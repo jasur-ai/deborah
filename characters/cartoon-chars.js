@@ -121,7 +121,14 @@ export const CARTOON_CHARS = [
     animation: 'hover',
     animationStyle: 'sway 3s ease-in-out infinite'
   }, 
- 
+   {
+    id: 'wolf_bad',
+    name: 'Mr.Wolf',
+    image: 'characters/wolf_bad.png',
+    from: 'Bad Guys ',
+    animation: 'hover',
+    animationStyle: 'float 2.6s ease-in-out infinite'
+  },
   {
     id: 'white-fury',
     name: 'Night Fury',
