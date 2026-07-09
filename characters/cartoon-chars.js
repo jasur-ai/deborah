@@ -129,6 +129,14 @@ export const CARTOON_CHARS = [
     animation: 'hover',
     animationStyle: 'float 2.6s ease-in-out infinite'
   },
+   {
+    id: 'fox_bad',
+    name: 'Agent Diana',
+    image: 'characters/fox_bada$$.png',
+    from: 'Bad Guys ',
+    animation: 'hover',
+    animationStyle: 'float 2.6s ease-in-out infinite'
+  },
   {
     id: 'white-fury',
     name: 'Night Fury',
