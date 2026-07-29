@@ -6,6 +6,7 @@
 import { Router } from 'express';
 import { fb } from '../firebase/admin.js';
 import { requireAuth } from '../middleware/auth.js';
+import { requireVip } from '../middleware/vip.js';
 import { CARTOON_CHARS, GAME_SETTINGS, DB_PATHS } from '../utils/constants.js';
 import { normalizeQuestion } from '../utils/helpers.js';
 
@@ -83,8 +84,17 @@ async function loadGameQuestions(source, key, chunk) {
   return { questions, testName };
 }
 
+// ── VIP gate: only allow VIP users for mock/pre sources ──
+function vipGateForMockPre(req, res, next) {
+  const { source } = req.query;
+  if (source === 'mock' || source === 'pre') {
+    return requireVip(req, res, next);
+  }
+  next();
+}
+
 // ── Host Game Page (with test data from query params) ──
-router.get('/host', requireAuth, async (req, res) => {
+router.get('/host', requireAuth, vipGateForMockPre, async (req, res) => {
   const { testName: tn, source, key, chunk, time, type, auto } = req.query;
   
   let questions = [];

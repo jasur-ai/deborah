@@ -91,4 +91,136 @@ edikit/
 └── scripts/                     ← Dev, test, seed, build
 ```
 
-> Document version: 2.1 | Last updated: July 2026 | Cleaned: removed dead CSS, design-tokens, controllers, services
+## 🔒 VIP Access Control
+
+### Overview
+VIP tizimi — bu **yashirin premium** funksiya. Oddiy foydalanuvchi bu funksiya mavjudligini
+**umuman bilmasligi** kerak. Hech qanday UI, matn, yoki HTML komment VIP borligini
+ko'rsatmasligi kerak.
+
+### Data Model
+
+```
+users/{safeKey}/isVip             → boolean (default: false)
+users/{safeKey}/vipGrantedAt      → timestamp | null
+users/{safeKey}/vipGrantedBy      → string (admin username) | null
+users/{safeKey}/vipRevokedAt      → timestamp | null
+users/{safeKey}/vipPlainPassword  → string | null (faqat admin ko'radi)
+```
+
+### Why 404 (not 403)?
+
+| Status code | Meaning | Issue |
+|-------------|---------|-------|
+| **403 Forbidden** | "Bu yerda nimadir bor, lekin sizga ruxsat yo'q" | Yashirin funksiya mavjudligini bildirib qo'yadi |
+| **404 Not Found** | "Bunday sahifa umuman yo'q" | Oddiy foydalanuvchi noto'g'ri URL yozgandek taassurot qoldiradi |
+
+⚠️ **Muhim**: Hech qachon 403 qaytarmang — bu "VIP bo'lim" borligini ochib beradi.
+
+### Architecture
+
+```
+┌─ ADMIN PANEL ──────────────────────────────────────┐
+│  routes/admin.js                                    │
+│  ├── GET  /admin/vip              → VIP sahifasi    │
+│  ├── GET  /admin/api/users        → Users list + VIP │
+│  ├── POST /admin/api/vip/grant    → VIP berish      │
+│  └── POST /admin/api/vip/revoke   → VIP olib tashlash│
+│                                                     │
+│  ⚠️ Grant: password maydoniga TEGILMAYDI —          │
+│     user o'z paroli bilan kiraveradi.               │
+└─────────────────────────────────────────────────────┘
+
+┌─ ACCESS CONTROL ────────────────────────────────────┐
+│  middleware/vip.js                                   │
+│  ├── requireVip(req, res, next)                      │
+│  │   ├── DB dan isVip ni o'qi (har safar, keshlanma)│
+│  │   ├── true  → next()                              │
+│  │   └── false → 404 render('error')                 │
+│  └── isCurrentUserVip(req) → boolean                 │
+│                                                       │
+│  routes/game.js:                                      │
+│    GET /host?source=mock|pre → vipGateForMockPre     │
+│    (requireVip middleware applied conditionally)      │
+└─────────────────────────────────────────────────────┘
+
+┌─ UI HIDING (USER PANEL) ────────────────────────────┐
+│  routes/user.js                                      │
+│  └── /panel                                          │
+│      ├── isVip=true  → fans/pre data loaded + sent  │
+│      └── isVip=false → fans={}, pre={} (empty)      │
+│                                                       │
+│  views/user/panel.ejs                                 │
+│  └── Mock section: <% if (isVip && fans.length) { %> │
+│  └── PRE section:  <% if (isVip && preGroups) { %>  │
+│                                                       │
+│  ℹ️ Both sections are 100% server-gated:              │
+│     - Ma'lumot serverdan chiqmaydi                   │
+│     - HTML rendering qilinmaydi                      │
+│     - View Source da ham ko'rinmaydi                 │
+└─────────────────────────────────────────────────────┘
+```
+
+### Auto-Migration
+
+`firebase/local-db.js` → `LocalDB.init()`:
+- Server ishga tushganda barcha userlarni tekshiradi
+- `isVip === undefined` bo'lganlarga `isVip: false` qo'shadi
+- **Idempotent**: keyingi safar hech narsa qilmaydi
+
+```js
+// Auto-migration in init():
+const users = this._data.users;
+if (users && typeof users === 'object') {
+  let migrated = 0;
+  for (const userKey of Object.keys(users)) {
+    const user = users[userKey];
+    if (user && typeof user === 'object' && user.isVip === undefined) {
+      user.isVip = false;
+      user.vipGrantedAt = null;
+      user.vipGrantedBy = null;
+      user.vipRevokedAt = null;
+      user.vipPlainPassword = null;
+      migrated++;
+    }
+  }
+  if (migrated > 0) {
+    await writeDB(this._data);
+    console.log(`🔄 Migratsiya: ${migrated} ta foydalanuvchiga isVip maydoni qo'shildi`);
+  }
+}
+```
+
+### Seed Data (VIP Demo Users)
+
+`firebase/seed-data.js`:
+```
+3 ta demo VIP user:
+  - sardor  | isVip: true | parol: 1234
+  - feruza  | isVip: true | parol: 1234
+  - shoxrux | isVip: true | parol: 1234
+
+Qolgan 46 ta user: isVip: false (automigration qo'shadi)
+```
+
+### Security Rules
+
+| Rule | Enforced at |
+|------|-------------|
+| `safeKey()` username sanitization | `routes/admin.js` grant/revoke |
+| `requireAdmin` router-level | `routes/admin.js` → `router.use(requireAdmin)` |
+| 404 (not 403) for non-VIP | `middleware/vip.js` → `requireVip` |
+| DB read every request (no cache) | `middleware/vip.js` → `fb.get(.../isVip)` |
+| Password NOT overwritten on grant | `routes/admin.js` → only sets isVip, vipPlainPassword |
+| `<%= %>` EJS escaping in views | `views/admin/vip.ejs` — all username outputs |
+| `esc()` client-side function | `views/admin/vip.ejs` — JS template literals |
+| No HTML comments leaking VIP | `views/user/panel.ejs` — comments removed |
+
+### Test Coverage
+
+| Script | Tests | Coverage |
+|--------|-------|----------|
+| `scripts/test-vip-browser.js` | 15 | Login, grant, VIP panel, non-VIP hiding, 404 |
+| `scripts/test-xss.js` (sec 7-10) | 22 | safeKey, ESM import, 404, escaping, HTTP XSS |
+
+> Document version: 2.2 | Last updated: July 2026 | Added: VIP Access Control, Auto-migration, Security Rules

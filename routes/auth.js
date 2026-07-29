@@ -93,9 +93,17 @@ router.post('/user/login', redirectIfAuth, async (req, res) => {
         });
       }
 
+      // Read isVip from DB
+      let isVip = false;
+      try {
+        const vipSnap = await fb.get(`users/${safeKey(username)}/isVip`);
+        isVip = vipSnap.exists() && vipSnap.val() === true;
+      } catch (_) {}
+
       req.session.user = {
         username: userData.username || username,
         safeKey: safeKey(username),
+        isVip,
       };
 
       return res.redirect('/user/panel');
@@ -139,6 +147,7 @@ router.post('/user/login', redirectIfAuth, async (req, res) => {
       req.session.user = {
         username: username.trim(),
         safeKey: safeKey(username),
+        isVip: false,
       };
 
       return res.redirect('/user/panel');

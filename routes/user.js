@@ -6,6 +6,7 @@
 import { Router } from 'express';
 import { fb } from '../firebase/admin.js';
 import { requireAuth } from '../middleware/auth.js';
+import { requireVip, isCurrentUserVip } from '../middleware/vip.js';
 import { DB_PATHS, GAME_SETTINGS, CARTOON_CHARS } from '../utils/constants.js';
 import { normalizeQuestion } from '../utils/helpers.js';
 
@@ -18,15 +19,20 @@ router.use(requireAuth);
 router.get('/panel', async (req, res) => {
   const user = req.session.user;
   try {
-    const [testsSnap, fansSnap, preSnap] = await Promise.all([
-      fb.get(`users/${user.safeKey}/tests`),
-      fb.get(DB_PATHS.MOCK_FANS),
-      fb.get(DB_PATHS.PRE_GROUPS),
-    ]);
+    // 🔒 Only load Mock/PRE data for VIP users (server-side hiding)
+    const isVip = await isCurrentUserVip(req);
+    
+    const promises = [fb.get(`users/${user.safeKey}/tests`)];
+    if (isVip) {
+      promises.push(fb.get(DB_PATHS.MOCK_FANS));
+      promises.push(fb.get(DB_PATHS.PRE_GROUPS));
+    }
+    
+    const [testsSnap, fansSnap, preSnap] = await Promise.all(promises);
 
     const tests = testsSnap.val() || {};
-    const fans = fansSnap.val() || {};
-    const preGroups = preSnap.val() || {};
+    const fans = isVip ? (fansSnap?.val() || {}) : {};
+    const preGroups = isVip ? (preSnap?.val() || {}) : {};
 
     res.render('user/panel', {
       title: 'Mening Panelim',
@@ -37,6 +43,7 @@ router.get('/panel', async (req, res) => {
           name: t.name || t.title || 'Testsiz',
           count: t.questions?.length || t.count || 0,
           createdAt: t.created_at || t.created || 0,
+          isPublic: !!t.isPublic,
         })),
       fans: Object.entries(fans)
         .sort((a, b) => (a[1].name || '').localeCompare(b[1].name || ''))
@@ -57,7 +64,10 @@ router.get('/panel', async (req, res) => {
         })),
       characters: CARTOON_CHARS,
       username: user.username,
+      isVip,
     });
+    // Update session with fresh isVip value
+    req.session.user.isVip = isVip;
   } catch (err) {
     console.error('User panel error:', err);
     res.render('user/panel', {
@@ -65,6 +75,7 @@ router.get('/panel', async (req, res) => {
       tests: [], fans: [], preGroups: [],
       characters: CARTOON_CHARS,
       username: user.username,
+      isVip: false,
       error: err.message,
     });
   }
@@ -100,6 +111,18 @@ router.post('/api/tests/save', async (req, res) => {
     }
 
     const testKey = editKey || Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+
+    // Preserve isPublic when editing
+    let isPublic = false;
+    if (editKey) {
+      try {
+        const existing = await fb.get(`users/${user.safeKey}/tests/${editKey}`);
+        if (existing.exists()) {
+          isPublic = !!existing.val().isPublic;
+        }
+      } catch (_) {}
+    }
+
     const testData = {
       name: name.trim(),
       questions: questions.map(q => ({
@@ -109,10 +132,19 @@ router.post('/api/tests/save', async (req, res) => {
       })),
       count: questions.length,
       created_at: Date.now(),
-      isPublic: false, // 🔒 Private by default
+      isPublic, // Preserved from existing test, default false
     };
 
     await fb.set(`users/${user.safeKey}/tests/${testKey}`, testData);
+
+    // Sync public_tests on edit (name/count may have changed)
+    if (isPublic) {
+      await fb.update(`public_tests/${user.safeKey}__${testKey}`, {
+        name: name.trim(),
+        count: questions.length,
+      });
+    }
+
     res.json({ success: true, key: testKey });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -122,7 +154,16 @@ router.post('/api/tests/save', async (req, res) => {
 // ── Delete Test ──
 router.post('/api/tests/delete', async (req, res) => {
   try {
-    await fb.remove(`users/${req.session.user.safeKey}/tests/${req.body.key}`);
+    const userKey = req.session.user.safeKey;
+    const testKey = req.body.key;
+    
+    // Remove from public_tests if was public
+    const snap = await fb.get(`users/${userKey}/tests/${testKey}`);
+    if (snap.exists() && snap.val().isPublic) {
+      await fb.remove(`public_tests/${userKey}__${testKey}`);
+    }
+    
+    await fb.remove(`users/${userKey}/tests/${testKey}`);
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -136,6 +177,42 @@ router.post('/api/tests/rename', async (req, res) => {
     if (!name?.trim()) return res.status(400).json({ error: 'Name required' });
     await fb.update(`users/${req.session.user.safeKey}/tests/${key}`, { name: name.trim() });
     res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Toggle Test Public/Private ──
+router.post('/api/tests/toggle-public', async (req, res) => {
+  try {
+    const { key } = req.body;
+    if (!key) return res.status(400).json({ error: 'Key required' });
+    
+    const userKey = req.session.user.safeKey;
+    const snap = await fb.get(`users/${userKey}/tests/${key}`);
+    if (!snap.exists()) return res.status(404).json({ error: 'Test topilmadi' });
+    
+    const test = snap.val();
+    const newVal = !test.isPublic;
+    const globalKey = `${userKey}__${key}`;
+    
+    await fb.update(`users/${userKey}/tests/${key}`, { isPublic: newVal });
+    
+    // Sync public_tests collection
+    if (newVal) {
+      await fb.set(`public_tests/${globalKey}`, {
+        name: test.name || 'Test',
+        authorName: req.session.user.username || userKey,
+        authorUid: userKey,
+        testKey: key,
+        count: test.questions?.length || test.count || 0,
+        created: Date.now(),
+      });
+    } else {
+      await fb.remove(`public_tests/${globalKey}`);
+    }
+    
+    res.json({ success: true, isPublic: newVal });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -155,35 +232,60 @@ router.get('/test-arena', (req, res) => {
 });
 
 // ── Search tests ──
-// 🔒 Privacy: only returns tests explicitly marked isPublic=true
-// or tests belonging to the current user
+// 🔥 Uses public_tests collection for fast search (no full user scan)
+// + current user's own tests
 router.get('/api/tests/search', async (req, res) => {
   try {
     const query = (req.query.q || '').toLowerCase().trim();
     if (!query) return res.json({ results: [] });
 
-    const snap = await fb.get('users');
-    const users = snap.val() || {};
-    const results = [];
     const currentUser = req.session?.user?.safeKey || '';
+    const results = [];
+    const seenKeys = new Set();
 
-    for (const [userId, userData] of Object.entries(users)) {
-      if (!userData.tests) continue;
-      for (const [testKey, test] of Object.entries(userData.tests)) {
-        const testName = (test.name || '').toLowerCase();
-        if (!testName.includes(query)) continue;
-
-        // 🔒 Only show public tests or the current user's own tests
-        const isOwn = userId === currentUser;
-        if (!isOwn && !test.isPublic) continue;
-
-        results.push({
-          userName: userData.username || userId,
-          testName: test.name || 'Test',
-          testKey,
-          count: test.questions?.length || test.count || 0,
-        });
+    // 1️⃣ Search public_tests collection (fast, indexed)
+    try {
+      const pubSnap = await fb.get('public_tests');
+      if (pubSnap.exists()) {
+        const pubTests = pubSnap.val();
+        for (const [globalKey, pub] of Object.entries(pubTests)) {
+          const testName = (pub.name || '').toLowerCase();
+          if (!testName.includes(query)) continue;
+          
+          results.push({
+            userName: pub.authorName || pub.authorUid || 'Noma\'lum',
+            testName: pub.name || 'Test',
+            testKey: pub.testKey,
+            count: pub.count || 0,
+          });
+          seenKeys.add(globalKey);
+        }
       }
+    } catch (_) {}
+
+    // 2️⃣ Also search current user's own tests (in case not public)
+    if (currentUser) {
+      try {
+        const mySnap = await fb.get(`users/${currentUser}/tests`);
+        if (mySnap.exists()) {
+          const myTests = mySnap.val();
+          for (const [testKey, test] of Object.entries(myTests)) {
+            const testName = (test.name || '').toLowerCase();
+            if (!testName.includes(query)) continue;
+            
+            const globalKey = `${currentUser}__${testKey}`;
+            // Skip if already in results from public_tests
+            if (seenKeys.has(globalKey)) continue;
+            
+            results.push({
+              userName: req.session.user.username || currentUser,
+              testName: test.name || 'Test',
+              testKey,
+              count: test.questions?.length || test.count || 0,
+            });
+          }
+        }
+      } catch (_) {}
     }
 
     res.json({ results: results.slice(0, 30) });

@@ -142,6 +142,27 @@ class LocalDB {
       console.log(`📦 Local DB yuklandi: ${Object.keys(this._data).length} ta asosiy yo\'nalish`);
     }
 
+    // ── Auto-migration: Add isVip field to existing users ──
+    const users = this._data.users;
+    if (users && typeof users === 'object') {
+      let migrated = 0;
+      for (const userKey of Object.keys(users)) {
+        const user = users[userKey];
+        if (user && typeof user === 'object' && user.isVip === undefined) {
+          user.isVip = false;
+          user.vipGrantedAt = null;
+          user.vipGrantedBy = null;
+          user.vipRevokedAt = null;
+          user.vipPlainPassword = null;
+          migrated++;
+        }
+      }
+      if (migrated > 0) {
+        await writeDB(this._data);
+        console.log(`   🔄 Migratsiya: ${migrated} ta foydalanuvchiga isVip maydoni qo'shildi`);
+      }
+    }
+
     this._initialized = true;
   }
 

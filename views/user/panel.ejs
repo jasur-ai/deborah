@@ -33,6 +33,11 @@
 
     .test-card{background:var(--card);border-radius:14px;padding:14px 16px;margin-bottom:9px;border:1px solid var(--border);display:flex;align-items:center;gap:12px;transition:border-color .3s,background .3s;}
     .test-card:hover{border-color:var(--accent);}
+    .act-vis{transition:all .25s ease;}
+    .act-vis.is-public{color:var(--green);background:rgba(0,229,160,.1);border-color:rgba(0,229,160,.25);}
+    .act-vis.is-public:hover{background:rgba(0,229,160,.18);border-color:rgba(0,229,160,.4);transform:scale(1.05);}
+    .act-vis:not(.is-public){color:var(--muted);background:rgba(255,255,255,.04);border-color:var(--border);}
+    .act-vis:not(.is-public):hover{color:var(--text);background:rgba(255,255,255,.08);border-color:var(--border-medium);transform:scale(1.05);}
     .tc-icon{width:44px;height:44px;border-radius:11px;background:linear-gradient(135deg,var(--accent-alpha,rgba(37,99,235,.2)),var(--accent-glow-alpha,rgba(56,189,248,.1)));display:flex;align-items:center;justify-content:center;flex-shrink:0;}
     .tc-icon svg{width:22px;height:22px;opacity:.8;}
     .tc-info{flex:1;min-width:0;}
@@ -252,6 +257,7 @@
               <button type="button" class="act-btn act-mock" onclick="openStartModal('<%= t.name.replace(/'/g, "\\\\'") %>', <%= t.count %>, '/user/test-arena?source=user&key=<%= t.key %>')"><%- icon('zap', 12) %> Sinov</button>
               <button type="button" class="act-btn act-cast" onclick="openCast('<%= t.name.replace(/'/g, "\\\\'") %>','user','<%= t.key %>')"><%- icon('gamepad', 12) %> Cast</button>
               <button type="button" class="act-btn act-edit" onclick="location.href='/user/create-test?edit=<%= t.key %>'"><%- icon('edit', 12) %></button>
+              <button type="button" class="act-btn act-vis <%= t.isPublic ? 'is-public' : '' %>" onclick="togglePublic('<%= t.key %>')" title="<%= t.isPublic ? 'Ommaviy (barcha ko\'radi)' : 'Shaxsiy (faqat siz)' %>"><%- icon(t.isPublic ? 'globe' : 'shield', 12) %></button>
               <button type="button" class="act-btn act-del" onclick="deleteTest('<%= t.key %>','<%= t.name.replace(/'/g, "\\\\'") %>')"><%- icon('trash', 12) %></button>
             </div>
           </div>
@@ -259,8 +265,7 @@
       <% } %>
     </div>
 
-    <!-- Mock Section -->
-    <% if (fans.length > 0) { %>
+    <% if (typeof isVip !== 'undefined' && isVip && fans.length > 0) { %>
     <div style="margin-top:16px">
       <div class="acc-section">
         <div class="acc-header" onclick="toggleAcc('mock-body','mock-arrow')">
@@ -285,8 +290,7 @@
     </div>
     <% } %>
 
-    <!-- PRE Tests -->
-    <% if (preGroups.length > 0) { %>
+    <% if (typeof isVip !== 'undefined' && isVip && preGroups.length > 0) { %>
     <div style="margin-top:10px">
       <div class="acc-section">
         <div class="acc-header" onclick="toggleAcc('pre-body','pre-arrow')">
@@ -348,6 +352,20 @@
       if (pendingDelete) { pendingDelete(); pendingDelete = null; }
       closeConfirm();
     });
+
+    async function togglePublic(key) {
+      try {
+        const res = await fetch('/api/tests/toggle-public', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(data.isPublic ? 'Test barcha uchun ochiq' : 'Test shaxsiy holatga o\'tkazildi', 'ok');
+          location.reload();
+        } else showToast('Xato: ' + (data.error || ''), 'err');
+      } catch(e) { showToast('Xato: ' + e.message, 'err'); }
+    }
 
     async function deleteTest(key, name) {
       showConfirm('"' + name + '" testini o\'chirishni tasdiqlaysizmi?', async function() {

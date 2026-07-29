@@ -11,7 +11,7 @@
 import crypto from 'crypto';
 
 function hashPass(username, password) {
-  const safeKey = username.replace(/[.#$\/\[\]]/g, '_');
+  const safeKey = username.replace(/[.#$\/\[\]]/g, '_').toLowerCase();
   return crypto.createHash('sha256')
     .update('qb_' + safeKey + '_' + password)
     .digest('hex');
@@ -149,6 +149,17 @@ export function generateSeedData() {
     }
 
     data.users[u.key] = userData;
+  });
+
+  // ── VIP Demo Users (3 ta) ──
+  ['sardor', 'feruza', 'shoxrux'].forEach(key => {
+    if (data.users[key]) {
+      data.users[key].isVip = true;
+      data.users[key].vipGrantedAt = Date.now();
+      data.users[key].vipGrantedBy = 'auto_seed';
+      data.users[key].vipRevokedAt = null;
+      data.users[key].vipPlainPassword = null;
+    }
   });
 
   // ═══════════════════════════════════════════════════════════════

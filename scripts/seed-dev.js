@@ -1,40 +1,55 @@
-#!/usr/bin/env node
-
 /**
- * Edikit — Development Seed Script
- * Seeds local database with sample data for testing
- * Usage: node scripts/seed-dev.js
+ * Edikit — Dev Seed Script (VIP + Migration)
+ * Run: node scripts/seed-dev.js
+ * Adds isVip fields to existing users + creates VIP demo users
  */
 
-import path from 'path';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { createRequire } from 'module';
+import crypto from 'crypto';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const require = createRequire(import.meta.url);
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const DB_FILE = resolve(__dirname, '..', 'data', 'db.json');
 
-async function seed() {
-  console.log('\n🌱 Edikit — Development Seed\n');
-  console.log('Seeding database with sample data...\n');
+if (!existsSync(DB_FILE)) {
+  console.log('❌ data/db.json topilmadi. Avval serverni ishga tushiring.');
+  process.exit(1);
+}
 
-  try {
-    // Load seed data
-    const { seedData } = await import('../firebase/seed-data.js');
-    const results = await seedData();
-    
-    console.log('✅ Seed complete!');
-    console.log(`   Users: ${results?.users || 0}`);
-    console.log(`   Tests: ${results?.tests || 0}`);
-    console.log(`   Fans:  ${results?.fans || 0}`);
-    console.log(`   PRE:   ${results?.pre || 0}`);
-    console.log(`   Games: ${results?.games || 0}\n`);
+const data = JSON.parse(readFileSync(DB_FILE, 'utf-8'));
 
-    console.log('   🔐 Admin: admin / admin');
-    console.log('   👤 User:  user / user\n');
-  } catch (err) {
-    console.error('❌ Seed failed:', err.message);
-    process.exit(1);
+// ── Migration: add isVip to all existing users ──
+let migrated = 0;
+if (data.users) {
+  for (const [key, user] of Object.entries(data.users)) {
+    if (user.isVip === undefined) {
+      user.isVip = false;
+      migrated++;
+    }
   }
 }
 
-seed();
+console.log(`📦 ${migrated} ta foydalanuvchiga isVip maydoni qo'shildi`);
+
+// ── Add VIP demo users (if they exist, add isVip) ──
+const vipUsers = ['sardor', 'feruza', 'shoxrux'];
+let vipCount = 0;
+for (const key of vipUsers) {
+  if (data.users[key]) {
+    const oldIsVip = data.users[key].isVip;
+    data.users[key].isVip = true;
+    data.users[key].vipGrantedAt = Date.now();
+    data.users[key].vipGrantedBy = 'seed';
+    if (!data.users[key].vipPlainPassword) {
+      data.users[key].vipPlainPassword = 'vip1234';
+    }
+    if (!oldIsVip) vipCount++;
+  }
+}
+
+console.log(`👑 ${vipCount} ta demo foydalanuvchi VIP qilindi: ${vipUsers.join(', ')}`);
+
+// ── Write back ──
+writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
+console.log('✅ data/db.json yangilandi');

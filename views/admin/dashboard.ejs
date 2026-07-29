@@ -27,6 +27,7 @@
       <button class="admin-side-btn <%= activeTab === 'pre' ? 'active' : '' %>" onclick="switchTab('pre')" style="--c:var(--accent-purple);--cbg:rgba(100,116,139,.14)"><span class="admin-side-ico"><%- icon('layers', 16) %></span>PRE Testlar</button>
       <button class="admin-side-btn <%= activeTab === 'results' ? 'active' : '' %>" onclick="switchTab('results')" style="--c:var(--accent-glow);--cbg:rgba(56,189,248,.14)"><span class="admin-side-ico"><%- icon('trophy', 16) %></span>Natijalar</button>
       <button class="admin-side-btn <%= activeTab === 'stats' ? 'active' : '' %>" onclick="switchTab('stats')" style="--c:var(--accent-glow);--cbg:rgba(56,189,248,.14)"><span class="admin-side-ico"><%- icon('barChart', 16) %></span>Statistika</button>
+      <button class="admin-side-btn <%= activeTab === 'vip' ? 'active' : '' %>" onclick="switchTab('vip')" style="--c:#f59e0b;--cbg:rgba(245,158,11,.14)"><span class="admin-side-ico"><%- icon('shield', 16) %></span>VIP</button>
       <div class="admin-side-label" style="margin-top:8px">Asboblar</div>
       <a href="/arena" target="_blank" class="admin-side-btn" style="--c:var(--green);--cbg:rgba(0,229,160,.1);text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('monitor', 16) %></span>Test Arena</a>
     </div>
@@ -44,15 +45,21 @@
       <!-- TAB: Users -->
       <div class="admin-tab-pane <%= activeTab === 'danger' ? 'active' : '' %>" id="pane-danger">
         <div class="admin-sec-hd"><div class="admin-sec-title"><%- icon('alertTriangle', 18) %> Foydalanuvchilar <span class="badge badge-danger">DANGER ZONE</span></div><button type="button" class="admin-refresh-btn" onclick="loadUsers()"><%- icon('refresh', 12) %></button></div>
-        <div class="table-wrap"><table><thead><tr><th>#</th><th>Login</th><th>Parol (hash)</th><th>Ro'yxatdan o'tgan</th><th>Testlar</th><th>O'chirish</th></tr></thead><tbody id="users-tbody">
-          <% if (users.length === 0) { %><tr><td colspan="6"><div class="admin-empty">Foydalanuvchilar yo'q</div></td></tr><% } else { %>
-            <% users.forEach((u, i) => { %>
-              <tr>
+        <div class="table-wrap"><table><thead><tr>                        <th>#</th><th>Login</th><th>Parol (hash)</th><th>Ro'yxatdan o'tgan</th><th>Testlar</th><th>VIP</th><th>O'chirish</th></tr></thead><tbody id="users-tbody">
+          <% if (users.length === 0) { %><tr><td colspan="7"><div class="admin-empty">Foydalanuvchilar yo'q</div></td></tr><% } else { %>
+            <% users.forEach((u, i) => { %>                <tr>
                 <td><%= i + 1 %></td>
                 <td><span class="font-bold"><%= u.username %></span></td>
                 <td style="font-family:monospace;font-size:.82rem;color:var(--accent-glow)"><%= u.password %></td>
                 <td class="text-muted" style="font-size:.76rem"><%= u.created_at ? new Date(u.created_at).toLocaleString('uz-UZ') : '—' %></td>
                 <td><span class="badge badge-accent"><%= u.tests %> ta test</span></td>
+                <td>
+                  <% if (u.isVip) { %>
+                    <span class="badge badge-success" style="cursor:pointer" onclick="quickRevokeVip('<%= u.username.replace(/'/g, "\\'") %>')" title="VIP ni olib tashlash">VIP</span>
+                  <% } else { %>
+                    <button class="admin-edit-btn" onclick="quickGrantVip('<%= u.username.replace(/'/g, "\\'") %>')" style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.15);border-radius:7px;padding:4px 9px;color:var(--blue);font-size:.7rem;font-weight:800;cursor:pointer"><%- icon('shield', 11) %> VIP</button>
+                  <% } %>
+                </td>
                 <td><button class="admin-del-btn" onclick="deleteUser('<%= u.key %>','<%= u.username.replace(/'/g, "\\'") %>')"><%- icon('trash', 12) %> O'chirish</button></td>
               </tr>
             <% }); %>
@@ -117,6 +124,36 @@
         <div class="admin-sec-hd"><div class="admin-sec-title"><%- icon('barChart', 18) %> Statistika</div><button type="button" class="admin-refresh-btn" onclick="loadStats()"><%- icon('refresh', 12) %></button></div>
         <div id="stats-content"><div class="admin-empty">Yuklanmoqda...</div></div>
       </div>
+
+      <!-- TAB: VIP -->
+      <div class="admin-tab-pane <%= activeTab === 'vip' ? 'active' : '' %>" id="pane-vip">
+        <div class="admin-sec-hd">
+          <div class="admin-sec-title"><%- icon('shield', 18) %> VIP Foydalanuvchilar <span class="badge badge-gold">MAXFIY</span></div>
+          <button type="button" class="admin-refresh-btn" onclick="loadVip()"><%- icon('refresh', 12) %></button>
+        </div>
+
+        <!-- Grant Form -->
+        <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:14px;padding:16px;margin-bottom:14px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+            <div style="flex:1;min-width:200px">
+              <label class="lbl">Foydalanuvchi nomi</label>
+              <input class="inp" id="vip-username" placeholder="username" style="margin-bottom:0">
+            </div>
+            <button type="button" onclick="grantVip()" style="background:linear-gradient(135deg,#f59e0b,#d97706);border:none;border-radius:9px;padding:11px 22px;color:#000;font-family:var(--font-body);font-size:.85rem;font-weight:900;cursor:pointer;display:flex;align-items:center;gap:6px"><%- icon('shield', 14) %> VIP qilish</button>
+          </div>
+          <div class="admin-msg" id="vip-msg"></div>
+          <div id="vip-result" style="display:none;margin-top:10px;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.25);border-radius:10px;padding:12px 15px">
+            <div style="font-size:.82rem;font-weight:800;color:var(--green);margin-bottom:4px">✅ VIP berildi!</div>
+            <div id="vip-result-detail" style="font-size:.78rem;color:var(--text-secondary)"></div>
+          </div>
+        </div>
+
+        <!-- Search filter -->
+        <input class="inp" id="vip-search" placeholder="Qidirish..." oninput="filterVip()" style="margin-bottom:12px">
+
+        <!-- VIP Users Table (dynamic) -->
+        <div id="vip-table-wrap"><div class="admin-empty">Yuklanmoqda...</div></div>
+      </div>
     </div>
   </div>
 
@@ -140,6 +177,7 @@
       else if (currentTab === 'pre') loadPreGroups();
       else if (currentTab === 'results') loadResults();
       else if (currentTab === 'stats') loadStats();
+      else if (currentTab === 'vip') loadVip();
     }
 
     // ── EXCEL IMPORT FUNCTIONS ──
@@ -459,6 +497,122 @@
         body: JSON.stringify({ key })
       });
       loadPreGroups();
+    }
+
+    // ── VIP Management ──
+    async function loadVip() {
+      const wrap = document.getElementById('vip-table-wrap');
+      try {
+        const res = await fetch('/admin/api/users');
+        const data = await res.json();
+        if (!data.users?.length) {
+          wrap.innerHTML = '<div class="admin-empty">Foydalanuvchilar yo\'q</div>';
+          return;
+        }
+        wrap.innerHTML = `
+          <div class="table-wrap"><table><thead><tr>
+            <th>#</th><th>Username</th><th>VIP</th><th>Ro\'yxatdan o\'tgan</th><th>VIP berilgan</th><th>Admin</th><th>Amallar</th>
+          </tr></thead><tbody>
+            ${data.users.map((u, i) => `
+              <tr class="vip-row">
+                <td>${i + 1}</td>
+                <td><span class="font-bold">${esc(u.username)}</span></td>
+                <td><span class="badge ${u.isVip ? 'badge-success' : 'badge-accent'}">${u.isVip ? 'VIP' : 'Oddiy'}</span></td>
+                <td class="text-muted" style="font-size:.76rem">${u.created_at ? new Date(u.created_at).toLocaleString('uz-UZ') : '—'}</td>
+                <td style="font-size:.76rem">${u.vipGrantedAt ? new Date(u.vipGrantedAt).toLocaleString('uz-UZ') : '—'}</td>
+                <td style="font-size:.76rem">${esc(u.vipGrantedBy || '—')}</td>
+                <td>
+                  <div class="admin-fan-btns" style="gap:4px">
+                    ${u.isVip
+                      ? `<button class="admin-del-btn" onclick="quickRevokeVip('${esc(u.username)}')">${svgIcon('shield', 12)} Olib tashlash</button>`
+                      : `<button class="admin-edit-btn" onclick="quickGrantVip('${esc(u.username)}')" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);border-radius:7px;padding:5px 10px;color:var(--blue);font-size:.72rem;font-weight:800;cursor:pointer">${svgIcon('shield', 12)} VIP qilish</button>`
+                    }
+                  </div>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody></table></div>`;
+      } catch(e) {
+        wrap.innerHTML = '<div class="admin-empty" style="color:var(--accent)">Yuklab bo\'lmadi</div>';
+      }
+    }
+
+    function filterVip() {
+      const q = document.getElementById('vip-search').value.toLowerCase();
+      document.querySelectorAll('#pane-vip .vip-row').forEach(row => {
+        const name = row.querySelector('.font-bold')?.textContent?.toLowerCase() || '';
+        row.style.display = name.includes(q) ? '' : 'none';
+      });
+    }
+
+    function setVipMsg(text, type) {
+      const el = document.getElementById('vip-msg');
+      el.textContent = text;
+      el.className = 'admin-msg active ' + (type || 'err');
+    }
+
+    async function grantVip() {
+      const username = document.getElementById('vip-username').value.trim();
+      if (!username) { setVipMsg('Username kiriting!', 'err'); return; }
+      setVipMsg('VIP berilmoqda...', 'ok');
+      document.getElementById('vip-result').style.display = 'none';
+      try {
+        const res = await fetch('/admin/api/vip/grant', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username })
+        });
+        const data = await res.json();
+        if (data.success) {
+          setVipMsg('', '');
+          const detail = document.getElementById('vip-result-detail');
+          detail.innerHTML = 'Foydalanuvchi: <strong>' + esc(data.username) + '</strong><br>Parol: <strong>' + esc(data.plainPassword) + '</strong> (foydalanuvchiga yetkazing)';
+          document.getElementById('vip-result').style.display = 'block';
+          document.getElementById('vip-username').value = '';
+          setTimeout(() => loadVip(), 2000);
+        } else {
+          setVipMsg('Xato: ' + (data.error || ''), 'err');
+        }
+      } catch(e) {
+        setVipMsg('Xato: ' + e.message, 'err');
+      }
+    }
+
+    async function quickGrantVip(username) {
+      if (!(await showConfirm('VIP berish', username + ' foydalanuvchisiga VIP berilsinmi?'))) return;
+      try {
+        const res = await fetch('/admin/api/vip/grant', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('VIP berildi! Parol: ' + data.plainPassword, 'ok', 5000);
+          if (currentTab === 'vip') { loadVip(); } else { location.reload(); }
+        } else {
+          showToast('Xato: ' + (data.error || ''), 'err');
+        }
+      } catch(e) {
+        showToast('Xato: ' + e.message, 'err');
+      }
+    }
+
+    async function quickRevokeVip(username) {
+      if (!(await showConfirm('VIP olib tashlash', username + ' foydalanuvchisidan VIP huquqini olib tashlashni tasdiqlaysizmi?'))) return;
+      try {
+        const res = await fetch('/admin/api/vip/revoke', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('VIP olib tashlandi', 'ok');
+          if (currentTab === 'vip') { loadVip(); } else { location.reload(); }
+        } else {
+          showToast('Xato: ' + (data.error || ''), 'err');
+        }
+      } catch(e) {
+        showToast('Xato: ' + e.message, 'err');
+      }
     }
 
     const MEDAL_ICONS = ['award', 'award', 'award'];

@@ -7,6 +7,7 @@ import { Router } from 'express';
 import { fb } from '../firebase/admin.js';
 import { requireAdmin } from '../middleware/auth.js';
 import { DB_PATHS } from '../utils/constants.js';
+import crypto from 'crypto';
 import { safeKey } from '../utils/helpers.js';
 
 const router = Router();
@@ -46,6 +47,9 @@ router.get('/dashboard', async (req, res) => {
           password: (u.password || '—').length === 64 ? (u.password || '—').slice(0, 12) + '…' : (u.password || '—'),
           created_at: u.created_at || 0,
           tests: u.tests ? Object.keys(u.tests).length : 0,
+          isVip: !!u.isVip,
+          vipGrantedBy: u.vipGrantedBy || null,
+          vipGrantedAt: u.vipGrantedAt || null,
         })),
       fans: [],
       preGroups: [],
@@ -247,6 +251,111 @@ router.get('/api/stats', async (req, res) => {
       resultsCount: Object.keys(results).length, totalPlayers,
       fansCount: Object.keys(fans).length, fanStats,
     });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── API: Get all users (for VIP tab) ──
+router.get('/api/users', async (req, res) => {
+  try {
+    const usersSnap = await fb.get(DB_PATHS.USERS);
+    const users = usersSnap.val() || {};
+    const list = Object.entries(users)
+      .sort((a, b) => (b[1].created_at || 0) - (a[1].created_at || 0))
+      .map(([key, u]) => ({
+        key,
+        username: u.username || key,
+        created_at: u.created_at || 0,
+        isVip: !!u.isVip,
+        vipGrantedAt: u.vipGrantedAt || null,
+        vipGrantedBy: u.vipGrantedBy || null,
+        vipRevokedAt: u.vipRevokedAt || null,
+      }));
+    res.json({ users: list });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── VIP Management Page ──
+router.get('/vip', async (req, res) => {
+  try {
+    const usersSnap = await fb.get(DB_PATHS.USERS);
+    const users = usersSnap.val() || {};
+    
+    res.render('admin/vip', {
+      title: 'VIP Foydalanuvchilar',
+      users: Object.entries(users)
+        .sort((a, b) => (b[1].created_at || 0) - (a[1].created_at || 0))
+        .map(([key, u]) => ({
+          key,
+          username: u.username || key,
+          isVip: !!u.isVip,
+          created_at: u.created_at || 0,
+          vipGrantedAt: u.vipGrantedAt || null,
+          vipGrantedBy: u.vipGrantedBy || null,
+          vipRevokedAt: u.vipRevokedAt || null,
+          vipPlainPassword: u.vipPlainPassword || null,
+        })),
+    });
+  } catch (err) {
+    console.error('VIP page error:', err);
+    res.render('admin/vip', { title: 'VIP Foydalanuvchilar', users: [], error: err.message });
+  }
+});
+
+// ── API: Grant VIP ──
+router.post('/api/vip/grant', async (req, res) => {
+  try {
+    const { username } = req.body;
+    if (!username) return res.status(400).json({ error: 'Username required' });
+
+    const userKey = safeKey(username);
+    const snap = await fb.get(`${DB_PATHS.USERS}/${userKey}`);
+    
+    if (!snap.exists()) {
+      return res.status(404).json({ error: 'Bunday foydalanuvchi topilmadi' });
+    }
+
+    // Generate random password for VIP user
+    // Generate random VIP management password (stored separately, does NOT change user's login password)
+    const vipPass = Math.random().toString(36).slice(2, 8) + Math.random().toString(36).slice(2, 6);
+
+    await fb.update(`${DB_PATHS.USERS}/${userKey}`, {
+      isVip: true,
+      vipGrantedAt: Date.now(),
+      vipGrantedBy: req.session.admin?.username || 'admin',
+      vipPlainPassword: vipPass,
+      // NOTE: password field is NOT overwritten — user keeps their original login password
+    });
+
+    res.json({ success: true, username, plainPassword: vipPass });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── API: Revoke VIP ──
+router.post('/api/vip/revoke', async (req, res) => {
+  try {
+    const { username } = req.body;
+    if (!username) return res.status(400).json({ error: 'Username required' });
+
+    const userKey = safeKey(username);
+    const snap = await fb.get(`${DB_PATHS.USERS}/${userKey}`);
+    
+    if (!snap.exists()) {
+      return res.status(404).json({ error: 'Bunday foydalanuvchi topilmadi' });
+    }
+
+    await fb.update(`${DB_PATHS.USERS}/${userKey}`, {
+      isVip: false,
+      vipRevokedAt: Date.now(),
+      // Keep vipGrantedAt/vipGrantedBy for audit trail
+    });
+
+    res.json({ success: true, username });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

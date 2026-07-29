@@ -12,7 +12,11 @@
     "reset": "rm -f data/db.json && npm run seed",
     "build:og": "node scripts/build-og-image.js",
     "build:pwa": "node scripts/build-pwa-icons.js",
-    "build": "npm run build:pwa && npm run build:og"
+    "build": "npm run build:pwa && npm run build:og",
+    "test:security": "node scripts/test-xss.js",
+    "pretest:vip": "rm -f data/db.json",
+    "test:vip": "node scripts/test-vip-browser.js",
+    "test": "npm run test:security && npm run test:vip"
   },
   "dependencies": {
     "compression": "^1.7.4",
