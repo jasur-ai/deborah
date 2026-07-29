@@ -211,7 +211,7 @@
   </div>
 
   <nav class="navbar">
-    <a href="/" class="nav-logo"><img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto"> Edikit</a>
+    <a href="/" class="nav-logo"><img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto"></a>
     <div class="nav-right">
       <div style="display:flex;align-items:center;gap:8px;">
         <div class="nav-av"><%= (username || 'U')[0].toUpperCase() %></div>
@@ -219,13 +219,13 @@
       </div>
       <button type="button" class="nav-btn" onclick="toggleCharsPanel()" style="border-color:rgba(56,189,248,.3);color:var(--gold);">Characters</button>
       <a href="/" class="nav-btn" style="text-decoration:none"><%- icon('home', 16) %></a>
-      <button type="button" class="nav-btn" data-theme-toggle title="Light mode"><%- icon('moon', 14) %> Light</button>
+      <button type="button" class="nav-btn" data-theme-toggle title="Light mode"><%- icon(.moon., 16) %></button>
       <a href="/user/logout" class="nav-btn danger" style="text-decoration:none"><%- icon('logOut', 14) %> Chiqish</a>
     </div>
   </nav>
 
   <div class="panel">
-    <div class="greeting"><img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto"> Edikit Panel</div>
+    <div class="greeting"><img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto"></div>
 
     <!-- Search -->
     <div class="search-row">

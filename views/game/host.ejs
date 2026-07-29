@@ -5,7 +5,7 @@
   <%- include('../partials/head') %>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
-    :root{--bg:#0a0f1f;--card:#111a35;--border:rgba(255,255,255,.07);--accent:#2563eb;--gold:#38bdf8;--green:#38bdf8;--blue:#38bdf8;--purple:#64748b;--text:#e8edf7;--muted:#8b96b3;}
+    :root{--bg:#0a0f1f;--card:#111a35;--border:rgba(255,255,255,.07);--accent:#2563eb;--gold:#FBBF24;--green:#38bdf8;--blue:#38bdf8;--purple:#64748b;--text:#e8edf7;--muted:#8b96b3;}
     body.light{--bg:#f0f0f8;--card:#fff;--border:rgba(0,0,0,.09);--text:#0a0a1a;--muted:#7070a0;}
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s;}
@@ -126,10 +126,10 @@
 
 <div class="screen" id="s-lobby">
   <div class="lob-head">
-    <div class="logo"><img src="/images/logo-icon.svg" alt="E"> Edikit</div>
+    <div class="logo"><img src="/images/logo-icon.svg" alt="E"></div>
     <div class="hd-right">
       <span style="font-size:.72rem;font-weight:700;color:var(--muted)" id="lob-test-name">Test</span>
-      <button type="button" class="mode-btn" id="dark-toggle" onclick="toggleDark()">☀️ Light</button>
+      <button type="button" class="mode-btn" id="dark-toggle" onclick="toggleDark()"><%- icon('sun', 14) %></button>
       <a href="/user/panel" class="mode-btn">← Qaytish</a>
       <button type="button" class="end-btn" onclick="confirmEnd()">✕ Tugatish</button>
     </div>
@@ -446,7 +446,7 @@
   function toggleDark() {
     darkMode = !darkMode;
     document.body.classList.toggle('light', !darkMode);
-    $('dark-toggle').textContent = darkMode ? '☀️ Light' : '🌙 Dark';
+    $('dark-toggle').innerHTML = darkMode ? '<%- icon("sun", 14) %>' : '<%- icon("moon", 14) %>';
   }
 </script>
 </body>

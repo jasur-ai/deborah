@@ -4,7 +4,7 @@
 <!-- Early font preconnect for performance -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<meta name="theme-color" content="#0A0F1F" id="meta-theme-color">
+<meta name="theme-color" content="#080C1A" id="meta-theme-color" data-light="#DEE1ED" data-dark="#080C1A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
@@ -44,7 +44,7 @@ function svgIcon(name, size) {
   if (!svg) return '';
   return '<span class="icon-inline" style="width:' + (size||16) + 'px;height:' + (size||16) + 'px">' + svg.replace('<svg', '<svg width="' + (size||16) + '" height="' + (size||16) + '"') + '</span>';
 }
-(function(){var k='edikit-theme';var t;try{t=localStorage.getItem(k)}catch(_){}if(!t)t='dark';document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');var mc=document.getElementById('meta-theme-color');if(mc)mc.setAttribute('content',t==='light'?'#F4F6FB':'#0A0F1F')})();
+(function(){var k='edikit-theme';var t;try{t=localStorage.getItem(k)}catch(_){}if(!t)t='dark';document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');var mc=document.getElementById('meta-theme-color');if(mc)mc.setAttribute('content',t==='light'?'#DEE1ED':'#080C1A')})();
 </script>
 <script src="/js/theme.js"></script>
 
