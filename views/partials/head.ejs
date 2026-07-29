@@ -1,0 +1,58 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<!-- Early font preconnect for performance -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<meta name="theme-color" content="#0A0F1F" id="meta-theme-color">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<meta name="handheldfriendly" content="true">
+<title><%= typeof title !== 'undefined' ? title : 'Edikit' %></title>
+<meta name="description" content="Edikit — Real-time multiplayer quiz platform. Jonli test va viktorina platformasi.">
+
+<!-- Open Graph / Social Preview -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Edikit">
+<meta property="og:title" content="<%= typeof title !== 'undefined' ? title : 'Edikit — Interactive Platform' %>">
+<meta property="og:description" content="Jonli test va viktorina platformasi. O'qituvchilar uchun savollar yaratish, o'yinlar o'tkazish va natijalarni kuzatish.">
+<meta property="og:image" content="<%= siteUrl + '/images/og-image.svg' %>">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="<%= siteUrl + path %>">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="<%= typeof title !== 'undefined' ? title : 'Edikit — Interactive Platform' %>">
+<meta name="twitter:description" content="Jonli test va viktorina platformasi.">
+<meta name="twitter:image" content="<%= siteUrl + '/images/og-image.svg' %>">
+
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/svg+xml" href="/images/logo-icon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/pwa-icon-180.png">
+<link rel="apple-touch-icon" sizes="192x192" href="/images/pwa-icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Righteous&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="/js/main.js"></script>
+<script>
+window.__ICONS = <%- JSON.stringify(icons) %>;
+function svgIcon(name, size) {
+  const svg = window.__ICONS && window.__ICONS[name];
+  if (!svg) return '';
+  return '<span class="icon-inline" style="width:' + (size||16) + 'px;height:' + (size||16) + 'px">' + svg.replace('<svg', '<svg width="' + (size||16) + '" height="' + (size||16) + '"') + '</span>';
+}
+(function(){var k='edikit-theme';var t;try{t=localStorage.getItem(k)}catch(_){}if(!t)t='dark';document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');var mc=document.getElementById('meta-theme-color');if(mc)mc.setAttribute('content',t==='light'?'#F4F6FB':'#0A0F1F')})();
+</script>
+<script src="/js/theme.js"></script>
+
+<!-- Service Worker (lightweight, deduped via controller check) -->
+<script>
+if ('serviceWorker' in navigator && !navigator.serviceWorker.controller) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/service-worker.js', { scope: '/' });
+  });
+}
+</script>

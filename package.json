@@ -1,13 +1,39 @@
 {
-  "name": "quizblitz-mock-up",
-  "version": "1.0.0",
-  "description": "QuizBlitz cast funksiyasini real odamlarsiz sinash uchun bot skripti",
+  "name": "edikit",
+  "version": "2.0.0",
+  "description": "Edikit — Real-time multiplayer quiz platform (Node.js Edition)",
   "type": "module",
-  "main": "mock-up.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node mock-up.js"
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "mock": "node scripts/mock-up.js",
+    "seed": "node scripts/seed-dev.js",
+    "reset": "rm -f data/db.json && npm run seed",
+    "build:og": "node scripts/build-og-image.js",
+    "build:pwa": "node scripts/build-pwa-icons.js",
+    "build": "npm run build:pwa && npm run build:og"
   },
   "dependencies": {
-    "firebase": "^10.12.2"
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.0",
+    "express-rate-limit": "^8.6.1",
+    "express-session": "^1.18.0",
+    "firebase-admin": "^12.6.0",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3",
+    "xlsx": "^0.18.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.62.0",
+    "sharp": "^0.35.3"
   }
 }

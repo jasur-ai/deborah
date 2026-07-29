@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <%- include('../partials/head') %>
+  <style>
+    body{background:var(--bg-primary);min-height:100vh;transition:background .3s;}
+    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 55% 40% at 15% 20%,rgba(37,99,235,.1) 0%,transparent 65%),radial-gradient(ellipse 45% 35% at 85% 75%,rgba(56,189,248,.07) 0%,transparent 65%);}
+    
+    .navbar{position:sticky;top:0;z-index:100;background:var(--bg-overlay);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;transition:background .3s,border-color .3s;}
+    .nav-logo{font-family:'Righteous',cursive;font-size:1.25rem;text-decoration:none;display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .nav-right{display:flex;align-items:center;gap:8px;}
+    .nav-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:900;color:#fff;}
+    .nav-un{font-weight:800;font-size:.85rem;}
+    .nav-role{font-size:.68rem;font-weight:700;color:var(--green);}
+    .nav-btn{padding:7px 12px;border-radius:9px;border:1px solid var(--border);background:var(--bg-surface);color:var(--muted);font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:800;cursor:pointer;text-decoration:none;transition:all .2s;display:flex;align-items:center;gap:5px;}
+    .nav-btn:hover{background:var(--bg-elevated);color:var(--text);}
+    .nav-btn.danger:hover{background:rgba(37,99,235,.15);color:var(--accent);border-color:rgba(37,99,235,.3);}
+
+    .panel{max-width:820px;margin:0 auto;padding:24px 20px 80px;position:relative;z-index:1;}
+    .greeting{font-family:'Righteous',cursive;font-size:1.5rem;display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+    .sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+    .sec-title{font-family:'Righteous',cursive;font-size:1.15rem;display:flex;align-items:center;gap:8px;}
+    .cnt-badge{background:var(--accent);color:#fff;font-size:.65rem;padding:2px 8px;border-radius:50px;font-weight:900;}
+    .new-btn{background:linear-gradient(135deg,var(--accent),#1d4ed8);border:none;border-radius:9px;padding:8px 16px;color:#fff;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:900;cursor:pointer;text-decoration:none;transition:all .3s ease;display:flex;align-items:center;gap:5px;}
+    .new-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+
+    .search-row{display:flex;gap:8px;margin-bottom:16px;}
+    .search-inp{flex:1;background:var(--bg-surface);border:2px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:700;outline:none;transition:border-color .3s,background .3s;}
+    .search-inp:focus{border-color:var(--accent);}
+    .search-inp::placeholder{color:var(--muted);}
+    .search-btn{background:var(--bg-elevated);border:1px solid var(--border);border-radius:10px;padding:10px 16px;color:var(--accent);font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;transition:all .3s ease;white-space:nowrap;display:flex;align-items:center;gap:6px;}
+    .search-btn:hover{background:var(--accent);color:#fff;}
+
+    .test-card{background:var(--card);border-radius:14px;padding:14px 16px;margin-bottom:9px;border:1px solid var(--border);display:flex;align-items:center;gap:12px;transition:border-color .3s,background .3s;}
+    .test-card:hover{border-color:var(--accent);}
+    .tc-icon{width:44px;height:44px;border-radius:11px;background:linear-gradient(135deg,var(--accent-alpha,rgba(37,99,235,.2)),var(--accent-glow-alpha,rgba(56,189,248,.1)));display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .tc-icon svg{width:22px;height:22px;opacity:.8;}
+    .tc-info{flex:1;min-width:0;}
+    .tc-name{font-weight:800;font-size:.9rem;margin-bottom:3px;}
+    .tc-meta{font-size:.72rem;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:10px;}
+    .q-badge{background:var(--cyan-alpha,rgba(56,189,248,.12));border:1px solid var(--cyan-border,rgba(56,189,248,.2));color:var(--blue);font-size:.65rem;font-weight:800;border-radius:50px;padding:2px 8px;}
+    .tc-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;}
+    .act-btn{border-radius:9px;border:none;padding:7px 10px;cursor:pointer;transition:all .3s ease;font-family:'Nunito',sans-serif;font-weight:800;font-size:.76rem;display:flex;align-items:center;gap:4px;}
+    .act-edit{background:var(--bg-elevated);border:1px solid var(--border);color:var(--info,var(--blue));}
+    .act-edit:hover{background:var(--accent);color:#fff;}
+    .act-cast{background:var(--bg-elevated);border:1px solid var(--border);color:var(--green);}
+    .act-cast:hover{background:var(--green);color:#fff;}
+    .act-mock{background:var(--bg-elevated);border:1px solid var(--border);color:var(--purple);}
+    .act-mock:hover{background:var(--purple);color:#fff;}
+    .act-del{background:var(--bg-elevated);border:1px solid var(--border);color:var(--accent);}
+    .act-del:hover{background:var(--accent);color:#fff;}
+
+    .acc-section{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:2px;transition:background .3s;}
+    .acc-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;user-select:none;}
+    .acc-header:hover{background:var(--bg-surface);}
+    .acc-title{font-family:'Righteous',cursive;font-size:1rem;display:flex;align-items:center;gap:8px;}
+    .acc-arrow{color:var(--muted);font-size:.7rem;transition:transform .25s;display:flex;align-items:center;}
+    .acc-arrow.open{transform:rotate(90deg);}
+    .acc-body{display:none;padding:0 14px 14px;}
+    .acc-body.open{display:block;}
+
+    .fan-btn,.pre-sub-btn{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--bg-surface);border:1px solid var(--border);border-radius:11px;padding:11px 14px;margin-bottom:6px;transition:all .3s ease;}
+    .fan-btn:hover,.pre-sub-btn:hover{background:var(--bg-elevated);border-color:var(--accent-purple);}
+    .fan-btn-left,.pre-sub-left{display:flex;flex-direction:column;gap:2px;}
+    .fan-btn-name,.pre-sub-name{font-weight:800;font-size:.88rem;display:flex;align-items:center;gap:6px;}
+    .fan-btn-cnt,.pre-sub-cnt{font-size:.72rem;color:var(--muted);font-weight:700;}
+    .fan-btn-actions,.pre-sub-actions{display:flex;gap:6px;}
+    .fan-start,.pre-sub-play{background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;padding:8px 13px;color:var(--purple);font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:900;cursor:pointer;transition:all .3s ease;display:flex;align-items:center;gap:5px;}
+    .fan-start:hover,.pre-sub-play:hover{background:var(--purple);color:#fff;}
+    .fan-cast,.pre-sub-cast{background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;padding:8px 13px;color:var(--green);font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:900;cursor:pointer;transition:all .3s ease;display:flex;align-items:center;gap:5px;}
+    .fan-cast:hover,.pre-sub-cast:hover{background:var(--green);color:#fff;}
+    .empty-state{text-align:center;padding:36px 20px;color:var(--muted);font-size:.84rem;font-weight:700;background:var(--bg-surface);border-radius:14px;border:1px dashed var(--border);}
+    .empty-state .ei{font-size:2.5rem;margin-bottom:8px;display:flex;align-items:center;justify-content:center;}
+    .search-result-card{background:var(--card);border-radius:12px;padding:12px 15px;margin-bottom:7px;border:1px solid var(--border);display:flex;align-items:center;gap:12px;transition:background .3s;}
+    .sr-name{font-weight:800;font-size:.88rem;display:flex;align-items:center;gap:6px;}
+    .sr-meta{font-size:.72rem;font-weight:600;color:var(--muted);}
+    .sr-start{background:var(--bg-elevated);border:1px solid var(--border);color:var(--green);border-radius:9px;padding:7px 13px;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:900;cursor:pointer;transition:all .3s ease;flex-shrink:0;display:flex;align-items:center;gap:5px;}
+    .sr-start:hover{background:var(--green);color:#fff;}
+    .pre-hd{display:flex;align-items:center;gap:8px;margin-bottom:12px;margin-top:4px;}
+    .pre-hd-title{font-family:'Righteous',cursive;font-size:1.05rem;}
+    .pre-badge{font-size:.62rem;font-weight:800;background:var(--bg-elevated);border:1px solid var(--border);color:var(--purple);border-radius:50px;padding:3px 8px;}
+
+    /* Chars panel */
+    #chars-panel{display:none;position:fixed;top:56px;left:0;right:0;z-index:200;background:var(--bg-overlay);backdrop-filter:blur(20px);border-bottom:2px solid var(--border-light);padding:18px 20px 22px;transition:background .3s;}
+    #chars-panel.open{display:block;}
+    @keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+    .chars-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;max-width:820px;margin:0 auto;}
+    .char-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:12px;padding:10px 6px;text-align:center;cursor:pointer;transition:all .3s ease;}
+    .char-card:hover{background:var(--bg-elevated);border-color:var(--accent);}
+    .char-card img{width:64px;height:64px;object-fit:contain;display:block;margin:0 auto 6px;}
+    .char-name{font-size:.62rem;font-weight:800;color:var(--muted);line-height:1.2;}
+
+    /* Modals */
+    .modal-overlay{position:fixed;inset:0;z-index:500;display:none;align-items:center;justify-content:center;padding:20px;background:var(--bg-overlay);backdrop-filter:blur(8px);}
+    .modal-overlay.open{display:flex;}
+    .modal-box{background:var(--card);border-radius:22px;padding:28px;width:100%;max-width:480px;border:1px solid var(--border);box-shadow:var(--shadow-xl);max-height:90vh;overflow-y:auto;}
+    .modal-title{font-family:'Righteous',cursive;font-size:1.25rem;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+    .modal-sub{color:var(--muted);font-size:.82rem;margin-bottom:18px;font-weight:700;}
+    .modal-actions{display:flex;gap:8px;margin-top:16px;}
+    .modal-btn{flex:1;border:none;border-radius:10px;padding:12px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:900;cursor:pointer;transition:all .3s ease;}
+    .modal-btn-primary{background:linear-gradient(135deg,var(--accent),#1d4ed8);color:#fff;}
+    .modal-btn-primary:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+    .modal-btn-secondary{background:var(--bg-surface);color:var(--muted);}
+    .modal-btn-secondary:hover{background:var(--bg-elevated);color:var(--text);}
+    .modal-btn-danger{background:var(--bg-surface);border:1px solid var(--border);color:var(--accent);}
+    .modal-btn-danger:hover{background:var(--accent);color:#fff;}
+    .modal-divider{border:none;border-top:1px solid var(--border);margin:14px 0;}
+    .modal-time-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px;}
+    .modal-time-opt{border:2px solid var(--border);background:var(--bg-surface);border-radius:10px;padding:8px 4px;text-align:center;cursor:pointer;transition:all .3s ease;}
+    .modal-time-opt:hover{border-color:var(--accent-purple);}
+    .modal-time-opt.selected{border-color:var(--accent);background:var(--accent-alpha,rgba(56,189,248,.1));}
+    .modal-time-opt .tv{font-size:.85rem;font-weight:900;color:var(--text);}
+    .modal-time-opt .tl{font-size:.6rem;font-weight:700;color:var(--muted);margin-top:2px;}
+    .modal-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;}
+    .modal-type-opt{border:2px solid var(--border);background:var(--bg-surface);border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;transition:all .3s ease;}
+    .modal-type-opt:hover{border-color:var(--accent-purple);}
+    .modal-type-opt.selected{border-color:var(--accent-purple);background:var(--accent-purple-alpha,rgba(100,116,139,.12));}
+    .modal-type-opt .tic{font-size:1.3rem;margin-bottom:3px;}
+    .modal-type-opt .tl{font-size:.7rem;font-weight:800;color:var(--muted);}
+    .modal-auto-row{display:flex;align-items:center;gap:12px;background:var(--bg-surface);border-radius:12px;padding:12px 14px;border:1px solid var(--border);margin-bottom:14px;transition:background .3s;}
+    .modal-auto-toggle{position:relative;width:48px;height:26px;flex-shrink:0;cursor:pointer;}
+    .modal-auto-toggle input{opacity:0;width:0;height:0;position:absolute;}
+    .modal-auto-slider{position:absolute;inset:0;background:var(--accent);border-radius:50px;cursor:pointer;transition:background .3s ease;}
+    .modal-auto-slider .thumb{position:absolute;height:20px;width:20px;left:25px;bottom:3px;background:#fff;border-radius:50%;transition:left .3s ease;box-shadow:0 1px 4px rgba(0,0,0,.4);}
+    .modal-auto-toggle input:checked + .modal-auto-slider{background:var(--green);}
+    .modal-auto-toggle input:checked + .modal-auto-slider .thumb{left:25px;}
+    .modal-auto-toggle input:not(:checked) + .modal-auto-slider .thumb{left:3px;}
+    .modal-section-label{font-size:.72rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+
+    @media(max-width:600px){.tc-actions{flex-wrap:wrap;}}
+  </style>
+</head>
+<body>
+  <!-- Confirm Modal -->
+  <div class="modal-overlay" id="confirm-modal" onclick="if(event.target===this)closeConfirm()">
+    <div class="modal-box">
+      <div class="modal-title"><%- icon('alertTriangle', 20) %> O'chirishni tasdiqlang</div>
+      <div class="modal-sub" id="confirm-text">Haqiqatan ham o'chirmoqchimisiz?</div>
+      <hr class="modal-divider">
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-secondary" onclick="closeConfirm()">Bekor qilish</button>
+        <button class="modal-btn modal-btn-danger" id="confirm-ok-btn">O'chirish</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Start Modal (Mock/Test Preview) -->
+  <div class="modal-overlay" id="start-modal" onclick="if(event.target===this)closeStartModal()">
+    <div class="modal-box">
+      <div class="modal-title"><%- icon('zap', 20) %> <span id="start-modal-title">Test</span></div>
+      <div class="modal-sub" id="start-modal-sub">5 ta savol &bull; Sinov rejimi</div>
+      <hr class="modal-divider">
+      <div id="start-modal-settings">
+        <div class="modal-section-label">⏱️ Savol vaqti (soniya)</div>
+        <div class="modal-time-grid" id="start-time-grid"></div>
+        <div class="modal-section-label">🎯 Rejim</div>
+        <div class="modal-type-grid" id="start-type-grid"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-secondary" onclick="closeStartModal()">Bekor qilish</button>
+        <button class="modal-btn modal-btn-primary" onclick="confirmStartQuiz()">Boshlash</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cast Modal (Live Game) -->
+  <div class="modal-overlay" id="cast-modal" onclick="if(event.target===this)closeCastModal()">
+    <div class="modal-box">
+      <div class="modal-title"><%- icon('gamepad', 20) %> Jonli O'yin <span id="cast-modal-badge" style="font-size:.65rem;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.25);color:var(--green);border-radius:50px;padding:2px 8px;font-weight:800;margin-left:8px">CAST</span></div>
+      <div class="modal-sub" id="cast-modal-sub">Test: —</div>
+      <div class="modal-section-label">⏱️ Savol vaqti (soniya)</div>
+      <div class="modal-time-grid" id="cast-time-grid"></div>
+      <div class="modal-section-label">🎯 O'yin turi</div>
+      <div class="modal-type-grid" id="cast-type-grid"></div>
+      <div class="modal-auto-row">
+        <label class="modal-auto-toggle">
+          <input type="checkbox" id="cast-auto-check" checked>
+          <span class="modal-auto-slider"><span class="thumb"></span></span>
+        </label>
+        <div style="flex:1">
+          <div style="font-size:.82rem;font-weight:800;margin-bottom:2px" id="cast-auto-lbl">Yoqiq — Avto rejim</div>
+          <div style="font-size:.7rem;font-weight:600;color:var(--muted)">Hammasi javob berganda yoki vaqt tugaganda avto o'tadi.</div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-secondary" onclick="closeCastModal()">Bekor qilish</button>
+        <button class="modal-btn modal-btn-primary" onclick="confirmCast()" style="background:linear-gradient(135deg,var(--green),#1d9bcf);color:#000">O'yinni boshlash</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Characters Panel -->
+  <div id="chars-panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;max-width:820px;margin:0 auto 14px">
+      <div style="font-family:'Righteous',cursive;font-size:1rem;color:var(--gold);">Characters</div>
+      <button type="button" onclick="toggleCharsPanel()" style="background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:9px;padding:6px 12px;color:var(--muted);font-family:'Nunito',sans-serif;font-size:.75rem;font-weight:800;cursor:pointer">Yopish</button>
+    </div>
+    <div class="chars-grid" id="chars-grid">
+      <% (typeof characters !== 'undefined' ? characters : []).forEach(c => { %>
+        <div class="char-card" onclick="selectChar('<%= c.id %>')">
+          <img src="/<%= c.image %>" alt="<%= c.name %>" loading="lazy">
+          <div class="char-name"><%= c.name %></div>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+
+  <nav class="navbar">
+    <a href="/" class="nav-logo"><img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto"> Edikit</a>
+    <div class="nav-right">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="nav-av"><%= (username || 'U')[0].toUpperCase() %></div>
+        <div><div class="nav-un"><%= username %></div><div class="nav-role">Foydalanuvchi</div></div>
+      </div>
+      <button type="button" class="nav-btn" onclick="toggleCharsPanel()" style="border-color:rgba(56,189,248,.3);color:var(--gold);">Characters</button>
+      <a href="/" class="nav-btn" style="text-decoration:none"><%- icon('home', 16) %></a>
+      <button type="button" class="nav-btn" data-theme-toggle title="Light mode"><%- icon('moon', 14) %> Light</button>
+      <a href="/user/logout" class="nav-btn danger" style="text-decoration:none"><%- icon('logOut', 14) %> Chiqish</a>
+    </div>
+  </nav>
+
+  <div class="panel">
+    <div class="greeting"><img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto"> Edikit Panel</div>
+
+    <!-- Search -->
+    <div class="search-row">
+      <input class="search-inp" id="search-inp" placeholder="Test nomi bo'yicha qidirish...">
+      <button type="button" class="search-btn" onclick="doSearch()"><%- icon('search', 14) %> Qidirish</button>
+    </div>
+    <div id="search-results"></div>
+
+    <!-- My Tests -->
+    <div class="sec-hd">
+      <div class="sec-title"><%- icon('book', 18) %> Mening Testlarim <span class="cnt-badge"><%= tests.length %></span></div>
+      <a href="/user/create-test" class="new-btn" style="text-decoration:none"><%- icon('plus', 14) %> Yangi test</a>
+    </div>
+    <div id="tests-list">
+      <% if (tests.length === 0) { %>
+        <div class="empty-state"><div class="ei"><%- icon('book', 40) %></div>Hali testlar yo'q. Birinchi testingizni yarating!</div>
+      <% } else { %>
+        <% tests.forEach(t => { %>
+          <div class="test-card">
+            <div class="tc-icon"><%- icon('edit', 22) %></div>
+            <div class="tc-info">
+              <div class="tc-name"><%= t.name %></div>
+              <div class="tc-meta">
+                <span class="q-badge"><%= t.count %> ta savol</span>
+                <span><%= new Date(t.createdAt).toLocaleDateString('uz-UZ') %></span>
+              </div>
+            </div>
+            <div class="tc-actions">
+              <button type="button" class="act-btn act-mock" onclick="openStartModal('<%= t.name.replace(/'/g, "\\\\'") %>', <%= t.count %>, '/user/test-arena?source=user&key=<%= t.key %>')"><%- icon('zap', 12) %> Sinov</button>
+              <button type="button" class="act-btn act-cast" onclick="openCast('<%= t.name.replace(/'/g, "\\\\'") %>','user','<%= t.key %>')"><%- icon('gamepad', 12) %> Cast</button>
+              <button type="button" class="act-btn act-edit" onclick="location.href='/user/create-test?edit=<%= t.key %>'"><%- icon('edit', 12) %></button>
+              <button type="button" class="act-btn act-del" onclick="deleteTest('<%= t.key %>','<%= t.name.replace(/'/g, "\\\\'") %>')"><%- icon('trash', 12) %></button>
+            </div>
+          </div>
+        <% }); %>
+      <% } %>
+    </div>
+
+    <!-- Mock Section -->
+    <% if (fans.length > 0) { %>
+    <div style="margin-top:16px">
+      <div class="acc-section">
+        <div class="acc-header" onclick="toggleAcc('mock-body','mock-arrow')">
+          <div class="acc-title"><%- icon('book', 18) %> Mock Testlar</div>
+          <span class="acc-arrow" id="mock-arrow"><%- icon('chevronDown', 14) %></span>
+        </div>
+        <div class="acc-body" id="mock-body">
+          <% fans.forEach(f => { %>
+            <div class="fan-btn">
+              <div class="fan-btn-left">
+                <div class="fan-btn-name"><%- icon('book', 14) %> <%= f.name %></div>
+                <div class="fan-btn-cnt"><%= f.count %> ta savol</div>
+              </div>
+              <div class="fan-btn-actions">
+                <button class="fan-start" onclick="openStartModal('<%= f.name.replace(/'/g, "\\\\'") %>', <%= f.count %>, '/user/test-arena?source=mock&key=<%= f.key %>')"><%- icon('zap', 12) %> Sinov</button>
+                <button class="fan-cast" onclick="openCast('<%= f.name.replace(/'/g, "\\\\'") %>','mock','<%= f.key %>')"><%- icon('gamepad', 12) %> Cast</button>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- PRE Tests -->
+    <% if (preGroups.length > 0) { %>
+    <div style="margin-top:10px">
+      <div class="acc-section">
+        <div class="acc-header" onclick="toggleAcc('pre-body','pre-arrow')">
+          <div class="acc-title"><%- icon('layers', 18) %> PRE Testlar <span class="pre-badge">Subtestlar</span></div>
+          <span class="acc-arrow" id="pre-arrow"><%- icon('chevronDown', 14) %></span>
+        </div>
+        <div class="acc-body" id="pre-body">
+          <% preGroups.forEach(g => { %>
+            <div style="margin-bottom:8px;">
+              <div class="pre-hd"><%- icon('database', 16) %><span class="pre-hd-title"><%= g.title %></span></div>
+              <% (g.chunks || []).forEach(c => { %>
+                <div class="pre-sub-btn">
+                  <div class="pre-sub-left">
+                    <div class="pre-sub-name"><%= c.name %></div>
+                    <div class="pre-sub-cnt"><%= c.count %> ta savol</div>
+                  </div>
+                  <div class="pre-sub-actions">
+                    <button class="pre-sub-play" onclick="openStartModal('<%= (g.title + " - " + c.name).replace(/'/g, "\\\\'") %>', <%= c.count %>, '/user/test-arena?source=pre&key=<%= g.key %>&chunk=<%= c.id %>')"><%- icon('zap', 12) %> Sinov</button>
+                    <button class="pre-sub-cast" onclick="openCast('<%= (g.title + " - " + c.name).replace(/'/g, "\\\\'") %>','pre','<%= g.key %>','<%= c.id %>')"><%- icon('gamepad', 12) %> Cast</button>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+          <% }); %>
+        </div>
+      </div>
+    </div>
+    <% } %>
+  </div>
+
+  <script>
+    function toggleCharsPanel() {
+      const panel = document.getElementById('chars-panel');
+      panel.classList.toggle('open');
+    }
+    function selectChar(id) {
+      console.log('Selected character:', id);
+    }
+
+    function toggleAcc(bodyId, arrowId) {
+      const body = document.getElementById(bodyId);
+      const arrow = document.getElementById(arrowId);
+      body.classList.toggle('open');
+      arrow.classList.toggle('open');
+    }
+
+    // ── Confirm Modal ──
+    let pendingDelete = null;
+    function showConfirm(text, onOk) {
+      document.getElementById('confirm-text').textContent = text;
+      pendingDelete = onOk;
+      document.getElementById('confirm-modal').classList.add('open');
+    }
+    function closeConfirm() {
+      document.getElementById('confirm-modal').classList.remove('open');
+      pendingDelete = null;
+    }
+    document.getElementById('confirm-ok-btn').addEventListener('click', function() {
+      if (pendingDelete) { pendingDelete(); pendingDelete = null; }
+      closeConfirm();
+    });
+
+    async function deleteTest(key, name) {
+      showConfirm('"' + name + '" testini o\'chirishni tasdiqlaysizmi?', async function() {
+        const res = await fetch('/api/tests/delete', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key })
+        });
+        const data = await res.json();
+        if (data.success) location.reload();
+        else showToast('Xato: ' + (data.error || ''), 'err');
+      });
+    }
+
+    async function doSearch() {
+      const q = document.getElementById('search-inp').value.trim();
+      if (!q) return;
+      const wrap = document.getElementById('search-results');
+      wrap.innerHTML = '<div style="text-align:center;padding:12px;color:var(--muted);">Qidirilmoqda...</div>';
+      const res = await fetch('/api/tests/search?q=' + encodeURIComponent(q));
+      const data = await res.json();
+      if (!data.results?.length) {
+        wrap.innerHTML = '<div class="empty-state">Hech narsa topilmadi</div>';
+        return;
+      }
+      wrap.innerHTML = data.results.map(r => `
+        <div class="search-result-card">
+          <div style="flex:1">
+            <div class="sr-name">${svgIcon('edit', 14)} ${esc(r.testName)}</div>
+            <div class="sr-meta">${esc(r.userName)} &bull; ${r.count} ta savol</div>
+          </div>
+          <button class="sr-start" onclick="location.href='/host?source=user&key=${encodeURIComponent(esc(r.testKey))}&testName=${encodeURIComponent(esc(r.testName))}'">${svgIcon('zap', 12)} Sinov</button>
+        </div>
+      `).join('');
+    }
+
+    // ── Start Modal ──
+    let startModalData = null;
+    const TIME_OPTS = [5, 10, 15, 30, 45, 60, 90, 120];
+    const TYPE_OPTS = [
+      { id: 'score', icon: 'zap', label: 'Tezlik + Ball' },
+      { id: 'correct', icon: 'check', label: 'To‘g‘ri javob' }
+    ];
+
+    function renderTimeGrid(containerId, selected) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      el.innerHTML = TIME_OPTS.map(t =>
+        '<div class="modal-time-opt' + (t === selected ? ' selected' : '') + '" onclick="selTime(\'' + containerId + '\',' + t + ')">' +
+        '<div class="tv">' + t + '</div><div class="tl">soniya</div></div>'
+      ).join('');
+    }
+
+    let selectedTimes = {};
+    function selTime(containerId, val) {
+      selectedTimes[containerId] = val;
+      document.querySelectorAll('#' + containerId + ' .modal-time-opt').forEach(el => {
+        const tv = parseInt(el.querySelector('.tv').textContent);
+        el.classList.toggle('selected', tv === val);
+      });
+    }
+
+    function openStartModal(name, count, url) {
+      startModalData = { url };
+      document.getElementById('start-modal-title').textContent = name;
+      document.getElementById('start-modal-sub').textContent = count + ' ta savol &bull; Sinov rejimi';
+      if (!selectedTimes['start-time-grid']) selectedTimes['start-time-grid'] = 15;
+      renderTimeGrid('start-time-grid', selectedTimes['start-time-grid']);
+      document.getElementById('start-modal').classList.add('open');
+    }
+
+    function closeStartModal() {
+      document.getElementById('start-modal').classList.remove('open');
+      startModalData = null;
+    }
+
+    function confirmStartQuiz() {
+      if (startModalData && startModalData.url) {
+        window.location.href = startModalData.url;
+      }
+      closeStartModal();
+    }
+
+    // ── Cast Modal ──
+    let castModalData = null;
+    let selectedCastTime = 15;
+    let selectedCastType = 'score';
+
+    function renderCastTypeGrid() {
+      const el = document.getElementById('cast-type-grid');
+      if (!el) return;
+      el.innerHTML = TYPE_OPTS.map(t => 
+        '<div class="modal-type-opt' + (t.id === selectedCastType ? ' selected' : '') + '" onclick="selectCastType(\'' + t.id + '\')">' +
+        '<div class="tic">' + svgIcon(t.id === 'score' ? 'zap' : 'check', 18) + '</div>' +
+        '<div class="tl" style="color:' + (t.id === selectedCastType ? 'var(--accent-purple)' : 'var(--muted)') + '">' + t.label + '</div></div>'
+      ).join('');
+    }
+
+    function selectCastType(id) {
+      selectedCastType = id;
+      renderCastTypeGrid();
+    }
+
+    function openCast(testName, source, key, chunk) {
+      castModalData = { testName, source, key, chunk };
+      document.getElementById('cast-modal-sub').textContent = 'Test: ' + testName;
+      if (!selectedTimes['cast-time-grid']) selectedTimes['cast-time-grid'] = 15;
+      selectedCastTime = selectedTimes['cast-time-grid'];
+      renderTimeGrid('cast-time-grid', selectedCastTime);
+      renderCastTypeGrid();
+      document.getElementById('cast-auto-check').checked = true;
+      document.getElementById('cast-auto-lbl').textContent = 'Yoqiq — Avto rejim';
+      document.getElementById('cast-modal').classList.add('open');
+    }
+
+    function closeCastModal() {
+      document.getElementById('cast-modal').classList.remove('open');
+      castModalData = null;
+    }
+
+    function confirmCast() {
+      if (!castModalData) return;
+      const params = new URLSearchParams({
+        testName: castModalData.testName,
+        source: castModalData.source,
+        key: castModalData.key
+      });
+      if (castModalData.chunk) params.set('chunk', castModalData.chunk);
+      params.set('time', selectedCastTime || 15);
+      params.set('type', selectedCastType || 'score');
+      params.set('auto', document.getElementById('cast-auto-check').checked ? '1' : '0');
+      window.location.href = '/host?' + params.toString();
+      closeCastModal();
+    }
+
+    document.getElementById('cast-auto-check').addEventListener('change', function() {
+      document.getElementById('cast-auto-lbl').textContent = this.checked ? 'Yoqiq — Avto rejim' : 'O‘chiq — Qo‘lda o‘tish';
+    });
+
+    document.getElementById('search-inp').addEventListener('keydown', e => {
+      if (e.key === 'Enter') doSearch();
+    });
+  </script>
+</body>
+</html>

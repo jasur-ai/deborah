@@ -1,0 +1,54 @@
+{
+  "name": "Edikit",
+  "short_name": "Edikit",
+  "description": "Jonli test va viktorina platformasi. O'qituvchilar uchun savollar yaratish, o'yinlar o'tkazish va natijalarni kuzatish.",
+  "start_url": "/",
+  "scope": "/",
+  "id": "/?source=pwa",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#0A0F1F",
+  "theme_color": "#0A0F1F",
+  "categories": ["education", "games", "productivity"],
+  "lang": "uz",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/images/pwa-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/pwa-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/pwa-icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Boshlash",
+      "short_name": "Play",
+      "description": "O'yinga kirish",
+      "url": "/play",
+      "icons": [{ "src": "/images/pwa-icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Panel",
+      "short_name": "Panel",
+      "description": "Foydalanuvchi paneli",
+      "url": "/user/panel",
+      "icons": [{ "src": "/images/pwa-icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

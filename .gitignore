@@ -1,2 +1,7 @@
 node_modules/
 .env
+*.log
+.DS_Store
+dist/
+build/
+data/  # Local JSON database (auto-generated from seed)

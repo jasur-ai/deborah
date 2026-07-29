@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <%- include('../partials/head') %>
+  <style>
+    .theme-floating{position:fixed;bottom:20px;right:20px;z-index:999;width:40px;height:40px;border-radius:50%;background:var(--bg-card);border:1px solid var(--border-light);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-lg);transition:all .3s ease;color:var(--text-muted);}
+    .theme-floating:hover{transform:scale(1.1);color:var(--text-primary);box-shadow:var(--shadow-lg),0 0 0 3px rgba(59,130,246,.15);}
+    .auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at 50% 50%,rgba(100,116,139,.06) 0%,transparent 60%),var(--bg-primary);}
+    .auth-wrap{width:100%;max-width:380px;text-align:center;}
+    .auth-icon{width:56px;height:56px;border-radius:16px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(100,116,139,.15),rgba(37,99,235,.1));border:1px solid rgba(100,116,139,.2);}
+    .auth-title{font-family:var(--font-display);font-size:1.3rem;margin-bottom:4px;}
+    .auth-sub{color:var(--text-muted);font-size:.78rem;font-weight:700;margin-bottom:20px;}
+    .auth-box{background:var(--bg-card);border-radius:20px;padding:26px;border:1px solid var(--border-light);box-shadow:var(--shadow-lg);}
+    .lbl{font-size:.72rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:block;}
+    .inp{width:100%;background:rgba(255,255,255,.04);border:2px solid rgba(255,255,255,.07);border-radius:10px;padding:11px 14px;color:var(--text-primary);font-family:var(--font-body);font-size:.92rem;font-weight:700;outline:none;transition:border-color .25s,box-shadow .25s;margin-bottom:14px;}
+    .inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.15);}
+    .btn{width:100%;border:none;border-radius:10px;padding:12px;font-family:var(--font-body);font-size:.92rem;font-weight:900;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:7px;}
+    .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#fff;}
+    .btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px rgba(59,130,246,.35);}
+    .msg{border-radius:10px;padding:10px 14px;font-size:.8rem;font-weight:700;margin-bottom:14px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;display:<%= typeof error !== 'undefined' && error ? 'block' : 'none' %>;}
+    .back-link{display:inline-block;margin-top:16px;color:var(--text-muted);font-size:.76rem;font-weight:700;text-decoration:none;transition:color .2s;}
+    .back-link:hover{color:var(--text-primary);}
+  </style>
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-wrap">
+      <div class="auth-icon"><%- icon('shield', 28) %></div>
+      <div class="auth-title">Admin Panel</div>
+      <div class="auth-sub">Faqat administratorlar uchun</div>
+      <div class="auth-box">
+        <form method="POST" action="/admin/login">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="msg"><%= typeof error !== 'undefined' ? error : '' %></div>
+          <label class="lbl">Login</label>
+          <input type="text" class="inp" name="username" placeholder="admin" autocomplete="off" autocapitalize="off" required>
+          <label class="lbl">Parol</label>
+          <input type="password" class="inp" name="password" placeholder="••••••••" required>
+          <button type="submit" class="btn btn-primary"><%- icon('logIn', 14) %> Kirish</button>
+        </form>
+      </div>
+      <a href="/" class="back-link">← Bosh sahifaga qaytish</a>
+    </div>
+  </div>
+  <button type="button" class="theme-floating" data-theme-toggle aria-label="Switch theme"><%- icon('moon', 16) %></button>
+</body>
+</html>

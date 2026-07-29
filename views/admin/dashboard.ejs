@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <%- include('../partials/head') %>
+  <link rel="stylesheet" href="/css/admin.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+  <nav class="admin-navbar">
+    <a href="/" class="admin-nav-brand">
+      <span class="admin-nav-logo"><img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto"> Edikit Admin</span>
+      <span class="admin-nav-badge">ADMIN</span>
+    </a>
+    <div class="flex items-center gap-8">
+      <button type="button" class="admin-nav-btn" onclick="refreshActiveTab()"><%- icon('refresh', 14) %> Yangilash</button>
+      <button type="button" class="admin-nav-btn" data-theme-toggle title="Light mode"><%- icon('moon', 14) %> Light</button>
+      <a href="/admin/logout" class="admin-nav-btn"><%- icon('logOut', 14) %> Chiqish</a>
+    </div>
+  </nav>
+
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+      <div class="admin-side-label">Bo'limlar</div>
+      <button class="admin-side-btn <%= activeTab === 'danger' ? 'active' : '' %>" onclick="switchTab('danger')" style="--c:var(--accent);--cbg:rgba(37,99,235,.14)"><span class="admin-side-ico"><%- icon('alertTriangle', 16) %></span>Foydalanuvchilar</button>
+      <button class="admin-side-btn <%= activeTab === 'fans' ? 'active' : '' %>" onclick="switchTab('fans')" style="--c:var(--accent-glow);--cbg:rgba(56,189,248,.14)"><span class="admin-side-ico"><%- icon('book', 16) %></span>Mock Fanlar</button>
+      <button class="admin-side-btn <%= activeTab === 'pre' ? 'active' : '' %>" onclick="switchTab('pre')" style="--c:var(--accent-purple);--cbg:rgba(100,116,139,.14)"><span class="admin-side-ico"><%- icon('layers', 16) %></span>PRE Testlar</button>
+      <button class="admin-side-btn <%= activeTab === 'results' ? 'active' : '' %>" onclick="switchTab('results')" style="--c:var(--accent-glow);--cbg:rgba(56,189,248,.14)"><span class="admin-side-ico"><%- icon('trophy', 16) %></span>Natijalar</button>
+      <button class="admin-side-btn <%= activeTab === 'stats' ? 'active' : '' %>" onclick="switchTab('stats')" style="--c:var(--accent-glow);--cbg:rgba(56,189,248,.14)"><span class="admin-side-ico"><%- icon('barChart', 16) %></span>Statistika</button>
+      <div class="admin-side-label" style="margin-top:8px">Asboblar</div>
+      <a href="/arena" target="_blank" class="admin-side-btn" style="--c:var(--green);--cbg:rgba(0,229,160,.1);text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('monitor', 16) %></span>Test Arena</a>
+    </div>
+
+    <!-- Panel -->
+    <div class="admin-panel">
+      <!-- Stats Row -->
+      <div class="admin-stats-row" id="stats-row">
+        <div class="stat-card" style="--c:var(--accent-glow);--cbg:rgba(56,189,248,.12)"><div class="stat-ico"><%- icon('users', 20) %></div><div><div class="stat-num" id="s-users" style="color:var(--accent-glow)"><%= stats.usersCount %></div><div class="stat-lbl">Foydalanuvchilar</div></div></div>
+        <div class="stat-card" style="--c:var(--accent-glow);--cbg:rgba(56,189,248,.12)"><div class="stat-ico"><%- icon('gamepad', 20) %></div><div><div class="stat-num" id="s-games" style="color:var(--accent-glow)"><%= stats.gamesCount %></div><div class="stat-lbl">O'yinlar</div></div></div>
+        <div class="stat-card" style="--c:var(--accent-glow);--cbg:rgba(56,189,248,.12)"><div class="stat-ico"><%- icon('edit', 20) %></div><div><div class="stat-num" id="s-tests" style="color:var(--accent-glow)"><%= stats.testsCount %></div><div class="stat-lbl">Testlar</div></div></div>
+        <div class="stat-card" style="--c:var(--accent-purple);--cbg:rgba(100,116,139,.12)"><div class="stat-ico"><%- icon('book', 20) %></div><div><div class="stat-num" id="s-fans" style="color:var(--accent-purple)"><%= stats.fansCount %></div><div class="stat-lbl">Mock Fanlar</div></div></div>
+      </div>
+
+      <!-- TAB: Users -->
+      <div class="admin-tab-pane <%= activeTab === 'danger' ? 'active' : '' %>" id="pane-danger">
+        <div class="admin-sec-hd"><div class="admin-sec-title"><%- icon('alertTriangle', 18) %> Foydalanuvchilar <span class="badge badge-danger">DANGER ZONE</span></div><button type="button" class="admin-refresh-btn" onclick="loadUsers()"><%- icon('refresh', 12) %></button></div>
+        <div class="table-wrap"><table><thead><tr><th>#</th><th>Login</th><th>Parol (hash)</th><th>Ro'yxatdan o'tgan</th><th>Testlar</th><th>O'chirish</th></tr></thead><tbody id="users-tbody">
+          <% if (users.length === 0) { %><tr><td colspan="6"><div class="admin-empty">Foydalanuvchilar yo'q</div></td></tr><% } else { %>
+            <% users.forEach((u, i) => { %>
+              <tr>
+                <td><%= i + 1 %></td>
+                <td><span class="font-bold"><%= u.username %></span></td>
+                <td style="font-family:monospace;font-size:.82rem;color:var(--accent-glow)"><%= u.password %></td>
+                <td class="text-muted" style="font-size:.76rem"><%= u.created_at ? new Date(u.created_at).toLocaleString('uz-UZ') : '—' %></td>
+                <td><span class="badge badge-accent"><%= u.tests %> ta test</span></td>
+                <td><button class="admin-del-btn" onclick="deleteUser('<%= u.key %>','<%= u.username.replace(/'/g, "\\'") %>')"><%- icon('trash', 12) %> O'chirish</button></td>
+              </tr>
+            <% }); %>
+          <% } %>
+        </tbody></table></div>
+      </div>
+
+      <!-- TAB: Mock Fans -->
+      <div class="admin-tab-pane <%= activeTab === 'fans' ? 'active' : '' %>" id="pane-fans">
+        <div class="admin-sec-hd"><div class="admin-sec-title"><%- icon('book', 18) %> Mock Fanlar <span class="badge badge-success">RANDOM 25</span></div>
+          <button type="button" class="admin-refresh-btn" onclick="loadFans()"><%- icon('refresh', 12) %></button>
+        </div>
+        <!-- Inline Excel upload for Fans -->
+        <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:14px;padding:16px;margin-bottom:14px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+            <input class="inp" id="fan-name" placeholder="Fan nomi (masalan: Matematika)" style="flex:1;min-width:140px;margin-bottom:0">
+            <div id="fan-drop-zone" onclick="document.getElementById('fan-excel-inp').click()" style="flex:1;min-width:140px;border:2px dashed rgba(56,189,248,.3);border-radius:10px;padding:10px;text-align:center;cursor:pointer;background:rgba(56,189,248,.04);transition:all .2s">
+              <p id="fan-excel-lbl" style="color:var(--text-muted);font-size:.8rem;font-weight:700"><%- icon('upload', 14) %> Excel faylni yuklang</p>
+            </div>
+            <button type="button" id="save-fan-btn" onclick="saveFanFromExcel()" style="background:linear-gradient(135deg,var(--accent),var(--accent-dark));border:none;border-radius:9px;padding:9px 18px;color:#fff;font-family:var(--font-body);font-size:.85rem;font-weight:900;cursor:pointer;white-space:nowrap"><%- icon('save', 14) %> Saqlash</button>
+          </div>
+          <button type="button" onclick="downloadFanTemplate()" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border-light);border-radius:9px;padding:8px 14px;color:var(--text-muted);font-family:var(--font-body);font-size:.78rem;font-weight:800;cursor:pointer"><%- icon('download', 12) %> Excel shablon yuklab olish</button>
+        </div>
+        <input type="file" id="fan-excel-inp" accept=".xlsx,.xls" style="display:none">
+        <div id="fans-list"><div class="admin-empty">Yuklanmoqda...</div></div>
+        <div class="admin-msg" id="fan-msg"></div>
+      </div>
+
+      <!-- TAB: PRE Tests -->
+      <div class="admin-tab-pane <%= activeTab === 'pre' ? 'active' : '' %>" id="pane-pre">
+        <div class="admin-sec-hd"><div class="admin-sec-title"><%- icon('layers', 18) %> PRE Testlar <span class="badge badge-purple">SUBTESTLAR</span></div>
+          <button type="button" class="admin-refresh-btn" onclick="loadPreGroups()"><%- icon('refresh', 12) %></button>
+        </div>
+        <!-- Inline Excel upload for PRE -->
+        <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:14px;padding:16px;margin-bottom:14px">
+          <input class="inp" id="pre-title" placeholder="Guruh sarlavhasi (masalan: Fizika 2024)" style="margin-bottom:9px">
+          <div id="pre-drop-zone" onclick="document.getElementById('pre-excel-inp').click()" style="border:2px dashed rgba(100,116,139,.3);border-radius:10px;padding:12px;text-align:center;cursor:pointer;background:rgba(100,116,139,.04);transition:all .2s;margin-bottom:9px">
+            <p id="pre-excel-lbl" style="color:var(--text-muted);font-size:.8rem;font-weight:700"><%- icon('upload', 14) %> Excel faylni yuklang (25 savol = 1 subtest)</p>
+          </div>
+          <button type="button" onclick="downloadFanTemplate()" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border-light);border-radius:9px;padding:8px 14px;color:var(--text-muted);font-family:var(--font-body);font-size:.78rem;font-weight:800;cursor:pointer;margin-bottom:8px"><%- icon('download', 12) %> Excel shablon yuklab olish</button>
+          <div id="pre-preview" style="display:none;background:rgba(100,116,139,.07);border:1px solid rgba(100,116,139,.2);border-radius:10px;padding:11px 13px;margin-bottom:9px">
+            <div id="pre-preview-title" style="font-size:.78rem;font-weight:800;color:var(--accent-purple);margin-bottom:7px"></div>
+            <div id="pre-chunk-list"></div>
+          </div>
+          <div id="pre-saving" style="display:none;align-items:center;gap:8px;font-size:.8rem;font-weight:700;color:var(--text-muted);margin-top:8px"><div class="spin-sm"></div><span>Saqlanmoqda...</span></div>
+          <div id="pre-prog-bar" style="display:none;background:rgba(255,255,255,.07);border-radius:50px;height:7px;margin-top:8px;overflow:hidden"><div id="pre-prog-fill" style="background:linear-gradient(90deg,var(--accent-purple),var(--accent-glow));height:100%;border-radius:50px;transition:width .3s;width:0%"></div></div>
+          <button type="button" id="save-pre-btn" onclick="savePreFromExcel()" style="width:100%;background:linear-gradient(135deg,var(--accent-purple),#7c3aed);border:none;border-radius:9px;padding:10px;color:#fff;font-family:var(--font-body);font-size:.88rem;font-weight:900;cursor:pointer"><%- icon('layers', 14) %> Barcha subtestlarni saqlash</button>
+          <div class="admin-msg" id="pre-msg"></div>
+        </div>
+        <input type="file" id="pre-excel-inp" accept=".xlsx,.xls" style="display:none">
+        <div id="pre-list"><div class="admin-empty">Yuklanmoqda...</div></div>
+      </div>
+
+      <!-- TAB: Results -->
+      <div class="admin-tab-pane <%= activeTab === 'results' ? 'active' : '' %>" id="pane-results">
+        <div class="admin-sec-hd"><div class="admin-sec-title"><%- icon('trophy', 18) %> O'yin Natijalari <span class="badge badge-gold">SHOXSUPA</span></div><button type="button" class="admin-refresh-btn" onclick="loadResults()"><%- icon('refresh', 12) %></button></div>
+        <div id="results-wrap"><div class="admin-empty">Yuklanmoqda...</div></div>
+      </div>
+
+      <!-- TAB: Stats -->
+      <div class="admin-tab-pane <%= activeTab === 'stats' ? 'active' : '' %>" id="pane-stats">
+        <div class="admin-sec-hd"><div class="admin-sec-title"><%- icon('barChart', 18) %> Statistika</div><button type="button" class="admin-refresh-btn" onclick="loadStats()"><%- icon('refresh', 12) %></button></div>
+        <div id="stats-content"><div class="admin-empty">Yuklanmoqda...</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden file inputs for Excel import -->
+  <input type="file" id="fan-reset-inp" accept=".xlsx,.xls" style="display:none">
+
+  <script>
+    let currentTab = '<%= activeTab %>';
+
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.admin-side-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.admin-tab-pane').forEach(p => p.classList.remove('active'));
+      document.getElementById('pane-' + tab).classList.add('active');
+      document.querySelector(`.admin-side-btn[onclick*="${tab}"]`).classList.add('active');
+      refreshActiveTab();
+    }
+
+    function refreshActiveTab() {
+      if (currentTab === 'fans') loadFans();
+      else if (currentTab === 'pre') loadPreGroups();
+      else if (currentTab === 'results') loadResults();
+      else if (currentTab === 'stats') loadStats();
+    }
+
+    // ── EXCEL IMPORT FUNCTIONS ──
+    let fanPendingQs = null;
+    let preChunks = [];
+    let editPreKey = null;
+    
+    function setMsg(id, text, type) {
+      const el = document.getElementById(id);
+      if (el) { el.textContent = text; el.className = 'admin-msg active ' + (type || 'ok'); }
+    }
+    
+    function setZoneLoaded(zone, label, text) {
+      zone.style.borderColor = 'var(--green)';
+      zone.style.borderStyle = 'solid';
+      zone.style.background = 'rgba(56,189,248,.1)';
+      label.innerHTML = svgIcon('check', 14) + ' ' + text;
+    }
+    function setZoneIdle(zone, label, text) {
+      zone.style.borderColor = '';
+      zone.style.borderStyle = 'dashed';
+      zone.style.background = '';
+      label.innerHTML = svgIcon('upload', 14) + ' ' + text;
+    }
+    
+    // ── Drag & Drop Support ──
+    function setupDropZone(zoneId, inputId, fileHandler) {
+      const zone = document.getElementById(zoneId);
+      const inp = document.getElementById(inputId);
+      if (!zone || !inp) return;
+      zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.borderColor = 'var(--accent-glow)'; zone.style.background = 'rgba(56,189,248,.14)'; zone.style.transform = 'scale(1.01)'; });
+      zone.addEventListener('dragleave', () => { zone.style.borderColor = ''; zone.style.background = ''; zone.style.transform = 'none'; });
+      zone.addEventListener('drop', e => {
+        e.preventDefault();
+        zone.style.borderColor = ''; zone.style.background = ''; zone.style.transform = 'none';
+        if (e.dataTransfer.files.length) {
+          const dt = new DataTransfer();
+          dt.items.add(e.dataTransfer.files[0]);
+          inp.files = dt.files;
+          const evt = new Event('change', { bubbles: true });
+          inp.dispatchEvent(evt);
+        }
+      });
+    }
+    setupDropZone('fan-drop-zone', 'fan-excel-inp');
+    setupDropZone('pre-drop-zone', 'pre-excel-inp');
+
+    // ── Fan Excel Import ──
+    document.getElementById('fan-excel-inp').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const zone = document.getElementById('fan-drop-zone');
+      const label = document.getElementById('fan-excel-lbl');
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        try {
+          const wb = XLSX.read(ev.target.result, { type: 'binary' });
+          const qs = parseQuestionsFromWB(wb);
+          if (!qs || !qs.length) { setMsg('fan-msg', 'Savollar topilmadi!', 'err'); fanPendingQs = null; setZoneIdle(zone, label, 'Excel faylni yuklang'); if(e.target.value) e.target.value = ''; return; }
+          fanPendingQs = qs;
+          setZoneLoaded(zone, label, qs.length + ' ta savol yuklandi');
+          setMsg('fan-msg', qs.length + ' ta savol tayyor — Saqlash tugmasini bosing', 'ok');
+        } catch(err) { setMsg('fan-msg', 'Xato: ' + err.message, 'err'); }
+        if(e.target.value) e.target.value = '';
+      };
+      reader.readAsBinaryString(file);
+    });
+    
+    async function saveFanFromExcel() {
+      const name = document.getElementById('fan-name').value.trim();
+      if (!name) { setMsg('fan-msg', 'Fan nomini kiriting!', 'err'); return; }
+      if (!fanPendingQs || !fanPendingQs.length) { setMsg('fan-msg', 'Avval Excel faylni yuklang!', 'err'); return; }
+      const btn = document.getElementById('save-fan-btn');
+      btn.disabled = true; btn.textContent = 'Saqlanmoqda...';
+      try {
+        const slim = fanPendingQs.map(q => ({ num: q.num, text: q.text, correctLetter: q.correctLetter, correctText: q.correctText, options: q.options.map(o => ({ text: o.text, letter: o.letter, isCorrect: o.isCorrect })) }));
+        const res = await fetch('/admin/api/fans/save', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, questions: slim })
+        });
+        const data = await res.json();
+        if (data.success) {
+          setMsg('fan-msg', '"' + name + '" — ' + slim.length + ' ta savol saqlandi!', 'ok');
+          document.getElementById('fan-name').value = '';
+          setZoneIdle(document.getElementById('fan-drop-zone'), document.getElementById('fan-excel-lbl'), 'Excel faylni yuklang');
+          fanPendingQs = null;
+          loadFans();
+        } else setMsg('fan-msg', 'Xato: ' + (data.error || ''), 'err');
+      } catch(e) { setMsg('fan-msg', 'Saqlashda xatolik: ' + e.message, 'err'); }
+      btn.disabled = false; btn.textContent = svgIcon('save', 14) + ' Saqlash';
+    }
+    
+    function downloadFanTemplate() {
+      const wb = XLSX.utils.book_new();
+      const data = [
+        ['Savol', 'A) To\'g\'ri javob', 'B) Variant', 'C) Variant', 'D) Variant', 'To\'g\'ri harf (A/B/C/D)'],
+        ['Nyutonning 1-qonuni?', 'Inersiya', 'Dinamika', 'Ta`sir', 'Aks ta`sir', 'A'],
+        ['2+2 nechiga teng?', '3', '4', '5', '6', 'B'],
+      ];
+      const ws = XLSX.utils.aoa_to_sheet(data);
+      XLSX.utils.book_append_sheet(wb, ws, 'Savollar');
+      XLSX.writeFile(wb, 'edikit-fan-template.xlsx');
+    }
+    
+    function parseQuestionsFromWB(wb) {
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const arr = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+      const qs = [];
+      for (let i = 0; i < arr.length; i++) {
+        const r = arr[i];
+        const text = String(r[0] || '').trim();
+        if (!text) continue;
+        if (i === 0) {
+          const t = text.toLowerCase();
+          const opt1 = String(r[1] || '').trim().toLowerCase();
+          if ((t.includes('savol') || t.includes('question')) && (opt1.includes('variant') || opt1.includes('javob') || opt1.includes('to\'g\'ri'))) continue;
+        }
+        const options = [
+          { text: String(r[1] || '').trim(), letter: 'A', isCorrect: false },
+          { text: String(r[2] || '').trim(), letter: 'B', isCorrect: false },
+          { text: String(r[3] || '').trim(), letter: 'C', isCorrect: false },
+          { text: String(r[4] || '').trim(), letter: 'D', isCorrect: false },
+        ].filter(o => o.text);
+        if (options.length < 2) continue;
+        const correctLetter = String(r[5] || 'A').trim().toUpperCase();
+        const correctIdx = options.findIndex(o => o.letter === correctLetter);
+        if (correctIdx >= 0) options[correctIdx].isCorrect = true;
+        if (options.every(o => !o.isCorrect)) options[0].isCorrect = true;
+        qs.push({ num: qs.length + 1, text, correctLetter, correctText: options.find(o => o.isCorrect)?.text || options[0].text, options });
+      }
+      return qs;
+    }
+    
+    // ── PRE Excel Import ──
+    document.getElementById('pre-excel-inp').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const zone = document.getElementById('pre-drop-zone');
+      const label = document.getElementById('pre-excel-lbl');
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        try {
+          const wb = XLSX.read(ev.target.result, { type: 'binary' });
+          const qs = parseQuestionsFromWB(wb);
+          if (!qs || !qs.length) { setMsg('pre-msg', 'Savollar topilmadi!', 'err'); setZoneIdle(zone, label, 'Excel faylni yuklang (25 savol = 1 subtest)'); if(e.target.value) e.target.value = ''; return; }
+          // Split into chunks of 25
+          preChunks = [];
+          const CHUNK_SIZE = 25;
+          for (let ci = 0; ci < qs.length; ci += CHUNK_SIZE) {
+            const chunk = qs.slice(ci, ci + CHUNK_SIZE);
+            preChunks.push({ name: (ci / CHUNK_SIZE + 1) + '-subtest', questions: chunk, id: Date.now().toString(36) + ci });
+          }
+          setZoneLoaded(zone, label, qs.length + ' ta savol, ' + preChunks.length + ' ta subtest');
+          showPrePreview();
+        } catch(err) { setMsg('pre-msg', 'Xato: ' + err.message, 'err'); }
+        if(e.target.value) e.target.value = '';
+      };
+      reader.readAsBinaryString(file);
+    });
+    
+    function showPrePreview() {
+      if (!preChunks.length) return;
+      document.getElementById('pre-preview').style.display = 'block';
+      document.getElementById('pre-preview-title').textContent = preChunks.length + ' ta subtest: ' + preChunks.reduce((s, c) => s + c.questions.length, 0) + ' ta savol';
+      document.getElementById('pre-chunk-list').innerHTML = preChunks.map((c, i) => 
+        '<div style="display:flex;justify-content:space-between;font-size:.78rem;font-weight:700;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)">' +
+        '<span>' + c.name + '</span><span style="color:var(--accent-glow)">' + c.questions.length + ' ta savol</span></div>'
+      ).join('');
+    }
+    
+    async function savePreFromExcel() {
+      const title = document.getElementById('pre-title').value.trim();
+      if (!title) { setMsg('pre-msg', 'Guruh sarlavhasini kiriting!', 'err'); return; }
+      if (!preChunks.length) { setMsg('pre-msg', 'Avval Excel faylni yuklang!', 'err'); return; }
+      const btn = document.getElementById('save-pre-btn');
+      btn.disabled = true; btn.textContent = 'Saqlanmoqda...';
+      document.getElementById('pre-prog-bar').style.display = 'block';
+      document.getElementById('pre-saving').style.display = 'flex';
+      try {
+        const res = await fetch('/admin/api/pre-groups/save', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, chunks: preChunks, editKey: editPreKey })
+        });
+        const data = await res.json();
+        if (data.success) {
+          setMsg('pre-msg', 'PRE test saqlandi!', 'ok');
+          document.getElementById('pre-title').value = '';
+          preChunks = []; editPreKey = null;
+          document.getElementById('pre-preview').style.display = 'none';
+          setZoneIdle(document.getElementById('pre-drop-zone'), document.getElementById('pre-excel-lbl'), 'Excel faylni yuklang (25 savol = 1 subtest)');
+          loadPreGroups();
+        } else setMsg('pre-msg', 'Xato: ' + (data.error || ''), 'err');
+      } catch(e) { setMsg('pre-msg', 'Xato: ' + e.message, 'err'); }
+      document.getElementById('pre-prog-bar').style.display = 'none';
+      document.getElementById('pre-saving').style.display = 'none';
+      btn.disabled = false; btn.innerHTML = svgIcon('layers', 14) + ' Barcha subtestlarni saqlash';
+    }
+
+    async function deleteUser(key, name) {
+      if (!(await showConfirm('O\'chirish', name + ' foydalanuvchisini o\'chirishni tasdiqlaysizmi?'))) return;
+      await fetch('/admin/api/users/delete', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key })
+      });
+      location.reload();
+    }
+
+    async function loadFans() {
+      const wrap = document.getElementById('fans-list');
+      try {
+        const res = await fetch('/admin/api/fans');
+        const data = await res.json();
+        if (!data.fans?.length) {
+          wrap.innerHTML = '<div class="admin-empty">Hali fan qo\'shilmagan</div>';
+          return;
+        }
+        wrap.innerHTML = data.fans.map(f => {
+          const safeName = f.name.replace(/'/g,"\\'");
+          return `
+          <div class="admin-fan-item">
+            <div><div class="admin-fan-item-name">${svgIcon('book', 16)} ${f.name}</div><div class="admin-fan-item-meta">${f.count} ta savol</div></div>
+            <div class="admin-fan-btns">
+              <button class="fan-mock-btn" onclick="startFanMockup('${f.key}','${safeName}')" style="background:rgba(100,116,139,.14);border:1px solid rgba(100,116,139,.28);border-radius:7px;padding:5px 10px;color:var(--accent-purple);font-size:.72rem;font-weight:800;cursor:pointer">${svgIcon('zap', 11)} Mock</button>
+              <button class="fan-cast-btn" onclick="startFanCast('${f.key}','${safeName}')" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);border-radius:7px;padding:5px 10px;color:var(--green);font-size:.72rem;font-weight:800;cursor:pointer">${svgIcon('gamepad', 11)} Cast</button>
+              <button onclick="window.open('/arena','_blank')" style="background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);border-radius:7px;padding:5px 10px;color:var(--green);font-size:.72rem;font-weight:800;cursor:pointer">${svgIcon('monitor', 11)} Arena</button>
+              <button class="fan-reset-btn" onclick="resetFan('${f.key}','${safeName}')" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);border-radius:7px;padding:5px 10px;color:var(--accent-glow);font-size:.72rem;font-weight:800;cursor:pointer">${svgIcon('refresh', 11)} Yangilash</button>
+              <button class="admin-del-btn" onclick="deleteFan('${f.key}','${safeName}')">${svgIcon('trash', 12)}</button>
+            </div>
+          </div>`;
+        }).join('');
+      } catch(e) {
+        wrap.innerHTML = '<div class="admin-empty" style="color:var(--accent)">Yuklab bo\'lmadi</div>';
+      }
+    }
+    
+    function startFanMockup(key, name) {
+      window.location.href = '/host?source=mock&key=' + key + '&testName=' + encodeURIComponent('Mock: ' + name);
+    }
+    
+    function startFanCast(key, name) {
+      window.location.href = '/host?source=mock&key=' + key + '&testName=' + encodeURIComponent('Mock: ' + name);
+    }
+    
+    let resetFanKey = null;
+    async function resetFan(key, name) {
+      if (!(await showConfirm('Almashtirish', name + ' savollarini yangi Excel bilan almashtirasizmi?'))) return;
+      resetFanKey = key;
+      document.getElementById('fan-reset-inp').click();
+    }
+    
+    document.getElementById('fan-reset-inp').addEventListener('change', async function(e) {
+      const file = e.target.files[0];
+      if (!file || !resetFanKey) return;
+      const reader = new FileReader();
+      reader.onload = async function(ev) {
+        try {
+          const wb = XLSX.read(ev.target.result, { type: 'binary' });
+          const qs = parseQuestionsFromWB(wb);
+          if (!qs || !qs.length) { showToast('Savollar topilmadi!', 'err'); e.target.value = ''; return; }
+          const slim = qs.map(q => ({ num: q.num, text: q.text, correctLetter: q.correctLetter, correctText: q.correctText, options: q.options.map(o => ({ text: o.text, letter: o.letter, isCorrect: o.isCorrect })) }));
+          await fetch('/admin/api/fans/update', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ key: resetFanKey, questions: slim })
+          });
+          showToast(slim.length + ' ta savol yangilandi!', 'ok');
+          loadFans();
+        } catch(err) { showToast('Xato: ' + err.message, 'err'); }
+        e.target.value = '';
+      };
+      reader.readAsBinaryString(file);
+    });
+
+    async function deleteFan(key, name) {
+      if (!(await showConfirm('O\'chirish', name + ' fanini o\'chirishni tasdiqlaysizmi?'))) return;
+      await fetch('/admin/api/fans/delete', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key })
+      });
+      loadFans();
+    }
+
+    async function loadPreGroups() {
+      const wrap = document.getElementById('pre-list');
+      try {
+        const res = await fetch('/admin/api/pre-groups');
+        const data = await res.json();
+        if (!data.groups?.length) {
+          wrap.innerHTML = '<div class="admin-empty">Hali PRE testlar yo\'q</div>';
+          return;
+        }
+        wrap.innerHTML = data.groups.map(g => `
+          <div class="admin-pre-item">
+            <div><div class="admin-pre-item-name">${svgIcon('layers', 16)} ${g.title}</div><div class="admin-pre-item-meta">${g.count} ta subtest &bull; ${g.total} ta savol</div></div>
+            <div class="admin-pre-btns">
+              <button class="admin-edit-btn" onclick="editPreGroup('${g.key}','${g.title.replace(/'/g,"\\'")}')" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);border-radius:7px;padding:5px 10px;color:var(--blue);font-size:.72rem;font-weight:800;cursor:pointer;transition:all .18s;">${svgIcon('edit', 12)} Tahrirlash</button>
+              <button class="admin-del-btn" onclick="deletePreGroup('${g.key}','${g.title.replace(/'/g,"\\'")}')">${svgIcon('trash', 12)} O'chirish</button>
+            </div>
+          </div>
+        `).join('');
+      } catch(e) {
+        wrap.innerHTML = '<div class="admin-empty" style="color:var(--accent)">Yuklab bo\'lmadi</div>';
+      }
+    }
+
+    function editPreGroup(key, title) {
+      editPreKey = key;
+      document.getElementById('pre-title').value = title;
+      document.getElementById('pre-title').focus();
+      document.getElementById('pre-title').scrollIntoView({ behavior: 'smooth' });
+      setMsg('pre-msg', 'Tahrirlash: ' + title + ' — yangi Excel yuklang va saqlang', 'ok');
+    }
+
+    async function deletePreGroup(key, title) {
+      if (!(await showConfirm('O\'chirish', title + ' guruhini o\'chirishni tasdiqlaysizmi?'))) return;
+      await fetch('/admin/api/pre-groups/delete', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key })
+      });
+      loadPreGroups();
+    }
+
+    const MEDAL_ICONS = ['award', 'award', 'award'];
+
+    async function loadResults() {
+      const wrap = document.getElementById('results-wrap');
+      try {
+        const res = await fetch('/admin/api/results');
+        const data = await res.json();
+        if (!data.results?.length) {
+          wrap.innerHTML = '<div class="admin-empty">Hali o\'yin natijalari yo\'q</div>';
+          return;
+        }
+        wrap.innerHTML = data.results.map(r => `
+          <div class="admin-res-card">
+            <div class="admin-res-head">
+              <div>
+                <div class="admin-res-title">${svgIcon('trophy', 16)} ${r.testName}</div>
+                <div class="admin-res-meta">${new Date(r.date).toLocaleString('uz-UZ')} &bull; ${r.totalPlayers} o'yinchi &bull; Kod: <a href="/arena?code=${r.code}&auto=1" target="_blank" class="arena-code-link" style="color:var(--green);font-weight:900;text-decoration:none;border-bottom:2px solid rgba(0,229,160,.25)">${r.code}</a></div>
+              </div>
+              <button class="admin-del-btn" onclick="deleteResult('${r.code}')">${svgIcon('trash', 12)}</button>
+            </div>
+            <div class="admin-top3">
+              ${(r.leaderboard || []).slice(0,3).map((p,i) => `
+                <span class="admin-top-chip"><span class="admin-rank-medal">${svgIcon(MEDAL_ICONS[i] || 'award', 14)} ${p.name} — ${p.score} ball</span></span>
+              `).join('')}
+            </div>
+          </div>
+        `).join('');
+      } catch(e) {
+        wrap.innerHTML = '<div class="admin-empty" style="color:var(--accent)">Yuklab bo\'lmadi</div>';
+      }
+    }
+
+    async function deleteResult(code) {
+      if (!(await showConfirm('O\'chirish', 'Natijani o\'chirishni tasdiqlaysizmi?'))) return;
+      await fetch('/admin/api/results/delete', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code })
+      });
+      loadResults();
+    }
+
+    async function loadStats() {
+      const wrap = document.getElementById('stats-content');
+      try {
+        const res = await fetch('/admin/api/stats');
+        const data = await res.json();
+        wrap.innerHTML = `
+          <div class="admin-stats-row">
+            <div class="stat-card" style="--c:var(--accent-glow);--cbg:rgba(56,189,248,.12);"><div class="stat-ico">${svgIcon('users', 20)}</div><div><div class="stat-num" style="color:var(--accent-glow)">${data.userCount}</div><div class="stat-lbl">Foydalanuvchilar</div></div></div>
+            <div class="stat-card" style="--c:var(--accent-glow);--cbg:rgba(56,189,248,.12);"><div class="stat-ico">${svgIcon('edit', 20)}</div><div><div class="stat-num" style="color:var(--accent-glow)">${data.totalTests}</div><div class="stat-lbl">Testlar</div></div></div>
+            <div class="stat-card" style="--c:var(--accent-glow);--cbg:rgba(56,189,248,.12);"><div class="stat-ico">${svgIcon('gamepad', 20)}</div><div><div class="stat-num" style="color:var(--accent-glow)">${data.activeGames}</div><div class="stat-lbl">Faol o'yinlar</div></div></div>
+            <div class="stat-card" style="--c:var(--accent-purple);--cbg:rgba(100,116,139,.12);"><div class="stat-ico">${svgIcon('trophy', 20)}</div><div><div class="stat-num" style="color:var(--accent-purple)">${data.resultsCount}</div><div class="stat-lbl">Natijalar</div></div></div>
+            <div class="stat-card" style="--c:var(--accent);--cbg:rgba(37,99,235,.12);"><div class="stat-ico">${svgIcon('user', 20)}</div><div><div class="stat-num" style="color:var(--accent)">${data.totalPlayers}</div><div class="stat-lbl">Jami o'yinchilar</div></div></div>
+          </div>
+          ${(data.fanStats || []).map(f => `
+            <div class="admin-fan-item">
+              <div><div class="admin-fan-item-name">${svgIcon('book', 16)} ${f.name}</div><div class="admin-fan-item-meta">${f.count} ta savol</div></div>
+            </div>
+          `).join('')}
+        `;
+      } catch(e) {
+        wrap.innerHTML = '<div class="admin-empty" style="color:var(--accent);">Yuklab bo\'lmadi</div>';
+      }
+    }
+
+    refreshActiveTab();
+  </script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <%- include('../partials/head') %>
+  <style>
+    .auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:30px 20px;background:radial-gradient(ellipse 55% 40% at 15% 20%,rgba(37,99,235,.08) 0%,transparent 65%),radial-gradient(ellipse 45% 35% at 85% 75%,rgba(56,189,248,.05) 0%,transparent 65%),var(--bg);}
+    .auth-wrap{width:100%;max-width:420px;}
+    .auth-header{text-align:center;margin-bottom:24px;}
+    .auth-title{font-family:var(--font-display);font-size:1.4rem;margin-bottom:4px;}
+    .auth-sub{color:var(--text-muted);font-size:.8rem;font-weight:700;}
+    .auth-box{background:var(--bg-card);border-radius:20px;padding:26px;border:1px solid var(--border-light);box-shadow:var(--shadow-lg);}
+    .tab-row{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:20px;background:rgba(255,255,255,.04);border-radius:10px;padding:4px;}
+    .tab{padding:9px;border-radius:7px;border:none;font-family:var(--font-body);font-size:.82rem;font-weight:800;cursor:pointer;transition:all .25s;background:transparent;color:var(--text-muted);display:flex;align-items:center;justify-content:center;gap:6px;}
+    .tab:hover{color:var(--text-primary);background:rgba(255,255,255,.04);}
+    .tab.on{background:var(--accent);color:#fff;}
+    .tab.on:hover{background:var(--accent);color:#fff;}
+    .msg{border-radius:10px;padding:10px 14px;font-size:.8rem;font-weight:700;margin-bottom:14px;display:<%= typeof error !== 'undefined' && error ? 'block' : 'none' %>;}
+    .msg.err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;display:<%= typeof error !== 'undefined' && error ? 'block' : 'none' %>;}
+    .lbl{font-size:.72rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:block;}
+    .inp{width:100%;background:rgba(255,255,255,.04);border:2px solid rgba(255,255,255,.07);border-radius:10px;padding:11px 14px;color:var(--text-primary);font-family:var(--font-body);font-size:.92rem;font-weight:700;outline:none;transition:border-color .25s,box-shadow .25s;margin-bottom:14px;}
+    .inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.15);}
+    .btn{width:100%;border:none;border-radius:10px;padding:12px;font-family:var(--font-body);font-size:.92rem;font-weight:900;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:7px;min-height:46px;}
+    .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#fff;}
+    .btn-secondary{background:linear-gradient(135deg,var(--blue),#1a6599);color:#fff;}
+    .btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px rgba(59,130,246,.35);}
+    .footer-links{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:18px;}
+    .footer-link{color:var(--text-muted);font-size:.76rem;font-weight:700;text-decoration:none;transition:color .2s;}
+    .footer-link:hover{color:var(--text-primary);}
+    .theme-floating{position:fixed;bottom:20px;right:20px;z-index:999;width:40px;height:40px;border-radius:50%;background:var(--bg-card);border:1px solid var(--border-light);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-lg);transition:all .3s ease;color:var(--text-muted);}
+    .theme-floating:hover{transform:scale(1.1);color:var(--text-primary);}
+  </style>
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-wrap">
+      <div class="auth-header">
+        <img src="/images/logo-text.svg" alt="Edikit" style="height:32px;width:auto;margin-bottom:10px">
+        <div class="auth-title">Platformaga kirish</div>
+        <div class="auth-sub">Test yaratish va o'yinlarda qatnashish</div>
+      </div>
+      <div class="auth-box">
+        <div class="tab-row">
+          <button type="button" class="tab <%= mode === 'login' ? 'on' : '' %>" onclick="switchTab('login')"><%- icon('logIn', 14) %> Kirish</button>
+          <button type="button" class="tab <%= mode === 'reg' ? 'on' : '' %>" onclick="switchTab('reg')"><%- icon('edit', 14) %> Ro'yxat</button>
+        </div>
+
+        <!-- Login Form -->
+        <form id="form-login" method="POST" action="/user/login" style="display:<%= mode === 'login' ? 'block' : 'none' %>">
+          <input type="hidden" name="mode" value="login">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="msg<%= mode === 'login' && typeof error !== 'undefined' && error ? ' err' : '' %>"><%= mode === 'login' && typeof error !== 'undefined' ? error : '' %></div>
+          <label class="lbl">Foydalanuvchi nomi</label>
+          <input class="inp" name="username" type="text" placeholder="user" autocomplete="username" autocapitalize="off" required>
+          <label class="lbl">Parol</label>
+          <input class="inp" name="password" type="password" placeholder="••••••" autocomplete="current-password" required>
+          <button type="submit" class="btn btn-primary"><%- icon('logIn', 14) %> Kirish</button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="form-reg" method="POST" action="/user/login" style="display:<%= mode === 'reg' ? 'block' : 'none' %>">
+          <input type="hidden" name="mode" value="reg">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="msg<%= mode === 'reg' && typeof error !== 'undefined' && error ? ' err' : '' %>"><%= mode === 'reg' && typeof error !== 'undefined' ? error : '' %></div>
+          <label class="lbl">Foydalanuvchi nomi</label>
+          <input class="inp" name="username" type="text" placeholder="username" autocomplete="username" autocapitalize="off" pattern="[a-zA-Z0-9_]{2,20}" required>
+          <label class="lbl">Parol</label>
+          <input class="inp" name="password" type="password" placeholder="kamida 4 ta belgi" autocomplete="new-password" minlength="4" required>
+          <button type="submit" class="btn btn-secondary"><%- icon('edit', 14) %> Ro'yxatdan o'tish</button>
+        </form>
+      </div>
+      <div class="footer-links">
+        <a href="/" class="footer-link">← Bosh sahifa</a>
+        <a href="/admin/login" class="footer-link">Admin panel</a>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" class="theme-floating" data-theme-toggle aria-label="Switch theme"><%- icon('moon', 16) %></button>
+
+  <script>
+    function switchTab(mode) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+      if (mode === 'login') {
+        document.querySelector('.tab-row .tab:first-child').classList.add('on');
+        document.getElementById('form-login').style.display = 'block';
+        document.getElementById('form-reg').style.display = 'none';
+      } else {
+        document.querySelector('.tab-row .tab:last-child').classList.add('on');
+        document.getElementById('form-login').style.display = 'none';
+        document.getElementById('form-reg').style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>

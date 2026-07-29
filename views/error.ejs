@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <%- include('partials/head') %>
+  <style>
+    .error-page{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px;background:var(--bg);}
+    .error-code{font-family:'Righteous',cursive;font-size:clamp(5rem,15vw,10rem);line-height:1;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .error-msg{font-size:1.1rem;font-weight:800;color:var(--text);margin:12px 0 24px;max-width:400px;}
+    .error-btn{padding:12px 32px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#1d4ed8);color:#fff;border:none;font-family:'Nunito',sans-serif;font-size:.93rem;font-weight:900;cursor:pointer;text-decoration:none;transition:all .2s;}
+    .error-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,99,235,.4);}
+  </style>
+</head>
+<body>
+  <div class="error-page">
+    <div class="error-code"><%= typeof status !== 'undefined' ? status : '500' %></div>
+    <div class="error-msg"><%= typeof message !== 'undefined' ? message : 'Xatolik yuz berdi' %></div>
+    <a href="/" class="error-btn">← Bosh sahifaga</a>
+  </div>
+</body>
+</html>
