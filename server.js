@@ -147,6 +147,12 @@ export async function createApp() {
   app.set('view engine', 'ejs');
   app.set('views', join(__dirname, 'views'));
 
+  // ── Trust proxy (Render/Railway/Vercel orqasida HTTPS ulanish) ──
+  // Express reverse-proxy orqasida ishlaganda 'secure' cookie'ni to'g'ri
+  // yuborishi uchun kerak. Bo'lmasa secure:true cookie umuman yuborilmaydi
+  // va CSRF token sessiyada saqlanmaydi → "CSRF token validation failed".
+  app.set('trust proxy', 1);
+
   // ── Security & parsing middleware ──
   app.use(helmet({
     contentSecurityPolicy: false,
