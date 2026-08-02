@@ -33,9 +33,12 @@ export const OPT_SYMBOLS = ['▲', '●', '◆', '★', '✦'];
 // ── Emojis for bot players ──
 export const BOT_EMOJIS = ['🦊','🐺','🦁','🐯','🦝','🐲','🦄','🦅','🐸','🦑','🤖','👾','🦸','🧙','🥷','🦈','🐙','🦉','🦩','🎭'];
 
-// ── Admin credentials (from .env file via process.env) ──
-export const ADMIN_USER = process.env.ADMIN_USER || 'admin';
-export const ADMIN_PASS = process.env.ADMIN_PASS || 'admin';
+// ── Admin credentials (from CONFIG env schema — no hardcoded fallback) ──
+// Actual values loaded via src/config/env.js Zod schema at startup
+// These are kept for backward compatibility only; auth routes use CONFIG directly
+import CONFIG from '../src/config/env.js';
+export const ADMIN_USER = CONFIG.ADMIN_USER;
+export const ADMIN_PASS = CONFIG.ADMIN_PASS;
 
 // ── Firebase paths ──
 export const DB_PATHS = {

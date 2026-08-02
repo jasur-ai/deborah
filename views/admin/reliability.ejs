@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <%- include('../partials/head') %>
+  <link rel="stylesheet" href="/css/admin.css">
+  <style>
+    .rl-gate{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:14px;margin-top:16px;font-weight:800;font-size:.84rem;border:1px solid;}
+    .rl-gate.pass{background:rgba(0,229,160,.08);border-color:rgba(0,229,160,.35);color:var(--green);}
+    .rl-gate.fail{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.4);color:#ef4444;}
+    .rl-gate .g-blocks{font-size:.72rem;font-weight:700;margin-top:2px;color:var(--text-muted);}
+    .rl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:16px;}
+    .rl-card{background:var(--bg-card);border:1px solid var(--border-light);border-radius:14px;padding:15px;box-shadow:var(--shadow-sm);}
+    .rl-card h3{margin:0 0 4px;font-size:.9rem;display:flex;align-items:center;gap:8px;}
+    .rl-card .desc{font-size:.7rem;color:var(--text-muted);font-weight:600;margin-bottom:10px;}
+    .rl-tag{font-size:.64rem;font-weight:900;padding:2px 9px;border-radius:12px;letter-spacing:.3px;text-transform:uppercase;}
+    .rl-tag.green{background:rgba(0,229,160,.12);color:var(--green);}
+    .rl-tag.red{background:rgba(239,68,68,.14);color:#ef4444;}
+    .rl-tag.amber{background:rgba(245,158,11,.14);color:var(--gold);}
+    .rl-tag.blue{background:rgba(37,99,235,.12);color:var(--accent);}
+    .rl-row{display:flex;justify-content:space-between;font-size:.72rem;font-weight:700;padding:3px 0;border-bottom:1px dashed var(--border-light);}
+    .rl-row b{color:var(--text-primary);}
+    .rl-empty{color:var(--text-muted);font-size:.74rem;font-weight:700;padding:14px;text-align:center;border:1px dashed var(--border-light);border-radius:10px;}
+    .rl-section-h{display:flex;align-items:center;justify-content:space-between;margin-top:22px;}
+    .rl-section-h h2{font-size:1rem;margin:0;}
+    .rl-bar{height:6px;background:var(--bg-elevated);border-radius:3px;overflow:hidden;margin:6px 0;}
+    .rl-bar > span{display:block;height:100%;border-radius:3px;background:var(--green);}
+    .rl-bar.bad > span{background:#ef4444;}
+    .rl-mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.68rem;}
+    .rl-targets{display:flex;gap:12px;margin-top:10px;flex-wrap:wrap;}
+    .rl-target{font-size:.7rem;font-weight:800;padding:6px 12px;border-radius:10px;background:var(--bg-elevated);border:1px solid var(--border-light);}
+    .rl-target b{color:var(--accent);}
+  </style>
+</head>
+<body>
+  <div class="adm-shell">
+    <%- include('../partials/sidebar', { active: '/admin/reliability', role: 'admin', user }) %>
+    <main class="main" id="main-content" tabindex="-1">
+      <div class="topbar">
+        <h1><%- icon('zap', 18) %> Reliability — Load, Chaos, Backup & DR</h1>
+        <div class="topbar-right">
+          <button type="button" class="admin-nav-btn" onclick="location.reload()"><%- icon('refresh', 14) %> Yangilash</button>
+          <button type="button" class="admin-nav-btn" data-theme-toggle title="Toggle theme"><%- icon('moon', 16) %></button>
+        </div>
+      </div>
+
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="rl-gate fail"><%- icon('alertTriangle', 16) %> Xatolik: <%= error %></div>
+      <% } else if (posture) { %>
+        <!-- ═══ DR readiness gate ═══ -->
+        <div class="rl-gate <%= posture.gate.pass ? 'pass' : 'fail' %>">
+          <%- icon(posture.gate.pass ? 'checkCircle' : 'alertTriangle', 18) %>
+          <div>
+            <div>DR / release readiness: <%= posture.gate.pass ? 'TAYYOR (rehearsals green)' : 'TAYYOR EMAS (rehearsals talab qilinadi)' %></div>
+            <% if (!posture.gate.pass && posture.gate.blocks.length) { %>
+              <div class="g-blocks"><%= posture.gate.blocks.join(' • ') %></div>
+            <% } %>
+          </div>
+        </div>
+
+        <div class="rl-targets">
+          <span class="rl-target">RPO ≤ <b><%= posture.targets.rpoMinutes %> min</b></span>
+          <span class="rl-target">RTO ≤ <b><%= posture.targets.rtoMinutes %> min</b></span>
+        </div>
+
+        <!-- ═══ Load profiles ═══ -->
+        <div class="rl-section-h">
+          <h2><%- icon('activity', 15) %> Load profile SLOs</h2>
+          <span class="rl-tag <%= posture.load.length && posture.load.every((l) => l.ok) ? 'green' : 'amber' %>">
+            <%= posture.load.filter((l) => l.ok).length %>/<%= loadProfiles.length %> pass
+          </span>
+        </div>
+        <div class="rl-grid">
+          <% loadProfiles.forEach((p) => { %>
+            <% const run = posture.load.find((l) => l.profileId === p.id); %>
+            <div class="rl-card">
+              <h3>
+                <span class="rl-tag <%= run ? (run.ok ? 'green' : 'red') : 'blue' %>"><%= run ? (run.ok ? 'PASS' : 'FAIL') : 'rejalashtirilmagan' %></span>
+                <%= p.label %>
+              </h3>
+              <div class="desc"><%= p.description %></div>
+              <div class="rl-row"><span>ACK p95</span><b><%= run ? run.checks[0].observed + 'ms / ≤' + run.checks[0].target + 'ms' : '—' %></b></div>
+              <div class="rl-row"><span>Availability</span><b><%= run ? (run.checks[1].observed * 100).toFixed(2) + '%' : '—' %></b></div>
+              <div class="rl-row"><span>Data loss</span><b><%= run ? run.checks[2].observed : '—' %></b></div>
+              <% if (run && run.securityGuard) { %>
+                <div class="rl-mono" style="margin-top:6px;color:#ef4444"><%- icon('alertTriangle', 11) %> <%= run.securityGuard %></div>
+              <% } %>
+            </div>
+          <% }) %>
+        </div>
+
+        <!-- ═══ Chaos drills ═══ -->
+        <div class="rl-section-h">
+          <h2><%- icon('alertTriangle', 15) %> Chaos drills</h2>
+          <span class="rl-tag <%= posture.chaos.length && posture.chaos.every((c) => c.ok) ? 'green' : 'amber' %>">
+            <%= posture.chaos.filter((c) => c.ok).length %>/<%= chaosScenarios.length %> pass
+          </span>
+        </div>
+        <div class="rl-grid">
+          <% chaosScenarios.forEach((s) => { %>
+            <% const drill = posture.chaos.find((c) => c.scenarioId === s.id); %>
+            <div class="rl-card">
+              <h3>
+                <span class="rl-tag <%= drill ? (drill.ok ? 'green' : 'red') : 'blue' %>"><%= drill ? (drill.ok ? 'PASS' : 'FAIL') : 'sinovdan o‘tmagan' %></span>
+                <%= s.label %>
+              </h3>
+              <div class="desc"><%= s.description %></div>
+              <div class="rl-row"><span>Recovery</span><b><%= drill ? (drill.checks[0].observed * 100).toFixed(2) + '% / ≥' + (drill.checks[0].target * 100).toFixed(1) + '%' : '—' %></b></div>
+              <div class="rl-row"><span>Data corruption</span><b><%= drill ? (drill.checks[1].observed ? 'HA — FAIL' : 'yo‘q') : '—' %></b></div>
+              <% if (drill && drill.securityGuard) { %>
+                <div class="rl-mono" style="margin-top:6px;color:#ef4444"><%- icon('alertTriangle', 11) %> <%= drill.securityGuard %></div>
+              <% } %>
+            </div>
+          <% }) %>
+        </div>
+
+        <!-- ═══ Backup / DR evidence ═══ -->
+        <div class="rl-section-h">
+          <h2><%- icon('shield', 15) %> Backup restore / DR evidence</h2>
+          <span class="rl-tag <%= posture.backup.length ? (posture.backup.every((b) => b.ok) ? 'green' : 'red') : 'amber' %>">
+            <%= posture.backup.filter((b) => b.ok).length %>/<%= backupTypes.length %> evidence
+          </span>
+        </div>
+        <div class="rl-grid">
+          <% backupTypes.forEach((t) => { %>
+            <% const ev = posture.backup.find((b) => b.backupType === t.id); %>
+            <div class="rl-card">
+              <h3>
+                <span class="rl-tag <%= ev ? (ev.ok ? 'green' : 'red') : 'blue' %>"><%= ev ? (ev.ok ? 'PASS' : 'FAIL') : 'drill yo‘q' %></span>
+                <%= t.label %>
+              </h3>
+              <div class="desc"><%= t.description %></div>
+              <% if (ev) { %>
+                <div class="rl-row"><span>RPO</span><b><%= ev.checks[0].observed %> min / ≤ <%= ev.checks[0].target %></b></div>
+                <div class="rl-row"><span>RTO</span><b><%= ev.checks[1].observed %> min / ≤ <%= ev.checks[1].target %></b></div>
+                <div class="rl-row"><span>Integrity</span><b><%= ev.checks[2].observed ? 'tasdiqlangan' : 'YO‘Q' %></b></div>
+                <div class="rl-row"><span>Tekshiruvchi</span><b><%= ev.checks[3].observed || '—' %></b></div>
+              <% } else { %>
+                <div class="rl-empty">RPO/RTO evidence yozilmagan</div>
+              <% } %>
+            </div>
+          <% }) %>
+        </div>
+
+        <!-- ═══ Release safety ═══ -->
+        <div class="rl-section-h">
+          <h2><%- icon('refresh', 15) %> Release safety — drain & freeze</h2>
+        </div>
+        <div class="rl-grid">
+          <div class="rl-card">
+            <h3>
+              <span class="rl-tag <%= posture.drain ? (posture.drain.ok ? 'green' : 'red') : 'blue' %>">
+                <%= posture.drain ? (posture.drain.ok ? 'PASS' : 'FAIL') : 'tekshirilmagan' %>
+              </span>
+              Worker/socket drain
+            </h3>
+            <div class="desc">Deploydan oldin drain sekvensiyasi — zero in-flight talab (blue-green/canary)</div>
+            <% if (posture.drain) { %>
+              <% posture.drain.checks.forEach((c) => { %>
+                <div class="rl-row"><span><%= c.name %></span><b><%= c.ok ? '✓' : '✗' %> <%= c.detail %></b></div>
+              <% }) %>
+            <% } else { %>
+              <div class="rl-empty">Drain sekvensiyasi hali tekshirilmagan</div>
+            <% } %>
+          </div>
+          <div class="rl-card">
+            <h3>
+              <span class="rl-tag <%= posture.freeze ? (posture.freeze.ok ? 'green' : 'red') : 'blue' %>">
+                <%= posture.freeze ? (posture.freeze.ok ? 'PASS' : 'FAIL') : 'aktiv emas' %>
+              </span>
+              High-stakes freeze runbook
+            </h3>
+            <div class="desc">7–14 kunlik imtihon oynasi uchun release freeze + rollback rejasi</div>
+            <% if (posture.freeze) { %>
+              <% posture.freeze.checks.forEach((c) => { %>
+                <div class="rl-row"><span><%= c.name %></span><b><%= c.ok ? '✓' : '✗' %> <%= c.detail %></b></div>
+              <% }) %>
+              <% if (posture.freeze.plan) { %>
+                <div class="rl-mono" style="margin-top:6px;color:var(--text-muted)">
+                  <%= posture.freeze.plan.durationDays %> kun freeze • <%= posture.freeze.plan.strategy %>
+                </div>
+              <% } %>
+            <% } else { %>
+              <div class="rl-empty">Freeze runbook yozilmagan</div>
+            <% } %>
+          </div>
+        </div>
+      <% } %>
+    </main>
+  </div>
+</body>
+</html>

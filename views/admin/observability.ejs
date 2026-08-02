@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <%- include('../partials/head') %>
+  <link rel="stylesheet" href="/css/admin.css">
+  <style>
+    .obs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-top:18px;}
+    .obs-card{background:var(--bg-card);border:1px solid var(--border-light);border-radius:14px;padding:16px;box-shadow:var(--shadow-sm);}
+    .obs-card h3{margin:0 0 6px;font-size:.92rem;display:flex;align-items:center;gap:8px;}
+    .obs-card .desc{font-size:.72rem;color:var(--text-muted);font-weight:600;margin-bottom:10px;}
+    .obs-status{display:inline-flex;align-items:center;gap:6px;font-size:.68rem;font-weight:900;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px;}
+    .obs-status.ok{background:rgba(0,229,160,.12);color:var(--green);}
+    .obs-status.warning{background:rgba(245,158,11,.14);color:var(--gold);}
+    .obs-status.critical{background:rgba(239,68,68,.14);color:#ef4444;}
+    .obs-metric-row{display:flex;justify-content:space-between;font-size:.76rem;font-weight:700;color:var(--text-muted);padding:3px 0;border-bottom:1px dashed var(--border-light);}
+    .obs-metric-row b{color:var(--text-primary);}
+    .obs-alert{border-left:3px solid;border-radius:8px;padding:10px 12px;margin-bottom:10px;background:var(--bg-elevated);}
+    .obs-alert.critical{border-color:#ef4444;}
+    .obs-alert.warning{border-color:var(--gold);}
+    .obs-alert .a-title{font-weight:900;font-size:.8rem;color:var(--text-primary);}
+    .obs-alert .a-msg{font-size:.72rem;color:var(--text-muted);font-weight:600;margin:3px 0;}
+    .obs-alert .a-rb{font-size:.68rem;font-weight:800;color:var(--blue);text-decoration:none;}
+    .obs-runbook{font-size:.68rem;font-weight:800;color:var(--blue);text-decoration:none;}
+    .obs-section-h{display:flex;align-items:center;justify-content:space-between;margin-top:22px;}
+    .obs-section-h h2{font-size:1rem;margin:0;}
+    .obs-tag{font-size:.66rem;font-weight:800;padding:2px 8px;border-radius:10px;background:rgba(37,99,235,.12);color:var(--accent);}
+    .obs-empty{color:var(--text-muted);font-size:.76rem;font-weight:700;padding:14px;text-align:center;border:1px dashed var(--border-light);border-radius:10px;}
+    .obs-burn{height:6px;background:var(--bg-elevated);border-radius:3px;overflow:hidden;margin-top:8px;}
+    .obs-burn > span{display:block;height:100%;border-radius:3px;}
+    .obs-burn.ok > span{background:var(--green);}
+    .obs-burn.warning > span{background:var(--gold);}
+    .obs-burn.critical > span{background:#ef4444;}
+    .obs-bar{width:70%;}
+  </style>
+</head>
+<body>
+  <div class="adm-shell">
+    <%- include('../partials/sidebar', { active: '/admin/observability', role: 'admin', user }) %>
+    <main class="main" id="main-content" tabindex="-1">
+      <div class="topbar">
+        <h1><%- icon('activity', 18) %> Observability — SLO & Alerts</h1>
+        <div class="topbar-right">
+          <button type="button" class="admin-nav-btn" onclick="location.reload()"><%- icon('refresh', 14) %> Yangilash</button>
+          <button type="button" class="admin-nav-btn" data-theme-toggle title="Toggle theme"><%- icon('moon', 16) %></button>
+        </div>
+      </div>
+
+      <!-- ═══ Alerts ═══ -->
+      <div class="obs-section-h">
+        <h2><%- icon('alertTriangle', 15) %> Faol alertlar</h2>
+        <span class="obs-tag"><%= data.alerts.length %> ta</span>
+      </div>
+      <% if (data.alerts.length === 0) { %>
+        <div class="obs-empty"><%- icon('checkCircle', 14) %> Hozircha faol alert yo'q — hammasi yaxshi</div>
+      <% } else { %>
+        <% data.alerts.forEach((a) => { %>
+          <div class="obs-alert <%= a.severity %>">
+            <div class="a-title"><%- icon(a.severity === 'critical' ? 'alertTriangle' : 'info', 13) %> <%= a.title %></div>
+            <div class="a-msg"><%= a.message %></div>
+            <a class="a-rb" href="<%= a.runbook %>" target="_blank" rel="noopener"><%- icon('bookOpen', 11) %> Runbook</a>
+          </div>
+        <% }) %>
+      <% } %>
+
+      <!-- ═══ SLO status ═══ -->
+      <div class="obs-section-h">
+        <h2><%- icon('target', 15) %> SLO holati</h2>
+      </div>
+      <div class="obs-grid">
+        <% data.slos.forEach((s) => { %>
+          <div class="obs-card">
+            <h3>
+              <span class="obs-status <%= s.level %>"><%= s.level %></span>
+              <%= s.name %>
+            </h3>
+            <div class="desc"><%= s.description %></div>
+            <% if (s.type === 'availability') { %>
+              <div class="obs-metric-row"><span>Error rate</span><b><%= (s.errorRate * 100).toFixed(2) %>%</b></div>
+              <div class="obs-metric-row"><span>Error budget</span><b><%= ((1 - s.target) * 100).toFixed(2) %>%</b></div>
+              <div class="obs-metric-row"><span>Budget qoldiq</span><b><%= (s.errorBudgetRemaining * 100).toFixed(1) %>%</b></div>
+              <div class="obs-metric-row"><span>Burn-rate</span><b><%= s.burnRate !== null ? s.burnRate.toFixed(2) + 'x' : '—' %></b></div>
+              <div class="obs-burn <%= s.level %> obs-bar"><span style="width:<%= Math.min(100, Math.max(3, (s.burnRate || 0) * 4)) %>%"></span></div>
+            <% } else { %>
+              <div class="obs-metric-row"><span>p95</span><b><%= s.p95 %>ms</b></div>
+              <div class="obs-metric-row"><span>Target</span><b><%= s.targetMs %>ms</b></div>
+              <div class="obs-metric-row"><span>Ratio</span><b><%= s.ratio.toFixed(2) %>x</b></div>
+              <div class="obs-burn <%= s.level %> obs-bar"><span style="width:<%= Math.min(100, Math.max(3, s.ratio * 50)) %>%"></span></div>
+            <% } %>
+            <div style="margin-top:10px"><a class="obs-runbook" href="<%= s.runbook %>" target="_blank" rel="noopener"><%- icon('bookOpen', 11) %> Runbook</a></div>
+          </div>
+        <% }) %>
+      </div>
+
+      <!-- ═══ Metrics ═══ -->
+      <div class="obs-section-h">
+        <h2><%- icon('activity', 15) %> Metriclar</h2>
+        <span class="obs-tag">platform + domain</span>
+      </div>
+      <div class="obs-grid">
+        <% data.metrics.counters.forEach((c) => { %>
+          <div class="obs-card">
+            <h3><span class="obs-status ok" style="background:rgba(37,99,235,.12);color:var(--accent)">counter</span></h3>
+            <div class="desc" style="word-break:break-all"><%= c.name %></div>
+            <div class="obs-metric-row"><span>Qiymat</span><b><%= c.value %></b></div>
+            <% if (c.labels && Object.keys(c.labels).length) { %>
+              <div class="obs-metric-row"><span>Labels</span><b><%= JSON.stringify(c.labels) %></b></div>
+            <% } %>
+          </div>
+        <% }) %>
+        <% data.metrics.histograms.forEach((h) => { %>
+          <div class="obs-card">
+            <h3><span class="obs-status ok" style="background:rgba(0,229,160,.12);color:var(--green)">histogram</span></h3>
+            <div class="desc" style="word-break:break-all"><%= h.name %></div>
+            <div class="obs-metric-row"><span>Count</span><b><%= h.count %></b></div>
+            <div class="obs-metric-row"><span>p50 / p95 / p99</span><b><%= h.p50 %> / <%= h.p95 %> / <%= h.p99 %></b></div>
+          </div>
+        <% }) %>
+        <% data.metrics.gauges.forEach((g) => { %>
+          <div class="obs-card">
+            <h3><span class="obs-status ok" style="background:rgba(245,158,11,.14);color:var(--gold)">gauge</span></h3>
+            <div class="desc" style="word-break:break-all"><%= g.name %></div>
+            <div class="obs-metric-row"><span>Qiymat</span><b><%= g.value %></b></div>
+          </div>
+        <% }) %>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

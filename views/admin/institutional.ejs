@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <%- include('../partials/head') %>
+  <link rel="stylesheet" href="/css/admin.css">
+  <style>
+    .ih-gate{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:14px;margin-top:16px;font-weight:800;font-size:.84rem;border:1px solid;}
+    .ih-gate.pass{background:rgba(0,229,160,.08);border-color:rgba(0,229,160,.35);color:var(--green);}
+    .ih-gate.fail{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.4);color:#ef4444;}
+    .ih-gate .g-blocks{font-size:.72rem;font-weight:700;margin-top:2px;color:var(--text-muted);}
+    .ih-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:16px;}
+    .ih-card{background:var(--bg-card);border:1px solid var(--border-light);border-radius:14px;padding:15px;box-shadow:var(--shadow-sm);}
+    .ih-card h3{margin:0 0 4px;font-size:.9rem;display:flex;align-items:center;gap:8px;}
+    .ih-card .desc{font-size:.7rem;color:var(--text-muted);font-weight:600;margin-bottom:10px;}
+    .ih-tag{font-size:.64rem;font-weight:900;padding:2px 9px;border-radius:12px;letter-spacing:.3px;text-transform:uppercase;}
+    .ih-tag.green{background:rgba(0,229,160,.12);color:var(--green);}
+    .ih-tag.red{background:rgba(239,68,68,.14);color:#ef4444;}
+    .ih-tag.amber{background:rgba(245,158,11,.14);color:var(--gold);}
+    .ih-tag.blue{background:rgba(37,99,235,.12);color:var(--accent);}
+    .ih-row{display:flex;justify-content:space-between;font-size:.72rem;font-weight:700;padding:3px 0;border-bottom:1px dashed var(--border-light);}
+    .ih-row b{color:var(--text-primary);}
+    .ih-empty{color:var(--text-muted);font-size:.74rem;font-weight:700;padding:14px;text-align:center;border:1px dashed var(--border-light);border-radius:10px;}
+    .ih-section-h{display:flex;align-items:center;justify-content:space-between;margin-top:22px;}
+    .ih-section-h h2{font-size:1rem;margin:0;}
+    .ih-mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.68rem;}
+  </style>
+</head>
+<body>
+  <div class="adm-shell">
+    <%- include('../partials/sidebar', { active: '/admin/institutional', role: 'admin', user }) %>
+    <main class="main" id="main-content" tabindex="-1">
+      <div class="topbar">
+        <h1><%- icon('shield', 18) %> Institutional Handoff — Final Migration, Pilot & Procurement</h1>
+        <div class="topbar-right">
+          <button type="button" class="admin-nav-btn" onclick="location.reload()"><%- icon('refresh', 14) %> Yangilash</button>
+          <button type="button" class="admin-nav-btn" data-theme-toggle title="Toggle theme"><%- icon('moon', 16) %></button>
+        </div>
+      </div>
+
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="ih-gate fail"><%- icon('alertTriangle', 16) %> Xatolik: <%= error %></div>
+      <% } else if (posture) { %>
+        <!-- ═══ Release gate ═══ -->
+        <div class="ih-gate <%= posture.gate.pass ? 'pass' : 'fail' %>">
+          <%- icon(posture.gate.pass ? 'checkCircle' : 'alertTriangle', 18) %>
+          <div>
+            <div>Institutional release: <%= posture.gate.pass ? 'TAYYOR (handoff evidence yashil)' : 'TAYYOR EMAS (evidence talab qilinadi)' %></div>
+            <% if (!posture.gate.pass && posture.gate.blocks.length) { %>
+              <div class="g-blocks"><%= posture.gate.blocks.join(' • ') %></div>
+            <% } %>
+          </div>
+        </div>
+
+        <!-- ═══ Cutover FSM ═══ -->
+        <div class="ih-section-h">
+          <h2><%- icon('refresh', 15) %> Cutover — final migration</h2>
+          <span class="ih-tag <%= posture.cutover ? (['cutover','completed'].includes(posture.cutover.status) ? 'green' : 'amber') : 'blue' %>">
+            <%= posture.cutover ? posture.cutover.status : 'pre-migration' %>
+          </span>
+        </div>
+        <div class="ih-grid">
+          <% posture.catalog.cutoverStates.forEach((st) => { %>
+            <% const isCur = (posture.cutover ? posture.cutover.status : 'pre-migration') === st; %>
+            <% const done = ['cutover','completed'].includes(posture.cutover?.status); %>
+            <div class="ih-card" style="opacity:<%= done ? 0.6 : 1 %>">
+              <h3>
+                <span class="ih-tag <%= isCur ? 'blue' : 'amber' %>"><%= isCur ? 'HOZIR' : (done ? 'OK' : 'navbat') %></span>
+                <%= st %>
+              </h3>
+              <div class="desc"><%= st === 'cutover' ? 'PostgreSQL PRIMARY + legacy read-only' : (st === 'backup-hash' ? 'Final legacy SHA-256 backup' : st) %></div>
+              <% if (st === 'backup-hash' && posture.cutover?.evidence) { %>
+                <div class="ih-row"><span>Data hash</span><b class="ih-mono"><%= posture.cutover.evidence.dataHash.slice(0,16) %>…</b></div>
+              <% } %>
+              <% if (st === 'cutover' && posture.cutover) { %>
+                <div class="ih-row"><span>PG primary</span><b><%= posture.cutover.postgresPrimary ? '✓' : '—' %></b></div>
+                <div class="ih-row"><span>Legacy read-only</span><b><%= posture.cutover.legacyReadOnly ? '✓' : '—' %></b></div>
+              <% } %>
+            </div>
+          <% }) %>
+        </div>
+
+        <!-- ═══ Training ═══ -->
+        <div class="ih-section-h">
+          <h2><%- icon('users', 15) %> Role training</h2>
+          <span class="ih-tag <%= posture.training.length === posture.catalog.trainingRoles.length ? 'green' : 'amber' %>">
+            <%= posture.training.filter((t) => t.ok).length %>/<%= posture.catalog.trainingRoles.length %> roles
+          </span>
+        </div>
+        <div class="ih-grid">
+          <% posture.catalog.trainingRoles.forEach((role) => { %>
+            <% const rec = posture.training.find((t) => t.role === role); %>
+            <div class="ih-card">
+              <h3>
+                <span class="ih-tag <%= rec ? (rec.ok ? 'green' : 'red') : 'blue' %>"><%= rec ? (rec.ok ? 'PASS' : 'FAIL') : 'boshlanmagan' %></span>
+                <%= role %>
+              </h3>
+              <div class="desc">Role-based curriculum + human verifier</div>
+              <div class="ih-row"><span>Steps</span><b><%= rec ? rec.completedSteps : '—' %></b></div>
+              <div class="ih-row"><span>Verifier</span><b><%= rec ? rec.verifier : '—' %></b></div>
+            </div>
+          <% }) %>
+          <div class="ih-card">
+            <h3>
+              <span class="ih-tag <%= posture.practice ? (posture.practice.ok ? 'green' : 'red') : 'blue' %>">
+                <%= posture.practice ? (posture.practice.ok ? 'PASS' : 'FAIL') : 'boshlanmagan' %>
+              </span>
+              Student practice exam
+            </h3>
+            <div class="desc">Pilot oldidan talab qilinadi</div>
+            <div class="ih-row"><span>Attempts</span><b><%= posture.practice ? posture.practice.attempts : '—' %></b></div>
+            <div class="ih-row"><span>Participants</span><b><%= posture.practice ? posture.practice.participants : '—' %></b></div>
+          </div>
+        </div>
+
+        <!-- ═══ Pilot ═══ -->
+        <div class="ih-section-h">
+          <h2><%- icon('activity', 15) %> Pilot phases</h2>
+          <span class="ih-tag <%= posture.pilot.phases.length ? (posture.pilot.phases.every((p) => p.ok) ? 'green' : 'amber') : 'blue' %>">
+            <%= posture.pilot.phases.filter((p) => p.ok).length %>/<%= posture.catalog.pilotPhases.length %>
+          </span>
+        </div>
+        <div class="ih-grid">
+          <% posture.catalog.pilotPhases.forEach((ph) => { %>
+            <% const rec = posture.pilot.phases.find((p) => p.phase === ph); %>
+            <div class="ih-card">
+              <h3>
+                <span class="ih-tag <%= rec ? (rec.ok ? 'green' : 'red') : 'blue' %>"><%= rec ? (rec.decision || (rec.ok ? 'PASS' : 'FAIL')) : 'boshlanmagan' %></span>
+                <%= ph %>
+              </h3>
+              <div class="desc"><%= ph === 'practice' ? 'Demo/sandbox' : (ph === 'low-stakes' ? 'Past qiymatli sinov' : 'Controlled midterm') %></div>
+              <div class="ih-row"><span>Incidents</span><b><%= rec ? (rec.incidents?.length || 0) : '—' %></b></div>
+              <div class="ih-row"><span>Availability</span><b><%= rec ? (rec.availability !== undefined ? (rec.availability * 100).toFixed(2) + '%' : '—') : '—' %></b></div>
+            </div>
+          <% }) %>
+        </div>
+
+        <!-- ═══ Procurement pack ═══ -->
+        <div class="ih-section-h">
+          <h2><%- icon('briefcase', 15) %> Procurement pack (buyer evidence)</h2>
+          <span class="ih-tag <%= posture.procurement ? (posture.procurement.ok ? 'green' : 'red') : 'amber' %>">
+            <%= posture.procurement ? `${posture.procurement.items} items` : 'topilmadi' %>
+          </span>
+        </div>
+        <div class="ih-grid">
+          <div class="ih-card" style="grid-column:1/-1">
+            <h3>
+              <span class="ih-tag <%= posture.procurement ? (posture.procurement.ok ? 'green' : 'red') : 'blue' %>">
+                <%= posture.procurement ? (posture.procurement.ok ? 'PASS' : 'FAIL') : 'yig‘ilmagan' %>
+              </span>
+              HECVAT • ACR • security white paper • pen-test • SLA • DPA • retention • AI registry • standards • incident terms • exit plan • pricing
+            </h3>
+            <div class="desc">Xarid qiluvchi universitet uchun 12 ta evidence — owner review cycle bilan</div>
+            <div class="ih-row"><span>Owner</span><b><%= posture.procurement ? posture.procurement.owner : '—' %></b></div>
+          </div>
+        </div>
+
+        <!-- ═══ Exit test ═══ -->
+        <div class="ih-section-h">
+          <h2><%- icon('logOut', 15) %> Tenant exit test</h2>
+          <span class="ih-tag <%= posture.exit ? (posture.exit.ok ? 'green' : 'red') : 'blue' %>">
+            <%= posture.exit ? (posture.exit.ok ? 'PASS' : 'FAIL') : 'o‘tkazilmagan' %>
+          </span>
+        </div>
+        <div class="ih-grid">
+          <div class="ih-card">
+            <h3>Export / Restore / Delete</h3>
+            <div class="desc">Full tenant export bundle + restore parity + deletion receipts</div>
+            <% if (posture.exit) { %>
+              <% posture.exit.steps.forEach((s) => { %>
+                <div class="ih-row"><span><%= s.name %></span><b><%= s.ok ? '✓' : '✗' %> <%= s.detail %></b></div>
+              <% }) %>
+            <% } else { %>
+              <div class="ih-empty">Exit test hali o‘tkazilmagan</div>
+            <% } %>
+          </div>
+        </div>
+      <% } %>
+    </main>
+  </div>
+</body>
+</html>

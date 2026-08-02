@@ -1,0 +1,356 @@
+<% const current = user || {}; %>
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — Edikit Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="adm-body">
+  <div class="adm-shell">
+    <aside class="adm-sidebar">
+      <div class="adm-brand">
+        <img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto">
+        <span>Edikit</span>
+      </div>
+      <nav class="adm-nav">
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/api-contracts" class="active">API Contracts</a>
+        <a href="/admin/external-integration">External Integration</a>
+        <a href="/admin/data-governance">Data Governance</a>
+        <a href="/admin/accessibility">Accessibility</a>
+        <a href="/admin/multilingual">Multilingual</a>
+        <a href="/admin/program-quality">Program Quality</a>
+        <a href="/admin/credentials">Credentials</a>
+        <a href="/admin/ai-checkpoint">AI Checkpoint</a>
+        <a href="/admin/ai-grading">AI Grading</a>
+        <a href="/admin/ai-mlops">AI MLOps</a>
+        <a href="/admin/source-pack">Source Packs</a>
+        <a href="/admin/vip">VIP</a>
+      </nav>
+      <div class="adm-side-foot">
+        <a href="/admin/logout">Chiqish</a>
+      </div>
+    </aside>
+
+    <main class="adm-main">
+      <header class="adm-topbar">
+        <h1>API, Socket, Job, Webhook &amp; Outbox Contracts</h1>
+        <span class="adm-chip" id="mStatus">Yuklanmoqda…</span>
+      </header>
+
+      <section class="adm-card">
+        <h2>Summary</h2>
+        <div id="summary" class="adm-grid">Yuklanmoqda…</div>
+      </section>
+
+      <div class="adm-grid-2">
+        <section class="adm-card">
+          <h2>Route inventory (/api/v1)</h2>
+          <div class="adm-row">
+            <input type="text" id="rtPath" placeholder="Path (masalan /api/v1/tests)" class="adm-input">
+            <select id="rtMethod">
+              <option value="GET">GET</option>
+              <option value="POST">POST</option>
+              <option value="PUT">PUT</option>
+              <option value="PATCH">PATCH</option>
+              <option value="DELETE">DELETE</option>
+            </select>
+            <select id="rtAuth">
+              <option value="public">Public</option>
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+            <input type="text" id="rtModule" placeholder="Module" class="adm-input">
+            <label class="adm-check"><input type="checkbox" id="rtDoc"> Documented</label>
+            <label class="adm-check"><input type="checkbox" id="rtIdem"> Idempotent</label>
+            <button class="adm-btn" onclick="registerRoute()">Register</button>
+          </div>
+          <button class="adm-btn" onclick="loadRoutes()">List routes</button>
+          <button class="adm-btn" onclick="loadUndocumented()">Undocumented privileged</button>
+          <div id="routesList">Yuklanmoqda…</div>
+        </section>
+
+        <section class="adm-card">
+          <h2>Contracts (Zod → OpenAPI 3.1)</h2>
+          <div class="adm-row">
+            <input type="text" id="ctName" placeholder="Contract name" class="adm-input">
+            <select id="ctKind">
+              <option value="request">Request</option>
+              <option value="response">Response</option>
+              <option value="event">Event</option>
+              <option value="job">Job</option>
+            </select>
+            <select id="ctScope">
+              <option value="user">User (generic)</option>
+              <option value="admin">Admin</option>
+            </select>
+            <button class="adm-btn" onclick="saveContract()">Save contract</button>
+          </div>
+          <textarea id="ctDef" rows="3" class="adm-input" placeholder='{"name":"string","age":"number","role":["admin","user"]}'></textarea>
+          <div id="contractsList">Yuklanmoqda…</div>
+          <button class="adm-btn" onclick="loadOpenApi()">View OpenAPI doc</button>
+          <pre id="openapiBox" class="adm-box" style="max-height:200px;overflow:auto">—</pre>
+        </section>
+      </div>
+
+      <div class="adm-grid-2">
+        <section class="adm-card">
+          <h2>Socket event allowlist</h2>
+          <div class="adm-row">
+            <input type="text" id="seName" placeholder="Event (masalan player:answer)" class="adm-input">
+            <select id="seAuth">
+              <option value="public">Public</option>
+              <option value="player">Player</option>
+              <option value="host">Host</option>
+              <option value="admin">Admin</option>
+            </select>
+            <input type="text" id="seGroup" placeholder="Rate group" class="adm-input" value="default">
+            <button class="adm-btn" onclick="registerSocketEvent()">Register</button>
+          </div>
+          <div id="socketList">Yuklanmoqda…</div>
+        </section>
+
+        <section class="adm-card">
+          <h2>Webhook audit (signature/replay/dedup)</h2>
+          <div class="adm-row">
+            <input type="text" id="whProvider" placeholder="Provider" class="adm-input">
+            <input type="text" id="whEventId" placeholder="Event ID" class="adm-input">
+            <input type="text" id="whEventType" placeholder="Event type" class="adm-input">
+            <input type="text" id="whSig" placeholder="Signature (HMAC hex)" class="adm-input">
+            <input type="number" id="whTime" placeholder="Event time (ms)" class="adm-input">
+            <input type="number" id="whSeq" placeholder="Seq" class="adm-input">
+          </div>
+          <textarea id="whRaw" rows="2" class="adm-input" placeholder='{"hello":"world"}'></textarea>
+          <input type="text" id="whSecret" placeholder="Webhook secret" class="adm-input">
+          <button class="adm-btn" onclick="recordWebhook()">Record webhook</button>
+          <div id="webhookList">Yuklanmoqda…</div>
+        </section>
+      </div>
+
+      <div class="adm-grid-2">
+        <section class="adm-card">
+          <h2>Transactional outbox</h2>
+          <div class="adm-row">
+            <input type="text" id="obType" placeholder="Outbox type (scoring/publish…)" class="adm-input">
+            <input type="text" id="obJobType" placeholder="Job type" class="adm-input">
+            <label class="adm-check"><input type="checkbox" id="obTrace"> Trace</label>
+            <button class="adm-btn" onclick="enqueueOutbox()">Enqueue</button>
+          </div>
+          <textarea id="obPayload" rows="2" class="adm-input" placeholder='{"attemptId":123}'></textarea>
+          <div id="outboxList">Yuklanmoqda…</div>
+        </section>
+
+        <section class="adm-card">
+          <h2>Conventions</h2>
+          <div class="adm-box">
+            <p><b>Idempotency-Key:</b> <code>edikit:{tenant}:{operation}:{sha256}</code></p>
+            <p><b>ETag:</b> <code>"sha256-{hash}"</code> — If-Match / If-None-Match</p>
+            <p><b>Cursor:</b> base64url(kind:key:value)</p>
+            <p><b>Socket:</b> allowlist + version + rate-limit group (fail-closed)</p>
+            <p><b>Webhook:</b> HMAC raw-signature + timestamp tolerance + event_id dedup + seq</p>
+            <p><b>Outbox:</b> consumer_key UNIQUE → at-least-once idempotent consumer</p>
+            <p><b>§15:</b> private scoring / sensitive fields generic API schema'da YO'Q</p>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+<script>
+const api = (path, opts) => fetch(path, {
+  headers: { 'Content-Type': 'application/json' },
+  ...opts,
+}).then(async (r) => {
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
+  return d;
+});
+const $ = (id) => document.getElementById(id);
+function el(tag, cls, html) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (html !== undefined) e.innerHTML = html;
+  return e;
+}
+
+async function refreshSummary() {
+  try {
+    const s = await api('/api/admin/api-contracts/summary');
+    $('mStatus').textContent = s.undocumentedPrivileged > 0 ? `⚠ ${s.undocumentedPrivileged} undocumented privileged` : 'All documented';
+    $('summary').innerHTML = [
+      ['Routes', s.routes],
+      ['Undoc privileged', s.undocumentedPrivileged],
+      ['Contracts published', s.contractsPublished],
+      ['Socket events', s.socketEvents],
+      ['Webhooks', s.webhooks],
+      ['Outbox delivered', s.outboxDelivered],
+      ['Outbox failed', s.outboxFailed],
+      ['Outbox dead-letter', s.outboxDeadLetter],
+    ].map(([k, v]) => `<div class="adm-stat"><div class="adm-stat-v">${v}</div><div class="adm-stat-k">${k}</div></div>`).join('');
+  } catch (e) { $('summary').textContent = 'Xato: ' + e.message; }
+}
+
+async function registerRoute() {
+  try {
+    const d = await api('/api/admin/api-contracts/routes', {
+      method: 'POST',
+      body: JSON.stringify({
+        method: $('rtMethod').value, path: $('rtPath').value, authLevel: $('rtAuth').value,
+        module: $('rtModule').value, documented: $('rtDoc').checked, idempotent: $('rtIdem').checked,
+      }),
+    });
+    loadRoutes(); refreshSummary();
+  } catch (e) { alert('Xato: ' + e.message); }
+}
+
+async function loadRoutes() {
+  try {
+    const d = await api('/api/admin/api-contracts/routes');
+    $('routesList').innerHTML = '';
+    (d.routes || []).slice(0, 30).forEach((r) => {
+      $('routesList').appendChild(el('div', 'adm-row-item',
+        `<b>${r.method}</b> ${r.path} · ${r.auth_level} · ${r.module} · ${r.documented ? '📘' : '🚫 undocumented'}${r.idempotent ? ' · idem' : ''}`));
+    });
+  } catch (e) { $('routesList').textContent = 'Xato: ' + e.message; }
+}
+
+async function loadUndocumented() {
+  try {
+    const d = await api('/api/admin/api-contracts/routes/undocumented');
+    $('routesList').innerHTML = '<h3>Undocumented privileged (stop condition §24)</h3>';
+    (d.routes || []).forEach((r) => {
+      $('routesList').appendChild(el('div', 'adm-row-item adm-err', `<b>${r.method}</b> ${r.path} · ${r.auth_level} · ${r.module}`));
+    });
+    if (!(d.routes || []).length) $('routesList').innerHTML += '<div class="adm-row-item">✅ Yo‘q — barcha privileged route documented</div>';
+  } catch (e) { $('routesList').textContent = 'Xato: ' + e.message; }
+}
+
+async function saveContract() {
+  try {
+    let def = {};
+    try { def = JSON.parse($('ctDef').value); } catch {}
+    const d = await api('/api/admin/api-contracts/contracts', {
+      method: 'POST',
+      body: JSON.stringify({ contractName: $('ctName').value, kind: $('ctKind').value, scope: $('ctScope').value, schema: def }),
+    });
+    loadContracts(); refreshSummary();
+  } catch (e) { alert('Xato: ' + e.message); }
+}
+
+async function loadContracts() {
+  try {
+    const d = await api('/api/admin/api-contracts/contracts');
+    $('contractsList').innerHTML = '';
+    (d.contracts || []).slice(0, 20).forEach((c) => {
+      const row = el('div', 'adm-row-item', `<b>${c.contract_name}</b> · ${c.kind} · ${c.version} · ${c.status} · hash ${(c.schema_hash || '').slice(0, 8)}`);
+      if (c.status === 'draft') {
+        const b = el('button', 'adm-btn adm-btn-sm', 'Publish');
+        b.onclick = () => setStatus(c.id, 'published', row);
+        row.appendChild(b);
+      }
+      $('contractsList').appendChild(row);
+    });
+  } catch (e) { $('contractsList').textContent = 'Xato: ' + e.message; }
+}
+
+async function setStatus(id, status, rowEl) {
+  try {
+    await api('/api/admin/api-contracts/contracts/' + id + '/status', { method: 'POST', body: JSON.stringify({ status }) });
+    loadContracts(); refreshSummary();
+  } catch (e) { rowEl.innerHTML = 'Xato: ' + e.message; }
+}
+
+async function loadOpenApi() {
+  try {
+    const doc = await api('/api/admin/api-contracts/openapi');
+    $('openapiBox').textContent = JSON.stringify(doc, null, 2);
+  } catch (e) { $('openapiBox').textContent = 'Xato: ' + e.message; }
+}
+
+async function registerSocketEvent() {
+  try {
+    await api('/api/admin/api-contracts/socket-events', {
+      method: 'POST',
+      body: JSON.stringify({ eventName: $('seName').value, auth: $('seAuth').value, rateLimitGroup: $('seGroup').value, documented: true }),
+    });
+    loadSocketEvents(); refreshSummary();
+  } catch (e) { alert('Xato: ' + e.message); }
+}
+
+async function loadSocketEvents() {
+  try {
+    const d = await api('/api/admin/api-contracts/socket-events');
+    $('socketList').innerHTML = '';
+    (d.events || []).forEach((s) => {
+      $('socketList').appendChild(el('div', 'adm-row-item', `<b>${s.event_name}</b> · ${s.version} · ${s.auth} · ${s.rate_limit_group} · ${s.documented ? '📘' : '🚫'}`));
+    });
+  } catch (e) { $('socketList').textContent = 'Xato: ' + e.message; }
+}
+
+async function recordWebhook() {
+  try {
+    const d = await api('/api/admin/api-contracts/webhooks', {
+      method: 'POST',
+      body: JSON.stringify({
+        provider: $('whProvider').value, eventId: $('whEventId').value, eventType: $('whEventType').value,
+        signature: $('whSig').value, eventTime: Number($('whTime').value), seq: $('whSeq').value ? Number($('whSeq').value) : null,
+        rawBody: $('whRaw').value, secret: $('whSecret').value,
+      }),
+    });
+    loadWebhooks(); refreshSummary();
+  } catch (e) { alert('Xato: ' + e.message); }
+}
+
+async function loadWebhooks() {
+  try {
+    const d = await api('/api/admin/api-contracts/webhooks');
+    $('webhookList').innerHTML = '';
+    (d.webhooks || []).slice(0, 15).forEach((w) => {
+      $('webhookList').appendChild(el('div', 'adm-row-item', `#${w.id} · ${w.provider} · ${w.event_type} · <b>${w.status}</b> · sig ${w.signature_ok ? '✓' : '✗'}`));
+    });
+  } catch (e) { $('webhookList').textContent = 'Xato: ' + e.message; }
+}
+
+async function enqueueOutbox() {
+  try {
+    let payload = {};
+    try { payload = JSON.parse($('obPayload').value); } catch {}
+    const d = await api('/api/admin/api-contracts/outbox', {
+      method: 'POST',
+      body: JSON.stringify({ outboxType: $('obType').value, payload, jobType: $('obJobType').value || null, traceRequired: $('obTrace').checked }),
+    });
+    loadOutbox(); refreshSummary();
+  } catch (e) { alert('Xato: ' + e.message); }
+}
+
+async function loadOutbox() {
+  try {
+    const d = await api('/api/admin/api-contracts/outbox');
+    $('outboxList').innerHTML = '';
+    (d.messages || []).slice(0, 15).forEach((m) => {
+      const row = el('div', 'adm-row-item', `#${m.id} · ${m.outbox_type} · <b>${m.status}</b> · attempts ${m.attempts}/${m.max_attempts} · trace ${m.trace_id || '—'}`);
+      if (['pending', 'failed', 'dead_letter'].includes(m.status)) {
+        const b = el('button', 'adm-btn adm-btn-sm', 'Process');
+        b.onclick = () => processOutbox(m.id, row);
+        row.appendChild(b);
+      }
+      $('outboxList').appendChild(row);
+    });
+  } catch (e) { $('outboxList').textContent = 'Xato: ' + e.message; }
+}
+
+async function processOutbox(id, rowEl) {
+  try {
+    const d = await api('/api/admin/api-contracts/outbox/' + id + '/process', { method: 'POST' });
+    rowEl.innerHTML = `#${id} → <b>${d.status || (d.deadLettered ? 'dead_letter' : d.ok ? 'delivered' : 'failed')}</b>`;
+    loadOutbox(); refreshSummary();
+  } catch (e) { rowEl.innerHTML = 'Xato: ' + e.message; }
+}
+
+refreshSummary(); loadRoutes(); loadContracts(); loadSocketEvents(); loadWebhooks(); loadOutbox();
+</script>
+</body>
+</html>

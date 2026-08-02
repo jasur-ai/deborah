@@ -39,6 +39,9 @@
 <script src="/js/main.js"></script>
 <script>
 window.__ICONS = <%- JSON.stringify(icons) %>;
+window.__CSRF_TOKEN = '<%= csrfToken %>';
+// Auto-attach CSRF token to all same-origin fetch POST/PUT/PATCH/DELETE requests
+(function(){var f=window.fetch;window.fetch=function(u,o){if(!o)o={};var m=(o.method||'GET').toUpperCase();if(['POST','PUT','PATCH','DELETE'].indexOf(m)>=0&&window.__CSRF_TOKEN){o.headers=o.headers||{};if(o.headers instanceof Headers){if(!o.headers.has('X-CSRF-Token'))o.headers.set('X-CSRF-Token',window.__CSRF_TOKEN)}else{o.headers['X-CSRF-Token']=o.headers['X-CSRF-Token']||window.__CSRF_TOKEN}}return f.call(window,u,o)}})();
 function svgIcon(name, size) {
   const svg = window.__ICONS && window.__ICONS[name];
   if (!svg) return '';

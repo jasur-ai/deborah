@@ -1,0 +1,131 @@
+<% const current = user || {}; %>
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — Edikit Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="adm-body">
+  <div class="adm-shell">
+    <aside class="adm-sidebar">
+      <div class="adm-brand">
+        <img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto">
+        <span>Edikit</span>
+      </div>
+      <nav class="adm-nav">
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/users">Users</a>
+        <a href="/admin/provider">Provider Adapters</a>
+        <a href="/admin/canva">Canva</a>
+        <a href="/admin/google-slides">Google Slides</a>
+        <a href="/admin/deck-export">Deck Export</a>
+        <a href="/admin/quiz-deck" class="active">Quiz from Deck</a>
+        <a href="/admin/claude">Claude Adapter</a>
+        <a href="/admin/vip">VIP</a>
+      </nav>
+      <div class="adm-side-foot">
+        <a href="/admin/logout">Chiqish</a>
+      </div>
+    </aside>
+
+    <main class="adm-main">
+      <header class="adm-topbar">
+        <h1>Quiz from Deck</h1>
+        <span class="adm-chip" id="genStatus">Tayyor</span>
+      </header>
+
+      <section class="adm-card">
+        <h2>Generate Quiz</h2>
+        <p class="adm-hint">Deck'dan quizConcepts olish → 50/30/20 blueprint (concept recall / application / analysis) → source citation bilan item draft (research §9.11). Teacher approval kerak.</p>
+        <div class="adm-form">
+          <div class="adm-row">
+            <div class="field"><label>Deck ID</label><input class="input" id="fDeckId" placeholder="1"></div>
+            <div class="field"><label>Savollar soni</label><input class="input" id="fCount" type="number" min="1" max="50" value="10"></div>
+            <button class="btn btn-primary" id="btnGenerate">Generate</button>
+          </div>
+          <span class="adm-hint" id="opStatus"></span>
+        </div>
+      </section>
+
+      <section class="adm-card">
+        <h2>Quiz Jobs</h2>
+        <button class="btn" id="btnRefresh">Refresh</button>
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead><tr><th>ID</th><th>Deck</th><th>Status</th><th>Items</th><th>Needs review</th><th>Created</th><th></th></tr></thead>
+            <tbody id="jobsBody"><tr><td colspan="7" class="adm-muted">Yuklanmoqda…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+<script>
+(function () {
+  const CSRF = '<%= csrfToken || "" %>';
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  // Demo canonical deck — admin panel'dan generate tugmasini sinash uchun
+  const DEMO_DECK = {
+    title: 'Fotosintez',
+    learningOutcomes: ['Fotosintez jarayonini tushuntirish'],
+    slides: [
+      { id: 's1', title: 'Kirish', speakerNotes: 'Fotosintez — yorug\'lik energiyasini kimyoviy energiyaga aylantiradi.', blocks: [{ type: 'text', content: { text: 'Xlorofill yashil pigment.' } }], citations: ['source:1'] },
+      { id: 's2', title: 'Bosqichlar', speakerNotes: 'Yorug\'lik va qorong\'u fazalar.', blocks: [], citations: [] },
+    ],
+  };
+
+  async function api(path, opts = {}) {
+    const res = await fetch(path, {
+      method: opts.method || 'GET',
+      headers: { 'content-type': 'application/json', 'x-csrf-token': CSRF },
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    return data;
+  }
+
+  async function loadJobs() {
+    try {
+      const { jobs } = await api('/api/admin/quiz-deck/jobs?limit=20');
+      $('jobsBody').innerHTML = jobs.map((j) => `
+        <tr>
+          <td>#${j.id}</td>
+          <td>#${j.deck_id}</td>
+          <td><span class="chip chip-${j.status === 'completed' ? 'ok' : j.status === 'failed' ? 'err' : 'warn'}">${esc(j.status)}</span></td>
+          <td>${j.item_count ?? '-'}</td>
+          <td>${j.needs_review ? '⚠' : '✓'}</td>
+          <td>${esc((j.created_at || '').slice(0, 19))}</td>
+          <td>${j.status === 'completed' && j.needs_review ? `<button class="btn btn-sm" onclick="approveJob(${j.id})">Approve</button>` : ''}</td>
+        </tr>`).join('') || '<tr><td colspan="7" class="adm-muted">Hozircha quiz job yo\u2018q</td></tr>';
+    } catch (e) { $('jobsBody').innerHTML = `<tr><td colspan="7" class="adm-muted">${esc(e.message)}</td></tr>`; }
+  }
+
+  window.approveJob = async function (id) {
+    try {
+      const r = await api(`/api/admin/quiz-deck/jobs/${id}/approve`, { method: 'POST', body: {} });
+      $('genStatus').textContent = r.approved ? `Job #${id} approved → item-bank` : 'Not approved';
+      loadJobs();
+    } catch (e) { alert(e.message); }
+  };
+
+  $('btnGenerate').addEventListener('click', async () => {
+    try {
+      const r = await api('/api/admin/quiz-deck/generate', { method: 'POST', body: { presentationId: Number($('fDeckId').value) || 1, versionId: 1, document: DEMO_DECK, total: Number($('fCount').value) || 10 } });
+      $('opStatus').textContent = r.cached
+        ? `Job #${r.jobId} cached ✓`
+        : `Job #${r.jobId} queued — ${r.blueprint.easy}/${r.blueprint.medium}/${r.blueprint.hard} blueprint ✓`;
+      loadJobs();
+    } catch (e) { $('opStatus').textContent = '✗ ' + e.message; }
+  });
+
+  $('btnRefresh').addEventListener('click', loadJobs);
+  loadJobs();
+})();
+</script>
+</body>
+</html>

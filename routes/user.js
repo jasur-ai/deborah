@@ -9,6 +9,7 @@ import { requireAuth } from '../middleware/auth.js';
 import { requireVip, isCurrentUserVip } from '../middleware/vip.js';
 import { DB_PATHS, GAME_SETTINGS, CARTOON_CHARS } from '../utils/constants.js';
 import { normalizeQuestion } from '../utils/helpers.js';
+import { getStudentAssignments } from '../src/modules/preflight/index.js';
 
 const router = Router();
 
@@ -79,6 +80,25 @@ router.get('/panel', async (req, res) => {
       error: err.message,
     });
   }
+});
+
+// ── Student Assignments (Prompt 28) ──
+router.get('/assignments', async (req, res) => {
+  const user = req.session.user;
+  let assignments = [];
+  try {
+    const userId = user?.id || null;
+    if (userId) {
+      assignments = await getStudentAssignments(userId);
+    }
+  } catch (err) {
+    console.error('Student assignments error:', err.message);
+  }
+  res.render('user/assignments', {
+    title: 'Mening Assessmentlarim',
+    assignments,
+    username: user?.username || '',
+  });
 });
 
 // ── Create Test Page ──

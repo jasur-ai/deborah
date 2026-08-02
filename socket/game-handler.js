@@ -9,7 +9,9 @@
  * - Leaderboard display
  * - Game end
  * 
- * 🔒 Security: Host events validate ownership via socket.data
+ * 🔒 Security: Host events validate ownership via socket.data + Firebase host grant
+ * 🔒 Rate limiting: Optional per-event throttling via rateLimiter.wrap()
+ * 🔒 Identity: HMAC-signed tickets + persistent host grants for reconnect
  */
 
 import { fb } from '../firebase/admin.js';
@@ -21,11 +23,29 @@ const VALID_CHAR_PATHS = new Set(CARTOON_CHARS.map(c => c.image));
 
 const activeTimers = new Map();
 
-export function setupSocketHandlers(io, socket) {
+export function setupSocketHandlers(io, socket, rateLimiter, identity) {
+  const rl = rateLimiter || null; // Optional rate limiter
+  const wrap = (event, handler) => rl ? rl.wrap(event, handler) : handler;
   const log = (...args) => console.log(`[Socket ${socket.id.slice(0, 8)}]`, ...args);
 
+  // ABAC ownership check — uses identity middleware + host grant
+  async function requireOwnership(code) {
+    if (identity && typeof identity.checkOwnership === 'function') {
+      const result = await identity.checkOwnership(socket, code);
+      if (!result.authorized) {
+        socket.emit('error', { message: result.reason || 'Siz bu o\'yinni boshqara olmaysiz' });
+        return false;
+      }
+      return true;
+    }
+    // Fallback: legacy socket.data check
+    if (socket.data.role === 'host' && socket.data.code === code) return true;
+    socket.emit('error', { message: 'Siz bu o\'yinni boshqara olmaysiz' });
+    return false;
+  }
+
   // ── HOST: Create game session ──
-  socket.on('host:create', async (data) => {
+  socket.on('host:create', wrap('host:create', async (data) => {
     try {
       const { testName, questions, settings, hostName } = data;
       let code = generateGameCode();
@@ -55,20 +75,27 @@ export function setupSocketHandlers(io, socket) {
 
       await fb.set(`game_sessions/${code}`, sessionData);
 
+      // Create persistent host grant for reconnect
+      let hostTicket = null;
+      if (identity && typeof identity.createHostGrant === 'function') {
+        const grant = await identity.createHostGrant(code, hostName || 'Host');
+        hostTicket = grant.ticket;
+      }
+
       socket.join(`game:${code}`);
       socket.data.code = code;
       socket.data.role = 'host';
 
       log(`Host created game: ${code}`);
-      socket.emit('host:created', { code, session: sessionData });
+      socket.emit('host:created', { code, session: sessionData, hostTicket });
     } catch (err) {
       log('Error creating game:', err.message);
       socket.emit('error', { message: 'Failed to create game session' });
     }
-  });
+  }));
 
   // ── PLAYER: Check if code exists ──
-  socket.on('player:checkCode', async (data) => {
+  socket.on('player:checkCode', wrap('player:checkCode', async (data) => {
     try {
       const { code } = data;
       const snap = await fb.get(`game_sessions/${code}`);
@@ -82,10 +109,10 @@ export function setupSocketHandlers(io, socket) {
     } catch (err) {
       socket.emit('code:checked', { exists: false });
     }
-  });
+  }));
 
   // ── PLAYER: Check if name is available ──
-  socket.on('player:checkName', async (data) => {
+  socket.on('player:checkName', wrap('player:checkName', async (data) => {
     try {
       const { code, name } = data;
       const snap = await fb.get(`game_sessions/${code}/players/${name}`);
@@ -93,10 +120,10 @@ export function setupSocketHandlers(io, socket) {
     } catch (err) {
       socket.emit('error', { message: 'Server xatoligi. Qayta urinib koring.' });
     }
-  });
+  }));
 
   // ── PLAYER: Rejoin session ──
-  socket.on('player:rejoin', async (data) => {
+  socket.on('player:rejoin', wrap('player:rejoin', async (data) => {
     try {
       const { code } = data;
       const snap = await fb.get(`game_sessions/${code}`);
@@ -116,16 +143,16 @@ export function setupSocketHandlers(io, socket) {
       const playersSnap = await fb.get(`game_sessions/${code}/players`);
       const players = playersSnap.val() || {};
       const playerList = Object.entries(players).map(([n, p]) => ({
-        name: n, emoji: p.emoji || '👤'
+        name: n, emoji: p.emoji || '\u{1F464}'
       }));
       socket.emit('players:update', { players: playerList });
     } catch (err) {
       log('Error rejoining:', err.message);
     }
-  });
+  }));
 
   // ── PLAYER: Join game (atomic name check) ──
-  socket.on('player:join', async (data) => {
+  socket.on('player:join', wrap('player:join', async (data) => {
     try {
       const { code, playerName, emoji } = data;
       const snap = await fb.get(`game_sessions/${code}`);
@@ -144,16 +171,16 @@ export function setupSocketHandlers(io, socket) {
         return socket.emit('error', { message: 'Noto\'g\'ri ism formati' });
       }
 
-      // 🛡️ Atomic-like name check: directly check the specific name, not the whole list
+      // Atomic-like name check: directly check the specific name, not the whole list
       const nameSnap = await fb.get(`game_sessions/${code}/players/${safeName}`);
       if (nameSnap.exists()) {
         return socket.emit('error', { message: 'Bu ism band. Boshqa ism tanlang' });
       }
 
-      // 🛡️ Validate emoji — only allow known character paths or single emoji characters
-      let safeEmoji = emoji || '👤';
+      // Validate emoji — only allow known character paths or single emoji characters
+      let safeEmoji = emoji || '\u{1F464}';
       if (!VALID_CHAR_PATHS.has(safeEmoji) && !/^\p{Extended_Pictographic}$/u.test(safeEmoji)) {
-        safeEmoji = '👤';
+        safeEmoji = '\u{1F464}';
       }
 
       await fb.set(`game_sessions/${code}/players/${safeName}`, {
@@ -170,7 +197,7 @@ export function setupSocketHandlers(io, socket) {
       const playersSnap = await fb.get(`game_sessions/${code}/players`);
       const players = playersSnap.val() || {};
       const playerList = Object.entries(players).map(([name, p]) => ({
-        name, emoji: p.emoji || '👤'
+        name, emoji: p.emoji || '\u{1F464}'
       }));
 
       io.to(`game:${code}`).emit('players:update', { players: playerList });
@@ -179,16 +206,15 @@ export function setupSocketHandlers(io, socket) {
       log('Error joining game:', err.message);
       socket.emit('error', { message: 'O\'yinga qo\'shilishda xatolik' });
     }
-  });
+  }));
 
   // ── HOST: Start game (ownership check) ──
-  socket.on('host:start', async (data) => {
+  socket.on('host:start', wrap('host:start', async (data) => {
     try {
       const { code } = data;
-      // 🔒 Ownership check
-      if (socket.data.role !== 'host' || socket.data.code !== code) {
-        return socket.emit('error', { message: 'Siz bu o\'yinni boshqara olmaysiz' });
-      }
+      // ABAC ownership check
+      const isOwner = await requireOwnership(code);
+      if (!isOwner) return;
 
       const snap = await fb.get(`game_sessions/${code}`);
       if (!snap.exists()) return;
@@ -204,16 +230,15 @@ export function setupSocketHandlers(io, socket) {
     } catch (err) {
       log('Error starting game:', err.message);
     }
-  });
+  }));
 
   // ── HOST: Next question (ownership check) ──
-  socket.on('host:next', async (data) => {
+  socket.on('host:next', wrap('host:next', async (data) => {
     try {
       const { code, currentIndex } = data;
-      // 🔒 Ownership check
-      if (socket.data.role !== 'host' || socket.data.code !== code) {
-        return socket.emit('error', { message: 'Siz bu o\'yinni boshqara olmaysiz' });
-      }
+      // ABAC ownership check
+      const isOwner = await requireOwnership(code);
+      if (!isOwner) return;
 
       const snap = await fb.get(`game_sessions/${code}`);
       if (!snap.exists()) return;
@@ -223,26 +248,127 @@ export function setupSocketHandlers(io, socket) {
       const nextIdx = currentIndex + 1;
 
       if (nextIdx >= questions.length) {
-        await endGame(io, fb, code);
+        await endGame(io, fb, code, identity);
       } else {
         await showQuestionPreview(io, fb, code, nextIdx, session);
       }
     } catch (err) {
       log('Error advancing question:', err.message);
     }
-  });
+  }));
 
-  // ── PLAYER: Submit answer ──
-  socket.on('player:answer', async (data) => {
+  // ── PLAYER: Submit answer (server-authoritative) ──
+  // SECURITY:
+  //   - Server calculates elapsed time (client timeMs is IGNORED)
+  //   - First answer is final (duplicates rejected via existence check)
+  //   - Late/stale epoch answers rejected
+  //   - Every answer gets a deterministic ACK
+  socket.on('player:answer', wrap('player:answer', async (data) => {
     try {
-      const { code, qIndex, optionIndex, timeMs } = data;
+      const { code, qIndex, optionIndex, idempotencyKey } = data;
       const playerName = socket.data.playerName;
       if (!playerName || !code) return;
 
-      await fb.set(`game_sessions/${code}/answers/${qIndex}/${playerName}`, {
-        option: optionIndex, time_ms: timeMs || 0,
+      // 1. Validate answer format
+      if (typeof optionIndex !== 'number' || optionIndex < 0) {
+        return socket.emit('answer:ack', {
+          status: 'rejected_invalid', qIndex,
+          serverTimeMs: 0,
+          reason: 'Noto\'g\'ri variant indeksi',
+        });
+      }
+
+      // 2. Epoch check: verify the question is currently active
+      const stateSnap = await fb.get(`game_sessions/${code}/state`);
+      if (!stateSnap.exists()) {
+        return socket.emit('answer:ack', {
+          status: 'rejected_epoch', qIndex,
+          serverTimeMs: 0,
+          reason: 'O\'yin sessiyasi topilmadi',
+        });
+      }
+      const state = stateSnap.val();
+      if (state.status !== 'question_active' || state.q_index !== qIndex) {
+        return socket.emit('answer:ack', {
+          status: 'rejected_epoch', qIndex,
+          serverTimeMs: 0,
+          reason: 'Bu savol uchun javob qabul qilinmaydi',
+        });
+      }
+
+      // 3. Server-authoritative time (ignore client timeMs)
+      const serverTimeMs = Math.max(0, Date.now() - (state.q_started_at || Date.now()));
+
+      // 4. Late check: reject if question time has expired
+      const sessionSnap = await fb.get(`game_sessions/${code}`);
+      if (!sessionSnap.exists()) return;
+      const session = sessionSnap.val();
+      const qTimeMs = (session.settings?.time_per_q || 20) * 1000;
+      if (serverTimeMs > qTimeMs + 1000) { // 1s grace period
+        return socket.emit('answer:ack', {
+          status: 'rejected_late', qIndex,
+          serverTimeMs,
+          reason: 'Vaqt tugagan',
+        });
+      }
+
+      // 5. Idempotency check: if this key was already accepted for this player, replay ACK
+      if (idempotencyKey) {
+        const myAnswerSnap = await fb.get(`game_sessions/${code}/answers/${qIndex}/${playerName}`);
+        const myAnswer = myAnswerSnap.val();
+        if (myAnswer && myAnswer.idempotencyKey === idempotencyKey) {
+          // Same key -> verify optionIndex matches (prevents inconsistent retry)
+          if (myAnswer.option !== optionIndex) {
+            return socket.emit('answer:ack', {
+              status: 'rejected_invalid', qIndex,
+              serverTimeMs: 0,
+              reason: 'Bu idempotencyKey bilan boshqa variant saqlangan',
+            });
+          }
+          // Same key + same option -> return the same ACK (safe retry on network loss)
+          return socket.emit('answer:ack', {
+            status: 'accepted', qIndex,
+            serverTimeMs: myAnswer.server_time_ms || serverTimeMs,
+            idempotencyKey,
+          });
+        }
+      }
+
+      // 6. Duplicate check: first answer is final (also catches diff key from same player)
+      const existingSnap = await fb.get(`game_sessions/${code}/answers/${qIndex}/${playerName}`);
+      if (existingSnap.exists()) {
+        return socket.emit('answer:ack', {
+          status: 'rejected_duplicate', qIndex,
+          serverTimeMs,
+          reason: 'Javob allaqachon qabul qilingan',
+        });
+      }
+
+      // 7. Server-authoritative write: store the answer
+      const answerPayload = {
+        option: optionIndex,
+        server_time_ms: serverTimeMs,  // Server time, not client timeMs
+        idempotencyKey: idempotencyKey || '',
+        accepted_at: Date.now(),
+      };
+
+      await fb.set(`game_sessions/${code}/answers/${qIndex}/${playerName}`, answerPayload);
+
+      // 8. Verify write integrity: re-read and confirm no race condition
+      const verifySnap = await fb.get(`game_sessions/${code}/answers/${qIndex}/${playerName}`);
+      const written = verifySnap.val();
+      if (written && written.server_time_ms !== answerPayload.server_time_ms) {
+        console.warn(`[RACE] Answer overwrite detected: ${playerName}@q${qIndex} in ${code}`);
+      }
+
+      // 9. Send ACK to the answering player
+      socket.emit('answer:ack', {
+        status: 'accepted', qIndex,
+        serverTimeMs,
+        idempotencyKey: idempotencyKey || '',
       });
 
+      // 10. Broadcast answer count to all players
       const ansSnap = await fb.get(`game_sessions/${code}/answers/${qIndex}`);
       const answers = ansSnap.val() || {};
       const answerCount = Object.keys(answers).length;
@@ -255,8 +381,6 @@ export function setupSocketHandlers(io, socket) {
       });
 
       // Auto-advance if all answered
-      const sessionSnap = await fb.get(`game_sessions/${code}`);
-      const session = sessionSnap.val();
       if (session?.settings?.auto !== false && answerCount >= totalPlayers) {
         const timers = activeTimers.get(code);
         if (timers?.autoNext) clearTimeout(timers.autoNext);
@@ -267,17 +391,21 @@ export function setupSocketHandlers(io, socket) {
       }
     } catch (err) {
       log('Error submitting answer:', err.message);
+      socket.emit('answer:ack', {
+        status: 'rejected_invalid', qIndex: data?.qIndex ?? -1,
+        serverTimeMs: 0,
+        reason: 'Server xatoligi',
+      });
     }
-  });
+  }));
 
   // ── HOST: Force next (ownership check) ──
-  socket.on('host:forceNext', async (data) => {
+  socket.on('host:forceNext', wrap('host:forceNext', async (data) => {
     try {
       const { code } = data;
-      // 🔒 Ownership check
-      if (socket.data.role !== 'host' || socket.data.code !== code) {
-        return socket.emit('error', { message: 'Siz bu o\'yinni boshqara olmaysiz' });
-      }
+      // ABAC ownership check
+      const isOwner = await requireOwnership(code);
+      if (!isOwner) return;
 
       const timers = activeTimers.get(code);
       if (timers) {
@@ -288,16 +416,15 @@ export function setupSocketHandlers(io, socket) {
     } catch (err) {
       log('Error force next:', err.message);
     }
-  });
+  }));
 
   // ── HOST: End game (ownership check) ──
-  socket.on('host:end', async (data) => {
+  socket.on('host:end', wrap('host:end', async (data) => {
     try {
       const { code } = data;
-      // 🔒 Ownership check
-      if (socket.data.role !== 'host' || socket.data.code !== code) {
-        return socket.emit('error', { message: 'Siz bu o\'yinni boshqara olmaysiz' });
-      }
+      // ABAC ownership check
+      const isOwner = await requireOwnership(code);
+      if (!isOwner) return;
 
       const timers = activeTimers.get(code);
       if (timers) {
@@ -312,41 +439,132 @@ export function setupSocketHandlers(io, socket) {
           await computeScoresAndShowLB(io, fb, code, state.q_index || 0);
         }
       }
-      await endGame(io, fb, code);
+      await endGame(io, fb, code, identity);
     } catch (err) {
       log('Error ending game:', err.message);
     }
-  });
+  }));
 
   // ── ARENA: Watch game state ──
-  socket.on('arena:watch', async (data) => {
+  socket.on('arena:watch', wrap('arena:watch', async (data) => {
     try {
       const { code } = data;
       if (!code) return;
       
-      socket.join(`game:${code}`);
+      // Mark socket as watcher (read-only)
+      socket.data.role = 'watcher';
       
-      // Send current state immediately
+      // Don't join game:code room — watchers get sanitized events
+      // Instead, join a separate watcher room
+      socket.join(`watch:${code}`);
+      
+      // Send sanitized state (no answer key, no question details)
       const snap = await fb.get(`game_sessions/${code}/state`);
       if (snap.exists()) {
-        socket.emit('arena:stateUpdate', { state: snap.val() });
+        const raw = snap.val();
+        // Public watchers only get: status, q_count, player_count, time
+        socket.emit('arena:stateUpdate', {
+          state: {
+            status: raw.status,
+            q_index: raw.q_index,
+            q_time: raw.q_time,
+            q_started_at: raw.q_started_at,
+            // EXCLUDED: q_text, q_options, q_correct, q_is_double
+            // EXCLUDED: leaderboard (player names)
+          },
+        });
+      }
+      
+      // Send player count
+      const playersSnap = await fb.get(`game_sessions/${code}/players`);
+      if (playersSnap.exists()) {
+        const playerCount = Object.keys(playersSnap.val()).length;
+        socket.emit('arena:playerCount', { count: playerCount });
       }
     } catch (err) {
       log('Arena watch error:', err.message);
     }
-  });
+  }));
 
-  // ── ARENA: Bot answer (simulated player) ──
-  socket.on('arena:botAnswer', async (data) => {
+  // ── ARENA: Bot answer (simulated player, same security checks as player:answer) ──
+  // SECURITY: Same invariants as player:answer — epoch, duplicate, late checks
+  socket.on('arena:botAnswer', wrap('arena:botAnswer', async (data) => {
     try {
-      const { code, qIndex, playerName, optionIndex, timeMs } = data;
+      const { code, qIndex, playerName, optionIndex } = data;
       if (!code || !playerName) return;
-      // Validate socket is watching this game
-      if (!socket.rooms?.has(`game:${code}`)) return;
+      // Owner-only: only the host can add bot answers
+      const isOwner = await requireOwnership(code);
+      if (!isOwner) return;
 
-      // Write answer to Firebase
-      await fb.set(`game_sessions/${code}/answers/${qIndex}/${playerName}`, {
-        option: optionIndex, time_ms: timeMs || 0,
+      // 1. Validate answer format
+      if (typeof optionIndex !== 'number' || optionIndex < 0) {
+        return socket.emit('arena:botAck', {
+          status: 'rejected_invalid', qIndex, playerName,
+          reason: 'Noto\'g\'ri variant indeksi',
+        });
+      }
+
+      // 2. Epoch check: verify the question is currently active
+      const stateSnap = await fb.get(`game_sessions/${code}/state`);
+      if (!stateSnap.exists()) {
+        return socket.emit('arena:botAck', {
+          status: 'rejected_epoch', qIndex, playerName,
+          reason: 'O\'yin sessiyasi topilmadi',
+        });
+      }
+      const state = stateSnap.val();
+      if (state.status !== 'question_active' || state.q_index !== qIndex) {
+        return socket.emit('arena:botAck', {
+          status: 'rejected_epoch', qIndex, playerName,
+          reason: 'Bu savol uchun javob qabul qilinmaydi',
+        });
+      }
+
+      // 3. Server-authoritative time
+      const serverTimeMs = Math.max(0, Date.now() - (state.q_started_at || Date.now()));
+
+      // 4. Late check
+      const sessionSnap = await fb.get(`game_sessions/${code}`);
+      if (!sessionSnap.exists()) return;
+      const session = sessionSnap.val();
+      const qTimeMs = (session.settings?.time_per_q || 20) * 1000;
+      if (serverTimeMs > qTimeMs + 1000) {
+        return socket.emit('arena:botAck', {
+          status: 'rejected_late', qIndex, playerName,
+          serverTimeMs,
+          reason: 'Vaqt tugagan',
+        });
+      }
+
+      // 5. Duplicate check: first answer is final
+      const existingSnap = await fb.get(`game_sessions/${code}/answers/${qIndex}/${playerName}`);
+      if (existingSnap.exists()) {
+        return socket.emit('arena:botAck', {
+          status: 'rejected_duplicate', qIndex, playerName,
+          serverTimeMs,
+          reason: 'Javob allaqachon qabul qilingan',
+        });
+      }
+
+      // 6. Server-authoritative write
+      const answerPayload = {
+        option: optionIndex,
+        server_time_ms: serverTimeMs,
+        accepted_at: Date.now(),
+      };
+      await fb.set(`game_sessions/${code}/answers/${qIndex}/${playerName}`, answerPayload);
+
+      // 7. Verify write integrity
+      const verifySnap = await fb.get(`game_sessions/${code}/answers/${qIndex}/${playerName}`);
+      const written = verifySnap.val();
+      if (written && written.server_time_ms !== answerPayload.server_time_ms) {
+        console.warn(`[RACE] Bot answer overwrite: ${playerName}@q${qIndex} in ${code}`);
+      }
+
+      // 8. Send ACK
+      socket.emit('arena:botAck', {
+        status: 'accepted', qIndex, playerName,
+        serverTimeMs,
       });
 
       // Count answers and broadcast
@@ -357,14 +575,11 @@ export function setupSocketHandlers(io, socket) {
       const playersSnap = await fb.get(`game_sessions/${code}/players`);
       const totalPlayers = Object.keys(playersSnap.val() || {}).length;
 
-      // Emit to all players in the game (host sees real-time count)
       io.to(`game:${code}`).emit('answer:count', {
         answered: answerCount, total: totalPlayers,
       });
 
       // Auto-advance if all answered
-      const sessionSnap = await fb.get(`game_sessions/${code}`);
-      const session = sessionSnap.val();
       if (session?.settings?.auto !== false && answerCount >= totalPlayers) {
         const timers = activeTimers.get(code);
         if (timers?.autoNext) clearTimeout(timers.autoNext);
@@ -375,16 +590,27 @@ export function setupSocketHandlers(io, socket) {
       }
     } catch (err) {
       log('Arena bot answer error:', err.message);
+      socket.emit('arena:botAck', {
+        status: 'rejected_invalid',
+        qIndex: data?.qIndex ?? -1,
+        playerName: data?.playerName ?? '',
+        reason: 'Server xatoligi',
+      });
     }
-  });
+  }));
 
   // ── ARENA: Leave ──
   socket.on('arena:leave', (data) => {
     const { code } = data;
-    if (code) socket.leave(`game:${code}`);
+    if (code) {
+      socket.leave(`game:${code}`);
+      socket.leave(`watch:${code}`);
+    }
   });
 
   // ── Disconnect ──
+  // SECURITY: research.md 16.2 — disconnect playerni o'chirmasin, presence false qiladi
+  // Answers are NEVER deleted on disconnect — they survive network interruptions
   socket.on('disconnect', async () => {
     const code = socket.data.code;
     const role = socket.data.role;
@@ -392,29 +618,32 @@ export function setupSocketHandlers(io, socket) {
 
     if (code && role === 'player') {
       try {
-        await fb.remove(`game_sessions/${code}/players/${playerName}`);
-        const answersSnap = await fb.get(`game_sessions/${code}/answers`);
-        if (answersSnap.exists()) {
-          const answers = answersSnap.val();
-          Object.keys(answers).forEach(qIdx => {
-            if (answers[qIdx][playerName]) {
-              fb.remove(`game_sessions/${code}/answers/${qIdx}/${playerName}`);
-            }
-          });
-        }
+        // Set presence to offline (DO NOT delete player or answers!)
+        await fb.set(`game_sessions/${code}/players/${playerName}/presence`, 'offline');
+        await fb.set(`game_sessions/${code}/players/${playerName}/last_seen`, Date.now());
+
+        // Notify room about presence change
+        io.to(`game:${code}`).emit('player:presence', {
+          playerName,
+          presence: 'offline',
+        });
+
+        // Refresh player list for lobby/leaderboard (backward compatibility)
         const playersSnap = await fb.get(`game_sessions/${code}/players`);
         const players = playersSnap.val() || {};
         const playerList = Object.entries(players).map(([n, p]) => ({
-          name: n, emoji: p.emoji || '👤'
+          name: n, emoji: p.emoji || '\u{1F464}', presence: p.presence || 'online',
         }));
         io.to(`game:${code}`).emit('players:update', { players: playerList });
+
+        log(`Player ${playerName} went offline in ${code}`);
       } catch (err) {
-        log('Error cleaning up disconnected player:', err.message);
+        log('Error handling player disconnect:', err.message);
       }
     }
 
     if (code && role === 'host') {
-      // 🧹 Clean up timers on host disconnect
+      // Clean up timers on host disconnect
       const timers = activeTimers.get(code);
       if (timers) {
         Object.values(timers).forEach(t => clearTimeout(t));
@@ -427,7 +656,25 @@ export function setupSocketHandlers(io, socket) {
   });
 }
 
-// ── Helper: Show question preview ──
+// ── Helper: Read private correct answer (Prompt 05 — answer-key separated) ──
+async function getPrivateCorrect(fb, code, idx) {
+  // 1. Try new private path
+  try {
+    const snap = await fb.get(`game_sessions/${code}/private/q_${idx}_correct`);
+    if (snap.exists()) return snap.val();
+  } catch (_) {}
+  // 2. Fallback to legacy session.questions (in-flight games from before Prompt 05)
+  try {
+    const sessionSnap = await fb.get(`game_sessions/${code}`);
+    if (sessionSnap.exists()) {
+      const q = (sessionSnap.val()?.questions || [])[idx];
+      if (q && typeof q.correct === 'number') return q.correct;
+    }
+  } catch (_) {}
+  return null;
+}
+
+// ── Helper: Show question preview (public DTO — no answer key) ──
 async function showQuestionPreview(io, fb, code, idx, session) {
   const questions = session.questions || [];
   const q = questions[idx];
@@ -435,16 +682,19 @@ async function showQuestionPreview(io, fb, code, idx, session) {
 
   const qTime = session.settings?.time_per_q || GAME_SETTINGS.DEFAULT_TIME;
 
+  // Store public state WITHOUT correct answer — answer key is kept server-side only
   await fb.set(`game_sessions/${code}/state`, {
     status: 'question_preview',
     q_index: idx,
     q_text: q.text || '',
     q_options: q.options || [],
-    q_correct: q.correct,
     q_is_double: !!q.is_double,
     q_time: qTime,
     q_started_at: 0,
   });
+
+  // Store the correct answer in a PRIVATE path (never sent to clients)
+  await fb.set(`game_sessions/${code}/private/q_${idx}_correct`, q.correct);
 
   io.to(`game:${code}`).emit('game:questionPreview', {
     qIndex: idx,
@@ -461,7 +711,7 @@ async function showQuestionPreview(io, fb, code, idx, session) {
   activeTimers.set(code, timers);
 }
 
-// ── Helper: Activate question ──
+// ── Helper: Activate question (public DTO — no answer key) ──
 async function activateQuestion(io, fb, code, idx, q, qTime) {
   const now = Date.now();
 
@@ -470,9 +720,10 @@ async function activateQuestion(io, fb, code, idx, q, qTime) {
     q_started_at: now,
   });
 
+  // SECURITY: qCorrect is NEVER sent to clients — answer key is server-side only
   io.to(`game:${code}`).emit('game:questionActive', {
     qIndex: idx, qText: q.text, qOptions: q.options,
-    qCorrect: q.correct, qIsDouble: !!q.is_double,
+    qIsDouble: !!q.is_double,
     qTime: qTime, startedAt: now,
   });
 
@@ -500,6 +751,9 @@ async function computeScoresAndShowLB(io, fb, code, qIdx) {
     const q = questions[qIdx];
     if (!q) return;
 
+    // Read the correct answer from the PRIVATE path (not from client-visible state)
+    const correctAnswer = await getPrivateCorrect(fb, code, qIdx);
+
     const answersSnap = await fb.get(`game_sessions/${code}/answers/${qIdx}`);
     const answers = answersSnap.val() || {};
     const playersSnap = await fb.get(`game_sessions/${code}/players`);
@@ -509,8 +763,9 @@ async function computeScoresAndShowLB(io, fb, code, qIdx) {
     const qTimeMs = (session.settings?.time_per_q || 20) * 1000;
 
     for (const [pname, ans] of Object.entries(answers)) {
-      const isCorrect = ans.option === q.correct;
-      const elapsed = ans.time_ms || 0;
+      // Use server-calculated time (server_time_ms), not client timeMs
+      const elapsed = typeof ans.server_time_ms === 'number' ? ans.server_time_ms : (ans.time_ms || 0);
+      const isCorrect = ans.option === correctAnswer;
 
       const curTime = players[pname]?.totalTime || 0;
       const newTime = curTime + elapsed;
@@ -542,14 +797,31 @@ async function computeScoresAndShowLB(io, fb, code, qIdx) {
       autoNext: session.settings?.auto !== false,
       autoDelay: GAME_SETTINGS.AUTO_LB_DELAY,
     });
+
+    // Emit answer reveal with correct answer (only once per question, after scoring)
+    const totalAnswered = Object.keys(answers).length;
+    const totalCorrect = Object.values(answers).filter(a => a.option === correctAnswer).length;
+    io.to(`game:${code}`).emit('game:answerReveal', {
+      qIndex: qIdx,
+      correctOptionIndex: correctAnswer,
+      correctText: (q.options || [])[correctAnswer] || '',
+      stats: {
+        total: Object.keys(players).length,
+        answered: totalAnswered,
+        correct: totalCorrect,
+        incorrect: totalAnswered - totalCorrect,
+      },
+    });
+    // Mark as revealed to prevent double-fire on forceNext/end calls
+    await fb.set(`game_sessions/${code}/state/q_${qIdx}_revealed`, true);
   } catch (err) {
     console.error('Score computation error:', err.message);
   }
 }
 
 // ── Helper: End game ──
-async function endGame(io, fb, code) {
-  // 🧹 Clean up all timers for this game
+async function endGame(io, fb, code, identity) {
+  // Clean up all timers for this game
   const timers = activeTimers.get(code);
   if (timers) {
     Object.values(timers).forEach(t => clearTimeout(t));
@@ -564,6 +836,11 @@ async function endGame(io, fb, code) {
 
     const sessionSnap = await fb.get(`game_sessions/${code}`);
     const session = sessionSnap.val();
+
+    // Revoke host grant on game end
+    if (identity && typeof identity.revokeHostGrant === 'function') {
+      await identity.revokeHostGrant(code);
+    }
 
     await fb.set(`results/${code}`, {
       test_name: session?.test_name || 'Test',
@@ -584,10 +861,9 @@ async function endGame(io, fb, code) {
       top7,
     });
 
-    // 🧹 Schedule cleanup with TTL (5 minutes)
+    // Schedule cleanup with TTL (5 minutes)
     setTimeout(async () => {
       try {
-        // Also delete answers to free space
         await fb.remove(`game_sessions/${code}/answers`);
         await fb.remove(`game_sessions/${code}`);
         log(`Session ${code} cleaned up (TTL expired)`);
@@ -598,7 +874,7 @@ async function endGame(io, fb, code) {
   }
 }
 
-// ── 🧹 Periodic cleanup of expired sessions ──
+// ── Periodic cleanup of expired sessions ──
 // Runs every 60 seconds and cleans up stale game sessions
 const CLEANUP_INTERVAL = 60 * 1000;
 setInterval(async () => {
@@ -614,21 +890,22 @@ setInterval(async () => {
       // Clean up sessions older than 1 hour
       const created = session.created_at || 0;
       if (now - created > 60 * 60 * 1000) {
-        // Clean up timers
         const timers = activeTimers.get(code);
         if (timers) {
           Object.values(timers).forEach(t => clearTimeout(t));
           activeTimers.delete(code);
         }
+        // Also revoke host grant during cleanup
         await fb.remove(`game_sessions/${code}/answers`);
         await fb.remove(`game_sessions/${code}`);
+        await fb.remove(`game_sessions/${code}/host_grant`);
         cleaned++;
       }
     }
     if (cleaned > 0) {
-      console.log(`🧹 Session cleanup: ${cleaned} expired session(s) removed`);
+      console.log(`Session cleanup: ${cleaned} expired session(s) removed`);
     }
   } catch (_) {}
 }, CLEANUP_INTERVAL);
 
-console.log('   🧹 Periodic session cleanup active (every 60s)');
+console.log('   Periodic session cleanup active (every 60s)');

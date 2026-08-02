@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <%- include('../partials/head') %>
+  <style>
+    body{background:var(--bg-primary);min-height:100vh;transition:background .3s;}
+    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 55% 40% at 15% 20%,rgba(37,99,235,.1) 0%,transparent 65%),radial-gradient(ellipse 45% 35% at 85% 75%,rgba(56,189,248,.07) 0%,transparent 65%);}
+    .navbar{position:sticky;top:0;z-index:100;background:var(--bg-overlay);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;transition:background .3s,border-color .3s;}
+    .nav-logo{font-family:'Righteous',cursive;font-size:1.25rem;text-decoration:none;display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .nav-right{display:flex;align-items:center;gap:8px;}
+    .nav-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:900;color:#fff;}
+    .nav-btn{padding:7px 12px;border-radius:9px;border:1px solid var(--border);background:var(--bg-surface);color:var(--muted);font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:800;cursor:pointer;text-decoration:none;transition:all .2s;display:flex;align-items:center;gap:5px;}
+    .nav-btn:hover{background:var(--bg-elevated);color:var(--text);}
+    .nav-btn.danger:hover{background:rgba(37,99,235,.15);color:var(--accent);border-color:rgba(37,99,235,.3);}
+    .panel{max-width:860px;margin:0 auto;padding:24px 20px 80px;position:relative;z-index:1;}
+    .greeting{font-family:'Righteous',cursive;font-size:1.5rem;display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+    .greeting-sub{font-size:.82rem;color:var(--muted);font-weight:700;margin-bottom:18px;}
+    .sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+    .sec-title{font-family:'Righteous',cursive;font-size:1.15rem;display:flex;align-items:center;gap:8px;}
+    .cnt-badge{background:var(--accent);color:#fff;font-size:.65rem;padding:2px 8px;border-radius:50px;font-weight:900;}
+    .empty-state{text-align:center;padding:36px 20px;color:var(--muted);font-size:.84rem;font-weight:700;background:var(--bg-surface);border-radius:14px;border:1px dashed var(--border);}
+    .assign-card{background:var(--card);border-radius:16px;padding:16px 18px;margin-bottom:12px;border:1px solid var(--border);transition:border-color .3s,transform .2s,box-shadow .3s;}
+    .assign-card:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:var(--shadow-md);}
+    .assign-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+    .assign-name{font-weight:900;font-size:1rem;display:flex;align-items:center;gap:8px;}
+    .assign-status{font-size:.62rem;font-weight:800;border-radius:50px;padding:3px 10px;text-transform:uppercase;letter-spacing:.4px;}
+    .st-scheduled{background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.25);color:var(--blue);}
+    .st-published{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);color:var(--green);}
+    .st-cancelled,.st-draft{background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted);}
+    .av-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+    .av-chip{display:flex;align-items:center;gap:6px;font-size:.72rem;font-weight:800;background:var(--bg-surface);border:1px solid var(--border);border-radius:50px;padding:5px 12px;color:var(--muted);}
+    .av-chip.open{color:var(--green);border-color:rgba(0,229,160,.3);background:rgba(0,229,160,.08);}
+    .av-chip.not_started{color:var(--gold);border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.08);}
+    .av-chip.closed,.av-chip.unscheduled{color:var(--accent);border-color:rgba(248,113,113,.3);background:rgba(248,113,113,.08);}
+    .assign-actions{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;}
+    .act-btn{border-radius:10px;border:none;padding:9px 16px;cursor:pointer;transition:all .3s ease;font-family:'Nunito',sans-serif;font-weight:900;font-size:.8rem;display:flex;align-items:center;gap:5px;}
+    .act-brief{background:var(--bg-elevated);border:1px solid var(--border);color:var(--blue);}
+    .act-brief:hover{background:var(--accent);color:#fff;}
+    .act-preflight{background:linear-gradient(135deg,var(--accent),#1d4ed8);color:#fff;}
+    .act-preflight:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+    .act-preflight:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
+    .act-ready{background:linear-gradient(135deg,var(--green),#1d9bcf);color:#000;}
+    .act-ready:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+
+    .pf-result{margin-top:14px;border-radius:14px;padding:14px 16px;border:1px solid var(--border);background:var(--bg-surface);animation:slideDown .3s ease;}
+    .pf-eligible{display:flex;align-items:center;gap:10px;font-weight:900;font-size:.9rem;margin-bottom:8px;}
+    .pf-eligible.ok{color:var(--green);}
+    .pf-eligible.blocked{color:var(--accent);}
+    .blocker{display:flex;align-items:center;gap:8px;font-size:.78rem;font-weight:700;color:var(--muted);padding:5px 0;border-bottom:1px dashed var(--border);}
+    .blocker:last-child{border-bottom:none;}
+    .blocker .bx{color:var(--accent);flex-shrink:0;}
+    .warn{display:flex;align-items:center;gap:8px;font-size:.74rem;font-weight:700;color:var(--gold);padding:4px 0;}
+    .spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;display:inline-block;animation:spin .7s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+    .brief-modal{position:fixed;inset:0;z-index:500;display:none;align-items:center;justify-content:center;padding:20px;background:var(--bg-overlay);backdrop-filter:blur(8px);}
+    .brief-modal.open{display:flex;}
+    .brief-box{background:var(--card);border-radius:22px;padding:26px;width:100%;max-width:560px;border:1px solid var(--border);box-shadow:var(--shadow-xl);max-height:88vh;overflow-y:auto;}
+    .brief-title{font-family:'Righteous',cursive;font-size:1.2rem;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+    .brief-sub{color:var(--muted);font-size:.8rem;margin-bottom:16px;font-weight:700;}
+    .brief-sec{margin-bottom:14px;}
+    .brief-sec-h{font-size:.72rem;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+    .brief-item{font-size:.82rem;font-weight:700;color:var(--text);background:var(--bg-surface);border:1px solid var(--border);border-radius:9px;padding:7px 11px;margin-bottom:5px;}
+    .brief-chip{display:inline-flex;align-items:center;gap:5px;font-size:.68rem;font-weight:800;background:var(--bg-elevated);border:1px solid var(--border);border-radius:50px;padding:3px 10px;margin:0 5px 5px 0;color:var(--muted);}
+    .modal-actions{display:flex;gap:8px;margin-top:16px;}
+    .modal-btn{flex:1;border:none;border-radius:10px;padding:12px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:900;cursor:pointer;transition:all .3s ease;}
+    .modal-btn-secondary{background:var(--bg-surface);color:var(--muted);}
+    .modal-btn-secondary:hover{background:var(--bg-elevated);color:var(--text);}
+    .modal-btn-primary{background:linear-gradient(135deg,var(--accent),#1d4ed8);color:#fff;}
+    .modal-btn-primary:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+    @media(max-width:600px){.assign-top{flex-direction:column;}.assign-actions{width:100%;}.act-btn{flex:1;justify-content:center;}}
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="nav-logo"><img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto"></a>
+    <div class="nav-right">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="nav-av"><%= (username || 'U')[0].toUpperCase() %></div>
+      </div>
+      <a href="/user/panel" class="nav-btn" style="text-decoration:none"><%- icon('book', 14) %> Panel</a>
+      <button type="button" class="nav-btn" data-theme-toggle title="Light mode"><%- icon('moon', 16) %></button>
+      <a href="/user/logout" class="nav-btn danger" style="text-decoration:none"><%- icon('logOut', 14) %> Chiqish</a>
+    </div>
+  </nav>
+
+  <div class="panel">
+    <div class="greeting"><img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:26px;width:auto"> Mening Assessmentlarim</div>
+    <div class="greeting-sub">Faqat sizga tayinlangan assessmentlar — boshlashdan oldin preflight tekshiruvidan o'ting.</div>
+
+    <div class="sec-hd">
+      <div class="sec-title"><%- icon('layers', 18) %> Tayinlanganlar <span class="cnt-badge"><%= assignments.length %></span></div>
+      <button type="button" class="act-btn act-preflight" onclick="refreshAll()" style="padding:8px 14px;font-size:.75rem"><%- icon('refresh', 13) %> Yangilash</button>
+    </div>
+
+    <div id="list">
+      <% if (assignments.length === 0) { %>
+        <div class="empty-state"><div style="font-size:2.2rem;margin-bottom:8px"><%- icon('clipboard', 40) %></div>Sizga hali assessment tayinlanmagan.</div>
+      <% } else { %>
+        <% assignments.forEach(a => { %>
+          <div class="assign-card" data-id="<%= a.assignment_id %>" id="card-<%= a.assignment_id %>">
+            <div class="assign-top">
+              <div class="assign-name">
+                <%- icon('edit', 16) %> <%= a.title %>
+                <span class="assign-status st-<%= a.status %>"><%= a.status %></span>
+              </div>
+            </div>
+            <div class="av-row">
+              <span class="av-chip <%= a.availability.status %>">
+                <%- icon(a.availability.status === 'open' ? 'check' : 'clock', 13) %>
+                <%= avLabel(a.availability) %>
+              </span>
+              <% if (a.availability.window.start) { %>
+                <span class="av-chip"><%- icon('calendar', 13) %> <%= fmtDate(a.availability.window.start) %></span>
+              <% } %>
+              <% if (a.availability.window.end) { %>
+                <span class="av-chip"><%- icon('clock', 13) %> tugaydi: <%= fmtDate(a.availability.window.end) %></span>
+              <% } %>
+            </div>
+            <div class="assign-actions">
+              <button type="button" class="act-btn act-brief" onclick="openBrief(<%= a.assignment_id %>)"><%- icon('fileText', 14) %> Brief</button>
+              <button type="button" class="act-btn act-preflight" onclick="runPreflight(<%= a.assignment_id %>)" data-pf id="pf-btn-<%= a.assignment_id %>">
+                <%- icon('shieldCheck', 14) %> <span>Preflight</span>
+              </button>
+            </div>
+            <div class="pf-result" id="pf-result-<%= a.assignment_id %>" style="display:none"></div>
+          </div>
+        <% }); %>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Brief Modal -->
+  <div class="brief-modal" id="brief-modal" onclick="if(event.target===this)closeBrief()">
+    <div class="brief-box">
+      <div class="brief-title"><%- icon('fileText', 20) %> <span id="brief-modal-title">Brief</span></div>
+      <div class="brief-sub" id="brief-modal-sub">Yuklanmoqda...</div>
+      <div id="brief-modal-body"></div>
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-secondary" onclick="closeBrief()">Yopish</button>
+        <button class="modal-btn modal-btn-primary" id="brief-start-btn" onclick="runPreflightFromBrief()" style="display:none">Preflight</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const AV_LABELS = {
+      open: 'Ochiq',
+      not_started: 'Hali boshlanmagan',
+      closed: 'Yopilgan',
+      unscheduled: 'Vaqti belgilanmagan'
+    };
+
+    function fmtDate(iso) {
+      if (!iso) return '';
+      return new Date(iso).toLocaleString('uz-UZ', { dateStyle: 'short', timeStyle: 'short' });
+    }
+    function avLabel(av) { return AV_LABELS[av.status] || av.status; }
+
+    // ── Brief ──
+    let briefAssignmentId = null;
+    async function openBrief(assignmentId) {
+      briefAssignmentId = assignmentId;
+      document.getElementById('brief-modal').classList.add('open');
+      document.getElementById('brief-modal-title').textContent = 'Brief yuklanmoqda...';
+      document.getElementById('brief-modal-sub').textContent = '';
+      document.getElementById('brief-modal-body').innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted)">Yuklanmoqda...</div>';
+      document.getElementById('brief-start-btn').style.display = 'none';
+      try {
+        const res = await fetch('/api/student/assignments/' + assignmentId + '/brief');
+        if (!res.ok) throw new Error((await res.json()).error || 'Brief topilmadi');
+        const data = await res.json();
+        document.getElementById('brief-modal-title').textContent = data.assignment.title;
+        document.getElementById('brief-modal-sub').textContent = 'Brief versiya ' + (data.brief.version || '—') + ' · Siyosat versiya ' + (data.policy.version || '—');
+        const bc = data.brief.sanitized_content || {};
+        let html = '';
+        if ((bc.learning_outcomes || []).length) {
+          html += '<div class="brief-sec"><div class="brief-sec-h">O\'quv natijalari</div>' + bc.learning_outcomes.map(lo => '<div class="brief-item">' + esc(lo) + '</div>').join('') + '</div>';
+        }
+        if (bc.duration_minutes != null) html += '<div class="brief-sec"><div class="brief-sec-h">Davomiylik</div><div class="brief-item">' + bc.duration_minutes + ' daqiqa</div></div>';
+        if (bc.submission_format) html += '<div class="brief-sec"><div class="brief-sec-h">Topshirish formati</div><div class="brief-item">' + esc(bc.submission_format) + '</div></div>';
+        if ((bc.materials || []).length) html += '<div class="brief-sec"><div class="brief-sec-h">Materiallar</div>' + bc.materials.map(m => '<span class="brief-chip">' + esc(m) + '</span>').join('') + '</div>';
+        const pol = data.policy.security || {};
+        const polChips = [];
+        if (pol.allow_camera === false) polChips.push('Kamera talab');
+        if (pol.require_seb === true) polChips.push('SEB talab');
+        if (pol.max_strikes != null) polChips.push('Max ' + pol.max_strikes + ' ogohlantirish');
+        if (polChips.length) html += '<div class="brief-sec"><div class="brief-sec-h">Talablar</div>' + polChips.map(c => '<span class="brief-chip">' + c + '</span>').join('') + '</div>';
+        if (!html) html = '<div class="empty-state">Brief kontenti mavjud emas</div>';
+        document.getElementById('brief-modal-body').innerHTML = html;
+        document.getElementById('brief-start-btn').style.display = 'block';
+      } catch (e) {
+        document.getElementById('brief-modal-body').innerHTML = '<div class="empty-state">' + esc(e.message) + '</div>';
+        document.getElementById('brief-modal-sub').textContent = '';
+      }
+    }
+    function closeBrief() { document.getElementById('brief-modal').classList.remove('open'); briefAssignmentId = null; }
+    function runPreflightFromBrief() { if (briefAssignmentId) { closeBrief(); runPreflight(briefAssignmentId); } }
+
+    // ── Preflight ──
+    function detectClient() {
+      const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection || {};
+      return {
+        userAgent: navigator.userAgent,
+        screenWidth: window.screen ? window.screen.width : 0,
+        screenHeight: window.screen ? window.screen.height : 0,
+        online: navigator.onLine,
+        connectionType: conn.effectiveType || null,
+        connectionDownlink: conn.downlink != null ? conn.downlink : 0
+      };
+    }
+
+    async function runPreflight(assignmentId) {
+      const btn = document.getElementById('pf-btn-' + assignmentId);
+      const box = document.getElementById('pf-result-' + assignmentId);
+      if (btn) { btn.disabled = true; btn.querySelector('span').innerHTML = '<span class="spinner"></span> Tekshirilmoqda...'; }
+      box.style.display = 'block';
+      box.innerHTML = '<div style="color:var(--muted);font-weight:800;font-size:.8rem">Tekshirilmoqda...</div>';
+      try {
+        const res = await fetch('/api/student/assignments/' + assignmentId + '/preflight', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            clientInfo: detectClient(),
+            deviceAttestation: {
+              cameraAvailable: !!navigator.mediaDevices,
+              sebPresent: /seb|safe exam/i.test(navigator.userAgent)
+            },
+            practiceData: { completed_runs: 0, required_runs: 1 }
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Xato yuz berdi');
+        renderPreflightResult(box, data, assignmentId);
+      } catch (e) {
+        box.innerHTML = '<div class="pf-eligible blocked">' + svgIcon('alertTriangle', 16) + ' ' + esc(e.message) + '</div>';
+      } finally {
+        if (btn) { btn.disabled = false; btn.querySelector('span').textContent = 'Preflight'; }
+      }
+    }
+
+    function renderPreflightResult(box, data, assignmentId) {
+      const ok = data.eligible;
+      let html = '<div class="pf-eligible ' + (ok ? 'ok' : 'blocked') + '">' + svgIcon(ok ? 'checkCircle' : 'alertTriangle', 18) + (ok ? 'Boshlashga tayyor — barcha talablar bajarildi' : 'Preflight o\'tmadi — quyidagi talablarni bajarish kerak') + '</div>';
+      if (ok) html += '<div class="warn">' + svgIcon('shieldCheck', 13) + ' Startga ruxsat berildi. O\'qituvchi tomonidan tasdiqlangan vaqtda boshlang.</div>';
+      (data.blockers || []).forEach(b => {
+        html += '<div class="blocker"><span class="bx">' + svgIcon('alertTriangle', 14) + '</span>' + esc(b.message || b.code) + '</div>';
+      });
+      (data.warnings || []).forEach(w => {
+        html += '<div class="warn">' + svgIcon('info', 13) + ' ' + esc(w) + '</div>';
+      });
+      // Accommodation confirmation action (§10) — shown when required but not yet
+      // confirmed. Uses the assignmentId passed in (NOT briefAssignmentId,
+      // which is only set when the brief modal was opened).
+      if (data.accommodation && data.accommodation.required === true && data.accommodation.confirmed !== true && assignmentId) {
+        html += '<div style="margin-top:12px"><button type="button" class="act-btn act-preflight" onclick="confirmAccommodation(' + assignmentId + ')">' + svgIcon('shieldCheck', 14) + ' Accommodationni tasdiqlash</button></div>';
+      }
+      box.innerHTML = html;
+    }
+
+    async function confirmAccommodation(assignmentId) {
+      try {
+        const res = await fetch('/api/student/assignments/' + assignmentId + '/accommodation/confirm', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: '{}'
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Tasdiqlash amalga oshmadi');
+        showToast ? showToast('Accommodation tasdiqlandi', 'ok') : null;
+        runPreflight(assignmentId);
+      } catch (e) {
+        alert('Xato: ' + e.message);
+      }
+    }
+
+    async function refreshAll() {
+      location.reload();
+    }
+
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+  </script>
+</body>
+</html>

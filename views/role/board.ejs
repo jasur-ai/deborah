@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <%- include('../partials/head') %>
+  <style>
+    body{background:var(--bg-primary);min-height:100vh;}
+    .quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;}
+    .ratify-banner{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:18px;}
+  </style>
+</head>
+<body>
+  <%- include('../partials/sidebar', { active, role, user }) %>
+  <main class="main" id="main-content" tabindex="-1">
+    <div class="topbar">
+      <h1>Hay'at — ratifikatsiya</h1>
+      <div class="topbar-right">
+        <span style="font-size:.74rem;font-weight:800;color:var(--muted)">Salom, <span style="color:var(--text)"><%= username %></span></span>
+      </div>
+    </div>
+
+    <div class="ratify-banner" role="status">
+      <span class="shell-role-ico" style="color:var(--gold);display:flex"><%- icon('award', 20) %></span>
+      <div style="flex:1">
+        <div style="font-weight:900;font-size:.9rem">Ratifikatsiya holati</div>
+        <div style="font-size:.74rem;color:var(--muted);font-weight:700">Yig'ilishlar: 0 · Qarorlar: 0 · Amendmentlar: 0</div>
+      </div>
+      <span style="font-size:.72rem;font-weight:900;color:var(--gold)"><%- icon('checkCircle', 13) %> <%= canRatify ? 'Ratify huquqi aktiv' : "O'qish rejimi" %></span>
+    </div>
+
+    <div class="quick-grid">
+      <div class="role-card">
+        <div class="rc-ico" style="background:rgba(245,158,11,.14);color:var(--gold)"><%- icon('shield', 20) %></div>
+        <div class="rc-title">Board</div>
+        <div class="rc-sub">Yig'ilishlar, ovoz berish va hujjatlar</div>
+        <a href="/admin/board" style="display:inline-block;margin-top:12px;text-decoration:none;color:var(--gold);font-weight:900;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
+      </div>
+      <div class="role-card">
+        <div class="rc-ico" style="background:rgba(0,229,160,.12);color:var(--green)"><%- icon('trendUp', 20) %></div>
+        <div class="rc-title">Grading nazorati</div>
+        <div class="rc-sub">Ball va hisoblash qoidalari</div>
+        <a href="/admin/grading" style="display:inline-block;margin-top:12px;text-decoration:none;color:var(--green);font-weight:900;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
+      </div>
+    </div>
+
+    <div style="margin-top:16px">
+      <%- include('../partials/states', { state: 'empty', iconName: 'award', title: "Kutilayotgan ratifikatsiya yo'q", sub: "Yakunlangan natijalar shu yerda ko'rib chiqiladi" }) %>
+    </div>
+  </main>
+
+  <script>
+    (function(){
+      var b=document.querySelector('[data-shell-open]');
+      var c=document.querySelectorAll('[data-shell-close]');
+      function open(){document.body.classList.add('shell-open');var t=document.querySelector('[data-shell-open]');if(t)t.setAttribute('aria-expanded','true');}
+      function close(){document.body.classList.remove('shell-open');var t=document.querySelector('[data-shell-open]');if(t)t.setAttribute('aria-expanded','false');}
+      if(b)b.addEventListener('click',open);
+      c.forEach(function(el){el.addEventListener('click',close);});
+      document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+    })();
+  </script>
+</body>
+</html>

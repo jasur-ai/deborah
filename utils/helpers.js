@@ -35,12 +35,54 @@ export function normStr(str) {
 }
 
 /**
- * Hash password with SHA-256 (Node.js compatible)
+ * Legacy SHA-256 password hashing (for migration only)
+ * @deprecated Use hashPassword() with argon2 instead
  */
 export function hashPass(password, salt) {
   return crypto.createHash('sha256')
     .update('qb_' + salt + '_' + password)
     .digest('hex');
+}
+
+/**
+ * Hash password with argon2id (modern, memory-hard)
+ * Returns the full argon2 hash string (includes salt, params, etc.)
+ */
+export async function hashPassword(password) {
+  if (!password) throw new Error('Password is required');
+  const argon2 = await import('argon2');
+  return argon2.hash(password, {
+    type: argon2.argon2id,
+    memoryCost: 19456,   // 19 MiB
+    timeCost: 2,         // 2 iterations
+    parallelism: 1,      // single thread
+  });
+}
+
+/**
+ * Verify password against argon2 hash
+ * Returns true/false
+ */
+export async function verifyPassword(password, hash) {
+  if (!password || !hash) return false;
+  try {
+    // Detect if it's an argon2 hash (starts with $argon2)
+    if (hash.startsWith('$argon2')) {
+      const argon2 = await import('argon2');
+      return argon2.verify(hash, password);
+    }
+    // Not an argon2 hash — will be handled by legacy migration in auth routes
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Check if a stored hash uses the legacy SHA-256 algorithm
+ */
+export function isLegacyHash(hash) {
+  return typeof hash === 'string' && /^[a-f0-9]{64}$/i.test(hash);
 }
 
 /**

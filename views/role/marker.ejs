@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <%- include('../partials/head') %>
+  <style>
+    body{background:var(--bg-primary);min-height:100vh;}
+    .quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;}
+    .queue-head{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:18px;}
+  </style>
+</head>
+<body>
+  <%- include('../partials/sidebar', { active, role, user }) %>
+  <main class="main" id="main-content" tabindex="-1">
+    <div class="topbar">
+      <h1>Baholovchi — grading queue</h1>
+      <div class="topbar-right">
+        <span style="font-size:.74rem;font-weight:800;color:var(--muted)">Salom, <span style="color:var(--text)"><%= username %></span></span>
+      </div>
+    </div>
+
+    <div class="queue-head" role="status">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="shell-role-ico" style="color:var(--purple);display:flex"><%- icon('clipboard', 18) %></span>
+        <div>
+          <div style="font-weight:900;font-size:.9rem">Queue holati</div>
+          <div style="font-size:.74rem;color:var(--muted);font-weight:700">Kutayotgan ishlar: 0 · Ishda: 0 · Yakunlangan: 0</div>
+        </div>
+      </div>
+      <span style="font-size:.72rem;font-weight:900;color:var(--purple)"><%- icon('checkCircle', 13) %> <%= canScore ? 'Score huquqi aktiv' : "O'qish rejimi" %></span>
+    </div>
+
+    <div class="quick-grid">
+      <div class="role-card">
+        <div class="rc-ico" style="background:rgba(100,116,139,.16);color:var(--purple)"><%- icon('checkCircle', 20) %></div>
+        <div class="rc-title">Marking</div>
+        <div class="rc-sub">Anonymized submissions + rubric</div>
+        <a href="/admin/marking" style="display:inline-block;margin-top:12px;text-decoration:none;color:var(--purple);font-weight:900;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
+      </div>
+      <div class="role-card">
+        <div class="rc-ico" style="background:rgba(248,113,113,.12);color:var(--accent)"><%- icon('alertTriangle', 20) %></div>
+        <div class="rc-title">Consideration</div>
+        <div class="rc-sub">Appeal va maxsus holatlar</div>
+        <a href="/admin/consideration" style="display:inline-block;margin-top:12px;text-decoration:none;color:var(--accent);font-weight:900;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
+      </div>
+    </div>
+
+    <div style="margin-top:16px">
+      <%- include('../partials/states', { state: 'empty', iconName: 'clipboard', title: "Queue bo'sh", sub: "Tayinlangan ishlar hozircha yo'q" }) %>
+    </div>
+  </main>
+
+  <script>
+    (function(){
+      var b=document.querySelector('[data-shell-open]');
+      var c=document.querySelectorAll('[data-shell-close]');
+      function open(){document.body.classList.add('shell-open');var t=document.querySelector('[data-shell-open]');if(t)t.setAttribute('aria-expanded','true');}
+      function close(){document.body.classList.remove('shell-open');var t=document.querySelector('[data-shell-open]');if(t)t.setAttribute('aria-expanded','false');}
+      if(b)b.addEventListener('click',open);
+      c.forEach(function(el){el.addEventListener('click',close);});
+      document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+    })();
+  </script>
+</body>
+</html>

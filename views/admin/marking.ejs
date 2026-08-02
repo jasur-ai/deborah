@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <%- include('../partials/head') %>
+  <style>
+    body{background:var(--bg-primary);min-height:100vh;transition:background .3s;}
+    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 55% 40% at 15% 20%,rgba(37,99,235,.1) 0%,transparent 65%),radial-gradient(ellipse 45% 35% at 85% 75%,rgba(56,189,248,.07) 0%,transparent 65%);}
+    .navbar{position:sticky;top:0;z-index:100;background:var(--bg-overlay);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;transition:background .3s,border-color .3s;}
+    .nav-logo{font-family:'Righteous',cursive;font-size:1.25rem;text-decoration:none;display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .nav-right{display:flex;align-items:center;gap:8px;}
+    .nav-btn{padding:7px 12px;border-radius:9px;border:1px solid var(--border);background:var(--bg-surface);color:var(--muted);font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:800;cursor:pointer;text-decoration:none;transition:all .2s;display:flex;align-items:center;gap:5px;}
+    .nav-btn:hover{background:var(--bg-elevated);color:var(--text);}
+    .panel{max-width:1180px;margin:0 auto;padding:24px 20px 90px;position:relative;z-index:1;}
+    .greeting{font-family:'Righteous',cursive;font-size:1.5rem;display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+    .greeting-sub{font-size:.82rem;color:var(--muted);font-weight:700;margin-bottom:20px;}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
+    @media(max-width:900px){.grid{grid-template-columns:1fr;}}
+    .card{background:var(--card);border-radius:16px;padding:18px;border:1px solid var(--border);margin-bottom:14px;animation:slideDown .3s ease;transition:background .3s,border-color .3s;}
+    .card-h{font-family:'Righteous',cursive;font-size:.95rem;display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+    .card-h small{font-family:'Nunito',sans-serif;font-size:.66rem;color:var(--muted);font-weight:800;margin-left:auto;}
+    .field{margin-bottom:11px;}
+    .field label{display:block;font-size:.72rem;font-weight:900;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px;}
+    .inp{width:100%;background:var(--bg-surface);border:2px solid var(--border);border-radius:10px;padding:9px 12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;outline:none;transition:border-color .3s;}
+    .inp:focus{border-color:var(--accent);}
+    textarea.inp{min-height:60px;resize:vertical;}
+    .btn{border-radius:10px;border:none;padding:10px 16px;cursor:pointer;transition:all .3s ease;font-family:'Nunito',sans-serif;font-weight:900;font-size:.8rem;background:linear-gradient(135deg,var(--accent),#1d4ed8);color:#fff;display:inline-flex;align-items:center;gap:6px;}
+    .btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+    .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+    .btn.ghost{background:var(--bg-surface);color:var(--muted);border:1px solid var(--border);}
+    .btn.ghost:hover{color:var(--text);background:var(--bg-elevated);}
+    .btn.green{background:linear-gradient(135deg,#00e5a0,#00b37e);color:#04120c;}
+    .btn.red{background:linear-gradient(135deg,#ef4444,#b91c1c);color:#fff;}
+    .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:99px;font-size:.66rem;font-weight:900;letter-spacing:.3px;}
+    .badge.blue{background:rgba(37,99,235,.15);color:var(--accent);}
+    .badge.green{background:rgba(0,229,160,.14);color:var(--green);}
+    .badge.red{background:rgba(239,68,68,.14);color:#f87171;}
+    .badge.amber{background:rgba(251,191,36,.14);color:var(--gold);}
+    .badge.gray{background:var(--bg-elevated);color:var(--muted);}
+    .badge.violet{background:rgba(139,92,246,.14);color:#a78bfa;}
+    table{width:100%;border-collapse:collapse;font-size:.78rem;}
+    th{text-align:left;font-size:.64rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:7px 8px;border-bottom:1px solid var(--border);font-weight:900;}
+    td{padding:7px 8px;border-bottom:1px solid var(--border);font-weight:700;}
+    tr:last-child td{border-bottom:none;}
+    .msg{padding:10px 14px;border-radius:10px;font-size:.78rem;font-weight:800;margin-bottom:12px;display:none;}
+    .msg.ok{display:block;background:rgba(0,229,160,.12);color:var(--green);border:1px solid rgba(0,229,160,.25);}
+    .msg.err{display:block;background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.25);}
+    .mono{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);}
+    .row-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:4px 9px;font-size:.68rem;font-weight:800;cursor:pointer;transition:all .2s;margin-right:5px;}
+    .row-btn:hover{color:var(--text);border-color:var(--accent);}
+    .empty{text-align:center;color:var(--muted);padding:22px 0;font-size:.8rem;font-weight:700;}
+    .pre{background:var(--bg-surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);white-space:pre-wrap;margin-top:8px;}
+    .mini-stat{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;}
+    .mini-stat div{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 16px;flex:1;min-width:120px;text-align:center;transition:background .3s,border-color .3s;}
+    .mini-stat b{display:block;font-family:'Righteous',cursive;font-size:1.25rem;color:var(--accent);}
+    .mini-stat span{font-size:.66rem;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;}
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/admin" class="nav-logo">Edikit Admin</a>
+    <div class="nav-right">
+      <a href="/admin/dashboard" class="nav-btn">Dashboard</a>
+      <a href="/admin/grading" class="nav-btn">Grading</a>
+      <a href="/admin/safe-submit" class="nav-btn">Safe Submit</a>
+      <a href="/admin/logout" class="nav-btn">Chiqish</a>
+    </div>
+  </nav>
+
+  <div class="panel">
+    <h1 class="greeting">Marking &amp; Moderation</h1>
+    <p class="greeting-sub">Pseudonimli taqsimlash, kalibratsiya va kelishmovchilik moderatsiyasi</p>
+
+    <div class="mini-stat" id="progressStats">
+      <div><b>–</b><span>Assigned</span></div>
+      <div><b>–</b><span>Work items</span></div>
+      <div><b>–</b><span>Scored</span></div>
+      <div><b>–</b><span>Moderation</span></div>
+    </div>
+
+    <div id="msg" class="msg"></div>
+
+    <div class="grid">
+      <!-- LEFT: Assignment creation -->
+      <div>
+        <div class="card">
+          <div class="card-h">Yangi marking assignment <small>conflict-checked</small></div>
+          <div class="field">
+            <label>Assessment ID</label>
+            <input type="number" id="aAssessmentId" class="inp" placeholder="Masalan: 12" />
+          </div>
+          <div class="field">
+            <label>Marker user ID</label>
+            <input type="number" id="aMarkerUserId" class="inp" placeholder="Masalan: 34" />
+          </div>
+          <div class="field">
+            <label>Rol</label>
+            <select id="aRole" class="inp">
+              <option value="marker">marker</option>
+              <option value="sample_marker">sample_marker</option>
+              <option value="second_marker">second_marker</option>
+              <option value="adjudicator">adjudicator</option>
+              <option value="external_examiner">external_examiner</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Workload cap (0 = cheksiz)</label>
+            <input type="number" id="aWorkloadCap" class="inp" value="0" />
+          </div>
+          <div class="field" style="display:flex;align-items:center;gap:8px;">
+            <input type="checkbox" id="aExternalScoped" style="accent-color:var(--accent);" />
+            <label for="aExternalScoped" style="margin:0;text-transform:none;">External scoped (faqat o'z work item'lariga)</label>
+          </div>
+          <button class="btn" onclick="createAssignment()">Assignment yaratish</button>
+        </div>
+
+        <div class="card">
+          <div class="card-h">Work item'larga taqsimlash <small>pseudonymous</small></div>
+          <div class="field">
+            <label>Assignment ID</label>
+            <input type="number" id="wAssignmentId" class="inp" />
+          </div>
+          <div class="field">
+            <label>Submissions (JSON: [{submissionVersionId, attemptId}])</label>
+            <textarea id="wSubmissions" class="inp mono" placeholder='[{"submissionVersionId":1,"attemptId":101},{"submissionVersionId":2,"attemptId":102}]'></textarea>
+          </div>
+          <div class="field">
+            <label>Mode (single | sample | second | double)</label>
+            <select id="wMode" class="inp">
+              <option value="single">single</option>
+              <option value="sample">sample</option>
+              <option value="second">second</option>
+              <option value="double">double</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Sample rate % (sample mode)</label>
+            <input type="number" id="wSampleRate" class="inp" value="10" />
+          </div>
+          <button class="btn green" onclick="allocateItems()">Taqsimlash</button>
+        </div>
+
+        <div class="card">
+          <div class="card-h">Kalibratsiya <small>anchor set</small></div>
+          <div class="field">
+            <label>Assignment ID</label>
+            <input type="number" id="cAssignmentId" class="inp" />
+          </div>
+          <div class="field">
+            <label>Anchor set ID</label>
+            <input type="number" id="cAnchorSetId" class="inp" />
+          </div>
+          <div class="field">
+            <label>Gold scores (JSON: {anchorId: score})</label>
+            <textarea id="cGoldScores" class="inp mono" placeholder='{"anchor1":85,"anchor2":70}'></textarea>
+          </div>
+          <div class="field">
+            <label>Threshold %</label>
+            <input type="number" id="cThreshold" class="inp" value="80" />
+          </div>
+          <button class="btn" onclick="openCalibration()">Kalibratsiyani ochish</button>
+        </div>
+      </div>
+
+      <!-- RIGHT: Lists & actions -->
+      <div>
+        <div class="card">
+          <div class="card-h">Assignments <small><span class="badge blue" id="assignCount">0</span></small></div>
+          <div id="assignList"><div class="empty">Yuklanmoqda…</div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h">Work items <small><span class="badge violet" id="wiCount">0</span></small></div>
+          <div id="wiList"><div class="empty">Yuklanmoqda…</div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h">Moderation cases <small><span class="badge amber" id="modCount">0</span></small></div>
+          <div id="modList"><div class="empty">Yuklanmoqda…</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  window.__CSRF_TOKEN = '<%= csrfToken %>';
+
+  async function api(url, method, body) {
+    const opts = { method: method || 'GET', headers: { 'Content-Type': 'application/json' } };
+    // CSRF: attach the session token to every state-changing request
+    // (required by the CSRF middleware for POST/PUT/DELETE).
+    if (method && method !== 'GET') opts.headers['x-csrf-token'] = window.__CSRF_TOKEN || '';
+    if (body !== undefined) opts.body = JSON.stringify(body);
+    const r = await fetch(url, opts);
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error || ('HTTP ' + r.status));
+    return j;
+  }
+
+  function showMsg(text, isErr) {
+    const m = document.getElementById('msg');
+    m.className = 'msg ' + (isErr ? 'err' : 'ok');
+    m.textContent = text;
+    setTimeout(() => { m.style.opacity = '0'; }, 4000);
+    setTimeout(() => { m.className = 'msg'; m.style.opacity = ''; }, 4400);
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  async function createAssignment() {
+    try {
+      const r = await api('/api/admin/marking/assignments', 'POST', {
+        assessmentId: Number(document.getElementById('aAssessmentId').value),
+        markerUserId: Number(document.getElementById('aMarkerUserId').value),
+        role: document.getElementById('aRole').value,
+        workloadCap: Number(document.getElementById('aWorkloadCap').value) || 0,
+        externalScoped: document.getElementById('aExternalScoped').checked,
+      });
+      showMsg('Assignment #' + r.assignment.id + ' yaratildi');
+      loadAssignments();
+    } catch (e) { showMsg(e.message, true); }
+  }
+
+  async function allocateItems() {
+    try {
+      let subs = [];
+      try { subs = JSON.parse(document.getElementById('wSubmissions').value || '[]'); }
+      catch (e) { throw new Error('Submissions JSON formati noto\'g\'ri'); }
+      const r = await api('/api/admin/marking/assignments/' + document.getElementById('wAssignmentId').value + '/allocate', 'POST', {
+        submissions: subs,
+        opts: { mode: document.getElementById('wMode').value, sampleRatePercent: Number(document.getElementById('wSampleRate').value) || 10 },
+      });
+      showMsg(r.created + ' ta work item yaratildi (pseudonim: ' + esc(r.pseudonyms[0] || '–') + ' …)');
+      loadWorkItems();
+      loadProgress();
+    } catch (e) { showMsg(e.message, true); }
+  }
+
+  async function openCalibration() {
+    try {
+      let gold = {};
+      try { gold = JSON.parse(document.getElementById('cGoldScores').value || '{}'); }
+      catch (e) { throw new Error('Gold scores JSON formati noto\'g\'ri'); }
+      const r = await api('/api/admin/marking/calibrations', 'POST', {
+        assignmentId: Number(document.getElementById('cAssignmentId').value),
+        anchorSetId: Number(document.getElementById('cAnchorSetId').value) || null,
+        goldScores: gold,
+        threshold: Number(document.getElementById('cThreshold').value) || 80,
+      });
+      showMsg('Kalibratsiya run #' + r.run.id + ' ochildi');
+      loadModeration();
+    } catch (e) { showMsg(e.message, true); }
+  }
+
+  async function scoreItem(id, userId) {
+    const val = prompt('Marker score (0-100):');
+    if (val === null) return;
+    try {
+      const r = await api('/api/admin/marking/work-items/' + id + '/scores', 'POST', {
+        markerUserId: Number(userId),
+        criterionScores: [{ criterionId: 1, score: Number(val) }],
+        markerComment: 'Admin tezkor baho',
+      });
+      showMsg('Baho saqlandi (total: ' + r.totalScore + ')');
+      loadWorkItems();
+      loadModeration();
+    } catch (e) { showMsg(e.message, true); }
+  }
+
+  async function adjudicate(id) {
+    const val = prompt('Adjudicated score (0-100):');
+    if (val === null) return;
+    try {
+      const r = await api('/api/admin/marking/moderation/' + id + '/adjudicate', 'POST', {
+        adjudicatedScore: Number(val),
+        note: 'Admin adjudication',
+      });
+      showMsg('Case #' + id + ' adjudicated: ' + r.finalScore);
+      loadModeration();
+      loadProgress();
+    } catch (e) { showMsg(e.message, true); }
+  }
+
+  async function loadAssignments() {
+    try {
+      const r = await api('/api/admin/marking/assignments');
+      document.getElementById('assignCount').textContent = r.rows.length;
+      const el = document.getElementById('assignList');
+      if (!r.rows.length) { el.innerHTML = '<div class="empty">Hozircha assignment yo\'q</div>'; return; }
+      el.innerHTML = '<table><tr><th>ID</th><th>Assessment</th><th>Marker</th><th>Rol</th><th>Status</th></tr>' +
+        r.rows.map(a => '<tr><td>' + a.id + '</td><td>' + a.assessment_id + '</td><td>' + a.marker_user_id + '</td><td><span class="badge blue">' + esc(a.role) + '</span></td><td><span class="badge ' + (a.status === 'allocated' ? 'green' : 'gray') + '">' + esc(a.status) + '</span></td></tr>').join('') + '</table>';
+    } catch (e) { document.getElementById('assignList').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; }
+  }
+
+  async function loadWorkItems() {
+    try {
+      const r = await api('/api/admin/marking/work-items');
+      document.getElementById('wiCount').textContent = r.rows.length;
+      const el = document.getElementById('wiList');
+      if (!r.rows.length) { el.innerHTML = '<div class="empty">Hozircha work item yo\'q</div>'; return; }
+      el.innerHTML = '<table><tr><th>ID</th><th>Pseudonim</th><th>Mode</th><th>Status</th><th>Ball</th><th></th></tr>' +
+        r.rows.map(w => '<tr><td>' + w.id + '</td><td class="mono">' + esc(w.pseudonym) + '</td><td><span class="badge violet">' + esc(w.mode) + '</span></td><td><span class="badge ' + (w.status === 'scored' ? 'green' : 'gray') + '">' + esc(w.status) + '</span></td><td>' + (w.marker_score != null ? w.marker_score : '–') + '</td><td>' +
+          (w.status !== 'scored' ? '<button class="row-btn" onclick="scoreItem(' + w.id + ',' + (w.marker_user_id || 0) + ')">Baho</button>' : '') +
+        '</td></tr>').join('') + '</table>';
+    } catch (e) { document.getElementById('wiList').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; }
+  }
+
+  async function loadModeration() {
+    try {
+      const r = await api('/api/admin/marking/moderation');
+      document.getElementById('modCount').textContent = r.rows.length;
+      const el = document.getElementById('modList');
+      if (!r.rows.length) { el.innerHTML = '<div class="empty">Kelishmovchilik yo\'q</div>'; return; }
+      el.innerHTML = '<table><tr><th>ID</th><th>Work item</th><th>Status</th><th>f1/f2</th><th></th></tr>' +
+        r.rows.map(c => '<tr><td>' + c.id + '</td><td>' + c.work_item_id + '</td><td><span class="badge amber">' + esc(c.status) + '</span></td><td>' + (c.score1 != null ? c.score1 + ' / ' + c.score2 : '–') + '</td><td>' +
+          (c.status === 'open' ? '<button class="row-btn" onclick="adjudicate(' + c.id + ')">Hal qilish</button>' : '') +
+        '</td></tr>').join('') + '</table>';
+    } catch (e) { document.getElementById('modList').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; }
+  }
+
+  async function loadProgress() {
+    try {
+      const list = await api('/api/admin/marking/assignments');
+      if (!list.rows.length) return;
+      const aId = list.rows[0].id;
+      const p = await api('/api/admin/marking/assignments/' + aId + '/progress');
+      document.getElementById('progressStats').innerHTML =
+        '<div><b>' + p.total + '</b><span>Work items</span></div>' +
+        '<div><b>' + p.scored + '</b><span>Scored</span></div>' +
+        '<div><b>' + p.pending + '</b><span>Pending</span></div>' +
+        '<div><b>' + (p.overdue || 0) + '</b><span>Overdue</span></div>';
+    } catch (e) { /* progress stats optional */ }
+  }
+
+  loadAssignments();
+  loadWorkItems();
+  loadModeration();
+  loadProgress();
+</script>
+</body>
+</html>

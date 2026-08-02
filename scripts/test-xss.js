@@ -75,10 +75,11 @@ test(
   gameHandlerSrc.includes('\\\\p{Extended_Pictographic}') || gameHandlerSrc.includes('\\p{Extended_Pictographic}')
 );
 
-// Check safeEmoji fallback
+// Check safeEmoji fallback (default person emoji — stored as unicode escape \u{1F464})
 test(
   'safeEmoji fallback to 👤 on invalid',
-  gameHandlerSrc.includes("safeEmoji = '👤'")
+  gameHandlerSrc.includes("safeEmoji = emoji || '") &&
+    (gameHandlerSrc.includes("safeEmoji = '\\u{1F464}';") || gameHandlerSrc.includes("safeEmoji = '👤'"))
 );
 
 // Check emoji stored is safeEmoji, not raw emoji
@@ -447,12 +448,12 @@ const BASE = `http://localhost:${HTTP_PORT}`;
 let serverReady = false;
 
 try {
-  // Dynamic import starts the server as a side effect
+  // Import createApp() and start the server on the test port ourselves —
+  // server.js only listens when run directly (isMainModule), not when imported.
   const serverModule = await import(join(ROOT, 'server.js'));
-  
-  // Wait for httpServer 'listening' event
-  const hs = serverModule.httpServer;
+  const { httpServer: hs } = await serverModule.createApp();
   if (hs && !hs.listening) {
+    hs.listen(HTTP_PORT, '127.0.0.1');
     await new Promise(resolve => hs.once('listening', resolve));
   }
   
@@ -514,8 +515,8 @@ try {
     });
     const body = await res.json().catch(() => ({}));
     test(
-      'toggle API: 401 JSON without auth',
-      res.status === 401 && body.error,
+      'toggle API: 401/403 JSON without auth',
+      (res.status === 401 || res.status === 403) && body.error,
       `Got ${res.status}: ${JSON.stringify(body).slice(0, 60)}`
     );
   } catch (e) {
@@ -532,8 +533,8 @@ try {
     });
     const body = await res.json().catch(() => ({}));
     test(
-      'delete API: 401 JSON without auth',
-      res.status === 401 && body.error,
+      'delete API: 401/403 JSON without auth',
+      (res.status === 401 || res.status === 403) && body.error,
       `Got ${res.status}: ${JSON.stringify(body).slice(0, 60)}`
     );
   } catch (e) {
@@ -550,8 +551,8 @@ try {
     });
     const body = await res.json().catch(() => ({}));
     test(
-      'VIP grant API: 401 JSON without auth',
-      res.status === 401 && body.error,
+      'VIP grant API: 401/403 JSON without auth',
+      (res.status === 401 || res.status === 403) && body.error,
       `Got ${res.status}: ${JSON.stringify(body).slice(0, 60)}`
     );
   } catch (e) {
@@ -568,8 +569,8 @@ try {
     });
     const body = await res.json().catch(() => ({}));
     test(
-      'VIP revoke API: 401 JSON without auth',
-      res.status === 401 && body.error,
+      'VIP revoke API: 401/403 JSON without auth',
+      (res.status === 401 || res.status === 403) && body.error,
       `Got ${res.status}: ${JSON.stringify(body).slice(0, 60)}`
     );
   } catch (e) {
@@ -587,8 +588,8 @@ try {
     const body = await res.json().catch(() => ({}));
     const ct = res.headers.get('content-type') || '';
     test(
-      'VIP grant XSS payload: 401 JSON (not HTML)',
-      (res.status === 401 || res.status === 400) && ct.includes('json'),
+      'VIP grant XSS payload: 401/403 JSON (not HTML)',
+      (res.status === 401 || res.status === 403) && ct.includes('json'),
       `Got ${res.status}: ${JSON.stringify(body).slice(0, 60)}, Content-Type: ${ct}`
     );
   } catch (e) {
@@ -606,8 +607,8 @@ try {
     const body = await res.json().catch(() => ({}));
     const ct = res.headers.get('content-type') || '';
     test(
-      'VIP revoke XSS payload: 401 JSON (not HTML)',
-      (res.status === 401 || res.status === 400) && ct.includes('json'),
+      'VIP revoke XSS payload: 401/403 JSON (not HTML)',
+      (res.status === 401 || res.status === 403) && ct.includes('json'),
       `Got ${res.status}: ${JSON.stringify(body).slice(0, 60)}, Content-Type: ${ct}`
     );
   } catch (e) {
@@ -615,7 +616,7 @@ try {
   }
 
 } finally {
-  // With dynamic import, server runs in-process — process.exit() handles cleanup
+  // Server runs in-process on the test port — process.exit() below handles cleanup
   await new Promise(r => setTimeout(r, 300));
 }
 

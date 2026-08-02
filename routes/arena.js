@@ -6,6 +6,7 @@
 import { Router } from 'express';
 import { fb } from '../firebase/admin.js';
 import { CARTOON_CHARS } from '../utils/constants.js';
+import { requireAdmin } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -21,7 +22,7 @@ router.get('/', (req, res) => {
   });
 });
 
-// ── API: Check if session exists ──
+// ── API: Check if session exists (public — anyone can check) ──
 router.get('/api/check-session', async (req, res) => {
   try {
     const { code } = req.query;
@@ -33,8 +34,8 @@ router.get('/api/check-session', async (req, res) => {
   }
 });
 
-// ── API: Add bots to session ──
-router.post('/api/add-bots', async (req, res) => {
+// ── API: Add bots to session (admin only — modifies game state) ──
+router.post('/api/add-bots', requireAdmin, async (req, res) => {
   try {
     const { code, count, prefix } = req.body;
     if (!code || !count) return res.status(400).json({ error: 'Invalid params' });
@@ -65,8 +66,8 @@ router.post('/api/add-bots', async (req, res) => {
   }
 });
 
-// ── API: Cleanup bots from session ──
-router.post('/api/cleanup-bots', async (req, res) => {
+// ── API: Cleanup bots from session (admin only) ──
+router.post('/api/cleanup-bots', requireAdmin, async (req, res) => {
   try {
     const { code, prefix } = req.body;
     if (!code) return res.status(400).json({ error: 'Invalid params' });

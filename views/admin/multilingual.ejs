@@ -1,0 +1,337 @@
+<% const current = user || {}; %>
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — Edikit Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="adm-body">
+  <div class="adm-shell">
+    <aside class="adm-sidebar">
+      <div class="adm-brand">
+        <img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto">
+        <span>Edikit</span>
+      </div>
+      <nav class="adm-nav">
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/multilingual" class="active">Multilingual</a>
+        <a href="/admin/program-quality">Program Quality</a>
+        <a href="/admin/credentials">Credentials</a>
+        <a href="/admin/ai-checkpoint">AI Checkpoint</a>
+        <a href="/admin/ai-grading">AI Grading</a>
+        <a href="/admin/ai-mlops">AI MLOps</a>
+        <a href="/admin/source-pack">Source Packs</a>
+        <a href="/admin/vip">VIP</a>
+      </nav>
+      <div class="adm-side-foot">
+        <a href="/admin/logout">Chiqish</a>
+      </div>
+    </aside>
+
+    <main class="adm-main">
+      <header class="adm-topbar">
+        <h1>Uzbek Latin/Cyrillic & Terminology</h1>
+        <span class="adm-chip" id="mStatus">Yuklanmoqda…</span>
+      </header>
+
+      <section class="adm-card">
+        <h2>Transliteration Tool</h2>
+        <p class="adm-hint">Deterministik Uzbek Latin ↔ Cyrillic. <b>Transliteration translation yoki psychometric equivalence emas</b> (§58.4) — original text doim saqlanadi. Ambiguous tokenlar (o'/g' vs ъ) highlight qilinadi.</p>
+        <div class="adm-form">
+          <div class="adm-row">
+            <div class="field" style="flex:2"><label>Matn</label><textarea class="input" id="fTrText" rows="2" placeholder="o'quvchi matematika darsida">o'quvchi matematika darsida</textarea></div>
+            <div class="field"><label>From</label>
+              <select class="input" id="fTrFrom"><option value="">auto</option><option value="uz-Latn">uz-Latn</option><option value="uz-Cyrl">uz-Cyrl</option></select>
+            </div>
+            <div class="field"><label>To</label>
+              <select class="input" id="fTrTo"><option value="uz-Cyrl">uz-Cyrl</option><option value="uz-Latn">uz-Latn</option></select>
+            </div>
+            <button class="btn btn-primary" id="btnTransliterate">Transliterate</button>
+          </div>
+          <div class="adm-row" style="margin-top:8px">
+            <div class="field" style="flex:2"><label>Natija</label><input class="input" id="fTrResult" readonly placeholder="—"></div>
+            <div class="field" style="flex:2"><label>Ambiguous</label><input class="input" id="fTrAmbiguous" readonly placeholder="—"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="adm-card">
+        <h2>Terminology Bank</h2>
+        <p class="adm-hint">Versioned glossary — canonical term + uz-Latn/uz-Cyrl/ru/en + forbidden variants. AI prompts/content shu glossary'dan foydalanadi (§58.3).</p>
+        <div class="adm-form">
+          <div class="adm-row">
+            <div class="field"><label>Nomi</label><input class="input" id="fTVName" placeholder="DTM Matematika glossary"></div>
+            <div class="field"><label>Subject</label><input class="input" id="fTVSubject" placeholder="matematika"></div>
+            <div class="field"><label>Version</label><input class="input" id="fTVVersion" value="v1"></div>
+            <button class="btn btn-primary" id="btnCreateVersion">Create Version</button>
+          </div>
+          <div class="adm-row" style="margin-top:10px">
+            <div class="field"><label>Version</label><select class="input" id="fVersionSelect"></select></div>
+            <div class="field"><label>Status</label>
+              <select class="input" id="fVersionStatus">
+                <option value="review">review</option>
+                <option value="published">published</option>
+                <option value="retired">retired</option>
+              </select>
+            </div>
+            <button class="btn" id="btnVersionStatus">Transition</button>
+            <button class="btn" id="btnRefreshVersions">Refresh</button>
+          </div>
+          <div class="adm-row" style="margin-top:10px;align-items:flex-end">
+            <div class="field"><label>Canonical term</label><input class="input" id="fTCanonical" placeholder="momentum"></div>
+            <div class="field"><label>uz-Latn</label><input class="input" id="fTUzLatn" placeholder="impuls"></div>
+            <div class="field"><label>uz-Cyrl</label><input class="input" id="fTUzCyrl" placeholder="импулс"></div>
+            <div class="field"><label>ru</label><input class="input" id="fTRu" placeholder="импульс"></div>
+            <div class="field"><label>en</label><input class="input" id="fTEn" placeholder="momentum"></div>
+            <button class="btn" id="btnAddTerm">Add Term</button>
+          </div>
+          <div class="adm-row" style="margin-top:10px">
+            <div class="field" style="flex:2"><label>Qidiruv (cross-script)</label><input class="input" id="fTermQuery" placeholder="impuls / импульс"></div>
+            <button class="btn" id="btnSearchTerms">Search</button>
+          </div>
+        </div>
+        <div class="adm-table-wrap" style="margin-top:12px">
+          <table class="adm-table">
+            <thead><tr><th>Canonical</th><th>uz-Latn</th><th>uz-Cyrl</th><th>ru</th><th>en</th><th>search_key</th></tr></thead>
+            <tbody id="termsBody"><tr><td colspan="6" class="adm-muted">Version tanlang</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="adm-card">
+        <h2>Content Translations</h2>
+        <p class="adm-hint"><b>Original text doim saqlanadi</b> (§58.2). Transliteration/translation hech qachon psychometric link qilmaydi — construct equivalence faqat inson review'dan keyin (§58.4).</p>
+        <div class="adm-form">
+          <div class="adm-row">
+            <div class="field"><label>Content type</label><input class="input" id="fCTType" value="item"></div>
+            <div class="field"><label>Content ID</label><input class="input" id="fCTId" type="number" value="1"></div>
+            <div class="field"><label>Source</label>
+              <select class="input" id="fCTSrc"><option value="uz-Latn">uz-Latn</option><option value="uz-Cyrl">uz-Cyrl</option><option value="ru">ru</option><option value="en">en</option></select>
+            </div>
+            <div class="field"><label>Target</label>
+              <select class="input" id="fCTTgt"><option value="uz-Cyrl">uz-Cyrl</option><option value="uz-Latn">uz-Latn</option><option value="ru">ru</option><option value="en">en</option></select>
+            </div>
+            <div class="field" style="flex:2"><label>Original text</label><input class="input" id="fCTOriginal" placeholder="o'quvchi momentumni tushunadi"></div>
+            <div class="field" style="flex:2"><label>Translated text</label><input class="input" id="fCTTranslated" placeholder="учувчи импулсни тушунади"></div>
+            <button class="btn" id="btnAddTranslation">Add Translation</button>
+          </div>
+          <div class="adm-row" style="margin-top:10px">
+            <div class="field"><label>Translation ID</label><input class="input" id="fReviewId" type="number"></div>
+            <div class="field"><label>Verdict</label>
+              <select class="input" id="fReviewVerdict">
+                <option value="construct_equivalent">construct_equivalent</option>
+                <option value="needs_review">needs_review</option>
+                <option value="not_equivalent">not_equivalent</option>
+              </select>
+            </div>
+            <div class="field" style="flex:2"><label>Notes</label><input class="input" id="fReviewNotes" placeholder="reviewer izohi"></div>
+            <button class="btn" id="btnReview">Review</button>
+          </div>
+        </div>
+        <div class="adm-table-wrap" style="margin-top:12px">
+          <table class="adm-table">
+            <thead><tr><th>ID</th><th>Content</th><th>Src→Tgt</th><th>Status</th><th>Equivalence</th><th>Original</th></tr></thead>
+            <tbody id="translationsBody"><tr><td colspan="6" class="adm-muted">Translation yo&rsquo;q</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="adm-card">
+        <h2>Proper Names (Identity)</h2>
+        <p class="adm-hint">Identity name content transliterator bilan ko&rsquo;r-ko&rsquo;rona o&rsquo;zgartirilmaydi — canonical field alohida (§58.2).</p>
+        <div class="adm-form">
+          <div class="adm-row">
+            <div class="field"><label>Type</label>
+              <select class="input" id="fPNType"><option value="student">student</option><option value="institution">institution</option><option value="subject">subject</option></select>
+            </div>
+            <div class="field"><label>Key</label><input class="input" id="fPNKey" placeholder="2026-001"></div>
+            <div class="field"><label>Canonical name</label><input class="input" id="fPNCanonical" placeholder="Aziz Karimov"></div>
+            <div class="field"><label>uz-Latn</label><input class="input" id="fPNLatn" placeholder="Aziz Karimov"></div>
+            <div class="field"><label>uz-Cyrl</label><input class="input" id="fPNCyrl" placeholder="Азиз Каримов"></div>
+            <button class="btn" id="btnAddName">Register</button>
+          </div>
+        </div>
+        <div class="adm-table-wrap" style="margin-top:12px">
+          <table class="adm-table">
+            <thead><tr><th>Type</th><th>Canonical</th><th>uz-Latn</th><th>uz-Cyrl</th><th>search_key</th></tr></thead>
+            <tbody id="namesBody"><tr><td colspan="5" class="adm-muted">Name yo&rsquo;q</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+<script>
+(function () {
+  const CSRF = '<%= csrfToken || "" %>';
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  async function api(path, opts = {}) {
+    const res = await fetch(path, {
+      method: opts.method || 'GET',
+      headers: { 'content-type': 'application/json', 'x-csrf-token': CSRF },
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    return data;
+  }
+
+  function currentVersionId() {
+    const v = $('fVersionSelect').value;
+    return v ? Number(v) : 0;
+  }
+
+  // ── Transliteration ──
+  $('btnTransliterate').addEventListener('click', async () => {
+    try {
+      const r = await api('/api/admin/multilingual/transliterate', {
+        method: 'POST',
+        body: { text: $('fTrText').value, from: $('fTrFrom').value, to: $('fTrTo').value },
+      });
+      $('fTrResult').value = r.text;
+      $('fTrAmbiguous').value = r.ambiguous.length ? r.ambiguous.map((a) => `'${a.token}'@${a.index}`).join(', ') : '(none)';
+    } catch (e) { $('mStatus').textContent = '✗ ' + e.message; }
+  });
+
+  // ── Versions ──
+  async function loadVersions() {
+    try {
+      const { versions } = await api('/api/admin/multilingual/versions');
+      const sel = $('fVersionSelect');
+      const prev = sel.value;
+      sel.innerHTML = versions.map((v) => `<option value="${v.id}">${esc(v.name)}@${esc(v.version)} — ${esc(v.status)}</option>`).join('') || '<option value="">(version yo&rsquo;q)</option>';
+      if (prev && versions.some((v) => String(v.id) === prev)) sel.value = prev;
+      $('mStatus').textContent = versions.length ? `${versions.length} version` : "Version yo'q";
+      await loadTerms();
+    } catch (e) { $('mStatus').textContent = '✗ ' + e.message; }
+  }
+
+  async function loadTerms() {
+    const vid = currentVersionId();
+    const q = $('fTermQuery').value || '';
+    try {
+      const { terms } = await api(`/api/admin/multilingual/terms?versionId=${vid}${q ? '&query=' + encodeURIComponent(q) : ''}`);
+      $('termsBody').innerHTML = terms.map((t) => `<tr>
+        <td><b>${esc(t.canonical_term)}</b></td>
+        <td>${esc(t.uz_latn || '-')}</td>
+        <td>${esc(t.uz_cyrl || '-')}</td>
+        <td>${esc(t.ru || '-')}</td>
+        <td>${esc(t.en || '-')}</td>
+        <td><code style="font-size:11px">${esc(t.search_key || '')}</code></td></tr>`).join('') || '<tr><td colspan="6" class="adm-muted">Term yo&rsquo;q</td></tr>';
+    } catch (e) { /* silent */ }
+  }
+
+  $('btnCreateVersion').addEventListener('click', async () => {
+    try {
+      await api('/api/admin/multilingual/versions', { method: 'POST', body: { name: $('fTVName').value, subject: $('fTVSubject').value, version: $('fTVVersion').value } });
+      $('mStatus').textContent = 'Version created ✓';
+      await loadVersions();
+    } catch (e) { $('mStatus').textContent = '✗ ' + e.message; }
+  });
+
+  $('btnVersionStatus').addEventListener('click', async () => {
+    try {
+      const r = await api(`/api/admin/multilingual/versions/${currentVersionId()}/status`, { method: 'POST', body: { status: $('fVersionStatus').value } });
+      $('mStatus').textContent = 'Status → ' + r.status;
+      await loadVersions();
+    } catch (e) { $('mStatus').textContent = '✗ ' + e.message; }
+  });
+
+  $('btnRefreshVersions').addEventListener('click', loadVersions);
+  $('btnSearchTerms').addEventListener('click', loadTerms);
+  $('fVersionSelect').addEventListener('change', loadTerms);
+
+  $('btnAddTerm').addEventListener('click', async () => {
+    try {
+      const r = await api('/api/admin/multilingual/terms', {
+        method: 'POST',
+        body: {
+          versionId: currentVersionId(), canonicalTerm: $('fTCanonical').value,
+          uzLatn: $('fTUzLatn').value, uzCyrl: $('fTUzCyrl').value, ru: $('fTRu').value, en: $('fTEn').value,
+          subject: $('fTVSubject').value || null,
+        },
+      });
+      $('mStatus').textContent = 'Term #' + r.termId + ' — search_key: ' + r.searchKey;
+      await loadTerms();
+    } catch (e) { $('mStatus').textContent = '✗ ' + e.message; }
+  });
+
+  // ── Translations ──
+  $('btnAddTranslation').addEventListener('click', async () => {
+    try {
+      const r = await api('/api/admin/multilingual/translations', {
+        method: 'POST',
+        body: {
+          contentType: $('fCTType').value, contentId: Number($('fCTId').value),
+          sourceLang: $('fCTSrc').value, targetLang: $('fCTTgt').value,
+          originalText: $('fCTOriginal').value, translatedText: $('fCTTranslated').value || null,
+        },
+      });
+      $('mStatus').textContent = 'Translation #' + r.translationId + ' (original preserved) ✓';
+      await loadTranslations();
+    } catch (e) { $('mStatus').textContent = '✗ ' + e.message; }
+  });
+
+  async function loadTranslations() {
+    try {
+      const { items } = await api('/api/admin/multilingual/translations');
+      $('translationsBody').innerHTML = items.map((x) => `<tr>
+        <td>#${x.id}</td>
+        <td>${esc(x.content_type)}:${x.content_id}</td>
+        <td>${esc(x.source_lang)} → ${esc(x.target_lang)}</td>
+        <td><span class="chip chip-${x.translation_status === 'approved' ? 'ok' : 'warn'}">${esc(x.translation_status)}</span></td>
+        <td><span class="chip chip-${x.equivalence_status === 'construct_equivalent' ? 'ok' : 'warn'}">${esc(x.equivalence_status)}</span></td>
+        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(x.original_text)}">${esc(x.original_text)}</td></tr>`).join('') || '<tr><td colspan="6" class="adm-muted">Translation yo&rsquo;q</td></tr>';
+    } catch (e) { /* silent */ }
+  }
+
+  $('btnReview').addEventListener('click', async () => {
+    try {
+      const r = await api(`/api/admin/multilingual/translations/${Number($('fReviewId').value)}/review`, {
+        method: 'POST',
+        body: { verdict: $('fReviewVerdict').value, notes: $('fReviewNotes').value },
+      });
+      $('mStatus').textContent = `Review #${r.translationId}: ${r.verdict} (${r.status}) ✓`;
+      await loadTranslations();
+    } catch (e) { $('mStatus').textContent = '✗ ' + e.message; }
+  });
+
+  // ── Proper names ──
+  $('btnAddName').addEventListener('click', async () => {
+    try {
+      const r = await api('/api/admin/multilingual/proper-names', {
+        method: 'POST',
+        body: {
+          identityType: $('fPNType').value, identityKey: $('fPNKey').value, canonicalName: $('fPNCanonical').value,
+          uzLatn: $('fPNLatn').value, uzCyrl: $('fPNCyrl').value,
+        },
+      });
+      $('mStatus').textContent = r.updated ? 'Name updated ✓' : 'Name registered ✓';
+      await loadNames();
+    } catch (e) { $('mStatus').textContent = '✗ ' + e.message; }
+  });
+
+  async function loadNames() {
+    try {
+      const { names } = await api('/api/admin/multilingual/proper-names');
+      $('namesBody').innerHTML = names.map((n) => `<tr>
+        <td>${esc(n.identity_type)}</td>
+        <td><b>${esc(n.canonical_name)}</b></td>
+        <td>${esc(n.uz_latn || '-')}</td>
+        <td>${esc(n.uz_cyrl || '-')}</td>
+        <td><code style="font-size:11px">${esc(n.search_key || '')}</code></td></tr>`).join('') || '<tr><td colspan="5" class="adm-muted">Name yo&rsquo;q</td></tr>';
+    } catch (e) { /* silent */ }
+  }
+
+  loadVersions();
+  loadTranslations();
+  loadNames();
+})();
+</script>
+</body>
+</html>

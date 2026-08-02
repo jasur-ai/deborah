@@ -5,3 +5,6 @@ node_modules/
 dist/
 build/
 data/  # Local JSON database (auto-generated from seed)
+# Firebase service account (maxfiy kalit — hech qachon commit qilinmaydi)
+*-firebase-adminsdk-*.json
+firebase-service-account.json

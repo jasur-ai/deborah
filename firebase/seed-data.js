@@ -125,12 +125,30 @@ export function generateSeedData() {
     { key: 'dilmurod', name: 'Dilmurod', pass: '1234', days: 47, tests: true },
   ];
 
+  // ── Role demo users (Prompt 68 — role-aware shell) ──
+  // teacher/proctor/marker/board rollari workspace'lar uchun demo hisoblar.
+  const ROLE_DEMO = {
+    teacher: ['alisher', 'malika'],
+    proctor: ['sardor'],
+    marker: ['nigora'],
+    board: ['feruza'],
+  };
+
   demoUsers.forEach((u, idx) => {
     const userData = {
       username: u.name,
       password: hashPass(u.name, u.pass),
       created_at: ago(u.days),
     };
+
+    // Prompt 68 — role tayinlash (default student).
+    for (const [r, names] of Object.entries(ROLE_DEMO)) {
+      if (names.includes(u.key)) {
+        userData.role = r;
+        break;
+      }
+    }
+    if (!userData.role) userData.role = 'student';
 
     if (u.tests) {
       userData.tests = {};

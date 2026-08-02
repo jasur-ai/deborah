@@ -2,8 +2,14 @@
  * Edikit — Firebase Admin SDK
  * 
  * 🔥 Real Firebase Realtime Database ga ulanadi (agar kredensial bo'lsa)
- * 💻 Agar FIREBASE_SERVICE_ACCOUNT yoki GOOGLE_APPLICATION_CREDENTIALS bo'lmasa,
- *    local-db.js (data/db.json) ga tayanadi
+ * 💻 Agar kredensial bo'lmasa, local-db.js (data/db.json) ga tayanadi
+ * 
+ * Qo'llab-quvvatlanadigan kredensial formatlari (ustuvorlik tartibida):
+ *   1. FIREBASE_SERVICE_ACCOUNT         — service account JSON string (env)
+ *   2. GOOGLE_APPLICATION_CREDENTIALS   — service account JSON fayl yo'li
+ *   3. FIREBASE_SERVICE_ACCOUNT_PATH    — service account JSON fayl yo'li (.env)
+ *   4. FIREBASE_CLIENT_EMAIL + FIREBASE_PRIVATE_KEY — alohida kalitlar (eski
+ *      Next.js sessiya_pro formati; PRIVATE_KEY ichida \n literal bo'lishi mumkin)
  * 
  * Original Firebase config (sessiya-11767):
  *   databaseURL: https://sessiya-11767-default-rtdb.firebaseio.com
@@ -23,6 +29,13 @@ let _fbInstance = null;
 
 // Try to initialize real Firebase
 async function initFirebase() {
+  // Test muhitida (NODE_ENV=test) REAL Firebase'ga ulanishni bloklaymiz —
+  // testlar doim lokal DB (data/db.json) bilan ishlaydi. Bu test ma'lumotlari
+  // cloud'ga yozilishini oldini oladi. Real Firebase faqat development /
+  // production'da ishlaydi.
+  if (process.env.NODE_ENV === 'test') {
+    return false;
+  }
   try {
     const { initializeApp, getApps, cert, getApp } = await import('firebase-admin/app');
     const { getDatabase } = await import('firebase-admin/database');
@@ -31,16 +44,30 @@ async function initFirebase() {
     const PROJECT_ID = process.env.FIREBASE_PROJECT_ID || 'sessiya-11767';
 
     let credential = null;
+    let serviceAccount = null;
     const saEnv = process.env.FIREBASE_SERVICE_ACCOUNT;
-    const saPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+    const saPath = process.env.GOOGLE_APPLICATION_CREDENTIALS || process.env.FIREBASE_SERVICE_ACCOUNT_PATH;
 
     if (saEnv) {
       // Service account as JSON string
-      credential = cert(JSON.parse(saEnv));
+      serviceAccount = JSON.parse(saEnv);
     } else if (saPath && existsSync(resolve(saPath))) {
       // Service account as file path
       const raw = readFileSync(resolve(saPath), 'utf-8');
-      credential = cert(JSON.parse(raw));
+      serviceAccount = JSON.parse(raw);
+    } else if (process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY) {
+      // Legacy split-key format (sessiya_pro Next.js): CLIENT_EMAIL + PRIVATE_KEY.
+      // PRIVATE_KEY ichidagi literal \n ni haqiqiy newline'ga o'tkazamiz.
+      serviceAccount = {
+        type: 'service_account',
+        project_id: PROJECT_ID,
+        private_key: String(process.env.FIREBASE_PRIVATE_KEY).replace(/\\n/g, '\n'),
+        client_email: process.env.FIREBASE_CLIENT_EMAIL,
+      };
+    }
+
+    if (serviceAccount) {
+      credential = cert(serviceAccount);
     }
 
     if (credential) {

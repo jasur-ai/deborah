@@ -752,3 +752,146 @@ tbody tr:hover td { background: rgba(59,130,246,.03); }
   .hero-logo { height: 30px; }
   .code-display { font-size: clamp(2rem, 8vw, 3rem); letter-spacing: 3px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   14. ROLE SHELL (Prompt 68 — role-based frontend completion)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Skip link (WCAG 2.2 — keyboard nav) ── */
+.skip-link {
+  position: fixed; top: -100px; left: 12px; z-index: 1000;
+  background: var(--accent); color: #fff; padding: 10px 18px;
+  border-radius: 10px; font-weight: 900; font-size: .82rem;
+  text-decoration: none; transition: top .2s ease;
+  box-shadow: 0 8px 24px rgba(0,0,0,.35);
+}
+.skip-link:focus { top: 12px; }
+
+/* ── Sidebar ── */
+.shell-sidebar {
+  position: fixed; top: 0; left: 0; bottom: 0; width: 240px; z-index: 300;
+  display: flex; flex-direction: column;
+  background: var(--bg-surface, var(--surf));
+  border-right: 1px solid var(--border);
+  backdrop-filter: blur(18px);
+  transition: transform .3s ease, background .3s, border-color .3s;
+}
+.shell-side-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; }
+.shell-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+.shell-brand-name { font-family: 'Righteous', cursive; font-size: 1.1rem; background: linear-gradient(135deg, var(--accent), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.shell-close { display: none; background: none; border: none; color: var(--muted); cursor: pointer; padding: 4px; }
+
+.shell-role-chip {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin: 4px 14px 10px; padding: 9px 12px;
+  background: var(--bg-card, var(--card)); border: 1px solid var(--border);
+  border-radius: 12px; font-size: .74rem; font-weight: 800; color: var(--text);
+}
+.shell-role-ico { color: var(--green); display: flex; }
+.shell-role-user { color: var(--muted); font-weight: 700; font-size: .68rem; }
+
+.shell-nav { flex: 1; overflow-y: auto; padding: 0 10px 14px; }
+.shell-nav-sec {
+  font-size: .62rem; font-weight: 900; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--muted); padding: 14px 10px 6px;
+}
+.shell-nav-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: 10px;
+  color: var(--muted); text-decoration: none;
+  font-size: .8rem; font-weight: 800;
+  transition: background .25s ease, color .25s ease, transform .2s ease;
+}
+.shell-nav-link:hover { background: var(--bg-elevated, rgba(255,255,255,.05)); color: var(--text); transform: translateX(2px); }
+.shell-nav-link.active {
+  background: var(--accent-alpha, rgba(37,99,235,.14)); color: var(--accent);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.shell-nav-ico { display: flex; flex-shrink: 0; opacity: .85; }
+
+.shell-side-foot { padding: 12px 14px; border-top: 1px solid var(--border); display: flex; gap: 6px; }
+.shell-foot-link {
+  display: flex; align-items: center; gap: 6px; flex: 1;
+  padding: 8px 10px; border-radius: 9px; background: none; border: none;
+  color: var(--muted); font-family: 'Nunito', sans-serif; font-size: .76rem; font-weight: 800;
+  text-decoration: none; cursor: pointer; transition: background .25s ease, color .25s ease;
+}
+.shell-foot-link:hover { background: var(--bg-elevated); color: var(--text); }
+
+/* ── Overlay (mobile) ── */
+.shell-overlay {
+  position: fixed; inset: 0; z-index: 290; display: none;
+  background: rgba(0,0,0,.55); backdrop-filter: blur(2px);
+}
+body.shell-open .shell-overlay { display: block; }
+body.shell-open .shell-sidebar { transform: translateX(0); }
+
+/* ── Main content + topbar ── */
+.main, .shell-main {
+  margin-left: 240px; min-height: 100vh;
+  padding: 20px 24px 60px; position: relative; z-index: 1;
+  transition: margin-left .3s ease;
+}
+.topbar, .shell-topbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-bottom: 18px; padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.topbar h1, .shell-topbar-title {
+  margin: 0; font-family: 'Righteous', cursive; font-size: 1.3rem;
+  background: linear-gradient(135deg, var(--accent), var(--gold));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.topbar-right, .shell-topbar-right { display: flex; align-items: center; gap: 8px; }
+.shell-burger { display: none; background: var(--bg-card); border: 1px solid var(--border); border-radius: 9px; padding: 7px 9px; color: var(--text); cursor: pointer; }
+.shell-top-btn { display: flex; align-items: center; background: var(--bg-card); border: 1px solid var(--border); border-radius: 9px; padding: 7px 9px; color: var(--text); cursor: pointer; transition: all .2s; }
+.shell-top-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── Role workspace cards & tabs ── */
+.role-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+.role-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  padding: 16px; transition: all .3s ease; position: relative; overflow: hidden;
+}
+.role-card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: var(--shadow-md); }
+.role-card .rc-ico { width: 42px; height: 42px; border-radius: 11px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+.role-card .rc-title { font-weight: 900; font-size: .92rem; margin-bottom: 4px; }
+.role-card .rc-sub { font-size: .74rem; color: var(--muted); font-weight: 700; }
+.role-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.role-tab {
+  padding: 8px 16px; border-radius: 50px; border: 1px solid var(--border);
+  background: var(--bg-card); color: var(--muted); font-family: 'Nunito', sans-serif;
+  font-size: .78rem; font-weight: 900; cursor: pointer; text-decoration: none;
+  transition: all .25s ease; display: flex; align-items: center; gap: 6px;
+}
+.role-tab:hover { border-color: var(--accent); color: var(--text); }
+.role-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 4px 14px rgba(37,99,235,.35); }
+
+/* ── UI states (loading/error/empty/offline/job) ── */
+.ui-state { text-align: center; padding: 34px 18px; color: var(--muted); border-radius: 14px; border: 1px dashed var(--border); background: var(--bg-card); }
+.ui-state .us-ico { display: flex; justify-content: center; margin-bottom: 10px; opacity: .7; }
+.ui-state .us-title { font-weight: 900; font-size: .9rem; color: var(--text); margin-bottom: 4px; }
+.ui-state .us-sub { font-size: .76rem; font-weight: 700; }
+.ui-state.us-error { border-color: rgba(248,113,113,.4); background: rgba(248,113,113,.05); }
+.ui-state.us-error .us-title { color: var(--accent); }
+.ui-state.us-offline { border-color: rgba(251,191,36,.4); background: rgba(251,191,36,.05); }
+.ui-state.us-offline .us-title { color: var(--gold); }
+.ui-state.us-job { border-color: rgba(56,189,248,.4); background: rgba(56,189,248,.05); }
+.ui-state.us-job .us-title { color: var(--blue); }
+
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-elevated) 50%, var(--bg-card) 75%);
+  background-size: 200% 100%; border-radius: 10px;
+  animation: skeletonShimmer 1.4s ease infinite;
+}
+@keyframes skeletonShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* ── Mobile shell (≤ 768px) ── */
+@media (max-width: 768px) {
+  .shell-sidebar { transform: translateX(-100%); box-shadow: 2px 0 30px rgba(0,0,0,.4); }
+  body.shell-open .shell-sidebar { transform: translateX(0); }
+  .shell-close { display: flex; }
+  .shell-burger { display: flex; }
+  .main, .shell-main { margin-left: 0; padding: 14px 14px 60px; }
+  .topbar, .shell-topbar { flex-wrap: wrap; }
+}

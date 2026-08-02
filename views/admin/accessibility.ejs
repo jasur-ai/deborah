@@ -1,0 +1,277 @@
+<% const current = user || {}; %>
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — Edikit Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="adm-body">
+  <div class="adm-shell">
+    <aside class="adm-sidebar">
+      <div class="adm-brand">
+        <img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto">
+        <span>Edikit</span>
+      </div>
+      <nav class="adm-nav">
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/accessibility" class="active">Accessibility</a>
+        <a href="/admin/multilingual">Multilingual</a>
+        <a href="/admin/program-quality">Program Quality</a>
+        <a href="/admin/credentials">Credentials</a>
+        <a href="/admin/ai-checkpoint">AI Checkpoint</a>
+        <a href="/admin/ai-grading">AI Grading</a>
+        <a href="/admin/ai-mlops">AI MLOps</a>
+        <a href="/admin/source-pack">Source Packs</a>
+        <a href="/admin/vip">VIP</a>
+      </nav>
+      <div class="adm-side-foot">
+        <a href="/admin/logout">Chiqish</a>
+      </div>
+    </aside>
+
+    <main class="adm-main">
+      <header class="adm-topbar">
+        <h1>WCAG 2.2 AA &amp; Artifact Accessibility</h1>
+        <span class="adm-chip" id="mStatus">Yuklanmoqda…</span>
+      </header>
+
+      <section class="adm-card">
+        <h2>Summary</h2>
+        <div id="summary" class="adm-grid">Yuklanmoqda…</div>
+      </section>
+
+      <div class="adm-grid-2">
+        <section class="adm-card">
+          <h2>Settings (user preferences)</h2>
+          <div class="adm-row">
+            <label class="adm-check"><input type="checkbox" id="stReducedMotion"> Reduced motion (2.3.3)</label>
+            <label class="adm-check"><input type="checkbox" id="stHighContrast"> High contrast (1.4.8)</label>
+            <label class="adm-check"><input type="checkbox" id="stKeyboardNav"> Keyboard nav (2.1)</label>
+            <label class="adm-check"><input type="checkbox" id="stScreenReader"> Screen reader mode (4.1.2)</label>
+            <label class="adm-label">Font scale
+              <input type="number" id="stFontScale" min="0.8" max="2" step="0.1" value="1">
+            </label>
+            <button class="adm-btn" onclick="saveSettings()">Saqlash</button>
+          </div>
+        </section>
+
+        <section class="adm-card">
+          <h2>Run audit (ACR)</h2>
+          <div class="adm-row">
+            <label class="adm-label">Journey
+              <select id="auJourney">
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+                <option value="admin">Admin</option>
+                <option value="proctor">Proctor</option>
+              </select>
+            </label>
+            <input type="text" id="auPageUrl" placeholder="Page URL" class="adm-input">
+            <textarea id="auSnapshot" placeholder='DOM snapshot JSON: {"landmarks":["main"],"headings":[{"level":1}],"controls":[],"focusables":[],"skipLinks":[],"timers":[],"dragDrops":[],"media":[]}' class="adm-textarea" rows="4"></textarea>
+            <button class="adm-btn" onclick="runAudit()">Run audit</button>
+          </div>
+          <div id="auditResult"></div>
+        </section>
+      </div>
+
+      <section class="adm-card">
+        <h2>Known-gap backlog</h2>
+        <div class="adm-row">
+          <input type="text" id="gpRule" placeholder="rule_id (masalan: target-size)" class="adm-input">
+          <input type="text" id="gpDesc" placeholder="Description" class="adm-input">
+          <select id="gpSeverity">
+            <option value="blocker">Blocker</option>
+            <option value="critical">Critical</option>
+            <option value="major" selected>Major</option>
+            <option value="minor">Minor</option>
+          </select>
+          <label class="adm-check"><input type="checkbox" id="gpTimed"> Timed/high-stakes</label>
+          <button class="adm-btn" onclick="createGap()">Add gap</button>
+        </div>
+        <div id="gapsList">Yuklanmoqda…</div>
+      </section>
+
+      <section class="adm-card">
+        <h2>Artifact QA (PDF/DOCX/PPTX)</h2>
+        <div class="adm-row">
+          <select id="arType">
+            <option value="pdf">PDF</option>
+            <option value="docx">DOCX</option>
+            <option value="pptx">PPTX</option>
+          </select>
+          <input type="number" id="arId" placeholder="Artifact ID" class="adm-input">
+          <label class="adm-check"><input type="checkbox" id="arReadingOrder"> Reading order ok</label>
+          <label class="adm-check"><input type="checkbox" id="arTagged"> Tagged PDF</label>
+          <input type="text" id="arContrast" placeholder='Contrast pairs JSON: [{"fg":"#333","bg":"#fff","fontSizePx":16}]' class="adm-input">
+          <button class="adm-btn" onclick="checkArtifact()">Check</button>
+        </div>
+        <div id="artifactsList">Yuklanmoqda…</div>
+      </section>
+    </main>
+  </div>
+
+<script>
+// ── Helpers ──
+async function api(url, opts = {}) {
+  const r = await fetch(url, { headers: { 'Content-Type': 'application/json' }, ...opts });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || ('HTTP ' + r.status));
+  return j;
+}
+
+function el(tag, text, cls) {
+  const e = document.createElement(tag);
+  if (text) e.textContent = text;
+  if (cls) e.className = cls;
+  return e;
+}
+
+function chip(t) {
+  const c = el('span', t, 'adm-chip');
+  c.style.marginLeft = '4px';
+  return c;
+}
+
+// ── Summary ──
+async function loadSummary() {
+  const s = await api('/api/admin/accessibility/summary');
+  const box = document.getElementById('summary');
+  box.innerHTML = '';
+  box.appendChild(el('div', `Audits: ${s.audits}`, 'adm-stat'));
+  box.appendChild(el('div', `Gaps: ${s.gaps} (open ${s.openGaps}, blockers ${s.blockers})`, 'adm-stat'));
+  box.appendChild(el('div', `Artifacts: ${s.artifacts} (failed ${s.failedArtifacts})`, 'adm-stat'));
+  box.appendChild(el('div', `Needs review: ${s.needsReview}`, 'adm-stat'));
+  (s.journeyCoverage || []).forEach((j) => box.appendChild(el('div', `${j.journey}: ${j.auditCount} audits`, 'adm-stat')));
+}
+
+// ── Settings ──
+async function loadSettings() {
+  const s = (await api('/api/admin/accessibility/settings')).settings;
+  document.getElementById('stReducedMotion').checked = !!s.reducedMotion;
+  document.getElementById('stHighContrast').checked = !!s.highContrast;
+  document.getElementById('stKeyboardNav').checked = !!s.keyboardNav;
+  document.getElementById('stScreenReader').checked = !!s.screenReaderMode;
+  document.getElementById('stFontScale').value = s.fontScale || 1;
+}
+
+async function saveSettings() {
+  const body = {
+    reducedMotion: document.getElementById('stReducedMotion').checked,
+    highContrast: document.getElementById('stHighContrast').checked,
+    keyboardNav: document.getElementById('stKeyboardNav').checked,
+    screenReaderMode: document.getElementById('stScreenReader').checked,
+    fontScale: Number(document.getElementById('stFontScale').value) || 1,
+  };
+  const r = await api('/api/admin/accessibility/settings', { method: 'POST', body: JSON.stringify(body) });
+  setStatus('Settings saved' + (r.updated ? ' (updated)' : ''));
+}
+
+// ── Audit ──
+async function runAudit() {
+  let snapshot = null;
+  const raw = document.getElementById('auSnapshot').value.trim();
+  if (raw) { try { snapshot = JSON.parse(raw); } catch { setStatus('Invalid snapshot JSON'); return; } }
+  const r = await api('/api/admin/accessibility/audits', {
+    method: 'POST',
+    body: JSON.stringify({ journey: document.getElementById('auJourney').value, pageUrl: document.getElementById('auPageUrl').value, snapshot }),
+  });
+  const box = document.getElementById('auditResult');
+  box.innerHTML = '';
+  box.appendChild(el('div', `Audit #${r.auditId} — score ${r.score} (needs human review: ${r.needsReview})`, 'adm-stat'));
+  (r.violations || []).forEach((v) => {
+    const row = el('div', `[${v.impact}] ${v.rule} — ${v.help}`, 'adm-row');
+    row.style.color = v.impact === 'critical' ? '#f87171' : v.impact === 'serious' ? '#fbbf24' : '#8b96b3';
+    box.appendChild(row);
+  });
+  setStatus('Audit recorded');
+}
+
+// ── Gaps ──
+async function createGap() {
+  const r = await api('/api/admin/accessibility/gaps', {
+    method: 'POST',
+    body: JSON.stringify({
+      ruleId: document.getElementById('gpRule').value,
+      description: document.getElementById('gpDesc').value,
+      severity: document.getElementById('gpSeverity').value,
+      isTimed: document.getElementById('gpTimed').checked,
+      journey: 'student',
+    }),
+  });
+  setStatus('Gap added (blocker: ' + r.isBlocker + ')');
+  loadGaps();
+}
+
+async function loadGaps() {
+  const { gaps } = await api('/api/admin/accessibility/gaps');
+  const box = document.getElementById('gapsList');
+  box.innerHTML = '';
+  (gaps || []).forEach((g) => {
+    const row = el('div', `[${g.severity}${g.is_blocker ? ' ⛔' : ''}] ${g.rule_id} — ${g.description} (${g.status})`, 'adm-row');
+    const btn = el('button', g.status === 'open' ? 'Boshlash' : g.status === 'in_progress' ? 'Tuzatildi' : g.status === 'fixed' ? 'Verify' : '', 'adm-btn');
+    if (g.status !== 'verified') {
+      const next = g.status === 'open' ? 'in_progress' : g.status === 'in_progress' ? 'fixed' : 'verified';
+      btn.onclick = async () => {
+        const body = { to: next };
+        if (next === 'verified') body.verifiedBy = prompt('Verifier (ACR sign-off):') || '';
+        const r = await api('/api/admin/accessibility/gaps/' + g.id + '/status', { method: 'POST', body: JSON.stringify(body) });
+        setStatus('Gap → ' + r.to);
+        loadGaps();
+      };
+      row.appendChild(btn);
+    }
+    box.appendChild(row);
+  });
+}
+
+// ── Artifacts ──
+async function checkArtifact() {
+  let contrastPairs = [];
+  const raw = document.getElementById('arContrast').value.trim();
+  if (raw) { try { contrastPairs = JSON.parse(raw); } catch { setStatus('Invalid contrast JSON'); return; } }
+  const r = await api('/api/admin/accessibility/artifacts', {
+    method: 'POST',
+    body: JSON.stringify({
+      artifactType: document.getElementById('arType').value,
+      artifactId: Number(document.getElementById('arId').value) || 0,
+      readingOrderOk: document.getElementById('arReadingOrder').checked,
+      tagged: document.getElementById('arTagged').checked,
+      contrastPairs,
+    }),
+  });
+  setStatus('Artifact ' + (r.ok ? 'PASSED' : 'FAILED') + ' — alt issues: ' + (r.missingAlt || []).length + ', contrast: ' + (r.contrastIssues || []).length);
+  loadArtifacts();
+}
+
+async function loadArtifacts() {
+  const { artifacts } = await api('/api/admin/accessibility/artifacts');
+  const box = document.getElementById('artifactsList');
+  box.innerHTML = '';
+  (artifacts || []).forEach((a) => {
+    const row = el('div', `[${a.artifact_type}] #${a.artifact_id} — ${a.status} (reading order ${a.reading_order_ok ? 'ok' : 'FAIL'}, alt ${(a.alt_text_issues || []).length} issues, contrast ${(a.contrast_issues || []).length} issues)`, 'adm-row');
+    box.appendChild(row);
+  });
+}
+
+// ── Status ──
+function setStatus(msg) {
+  const s = document.getElementById('mStatus');
+  s.textContent = msg;
+  s.style.opacity = 1;
+}
+
+// ── Init ──
+(async function init() {
+  try {
+    await Promise.all([loadSummary(), loadSettings(), loadGaps(), loadArtifacts()]);
+    setStatus('Yuklandi');
+  } catch (e) {
+    setStatus('Xato: ' + e.message);
+  }
+})();
+</script>
+</body>
+</html>

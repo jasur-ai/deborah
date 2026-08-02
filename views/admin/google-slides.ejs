@@ -1,0 +1,131 @@
+<% const current = user || {}; %>
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — Edikit Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="adm-body">
+  <div class="adm-shell">
+    <aside class="adm-sidebar">
+      <div class="adm-brand">
+        <img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto">
+        <span>Edikit</span>
+      </div>
+      <nav class="adm-nav">
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/users">Users</a>
+        <a href="/admin/provider">Provider Adapters</a>
+        <a href="/admin/canva">Canva</a>
+        <a href="/admin/google-slides" class="active">Google Slides</a>
+        <a href="/admin/deck-export">Deck Export</a>
+        <a href="/admin/quiz-deck">Quiz from Deck</a>
+        <a href="/admin/claude">Claude Adapter</a>
+        <a href="/admin/vip">VIP</a>
+      </nav>
+      <div class="adm-side-foot">
+        <a href="/admin/logout">Chiqish</a>
+      </div>
+    </aside>
+
+    <main class="adm-main">
+      <header class="adm-topbar">
+        <h1>Google Slides Adapter</h1>
+        <span class="adm-chip" id="connStatus">Tekshirilmoqda…</span>
+      </header>
+
+      <section class="adm-card">
+        <h2>Google OAuth (PKCE)</h2>
+        <p class="adm-hint">drive.file minimal scope — faqat ilova yaratgan fayllarga kirish. Token vault encrypted, refresh token aylantiriladi (research §9.9).</p>
+        <div class="adm-row">
+          <button class="btn btn-primary" id="btnLink">Link Google (OAuth)</button>
+          <button class="btn" id="btnUnlink">Unlink + Revoke</button>
+          <span class="adm-hint" id="linkStatus"></span>
+        </div>
+      </section>
+
+      <section class="adm-card">
+        <h2>Deck → Google Slides</h2>
+        <p class="adm-hint">Canonical deck'ni Google Slides'da yaratish (batchUpdate: createSlide → insertText → title/speaker-notes).</p>
+        <div class="adm-form">
+          <div class="adm-row">
+            <div class="field"><label>Deck ID (presentation)</label><input class="input" id="fDeckId" placeholder="1"></div>
+            <button class="btn" id="btnCreate">Create Slides</button>
+            <button class="btn" id="btnExport">Export PDF</button>
+          </div>
+          <span class="adm-hint" id="opStatus"></span>
+        </div>
+      </section>
+    </main>
+  </div>
+
+<script>
+(function () {
+  const CSRF = '<%= csrfToken || "" %>';
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  // Demo canonical deck — admin panel'dan create tugmasini sinash uchun
+  const DEMO_DECK = {
+    title: 'Fotosintez',
+    slides: [
+      { id: 's1', title: 'Kirish', blocks: [{ type: 'heading', content: { heading: 'Fotosintez' } }, { type: 'bullets', content: { items: ['Xlorofill', 'Quyosh nuri'] } }] },
+      { id: 's2', title: 'Xulosa', blocks: [{ type: 'text', content: { text: 'Short' } }] },
+    ],
+  };
+
+  async function api(path, opts = {}) {
+    const res = await fetch(path, {
+      method: opts.method || 'GET',
+      headers: { 'content-type': 'application/json', 'x-csrf-token': CSRF },
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    return data;
+  }
+
+  async function loadStatus() {
+    try {
+      const s = await api('/api/admin/google-slides/status');
+      $('connStatus').textContent = s.configured ? 'Configured ✓ (drive.file)' : 'Not configured (env)';
+      $('connStatus').className = 'adm-chip ' + (s.configured ? 'chip-ok' : 'chip-warn');
+    } catch (e) { /* ignore */ }
+  }
+
+  $('btnLink').addEventListener('click', async () => {
+    try {
+      const r = await api('/api/admin/google-slides/link', { method: 'POST', body: {} });
+      $('linkStatus').textContent = 'OAuth URL ochilmoqda…';
+      window.open(r.url, '_blank');
+    } catch (e) { $('linkStatus').textContent = '✗ ' + e.message; }
+  });
+
+  $('btnUnlink').addEventListener('click', async () => {
+    try {
+      await api('/api/admin/google-slides/unlink', { method: 'POST', body: {} });
+      $('linkStatus').textContent = 'Unlinked + revoked ✓';
+    } catch (e) { $('linkStatus').textContent = '✗ ' + e.message; }
+  });
+
+  $('btnCreate').addEventListener('click', async () => {
+    try {
+      const r = await api('/api/admin/google-slides/deck', { method: 'POST', body: { title: 'Fotosintez', document: DEMO_DECK } });
+      $('opStatus').textContent = 'Slides: ' + esc(r.presentationId || '-') + ' (' + (r.slides ?? 0) + ' slayd) ✓';
+    } catch (e) { $('opStatus').textContent = '✗ ' + e.message; }
+  });
+
+  $('btnExport').addEventListener('click', async () => {
+    try {
+      const r = await api(`/api/admin/google-slides/${Number($('fDeckId').value) || 1}/export`, { method: 'POST', body: { format: 'pdf' } });
+      $('opStatus').textContent = 'Export: ' + esc(r.size ? r.size + ' bytes' : 'queued') + ' ✓';
+    } catch (e) { $('opStatus').textContent = '✗ ' + e.message; }
+  });
+
+  loadStatus();
+})();
+</script>
+</body>
+</html>

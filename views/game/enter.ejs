@@ -445,8 +445,10 @@
     updatePBadge();
     goTo('s-qact');
 
-    lastCorrectIdx = typeof data.qCorrect === 'number' ? data.qCorrect : -1;
-    lastCorrectText = (data.qOptions || [])[lastCorrectIdx] || '';
+    // 🔒 SECURITY: qCorrect is NOT sent from server — answer revealed after scoring
+    // Player does NOT know the correct answer until game:answerReveal event
+    lastCorrectIdx = -1; // Will be set by game:answerReveal after scoring
+    lastCorrectText = '';
     lastPickedIdx = -1;
     qTime = data.qTime || 20;
     qStartAt = data.startedAt || Date.now();
@@ -589,6 +591,14 @@
 
   socket.on('error', (data) => {
     showMsg('code-msg', data.message || 'Xatolik');
+  });
+
+  // ── ANSWER REVEAL (sent after scoring, includes correct answer) ──
+  socket.on('game:answerReveal', (data) => {
+    if (data.qIndex === curQIdx) {
+      lastCorrectIdx = typeof data.correctOptionIndex === 'number' ? data.correctOptionIndex : -1;
+      lastCorrectText = data.correctText || '';
+    }
   });
 
   socket.on('host:disconnected', () => {

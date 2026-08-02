@@ -1,0 +1,43 @@
+<%
+// ── UI States partial (Prompt 68 — loading/error/empty/offline/job) ──
+// Foydalanish: include('partials/states', { state: 'empty', title, sub, iconName })
+const _st = typeof state !== 'undefined' ? state : 'empty';
+const _title = typeof title !== 'undefined' ? title : "Ma'lumot yo'q";
+const _sub = typeof sub !== 'undefined' ? sub : '';
+const _icon = typeof iconName !== 'undefined' ? iconName : 'info';
+%>
+<% if (_st === 'loading') { %>
+  <div class="ui-state" role="status" aria-live="polite">
+    <div class="us-ico"><%- icon('refresh', 28) %></div>
+    <div class="us-title"><%= _title %></div>
+    <% if (_sub) { %><div class="us-sub"><%= _sub %></div><% } %>
+    <div style="margin-top:14px;display:flex;gap:8px;justify-content:center">
+      <div class="skeleton" style="width:90px;height:12px"></div>
+      <div class="skeleton" style="width:60px;height:12px"></div>
+    </div>
+  </div>
+<% } else if (_st === 'error') { %>
+  <div class="ui-state us-error" role="alert">
+    <div class="us-ico"><%- icon('alertTriangle', 28) %></div>
+    <div class="us-title"><%= _title %></div>
+    <% if (_sub) { %><div class="us-sub"><%= _sub %></div><% } %>
+  </div>
+<% } else if (_st === 'offline') { %>
+  <div class="ui-state us-offline" role="status">
+    <div class="us-ico"><%- icon('wifiOff', 28) %></div>
+    <div class="us-title">Offline rejim</div>
+    <div class="us-sub"><%= _sub || "Internet aloqasi yo'q — ma'lumotlar qurilmada saqlanadi" %></div>
+  </div>
+<% } else if (_st === 'job') { %>
+  <div class="ui-state us-job" role="status" aria-live="polite">
+    <div class="us-ico"><%- icon('cpu', 28) %></div>
+    <div class="us-title"><%= _title %></div>
+    <% if (_sub) { %><div class="us-sub"><%= _sub %></div><% } %>
+  </div>
+<% } else { %>
+  <div class="ui-state" role="status">
+    <div class="us-ico"><%- icon(_icon, 28) %></div>
+    <div class="us-title"><%= _title %></div>
+    <% if (_sub) { %><div class="us-sub"><%= _sub %></div><% } %>
+  </div>
+<% } %>

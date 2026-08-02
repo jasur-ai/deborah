@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <%- include('../partials/head') %>
+  <style>
+    body{background:var(--bg-primary);min-height:100vh;}
+    .ov-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;}
+    .ov-stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;transition:all .25s;}
+    .ov-stat:hover{transform:translateY(-2px);border-color:var(--accent);}
+    .ov-stat .n{font-family:'Righteous',cursive;font-size:1.5rem;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .ov-stat .l{font-size:.72rem;font-weight:800;color:var(--muted);}
+    .quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;}
+  </style>
+</head>
+<body>
+  <%- include('../partials/sidebar', { active, role, user }) %>
+  <main class="main" id="main-content" tabindex="-1">
+    <div class="topbar">
+      <h1>O'qituvchi ish maydoni</h1>
+      <div class="topbar-right">
+        <span style="font-size:.74rem;font-weight:800;color:var(--muted)">Salom, <span style="color:var(--text)"><%= username %></span></span>
+      </div>
+    </div>
+
+    <div class="role-tabs" role="tablist" aria-label="Bo'limlar">
+      <a href="/teacher" class="role-tab <%= tab === 'overview' ? 'active' : '' %>" role="tab" aria-selected="<%= tab === 'overview' %>"><%- icon('grid', 14) %> Overview</a>
+      <a href="/teacher?tab=courses" class="role-tab <%= tab === 'courses' ? 'active' : '' %>" role="tab" aria-selected="<%= tab === 'courses' %>"><%- icon('bookOpen', 14) %> Kurslar</a>
+      <a href="/teacher?tab=assessments" class="role-tab <%= tab === 'assessments' ? 'active' : '' %>" role="tab" aria-selected="<%= tab === 'assessments' %>"><%- icon('target', 14) %> Baholashlar</a>
+      <a href="/teacher?tab=grading" class="role-tab <%= tab === 'grading' ? 'active' : '' %>" role="tab" aria-selected="<%= tab === 'grading' %>"><%- icon('clipboard', 14) %> Grading queue</a>
+    </div>
+
+    <% if (tab === 'overview') { %>
+      <div class="ov-stats">
+        <div class="ov-stat"><div class="n">0</div><div class="l">Bugungi darslar</div></div>
+        <div class="ov-stat"><div class="n">0</div><div class="l">Qoralama testlar</div></div>
+        <div class="ov-stat"><div class="n">0</div><div class="l">Grading queue</div></div>
+        <div class="ov-stat"><div class="n">0</div><div class="l">Aktiv attemptlar</div></div>
+      </div>
+      <div class="quick-grid">
+        <div class="role-card">
+          <div class="rc-ico" style="background:rgba(37,99,235,.14);color:var(--accent)"><%- icon('plus', 20) %></div>
+          <div class="rc-title">Yangi test yaratish</div>
+          <div class="rc-sub">Savollar bankidan yoki Excel import orqali</div>
+          <a href="/user/create-test" style="display:inline-block;margin-top:12px;text-decoration:none;color:var(--accent);font-weight:900;font-size:.8rem"><%- icon('arrowRight', 13) %> Boshlash</a>
+        </div>
+        <div class="role-card">
+          <div class="rc-ico" style="background:rgba(56,189,248,.14);color:var(--blue)"><%- icon('target', 20) %></div>
+          <div class="rc-title">Baholashlar</div>
+          <div class="rc-sub">Assessment builder &amp; blueprint</div>
+          <a href="/teacher?tab=assessments" style="display:inline-block;margin-top:12px;text-decoration:none;color:var(--blue);font-weight:900;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
+        </div>
+        <div class="role-card">
+          <div class="rc-ico" style="background:rgba(0,229,160,.12);color:var(--green)"><%- icon('clipboard', 20) %></div>
+          <div class="rc-title">Grading queue</div>
+          <div class="rc-sub">AI first-pass + teacher final model</div>
+          <a href="/teacher?tab=grading" style="display:inline-block;margin-top:12px;text-decoration:none;color:var(--green);font-weight:900;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
+        </div>
+        <div class="role-card">
+          <div class="rc-ico" style="background:rgba(245,158,11,.14);color:var(--gold)"><%- icon('users', 20) %></div>
+          <div class="rc-title">Kurslar &amp; guruhlar</div>
+          <div class="rc-sub">Groups / Cohorts / Students</div>
+          <a href="/teacher?tab=courses" style="display:inline-block;margin-top:12px;text-decoration:none;color:var(--gold);font-weight:900;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
+        </div>
+      </div>
+    <% } else if (tab === 'courses') { %>
+      <%- include('../partials/states', { state: 'empty', iconName: 'bookOpen', title: "Kurslar bo'limi", sub: 'Kurs yaratish va guruhlarni boshqarish' }) %>
+    <% } else if (tab === 'assessments') { %>
+      <%- include('../partials/states', { state: 'empty', iconName: 'target', title: 'Baholashlar', sub: 'Assessment builder, blueprint va monitoring' }) %>
+    <% } else if (tab === 'grading') { %>
+      <%- include('../partials/states', { state: 'job', iconName: 'cpu', title: "Grading queue bo'sh", sub: canOverride ? 'Model override huquqiga egasiz' : "Faqat o'qish rejimi" }) %>
+    <% } %>
+  </main>
+
+  <script>
+    // Mobile shell toggle
+    (function(){
+      var b=document.querySelector('[data-shell-open]');
+      var c=document.querySelector('[data-shell-close]');
+      function open(){document.body.classList.add('shell-open');var t=document.querySelector('[data-shell-open]');if(t)t.setAttribute('aria-expanded','true');}
+      function close(){document.body.classList.remove('shell-open');var t=document.querySelector('[data-shell-open]');if(t)t.setAttribute('aria-expanded','false');}
+      if(b)b.addEventListener('click',open);
+      if(c){c.addEventListener('click',close);}
+      document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+    })();
+  </script>
+</body>
+</html>

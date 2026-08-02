@@ -1,14 +1,20 @@
 /**
  * Edikit — Authentication Routes
  * User login/register and admin login
+ *
+ * Security:
+ *   - Admin credentials from CONFIG (Zod-validated env) — no hardcoded fallback
+ *   - User passwords hashed with argon2id (memory-hard, salt included)
+ *   - Legacy SHA-256 hashes auto-migrated on successful login
+ *   - CSRF validation active on all POST endpoints
+ *   - Rate-limited login routes (15 min window, 20 attempts)
  */
 
 import { Router } from 'express';
-import crypto from 'crypto';
+import CONFIG from '../src/config/env.js';
 import { fb } from '../firebase/admin.js';
-import { safeKey } from '../utils/helpers.js';
-import { ADMIN_USER, ADMIN_PASS } from '../utils/constants.js';
-import { requireAuth, redirectIfAuth, redirectIfAdmin } from '../middleware/auth.js';
+import { safeKey, hashPassword, verifyPassword, isLegacyHash, hashPass } from '../utils/helpers.js';
+import { redirectIfAuth, redirectIfAdmin } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -17,16 +23,27 @@ router.get('/admin/login', redirectIfAdmin, (req, res) => {
   res.render('admin/login', { title: 'Admin Login', error: null });
 });
 
-// ── Admin Login Action (rate-limited) ──
+// ── Admin Login Action (rate-limited, CSRF-protected, session regeneration) ──
 router.post('/admin/login', redirectIfAdmin, async (req, res) => {
   const { username, password } = req.body;
 
-  if (username === ADMIN_USER && password === ADMIN_PASS) {
-    req.session.admin = {
-      username: ADMIN_USER,
-      loggedInAt: Date.now(),
-    };
-    return res.redirect('/admin/dashboard');
+  // Credentials from CONFIG (Zod-validated, no hardcoded defaults)
+  if (username === CONFIG.ADMIN_USER && password === CONFIG.ADMIN_PASS) {
+    // Regenerate session to prevent session fixation
+    req.session.regenerate((err) => {
+      if (err) {
+        return res.render('admin/login', {
+          title: 'Admin Login',
+          error: 'Session xatoligi',
+        });
+      }
+      req.session.admin = {
+        username: CONFIG.ADMIN_USER,
+        loggedInAt: Date.now(),
+      };
+      return res.redirect('/admin/dashboard');
+    });
+    return;
   }
 
   res.render('admin/login', {
@@ -35,9 +52,10 @@ router.post('/admin/login', redirectIfAdmin, async (req, res) => {
   });
 });
 
-// ── Admin Logout ──
+// ── Admin Logout (session destroy + regenerate) ──
 router.get('/admin/logout', (req, res) => {
   req.session.destroy(() => {
+    res.clearCookie('connect.sid');
     res.redirect('/admin/login');
   });
 });
@@ -48,7 +66,7 @@ router.get('/user/login', redirectIfAuth, (req, res) => {
   res.render('user/login', { title: 'Kirish', mode, error: null });
 });
 
-// ── User Login Action (rate-limited) ──
+// ── User Login Action (rate-limited, CSRF-protected) ──
 router.post('/user/login', redirectIfAuth, async (req, res) => {
   const { username, password } = req.body;
   const mode = req.body.mode || 'login';
@@ -62,7 +80,8 @@ router.post('/user/login', redirectIfAuth, async (req, res) => {
   }
 
   try {
-    const snap = await fb.get(`users/${safeKey(username)}`);
+    const userKey = safeKey(username);
+    const snap = await fb.get(`users/${userKey}`);
 
     if (mode === 'login') {
       if (!snap.exists()) {
@@ -74,18 +93,25 @@ router.post('/user/login', redirectIfAuth, async (req, res) => {
       }
 
       const userData = snap.val();
-      const hashed = crypto.createHash('sha256')
-        .update('qb_' + safeKey(username) + '_' + password)
-        .digest('hex');
+      const storedHash = userData.password || '';
 
-      if (userData.password === hashed) {
-        // OK
-      } else if (userData.password === password) {
-        // Legacy plaintext password - upgrade to hash
-        try {
-          await fb.set(`users/${safeKey(username)}/password`, hashed);
-        } catch (_) {}
-      } else {
+      let isMatch = false;
+
+      // 1. Try argon2 verification first
+      if (storedHash.startsWith('$argon2')) {
+        isMatch = await verifyPassword(password, storedHash);
+      }
+      // 2. Try legacy SHA-256 verification (for migration)
+      else if (isLegacyHash(storedHash)) {
+        const legacyHash = hashPass(password, userKey);
+        isMatch = legacyHash === storedHash;
+      }
+      // 3. Try legacy plaintext (oldest format)
+      else if (storedHash === password) {
+        isMatch = true;
+      }
+
+      if (!isMatch) {
         return res.render('user/login', {
           title: 'Kirish',
           mode,
@@ -93,27 +119,56 @@ router.post('/user/login', redirectIfAuth, async (req, res) => {
         });
       }
 
-      // Read isVip from DB
-      let isVip = false;
-      try {
-        const vipSnap = await fb.get(`users/${safeKey(username)}/isVip`);
-        isVip = vipSnap.exists() && vipSnap.val() === true;
-      } catch (_) {}
+      // ── Legacy hash migration ──
+      // If password was verified with SHA-256 or plaintext, upgrade to argon2
+      if (!storedHash.startsWith('$argon2')) {
+        try {
+          const newHash = await hashPassword(password);
+          await fb.set(`users/${userKey}/password`, newHash);
+        } catch (_) {
+          // Non-critical: next login will migrate
+        }
+      }
 
-      req.session.user = {
-        username: userData.username || username,
-        safeKey: safeKey(username),
-        isVip,
-      };
+      // Regenerate session to prevent session fixation
+      req.session.regenerate(async (err) => {
+        if (err) {
+          return res.render('user/login', {
+            title: 'Kirish',
+            mode,
+            error: 'Session xatoligi',
+          });
+        }
 
-      return res.redirect('/user/panel');
+        // Read isVip from DB
+        let isVip = false;
+        try {
+          const vipSnap = await fb.get(`users/${userKey}/isVip`);
+          isVip = vipSnap.exists() && vipSnap.val() === true;
+        } catch (_) {}
+
+        // Role-aware session (Prompt 68) — default 'student'.
+        const role = userData.role && ['student','teacher','proctor','marker','board'].includes(userData.role)
+          ? userData.role
+          : 'student';
+
+        req.session.user = {
+          username: userData.username || username,
+          safeKey: userKey,
+          isVip,
+          role,
+        };
+
+        // Role workspace'ga yo'naltirish (teacher uchun).
+        return res.redirect(role === 'teacher' ? '/teacher' : '/user/panel');
+      });
     } else {
-      // Register
+      // ── Register ──
       if (!/^[a-zA-Z0-9_]{2,20}$/.test(username)) {
         return res.render('user/login', {
           title: 'Ro\'yxatdan o\'tish',
           mode: 'reg',
-          error: 'Faqat harf, raqam va _ (2–20 belgi)',
+          error: 'Faqat harf, raqam va _ (2\u201320 belgi)',
         });
       }
 
@@ -133,24 +188,34 @@ router.post('/user/login', redirectIfAuth, async (req, res) => {
         });
       }
 
-      const hashed = crypto.createHash('sha256')
-        .update('qb_' + safeKey(username) + '_' + password)
-        .digest('hex');
+      // Hash with argon2 (modern, memory-hard)
+      const hashed = await hashPassword(password);
 
-      await fb.set(`users/${safeKey(username)}`, {
+      await fb.set(`users/${userKey}`, {
         username: username.trim(),
         password: hashed,
         created_at: Date.now(),
-        safeKey: safeKey(username),
+        safeKey: userKey,
+        isVip: false,
       });
 
-      req.session.user = {
-        username: username.trim(),
-        safeKey: safeKey(username),
-        isVip: false,
-      };
-
-      return res.redirect('/user/panel');
+      // Regenerate session after registration
+      req.session.regenerate(async (err) => {
+        if (err) {
+          return res.render('user/login', {
+            title: 'Ro\'yxatdan o\'tish',
+            mode: 'reg',
+            error: 'Session xatoligi',
+          });
+        }
+        req.session.user = {
+          username: username.trim(),
+          safeKey: userKey,
+          isVip: false,
+          role: 'student',
+        };
+        return res.redirect('/user/panel');
+      });
     }
   } catch (err) {
     console.error('Auth error:', err);
@@ -162,9 +227,10 @@ router.post('/user/login', redirectIfAuth, async (req, res) => {
   }
 });
 
-// ── User Logout ──
+// ── User Logout (session destroy + cookie clear) ──
 router.get('/user/logout', (req, res) => {
   req.session.destroy(() => {
+    res.clearCookie('connect.sid');
     res.redirect('/');
   });
 });

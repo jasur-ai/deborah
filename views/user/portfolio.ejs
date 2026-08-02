@@ -1,0 +1,170 @@
+<% const current = user || {}; %>
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — Edikit</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="app-body">
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto">
+        Edikit
+      </a>
+      <div class="nav-links">
+        <a href="/user/panel">Panel</a>
+        <a href="/user/portfolio" class="active">Portfolio</a>
+        <a href="/user/security-profile">Xavfsizlik</a>
+        <a href="/user/logout">Chiqish</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="page-wrap" style="max-width:900px;margin:0 auto;padding:24px 16px">
+    <div class="card" style="margin-bottom:20px">
+      <h1 style="margin:0 0 4px">Evidence Portfolio</h1>
+      <p style="margin:0;color:var(--muted);font-size:14px">
+        Portfolio standart <b>yopiq (private)</b> — faqat siz ko'rasiz. Dalillar
+        (loyiha, reja, qoralamalar, aks ettirish, og'zaki himoya) va
+        verifiable credentials (Open Badges / CLR / VC) shu yerda saqlanadi.
+        AI detector hukm emas — dalil portfeli asosiy dalildir (research §27).
+      </p>
+      <span class="chip <%= (portfolio && portfolio.is_public) ? 'chip-ok' : 'chip-warn' %>"
+        style="margin-top:10px;display:inline-block">
+        <%= (portfolio && portfolio.is_public) ? 'Ommaviy' : 'Yopiq (private)' %>
+      </span>
+    </div>
+
+    <div class="card" style="margin-bottom:20px">
+      <h2 style="margin:0 0 12px">Yangi dalil qo'shish</h2>
+      <div style="display:grid;gap:10px">
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <select id="fKind" class="input" style="flex:1;min-width:160px">
+            <option value="proposal">Loyiha (proposal)</option>
+            <option value="outline">Reja (outline)</option>
+            <option value="source_shortlist">Manba ro'yxati</option>
+            <option value="draft">Qoralama (draft)</option>
+            <option value="teacher_feedback">O'qituvchi fikri</option>
+            <option value="reflection">Aks ettirish (reflection)</option>
+            <option value="oral_defense">Og'zaki himoya</option>
+            <option value="credential">Credential</option>
+          </select>
+          <input id="fTitle" class="input" style="flex:2;min-width:200px" placeholder="Dalil nomi">
+          <select id="fAiLevel" class="input" style="flex:1;min-width:140px">
+            <option value="A0">A0 — AI taqiqlangan</option>
+            <option value="A1">A1 — imlo/tarjima</option>
+            <option value="A2">A2 — g'oya/tadqiqot</option>
+            <option value="A3">A3 — qoralama/hamkorlik</option>
+            <option value="A4">A4 — AI-native</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-primary" id="btnAdd">Qo'shish</button>
+          <span class="muted" id="addHint" style="font-size:13px"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin:0 0 12px">Mening dalillarim</h2>
+      <div id="itemsWrap">
+        <% (items || []).forEach((it) => { %>
+          <div class="row" style="display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
+            <div style="flex:1">
+              <b><%= it.title %></b>
+              <div style="font-size:12px;color:var(--muted)">
+                <%= it.kind %> · <%= (it.content_meta && it.content_meta.aiUseLevel) ? 'AI daraja: ' + it.content_meta.aiUseLevel : 'AI daraja: A0' %>
+              </div>
+            </div>
+            <select class="input vis-select" style="width:130px" data-id="<%= it.id %>">
+              <option value="private" <%= it.visibility === 'private' ? 'selected' : '' %>>Yopiq</option>
+              <option value="shared" <%= it.visibility === 'shared' ? 'selected' : '' %>>Havola</option>
+              <option value="public" <%= it.visibility === 'public' ? 'selected' : '' %>>Ommaviy</option>
+            </select>
+            <button class="btn btn-sm share-btn" data-id="<%= it.id %>">Share</button>
+          </div>
+        <% }) %>
+        <% if (!items || items.length === 0) { %>
+          <p class="muted">Hozircha dalil yo'q. Yuqoridan birinchi dalilni qo'shing.</p>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px">
+      <h2 style="margin:0 0 12px">Credentials</h2>
+      <div id="credWrap"><span class="muted">Yuklanmoqda…</span></div>
+      <div style="margin-top:10px;font-size:12px;color:var(--muted)">
+        Credential faqat ratified evidence + teacher/admin sign-off bilan chiqadi
+        (LLM hech qachon credential bermaydi). Ommaviy payloadda raw submission
+        bo'lmaydi — faqat select share maydonlari.
+      </div>
+    </div>
+  </main>
+
+<script>
+(function () {
+  const CSRF = '<%= csrfToken || "" %>';
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  async function api(path, opts = {}) {
+    const res = await fetch(path, {
+      method: opts.method || 'GET',
+      headers: { 'content-type': 'application/json', 'x-csrf-token': CSRF },
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'HTTP ' + res.status);
+    return data;
+  }
+
+  $('btnAdd').addEventListener('click', async () => {
+    const title = $('fTitle').value.trim();
+    if (!title) { $('addHint').textContent = 'Nomi kerak'; return; }
+    try {
+      const r = await api('/api/user/portfolio/items', {
+        method: 'POST',
+        body: { kind: $('fKind').value, title, visibility: 'private', contentMeta: { aiUseLevel: $('fAiLevel').value } },
+      });
+      $('addHint').textContent = 'Qo\'shildi ✓';
+      setTimeout(() => location.reload(), 400);
+    } catch (e) { $('addHint').textContent = '✗ ' + e.message; }
+  });
+
+  document.querySelectorAll('.vis-select').forEach((sel) => {
+    sel.addEventListener('change', async () => {
+      try {
+        await api('/api/user/portfolio/items/' + sel.dataset.id, { method: 'PATCH', body: { visibility: sel.value } });
+      } catch (e) { alert(e.message); }
+    });
+  });
+
+  document.querySelectorAll('.share-btn').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      try {
+        const r = await api('/api/user/items/' + btn.dataset.id + '/share', { method: 'POST', body: {} });
+        const url = location.origin + r.url;
+        prompt('Selective share havolasi (viewer email bilan cheklash mumkin):', url);
+      } catch (e) { alert(e.message); }
+    });
+  });
+
+  (async function loadCredentials() {
+    try {
+      const { credentials } = await api('/api/user/credentials');
+      $('credWrap').innerHTML = (credentials || []).map((c) =>
+        '<div style="padding:8px 0;border-bottom:1px solid var(--border)">' +
+          '<b>' + esc(c.name || ('#' + c.id)) + '</b> ' +
+          '<span class="chip chip-' + (c.effectiveStatus === 'revoked' ? 'err' : (c.effectiveStatus === 'expired' ? 'warn' : 'ok')) + '">' + esc(c.effectiveStatus) + '</span>' +
+          '<div style="font-size:12px;color:var(--muted)">Digest: ' + esc((c.vc_digest || '').slice(0, 16)) + '… · Verify: <a href="/verify/' + esc(c.vc_digest || '') + '">ochish</a></div>' +
+        '</div>'
+      ).join('') || '<span class="muted">Credential yo\'q</span>';
+    } catch (e) { $('credWrap').innerHTML = '<span class="muted">✗ ' + esc(e.message) + '</span>'; }
+  })();
+})();
+</script>
+</body>
+</html>

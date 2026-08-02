@@ -137,12 +137,26 @@ function showConfirm(title, sub, okText = 'Ha') {
   });
 }
 
-// ── Fetch wrapper ──
+// ── CSRF-safe fetch wrapper ──
+// Automatically includes X-CSRF-Token header on state-changing requests
 async function apiFetch(url, options = {}) {
   try {
+    const method = (options.method || 'GET').toUpperCase();
+    const headers = {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    };
+
+    // Add CSRF token for state-changing methods
+    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method) && window.__CSRF_TOKEN) {
+      headers['X-CSRF-Token'] = window.__CSRF_TOKEN;
+    }
+
     const res = await fetch(url, {
-      headers: { 'Content-Type': 'application/json', ...options.headers },
-      ...options
+      method,
+      body: options.body,
+      ...options,
+      headers, // always wins — preserves CSRF token over options.headers
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return await res.json();

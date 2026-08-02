@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <%- include('../partials/head') %>
+  <style>
+    body{background:var(--bg-primary);min-height:100vh;transition:background .3s;}
+    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 55% 40% at 15% 20%,rgba(37,99,235,.1) 0%,transparent 65%),radial-gradient(ellipse 45% 35% at 85% 75%,rgba(56,189,248,.07) 0%,transparent 65%);}
+    .navbar{position:sticky;top:0;z-index:100;background:var(--bg-overlay);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;transition:background .3s,border-color .3s;}
+    .nav-logo{font-family:'Righteous',cursive;font-size:1.25rem;text-decoration:none;display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .nav-right{display:flex;align-items:center;gap:8px;}
+    .nav-btn{padding:7px 12px;border-radius:9px;border:1px solid var(--border);background:var(--bg-surface);color:var(--muted);font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:800;cursor:pointer;text-decoration:none;transition:all .2s;display:flex;align-items:center;gap:5px;}
+    .nav-btn:hover{background:var(--bg-elevated);color:var(--text);}
+    .panel{max-width:1180px;margin:0 auto;padding:24px 20px 90px;position:relative;z-index:1;}
+    .greeting{font-family:'Righteous',cursive;font-size:1.5rem;display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+    .greeting-sub{font-size:.82rem;color:var(--muted);font-weight:700;margin-bottom:20px;}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
+    @media(max-width:900px){.grid{grid-template-columns:1fr;}}
+    .card{background:var(--card);border-radius:16px;padding:18px;border:1px solid var(--border);margin-bottom:14px;animation:slideDown .3s ease;transition:background .3s,border-color .3s;}
+    .card-h{font-family:'Righteous',cursive;font-size:.95rem;display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+    .card-h small{font-family:'Nunito',sans-serif;font-size:.66rem;color:var(--muted);font-weight:800;margin-left:auto;}
+    .field{margin-bottom:11px;}
+    .field label{display:block;font-size:.72rem;font-weight:900;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px;}
+    .inp{width:100%;background:var(--bg-surface);border:2px solid var(--border);border-radius:10px;padding:9px 12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;outline:none;transition:border-color .3s;}
+    .inp:focus{border-color:var(--accent);}
+    textarea.inp{min-height:70px;resize:vertical;}
+    .btn{border-radius:10px;border:none;padding:10px 16px;cursor:pointer;transition:all .3s ease;font-family:'Nunito',sans-serif;font-weight:900;font-size:.8rem;background:linear-gradient(135deg,var(--accent),#1d4ed8);color:#fff;display:inline-flex;align-items:center;gap:6px;}
+    .btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+    .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+    .btn.ghost{background:var(--bg-surface);color:var(--muted);border:1px solid var(--border);}
+    .btn.ghost:hover{color:var(--text);background:var(--bg-elevated);}
+    .btn.green{background:linear-gradient(135deg,#00e5a0,#00b37e);color:#04120c;}
+    .btn.red{background:linear-gradient(135deg,#ef4444,#b91c1c);color:#fff;}
+    .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:99px;font-size:.66rem;font-weight:900;letter-spacing:.3px;}
+    .badge.blue{background:rgba(37,99,235,.15);color:var(--accent);}
+    .badge.green{background:rgba(0,229,160,.14);color:var(--green);}
+    .badge.red{background:rgba(239,68,68,.14);color:#f87171;}
+    .badge.amber{background:rgba(251,191,36,.14);color:var(--gold);}
+    .badge.gray{background:var(--bg-elevated);color:var(--muted);}
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px;}
+    .stat{background:var(--bg-surface);border:1px solid var(--border);border-radius:12px;padding:12px;}
+    .stat b{font-size:1.3rem;display:block;font-family:'Righteous',cursive;}
+    .stat span{font-size:.66rem;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+    table{width:100%;border-collapse:collapse;font-size:.78rem;}
+    th{text-align:left;font-size:.64rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:7px 8px;border-bottom:1px solid var(--border);font-weight:900;}
+    td{padding:7px 8px;border-bottom:1px solid var(--border);font-weight:700;}
+    tr:last-child td{border-bottom:none;}
+    .msg{padding:10px 14px;border-radius:10px;font-size:.78rem;font-weight:800;margin-bottom:12px;display:none;}
+    .msg.ok{display:block;background:rgba(0,229,160,.12);color:var(--green);border:1px solid rgba(0,229,160,.25);}
+    .msg.err{display:block;background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.25);}
+    .mono{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);}
+    .chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+    .empty{text-align:center;color:var(--muted);padding:22px 0;font-size:.8rem;font-weight:700;}
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/admin" class="nav-logo">Edikit Admin</a>
+    <div class="nav-right">
+      <a href="/admin/dashboard" class="nav-btn">Dashboard</a>
+      <a href="/admin/paper" class="nav-btn">Paper</a>
+      <a href="/admin/logout" class="nav-btn">Chiqish</a>
+    </div>
+  </nav>
+
+  <main class="panel">
+    <h1 class="greeting">Scan & Reconciliation</h1>
+    <p class="greeting-sub">Skанирован paper sahifalarni silent loss'siz reconcile qilish — OMR/OCR + manual queue (research §52.5)</p>
+
+    <div id="msgBox" class="msg"></div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="card-h">Scan batch yaratish <small>idempotent batch_key</small></div>
+        <div class="field">
+          <label>Batch key</label>
+          <input id="batchKey" class="inp" placeholder="scan:assign12:run5" />
+        </div>
+        <div class="field">
+          <label>Paper batch ID (ixtiyoriy)</label>
+          <input id="paperBatchId" class="inp" type="number" placeholder="3" />
+        </div>
+        <div class="field">
+          <label>Expected packets (JSON: [{packetId, pageCount}])</label>
+          <textarea id="expectedPackets" class="inp mono" placeholder='[{"packetId":"abc…","pageCount":4}]'></textarea>
+        </div>
+        <button class="btn" onclick="createBatch()">Batch yaratish</button>
+      </div>
+
+      <div class="card">
+        <div class="card-h">Batch holati <small>completion blocker</small></div>
+        <div class="field">
+          <label>Batch ID</label>
+          <input id="batchId" class="inp" type="number" placeholder="1" />
+        </div>
+        <div class="field">
+          <label>Yangi status</label>
+          <select id="batchStatus" class="inp">
+            <option value="processing">processing</option>
+            <option value="quality_review">quality_review</option>
+            <option value="reconciling">reconciling</option>
+            <option value="grading_ready">grading_ready</option>
+            <option value="complete">complete</option>
+          </select>
+        </div>
+        <button class="btn" onclick="transitionBatch()">Status o'zgartirish</button>
+        <button class="btn ghost" onclick="loadBatch()" style="margin-left:6px;">Yuklash</button>
+        <div class="stats" id="batchStats" style="margin-top:14px;"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h">Sahifa ingest <small>quality gate + QR decode + routing</small></div>
+      <div class="field">
+        <label>Batch ID</label>
+        <input id="ingestBatchId" class="inp" type="number" placeholder="1" />
+      </div>
+      <div class="field">
+        <label>Image (base64 — kichik test buffer ham bo'ladi)</label>
+        <textarea id="imageBase64" class="inp mono" placeholder="aGVsbG8="></textarea>
+      </div>
+      <div class="field">
+        <label>QR token (signed paper page QR)</label>
+        <input id="qrToken" class="inp mono" placeholder='{"v":1,"type":"paper_page","packet":"…","page":0,"epoch":1,"nonce":"…","sig":"…"}' />
+      </div>
+      <div class="field">
+        <label>Meta (JSON: dpi, orientation, blur, skew, shadow, cut, duplexMissing)</label>
+        <textarea id="metaJson" class="inp mono" placeholder='{"dpi":300,"orientation":"portrait","blur":false}'></textarea>
+      </div>
+      <button class="btn" onclick="ingestPage()">Sahifani qo'shish</button>
+    </div>
+
+    <div class="card">
+      <div class="card-h">Reconciliation queue <small>manual, human-only</small></div>
+      <div class="field">
+        <label>Batch ID</label>
+        <input id="queueBatchId" class="inp" type="number" placeholder="1" />
+      </div>
+      <button class="btn ghost" onclick="loadQueue()">Queue yuklash</button>
+      <div id="queueList" style="margin-top:12px;"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-h">OMR / OCR</div>
+      <div class="field">
+        <label>Batch ID</label>
+        <input id="aiBatchId" class="inp" type="number" placeholder="1" />
+      </div>
+      <div class="field">
+        <label>OMR marks (JSON)</label>
+        <textarea id="omrMarks" class="inp mono" placeholder='[{"packetId":"abc","pageIndex":0,"questionKey":"q1","optionIndex":1,"confidence":0.82,"pageId":1}]'></textarea>
+      </div>
+      <button class="btn" onclick="ingestOmr()">OMR qo'shish</button>
+      <div class="field" style="margin-top:12px;">
+        <label>OCR transcript (JSON)</label>
+        <textarea id="ocrTranscript" class="inp mono" placeholder='{"pageId":1,"packetId":"abc","pageIndex":0,"kind":"handwriting","transcriptText":"x²+6x+9=0","confidence":0.6}'></textarea>
+      </div>
+      <button class="btn green" onclick="ingestOcr()">OCR qo'shish</button>
+    </div>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let msgTimer = null;
+    function showMsg(text, ok) {
+      const box = $('msgBox');
+      box.className = 'msg ' + (ok ? 'ok' : 'err');
+      box.textContent = text;
+      clearTimeout(msgTimer);
+      msgTimer = setTimeout(() => { box.className = 'msg'; }, 5000);
+    }
+    async function api(url, method = 'GET', body) {
+      const opts = { method, headers: { 'Content-Type': 'application/json' } };
+      if (body !== undefined) opts.body = JSON.stringify(body);
+      const r = await fetch(url, opts);
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(data.error || ('HTTP ' + r.status));
+      return data;
+    }
+
+    async function createBatch() {
+      try {
+        let expectedPackets = [];
+        const raw = $('expectedPackets').value.trim();
+        if (raw) expectedPackets = JSON.parse(raw);
+        const r = await api('/api/admin/scan/batches', 'POST', {
+          batchKey: $('batchKey').value,
+          paperBatchId: $('paperBatchId').value ? Number($('paperBatchId').value) : null,
+          expectedPackets,
+        });
+        showMsg('Batch yaratildi: id=' + r.id + (r.idempotent ? ' (idempotent)' : ''), true);
+        $('batchId').value = r.id;
+      } catch (e) { showMsg(e.message, false); }
+    }
+
+    async function loadBatch() {
+      try {
+        const id = Number($('batchId').value);
+        if (!id) throw new Error('Batch ID kiriting');
+        const d = await api('/api/admin/scan/batches/' + id);
+        const b = d.batch;
+        const c = d.completion;
+        $('batchStats').innerHTML = [
+          ['Expected', b.expected_pages], ['Scanned', b.scanned_pages],
+          ['Reconciled', b.reconciled_pages], ['Missing', b.missing_pages],
+          ['Duplicate', b.duplicate_pages], ['Orphan', b.orphan_pages],
+          ['Open tickets', d.openTickets],
+        ].map(([l, v]) => `<div class="stat"><b>${v}</b><span>${l}</span></div>`).join('');
+        const badge = (t) => {
+          const cls = t === 'routed' ? 'green' : t === 'duplicate' ? 'amber' : t === 'orphan' ? 'red' : t === 'quality_failed' ? 'red' : 'gray';
+          return `<span class="badge ${cls}">${t}</span>`;
+        };
+        showMsg('Status: ' + b.status + (c.blocked ? ' — ⛔ completion BLOCKED: ' + c.reason : ' — ✅'), true);
+      } catch (e) { showMsg(e.message, false); }
+    }
+
+    async function transitionBatch() {
+      try {
+        const id = Number($('batchId').value);
+        const r = await api('/api/admin/scan/batches/' + id + '/transition', 'POST', { to: $('batchStatus').value });
+        showMsg('Status: ' + r.from + ' → ' + r.to, true);
+        loadBatch();
+      } catch (e) { showMsg(e.message, false); }
+    }
+
+    async function ingestPage() {
+      try {
+        const r = await api('/api/admin/scan/batches/' + Number($('ingestBatchId').value) + '/pages', 'POST', {
+          imageBase64: $('imageBase64').value,
+          qrToken: $('qrToken').value || null,
+          meta: JSON.parse($('metaJson').value || '{}'),
+        });
+        showMsg('Sahifa qo'shildi: pageStatus=' + r.pageStatus + ' qrStatus=' + r.qrStatus + (r.idempotent ? ' (idempotent)' : ''), true);
+      } catch (e) { showMsg(e.message, false); }
+    }
+
+    async function loadQueue() {
+      try {
+        const d = await api('/api/admin/scan/batches/' + Number($('queueBatchId').value) + '/queue');
+        const list = $('queueList');
+        if (!d.tickets.length) { list.innerHTML = '<div class="empty">Queue bo'sh ✅</div>'; return; }
+        list.innerHTML = '<table><tr><th>ID</th><th>Kind</th><th>Packet</th><th>Page</th><th>Status</th><th>Action</th></tr>' +
+          d.tickets.map((t) => `<tr>
+            <td>${t.id}</td><td>${t.kind}</td><td class="mono">${t.packet_id || '—'}</td><td>${t.page_index ?? '—'}</td>
+            <td><span class="badge ${t.status === 'open' ? 'amber' : 'green'}">${t.status}</span></td>
+            <td>${t.status === 'open' ? `<button class="btn ghost" style="padding:4px 8px;font-size:.68rem;" onclick="resolveTicket(${t.id})">Hal qilish</button>` : ''}</td>
+          </tr>`).join('') + '</table>';
+      } catch (e) { showMsg(e.message, false); }
+    }
+
+    async function resolveTicket(id) {
+      try {
+        const res = prompt('Resolution qayd (ixtiyoriy):') || '';
+        await api('/api/admin/scan/queue/' + id + '/resolve', 'POST', { resolution: res });
+        showMsg('Ticket #' + id + ' hal qilindi', true);
+        loadQueue();
+      } catch (e) { showMsg(e.message, false); }
+    }
+
+    async function ingestOmr() {
+      try {
+        const marks = JSON.parse($('omrMarks').value || '[]');
+        const r = await api('/api/admin/scan/batches/' + Number($('aiBatchId').value) + '/omr', 'POST', { marks });
+        showMsg('OMR: ' + r.ingested + ' mark qo'shildi', true);
+      } catch (e) { showMsg(e.message, false); }
+    }
+
+    async function ingestOcr() {
+      try {
+        const t = JSON.parse($('ocrTranscript').value);
+        const r = await api('/api/admin/scan/batches/' + Number($('aiBatchId').value) + '/ocr', 'POST', t);
+        showMsg('OCR transcript #' + r.id + ' (status: ' + r.status + ')', true);
+      } catch (e) { showMsg(e.message, false); }
+    }
+  </script>
+</body>
+</html>

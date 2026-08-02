@@ -1,0 +1,158 @@
+<% const current = user || {}; %>
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — Edikit Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="adm-body">
+  <div class="adm-shell">
+    <aside class="adm-sidebar">
+      <div class="adm-brand">
+        <img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto">
+        <span>Edikit</span>
+      </div>
+      <nav class="adm-nav">
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/users">Users</a>
+        <a href="/admin/provider">Provider Adapters</a>
+        <a href="/admin/canva" class="active">Canva</a>
+        <a href="/admin/google-slides">Google Slides</a>
+        <a href="/admin/deck-export">Deck Export</a>
+        <a href="/admin/quiz-deck">Quiz from Deck</a>
+        <a href="/admin/claude">Claude Adapter</a>
+        <a href="/admin/vip">VIP</a>
+      </nav>
+      <div class="adm-side-foot">
+        <a href="/admin/logout">Chiqish</a>
+      </div>
+    </aside>
+
+    <main class="adm-main">
+      <header class="adm-topbar">
+        <h1>Canva Adapter</h1>
+        <span class="adm-chip" id="connStatus">Tekshirilmoqda…</span>
+      </header>
+
+      <section class="adm-card">
+        <h2>Canva Button / Connect</h2>
+        <p class="adm-hint">Modal (Button) create/edit + Connect OAuth (PKCE). Minimal scopes: design:create:edit, design:content:read, design:export — full account scope yo'q (research §9.8). Token vault encrypted.</p>
+        <div class="adm-row">
+          <button class="btn btn-primary" id="btnLink">Link Canva (OAuth)</button>
+          <button class="btn" id="btnUnlink">Unlink + Revoke</button>
+          <span class="adm-hint" id="linkStatus"></span>
+        </div>
+      </section>
+
+      <section class="adm-card">
+        <h2>Button Callback</h2>
+        <p class="adm-hint">onDesignOpen / onDesignPublish callback'larini simulyatsiya qilish (design → artifact version mapping).</p>
+        <div class="adm-form">
+          <div class="adm-row">
+            <div class="field"><label>Callback type</label>
+              <select class="input" id="fCbType">
+                <option value="onDesignPublish">onDesignPublish</option>
+                <option value="onDesignOpen">onDesignOpen</option>
+              </select>
+            </div>
+            <div class="field"><label>Design ID</label><input class="input" id="fDesignId" placeholder="DAbc123..."></div>
+            <div class="field" style="flex:2"><label>Design URL</label><input class="input" id="fDesignUrl" placeholder="https://www.canva.com/design/..."></div>
+          </div>
+          <div class="adm-row">
+            <button class="btn" id="btnCallback">Send Callback</button>
+            <span class="adm-hint" id="cbStatus"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="adm-card">
+        <h2>Connect Design Flows</h2>
+        <div class="adm-form">
+          <div class="adm-row">
+            <div class="field"><label>Design ID (create/import/export uchun)</label><input class="input" id="fOpDesignId" placeholder="DAbc123..."></div>
+            <button class="btn" id="btnCreate">Create Design</button>
+            <button class="btn" id="btnImport">Import PPTX</button>
+            <button class="btn" id="btnExport">Export PDF</button>
+          </div>
+          <span class="adm-hint" id="opStatus"></span>
+        </div>
+      </section>
+    </main>
+  </div>
+
+<script>
+(function () {
+  const CSRF = '<%= csrfToken || "" %>';
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  async function api(path, opts = {}) {
+    const res = await fetch(path, {
+      method: opts.method || 'GET',
+      headers: { 'content-type': 'application/json', 'x-csrf-token': CSRF },
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    return data;
+  }
+
+  async function loadStatus() {
+    try {
+      const s = await api('/api/admin/canva/status');
+      $('connStatus').textContent = s.configured ? 'Configured ✓ (minimal scopes)' : 'Not configured (env)';
+      $('connStatus').className = 'adm-chip ' + (s.configured ? 'chip-ok' : 'chip-warn');
+    } catch (e) { /* ignore */ }
+  }
+
+  $('btnLink').addEventListener('click', async () => {
+    try {
+      const r = await api('/api/admin/canva/link', { method: 'POST', body: {} });
+      $('linkStatus').textContent = 'OAuth URL ochilmoqda…';
+      window.open(r.url, '_blank');
+    } catch (e) { $('linkStatus').textContent = '✗ ' + e.message; }
+  });
+
+  $('btnUnlink').addEventListener('click', async () => {
+    try {
+      await api('/api/admin/canva/unlink', { method: 'POST', body: {} });
+      $('linkStatus').textContent = 'Unlinked + revoked ✓';
+    } catch (e) { $('linkStatus').textContent = '✗ ' + e.message; }
+  });
+
+  $('btnCallback').addEventListener('click', async () => {
+    try {
+      const r = await api('/api/admin/canva/button', { method: 'POST', body: { type: $('fCbType').value, designId: $('fDesignId').value, designUrl: $('fDesignUrl').value } });
+      $('cbStatus').textContent = `Mapped: ${esc(r.type)} → design ${esc(r.designId)} ✓`;
+    } catch (e) { $('cbStatus').textContent = '✗ ' + e.message; }
+  });
+
+  $('btnCreate').addEventListener('click', async () => {
+    try {
+      const r = await api('/api/admin/canva/design', { method: 'POST', body: { title: 'Edikit deck' } });
+      $('opStatus').textContent = 'Design: ' + esc(r.designId);
+    } catch (e) { $('opStatus').textContent = '✗ ' + e.message; }
+  });
+
+  $('btnImport').addEventListener('click', async () => {
+    try {
+      const r = await api(`/api/admin/canva/design/${encodeURIComponent($('fOpDesignId').value)}/import`, { method: 'POST', body: { fileType: 'pptx', fileBase64: 'sample' } });
+      $('opStatus').textContent = r.imported ? 'Imported ✓' : 'Failed';
+    } catch (e) { $('opStatus').textContent = '✗ ' + e.message; }
+  });
+
+  $('btnExport').addEventListener('click', async () => {
+    try {
+      const r = await api(`/api/admin/canva/design/${encodeURIComponent($('fOpDesignId').value)}/export`, { method: 'POST', body: { exportType: 'pdf' } });
+      $('opStatus').textContent = 'Export queued ✓ (' + esc(r.exportType) + ')';
+    } catch (e) { $('opStatus').textContent = '✗ ' + e.message; }
+  });
+
+  loadStatus();
+})();
+</script>
+</body>
+</html>
