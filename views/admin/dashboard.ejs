@@ -30,6 +30,55 @@
       <button class="admin-side-btn <%= activeTab === 'vip' ? 'active' : '' %>" onclick="switchTab('vip')" style="--c:#f59e0b;--cbg:rgba(245,158,11,.14)"><span class="admin-side-ico"><%- icon('shield', 16) %></span>VIP</button>
       <div class="admin-side-label" style="margin-top:8px">Asboblar</div>
       <a href="/arena" target="_blank" class="admin-side-btn" style="--c:var(--green);--cbg:rgba(0,229,160,.1);text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('monitor', 16) %></span>Test Arena</a>
+
+      <div class="admin-side-label" style="margin-top:14px">Monitoring</div>
+      <a href="/admin/observability" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('activity', 16) %></span>Observability (SLO)</a>
+      <a href="/admin/reliability" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('refresh', 16) %></span>Reliability</a>
+      <a href="/admin/security-guard" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('shield', 16) %></span>Security Guard</a>
+      <a href="/admin/command-center" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('zap', 16) %></span>Command Center</a>
+      <a href="/admin/camera-review" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('camera', 16) %></span>Camera Review</a>
+
+      <div class="admin-side-label" style="margin-top:14px">Akademik</div>
+      <a href="/admin/scheduler" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('calendar', 16) %></span>Scheduler</a>
+      <a href="/admin/seating" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('users', 16) %></span>Seating</a>
+      <a href="/admin/scan" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('search', 16) %></span>Scan &amp; Answer Key</a>
+      <a href="/admin/paper" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('fileText', 16) %></span>Paper Packets</a>
+      <a href="/admin/safe-submit" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('upload', 16) %></span>Safe Submit</a>
+      <a href="/admin/sources" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('folder', 16) %></span>Source Pack</a>
+
+      <div class="admin-side-label" style="margin-top:14px">Baholash</div>
+      <a href="/admin/grading" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('trendUp', 16) %></span>Grading</a>
+      <a href="/admin/marking" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('checkCircle', 16) %></span>Marking</a>
+      <a href="/admin/board" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('award', 16) %></span>Board Ratification</a>
+      <a href="/admin/consideration" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('alertTriangle', 16) %></span>Consideration</a>
+      <a href="/admin/question-gen" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('info', 16) %></span>AI Question Gen</a>
+
+      <div class="admin-side-label" style="margin-top:14px">AI</div>
+      <a href="/admin/ai-grading" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('cpu', 16) %></span>AI Grading</a>
+      <a href="/admin/ai-mlops" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('layers', 16) %></span>AI MLOps</a>
+      <a href="/admin/ai-checkpoint" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('shieldCheck', 16) %></span>AI Checkpoint</a>
+      <a href="/admin/claude" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('sparkles', 16) %></span>Claude</a>
+      <a href="/admin/provider" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('settings', 16) %></span>AI Provider</a>
+      <a href="/admin/resource-reco" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('search', 16) %></span>Resource Reco</a>
+
+      <div class="admin-side-label" style="margin-top:14px">Taqdimot &amp; Eksport</div>
+      <a href="/admin/presentation" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('play', 16) %></span>Presentation</a>
+      <a href="/admin/canva" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('gift', 16) %></span>Canva</a>
+      <a href="/admin/google-slides" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('play', 16) %></span>Google Slides</a>
+      <a href="/admin/deck-export" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('download', 16) %></span>Deck Export</a>
+      <a href="/admin/quiz-deck" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('layers', 16) %></span>Quiz Deck</a>
+
+      <div class="admin-side-label" style="margin-top:14px">Sifat &amp; Boshqaruv</div>
+      <a href="/admin/acceptance" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('checkCircle', 16) %></span>Acceptance</a>
+      <a href="/admin/institutional" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('briefcase', 16) %></span>Institutional</a>
+      <a href="/admin/program-quality" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('award', 16) %></span>Program Quality</a>
+      <a href="/admin/credentials" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('trophy', 16) %></span>Credentials</a>
+      <a href="/admin/multilingual" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('globe', 16) %></span>Multilingual</a>
+      <a href="/admin/accessibility" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('eye', 16) %></span>Accessibility</a>
+      <a href="/admin/data-governance" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('database', 16) %></span>Data Governance</a>
+      <a href="/admin/external-integration" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('link', 16) %></span>External Integration</a>
+      <a href="/admin/intervention" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('heart', 16) %></span>Intervention</a>
+      <a href="/admin/contracts" class="admin-side-btn" style="text-decoration:none;display:flex"><span class="admin-side-ico"><%- icon('file', 16) %></span>API Contracts</a>
     </div>
 
     <!-- Panel -->

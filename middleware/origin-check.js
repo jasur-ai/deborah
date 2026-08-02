@@ -80,11 +80,21 @@ export function originCheck(req, res, next) {
   // Try Origin header first, then Referer
   const origin = extractOrigin(req.headers.origin) || extractOrigin(req.headers.referer);
 
+  // Same-origin ruxsat: Origin == Host bo'lsa avtomatik o'tkazamiz.
+  // Bu Render/Railway kabi hosting'da SITE_URL env qo'yilmagan bo'lsa ham
+  // brauzer request'lari (VIP grant, API POST'lar) ishlaydi.
+  const host = req.headers.host;
+  if (host) {
+    const proto = req.protocol || 'http';
+    const sameOrigin = `${proto}://${host}`.toLowerCase();
+    if (origin && origin === sameOrigin) {
+      return next();
+    }
+  }
+
   // If no origin/referer header (e.g., direct curl/postman), skip check
-  // Allow requests from same origin (Host header matches)
   if (!origin) {
-    // Check if it's a same-origin request by comparing to Host
-    const host = req.headers.host;
+    // Allow requests from same origin (Host header matches)
     if (host) {
       const proto = req.protocol || 'http';
       const sameOrigin = `${proto}://${host}`.toLowerCase();
