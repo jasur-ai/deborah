@@ -182,7 +182,11 @@ export async function createApp() {
     store: sessionStore,
     secret: CONFIG.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false,
+    // saveUninitialized: true — CSRF token sessiyada saqlanishi uchun.
+    // false bo'lsa express-session yangi sessiyani saqlamaydi va cookie
+    // yozmaydi → brauzerda session yo'q → POST'da CSRF token tekshiruvi
+    // yiqiladi ("CSRF token validation failed" 403).
+    saveUninitialized: true,
     cookie: {
       secure: CONFIG.NODE_ENV === 'production',
       httpOnly: true,
