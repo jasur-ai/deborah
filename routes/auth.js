@@ -11,6 +11,7 @@
  */
 
 import { Router } from 'express';
+import crypto from 'crypto';
 import CONFIG from '../src/config/env.js';
 import { fb } from '../firebase/admin.js';
 import { safeKey, hashPassword, verifyPassword, isLegacyHash, hashPass } from '../utils/helpers.js';
@@ -41,6 +42,9 @@ router.post('/admin/login', redirectIfAdmin, async (req, res) => {
         username: CONFIG.ADMIN_USER,
         loggedInAt: Date.now(),
       };
+      // regenerate() yangi bo'sh sessiya yaratadi — CSRF token'ni qayta
+      // o'rnatamiz, aks holda keyingi POST'lar 403 qaytaradi.
+      req.session.csrfToken = crypto.randomBytes(32).toString('hex');
       return res.redirect('/admin/dashboard');
     });
     return;
@@ -159,6 +163,10 @@ router.post('/user/login', redirectIfAuth, async (req, res) => {
           role,
         };
 
+        // regenerate() yangi bo'sh sessiya yaratadi — CSRF token'ni qayta
+        // o'rnatamiz, aks holda keyingi POST'lar 403 qaytaradi.
+        req.session.csrfToken = crypto.randomBytes(32).toString('hex');
+
         // Role workspace'ga yo'naltirish (teacher uchun).
         return res.redirect(role === 'teacher' ? '/teacher' : '/user/panel');
       });
@@ -214,6 +222,9 @@ router.post('/user/login', redirectIfAuth, async (req, res) => {
           isVip: false,
           role: 'student',
         };
+        // regenerate() yangi bo'sh sessiya yaratadi — CSRF token'ni qayta
+        // o'rnatamiz, aks holda keyingi POST'lar 403 qaytaradi.
+        req.session.csrfToken = crypto.randomBytes(32).toString('hex');
         return res.redirect('/user/panel');
       });
     }

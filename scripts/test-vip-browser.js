@@ -13,18 +13,39 @@
  */
 
 import http from 'http';
+import { spawn } from 'child_process';
+import { readFileSync, existsSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Set port BEFORE dynamic import (static import hoists — can't use it!)
+// Set port BEFORE starting the server child process
 const PORT = process.env.TEST_PORT || '3457';
 process.env.PORT = PORT;
 const BASE = `http://localhost:${PORT}`;
 
 let passed = 0;
 let failed = 0;
+
+// ── Admin kredensiallari ──
+// Server .env faylini o'qiydi (dotenv). Test ham xuddi shu .env'dan o'qishi
+// kerak, aks holda lokalda kredensiallar mos kelmaydi. CI'da .env yo'q → default.
+function readAdminCreds() {
+  const envFile = resolve(__dirname, '..', '.env');
+  const vars = {};
+  if (existsSync(envFile)) {
+    for (const line of readFileSync(envFile, 'utf-8').split('\n')) {
+      const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/);
+      if (m && !line.trim().startsWith('#')) vars[m[1]] = m[2].replace(/^['"]|['"]$/g, '').trim();
+    }
+  }
+  return {
+    user: vars.ADMIN_USER || process.env.ADMIN_USER || 'admin',
+    pass: vars.ADMIN_PASS || process.env.ADMIN_PASS || 'admin',
+  };
+}
+const ADMIN = readAdminCreds();
 
 // ── Cookie jar + CSRF token ──
 const jar = {};
@@ -49,10 +70,30 @@ function request(method, path, body) {
     const u = new URL(BASE + path);
     const headers = {
       'Cookie': cookieHeader(),
-      'Content-Type': 'application/json',
     };
-    // Add CSRF token for non-GET, non-API requests
-    if (csrfToken && method !== 'GET' && !path.startsWith('/admin/api/') && !path.startsWith('/user/api/') && !path.startsWith('/api/')) {
+
+    let payload = '';
+    if (body) {
+      const isApi = path.startsWith('/admin/api/') || path.startsWith('/user/api/') || path.startsWith('/api/');
+      if (isApi) {
+        // API endpoint'lar JSON kutadi
+        payload = JSON.stringify(body);
+        headers['Content-Type'] = 'application/json';
+      } else {
+        // Login/forma POST'lari application/x-www-form-urlencoded formatida
+        // yuboriladi (server express.urlencoded orqali o'qiydi). JSON emas!
+        payload = Object.entries(body).map(([k, v]) =>
+          `${encodeURIComponent(k)}=${encodeURIComponent(v)}`
+        ).join('&');
+        headers['Content-Type'] = 'application/x-www-form-urlencoded';
+      }
+      headers['Content-Length'] = Buffer.byteLength(payload);
+    }
+
+    // Add CSRF token for ALL non-GET requests
+    // (server CSRF middleware hamma POST/PUT/PATCH/DELETE'ni tekshiradi,
+    // API endpoint'lar ham bundan mustasno emas)
+    if (csrfToken && method !== 'GET') {
       headers['x-csrf-token'] = csrfToken;
     }
 
@@ -71,15 +112,20 @@ function request(method, path, body) {
       });
     });
     req.on('error', reject);
-    if (body) req.write(JSON.stringify(body));
+    if (payload) req.write(payload);
     req.end();
   });
 }
 
-/** Extract CSRF token from HTML hidden input */
+/** Extract CSRF token from HTML */
 function extractCsrf(body) {
-  const m = body.match(/name="_csrf"\s+value="([^"]+)"/);
-  return m ? m[1] : '';
+  // 1) Form: <input type="hidden" name="_csrf" value="...">
+  const m = body.match(/name="_csrf"[^>]*\svalue="([^"]+)"/) ||
+            body.match(/name="_csrf"\s+value="([^"]+)"/);
+  if (m) return m[1];
+  // 2) JS global: window.__CSRF_TOKEN = '...'  (head.ejs)
+  const g = body.match(/window\.__CSRF_TOKEN\s*=\s*'([^']+)'/);
+  return g ? g[1] : '';
 }
 
 /** Log in as a user — GET login page, extract CSRF, POST with token */
@@ -104,7 +150,36 @@ async function loginAs(username, password, admin = false) {
   const r = await request('POST', loginPage, { username, password });
   // 302 = redirect to dashboard/panel → login succeeded
   // 200 = login page re-rendered → login failed (wrong credentials, etc.)
-  return r.status === 302;
+  if (r.status !== 302) {
+    // User mavjud bo'lmasa (noto'g'ri parol o'rniga) — avval register qilamiz.
+    // Test DB holatidan mustaqil bo'lishi uchun: user yo'q bo'lsa yaratamiz.
+    if (!admin && r.status === 200) {
+      Object.keys(jar).forEach(k => delete jar[k]);
+      csrfToken = '';
+      const regPage = await request('GET', loginPage);
+      csrfToken = extractCsrf(regPage.body);
+      if (!csrfToken) return false;
+      const reg = await request('POST', loginPage, { username, password, mode: 'reg' });
+      if (reg.status === 302) {
+        // Register sessiyani regenerate qildi — yangi token kerak
+        const dest = admin ? '/admin/dashboard' : '/user/panel';
+        const fresh = await request('GET', dest);
+        const freshCsrf = extractCsrf(fresh.body);
+        if (freshCsrf) csrfToken = freshCsrf;
+        return true;
+      }
+      return false;
+    }
+    return false;
+  }
+
+  // Login sessiyani regenerate qiladi (yangi CSRF token) — keyingi POST'lar
+  // uchun yangi tokenni saqlab olamiz (dashboard/panel sahifasidan).
+  const dest = admin ? '/admin/dashboard' : '/user/panel';
+  const fresh = await request('GET', dest);
+  const freshCsrf = extractCsrf(fresh.body);
+  if (freshCsrf) csrfToken = freshCsrf;
+  return true;
 }
 
 function test(name, fn) {
@@ -124,17 +199,37 @@ async function main() {
   console.log('   🧪 VIP Tizimi — To\'liq Test');
   console.log('══════════════════════════════════════════════\n');
 
-  // ── Dynamic import (process.env.PORT already set) ──
+  // ── Server'ni child process sifatida ishga tushirish ──
+  // (server.js import orqali listen qilmaydi — isMainModule guard tufayli)
   console.log(`📡 Server http://localhost:${PORT} da ishga tushirilmoqda...`);
-  const serverModule = await import(resolve(__dirname, '..', 'server.js'));
-  await sleep(1500);
+  const serverProc = spawn(process.execPath, [resolve(__dirname, '..', 'server.js')], {
+    env: { ...process.env, PORT },
+    stdio: ['ignore', 'inherit', 'inherit'],
+  });
+
+  // Server tayyor bo'lguncha kutamiz (/health → 200).
+  // Startup sekin bo'lishi mumkin (Firebase init + modullar) — 120s.
+  let ready = false;
+  for (let i = 0; i < 120; i++) {
+    await sleep(1000);
+    try {
+      const r = await request('GET', '/health');
+      if (r.status === 200) { ready = true; break; }
+    } catch { /* still starting */ }
+  }
+  if (!ready) {
+    console.error('❌ Server start bo\'lmadi (health check muvaffaqiyatsiz)');
+    serverProc.kill('SIGKILL');
+    process.exit(1);
+  }
+  console.log('✅ Server tayyor');
 
   try {
     // ── 1. Admin Login & VIP Grant ──
     console.log('\n┌─ 1. Admin Login & VIP Grant');
 
-    await test('Admin login — admin/admin', async () => {
-      return await loginAs('admin', 'admin', true);
+    await test(`Admin login — ${ADMIN.user}/${ADMIN.pass}`, async () => {
+      return await loginAs(ADMIN.user, ADMIN.pass, true);
     });
 
     await test('GET /admin/dashboard — 200', async () => {
@@ -155,6 +250,26 @@ async function main() {
     await test('GET /admin/vip — VIP sahifasi', async () => {
       const r = await request('GET', '/admin/vip');
       return r.status === 200 && r.body.includes('VIP');
+    });
+
+    // sardor user'ini yaratamiz (agar mavjud bo'lmasa) — test DB holatidan
+    // mustaqil bo'lishi uchun (CI'da toza DB, lokalda eski DB bo'lishi mumkin)
+    await test('sardor user yaratish (register)', async () => {
+      const r = await request('POST', '/user/login', { username: 'sardor', password: '1234', mode: 'reg' });
+      // 302 = yaratildi/login bo'ldi; 200 = nom band (allaqachon bor) — ikkalasi ham OK
+      const ok = r.status === 302 || r.status === 200;
+      // Register sessiyani regenerate qiladi — yangi CSRF tokenni saqlaymiz
+      if (r.status === 302) {
+        const fresh = await request('GET', '/user/panel');
+        const t = extractCsrf(fresh.body);
+        if (t) csrfToken = t;
+      }
+      return ok;
+    });
+
+    // Admin sessiyasiga qaytamiz (register admin cookie'sini buzdi)
+    await test('Admin qayta login (grant uchun)', async () => {
+      return await loginAs(ADMIN.user, ADMIN.pass, true);
     });
 
     await test('VIP berish: sardor (parol o\'zgarmaydi)', async () => {
@@ -187,6 +302,7 @@ async function main() {
     // ── 3. Non-VIP User (user) ──
     console.log('\n┌─ 3. Non-VIP User — user (isVip: false)');
 
+    // user user'ini yaratamiz (agar mavjud bo'lmasa)
     await test('Login — user/user', async () => {
       return await loginAs('user', 'user', false);
     });
@@ -233,6 +349,8 @@ async function main() {
     console.log('══════════════════════════════════════════════\n');
 
   } finally {
+    // Server'ni to'xtatamiz
+    if (serverProc && !serverProc.killed) serverProc.kill('SIGTERM');
     process.exit(failed > 0 ? 1 : 0);
   }
 }
