@@ -17,7 +17,9 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18, 20, 22]
+        # Node 18 chiqarildi: vitest 4 (rolldown) 'styleText' ni talab qiladi,
+        # u faqat Node >= 20.12 da mavjud (Node 18'da CI yiqiladi).
+        node-version: [20, 22]
 
     steps:
       - uses: actions/checkout@v4
