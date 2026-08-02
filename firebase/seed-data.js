@@ -123,12 +123,14 @@ export function generateSeedData() {
     { key: 'azizbek', name: 'Azizbek', pass: '1234', days: 43, tests: false },
     { key: 'shirin', name: 'Shirin', pass: '1234', days: 46, tests: false },
     { key: 'dilmurod', name: 'Dilmurod', pass: '1234', days: 47, tests: true },
+    // ── Teacher hisob (real login: teacher / teacher34, VIP) ──
+    { key: 'teacher', name: 'Teacher', pass: 'teacher34', days: 1, tests: false },
   ];
 
   // ── Role demo users (Prompt 68 — role-aware shell) ──
   // teacher/proctor/marker/board rollari workspace'lar uchun demo hisoblar.
   const ROLE_DEMO = {
-    teacher: ['alisher', 'malika'],
+    teacher: ['alisher', 'malika', 'teacher'],
     proctor: ['sardor'],
     marker: ['nigora'],
     board: ['feruza'],
@@ -169,8 +171,8 @@ export function generateSeedData() {
     data.users[u.key] = userData;
   });
 
-  // ── VIP Demo Users (3 ta) ──
-  ['sardor', 'feruza', 'shoxrux'].forEach(key => {
+  // ── VIP Demo Users (4 ta) ──
+  ['sardor', 'feruza', 'shoxrux', 'teacher'].forEach(key => {
     if (data.users[key]) {
       data.users[key].isVip = true;
       data.users[key].vipGrantedAt = Date.now();
