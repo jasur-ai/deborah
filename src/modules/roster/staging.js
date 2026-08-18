@@ -17,6 +17,7 @@
 import crypto from 'crypto';
 import { fb } from '../../../firebase/admin.js';
 import { audit, AUDIT_ACTIONS } from '../auth/audit.js';
+import { safeKey } from '../../../utils/helpers.js';
 
 const STAGING_PATH = 'roster_staging';
 
@@ -140,7 +141,23 @@ export async function generateParseReport(sessionId) {
 
 // New commitStagingSession function to replace the old one
 // This version actually applies roster data (users, enrollments, groups)
-export async function commitStagingSession(sessionId, userId, { mapping, hash } = {}) {
+const commitLocks = new Map();
+
+// Per-session mutex (AUTH A-11 §10): parallel commit race — ikki request ham
+// status='staging' o'qib, ikkalasi ham user/enrollment yozmasligi uchun.
+// (invites.js acceptInvite dagi per-token mutex namunasi)
+export async function commitStagingSession(sessionId, userId, opts = {}) {
+  const prev = commitLocks.get(sessionId);
+  const run = (prev || Promise.resolve()).then(() => _commitStagingSessionUnlocked(sessionId, userId, opts));
+  commitLocks.set(sessionId, run);
+  try {
+    return await run;
+  } finally {
+    commitLocks.delete(sessionId);
+  }
+}
+
+async function _commitStagingSessionUnlocked(sessionId, userId, { mapping, hash } = {}) {
   const session = await getStagingSession(sessionId);
   if (!session) return { ok: false, error: 'Session not found' };
   if (session.status !== 'staging' && session.status !== 'reviewed') {
@@ -189,43 +206,68 @@ export async function commitStagingSession(sessionId, userId, { mapping, hash } 
   };
   const diff = generateDiff(rows, effectiveMapping, existingState);
 
-  const stats = { created: 0, updated: 0, deactivated: 0, unchanged: 0, errors: 0 };
+  const stats = { created: 0, createdUsers: 0, createdEnrollments: 0, updated: 0, deactivated: 0, unchanged: 0, errors: 0 };
 
-  // Apply creates (new users + enrollments)
+  // ── Apply creates (new users + enrollments) — AUTH A-11 §10 fix ──
+  // Eski kod `item.entity === 'user'` tekshirardi — diff item'larida
+  // `entity` field'i YO'Q (faqat `type: 'create' | 'enroll'`), shuning
+  // uchun commit hech qanday user/enrollment YOZMAS edi (testlar faqat
+  // status'ni tekshirgani uchun sezilmagan). Endi:
+  //   create → user (auth schema) + enrollment + guruh
+  //   enroll → faqat enrollment (user allaqachon mavjud)
   for (const item of diff.creates) {
-    if (item.type !== 'create') continue;
-    const key = item.identity?.primary || item.data?.student_id || 'row-' + item.rowIndex;
     try {
-      if (item.entity === 'user' && !existingState.users[key]) {
-        await fb.set('users/' + key, {
-          id: key,
-          username: item.data.student_id || key,
-          displayName: item.data.name || item.data.full_name || '',
-          email: item.data.email || '',
+      // diff item'larida `identity` STRING (identity.primary qiymati) — object emas!
+      const idKey = item.identity || '';
+      const userKey = idKey ? safeKey(idKey) : `row-${item.rowIndex}`;
+      const courseCode = item.enrollment?.courseCode || '';
+      const groupName = item.group?.groupName || '';
+
+      // 1) User (faqat type 'create' — mavjud bo'lmasa)
+      if (item.type === 'create' && !existingState.users[userKey]) {
+        await fb.set(`users/${userKey}`, {
+          username: item.data?.username || idKey || userKey,
+          password: '',                    // parol invite aktivatsiyasida beriladi (A-11 §13)
+          created_at: Date.now(),
+          safeKey: userKey,
+          isVip: false,
+          display_name: item.data?.displayName || '',
+          email: item.data?.email || '',
           role: 'student',
-          createdAt: Date.now(),
           source: 'roster',
+          group: groupName,               // guruh prefilled — invite aktivatsiyasida
         });
         stats.created++;
+        stats.createdUsers++;
       }
 
-      if (item.entity === 'enrollment') {
-        const enrollmentKey = key + '_' + (item.data.course_code || 'unknown');
-        if (!existingState.enrollments[enrollmentKey]) {
-          await fb.set('enrollments/' + enrollmentKey, {
-            id: enrollmentKey,
-            userId: key,
-            courseCode: item.data.course_code || '',
-            termCode: item.data.term || '',
-            groupCode: item.data.group || '',
-            status: 'active',
-            source: 'roster',
-            createdAt: Date.now(),
-          });
-          stats.created++;
-        } else {
-          stats.unchanged++;
-        }
+      // 2) Enrollment (create ham, enroll ham)
+      const enrollmentKey = `${userKey}_${courseCode}`;
+      if (courseCode && !existingState.enrollments[enrollmentKey]) {
+        await fb.set(`enrollments/${enrollmentKey}`, {
+          id: enrollmentKey,
+          userId: userKey,
+          courseCode,
+          termCode: item.enrollment?.termCode || '',
+          groupCode: groupName,
+          status: 'active',
+          source: 'roster',
+          created_at: Date.now(),
+        });
+        stats.created++;
+        stats.createdEnrollments++;
+      } else if (courseCode && existingState.enrollments[enrollmentKey]) {
+        stats.unchanged++;
+      }
+
+      // 3) Guruh (mavjud bo'lmasa yoziladi)
+      if (groupName && !existingState.groups[safeKey(groupName)]) {
+        await fb.set(`groups/${safeKey(groupName)}`, {
+          name: groupName,
+          code: safeKey(groupName),
+          created_at: Date.now(),
+          source: 'roster',
+        });
       }
     } catch (err) {
       await addRowError(sessionId, item.rowIndex || 0, 'commit', err.message);
@@ -233,32 +275,33 @@ export async function commitStagingSession(sessionId, userId, { mapping, hash } 
     }
   }
 
-  // Apply updates (existing users)
+  // ── Apply updates (enrollment changes) — A-11 review fix ──
+  // diff update item'larida `.data` YO'Q — `changes` massivi bor
+  // (detectChanges: groupName/section/status enrollment fieldlari).
   for (const item of diff.updates) {
     try {
-      const key = item.identity?.primary;
-      if (!key) continue;
-      const existing = existingState.users[key];
-      if (existing) {
-        await fb.set('users/' + key + '/displayName', item.data.name || item.data.full_name || existing.displayName);
-        await fb.set('users/' + key + '/email', item.data.email || existing.email);
-        stats.updated++;
+      const key = item.identity;
+      if (!key || !item.enrollmentId) continue;
+      for (const ch of item.changes || []) {
+        await fb.set(`enrollments/${item.enrollmentId}/${ch.field}`, ch.newValue);
       }
+      stats.updated++;
     } catch (err) {
       await addRowError(sessionId, item.rowIndex || 0, 'commit-update', err.message);
       stats.errors++;
     }
   }
 
-  // Apply deactivations (mark as inactive, not hard-delete)
+  // ── Apply deactivations (mark as inactive, not hard-delete) ──
   for (const item of diff.deactivates) {
     try {
-      const key = item.identity?.primary;
+      const key = item.identity;
       if (!key) continue;
-      const existing = existingState.users[key];
+      const userKey = safeKey(key);
+      const existing = existingState.users[userKey];
       if (existing) {
-        await fb.set('users/' + key + '/status', 'inactive');
-        await fb.set('users/' + key + '/deactivatedAt', Date.now());
+        await fb.set(`users/${userKey}/status`, 'inactive');
+        await fb.set(`users/${userKey}/deactivated_at`, Date.now());
         stats.deactivated++;
       }
     } catch (err) {
@@ -379,4 +422,126 @@ export async function deleteStagingSession(sessionId) {
   });
 
   return { ok: true };
+}
+
+/**
+ * Expired staging sessiyalarni tozalaydi (A-10 §26 — 24 soat retention).
+ *
+ * Faqat faol (staging/reviewed) va retention muddati o'tgan sessiyalarni
+ * o'chiradi; committed/rolled_back holatlar tarix sifatida saqlanadi.
+ * Upload paytida opportunistik chaqiriladi (fail-soft).
+ *
+ * @param {number} [maxAgeMs] - Retention muddati (default 24 soat)
+ * @returns {Promise<{ ok: boolean, purged: number }>}
+ */
+export async function purgeExpiredStagingSessions(maxAgeMs = 24 * 60 * 60 * 1000) {
+  const snap = await fb.get(STAGING_PATH);
+  if (!snap.exists()) return { ok: true, purged: 0 };
+
+  const all = snap.val();
+  const now = Date.now();
+
+  // Expired sessiyalarni yig'ib, parallel tozalaymiz (ko'p sessiya uchun tez)
+  const expired = [];
+  for (const sid of Object.keys(all)) {
+    const s = all[sid] || {};
+    const active = s.status === 'staging' || s.status === 'reviewed';
+    const ageMs = now - (s.updatedAt || s.createdAt || 0);
+    if (active && ageMs > maxAgeMs) expired.push({ sid, ageMs });
+  }
+
+  await Promise.all(expired.map(async ({ sid, ageMs }) => {
+    await fb.remove(`${STAGING_PATH}/${sid}`);
+    await audit({
+      action: AUDIT_ACTIONS.ROSTER_DELETE,
+      resourceType: 'roster_staging',
+      resourceId: sid,
+      details: { reason: 'retention_purge', ageMs },
+    });
+  }));
+
+  return { ok: true, purged: expired.length };
+}
+
+/**
+ * Row-level status report (A-11 §11).
+ * Har qator uchun status: 'ok' | 'error' + sabab (rowErrors dan).
+ *
+ * @param {string} sessionId
+ * @returns {Promise<Object>} { rows: [{ rowIndex, sheet, status, errors }], summary }
+ */
+export async function buildRowStatusReport(sessionId) {
+  const session = await getStagingSession(sessionId);
+  if (!session) return { error: 'Session not found' };
+
+  const sheetsSnap = await fb.get(`${STAGING_PATH}/${sessionId}/sheets`);
+  const sheets = sheetsSnap.exists() ? sheetsSnap.val() : {};
+  const errorsByRow = new Map();
+  for (const e of session.rowErrors || []) {
+    if (!errorsByRow.has(e.rowIndex)) errorsByRow.set(e.rowIndex, []);
+    errorsByRow.get(e.rowIndex).push(e);
+  }
+
+  const rows = [];
+  let okCount = 0;
+  let errorCount = 0;
+  for (const [sheetName, sheet] of Object.entries(sheets)) {
+    for (const row of sheet.rows || []) {
+      const errs = errorsByRow.get(row.rowIndex) || [];
+      const status = errs.length > 0 ? 'error' : 'ok';
+      if (errs.length > 0) errorCount++; else okCount++;
+      rows.push({
+        rowIndex: row.rowIndex,
+        sheet: sheetName,
+        status,
+        errors: errs.map(e => ({ field: e.field, message: e.message })),
+      });
+    }
+  }
+
+  return {
+    sessionId,
+    rows,
+    summary: { total: rows.length, ok: okCount, error: errorCount },
+  };
+}
+
+/**
+ * Reconciliation (A-11 §29) — commit'dan keyin count tekshirish.
+ * Commit natijasini DB'dagi haqiqiy yozuvlar bilan solishtiradi.
+ *
+ * @param {string} sessionId
+ * @returns {Promise<Object>} { expected, actual, matched }
+ */
+export async function reconcileSession(sessionId) {
+  const session = await getStagingSession(sessionId);
+  if (!session) return { error: 'Session not found' };
+
+  const stats = session.commitStats || {};
+  const usersSnap = await fb.get('users');
+  const enrollSnap = await fb.get('enrollments');
+  const users = usersSnap.exists() ? usersSnap.val() : {};
+  const enrollments = enrollSnap.exists() ? enrollSnap.val() : {};
+
+  // Roster commit'dan yozilgan yozuvlar soni (source: 'roster')
+  let rosterUsers = 0;
+  let rosterEnrollments = 0;
+  for (const u of Object.values(users)) if (u.source === 'roster') rosterUsers++;
+  for (const e of Object.values(enrollments)) if (e.source === 'roster') rosterEnrollments++;
+
+  // AUTH A-11 §29: user va enrollment alohida hisoblanadi (created aralash edi)
+  const expectedUsers = stats.createdUsers ?? 0;
+  const expectedEnrollments = stats.createdEnrollments ?? 0;
+  const matchedUsers = rosterUsers >= expectedUsers - stats.errors;
+  const matchedEnrollments = rosterEnrollments >= expectedEnrollments - stats.errors;
+  const matched = matchedUsers && matchedEnrollments;
+
+  return {
+    sessionId,
+    status: session.status,
+    expected: { users: expectedUsers, enrollments: expectedEnrollments },
+    actual: { users: rosterUsers, enrollments: rosterEnrollments },
+    matched,
+    note: matched ? 'reconciled' : 'mismatch — rollback tavsiya etiladi',
+  };
 }

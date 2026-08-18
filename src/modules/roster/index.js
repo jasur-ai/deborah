@@ -41,8 +41,27 @@ export {
   deleteStagingSession,
   rollbackStagingSession,
   exportRowErrors,
+  purgeExpiredStagingSessions,
   setSessionApproval,
+  buildRowStatusReport,
+  reconcileSession,
 } from './staging.js';
+
+export {
+  createInvitesForSession,
+  acceptInvite,
+  revokeInvite,
+  listInvites,
+  getPendingInviteSummary,
+  INVITE_STATUS,
+  // AUTH B-11: email yetkazish + expiry job + link validatsiya + rate limit
+  sendInviteEmails,
+  expireOverdueInvites,
+  getInviteByHash,
+  checkInviteSendLimit,
+  // AUTH B-13: Google accept — invite claim (user yaratilishidan oldin)
+  claimInviteForGoogle,
+} from './invites.js';
 
 export {
   detectColumnMapping,

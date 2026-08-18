@@ -67,6 +67,36 @@ export const DEFAULT_COLUMN_MAP = {
   'status':                       { field: 'status',      entity: 'enrollment', required: false },
   'role':                         { field: 'role',        entity: 'group',  required: false },
   'enrollment_status':            { field: 'status',      entity: 'enrollment', required: false },
+
+  // ── HEMIS eksporti (o'zbek/rus header'lari) — A-10 §12 ──
+  // Normalizatsiya: apostrof va nuqta olib tashlanadi ("F.I.Sh" → "f_i_sh")
+  'talaba_id':                    { field: 'userId',      entity: 'user',    required: false },
+  'talaba':                       { field: 'userId',      entity: 'user',    required: false },
+  'talaba_kodi':                  { field: 'externalId',  entity: 'user',    required: false },
+  'f_i_sh':                       { field: 'displayName', entity: 'user',    required: false },
+  'fish':                         { field: 'displayName', entity: 'user',    required: false },
+  'familiya':                     { field: 'lastName',    entity: 'user',    required: false },
+  'ism':                          { field: 'firstName',   entity: 'user',    required: false },
+  'sharif':                       { field: 'lastName',    entity: 'user',    required: false },
+  'guruh':                        { field: 'groupName',   entity: 'group',   required: false },
+  'kurs':                         { field: 'termCode',    entity: 'term',    required: false },
+  'fan':                          { field: 'courseCode',  entity: 'course',  required: true },
+  'fan_kodi':                     { field: 'courseCode',  entity: 'course',  required: true },
+  'fakultet':                     { field: 'facultyCode', entity: 'faculty', required: false },
+  'yonalish':                     { field: 'programCode', entity: 'program', required: false },
+  'yonalish_kodi':                { field: 'programCode', entity: 'program', required: false },
+  'akademik_yil':                 { field: 'termCode',    entity: 'term',    required: false },
+  'semestr':                      { field: 'termCode',    entity: 'term',    required: false },
+  'elektron_pochta':              { field: 'email',       entity: 'user',    required: false },
+  // Ruscha header'lar
+  'фамилия':                      { field: 'lastName',    entity: 'user',    required: false },
+  'имя':                          { field: 'firstName',   entity: 'user',    required: false },
+  'группа':                       { field: 'groupName',   entity: 'group',   required: false },
+  'курс':                         { field: 'termCode',    entity: 'term',    required: false },
+  'дисциплина':                   { field: 'courseCode',  entity: 'course',  required: true },
+  'факультет':                    { field: 'facultyCode', entity: 'faculty', required: false },
+  'направление':                  { field: 'programCode', entity: 'program', required: false },
+  'электронная_почта':            { field: 'email',       entity: 'user',    required: false },
 };
 
 const MAPPING_PATH = 'roster_mappings';
@@ -94,7 +124,9 @@ export async function detectColumnMapping(parsedRows, existingMapping) {
   const unmapped = [];
 
   for (const col of columnList) {
-    const normalized = col.toLowerCase().trim().replace(/[\s_-]+/g, '_');
+    // A-10 §12: apostrof va nuqtalarni ham normallashtiramiz
+    // ("F.I.Sh" → "f_i_sh", "Yo'nalish" → "yonalish")
+    const normalized = col.toLowerCase().trim().replace(/['’`]+/g, '').replace(/[.\s_-]+/g, '_');
     const directMatch = DEFAULT_COLUMN_MAP[normalized];
     if (directMatch) {
       mapping[col] = { ...directMatch, sourceColumn: col };

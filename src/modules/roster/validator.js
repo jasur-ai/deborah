@@ -18,10 +18,12 @@ import fs from 'fs';
 import path from 'path';
 
 // ── Lazy child_process (ESM-safe) ──
-let _execSync = null;
+// F-d security audit: execSync (shell interpolatsiya) o'rniga spawnSync
+// (args array) — filePath multer temp bo'lsa ham shell-injeksiya yuzasi yopiladi.
+let _spawnSync = null;
 try {
   // Dynamic import is ESM-safe; falls back to null if unavailable
-  _execSync = (await import('child_process')).execSync;
+  _spawnSync = (await import('child_process')).spawnSync;
 } catch (_) { /* child_process not available */ }
 
 // ── Configuration ──
@@ -38,6 +40,7 @@ export const ROSTER_CONFIG = {
     'text/csv', 'application/csv', 'text/plain',
   ],
   magicBytes: { xlsx: [0x50, 0x4B, 0x03, 0x04], csv: null },
+  csvEncodings: ['utf-8', 'cp1251'], // A-10 §29: UTF-8 BOM + cp1251 (rus)
 };
 
 // ── Validation Result ──
@@ -98,10 +101,16 @@ export function validateZipRatio(filePath, extension) {
   try {
     const stats = fs.statSync(filePath);
     const cs = stats.size;
-    if (_execSync) {
+    if (_spawnSync) {
       try {
-        const result = _execSync(`unzip -l "${filePath}" 2>&1 | tail -n +4 | head -n -2 | awk '{print $1}'`, { encoding: 'utf-8', timeout: 5000 });
-        const sizes = result.trim().split('\n').filter(Boolean).map(s => parseInt(s, 10)).filter(n => !isNaN(n));
+        // spawnSync args-array — shell yo'q (injeksiya yuzasi yopiq)
+        const r = _spawnSync('unzip', ['-l', filePath], { encoding: 'utf-8', timeout: 5000 });
+        const out = String(r.stdout || '') + String(r.stderr || '');
+        // unzip -l qatorlari: "  Length      Date    Time    Name" — fayl qatorlari uzunlik+sana bilan boshlanadi
+        const sizes = out.split('\n')
+          .map((l) => /^\s*(\d+)\s+\d{4}-\d{2}-\d{2}\s/.exec(l))
+          .filter(Boolean)
+          .map((m) => parseInt(m[1], 10));
         const totalUncompressed = sizes.reduce((a, b) => a + b, 0);
         if (totalUncompressed > 0) {
           const ratio = totalUncompressed / cs;
@@ -118,14 +127,15 @@ export function validateNoMacros(filePath, extension) {
   // Skip macro check for CSV files — they can't contain macros
   if (extension !== '.xlsx') return ValidationResult.pass({ skipMacroCheck: true });
   const warnings = [];
-  if (_execSync) {
+  if (_spawnSync) {
     try {
-      const vba = _execSync(`unzip -l "${filePath}" 2>&1 | grep -iE 'vba|macro|script' || true`, { encoding: 'utf-8', timeout: 5000 });
-      if (vba.trim()) warnings.push(`VBA/macro content detected: ${vba.trim().substring(0, 200)}`);
-    } catch (_) {}
-    try {
-      const rels = _execSync(`unzip -l "${filePath}" 2>&1 | grep -iE 'hyperlink|external|ole|activex' || true`, { encoding: 'utf-8', timeout: 5000 });
-      if (rels.trim()) warnings.push(`External references detected: ${rels.trim().substring(0, 200)}`);
+      // spawnSync args-array — shell yo'q; natija JS'da filtrlanadi
+      const r = _spawnSync('unzip', ['-l', filePath], { encoding: 'utf-8', timeout: 5000 });
+      const out = String(r.stdout || '') + String(r.stderr || '');
+      const macroLines = out.split('\n').filter((l) => /vba|macro|script/i.test(l));
+      if (macroLines.length) warnings.push(`VBA/macro content detected: ${macroLines.join(', ').trim().substring(0, 200)}`);
+      const extLines = out.split('\n').filter((l) => /hyperlink|external|ole|activex/i.test(l));
+      if (extLines.length) warnings.push(`External references detected: ${extLines.join(', ').trim().substring(0, 200)}`);
     } catch (_) {}
   }
   return ValidationResult.pass({ macroWarnings: warnings });

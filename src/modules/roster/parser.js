@@ -13,7 +13,9 @@
  * @module roster/parser
  */
 
+import fs from 'fs';
 import XLSX from 'xlsx';
+import { ROSTER_CONFIG } from './validator.js';
 
 // ── Limits ──
 const MAX_ROWS = 5000;
@@ -198,17 +200,66 @@ export function parseXlsx(filePath) {
  * @param {Object} [options] - { delimiter, encoding }
  * @returns {Object} { sheets, totalRows, errors, warnings }
  */
+// ═══════════════════════════════════════════════════════════════════
+// CSV Encoding (A-10 §29: UTF-8 BOM + cp1251 / rus)
+// ═══════════════════════════════════════════════════════════════════
+
+/**
+ * CSV buffer encoding'ini aniqlaydi.
+ * UTF-8 BOM bo'lsa 'utf-8'; aks holda UTF-8 dekodlashda qochgan
+ * belgilar (U+FFFD) chiqsa 'cp1251' deb hisoblanadi.
+ *
+ * @param {Buffer} buf
+ * @returns {'utf-8'|'cp1251'}
+ */
+export function detectCsvEncoding(buf) {
+  if (!buf || buf.length === 0) return 'utf-8';
+  if (buf.length >= 3 && buf[0] === 0xEF && buf[1] === 0xBB && buf[2] === 0xBF) return 'utf-8';
+  const utf8 = new TextDecoder('utf-8').decode(buf);
+  return utf8.includes('\uFFFD') ? 'cp1251' : 'utf-8';
+}
+
+/**
+ * CSV buffer'ni matnga dekodlaydi (UTF-8 BOM strip + encoding tanlash).
+ *
+ * @param {Buffer} buf - Xom fayl buffer
+ * @param {'auto'|'utf-8'|'cp1251'} [encoding]
+ * @returns {{ text: string, encoding: string }}
+ */
+export function decodeCsvBuffer(buf, encoding = 'auto') {
+  if (!buf) return { text: '', encoding: 'utf-8' };
+  // ROSTER_CONFIG.csvEncodings bilan validatsiya (review: dead config bo'lmasin)
+  const supported = ROSTER_CONFIG.csvEncodings || ['utf-8', 'cp1251'];
+  if (encoding && encoding !== 'auto' && !supported.includes(encoding)) {
+    throw new Error(`Unsupported CSV encoding "${encoding}". Supported: ${supported.join(', ')}`);
+  }
+  let data = buf;
+  if (data.length >= 3 && data[0] === 0xEF && data[1] === 0xBB && data[2] === 0xBF) {
+    data = data.subarray(3); // UTF-8 BOM strip
+  }
+  const resolved = (!encoding || encoding === 'auto') ? detectCsvEncoding(data) : encoding;
+  if (resolved === 'cp1251') {
+    return { text: new TextDecoder('windows-1251').decode(data), encoding: 'cp1251' };
+  }
+  return { text: data.toString('utf-8'), encoding: 'utf-8' };
+}
+
 export function parseCsv(filePath, options = {}) {
+  const warnings = [];
   let workbook;
   try {
-    workbook = XLSX.readFile(filePath, {
-      type: 'file',
+    const buf = fs.readFileSync(filePath);
+    const { text, encoding } = decodeCsvBuffer(buf, options.encoding || 'auto');
+    // cp1251 auto-detect jimgina emas — parse report'ga warning chiqadi
+    if (encoding === 'cp1251' && (!options.encoding || options.encoding === 'auto')) {
+      warnings.push({ type: 'encoding', message: 'Fayl Windows-1251 (cp1251) deb interpretatsiya qilindi — ruscha matnlar tekshirilsin' });
+    }
+    workbook = XLSX.read(text, {
+      type: 'string',
       raw: true,
       cellFormula: false,
-      // CSV-specific: detect delimiter, encoding
+      // CSV-specific: delimiter autodetect
       rawSheets: false,
-      codepage: options.encoding || undefined,
-      // Auto-detect delimiter if not specified
       FS: options.delimiter || undefined,
     });
   } catch (err) {
@@ -256,7 +307,7 @@ export function parseCsv(filePath, options = {}) {
     totalRows += sheetRows.length;
   }
 
-  return { sheets, totalRows, totalSheets: sheets.length, errors: [], warnings: [] };
+  return { sheets, totalRows, totalSheets: sheets.length, errors: [], warnings };
 }
 
 // ═══════════════════════════════════════════════════════════════════
