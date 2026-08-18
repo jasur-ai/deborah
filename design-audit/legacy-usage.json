@@ -1,0 +1,28 @@
+{
+  "current": {
+    "date": "2026-08-09",
+    "total": 301,
+    "cssSum": 59,
+    "viewInline": 242
+  },
+  "history": [
+    {
+      "date": "2026-08-09",
+      "total": 1375,
+      "cssSum": 328,
+      "viewInline": 1047
+    },
+    {
+      "date": "2026-08-09",
+      "total": 1375,
+      "cssSum": 328,
+      "viewInline": 1047
+    },
+    {
+      "date": "2026-08-09",
+      "total": 301,
+      "cssSum": 59,
+      "viewInline": 242
+    }
+  ]
+}

@@ -1,0 +1,940 @@
+/* ═══════════════════════════════════════════════════════════════
+   EDIKIT LANDING — Universitar platforma (plan_index §3, style.md §11)
+   Dark-first · glass surfaces · bento grid · glow accents
+   Dekorativ animatsiyalar YO'Q (plan_index §5; STEP 22 S22.01)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Tokens (style.md §11.2 bilan sinxron) ── */
+:root {
+  --ld-bg: #080c1a;
+  --ld-surface: rgba(255, 255, 255, 0.04);
+  --ld-surface-solid: #0e1428;
+  --ld-border: rgba(255, 255, 255, 0.09);
+  --ld-text: #e8ecf7;
+  --ld-muted: #9aa3bd;
+  --ld-primary: #4f46e5;
+  --ld-primary-hover: #6366f1;
+  --ld-primary-glow: rgba(79, 70, 229, 0.35);
+  --ld-green: #22c55e;
+  --ld-radius: 14px;
+  --ld-radius-lg: 20px;
+  --ld-container: 1200px;
+}
+
+/* ── Light theme (STEP 23 S23.10) — theme switcher amalda ishlaydi ── */
+[data-theme='light'] {
+  --ld-bg: #f4f6fb;
+  --ld-surface: rgba(15, 23, 42, 0.05);
+  --ld-surface-solid: #ffffff;
+  --ld-border: rgba(15, 23, 42, 0.12);
+  --ld-text: #1a2138;
+  --ld-muted: #5b647e;
+  --ld-primary: #4f46e5;
+  --ld-primary-hover: #4338ca;
+  --ld-primary-glow: rgba(79, 70, 229, 0.18);
+  --ld-green: #16a34a;
+}
+[data-theme='light'] .ld-hero::before {
+  background:
+    radial-gradient(620px 340px at 10% 12%, rgba(79, 70, 229, 0.10), transparent 62%),
+    radial-gradient(540px 300px at 92% 88%, rgba(37, 99, 235, 0.08), transparent 62%),
+    repeating-linear-gradient(0deg, transparent 0 39px, rgba(15, 23, 42, 0.035) 39px 40px),
+    repeating-linear-gradient(90deg, transparent 0 39px, rgba(15, 23, 42, 0.035) 39px 40px);
+}
+[data-theme='light'] .ld-stage,
+[data-theme='light'] .ld-demo-stage {
+  background: linear-gradient(160deg, rgba(15, 23, 42, 0.04), rgba(15, 23, 42, 0.01));
+  box-shadow: 0 26px 64px rgba(15, 23, 42, 0.12);
+}
+[data-theme='light'] .ld-dist-bar--ok,
+[data-theme='light'] .ld-rail--a { background: #16a34a; }
+[data-theme='light'] .ld-phone-submit { background: var(--ld-primary); }
+[data-theme='light'] .ld-discuss-chip { color: #b45309; }
+[data-theme='light'] .ld-stage-correct { color: var(--ld-green); }
+/* S36.01 — light theme'da ham header dark glass bo'lgani uchun lang linklari light qoladi */
+[data-theme='light'] .ld-lang { color: #AAB2C9; }
+[data-theme='light'] .ld-lang:hover { color: #E8ECF7; }
+/* S36.01 — pastel pill/bubble text'lari light theme'da tintli fonda 1.1-1.6:1 edi → dark ink */
+[data-theme='light'] .ld-crop-pill { color: #3730A3; }
+[data-theme='light'] .ld-crop-pill--ok { color: #166534; }
+[data-theme='light'] .ld-crop-bubble--ai { color: #3730A3; }
+
+/* ── Base ── */
+.ld-body {
+  margin: 0;
+  background: var(--ld-bg);
+  color: var(--ld-text);
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.ld-container {
+  max-width: var(--ld-container);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.ld-skip-link {
+  position: absolute;
+  top: -60px;
+  left: 12px;
+  z-index: 100;
+  background: var(--ld-primary);
+  color: #fff;
+  padding: var(--edikit-spacing-3, 12px) var(--edikit-spacing-4, 16px)
+  border-radius: 8px;
+  font-weight: 700;
+  transition: top 0.2s;
+}
+.ld-skip-link:focus { top: 12px; }
+
+/* ── Header (sticky, glass, menyu yo'q) ── */
+.ld-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  background: rgba(8, 12, 26, 0.82);
+  border-bottom: 1px solid var(--ld-border);
+}
+.ld-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 64px;
+  gap: 16px;
+}
+.ld-logo-img { display: block; height: 32px; width: auto; }
+.ld-header-right { display: flex; align-items: center; gap: 14px; }
+
+.ld-lang-switcher {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--ld-surface);
+  border: 1px solid var(--ld-border);
+  border-radius: var(--edikit-radius-md, 12px);
+}
+.ld-lang {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--ld-muted);
+  text-decoration: none;
+  padding: var(--edikit-spacing-2, 8px) var(--edikit-spacing-2, 8px)
+  border-radius: 8px;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.2s, background 0.2s;
+}
+.ld-lang:hover { color: var(--ld-text); }
+.ld-lang.is-active { background: var(--ld-primary); color: #fff; }
+
+/* ── Buttons (style.md §11.2 Primary/Ghost) ── */
+.ld-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px; /* 44px target (plan_index §8) */
+  padding: 0 22px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.ld-btn:focus-visible { outline: 2px solid var(--ld-primary); outline-offset: 3px; }
+.ld-btn-primary {
+  /* S12.10 — solid (gradient faqat approved brand art'da) */
+  background: var(--ld-primary);
+  color: #fff;
+  box-shadow: 0 4px 18px var(--ld-primary-glow);
+}
+.ld-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 26px var(--ld-primary-glow); }
+.ld-btn-ghost {
+  background: transparent;
+  color: var(--ld-text);
+  border-color: var(--ld-border);
+}
+.ld-btn-ghost:hover { background: var(--ld-surface); }
+.ld-btn-sm { min-height: 38px; padding: 0 16px; font-size: 0.85rem; }
+.ld-btn-lg { min-height: 54px; padding: 0 32px; font-size: 1.05rem; }
+
+/* ── Hero (STEP 22 S22.01/02) — 5+7 split, ambient 2 source + evidence grid ── */
+.ld-hero {
+  padding: 72px 0 64px;
+  position: relative;
+  overflow: hidden;
+}
+.ld-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(620px 340px at 10% 12%, rgba(79, 70, 229, 0.16), transparent 62%),
+    radial-gradient(540px 300px at 92% 88%, rgba(37, 99, 235, 0.10), transparent 62%),
+    repeating-linear-gradient(0deg, transparent 0 39px, rgba(255, 255, 255, 0.024) 39px 40px),
+    repeating-linear-gradient(90deg, transparent 0 39px, rgba(255, 255, 255, 0.024) 39px 40px);
+}
+.ld-hero .ld-container { position: relative; }
+.ld-hero-split {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 48px;
+  align-items: center;
+  text-align: left;
+}
+.ld-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--ld-surface);
+  border: 1px solid var(--ld-border);
+  color: var(--ld-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-bottom: 22px;
+}
+.ld-badge-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--ld-green);
+  box-shadow: 0 0 8px var(--ld-green);
+}
+.ld-hero-h1 {
+  font-size: clamp(2rem, 5.2vw, 3.4rem);
+  line-height: 1.12;
+  font-weight: 700;
+  margin: 0 0 18px;
+  max-width: 640px;
+  letter-spacing: -0.02em;
+}
+.ld-hero-sub {
+  font-size: clamp(1rem, 2vw, 1.18rem);
+  color: var(--ld-muted);
+  max-width: 560px;
+  margin: 0 0 30px;
+}
+.ld-hero-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.ld-hero-participant {
+  margin-top: 20px;
+  font-size: 0.88rem;
+}
+.ld-hero-participant a {
+  color: var(--ld-muted);
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 1px dashed var(--ld-border);
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.ld-hero-participant a:hover { color: var(--ld-text); border-color: var(--ld-primary-hover); }
+
+/* ── Product stage (STEP 22 S22.03/04/05/06) — Three-view grammar ── */
+.ld-stage {
+  position: relative;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.015));
+  border: 1px solid var(--ld-border);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 26px 64px rgba(0, 0, 0, 0.38);
+}
+.ld-stage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.ld-stage-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ld-muted);
+}
+.ld-stage-coverage {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--ld-green);
+}
+.ld-stage-question {
+  font-weight: 700;
+  font-size: 1.02rem;
+  line-height: 1.4;
+  margin-bottom: 14px;
+}
+.ld-stage-main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.ld-frame {
+  background: var(--ld-surface-solid);
+  border: 1px solid var(--ld-border);
+  border-radius: 14px;
+  padding: 14px;
+}
+.ld-frame-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.ld-frame-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ld-muted);
+}
+.ld-frame-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: #f87171;
+}
+.ld-live-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #f87171;
+  box-shadow: 0 0 8px #f87171;
+}
+.ld-frame--director { grid-column: 1 / -1; }
+
+/* Response mosaic */
+.ld-mosaic {
+  display: grid;
+  grid-template-columns: repeat(15, 1fr);
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.ld-mosaic-tile {
+  aspect-ratio: 1;
+  border-radius: 6px;
+  background: var(--ld-surface);
+  border: 1px solid var(--ld-border);
+}
+.ld-mosaic--a { background: rgba(34, 197, 94, 0.5); border-color: rgba(34, 197, 94, 0.35); }
+.ld-mosaic--b { background: rgba(59, 130, 246, 0.5); border-color: rgba(59, 130, 246, 0.35); }
+.ld-mosaic--c { background: rgba(245, 158, 11, 0.5); border-color: rgba(245, 158, 11, 0.35); }
+.ld-mosaic--d { background: rgba(148, 163, 184, 0.45); border-color: rgba(148, 163, 184, 0.3); }
+
+/* Signal rail (answer distribution) */
+.ld-rail {
+  display: flex;
+  height: 12px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--ld-surface);
+  gap: 2px;
+}
+.ld-rail-seg { width: var(--w); }
+.ld-rail--a { background: #22c55e; }
+.ld-rail--b { background: #3b82f6; }
+.ld-rail--c { background: #f59e0b; }
+.ld-rail--d { background: #94a3b8; }
+
+/* Projector distribution */
+.ld-dist { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.ld-dist-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.76rem;
+}
+.ld-dist-letter {
+  width: 18px; height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--ld-surface);
+  border: 1px solid var(--ld-border);
+  font-weight: 700;
+  font-size: 0.66rem;
+}
+.ld-dist-track {
+  flex: 1;
+  height: 8px;
+  background: var(--ld-surface);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.ld-dist-bar {
+  display: block;
+  height: 100%;
+  width: var(--w);
+  border-radius: 999px;
+}
+.ld-dist--a { background: #22c55e; }
+.ld-dist--b { background: #3b82f6; }
+.ld-dist--c { background: #f59e0b; }
+.ld-dist--d { background: #94a3b8; }
+.ld-dist-pct { width: 40px; text-align: right; color: var(--ld-muted); font-weight: 700; }
+
+/* Teacher action + correct chip */
+.ld-stage-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.ld-discuss-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(245, 158, 11, 0.14);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fbbf24;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+.ld-discuss-ico { font-size: 1rem; line-height: 1; }
+.ld-stage-correct { font-size: 0.76rem; color: var(--ld-green); font-weight: 700; }
+
+/* Participant phone frame */
+.ld-frame--phone { display: flex; flex-direction: column; }
+.ld-phone-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--ld-muted);
+  margin-bottom: 10px;
+}
+.ld-phone-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ld-primary-hover); }
+.ld-phone-question { font-size: 0.82rem; font-weight: 700; margin-bottom: 10px; line-height: 1.4; }
+.ld-phone-options { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.ld-phone-opt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  background: var(--ld-surface);
+  border: 1px solid var(--ld-border);
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+.ld-phone-opt--ok { border-color: rgba(34, 197, 94, 0.5); background: rgba(34, 197, 94, 0.12); }
+.ld-phone-letter {
+  width: 18px; height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.64rem;
+  font-weight: 700;
+}
+.ld-phone-submit {
+  margin-top: auto;
+  align-self: flex-end;
+  width: 34px; height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--ld-primary);
+  color: #fff;
+  font-weight: 700;
+}
+
+/* STEP 22 S22.07 — optional stage animation (reduced-motion/low-data static) */
+@keyframes ld-rail-grow { from { width: 0; } to { width: var(--w); } }
+@keyframes ld-fade-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: no-preference) {
+  .ld-stage.is-anim .ld-rail-seg,
+  .ld-stage.is-anim .ld-dist-bar {
+    animation: ld-rail-grow 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .ld-stage.is-anim .ld-mosaic-tile {
+    animation: ld-fade-in 0.4s ease both;
+    animation-delay: calc(var(--i) * 12ms);
+  }
+}
+
+/* STEP 23 S23.01 — hero enter motion: BIR MARTA (220ms copy, 280ms frame), infinite yo'q */
+@keyframes ld-enter {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ld-hero-copy { animation: ld-enter 0.22s ease-out both; }
+  .ld-stage { animation: ld-enter 0.28s ease-out 0.08s both; }
+}
+
+/* ── Section umumiy ── */
+.ld-roles, .ld-features, .ld-demo, .ld-how, .ld-trust, .ld-cta {
+  padding: 64px 0;
+}
+.ld-section-title {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  text-align: center;
+  margin: 0 0 12px;
+}
+.ld-section-desc {
+  text-align: center;
+  color: var(--ld-muted);
+  max-width: 560px;
+  margin: 0 auto 36px;
+}
+
+/* ── Ikki yo'l (roles) ── */
+.ld-roles-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+  margin-top: 24px;
+}
+.ld-role-card {
+  background: var(--ld-surface);
+  border: 1px solid var(--ld-border);
+  border-radius: var(--ld-radius-lg);
+  padding: var(--edikit-spacing-8, 32px);
+  text-align: left;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.ld-role-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 10px 34px var(--ld-primary-glow);
+}
+.ld-role-icon { font-size: 2rem; margin-bottom: 14px; }
+.ld-role-title { font-size: 1.25rem; font-weight: 600; margin: 0 0 6px; }
+.ld-role-sub { color: var(--ld-muted); font-size: 0.9rem; margin: 0 0 16px; }
+.ld-role-points { list-style: none; padding: 0; margin: 0 0 22px; }
+.ld-role-points li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  font-size: 0.9rem;
+  color: var(--ld-text);
+}
+.ld-check {
+  color: var(--ld-green);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ── Features (STEP 22 S22.10/11) — asymmetric bento, product crop + outcome ── */
+.ld-features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+.ld-feature-card {
+  background: var(--ld-surface);
+  border: 1px solid var(--ld-border);
+  border-radius: var(--ld-radius);
+  padding: 22px;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.ld-feature-card:first-child, .ld-feature-card:last-child { grid-column: 1 / -1; }
+.ld-feature-card:hover { transform: translateY(-3px); border-color: rgba(99, 102, 241, 0.45); }
+.ld-feature-title { font-size: 1.02rem; font-weight: 600; margin: 0 0 8px; }
+.ld-feature-desc { font-size: 0.88rem; color: var(--ld-muted); margin: 0; }
+
+/* Product crop mini-visual (real data context, emoji yo'q) */
+.ld-crop {
+  margin: 0 0 16px;
+  border-radius: 10px;
+  background: var(--ld-surface-solid);
+  border: 1px solid var(--ld-border);
+  min-height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+}
+.ld-crop--wide { min-height: 96px; }
+/* exam checklist */
+.ld-crop-rows { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+.ld-crop-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--ld-muted);
+}
+.ld-crop-row .ld-check { color: var(--ld-green); }
+/* live mini rail */
+.ld-crop-rail { display: flex; gap: 2px; height: 10px; width: 100%; border-radius: 999px; overflow: hidden; }
+.ld-crop-rail i { display: block; height: 100%; }
+/* grade score */
+.ld-crop-score { display: flex; align-items: center; gap: 14px; width: 100%; }
+.ld-crop-score b { font-size: 1.6rem; font-weight: 700; color: var(--ld-green); }
+.ld-crop-score .ld-crop-rail { flex: 1; }
+/* practice pills */
+.ld-crop-pills { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.ld-crop-pill {
+  font-size: 0.64rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.16);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  color: #a5b4fc;
+}
+.ld-crop-pill--ok { background: rgba(34, 197, 94, 0.14); border-color: rgba(34, 197, 94, 0.35); color: #86efac; }
+/* mastery map */
+.ld-crop-map { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; width: 100%; }
+.ld-crop-map i { aspect-ratio: 1; border-radius: 4px; background: rgba(34, 197, 94, 0.45); }
+.ld-crop-map i.ld-map--weak { background: rgba(245, 158, 11, 0.5); }
+/* ai chat */
+.ld-crop-chat { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+.ld-crop-bubble {
+  max-width: 78%;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: 12px;
+}
+.ld-crop-bubble--ai { align-self: flex-start; background: rgba(79, 70, 229, 0.18); border: 1px solid rgba(79, 70, 229, 0.4); color: #c7d2fe; }
+.ld-crop-bubble--user { align-self: flex-end; background: var(--ld-surface); border: 1px solid var(--ld-border); color: var(--ld-text); }
+
+/* ── Demo (STEP 22 S22.10) — full product stage archetype ── */
+.ld-demo { text-align: center; }
+.ld-demo-stage {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 28px 24px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.015));
+  border: 1px solid var(--ld-border);
+  border-radius: 20px;
+  text-align: left;
+}
+.ld-demo-stage .ld-section-title { text-align: left; margin-left: 0; margin-top: 8px; }
+.ld-demo-stage .ld-demo-hint { text-align: left; margin-left: 0; margin-bottom: 20px; }
+.ld-demo-hint { font-size: 0.85rem; margin-bottom: 24px; }
+.ld-demo-modal { position: fixed; inset: 0; z-index: 80; display: flex; align-items: center; justify-content: center; padding: 20px; }
+/* FIX (STEP 07/E2E): display:flex `hidden` attribute'ni override qilardi —
+   yopiq holatda modal butun sahifani yopib, barcha click'larni tutardi.
+   Specificity teng bo'lgani uchun `[hidden]` variant aniq beriladi. */
+.ld-demo-modal[hidden] { display: none; }
+.ld-demo-backdrop { position: absolute; inset: 0; background: rgba(4, 6, 14, 0.72); backdrop-filter: blur(4px); }
+.ld-demo-panel {
+  position: relative;
+  width: min(460px, 100%);
+  background: var(--ld-surface-solid);
+  border: 1px solid var(--ld-border);
+  border-radius: var(--ld-radius-lg);
+  padding: 28px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+}
+.ld-demo-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  width: 38px; height: 38px;
+  border-radius: var(--edikit-radius-md, 12px);
+  border: 1px solid var(--ld-border);
+  background: transparent;
+  color: var(--ld-muted);
+  font-size: 1rem;
+  cursor: pointer;
+}
+.ld-demo-close:hover { color: var(--ld-text); background: var(--ld-surface); }
+.ld-demo-q { font-weight: 600; font-size: 1.1rem; margin: 8px 0 18px; }
+.ld-demo-options { display: grid; gap: 10px; }
+.ld-demo-opt {
+  min-height: 48px;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 1px solid var(--ld-border);
+  background: var(--ld-surface);
+  color: var(--ld-text);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+.ld-demo-opt:hover { border-color: var(--ld-primary); transform: translateY(-1px); }
+.ld-demo-opt.is-correct { border-color: var(--ld-green); background: rgba(34, 197, 94, 0.12); }
+.ld-demo-opt.is-wrong { border-color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+.ld-demo-result { margin: 16px 0 0; font-weight: 700; }
+.ld-demo-result.is-good { color: var(--ld-green); }
+.ld-demo-result.is-bad { color: #f87171; }
+.ld-demo-cta { margin-top: 18px; }
+
+/* ── How (3 qadam × 2 tab) ── */
+.ld-how-tabs {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+.ld-tab {
+  min-height: 42px;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: 1px solid var(--ld-border);
+  background: transparent;
+  color: var(--ld-muted);
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.ld-tab.is-active { background: var(--ld-primary); border-color: var(--ld-primary); color: #fff; }
+/* ── How (STEP 22 S22.10) — split editorial: copy + vertical steps ── */
+.ld-how-split {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 44px;
+  align-items: start;
+}
+.ld-how-main .ld-section-title, .ld-how-main .ld-section-desc { text-align: left; margin-left: 0; }
+.ld-how-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 22px;
+  justify-content: flex-start;
+}
+.ld-how-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+.ld-how-steps::before {
+  content: '';
+  position: absolute;
+  left: 17px;
+  top: 26px;
+  bottom: 26px;
+  width: 2px;
+  background: linear-gradient(180deg, var(--ld-primary), rgba(79, 70, 229, 0.08));
+}
+.ld-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  column-gap: 16px;
+  align-items: start;
+  padding: 14px 0 22px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}
+.ld-step-num {
+  position: relative;
+  z-index: 1;
+  width: 34px; height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--ld-primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  box-shadow: 0 0 0 4px var(--ld-bg), 0 0 0 5px var(--ld-border);
+}
+.ld-step-num {
+  width: 34px; height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--ld-primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+  box-shadow: 0 0 14px var(--ld-primary-glow);
+}
+.ld-step-title { font-weight: 600; margin: 0 0 6px; font-size: 1rem; }
+.ld-step-desc { font-size: 0.86rem; color: var(--ld-muted); margin: 0; }
+
+/* ── Trust (STEP 21 S21.08) — safety/accessibility + real proof ── */
+.ld-trust-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  max-width: 860px;
+  margin: 0 auto;
+}
+.ld-trust-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+  background: var(--ld-surface);
+  border: 1px solid var(--ld-border);
+  border-radius: var(--ld-radius);
+  text-decoration: none;
+  color: var(--ld-text);
+  transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.ld-trust-item:hover { transform: translateY(-2px); border-color: var(--ld-primary-hover); background: rgba(255, 255, 255, 0.06); }
+.ld-trust-icon {
+  width: 40px; height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: rgba(79, 70, 229, 0.14);
+  color: var(--ld-primary-hover);
+  margin-bottom: 4px;
+}
+.ld-trust-icon svg { width: 20px; height: 20px; }
+.ld-trust-title { font-size: 1rem; font-weight: 700; margin: 0; }
+.ld-trust-desc { font-size: 0.86rem; color: var(--ld-muted); margin: 0; }
+.ld-trust-more { font-size: 0.82rem; font-weight: 700; color: var(--ld-primary-hover); margin-top: 4px; }
+/* S36.02: dark'da #6366f1 4.03:1 edi — indigo-400 5.6:1 (light override yuqorida #4338ca) */
+[data-theme='dark'] .ld-trust-more { color: #818CF8; }
+
+/* ── Final CTA ── */
+.ld-cta-box {
+  text-align: center;
+  background: linear-gradient(180deg, rgba(79, 70, 229, 0.12), rgba(124, 58, 237, 0.05));
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  border-radius: var(--ld-radius-lg);
+  padding: 48px 24px;
+}
+.ld-cta-title { font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 700; margin: 0 0 10px; }
+.ld-cta-desc { color: var(--ld-muted); margin: 0 0 26px; }
+
+/* ── Footer (STEP 21 S21.09 — kolonnalar, admin utility'da) ── */
+.ld-footer {
+  border-top: 1px solid var(--ld-border);
+  padding: 40px 0 24px;
+  margin-top: 40px;
+}
+.ld-footer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--ld-border);
+}
+.ld-footer-col { display: flex; flex-direction: column; gap: 10px; }
+.ld-footer-head { font-size: 0.78rem; font-weight: 700; color: var(--ld-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.ld-footer-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.ld-footer-list a { color: var(--ld-text); font-size: 0.9rem; text-decoration: none; opacity: 0.85; transition: opacity 0.15s ease, color 0.15s ease; }
+.ld-footer-list a:hover { opacity: 1; color: var(--ld-primary-hover); }
+.ld-footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-top: 18px;
+}
+.ld-footer-copy { color: var(--ld-muted); font-size: 0.85rem; }
+.ld-footer-links { display: flex; gap: 18px; flex-wrap: wrap; }
+.ld-footer-links a { color: var(--ld-muted); font-size: 0.85rem; text-decoration: none; transition: color 0.2s; }
+.ld-footer-links a:hover { color: var(--ld-text); }
+
+/* ── Responsive (plan_index §3: mobile-first 375px) ── */
+@media (max-width: 1100px) {
+  .ld-hero-split { grid-template-columns: 1fr; gap: 36px; }
+  .ld-hero-copy { text-align: center; }
+  .ld-hero-copy .ld-hero-actions { justify-content: center; }
+  .ld-hero-copy .ld-hero-h1, .ld-hero-copy .ld-hero-sub { margin-left: auto; margin-right: auto; }
+  .ld-how-split { grid-template-columns: 1fr; gap: 12px; }
+}
+@media (max-width: 900px) {
+  .ld-features-grid { grid-template-columns: repeat(2, 1fr); }
+  .ld-footer-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .ld-hero { padding: 48px 0 40px; }
+  .ld-stage { padding: 14px; }
+  .ld-stage-main { grid-template-columns: 1fr; }
+  .ld-frame--director { grid-column: auto; }
+  .ld-mosaic { grid-template-columns: repeat(10, 1fr); }
+  .ld-roles-grid, .ld-features-grid, .ld-trust-grid { grid-template-columns: 1fr; }
+  .ld-feature-card:first-child, .ld-feature-card:last-child { grid-column: auto; }
+  .ld-hero-h1 { font-size: 1.7rem; }
+  .ld-header-inner { min-height: 56px; }
+  .ld-lang-switcher { display: none; } /* mobil: faqat CTA (plan_index §3.1 burger) */
+  .ld-header-right { flex-wrap: wrap; justify-content: flex-end; gap: 8px 12px; } /* WCAG 1.4.12: text-spacing da toshmaydi */
+  .ld-cta-box { padding: 36px 18px; }
+  .ld-footer-grid { grid-template-columns: 1fr; gap: 22px; }
+  .ld-footer-bottom { flex-direction: column; text-align: center; }
+}
+
+/* ── AUTH A-13: ochiq ma'lumotlar stats strip ── */
+.ld-stats {
+  padding: 56px 0 64px;
+  background: var(--ld-surface);
+  border-top: 1px solid var(--ld-border);
+  border-bottom: 1px solid var(--ld-border);
+}
+.ld-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+.ld-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 28px 16px;
+  background: var(--ld-bg);
+  border: 1px solid var(--ld-border);
+  border-radius: 16px;
+  text-align: center;
+}
+.ld-stat-num {
+  font-size: clamp(1.9rem, 4.5vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--ld-primary);
+}
+.ld-stat-label {
+  font-size: 0.9rem;
+  color: var(--ld-muted);
+}
+.ld-stats-note {
+  max-width: 680px;
+  margin: 18px auto 0;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--ld-muted);
+}
+.ld-stats-note a {
+  color: #818cf8; /* dark: #4f46e5 3.33:1 — AA 4.5:1 uchun yorqinroq */
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+[data-theme='light'] .ld-stats-note a {
+  color: var(--ld-primary); /* #4f46e5 light bg'da 5.35:1 — OK */
+}
+
+/* ── Reduced motion (style.md §8) ── */
+@media (prefers-reduced-motion: reduce) {
+  .ld-role-card:hover, .ld-feature-card:hover, .ld-btn:hover, .ld-trust-item:hover { transform: none; }
+  .ld-btn-primary:hover { box-shadow: 0 4px 18px var(--ld-primary-glow); }
+  .ld-demo-opt:hover { transform: none; }
+}

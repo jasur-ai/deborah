@@ -1,0 +1,125 @@
+/* ═══════════════════════════════════════════════════════════════
+   Edikit Motion Foundations (STYLE STEP 10)
+   ---------------------------------------------------------------
+   1. Duration + easing token'lari (S10.01-02) — 0/80/120/160/220/
+      320/500/800ms, intent-based; bounce/elastic productive UI'da yo'q
+   2. Property-specific transition yordamchilari (S10.03, S10.08)
+   3. Interruptible motion (S10.07) — transform/opacity primary
+   4. prefers-reduced-motion task parity (S10.09)
+   5. @starting-style + transition-behavior (S10.10) progressive
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── 1. Duration + easing token'lari (S10.01-02) ── */
+:root {
+  /* Duration scale */
+  --motion-dur-0:       var(--edikit-motion-duration-0, 0ms);
+  --motion-dur-80:      var(--edikit-motion-duration-80, 80ms);
+  --motion-dur-120:     var(--edikit-motion-duration-120, 120ms);
+  --motion-dur-160:     var(--edikit-motion-duration-160, 160ms);
+  --motion-dur-220:     var(--edikit-motion-duration-220, 220ms);
+  --motion-dur-320:     var(--edikit-motion-duration-320, 320ms);
+  --motion-dur-500:     var(--edikit-motion-duration-500, 500ms);
+  --motion-dur-800:     var(--edikit-motion-duration-800, 800ms);
+
+  /* Usage intent (S10.05) */
+  --motion-feedback:     var(--edikit-motion-intent-feedback, 120ms);
+  --motion-hover:        var(--edikit-motion-intent-hover, 80ms);
+  --motion-popup:        var(--edikit-motion-intent-popup, 160ms);
+  --motion-modal:        var(--edikit-motion-intent-modal, 220ms);
+  --motion-modal-exit:   var(--edikit-motion-intent-modal-exit, 160ms);
+  --motion-page:         var(--edikit-motion-intent-page, 320ms);
+  --motion-page-exit:    var(--edikit-motion-intent-page-exit, 240ms);
+  --motion-milestone:    var(--edikit-motion-intent-milestone, 500ms);
+
+  /* Easing (S10.02) */
+  --ease-standard: cubic-bezier(var(--edikit-motion-easing-standard, 0.4, 0, 0.2, 1));
+  --ease-enter:    cubic-bezier(var(--edikit-motion-easing-enter, 0, 0, 0.2, 1));
+  --ease-exit:     cubic-bezier(var(--edikit-motion-easing-exit, 0.4, 0, 1, 1));
+  --ease-emphasis: cubic-bezier(var(--edikit-motion-easing-emphasis, 0.2, 0.8, 0.2, 1));
+}
+
+/* ── 2. Property-specific transition yordamchilari (S10.03, S10.08) ──
+   Layout animatsiya (width/height/margin/top/left) TAQIQ — faqat
+   transform/opacity/color/box-shadow. */
+@keyframes edikit-transition-none {}
+.tr-prop {
+  transition-property: transform, opacity, background-color, border-color, color, box-shadow, filter;
+  transition-duration: var(--motion-feedback);
+  transition-timing-function: var(--ease-standard);
+}
+.tr-color {
+  transition-property: color, background-color, border-color, opacity;
+  transition-duration: var(--motion-feedback);
+  transition-timing-function: var(--ease-standard);
+}
+.tr-lift { /* hover card */
+  transition-property: transform, box-shadow, border-color;
+  transition-duration: var(--motion-hover);
+  transition-timing-function: var(--ease-standard);
+}
+.tr-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* ── 3. Interruptible — transform/opacity primary (S10.07, S10.08) ── */
+.interruptible {
+  transition-property: transform, opacity;
+  transition-duration: var(--motion-feedback);
+  transition-timing-function: var(--ease-standard);
+  will-change: transform, opacity;
+}
+
+/* ── 4. prefers-reduced-motion: task parity (S10.09) ──
+   Decorative motion OFF, functional state static equivalent bilan. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* Functional state static equivalent — urgent timer red, shimmer o'rniga solid */
+  .proj-timer.urgent { animation: none !important; color: var(--cast-red, #ef4444); font-weight: 800; }
+  .skeleton, .skeleton-shimmer, [class*="skeleton"] { animation: none !important; background: var(--edikit-semantic-color-surface-raised, #1e293b); }
+  .hero-anim, [class*="hero-anim"], .ambient, [class*="ambient"] { animation: none !important; }
+  /* Accessibility: focus still visible (instant, S10.11) */
+  :focus-visible { outline-offset: 2px; }
+  /* S38.06 — low-power: blur/paint cost past — backdrop-filter o'chiriladi */
+  .navbar, .dialog[open]::backdrop, [class*="overlay"], [class*="sticky"], [class*="modal"] {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+/* S38.06 — low-power transparency: OS darajasida shaffoflik kamaytirilgan bo'lsa ham blur yengil */
+@media (prefers-reduced-transparency: reduce) {
+  .navbar, .dialog[open]::backdrop, [class*="overlay"], [class*="sticky"], [class*="modal"], [class*="topbar"] {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+/* ── 5. @starting-style + transition-behavior (S10.10) progressive ── */
+@supports (transition-behavior: allow-discrete) {
+  .modal-enter {
+    transition-property: transform, opacity;
+    transition-duration: var(--motion-modal);
+    transition-timing-function: var(--ease-enter);
+    transition-behavior: allow-discrete;
+  }
+  .modal-enter::backdrop,
+  .modal-enter {
+    @starting-style {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+  .modal-enter[open] { opacity: 1; transform: translateY(0); }
+}
+
+/* ── 6. Focus ring — instant, stable (S10.11) ── */
+:focus-visible {
+  outline: 2px solid var(--edikit-semantic-color-focus, #2563eb);
+  outline-offset: 2px;
+  transition: none; /* focus ring animatsiyasiz — keyboard aksiya tez */
+}

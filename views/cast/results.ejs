@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/cast-tokens.css">
+  <link rel="stylesheet" href="/css/cast-results.css">
+  <link rel="stylesheet" href="/design/foundations/typography.css">
+  <link rel="stylesheet" href="/design/foundations/layout.css">
+  <link rel="stylesheet" href="/design/foundations/motion.css">
+  <script>
+    window.__BOOT__ = <%- JSON.stringify(boot) %>;
+    window.__CSRF_TOKEN = '<%= boot.csrfToken %>';
+  </script>
+</head>
+<body class="cast-page" data-cast-theme="focus_dark">
+  <div class="cast-live-region" aria-live="polite" id="status-live"></div>
+  <div class="cast-live-region" aria-live="assertive" id="alert-live"></div>
+
+  <header class="res-topbar">
+    <div class="res-topbar-left">
+      <a class="res-logo" href="/user/panel">🎬 Cast</a>
+      <span class="res-title" id="res-title"><%= boot.title %></span>
+      <span class="res-badge" id="res-badge">Hisobot tayyorlanmoqda…</span>
+    </div>
+    <div class="res-topbar-right">
+      <button class="cast-btn cast-btn-ghost" id="btn-refresh" type="button"><%- icon('refresh', 16) %> Yangilash</button>
+      <button class="cast-btn cast-btn-outline" id="btn-export-csv" type="button" title="CSV eksport (faqat aggregate)">⬇ CSV</button>
+      <button class="cast-btn cast-btn-outline" id="btn-export-json" type="button" title="JSON eksport">⬇ JSON</button>
+      <button class="cast-btn cast-btn-secondary" id="btn-ai-draft" type="button" title="AI draft (feature flag)"><%- icon('sparkles', 16) %> AI draft</button>
+    </div>
+  </header>
+
+  <main class="res-layout" id="res-main">
+    <section class="cast-surface res-hero" id="res-hero">
+      <h2>📊 Sessiya natijalari</h2>
+      <p class="res-muted" id="res-fingerprint">Yuklanmoqda…</p>
+    </section>
+
+    <!-- Qatnashuv + accuracy -->
+    <section class="res-grid res-grid-2">
+      <div class="cast-surface res-card" id="res-participation">
+        <h3>👥 Qatnashuv</h3>
+        <div class="res-body">Yuklanmoqda…</div>
+      </div>
+      <div class="cast-surface res-card" id="res-accuracy">
+        <h3>🎯 Sinf accuracy</h3>
+        <div class="res-body">Yuklanmoqda…</div>
+      </div>
+    </section>
+
+    <!-- Eng qiyin savollar -->
+    <section class="cast-surface res-card" id="res-hardest">
+      <h3>🔍 Eng qiyin savollar</h3>
+      <div class="res-body">Yuklanmoqda…</div>
+    </section>
+
+    <!-- Misconceptions -->
+    <section class="cast-surface res-card" id="res-misconceptions">
+      <h3>💡 Tasdiqlangan noto'g'ri tushunchalar</h3>
+      <div class="res-body">Yuklanmoqda…</div>
+    </section>
+
+    <!-- Confidence + Revote -->
+    <section class="res-grid res-grid-2">
+      <div class="cast-surface res-card" id="res-confidence">
+        <h3>🎚 Ishonch matritsasi</h3>
+        <div class="res-body">Yuklanmoqda…</div>
+      </div>
+      <div class="cast-surface res-card" id="res-revote">
+        <h3>🔄 First → Revote o'zgarish</h3>
+        <div class="res-body">Yuklanmoqda…</div>
+      </div>
+    </section>
+
+    <!-- Tarmoq + transfer -->
+    <section class="res-grid res-grid-2">
+      <div class="cast-surface res-card" id="res-network">
+        <h3>🌐 Tarmoq / timeout</h3>
+        <div class="res-body">Yuklanmoqda…</div>
+      </div>
+      <div class="cast-surface res-card" id="res-transfer">
+        <h3>🎁 Transfer / redemption</h3>
+        <div class="res-body">Yuklanmoqda…</div>
+      </div>
+    </section>
+
+    <!-- Item quality -->
+    <section class="cast-surface res-card" id="res-quality">
+      <h3>🏷 Savol sifati (flaglar)</h3>
+      <div class="res-body">Yuklanmoqda…</div>
+    </section>
+
+    <!-- Recommended actions -->
+    <section class="cast-surface res-card res-actions" id="res-actions">
+      <h3>⚡ Tavsiya etilgan harakatlar</h3>
+      <div class="res-body">Yuklanmoqda…</div>
+    </section>
+
+    <!-- C5-03: Comparison guard -->
+    <section class="cast-surface res-card" id="res-comparison">
+      <h3>⚖️ Session taqqoslash (comparison guard)</h3>
+      <div class="res-body">Yuklanmoqda…</div>
+    </section>
+
+    <!-- Retention -->
+    <section class="cast-surface res-card" id="res-retention">
+      <h3>🗄 Saqlash muddati (retention)</h3>
+      <div class="res-body">Yuklanmoqda…</div>
+    </section>
+  </main>
+
+  <!-- AI draft modal -->
+  <div class="res-modal-backdrop" id="ai-modal" hidden>
+    <div class="res-modal">
+      <h3><%- icon('sparkles', 18) %> AI draft</h3>
+      <p class="res-muted">Faqat aggregate / de-identified ma'lumot. Teacher approval config'da talab qilinishi mumkin.</p>
+      <pre class="res-pre" id="ai-draft-payload">…</pre>
+      <div class="res-modal-actions">
+        <button class="cast-btn cast-btn-ghost" id="ai-modal-close" type="button">Yopish</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/cast-results.js"></script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+/* ═══════════════════════════════════════════════════════════════
+   Edikit Base (STYLE STEP 11, S11.02-03)
+   ---------------------------------------------------------------
+   Body background/text — semantic tokens (S11.02).
+   Ambient overlay global body'dan olib tashlandi (S11.02) —
+   faqat landing/page o'z kontekstida qo'llaydi.
+   Link rules content va app context (S11.03).
+   Cascade layer: foundations
+   ═══════════════════════════════════════════════════════════════ */
+
+@layer foundations {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 72px; /* sticky header ostida focus obscured bo'lmasin (S11.04) */
+  }
+
+  body {
+    font-family: var(--font-body);
+    font-weight: var(--w-regular);
+    background: var(--edikit-semantic-color-surface-default, var(--edikit-semantic-color-surface-default));
+    color: var(--edikit-semantic-color-text-primary, var(--edikit-semantic-color-text-primary));
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.6;
+    overflow-x: hidden;
+    /* NOTE (S11.02): body::before ambient overlay global emas — har bir
+       sahifa konteksti (landing/app) o'z gradient'ini boshqaradi. */
+  }
+
+  /* ── Link rules (S11.03) — content vs app context ──
+     Content: underline + color. App: color-only emas, hover da ikkinchi
+     signal (underline/background) beriladi. */
+  a {
+    text-decoration: none;
+  }
+
+  /* Content links — article/blog/prose */
+  .prose a,
+  .content a:not([class]) {
+    color: var(--edikit-semantic-color-action-primary, #2563eb);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color var(--motion-feedback, 120ms);
+  }
+  .prose a:hover,
+  .content a:not([class]):hover {
+    color: var(--edikit-semantic-color-action-primary-hover, #1d4ed8);
+  }
+  .prose a:visited,
+  .content a:not([class]):visited {
+    color: var(--edikit-semantic-color-action-primary, #7c3aed);
+  }
+
+  /* ── Selection (S11.05) ── */
+  ::selection {
+    background: rgba(37, 99, 235, 0.25);
+    color: var(--edikit-semantic-color-text-primary, #fff);
+  }
+
+  /* ── Scrollbar (S11.07) — minimal, Firefox fallback + forced-colors ── */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: rgba(59, 130, 246, 0.04); }
+  ::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.2); border-radius: var(--edikit-radius-pill, 999px); }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.35); }
+
+  @media (forced-colors: active) {
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-thumb { background: CanvasText; }
+  }
+}

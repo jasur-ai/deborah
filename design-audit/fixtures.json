@@ -1,0 +1,57 @@
+{
+  "landing": {
+    "viewports": ["desktop", "small-desktop", "tablet", "mobile", "mobile-small"],
+    "states": {
+      "rest": ["light", "dark", "reduced-motion"],
+      "hover": ["light", "dark", "reduced-motion"]
+    }
+  },
+  "login": {
+    "viewports": ["desktop", "small-desktop", "tablet", "mobile", "mobile-small"],
+    "states": {
+      "rest": ["light", "dark", "reduced-motion"],
+      "focus": ["light", "dark"]
+    }
+  },
+  "play": {
+    "viewports": ["desktop", "small-desktop", "tablet", "mobile", "mobile-small"],
+    "states": {
+      "rest": ["light", "dark", "reduced-motion"]
+    }
+  },
+  "user-panel": {
+    "viewports": ["desktop", "small-desktop", "tablet", "mobile", "mobile-small"],
+    "states": {
+      "rest": ["light", "dark"]
+    }
+  },
+  "admin-dashboard": {
+    "viewports": ["desktop", "small-desktop", "tablet", "mobile", "mobile-small"],
+    "states": {
+      "rest": ["light", "dark"]
+    }
+  },
+  "play-projector": {
+    "viewports": ["projector-hd", "projector-720p", "projector-xga"],
+    "states": {
+      "rest": ["light", "dark"]
+    },
+    "screenshotPrefix": "play"
+  },
+  "brand-gallery": {
+    "viewports": ["desktop", "tablet"],
+    "states": {
+      "rest": ["light", "dark"]
+    }
+  },
+  "brand-legibility": {
+    "viewports": ["desktop"],
+    "states": {
+      "rest": ["light"]
+    }
+  },
+  "cvd-protanopia": { "viewports": ["desktop"], "states": { "rest": ["light"] } },
+  "cvd-deuteranopia": { "viewports": ["desktop"], "states": { "rest": ["light"] } },
+  "cvd-tritanopia": { "viewports": ["desktop"], "states": { "rest": ["light"] } },
+  "cvd-grayscale": { "viewports": ["desktop"], "states": { "rest": ["light"] } }
+}

@@ -1,0 +1,58 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "edikit": {
+    "semantic": {
+      "$description": "Semantic tokens — light theme (S04.04 intent-based naming). Primitive'larga alias qiladi; component raw primitive ishlatmaydi (S04.03).",
+      "color": {
+        "action": {
+          "primary": { "$type": "color", "$value": "{edikit.primitive.cobalt.cobalt-500}", "$description": "Primary action — Edikit Cobalt (S04.12)" },
+          "primary-hover": { "$type": "color", "$value": "{edikit.primitive.cobalt.cobalt-600}", "$description": "Primary action hover" },
+          "primary-active": { "$type": "color", "$value": "{edikit.primitive.cobalt.cobalt-700}", "$description": "Primary action pressed" },
+          "primary-soft": { "$type": "color", "$value": "{edikit.primitive.cobalt.cobalt-100}", "$description": "Soft action fill (hover bg)" },
+          "primary-border": { "$type": "color", "$value": "{edikit.primitive.cobalt.cobalt-200}", "$description": "Action outline" },
+          "on-action": { "$type": "color", "$value": "#FFFFFF", "$description": "Text on primary action" },
+          "signal": { "$type": "color", "$value": "{edikit.primitive.signal.signal-light}", "$description": "Signal Cyan — live/current indicator" },
+          "insight": { "$type": "color", "$value": "{edikit.primitive.insight.insight-light}", "$description": "Insight Amber — attention/insight" }
+        },
+        "surface": {
+          "default": { "$type": "color", "$value": "{edikit.primitive.canvas}", "$description": "Page background (canvas) — S06.03" },
+          "sunken": { "$type": "color", "$value": "{edikit.primitive.sunken}", "$description": "Sunken/inset well area — S06.03" },
+          "alternate": { "$type": "color", "$value": "{edikit.primitive.section-alt}", "$description": "Alternate section bg" },
+          "raised": { "$type": "color", "$value": "{edikit.primitive.card}", "$description": "Card surface" },
+          "nested": { "$type": "color", "$value": "{edikit.primitive.nested-surface}", "$description": "Nested surface inside card" },
+          "input": { "$type": "color", "$value": "#FFFFFF", "$description": "Input field bg" },
+          "overlay": { "$type": "color", "$value": "rgba(8,12,26,0.45)", "$description": "Modal/backdrop overlay" },
+          "scrim": { "$type": "color", "$value": "#0A0F1F", "$description": "Gradient ustidagi text uchun solid scrim (S06.07)" }
+        },
+        "text": {
+          "primary": { "$type": "color", "$value": "{edikit.primitive.gray.gray-800}", "$description": "Primary text" },
+          "secondary": { "$type": "color", "$value": "{edikit.primitive.gray.gray-700}", "$description": "Secondary text" },
+          "muted": { "$type": "color", "$value": "{edikit.primitive.gray.gray-700}", "$description": "Muted text — S06.12 buffer ≥4.7:1 (gray-700 ~6:1)" },
+          "disabled": { "$type": "color", "$value": "{edikit.primitive.gray.gray-400}", "$description": "Disabled text" },
+          "inverse": { "$type": "color", "$value": "#FFFFFF", "$description": "Inverse text (on dark)" }
+        },
+        "border": {
+          "subtle": { "$type": "color", "$value": "#DDE3EC", "$description": "Subtle border" },
+          "default": { "$type": "color", "$value": "{edikit.primitive.gray.gray-400}", "$description": "Default border" },
+          "strong": { "$type": "color", "$value": "{edikit.primitive.control-border}", "$description": "Strong border / control boundary" }
+        },
+        "divider": { "$type": "color", "$value": "{edikit.primitive.divider}" },
+        "focus": { "$type": "color", "$value": "#0B63E5", "$description": "Focus ring" },
+        "selection": { "$type": "color", "$value": "#D8E7FF", "$description": "Text selection" },
+        "status": {
+          "success": { "$type": "color", "$value": "{edikit.primitive.status.success}" },
+          "success-soft": { "$type": "color", "$value": "{edikit.primitive.status.success-soft}" },
+          "warning": { "$type": "color", "$value": "{edikit.primitive.status.warning}" },
+          "warning-soft": { "$type": "color", "$value": "{edikit.primitive.status.warning-soft}" },
+          "danger": { "$type": "color", "$value": "{edikit.primitive.status.danger}" },
+          "danger-soft": { "$type": "color", "$value": "{edikit.primitive.status.danger-soft}" }
+        },
+        "brand": {
+          "cobalt": { "$type": "color", "$value": "{edikit.primitive.cobalt.cobalt-500}", "$description": "Edikit Cobalt brand" },
+          "signal": { "$type": "color", "$value": "{edikit.primitive.signal.signal-light}", "$description": "Edikit Signal Cyan brand" },
+          "insight": { "$type": "color", "$value": "{edikit.primitive.insight.insight-light}", "$description": "Edikit Insight Amber brand" }
+        }
+      }
+    }
+  }
+}

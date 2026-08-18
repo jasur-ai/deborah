@@ -1,0 +1,138 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "edikit": {
+    "spacing": {
+      "$description": "4px scale spacing (S09.01) — 0,4,8,12,16,20,24,32,40,48,64,80,96. 2px interval tokenlar yo'q.",
+      "$type": "dimension",
+      "0": { "$value": "0px" },
+      "1": { "$value": "4px" },
+      "2": { "$value": "8px" },
+      "3": { "$value": "12px" },
+      "4": { "$value": "16px" },
+      "5": { "$value": "20px" },
+      "6": { "$value": "24px" },
+      "8": { "$value": "32px" },
+      "10": { "$value": "40px" },
+      "12": { "$value": "48px" },
+      "16": { "$value": "64px" },
+      "20": { "$value": "80px" },
+      "24": { "$value": "96px" }
+    },
+    "container": {
+      "$description": "Content container widths (S09.02).",
+      "$type": "dimension",
+      "landing": { "$value": "1200px", "$description": "Landing page max width" },
+      "workspace": { "$value": "1280px", "$description": "Teacher/admin workspace" },
+      "workspace-wide": { "$value": "1440px", "$description": "Wide workspace (director/studio)" },
+      "reading": { "$value": "65ch", "$description": "Reading measure" },
+      "auth": { "$value": "440px", "$description": "Auth card 420-460px" },
+      "studio": { "$value": "920px", "$description": "Setup Studio 880-960px" }
+    },
+    "grid": {
+      "$description": "Grid primitives (S09.03): desktop 12-col/24px, tablet 8-col/20px, mobile 4-col/16px.",
+      "$type": "dimension",
+      "cols": {
+        "desktop": { "$value": "12" },
+        "tablet": { "$value": "8" },
+        "mobile": { "$value": "4" }
+      },
+      "gutter": {
+        "desktop": { "$value": "24px" },
+        "tablet": { "$value": "20px" },
+        "mobile": { "$value": "16px" }
+      },
+      "margin": {
+        "desktop": { "$value": "32px" },
+        "mobile": { "$value": "16px" }
+      }
+    },
+    "radius": {
+      "$description": "Radius grammar (S09.04): control 8, card 12, modal/hero 16, pill faqat status/chip.",
+      "$type": "dimension",
+      "sm": { "$value": "8px", "$description": "Control — inputs, buttons, chips (S09.04)" },
+      "md": { "$value": "12px", "$description": "Card — panels, cards, popovers" },
+      "lg": { "$value": "16px", "$description": "Modal/hero — dialogs, hero panels" },
+      "xl": { "$value": "20px", "$description": "Large surface — landing hero" },
+      "pill": { "$value": "999px", "$description": "Pill — faqat status/chip, cards uchun emas (S09.04)" }
+    },
+    "elevation": {
+      "$description": "Elevation layers (S09.06) — canvas → surface → sticky → modal → toast; z-index mos keladi.",
+      "$type": "shadow",
+      "canvas": { "$value": [{ "x": "0px", "y": "0px", "blur": "0px", "spread": "0px", "color": "rgba(0,0,0,0)" }], "$description": "Base — no shadow" },
+      "surface": { "$value": [{ "x": "0px", "y": "1px", "blur": "4px", "spread": "0px", "color": "rgba(12,16,36,0.05)" }], "$description": "Raised surface (card resting)" },
+      "sticky": { "$value": [{ "x": "0px", "y": "2px", "blur": "8px", "spread": "0px", "color": "rgba(12,16,36,0.08)" }], "$description": "Sticky header / dropdown" },
+      "modal": { "$value": [{ "x": "0px", "y": "8px", "blur": "32px", "spread": "0px", "color": "rgba(12,16,36,0.14)" }], "$description": "Modal / dialog" },
+      "toast": { "$value": [{ "x": "0px", "y": "4px", "blur": "16px", "spread": "0px", "color": "rgba(12,16,36,0.18)" }], "$description": "Toast / floating alert" }
+    },
+    "z-index": {
+      "$description": "Stacking layers (S09.06) — semantic, 10-60.",
+      "$type": "number",
+      "base": { "$value": "0" },
+      "sticky": { "$value": "10" },
+      "dropdown": { "$value": "20" },
+      "modal": { "$value": "30" },
+      "toast": { "$value": "40" },
+      "system": { "$value": "60" }
+    },
+    "density": {
+      "$description": "Density modes (S09.09) — comfortable default; compact faqat teacher/admin.",
+      "$type": "dimension",
+      "comfortable": {
+        "control-height": { "$value": "40px" },
+        "control-pad-y": { "$value": "10px" },
+        "control-pad-x": { "$value": "16px" },
+        "row-gap": { "$value": "16px" }
+      },
+      "compact": {
+        "control-height": { "$value": "32px" },
+        "control-pad-y": { "$value": "6px" },
+        "control-pad-x": { "$value": "12px" },
+        "row-gap": { "$value": "8px" }
+      }
+    },
+    "motion": {
+      "$description": "Motion (S10.01-02) — duration scale 0/80/120/160/220/320/500/800ms, intent-based usage; easing standard/enter/exit/emphasis (bounce/elastic productive UI'da yo'q). Reduced-motion S10.09.",
+      "duration": {
+        "$type": "duration",
+        "0": { "$value": "0ms" },
+        "80": { "$value": "80ms", "$description": "Hover/press feedback (S10.05)" },
+        "120": { "$value": "120ms", "$description": "Micro feedback — color/transform" },
+        "160": { "$value": "160ms", "$description": "Popup/tooltip (S10.05)" },
+        "220": { "$value": "220ms", "$description": "Modal/dialog enter (S10.05)" },
+        "320": { "$value": "320ms", "$description": "Page/phase transition (S10.05)" },
+        "500": { "$value": "500ms", "$description": "Milestone — celebration/success" },
+        "800": { "$value": "800ms", "$description": "Ambient/decorative (reduced-motion'da off)" }
+      },
+      "intent": {
+        "$description": "Usage intent (S10.01) — exit enter'ning 65-80%i (S10.06).",
+        "$type": "duration",
+        "feedback": { "$value": "120ms" },
+        "hover": { "$value": "80ms" },
+        "popup": { "$value": "160ms" },
+        "modal": { "$value": "220ms" },
+        "modal-exit": { "$value": "160ms" },
+        "page": { "$value": "320ms" },
+        "page-exit": { "$value": "240ms" },
+        "milestone": { "$value": "500ms" }
+      },
+      "easing": {
+        "$type": "cubicBezier",
+        "standard": { "$value": [0.4, 0, 0.2, 1], "$description": "Default — in/out symmetric" },
+        "enter": { "$value": [0, 0, 0.2, 1], "$description": "Decelerate — element enters (S10.02)" },
+        "exit": { "$value": [0.4, 0, 1, 1], "$description": "Accelerate — element exits" },
+        "emphasis": { "$value": [0.2, 0.8, 0.2, 1], "$description": "Milestone/celebration emphasis — overshootsiz" }
+      }
+    },
+    "data-viz": {
+      "$description": "Data-viz categorical palette — rank/answer options (opt-a..e), WCAG-aware.",
+      "$type": "color",
+      "series-1": { "$value": "#2563EB", "$description": "Option A / first series" },
+      "series-2": { "$value": "#06B6D4", "$description": "Option B / second series" },
+      "series-3": { "$value": "#F59E0B", "$description": "Option C / third series" },
+      "series-4": { "$value": "#10B981", "$description": "Option D / fourth series" },
+      "series-5": { "$value": "#8B5CF6", "$description": "Option E / fifth series" },
+      "correct": { "$value": "#16A34A", "$description": "Correct answer highlight" },
+      "incorrect": { "$value": "#DC2626", "$description": "Incorrect answer highlight" }
+    }
+  }
+}

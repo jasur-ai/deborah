@@ -1,0 +1,72 @@
+/* ═══════════════════════════════════════════════════════════
+   S16 — Progress (spinner / determinate bar)
+   S16.01: <300ms action'da loader yo'q; 300ms–2s inline spinner;
+           measurable long taskda determinate progress.
+   S16.11: progressbar role + aria-valuenow; live status; flood yo'q.
+   ═══════════════════════════════════════════════════════════ */
+
+/* Indeterminate spinner (300ms–2s inline) */
+.spinner {
+  width: 22px;
+  height: 22px;
+  border: 3px solid color-mix(in srgb, var(--edikit-semantic-color-action-primary, #255edb) 22%, transparent);
+  border-top-color: var(--edikit-semantic-color-action-primary, #255edb);
+  border-radius: 50%;
+  animation: edikit-spin 0.7s linear infinite;
+}
+.spinner--sm { width: 16px; height: 16px; border-width: 2.5px; }
+.spinner--lg { width: 34px; height: 34px; border-width: 4px; }
+@keyframes edikit-spin { to { transform: rotate(360deg); } }
+
+/* Inline spinner + text (section-level) */
+.inline-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--edikit-semantic-color-text-secondary, #5b6472);
+  font-size: 0.875rem;
+}
+
+/* Determinate progress bar (measurable long task) */
+.progress {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--edikit-semantic-color-surface-muted, rgba(16, 24, 40, 0.08));
+  overflow: hidden;
+  width: 100%;
+}
+.progress__bar {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--edikit-semantic-color-action-primary, #255edb);
+  transition: width 300ms ease;
+}
+.progress__bar--success { background: var(--edikit-semantic-color-status-success, #16a34a); }
+.progress__bar--error { background: var(--edikit-semantic-color-status-danger, #dc2626); }
+.progress--lg { height: 12px; }
+
+/* Progress with label */
+.progress-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--edikit-semantic-color-text-secondary, #5b6472);
+}
+.progress-wrap[aria-busy="true"] .progress__bar { animation: edikit-progress-glow 1.2s ease-in-out infinite; }
+@keyframes edikit-progress-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Spinner ham statik bo'ladi — WCAG 2.3.3: reduced-motion'da animatsiya yo'q */
+  .spinner { animation: none; opacity: 0.6; }
+  .progress__bar { transition: none; }
+  .progress-wrap[aria-busy="true"] .progress__bar { animation: none; }
+}

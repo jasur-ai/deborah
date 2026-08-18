@@ -1,0 +1,45 @@
+/* ═══════════════════════════════════════════════════════════════
+   Edikit Focus (STYLE STEP 11, S11.04-05)
+   ---------------------------------------------------------------
+   :focus-visible — 3px ring + 3px offset (S11.04).
+   Forced-colors focus/selection/control boundary (S11.05).
+   Cascade layer: foundations
+   ═══════════════════════════════════════════════════════════════ */
+
+@layer foundations {
+  :focus {
+    outline: none; /* :focus-visible orqali beriladi — mouse click'da ring yo'q */
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--edikit-semantic-color-focus, #2563eb);
+    outline-offset: 3px;
+    border-radius: var(--edikit-radius-sm, 8px);
+    transition: none; /* focus ring instant (S10.11) */
+  }
+
+  /* Sticky header ostida focus obscured bo'lmasin (S11.04) —
+     scroll-padding-top base.css'da; sticky elementlar uchun z-index token. */
+  [data-sticky] {
+    z-index: var(--edikit-z-index-sticky, 10);
+  }
+
+  /* ── Forced-colors (S11.05) ── */
+  @media (forced-colors: active) {
+    :focus-visible {
+      outline: 3px solid Highlight;
+      outline-offset: 3px;
+    }
+    ::selection {
+      background: Highlight;
+      color: HighlightText;
+    }
+    /* Control boundary — input/button chegarasi ko'rinsin */
+    input, button, select, textarea {
+      border: 1px solid ButtonText;
+    }
+    .btn, button, [role='button'] {
+      forced-color-adjust: none;
+    }
+  }
+}

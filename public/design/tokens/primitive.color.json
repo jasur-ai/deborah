@@ -1,0 +1,62 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "edikit": {
+    "primitive": {
+      "$description": "Primitive color palette — appearance-based names. Semantic qatlam (color.*) bularga alias qiladi. Final brand palette STEP 06 (S06.01) + OKLCH master va sRGB fallback (S06.02).",
+      "cobalt": {
+        "$type": "color",
+        "cobalt-100": { "$value": "#E9EFFF", "$oklch": "oklch(95.23% 0.022 269.4)", "$description": "Edikit Cobalt tint (light surface on cobalt)" },
+        "cobalt-200": { "$value": "#AFC5FF", "$oklch": "oklch(82.74% 0.085 268.4)", "$description": "Edikit Cobalt light border/soft" },
+        "cobalt-500": { "$value": "#1746D1", "$oklch": "oklch(46.59% 0.219 264.4)", "$description": "Edikit Cobalt — FINAL primary action (S06.01)" },
+        "cobalt-600": { "$value": "#1138B8", "$oklch": "oklch(41.52% 0.204 264.7)", "$description": "Edikit Cobalt hover" },
+        "cobalt-700": { "$value": "#0E2E96", "$oklch": "oklch(36.13% 0.173 264.8)", "$description": "Edikit Cobalt active/pressed" },
+        "cobalt-dark-action": { "$value": "#7AA8FF", "$oklch": "oklch(73.55% 0.136 262.3)", "$description": "Edikit Cobalt dark theme action" },
+        "cobalt-dark-pressed": { "$value": "#5B8DEF", "$oklch": "oklch(65.45% 0.156 262.5)", "$description": "Edikit Cobalt dark theme pressed" }
+      },
+      "signal": {
+        "$type": "color",
+        "signal-light": { "$value": "#007C91", "$oklch": "oklch(53.96% 0.095 215.0)", "$description": "Edikit Signal Cyan (light)" },
+        "signal-dark": { "$value": "#52D0D8", "$oklch": "oklch(79.13% 0.110 201.1)", "$description": "Edikit Signal Cyan (dark)" }
+      },
+      "insight": {
+        "$type": "color",
+        "insight-light": { "$value": "#9B5E00", "$oklch": "oklch(53.80% 0.119 67.0)", "$description": "Edikit Insight Amber (light)" },
+        "insight-dark": { "$value": "#F2B84B", "$oklch": "oklch(81.65% 0.140 80.1)", "$description": "Edikit Insight Amber (dark)" }
+      },
+      "foundation": {
+        "$type": "color",
+        "ink": { "$value": "#0C1426", "$oklch": "oklch(19.40% 0.039 264.9)", "$description": "Edikit ink — dark text/bg base" },
+        "paper": { "$value": "#F6F8FC", "$oklch": "oklch(97.87% 0.006 264.5)", "$description": "Edikit paper — light bg base" }
+      },
+      "gray": {
+        "$type": "color",
+        "gray-50": { "$value": "#F5F7FB" },
+        "gray-100": { "$value": "#EEF2F7" },
+        "gray-200": { "$value": "#E3E8F0" },
+        "gray-300": { "$value": "#DDE3EC" },
+        "gray-400": { "$value": "#CBD5E1" },
+        "gray-500": { "$value": "#8A95A8" },
+        "gray-600": { "$value": "#657187" },
+        "gray-700": { "$value": "#566176" },
+        "gray-800": { "$value": "#1F2937" },
+        "gray-900": { "$value": "#111827" }
+      },
+      "status": {
+        "$type": "color",
+        "success": { "$value": "#137A43" },
+        "success-soft": { "$value": "#E8F7EF" },
+        "warning": { "$value": "#9A5B00" },
+        "warning-soft": { "$value": "#FFF4D6" },
+        "danger": { "$value": "#C93434" },
+        "danger-soft": { "$value": "#FDECEC" }
+      },
+      "canvas": { "$value": "#F5F7FB", "$description": "Light canvas (S06.03)" },
+      "sunken": { "$value": "#E8EDF5", "$description": "Light sunken — inset/well area (S06.03)" },
+      "section-alt": { "$value": "#EEF2F7" },
+      "card": { "$value": "#FFFFFF" },
+      "nested-surface": { "$value": "#F7F9FC" },
+      "control-border": { "$value": "#7C8A9E" },
+      "divider": { "$value": "#E3E8F0" }
+    }
+  }
+}

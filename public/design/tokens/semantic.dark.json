@@ -1,0 +1,58 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "edikit": {
+    "semantic": {
+      "$description": "Semantic tokens — dark theme. Path'lar light bilan BIR XIL (S04.05 parity validator). Cobalt dark-action variantlari ishlatiladi.",
+      "color": {
+        "action": {
+          "primary": { "$type": "color", "$value": "{edikit.primitive.cobalt.cobalt-dark-action}", "$description": "Primary action — Edikit Cobalt dark" },
+          "primary-hover": { "$type": "color", "$value": "{edikit.primitive.cobalt.cobalt-dark-pressed}", "$description": "Primary action hover dark" },
+          "primary-active": { "$type": "color", "$value": "{edikit.primitive.cobalt.cobalt-dark-pressed}", "$description": "Primary action pressed dark" },
+          "primary-soft": { "$type": "color", "$value": "rgba(122,168,255,0.14)", "$description": "Soft action fill dark" },
+          "primary-border": { "$type": "color", "$value": "rgba(122,168,255,0.35)", "$description": "Action outline dark" },
+          "on-action": { "$type": "color", "$value": "#0C1426", "$description": "Text on primary action (dark — contrast uchun ink)" },
+          "signal": { "$type": "color", "$value": "{edikit.primitive.signal.signal-dark}", "$description": "Signal Cyan dark" },
+          "insight": { "$type": "color", "$value": "{edikit.primitive.insight.insight-dark}", "$description": "Insight Amber dark" }
+        },
+        "surface": {
+          "default": { "$type": "color", "$value": "#080C1A", "$description": "Page background dark — S06.03" },
+          "sunken": { "$type": "color", "$value": "#05080F", "$description": "Sunken/inset well dark — S06.03" },
+          "alternate": { "$type": "color", "$value": "#0C1124", "$description": "Alternate section bg dark" },
+          "raised": { "$type": "color", "$value": "#0F1630", "$description": "Card surface dark" },
+          "nested": { "$type": "color", "$value": "#131B3A", "$description": "Nested surface dark" },
+          "input": { "$type": "color", "$value": "#0C1124", "$description": "Input field bg dark" },
+          "overlay": { "$type": "color", "$value": "rgba(2,4,12,0.78)", "$description": "Modal overlay dark" },
+          "scrim": { "$type": "color", "$value": "#080C1A", "$description": "Gradient ustidagi text uchun solid scrim dark (S06.07)" }
+        },
+        "text": {
+          "primary": { "$type": "color", "$value": "#EEF2FF", "$description": "Primary text dark" },
+          "secondary": { "$type": "color", "$value": "#B8C1DC", "$description": "Secondary text dark" },
+          "muted": { "$type": "color", "$value": "#8892B0", "$description": "Muted text dark" },
+          "disabled": { "$type": "color", "$value": "#5D6785", "$description": "Disabled text dark" },
+          "inverse": { "$type": "color", "$value": "#0C1426", "$description": "Inverse text dark" }
+        },
+        "border": {
+          "subtle": { "$type": "color", "$value": "rgba(59,130,246,0.08)", "$description": "Subtle border dark" },
+          "default": { "$type": "color", "$value": "rgba(59,130,246,0.18)", "$description": "Default border dark" },
+          "strong": { "$type": "color", "$value": "rgba(122,168,255,0.55)", "$description": "Strong border dark — S06.10: UI boundary 3:1 (composited ~3.4:1)" }
+        },
+        "divider": { "$type": "color", "$value": "rgba(59,130,246,0.12)" },
+        "focus": { "$type": "color", "$value": "#7AA8FF", "$description": "Focus ring dark" },
+        "selection": { "$type": "color", "$value": "rgba(37,99,235,0.4)", "$description": "Text selection dark" },
+        "status": {
+          "success": { "$type": "color", "$value": "#34D399" },
+          "success-soft": { "$type": "color", "$value": "rgba(52,211,153,0.12)" },
+          "warning": { "$type": "color", "$value": "#F2B84B" },
+          "warning-soft": { "$type": "color", "$value": "rgba(242,184,75,0.12)" },
+          "danger": { "$type": "color", "$value": "#FF4466" },
+          "danger-soft": { "$type": "color", "$value": "rgba(255,68,102,0.12)" }
+        },
+        "brand": {
+          "cobalt": { "$type": "color", "$value": "{edikit.primitive.cobalt.cobalt-dark-action}", "$description": "Edikit Cobalt brand dark" },
+          "signal": { "$type": "color", "$value": "{edikit.primitive.signal.signal-dark}", "$description": "Edikit Signal Cyan brand dark" },
+          "insight": { "$type": "color", "$value": "{edikit.primitive.insight.insight-dark}", "$description": "Edikit Insight Amber brand dark" }
+        }
+      }
+    }
+  }
+}

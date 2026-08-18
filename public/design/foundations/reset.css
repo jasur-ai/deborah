@@ -1,0 +1,73 @@
+/* ═══════════════════════════════════════════════════════════════
+   Edikit Reset (STYLE STEP 11, S11.01)
+   ---------------------------------------------------------------
+   Minimal predictable reset — page-specific legacy qoidalar yo'q.
+   Cascade layer: reset
+   ═══════════════════════════════════════════════════════════════ */
+
+@layer reset {
+  /* Box sizing — hamma elementlarda */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  /* Margin/padding reset — semantic spacing token'lar orqali qayta beriladi */
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Body margin — brauzer default'ini olib tashlash */
+  body {
+    margin: 0;
+  }
+
+  /* Media — container'dan chiqib ketmasin */
+  img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  /* Font inheritance — form control'lar brauzer font'ini meros qiladi */
+  input, button, textarea, select {
+    font: inherit;
+    color: inherit;
+  }
+
+  /* List — marker'lar semantic nav'da emas */
+  ul[role='list'], ol[role='list'] {
+    list-style: none;
+  }
+
+  /* Button — default border/background olib tashlash (component layer beradi) */
+  button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  /* h1-h6 font-size meros — component scale beradi */
+  h1, h2, h3, h4, h5, h6 {
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+  }
+
+  /* Table — border-collapse, alignment */
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+
+  /* Anchor — inherit, underline link context beradi */
+  a {
+    color: inherit;
+    text-decoration: inherit;
+  }
+
+  /* Form — fieldset default reset */
+  fieldset {
+    border: 0;
+  }
+}

@@ -1,0 +1,64 @@
+/* ═══════════════════════════════════════════════════════════
+   S16 — Empty states
+   S16.05: first-use / no-results / permission / system-error / completion
+   S16.06: first-use — title + one-sentence value + primary action + template
+   S16.07: no-results — query summary + "Filtrlarni tozalash" (data yo'q emas!)
+   ═══════════════════════════════════════════════════════════ */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  padding: 40px 24px;
+  border: 1px dashed var(--edikit-semantic-color-border-default, #d3d9e6);
+  border-radius: var(--edikit-radius-lg, 16px);
+  background: var(--edikit-semantic-color-surface-muted, rgba(16, 24, 40, 0.02));
+}
+.empty-state__icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--edikit-semantic-color-action-primary, #255edb) 10%, transparent);
+  color: var(--edikit-semantic-color-action-primary, #255edb);
+}
+.empty-state__title {
+  margin: 0;
+  font-size: var(--edikit-typography-font-size-lg, 18px);
+  font-weight: 700;
+}
+.empty-state__desc {
+  margin: 0;
+  max-width: 340px;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--edikit-semantic-color-text-secondary, #5b6472);
+}
+.empty-state__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* S16.05: variant tonalites */
+.empty-state--no-results .empty-state__icon { background: color-mix(in srgb, var(--edikit-semantic-color-status-warning, #d97706) 12%, transparent); color: var(--edikit-semantic-color-status-warning, #d97706); }
+.empty-state--permission .empty-state__icon { background: color-mix(in srgb, var(--edikit-semantic-color-status-danger, #dc2626) 12%, transparent); color: var(--edikit-semantic-color-status-danger, #dc2626); }
+.empty-state--system-error .empty-state__icon { background: color-mix(in srgb, var(--edikit-semantic-color-status-danger, #dc2626) 12%, transparent); color: var(--edikit-semantic-color-status-danger, #dc2626); }
+.empty-state--completion .empty-state__icon { background: color-mix(in srgb, var(--edikit-semantic-color-status-success, #16a34a) 12%, transparent); color: var(--edikit-semantic-color-status-success, #16a34a); }
+
+/* S16.07: query summary pill */
+.empty-state__query {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--edikit-semantic-color-action-primary, #255edb) 8%, transparent);
+  color: var(--edikit-semantic-color-action-primary, #255edb);
+  font-size: 0.78rem;
+  font-weight: 600;
+}

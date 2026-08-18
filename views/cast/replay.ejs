@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/cast-tokens.css">
+  <link rel="stylesheet" href="/css/cast-replay.css">
+  <link rel="stylesheet" href="/design/foundations/typography.css">
+  <link rel="stylesheet" href="/design/foundations/layout.css">
+  <link rel="stylesheet" href="/design/foundations/motion.css">
+  <script>
+    window.__BOOT__ = <%- JSON.stringify(boot) %>;
+    window.__CSRF_TOKEN = '<%= boot.csrfToken %>';
+  </script>
+</head>
+<body class="cast-page" data-cast-theme="focus_dark">
+  <div class="cast-live-region" aria-live="polite" id="status-live"></div>
+
+  <header class="rp-topbar">
+    <div class="rp-topbar-left">
+      <a class="rp-logo" href="/user/panel">🎬 Cast</a>
+      <span class="rp-title" id="rp-title"><%= boot.title %></span>
+      <span class="rp-badge" id="rp-badge">Replay</span>
+    </div>
+    <div class="rp-topbar-right">
+      <button class="cast-btn cast-btn-ghost" id="btn-rp-refresh" type="button"><%- icon('refresh', 16) %> Yangilash</button>
+      <button class="cast-btn cast-btn-outline" id="btn-rp-determinism" type="button"><%- icon('check', 16) %> Determinism</button>
+    </div>
+  </header>
+
+  <main class="rp-layout">
+    <!-- Timeline -->
+    <section class="cast-surface rp-card" id="rp-timeline">
+      <h3>🕒 Event timeline</h3>
+      <div class="rp-body" id="rp-timeline-body">Yuklanmoqda…</div>
+    </section>
+
+    <section class="rp-grid rp-grid-2">
+      <!-- Distributions -->
+      <div class="cast-surface rp-card" id="rp-distributions">
+        <h3>📊 Aggregate distribution</h3>
+        <div class="rp-body">Yuklanmoqda…</div>
+      </div>
+      <!-- Misconceptions -->
+      <div class="cast-surface rp-card" id="rp-misconceptions">
+        <h3>💡 Misconception markerlar</h3>
+        <div class="rp-body">Yuklanmoqda…</div>
+      </div>
+    </section>
+
+    <section class="rp-grid rp-grid-2">
+      <!-- Actions -->
+      <div class="cast-surface rp-card" id="rp-actions">
+        <h3>⚡ Action markerlar</h3>
+        <div class="rp-body">Yuklanmoqda…</div>
+      </div>
+      <!-- Network -->
+      <div class="cast-surface rp-card" id="rp-network">
+        <h3>🌐 Network</h3>
+        <div class="rp-body">Yuklanmoqda…</div>
+      </div>
+    </section>
+
+    <!-- Teacher reflection -->
+    <section class="cast-surface rp-card" id="rp-reflection">
+      <h3>📝 Private teacher reflection</h3>
+      <p class="rp-muted">Bu note faqat sizga ko'rinadi — performance evaluation'ga yuborilmaydi.</p>
+      <div class="rp-body" id="rp-reflection-body">Yuklanmoqda…</div>
+    </section>
+
+    <!-- Audit -->
+    <section class="cast-surface rp-card" id="rp-audit">
+      <h3>🏛 Institution audit (PII-safe)</h3>
+      <div class="rp-body">Yuklanmoqda…</div>
+    </section>
+
+    <!-- Camera notice -->
+    <section class="cast-surface rp-card rp-camera-note">
+      <p class="rp-muted">🎥 Replay camera/video yozuvsiz ishlaydi — hech qanday ruxsat so'ralmaydi.</p>
+    </section>
+  </main>
+
+  <script src="/js/cast-replay.js"></script>
+</body>
+</html>

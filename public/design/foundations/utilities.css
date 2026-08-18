@@ -1,0 +1,76 @@
+/* ═══════════════════════════════════════════════════════════════
+   Edikit Utilities (STYLE STEP 11, S11.06, S11.08)
+   ---------------------------------------------------------------
+   A11y utilities: .sr-only, .skip-link, .scroll-mt-*.
+   Spacing/layout utilities — faqat token'lar bilan (S11.08);
+   visual component styling utility orqali tarqatilmaydi.
+   Cascade layer: utilities
+   ═══════════════════════════════════════════════════════════════ */
+
+@layer utilities {
+  /* ── S11.06: Screen-reader only ── */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ── S11.06: Skip link — focus'da ko'rinadi ── */
+  .skip-link {
+    position: absolute;
+    left: var(--edikit-spacing-2, 8px);
+    top: var(--edikit-spacing-2, 8px);
+    transform: translateY(-200%);
+    z-index: var(--edikit-z-index-system, 60);
+    background: var(--edikit-semantic-color-surface-raised, var(--edikit-semantic-color-surface-raised));
+    color: var(--edikit-semantic-color-text-primary, var(--edikit-semantic-color-text-primary));
+    padding: var(--edikit-spacing-2, 8px) var(--edikit-spacing-4, 16px);
+    border-radius: var(--edikit-radius-sm, 8px);
+    border: 1px solid var(--edikit-semantic-color-focus, #2563eb);
+    text-decoration: none;
+    transition: transform var(--motion-feedback, 120ms);
+  }
+  .skip-link:focus-visible {
+    transform: translateY(0);
+  }
+
+  /* ── S11.06: Scroll-margin — anchor'dan keyin sticky header bo'shligi ── */
+  [id] {
+    scroll-margin-top: var(--scroll-margin, 80px);
+  }
+  .scroll-mt-4 { scroll-margin-top: var(--edikit-spacing-4, 16px); }
+  .scroll-mt-6 { scroll-margin-top: var(--edikit-spacing-6, 24px); }
+  .scroll-mt-8 { scroll-margin-top: var(--edikit-spacing-8, 32px); }
+
+  /* ── S11.08: Spacing utilities — faqat spacing token'lari ── */
+  .p-1 { padding: var(--edikit-spacing-1, 4px); }
+  .p-2 { padding: var(--edikit-spacing-2, 8px); }
+  .p-3 { padding: var(--edikit-spacing-3, 12px); }
+  .p-4 { padding: var(--edikit-spacing-4, 16px); }
+  .p-6 { padding: var(--edikit-spacing-6, 24px); }
+  .px-2 { padding-inline: var(--edikit-spacing-2, 8px); }
+  .px-4 { padding-inline: var(--edikit-spacing-4, 16px); }
+  .py-2 { padding-block: var(--edikit-spacing-2, 8px); }
+  .py-4 { padding-block: var(--edikit-spacing-4, 16px); }
+  .gap-1 { gap: var(--edikit-spacing-1, 4px); }
+  .gap-2 { gap: var(--edikit-spacing-2, 8px); }
+  .gap-3 { gap: var(--edikit-spacing-3, 12px); }
+  .gap-4 { gap: var(--edikit-spacing-4, 16px); }
+  .mt-1 { margin-top: var(--edikit-spacing-1, 4px); }
+  .mt-2 { margin-top: var(--edikit-spacing-2, 8px); }
+  .mt-4 { margin-top: var(--edikit-spacing-4, 16px); }
+  .mb-2 { margin-bottom: var(--edikit-spacing-2, 8px); }
+  .mb-4 { margin-bottom: var(--edikit-spacing-4, 16px); }
+  .flex { display: flex; }
+  .items-center { align-items: center; }
+  .justify-between { justify-content: space-between; }
+  .hidden { display: none; }
+  .w-full { width: 100%; }
+  .text-center { text-align: center; }
+}

@@ -1,0 +1,48 @@
+/* ═══════════════════════════════════════════════════════════
+   S16 — Offline / reconnect banner
+   S16.09: selection va unsaved data saqlanadi (JS journal);
+           reconnect progress + retry/cancel action.
+   S16.10: full-screen overlay emas — section-level banner, tizim ishlaydi.
+   ═══════════════════════════════════════════════════════════ */
+
+.offline-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-loading, 9999);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid color-mix(in srgb, var(--edikit-semantic-color-status-warning, #d97706) 40%, transparent);
+  /* S36.02: --surface token mavjud emas edi (fallback #fff) — dark'da text-primary #EEF2FF
+     cream fonda 1.06:1 bo'lib qolardi. Surface-raised (dark #0F1630 / light #FFFFFF) ishlatiladi. */
+  background: color-mix(in srgb, var(--edikit-semantic-color-status-warning, #d97706) 8%, var(--edikit-semantic-color-surface-raised, #0F1630));
+  color: var(--edikit-semantic-color-text-primary, #141a26);
+  font-size: 0.875rem;
+  transform: translateY(-100%);
+  transition: transform 200ms ease-out;
+}
+.offline-banner.is-in { transform: translateY(0); }
+.offline-banner[hidden] { display: none; }
+
+.offline-banner__icon { flex: 0 0 auto; margin-top: 1px; color: var(--edikit-semantic-color-status-warning, #d97706); }
+.offline-banner__body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.offline-banner__status { font-weight: 700; }
+.offline-banner__desc { color: var(--edikit-semantic-color-text-secondary, #5b6472); font-size: 0.8rem; }
+.offline-banner__progress { max-width: 320px; }
+.offline-banner__actions { display: flex; gap: 8px; margin-top: 2px; }
+
+/* Offline holati (reconnect'ga nisbatan) */
+.offline-banner--offline {
+  border-bottom-color: color-mix(in srgb, var(--edikit-semantic-color-status-danger, #dc2626) 35%, transparent);
+}
+.offline-banner--offline .offline-banner__icon { color: var(--edikit-semantic-color-status-danger, #dc2626); }
+
+/* Reconnect: progress — determinate */
+.offline-banner__progress .progress { height: 6px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .offline-banner { transition: none; }
+}

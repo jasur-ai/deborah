@@ -1,0 +1,58 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "edikit": {
+    "semantic": {
+      "$description": "Semantic tokens — high-contrast theme (WCAG AAA targets). Path'lar light/dark bilan BIR XIL (S04.05).",
+      "color": {
+        "action": {
+          "primary": { "$type": "color", "$value": "#0033A6", "$description": "High-contrast primary action" },
+          "primary-hover": { "$type": "color", "$value": "#00288C", "$description": "HC hover" },
+          "primary-active": { "$type": "color", "$value": "#002075", "$description": "HC active" },
+          "primary-soft": { "$type": "color", "$value": "#D6E4FF", "$description": "HC soft fill" },
+          "primary-border": { "$type": "color", "$value": "#0033A6", "$description": "HC action outline" },
+          "on-action": { "$type": "color", "$value": "#FFFFFF", "$description": "HC text on action" },
+          "signal": { "$type": "color", "$value": "#005866", "$description": "HC Signal Cyan (AAA)" },
+          "insight": { "$type": "color", "$value": "#6B3F00", "$description": "HC Insight Amber (AAA)" }
+        },
+        "surface": {
+          "default": { "$type": "color", "$value": "#FFFFFF", "$description": "HC page bg" },
+          "sunken": { "$type": "color", "$value": "#E0E0E0", "$description": "HC sunken/inset well" },
+          "alternate": { "$type": "color", "$value": "#F0F0F0", "$description": "HC alternate bg" },
+          "raised": { "$type": "color", "$value": "#FFFFFF", "$description": "HC card" },
+          "nested": { "$type": "color", "$value": "#E8E8E8", "$description": "HC nested surface" },
+          "input": { "$type": "color", "$value": "#FFFFFF", "$description": "HC input bg" },
+          "overlay": { "$type": "color", "$value": "rgba(0,0,0,0.6)", "$description": "HC overlay" },
+          "scrim": { "$type": "color", "$value": "#000000", "$description": "Gradient ustidagi text uchun solid scrim HC (S06.07)" }
+        },
+        "text": {
+          "primary": { "$type": "color", "$value": "#000000", "$description": "HC primary text" },
+          "secondary": { "$type": "color", "$value": "#1A1A1A", "$description": "HC secondary text" },
+          "muted": { "$type": "color", "$value": "#333333", "$description": "HC muted text (min 4.5:1)" },
+          "disabled": { "$type": "color", "$value": "#555555", "$description": "HC disabled text" },
+          "inverse": { "$type": "color", "$value": "#FFFFFF", "$description": "HC inverse text" }
+        },
+        "border": {
+          "subtle": { "$type": "color", "$value": "#666666", "$description": "HC subtle border" },
+          "default": { "$type": "color", "$value": "#444444", "$description": "HC default border" },
+          "strong": { "$type": "color", "$value": "#000000", "$description": "HC strong border" }
+        },
+        "divider": { "$type": "color", "$value": "#666666" },
+        "focus": { "$type": "color", "$value": "#000000", "$description": "HC focus ring (solid)" },
+        "selection": { "$type": "color", "$value": "#CCE0FF", "$description": "HC selection" },
+        "status": {
+          "success": { "$type": "color", "$value": "#006B36" },
+          "success-soft": { "$type": "color", "$value": "#D9F0E3" },
+          "warning": { "$type": "color", "$value": "#8A5200" },
+          "warning-soft": { "$type": "color", "$value": "#FFEDCC" },
+          "danger": { "$type": "color", "$value": "#B00020" },
+          "danger-soft": { "$type": "color", "$value": "#FFD9D9" }
+        },
+        "brand": {
+          "cobalt": { "$type": "color", "$value": "#0033A6", "$description": "HC Edikit Cobalt brand" },
+          "signal": { "$type": "color", "$value": "#005866", "$description": "HC Edikit Signal brand" },
+          "insight": { "$type": "color", "$value": "#6B3F00", "$description": "HC Edikit Insight brand" }
+        }
+      }
+    }
+  }
+}

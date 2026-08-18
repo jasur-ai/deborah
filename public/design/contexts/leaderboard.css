@@ -1,0 +1,241 @@
+/* ═══════════════════════════════════════════════════════════════════
+   STYLE STEP 32 — Leaderboard, celebration va mature gamification
+   - Neutral rank rows (no flames/crowns/podium by default — S32.03)
+   - Top 3 subtle medal tones, CVD-safe (gold/silver/bronze contrast — S32.04)
+   - Enter stagger max 40ms × 5 (total 200ms); no falling/reorder (S32.07)
+   - Personal panel private; team rows reveal no individual low rank (S32.05/06)
+   - Celebration 500–800ms one-shot, reduced-motion aware (S32.09/10)
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Public Top-N list ── */
+.lb-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--edikit-spacing-1, 6px);
+}
+
+.lb-row {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  align-items: center;
+  gap: var(--edikit-spacing-2, 10px);
+  min-height: 48px;
+  padding: var(--edikit-spacing-1, 6px) var(--edikit-spacing-3, 12px);
+  border-radius: var(--edikit-radius-md, 10px);
+  background: var(--edikit-surface-elevated, #1b2030);
+  border: 1px solid transparent;
+  opacity: 0;
+  animation: lb-row-in 260ms ease-out forwards;
+  animation-delay: var(--lb-stagger, 0ms);
+}
+
+/* S32.07: max 5 row stagger — total 200ms */
+@keyframes lb-row-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.lb-row--top {
+  border-color: var(--edikit-border-subtle, #2c3346);
+}
+
+.lb-row--self {
+  background: var(--edikit-surface-active, #1f2a4d);
+  border-color: var(--edikit-border-strong, #3a4a75);
+  box-shadow: inset 3px 0 0 var(--edikit-primary, #5b7cfa);
+}
+
+.lb-rank {
+  display: inline-flex;
+  justify-content: center;
+}
+
+.lb-rank-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 34px;
+  border-radius: var(--edikit-radius-sm, 8px);
+  background: var(--edikit-surface-muted, #252b3d);
+  color: var(--edikit-text-secondary, #a8b0c4);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* S32.04: subtle medal tones — CVD-safe (label + shape + tone) */
+/* S37.01: medal ranglari local token sifatida (data-driven brand palitrasi) */
+.lb-medals {
+  --lb-gold: #c9a227;
+  --lb-gold-border: #a8861d;
+  --lb-silver: #8e97a8;
+  --lb-silver-border: #717a8c;
+  --lb-bronze: #a0713f;
+  --lb-bronze-border: #855c30;
+}
+.lb-medal--gold {
+  background: var(--lb-gold, #c9a227);
+  color: var(--edikit-semantic-color-action-on-action, #ffffff);
+  border: 1px solid var(--lb-gold-border, #a8861d);
+}
+.lb-medal--silver {
+  background: var(--lb-silver, #8e97a8);
+  color: var(--edikit-semantic-color-action-on-action, #ffffff);
+  border: 1px solid var(--lb-silver-border, #717a8c);
+}
+.lb-medal--bronze {
+  background: var(--lb-bronze, #a0713f);
+  color: var(--edikit-semantic-color-action-on-action, #ffffff);
+  border: 1px solid var(--lb-bronze-border, #855c30);
+}
+
+.lb-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--edikit-text-primary, #f2f4f8);
+  font-size: var(--edikit-typography-body-s, 14px);
+  font-weight: 500;
+}
+
+.lb-score {
+  color: var(--edikit-text-secondary, #a8b0c4);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.lb-row--noshow .lb-score {
+  color: var(--edikit-text-tertiary, #6b7288);
+  font-weight: 400;
+}
+
+.lb-row--empty {
+  justify-content: center;
+  opacity: 1;
+  animation: none;
+}
+
+.lb-empty-msg {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--edikit-text-tertiary, #6b7288);
+  font-size: var(--edikit-typography-body-s, 14px);
+  padding: var(--edikit-spacing-2, 8px) 0;
+}
+
+/* ── Personal panel (S32.05) ── */
+.lb-personal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--edikit-spacing-2, 10px);
+}
+
+.lb-personal-rank {
+  margin: 0;
+  font-size: var(--edikit-typography-heading-s, 18px);
+  font-weight: 700;
+  color: var(--edikit-text-primary, #f2f4f8);
+}
+
+.lb-list--compact .lb-row {
+  min-height: 40px;
+  padding-block: 4px;
+}
+
+.lb-personal-empty {
+  color: var(--edikit-text-tertiary, #6b7288);
+  font-size: var(--edikit-typography-body-s, 14px);
+  margin: 0;
+}
+
+/* ── Team rows (S32.06) — jamoa darajasida, individual emas ── */
+.lb-row--team {
+  grid-template-columns: 40px 1fr auto;
+}
+
+.lb-row--team .lb-name {
+  font-weight: 600;
+}
+
+/* ── Celebration (S32.09/S32.10): 500–800ms one-shot ── */
+.lb-celebration {
+  position: fixed;
+  inset: auto 0 8vh 0;
+  margin: 0 auto;
+  width: fit-content;
+  max-width: min(86vw, 480px);
+  padding: var(--edikit-spacing-3, 12px) var(--edikit-spacing-5, 24px);
+  border-radius: var(--edikit-radius-full, 999px);
+  background: var(--edikit-surface-elevated, #1b2030);
+  border: 1px solid var(--edikit-border-strong, #3a4a75);
+  color: var(--edikit-text-primary, #f2f4f8);
+  font-weight: 600;
+  text-align: center;
+  pointer-events: none;
+  animation: lb-celebrate-in 500ms ease-out forwards;
+  z-index: 60;
+}
+
+@keyframes lb-celebrate-in {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  18% {
+    opacity: 1;
+    transform: none;
+  }
+  82% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+/* Session complete — max 1 expressive event, subtle ring */
+.lb-celebration--complete {
+  animation-name: lb-celebrate-complete;
+  animation-duration: 800ms;
+  border-color: var(--edikit-primary, #5b7cfa);
+}
+
+@keyframes lb-celebrate-complete {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.94);
+  }
+  20% {
+    opacity: 1;
+    transform: none;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* S32.10: reduced-motion — statik ekvivalent (celebrate() skip qiladi) */
+@media (prefers-reduced-motion: reduce) {
+  .lb-row {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+  .lb-celebration {
+    animation: none;
+    opacity: 1;
+  }
+}

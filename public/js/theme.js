@@ -1,72 +1,159 @@
 /**
- * Edikit — Premium Theme Switcher v3.3
- * Dark/Light toggle — ICON ONLY, 900ms transitions via data-theme-transition
+ * Edikit — Theme Engine v4 (STYLE STEP 07)
+ * ----------------------------------------
+ * S07.01  States: system|light|dark|hc-light|hc-dark → data-resolved-theme
+ * S07.02  Head'dagi tiny sync boot (head.ejs) — FOUC yo'q
+ * S07.03  Yagona attribute model: html[data-theme] + data-resolved-theme
+ * S07.04  color-scheme resolved theme bilan (native form controls)
+ * S07.05  meta-theme-color real canvas token bilan (#F5F7FB/#080C1A/#FFFFFF)
+ * S07.06  900ms universal transition yo'q — root 150ms crossfade (theme.css)
+ * S07.07  Reduced motion → instant
+ * S07.08  System preference runtime'da — faqat user override yo'q bo'lsa
+ * S07.09  Segmented control: System/Light/Dark ([data-theme-state-btn])
+ * S07.10  Projector/data-cast-theme sahifalarida engine o'chadi
+ * S07.11  Print: theme.css @media print (light tokens)
  */
-(function() {
+(function () {
   'use strict';
-  var STORAGE_KEY = 'edikit-theme';
-  var ATTR = 'data-theme';
-  var TRANS_ATTR = 'data-theme-transition';
 
-  function apply(theme) {
-    var isLight = theme === 'light';
-    var next = isLight ? 'light' : 'dark';
-    var root = document.documentElement;
+  var core = window.EdikitThemeCore || { STATES: ['system', 'light', 'dark', 'hc-light', 'hc-dark'], resolveState: function () {} };
+  var STORAGE_KEY = core.STORAGE_KEY || 'edikit-theme-state';
+  var LEGACY_KEY = 'edikit-theme'; // eski dark/light toggle key (migration)
 
-    // Step 1: Remove no-transition class FIRST (prevents flash)
-    root.classList.remove('no-transition');
-    if (document.body) document.body.classList.remove('no-transition');
+  var mqLight = null;
+  var mqContrast = null;
+  var mqReduced = null;
 
-    // Step 2: Add data-theme-transition to enable 900ms CSS transitions on ALL themed elements
-    root.setAttribute(TRANS_ATTR, '');
-
-    // Step 3: After a minimal delay, change the theme attribute
-    setTimeout(function() {
-      root.setAttribute(ATTR, next);
-      if (document.body) {
-        document.body.classList.remove('theme-light', 'theme-dark');
-        document.body.classList.add(isLight ? 'theme-light' : 'theme-dark');
-      }
-      try { localStorage.setItem(STORAGE_KEY, next); } catch (_) {}
-
-      // Update toggle buttons: ICON ONLY (no text)
-      var iconFn = window.svgIcon;
-      document.querySelectorAll('[data-theme-toggle]').forEach(function(btn) {
-        if (iconFn) {
-          btn.innerHTML = isLight ? iconFn('moon', 16) : iconFn('sun', 16);
-        } else {
-          btn.textContent = isLight ? '\u{1F319}' : '\u{2600}\u{FE0F}';
-        }
-        btn.setAttribute('title', isLight ? 'Dark mode' : 'Light mode');
-      });
-
-      // Update theme-color meta tag for mobile status bar
-      var mc = document.getElementById('meta-theme-color');
-      if (mc) mc.setAttribute('content', isLight ? '#DEE1ED' : '#080C1A');
-
-      // Dispatch custom event for other scripts
-      document.dispatchEvent(new CustomEvent('themechange', { detail: { theme: next } }));
-
-      // Step 4: Remove the transition attribute after animations complete (~1050ms)
-      setTimeout(function() {
-        document.documentElement.removeAttribute(TRANS_ATTR);
-      }, 1050);
-    }, 20);
+  // S07.08 FIX: prefers() birinchi chaqiruvda lazy-init qiladi —
+  // apply() DOMContentLoaded'da wireListeners()dan OLDIN ishlasa ham
+  // (eski e'lon tartibi tufayli) media query'lar tayyor bo'ladi.
+  function prefers() {
+    if (!mqLight && window.matchMedia) {
+      mqLight = matchMedia('(prefers-color-scheme: light)');
+      mqContrast = matchMedia('(prefers-contrast: more)');
+      mqReduced = matchMedia('(prefers-reduced-motion: reduce)');
+    }
+    var light = !!(mqLight && mqLight.matches);
+    var hc = !!(mqContrast && mqContrast.matches);
+    return { light: light, hc: hc };
   }
 
+  function readState() {
+    var raw = null;
+    try { raw = localStorage.getItem(STORAGE_KEY); } catch (_) {}
+    // Legacy migration (S07.03): eski edikit-theme='light'|'dark' → state
+    if (!raw) {
+      try {
+        var legacy = localStorage.getItem(LEGACY_KEY);
+        if (legacy === 'light' || legacy === 'dark') {
+          raw = legacy;
+          // Migratsiyani bir marta persist qilamiz — har yuklashda takror
+          // o'qilmasligi uchun (reviewer fix).
+          try { localStorage.setItem(STORAGE_KEY, raw); } catch (_) {}
+        }
+      } catch (_) {}
+    }
+    return core.STATES.indexOf(raw) >= 0 ? raw : 'system';
+  }
+
+  /** Projektor/classroom sahifalari — OS'dan mustaqil (S07.10) */
+  function isIndependentThemePage() {
+    if (document.body && document.body.hasAttribute('data-cast-theme')) return true;
+    if (document.documentElement.hasAttribute('data-cast-theme')) return true;
+    return false;
+  }
+
+  function apply() {
+    if (isIndependentThemePage()) return; // S07.10 — cast/classroom o'z themesini boshqaradi
+    var state = readState();
+    var p = prefers();
+    var r = core.resolveState(state, p.light, p.hc);
+    var root = document.documentElement;
+
+    root.setAttribute('data-theme', r.resolved);          // yagona attribute model (S07.03)
+    root.setAttribute('data-resolved-theme', r.resolved); // S07.01
+    root.setAttribute('data-theme-state', r.state);       // S07.01
+    root.style.colorScheme = r.colorScheme;               // S07.04 (fallback inline)
+
+    // S07.05 — meta-theme-color real canvas bilan
+    var mc = document.getElementById('meta-theme-color');
+    if (mc) mc.setAttribute('content', r.canvas);
+
+    document.dispatchEvent(new CustomEvent('themechange', {
+      detail: { state: r.state, resolved: r.resolved, colorScheme: r.colorScheme },
+    }));
+    return r;
+  }
+
+  /** User explicit override (S07.08): localStorage + re-apply */
+  function setState(state) {
+    if (core.STATES.indexOf(state) < 0) return;
+    try { localStorage.setItem(STORAGE_KEY, state); } catch (_) {}
+    apply();
+  }
+
+  /** Eski data-theme-toggle (icon-only) tugmalar — davomiy compat: dark↔light aylantirish */
   function toggle() {
-    var cur = document.documentElement.getAttribute(ATTR) || 'dark';
-    apply(cur === 'dark' ? 'light' : 'dark');
+    var cur = readState();
+    var next = cur === 'light' || cur === 'hc-light' ? 'dark' : 'light';
+    setState(next);
+  }
+
+  // ── System preference runtime (S07.08) ──
+  var listenersWired = false;
+  function wireListeners() {
+    if (listenersWired) return;
+    function onSystemChange() {
+      var state = readState();
+      if (state === 'system') apply(); // faqat user override bo'lmaganda
+    }
+    prefers(); // mqLight/mqContrast/mqReduced tayyor (agar hali yo'q bo'lsa)
+    if (window.matchMedia) {
+      mqLight.addEventListener('change', onSystemChange);
+      mqContrast.addEventListener('change', onSystemChange);
+      // S07.07: prefers-reduced-motion CSS'da (theme.css @media) ishlanadi —
+      // JS listener kerak emas (reviewer fix: dead no-op olib tashlandi).
+    }
+    listenersWired = true;
+  }
+
+  // ── S07.09: Segmented control (System / Light / Dark) ──
+  function wireControls() {
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-theme-state-btn]');
+      if (btn) {
+        e.preventDefault();
+        setState(btn.getAttribute('data-theme-state-btn'));
+        return;
+      }
+      var old = e.target.closest('[data-theme-toggle]');
+      if (old) {
+        e.preventDefault();
+        toggle();
+      }
+    });
+    // Bosilgan holatni markalash
+    document.addEventListener('themechange', function (e) {
+      var state = e.detail && e.detail.state;
+      document.querySelectorAll('[data-theme-state-btn]').forEach(function (b) {
+        var on = b.getAttribute('data-theme-state-btn') === state;
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        b.classList.toggle('is-active', on);
+      });
+    });
   }
 
   window.EdikitTheme = {
     apply: apply,
+    setState: setState,
     toggle: toggle,
-    isLight: function() { return document.documentElement.getAttribute(ATTR) === 'light'; }
+    isLight: function () { return document.documentElement.getAttribute('data-resolved-theme') === 'light'; },
+    getState: readState,
   };
 
-  document.addEventListener('click', function(e) {
-    var btn = e.target.closest('[data-theme-toggle]');
-    if (btn) { e.preventDefault(); window.EdikitTheme.toggle(); }
-  });
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { apply(); wireListeners(); wireControls(); });
+  } else {
+    apply(); wireListeners(); wireControls();
+  }
 })();

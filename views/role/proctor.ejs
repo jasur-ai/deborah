@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="uz" dir="ltr">
 <head>
   <%- include('../partials/head') %>
   <style>
-    body{background:var(--bg-primary);min-height:100vh;}
-    .live-banner{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:18px;}
+    body{background:var(--edikit-semantic-color-surface-default);min-height:100vh;}
+    .live-banner{display:flex;align-items:center;gap:10px;background:var(--edikit-semantic-color-surface-raised);border:1px solid var(--edikit-semantic-color-border-default);border-radius:14px;padding:14px 16px;margin-bottom:18px;}
     .pulse-dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(0,229,160,.6);animation:pulse 1.8s infinite;}
     @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,229,160,.6)}70%{box-shadow:0 0 0 10px rgba(0,229,160,0)}100%{box-shadow:0 0 0 0 rgba(0,229,160,0)}}
     .quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;}
@@ -16,36 +16,36 @@
     <div class="topbar">
       <h1>Proktor — jonli monitoring</h1>
       <div class="topbar-right">
-        <span style="font-size:.74rem;font-weight:800;color:var(--muted)">Salom, <span style="color:var(--text)"><%= username %></span></span>
+        <span style="font-size:.74rem;font-weight:600;color:var(--edikit-semantic-color-text-muted)">Salom, <span style="color:var(--edikit-semantic-color-text-primary)"><%= username %></span></span>
       </div>
     </div>
 
     <div class="live-banner" role="status">
       <span class="pulse-dot" aria-hidden="true"></span>
       <div>
-        <div style="font-weight:900;font-size:.9rem">Monitoring rejimi</div>
-        <div style="font-size:.74rem;color:var(--muted);font-weight:700">Jonli sessionlar va kamera signalari shu yerda ko'rinadi</div>
+        <div style="font-weight:700;font-size:.9rem">Monitoring rejimi</div>
+        <div style="font-size:.74rem;color:var(--edikit-semantic-color-text-muted);font-weight:700">Jonli sessionlar va kamera signalari shu yerda ko'rinadi</div>
       </div>
     </div>
 
     <div class="quick-grid">
       <div class="role-card">
-        <div class="rc-ico" style="background:rgba(37,99,235,.14);color:var(--accent)"><%- icon('monitor', 20) %></div>
+        <div class="rc-ico" style="background:rgba(37,99,235,.14);color:var(--edikit-semantic-color-action-primary)"><%- icon('monitor', 20) %></div>
         <div class="rc-title">Jonli sessionlar</div>
         <div class="rc-sub">Aktiv attemptlar, start/pause/terminate</div>
-        <span style="display:inline-block;margin-top:12px;color:var(--muted);font-weight:800;font-size:.74rem"><%- icon('info', 12) %> Bo'sh — hozircha session yo'q</span>
+        <span style="display:inline-block;margin-top:12px;color:var(--edikit-semantic-color-text-muted);font-weight:600;font-size:.74rem"><%- icon('info', 12) %> Bo'sh — hozircha session yo'q</span>
       </div>
       <div class="role-card">
         <div class="rc-ico" style="background:rgba(0,229,160,.12);color:var(--green)"><%- icon('camera', 20) %></div>
         <div class="rc-title">Camera review</div>
         <div class="rc-sub">Rule-based signal tahlili</div>
-        <a href="/admin/camera-review" style="display:inline-block;margin-top:12px;text-decoration:none;color:var(--green);font-weight:900;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
+        <a href="/admin/camera-review" style="display:inline-block;margin-top:12px;text-decoration:none;color:var(--green);font-weight:700;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
       </div>
       <div class="role-card">
         <div class="rc-ico" style="background:rgba(245,158,11,.14);color:var(--gold)"><%- icon('zap', 20) %></div>
         <div class="rc-title">Command Center</div>
         <div class="rc-sub">Imtihon operatsiyalari markazi</div>
-        <a href="/admin/command-center" style="display:inline-block;margin-top:12px;text-decoration:none;color:var(--gold);font-weight:900;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
+        <a href="/admin/command-center" style="display:inline-block;margin-top:12px;text-decoration:none;color:var(--gold);font-weight:700;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
       </div>
     </div>
 
@@ -55,17 +55,5 @@
       </div>
     <% } %>
   </main>
-
-  <script>
-    (function(){
-      var b=document.querySelector('[data-shell-open]');
-      var c=document.querySelectorAll('[data-shell-close]');
-      function open(){document.body.classList.add('shell-open');var t=document.querySelector('[data-shell-open]');if(t)t.setAttribute('aria-expanded','true');}
-      function close(){document.body.classList.remove('shell-open');var t=document.querySelector('[data-shell-open]');if(t)t.setAttribute('aria-expanded','false');}
-      if(b)b.addEventListener('click',open);
-      c.forEach(function(el){el.addEventListener('click',close);});
-      document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
-    })();
-  </script>
 </body>
 </html>
