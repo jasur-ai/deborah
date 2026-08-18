@@ -57,7 +57,7 @@
   }
 
   async function loadProfile(assignmentId) {
-    content.innerHTML = '<div class="loading"><span class="spinner" style="border-color:var(--muted);border-top-color:var(--accent)"></span> Profil tekshirilmoqda...</div>';
+    content.innerHTML = '<div class="loading"><span class="spinner" style="border-color:var(--edikit-semantic-color-text-muted);border-top-color:var(--edikit-semantic-color-action-primary)"></span> Profil tekshirilmoqda...</div>';
     try {
       const res = await fetch('/api/student/assignments/' + assignmentId + '/security-profile');
       if (!res.ok) throw new Error((await res.json()).error || 'Profil topilmadi');
@@ -192,7 +192,7 @@
       });
       const data = await res.json();
       verdict.className = 'verdict ' + (data.ok ? 'ok' : 'fail');
-      verdict.innerHTML = (data.ok ? '<span style="color:var(--green)">SEB boundary tasdiqlandi</span>' : '<span style="color:var(--accent)">' + esc(data.reason || 'Tekshiruv o‘tmadi') + '</span>');
+      verdict.innerHTML = (data.ok ? '<span style="color:var(--green)">SEB boundary tasdiqlandi</span>' : '<span style="color:var(--edikit-semantic-color-action-primary)">' + esc(data.reason || 'Tekshiruv o‘tmadi') + '</span>');
     } catch (e) {
       verdict.className = 'verdict fail';
       verdict.textContent = 'Xato: ' + e.message;

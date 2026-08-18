@@ -1,23 +1,49 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-<!-- Early font preconnect for performance -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<meta name="theme-color" content="#080C1A" id="meta-theme-color" data-light="#DEE1ED" data-dark="#080C1A">
+<!-- STEP 08 (S08.05): faqat critical UI font (Source Sans 3 latin) preload;
+     barcha weight/fontlarni emas. Self-hosted — tarmoq beqaror bo'lsa ham ishlaydi. -->
+<link rel="preload" href="/fonts/source-sans-3-latin-200.woff2" as="font" type="font/woff2" crossorigin>
+<meta name="theme-color" content="#080C1A" id="meta-theme-color" data-light="#F5F7FB" data-dark="#080C1A" data-hc="#FFFFFF">
+
+<!-- ═══════════ THEME BOOT (S07.02) — tiny synchronous, first-paint oldin ═══════════
+     FOUC'siz: local pref + prefers-color-scheme/contrast ni CSS yuklanmasdan
+     resolve qiladi va yagona attribute model'ni (data-theme + data-resolved-theme)
+     o'rnatadi. JS/Node'da ham theme-core (S07.01) bilan bir xil mantiq. -->
+<script>
+(function(){var K='edikit-theme-state',L='edikit-theme',s=null;try{s=localStorage.getItem(K)}catch(_){}if(!s){try{var l=localStorage.getItem(L);if(l==='light'||l==='dark'){s=l;try{localStorage.setItem(K,s)}catch(_){}}}catch(_){}}
+var STATES=['system','light','dark','hc-light','hc-dark'];if(STATES.indexOf(s)<0)s='system';
+/* S07.10: projector/classroom (data-cast-theme) sahifalari — OS'dan mustaqil.
+   Boot ham engine kabi skip qiladi (reviewer fix, konsistentlik). */
+var dc=document.documentElement.getAttribute('data-cast-theme');if(!dc&&document.body&&document.body.getAttribute('data-cast-theme'))dc=1;
+if(!dc){
+var mL=window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches;
+var mC=window.matchMedia&&matchMedia('(prefers-contrast: more)').matches;
+var r='dark',cs='dark',cv='#080C1A';
+if(s==='light'){r='light';cs='light';cv='#F5F7FB'}
+else if(s==='dark'){r='dark';cs='dark';cv='#080C1A'}
+else if(s==='hc-light'){r='high-contrast';cs='light';cv='#FFFFFF'}
+else if(s==='hc-dark'){r='high-contrast';cs='dark';cv='#FFFFFF'}
+else{r=mC?'high-contrast':(mL?'light':'dark');cs=mL?'light':'dark';cv=r==='high-contrast'?'#FFFFFF':cv}
+var d=document.documentElement;d.setAttribute('data-theme',r);d.setAttribute('data-resolved-theme',r);d.setAttribute('data-theme-state',s);d.style.colorScheme=cs;
+var mc=document.getElementById('meta-theme-color');if(mc)mc.setAttribute('content',cv);
+}
+})();
+</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="handheldfriendly" content="true">
 <title><%= typeof title !== 'undefined' ? title : 'Edikit' %></title>
-<meta name="description" content="Edikit — Real-time multiplayer quiz platform. Jonli test va viktorina platformasi.">
+<meta name="description" content="<%= typeof description !== 'undefined' ? description : 'Edikit — Nazorat va imtihonlarni raqamli o\'tkazing. O\'qituvchi va talaba uchun test, amaliyot, tahlil, AI yordamchi.' %>">
+<% if (typeof path !== 'undefined') { %><link rel="canonical" href="<%= siteUrl + path %>"><% } %>
 
 <!-- Open Graph / Social Preview -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Edikit">
 <meta property="og:title" content="<%= typeof title !== 'undefined' ? title : 'Edikit — Interactive Platform' %>">
-<meta property="og:description" content="Jonli test va viktorina platformasi. O'qituvchilar uchun savollar yaratish, o'yinlar o'tkazish va natijalarni kuzatish.">
+<meta property="og:description" content="<%= typeof description !== 'undefined' ? description : 'Nazorat va imtihonlarni raqamli o\'tkazing. O\'qituvchi va talaba uchun test, amaliyot, tahlil, AI yordamchi.' %>">
 <meta property="og:image" content="<%= siteUrl + '/images/og-image.svg' %>">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -26,17 +52,56 @@
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="<%= typeof title !== 'undefined' ? title : 'Edikit — Interactive Platform' %>">
-<meta name="twitter:description" content="Jonli test va viktorina platformasi.">
+<meta name="twitter:description" content="<%= typeof description !== 'undefined' ? description : 'Jonli baholash va responsive teaching: test, amaliyot, tahlil, AI yordamchi.' %>">
 <meta name="twitter:image" content="<%= siteUrl + '/images/og-image.svg' %>">
 
 <link rel="manifest" href="/manifest.json">
 <link rel="icon" type="image/svg+xml" href="/images/logo-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/images/pwa-icon-180.png">
 <link rel="apple-touch-icon" sizes="192x192" href="/images/pwa-icon-192.png">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Righteous&display=swap" rel="stylesheet">
+<!-- STEP 08: self-hosted @font-face + type rollar (Google Fonts CDN yo'q) -->
+<link rel="stylesheet" href="/design/generated/tokens.css">
+<link rel="stylesheet" href="/design/foundations/typography.css">
+<link rel="stylesheet" href="/design/foundations/layout.css">
+<link rel="stylesheet" href="/design/foundations/motion.css">
+<link rel="stylesheet" href="/design/foundations/responsive.css">
+<!-- STEP 11: cascade layers — reset → foundations → components → utilities → overrides -->
+<link rel="stylesheet" href="/design/foundations/reset.css">
+<link rel="stylesheet" href="/design/foundations/base.css">
+<link rel="stylesheet" href="/design/foundations/focus.css">
+<link rel="stylesheet" href="/design/foundations/utilities.css">
+<!-- STEP 12: component library (F2) -->
+<link rel="stylesheet" href="/design/components/button.css">
+<link rel="stylesheet" href="/design/components/icon-button.css">
+<link rel="stylesheet" href="/design/components/badge.css">
+<link rel="stylesheet" href="/design/components/input.css">
+<link rel="stylesheet" href="/design/components/select.css">
+<link rel="stylesheet" href="/design/components/form.css">  <link rel="stylesheet" href="/design/components/selection.css">
+  <link rel="stylesheet" href="/design/components/dialog.css">
+  <link rel="stylesheet" href="/design/components/popover.css">
+  <link rel="stylesheet" href="/design/components/tooltip.css">
+  <link rel="stylesheet" href="/design/components/toast.css">
+  <link rel="stylesheet" href="/design/components/skeleton.css">
+  <link rel="stylesheet" href="/design/components/progress.css">
+  <link rel="stylesheet" href="/design/components/charts.css">
+  <link rel="stylesheet" href="/design/components/empty-state.css">
+  <link rel="stylesheet" href="/design/components/message.css">
+  <link rel="stylesheet" href="/design/components/navigation.css">
+  <link rel="stylesheet" href="/design/components/table.css">
+  <link rel="stylesheet" href="/design/components/filter-bar.css">
+  <link rel="stylesheet" href="/design/components/offline.css">
+<link rel="stylesheet" href="/design/components/tabs.css">
+<link rel="stylesheet" href="/design/components/accordion.css">
 <link rel="stylesheet" href="/css/style.css">
-<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<link rel="stylesheet" href="/design/brand.css">
+<link rel="stylesheet" href="/design/foundations/theme.css">
 <script src="/js/main.js"></script>
+<script src="/js/components/overlays.js"></script>
+<script src="/js/components/navigation.js"></script>  <script src="/js/components/data-table.js"></script>
+  <script src="/js/components/charts.js"></script>
+<script src="/js/theme-core.js"></script>
+<script src="/js/pwa-install.js" defer></script>
+<script src="/js/theme.js"></script>
 <script>
 window.__ICONS = <%- JSON.stringify(icons) %>;
 window.__CSRF_TOKEN = '<%= csrfToken %>';
@@ -47,9 +112,45 @@ function svgIcon(name, size) {
   if (!svg) return '';
   return '<span class="icon-inline" style="width:' + (size||16) + 'px;height:' + (size||16) + 'px">' + svg.replace('<svg', '<svg width="' + (size||16) + '" height="' + (size||16) + '"') + '</span>';
 }
-(function(){var k='edikit-theme';var t;try{t=localStorage.getItem(k)}catch(_){}if(!t)t='dark';document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');var mc=document.getElementById('meta-theme-color');if(mc)mc.setAttribute('content',t==='light'?'#DEE1ED':'#080C1A')})();
 </script>
-<script src="/js/theme.js"></script>
+
+<!-- S13: form field live counter (progressive enhancement) -->
+<script src="/js/design-forms.js" defer></script>
+<!-- S14: tabs + accordion (ARIA patterns) -->
+<script src="/js/components/tabs.js" defer></script>  <script src="/js/components/accordion.js" defer></script>
+  <script src="/js/components/switch.js" defer></script>
+  <script src="/js/components/offline-banner.js" defer></script>
+  <!-- S34.08: PWA update banner (nonblocking) -->
+  <script src="/js/update-banner.js" defer></script>
+  <!-- S35.06: locale-aware Intl formatterlar (number/percent/date/duration/list) -->
+  <script src="/js/i18n-formatters.js" defer></script>
+  <!-- S35.03/04/05: termin registry + apostrophe normalizatsiya + bidi -->
+  <script src="/js/term-utils.js" defer></script>
+  <!-- AUTH A-02: session idle timeout ogohlantirishi (faqat tizimga kirgan user'lar) -->
+  <% if (sessionTimeout) { %>
+  <script>window.__SESSION_TIMEOUT = <%- JSON.stringify(sessionTimeout) %>;</script>
+  <link rel="stylesheet" href="/design/components/session-timeout.css">
+  <script src="/js/components/session-timeout.js" defer></script>
+  <% } %>
+  <style>
+    .update-banner{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:var(--z-toast, 9000);max-width:min(92vw, 520px);background:var(--edikit-semantic-color-surface-raised, #0F1630);border:1px solid var(--edikit-semantic-color-border-default, #2C3346);border-radius:12px;box-shadow:0 12px 34px rgba(0,0,0,.35);padding:10px 12px;}
+    .update-banner-body{display:flex;align-items:center;gap:10px;}
+    .update-banner-text{flex:1;font-size:.85rem;font-weight:600;color:var(--edikit-semantic-color-text-primary, #F2F4F8);}
+    .update-banner-action{min-height:34px !important;padding:0 14px !important;font-size:.8rem !important;}
+    .update-banner-close{width:28px;height:28px;border:none;background:transparent;color:var(--text-tertiary, #6B7288);font-size:1.1rem;line-height:1;cursor:pointer;border-radius:6px;}
+    .update-banner-close:hover{background:var(--edikit-semantic-color-surface-nested, #131B3A);color:var(--edikit-semantic-color-text-primary);}
+    @media (prefers-reduced-motion: reduce){.update-banner{animation:none !important;}}
+  </style>
+
+<!-- STEP 40 S40.02: feature flag status (monitoring/rollout) -->
+<script>
+  document.documentElement.setAttribute('data-ff-theme', '<%= typeof featureFlags !== 'undefined' && featureFlags.theme === false ? 'off' : 'on' %>');
+  document.documentElement.setAttribute('data-ff-landing', '<%= typeof featureFlags !== 'undefined' && featureFlags.landing === false ? 'off' : 'on' %>');
+  document.documentElement.setAttribute('data-ff-auth', '<%= typeof featureFlags !== 'undefined' && featureFlags.auth === false ? 'off' : 'on' %>');
+  document.documentElement.setAttribute('data-ff-workspace', '<%= typeof featureFlags !== 'undefined' && featureFlags.workspace === false ? 'off' : 'on' %>');
+  document.documentElement.setAttribute('data-ff-cast', '<%= typeof featureFlags !== 'undefined' && featureFlags.cast === false ? 'off' : 'on' %>');
+  document.documentElement.setAttribute('data-ff-admin', '<%= typeof featureFlags !== 'undefined' && featureFlags.admin === false ? 'off' : 'on' %>');
+</script>
 
 <!-- Service Worker (lightweight, deduped via controller check) -->
 <script>

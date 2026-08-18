@@ -1,0 +1,109 @@
+<%#
+  Edikit — Form Field Partial (STYLE STEP 13, S13.01)
+  -----------------------------------------------------
+  Foydalanish (EJS ichida): include('form-field', { id, name, type, label,
+  required, placeholder, hint, error, value, autocomplete, maxlength })
+  Parametrlar:
+    id/name/type — control attributlari (type default 'text')
+    label — ko'rinadigan label (S13.02: placeholder label EMAS)
+    required — true bo'lsa required + aria-required
+    optional — ixtiyoriy belgisi
+    placeholder — faqat format/example (S13.02)
+    hint — field ostidagi izoh
+    error — xato matni (danger border+icon+text, S13.06)
+    warning — ogohlantirish matni (amber, S13.06)
+    count/maxlength — belgilar hisoblagichi
+    value — server xatosidan keyin saqlanadi (S13.09)
+    autocomplete/inputmode/spellcheck/autocapitalize — S13.08
+    readonly/disabled — S13.07
+    attrs — qo'shimcha attribute string
+%>
+<%# EJS include'da berilmagan parametrlar ReferenceError bermasligi uchun default'lar (S13.01) %>
+<% var id = typeof id !== 'undefined' ? id : '';
+   var name = typeof name !== 'undefined' ? name : '';
+   var type = typeof type !== 'undefined' ? type : 'text';
+   var label = typeof label !== 'undefined' ? label : '';
+   var required = typeof required !== 'undefined' ? required : false;
+   var optional = typeof optional !== 'undefined' ? optional : null;
+   var placeholder = typeof placeholder !== 'undefined' ? placeholder : '';
+   var hint = typeof hint !== 'undefined' ? hint : null;
+   var error = typeof error !== 'undefined' ? error : null;
+   var warning = typeof warning !== 'undefined' ? warning : null;
+   var count = typeof count !== 'undefined' ? count : null;
+   var maxlength = typeof maxlength !== 'undefined' ? maxlength : null;
+   var value = typeof value !== 'undefined' ? value : '';
+   var options = typeof options !== 'undefined' ? options : [];
+   var autocomplete = typeof autocomplete !== 'undefined' ? autocomplete : null;
+   var inputmode = typeof inputmode !== 'undefined' ? inputmode : null;
+   var spellcheck = typeof spellcheck !== 'undefined' ? spellcheck : true;
+   var autocapitalize = typeof autocapitalize !== 'undefined' ? autocapitalize : null;
+   var readonly = typeof readonly !== 'undefined' ? readonly : false;
+   var disabled = typeof disabled !== 'undefined' ? disabled : false;
+   var attrs = typeof attrs !== 'undefined' ? attrs : '';
+%>
+<div class="form-field <%= error ? 'form-field--error' : '' %> <%= warning ? 'form-field--warning' : '' %> <%= disabled ? 'form-field--disabled' : '' %>" <%= attrs %>>
+  <% if (label) { %>
+    <label class="form-field__label" for="<%= id %>">
+      <span><%= label %></span>
+      <% if (required) { %><span class="form-field__required" aria-hidden="true" style="color:var(--edikit-semantic-color-status-danger)">*</span><% } %>
+      <% if (optional) { %><span class="form-field__optional">(<%= optional %>)</span><% } %>
+    </label>
+  <% } %>
+  <% if (type === 'textarea') { %>
+    <textarea
+      class="form-control"
+      id="<%= id %>" name="<%= name %>"
+      <%= required ? 'required aria-required="true"' : '' %>
+      <%= readonly ? 'readonly' : '' %>
+      <%= disabled ? 'disabled' : '' %>
+      <%= maxlength ? 'maxlength="' + maxlength + '"' : '' %>
+      <%= autocomplete ? 'autocomplete="' + autocomplete + '"' : '' %>
+      <%= inputmode ? 'inputmode="' + inputmode + '"' : '' %>
+      aria-describedby="<%= (hint ? id + '-hint ' : '') %><%= (error ? id + '-error' : '') %>"
+      aria-invalid="<%= error ? 'true' : 'false' %>"
+      placeholder="<%= placeholder || '' %>"
+    ><%= value || '' %></textarea>
+  <% } else if (type === 'select') { %>
+    <select
+      class="form-select"
+      id="<%= id %>" name="<%= name %>"
+      <%= required ? 'required aria-required="true"' : '' %>
+      <%= disabled ? 'disabled' : '' %>
+      aria-describedby="<%= (hint ? id + '-hint ' : '') %><%= (error ? id + '-error' : '') %>"
+      aria-invalid="<%= error ? 'true' : 'false' %>"
+    ><%- (options || []).map((o) => `<option value="${o.value}" ${String(o.value) === String(value) ? 'selected' : ''}>${o.label}</option>`).join('') %></select>
+  <% } else { %>
+    <input
+      class="form-control"
+      type="<%= type || 'text' %>"
+      id="<%= id %>" name="<%= name %>"
+      <%= required ? 'required aria-required="true"' : '' %>
+      <%= readonly ? 'readonly' : '' %>
+      <%= disabled ? 'disabled' : '' %>
+      <%= maxlength ? 'maxlength="' + maxlength + '"' : '' %>
+      <%= autocomplete ? 'autocomplete="' + autocomplete + '"' : '' %>
+      <%= inputmode ? 'inputmode="' + inputmode + '"' : '' %>
+      <%= spellcheck === false ? 'spellcheck="false"' : '' %>
+      <%= autocapitalize ? 'autocapitalize="' + autocapitalize + '"' : '' %>
+      aria-describedby="<%= (hint ? id + '-hint ' : '') %><%= (error ? id + '-error' : '') %>"
+      aria-invalid="<%= error ? 'true' : 'false' %>"
+      placeholder="<%= placeholder || '' %>"
+      value="<%= value || '' %>"
+    >
+  <% } %>
+  <% if (count && maxlength) { %>
+    <span class="form-field__count" id="<%= id %>-count" data-for="<%= id %>" data-max="<%= maxlength %>"><%= String(value || '').length %>/<%= maxlength %></span>
+  <% } %>
+  <% if (hint) { %>
+    <span class="form-field__hint" id="<%= id %>-hint"><%= hint %></span>
+  <% } %>
+  <% if (error) { %>
+    <span class="form-field__error" id="<%= id %>-error" role="alert">
+      <%- icon('alertTriangle', 14) %><span><%= error %></span>
+    </span>
+  <% } else if (warning) { %>
+    <span class="form-field__error" id="<%= id %>-error" style="color:var(--edikit-semantic-color-status-warning)">
+      <span><%= warning %></span>
+    </span>
+  <% } %>
+</div>

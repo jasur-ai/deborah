@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="uz" data-theme="dark">
+<html lang="uz" dir="ltr" data-theme="dark">
 <head>
   <%- include('../partials/head', { title, user }) %>
   <style>
     .iv-grid { display: grid; grid-template-columns: 340px 1fr; gap: 18px; }
-    .iv-panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
-    .iv-panel h3 { margin: 0 0 12px; font-size: 14px; letter-spacing: .04em; color: var(--muted); text-transform: uppercase; }
+    .iv-panel { background: var(--edikit-semantic-color-surface-raised); border: 1px solid var(--edikit-semantic-color-border-default); border-radius: 12px; padding: 16px; }
+    .iv-panel h3 { margin: 0 0 12px; font-size: 14px; letter-spacing: .04em; color: var(--edikit-semantic-color-text-muted); text-transform: uppercase; }
     .field { margin-bottom: 12px; }
-    .field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
-    .input, textarea.input, select.input { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surf); color: var(--text); font-size: 13px; box-sizing: border-box; }
+    .field label { display: block; font-size: 12px; color: var(--edikit-semantic-color-text-muted); margin-bottom: 4px; }
+    .input, textarea.input, select.input { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--edikit-semantic-color-border-default); background: var(--edikit-semantic-color-surface-raised); color: var(--edikit-semantic-color-text-primary); font-size: 13px; box-sizing: border-box; }
     textarea.input { min-height: 60px; resize: vertical; }
-    .btn { padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; font-size: 13px; transition: all .2s; }
-    .btn:hover { border-color: var(--accent); }
-    .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn { padding: 6px 14px; border-radius: 8px; border: 1px solid var(--edikit-semantic-color-border-default); background: var(--edikit-semantic-color-surface-raised); color: var(--edikit-semantic-color-text-primary); cursor: pointer; font-size: 13px; transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s; }
+    .btn:hover { border-color: var(--edikit-semantic-color-action-primary); }
+    .btn.primary { background: var(--edikit-semantic-color-action-primary); border-color: var(--edikit-semantic-color-action-primary); color: #fff; }
     .btn.sm { padding: 4px 10px; font-size: 12px; }
     .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
     .badge.pending { background: rgba(148,163,184,.15); color: #94a3b8; }
@@ -23,19 +23,19 @@
     .badge.approaching { background: rgba(251,191,36,.15); color: #fbbf24; }
     .badge.at { background: rgba(0,229,160,.15); color: #00e5a0; }
     .badge.above { background: rgba(37,99,235,.15); color: #60a5fa; }
-    .card-item { padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; }
+    .card-item { padding: 10px 12px; border: 1px solid var(--edikit-semantic-color-border-default); border-radius: 8px; margin-bottom: 8px; }
     .card-item .ctitle { font-weight: 600; font-size: 13px; }
-    .card-item .cmeta { font-size: 12px; color: var(--muted); margin: 3px 0; }
+    .card-item .cmeta { font-size: 12px; color: var(--edikit-semantic-color-text-muted); margin: 3px 0; }
     .card-item .cactions { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
-    .privacy-note { font-size: 11px; color: var(--muted); border: 1px dashed var(--border); border-radius: 8px; padding: 8px; margin-bottom: 12px; }
-    .toast { position: fixed; top: 16px; right: 16px; z-index: 50; padding: 10px 16px; border-radius: 10px; background: var(--card); border: 1px solid var(--border); box-shadow: 0 8px 24px rgba(0,0,0,.3); opacity: 0; transform: translateY(-8px); transition: all .25s; font-size: 13px; }
+    .privacy-note { font-size: 11px; color: var(--edikit-semantic-color-text-muted); border: 1px dashed var(--edikit-semantic-color-border-default); border-radius: 8px; padding: 8px; margin-bottom: 12px; }
+    .toast { position: fixed; top: 16px; right: 16px; z-index: 50; padding: 10px 16px; border-radius: 10px; background: var(--edikit-semantic-color-surface-raised); border: 1px solid var(--edikit-semantic-color-border-default); box-shadow: 0 8px 24px rgba(0,0,0,.3); opacity: 0; transform: translateY(-8px); transition:color .25s,background-color .25s,border-color .25s,box-shadow .25s,transform .25s,opacity .25s; font-size: 13px; }
     .toast.show { opacity: 1; transform: translateY(0); }
     .toast.err { border-color: rgba(248,113,113,.5); }
     .toast.ok { border-color: rgba(0,229,160,.5); }
-    .muted { color: var(--muted); }
+    .muted { color: var(--edikit-semantic-color-text-muted); }
     table.iv-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    table.iv-table th, table.iv-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
-    table.iv-table th { color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+    table.iv-table th, table.iv-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--edikit-semantic-color-border-default); }
+    table.iv-table th { color: var(--edikit-semantic-color-text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
     @media (max-width: 960px) { .iv-grid { grid-template-columns: 1fr; } }
   </style>
 </head>

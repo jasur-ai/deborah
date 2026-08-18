@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="Edikit Evidence Mark">
+  <!-- High-contrast — toza qora, alpha 0.85+; forced-colors'da CanvasText qo'llanadi -->
+  <circle cx="24" cy="15" r="7" fill="#000000"/>
+  <circle cx="24" cy="15" r="2.5" fill="#000000" opacity="0.9"/>
+  <rect x="20.5" y="26" width="7" height="30" rx="3.5" fill="#000000"/>
+  <rect x="31" y="31" width="11" height="5" rx="2.5" fill="#000000"/>
+  <rect x="31" y="39" width="16" height="5" rx="2.5" fill="#000000"/>
+  <rect x="31" y="47" width="21" height="5" rx="2.5" fill="#000000"/>
+</svg>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="<%= lang === 'uz-cyrl' ? 'uz-Cyrl' : lang %>" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <link rel="stylesheet" href="/design/contexts/auth.css">
+  <style>
+    /* AUTH B-03 — sahifaga xos override'lar (global token'lar bazasida) */
+    .auth-page{margin-top:0;}
+    .auth-proof-list li + li { margin-top: 0; }
+    /* D-07 — email live check status (aria-live polite) */
+    .email-status {
+      margin: -2px 0 12px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--edikit-semantic-color-status-success, #22c55e);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 20px;
+    }
+    .email-status[hidden] { display: none; }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link"><%= copy.register.btn %> →</a>
+  <%- include('../partials/nav') %>
+  <main id="main" class="auth-page" style="min-height:calc(100dvh - 64px)">
+    <div class="auth-shell">
+      <!-- ── Product proof (S24.01) — desktop ── -->
+      <div class="auth-proof" aria-hidden="true">
+        <div class="auth-proof-brand">
+          <img src="/images/logo-icon.svg" alt="Edikit" class="auth-proof-logo">
+          <span class="auth-proof-badge"><%- icon('shield', 12) %> Edikit</span>
+        </div>
+        <h1><%= copy.register.title %></h1>
+        <p class="auth-proof-sub"><%= copy.register.sub %></p>
+        <ul class="auth-proof-list">
+          <li><span class="auth-proof-ico"><%- icon('zap', 13) %></span><span><%= copy.register.trustFree %></span></li>
+          <li><span class="auth-proof-ico"><%- icon('lock', 13) %></span><span><%= copy.register.trustData %></span></li>
+          <li><span class="auth-proof-ico"><%- icon('mail', 13) %></span><span><%= copy.register.trustEmail %></span></li>
+        </ul>
+      </div>
+
+      <!-- ── Register card (440px) ── -->
+      <div class="auth-box">
+        <div class="auth-header auth-header--split">
+          <img src="/images/logo-text.svg" alt="Edikit" class="auth-proof-logo">
+          <div class="auth-title"><%= copy.register.title %></div>
+          <div class="auth-sub"><%= copy.register.sub %></div>
+        </div>
+
+        <nav class="lang-row" aria-label="Language">
+          <% AUTH_LANGS.forEach(function(l){ %>
+            <a class="lang-link <%= l === lang ? 'on' : '' %>" href="?lang=<%= l %>" hreflang="<%= l === 'uz-cyrl' ? 'uz-Cyrl' : l %>"><%= l === 'uz' ? 'O\'zbekcha' : (l === 'uz-cyrl' ? 'Ўзбекча' : (l === 'ru' ? 'Русский' : 'English')) %></a>
+          <% }); %>
+        </nav>
+
+        <!-- AUTH A-04: Google birinchi (oidcEnabled'da). Register sahifasida ham doim ko'rinadi. -->
+        <% if (oidcEnabled) { %>
+          <a href="/auth/google" class="btn-google" data-analytics="register_google_start" data-google-btn>
+            <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84C8.87 7.48 11.26 5.38 12 5.38z"/></svg>
+            <span><%= copy.login.google %></span>
+          </a>
+          <div class="oidc-divider"><span><%= copy.login.or %></span></div>
+        <% } %>
+
+        <div id="auth-alert" class="msg <%= typeof error !== 'undefined' && error ? 'err' : '' %>" role="alert" aria-live="assertive" data-field="<%= typeof field !== 'undefined' && field ? field : '' %>"><%= typeof error !== 'undefined' && error ? error : '' %></div>
+        <!-- AUTH B-09 §06: duplicate — "Akkauntingiz borga o'xshaydi" + Kirish +
+             Parolni unutdingizmi? (account prefilled, enum. rate-limit himoyalangan) -->
+        <% if (typeof duplicate !== 'undefined' && duplicate) { %>
+        <div class="dup-actions" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0 14px" role="group" aria-label="<%= copy.errors.duplicate %>">
+          <a class="btn btn-primary" href="/user/login?lang=<%= lang %>&account=<%= encodeURIComponent(typeof prevAccount !== 'undefined' && prevAccount ? prevAccount : '') %>"><%- icon('logIn', 14) %> <%= copy.register.dupLogin %></a>
+          <a class="link" href="/user/forgot?lang=<%= lang %>&account=<%= encodeURIComponent(typeof prevAccount !== 'undefined' && prevAccount ? prevAccount : '') %>"><%- icon('key', 13) %> <%= copy.register.dupForgot %></a>
+        </div>
+        <% } %>
+        <!-- AUTH A-03: lockout countdown — auth.js'ning initLockoutCountdown()
+             bu box'ni textContent bilan to'ldiradi (qo'shimcha span'lar kerak emas) -->
+        <div id="lockout-countdown" class="msg err" role="alert" aria-live="assertive"
+             data-seconds="<%= typeof retryAfter !== 'undefined' && retryAfter ? retryAfter : 0 %>"
+             data-lockout="<%= typeof lockout !== 'undefined' && lockout ? '1' : '0' %>"
+             style="display:<%= (typeof lockout !== 'undefined' && lockout) ? '' : 'none' %>"></div>
+
+        <!-- B-03: register forma — POST /user/login (mode=reg), barcha A-faza himoyasi -->
+        <form id="form-reg" class="auth-form is-active" method="POST" action="/user/login" data-analytics-form="register" data-device-fp>
+          <input type="hidden" name="mode" value="reg">
+          <input type="hidden" name="lang" value="<%= lang %>">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+          <!-- AUTH A-21: honeypot — CSS'da ko'rinmaydi, bot'lar to'ldiradi -->
+          <div class="hp-field" aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden">
+            <label for="reg-website">Website (bot tekshiruvi)</label>
+            <input id="reg-website" name="website" type="text" tabindex="-1" autocomplete="off" value="">
+          </div>
+
+          <!-- B-03: rol tanlovi — talaba/teacher kartalari (AUTH A-19 bilan izchil) -->
+          <fieldset class="role-grid" id="role-select">
+            <legend class="role-legend"><%= copy.register.roleTitle %></legend>
+            <label class="role-card">
+              <!-- B-03 (review fix): xatoda tanlangan rol saqlanadi (prevRole) -->
+              <input type="radio" name="role" value="" <%= typeof prevRole !== 'undefined' && prevRole === 'teacher' ? '' : 'checked' %>>
+              <span class="role-ico"><%- icon('user', 18) %></span>
+              <span class="role-txt">
+                <strong><%= copy.register.roleStudent %></strong>
+                <small><%= copy.register.roleStudentHint %></small>
+              </span>
+            </label>
+            <label class="role-card">
+              <input type="radio" name="role" value="teacher" <%= typeof prevRole !== 'undefined' && prevRole === 'teacher' ? 'checked' : '' %>>
+              <span class="role-ico"><%- icon('bookOpen', 18) %></span>
+              <span class="role-txt">
+                <strong><%= copy.register.roleTeacher %></strong>
+                <small><%= copy.register.roleTeacherHint %></small>
+              </span>
+            </label>
+          </fieldset>
+          <p class="role-note" id="teacher-note" hidden><%- icon('info', 13) %><span><%= copy.register.teacherNote %></span></p>
+
+          <!-- B-29: teacher application form — role=teacher tanlanganda ko'rinadi -->
+          <div id="teacher-app-fields" hidden>
+            <label class="lbl" for="reg-university"><%= copy.register.universityPh %></label>
+            <input class="inp" id="reg-university" name="university" type="text" placeholder="<%= copy.register.universityHint %>" autocomplete="organization" autocapitalize="words" spellcheck="false" maxlength="200" aria-invalid="false" data-inline-error="err-reg-university" aria-describedby="err-reg-university" value="<%= typeof prevUniversity !== 'undefined' && prevUniversity ? prevUniversity : '' %>">
+            <div class="err-text" id="err-reg-university" data-inline-error="university" style="display:none" role="alert"><%- icon('alertTriangle', 13) %><span></span></div>
+
+            <label class="lbl" for="reg-subject"><%= copy.register.subjectPh %></label>
+            <input class="inp" id="reg-subject" name="subject" type="text" placeholder="<%= copy.register.subjectHint %>" autocomplete="off" autocapitalize="words" spellcheck="false" maxlength="100" aria-invalid="false" data-inline-error="err-reg-subject" aria-describedby="err-reg-subject" value="<%= typeof prevSubject !== 'undefined' && prevSubject ? prevSubject : '' %>">
+            <div class="err-text" id="err-reg-subject" data-inline-error="subject" style="display:none" role="alert"><%- icon('alertTriangle', 13) %><span></span></div>
+
+            <label class="lbl" for="reg-experience"><%= copy.register.experiencePh %></label>
+            <input class="inp" id="reg-experience" name="experience" type="number" min="0" max="50" placeholder="<%= copy.register.experienceHint %>" inputmode="numeric" maxlength="3" aria-invalid="false" data-inline-error="err-reg-experience" aria-describedby="err-reg-experience" value="<%= typeof prevExperience !== 'undefined' && prevExperience ? prevExperience : '' %>">
+            <div class="err-text" id="err-reg-experience" data-inline-error="experience" style="display:none" role="alert"><%- icon('alertTriangle', 13) %><span></span></div>
+
+            <label class="lbl" for="reg-reason"><%= copy.register.reasonLabel %></label>
+            <textarea class="inp" id="reg-reason" name="reason" rows="2" maxlength="500" placeholder="<%= copy.register.reasonPh %>" style="resize:vertical" aria-invalid="false" data-inline-error="err-reg-reason" aria-describedby="err-reg-reason"><%= typeof prevReason !== 'undefined' && prevReason ? prevReason : '' %></textarea>
+            <div class="err-text" id="err-reg-reason" data-inline-error="reason" style="display:none" role="alert"><%- icon('alertTriangle', 13) %><span></span></div>
+          </div>
+
+          <!-- B-03: ism (ixtiyoriy, B-01 `name`) -->
+          <label class="lbl" for="reg-name"><%= copy.register.name %></label>
+          <input class="inp" id="reg-name" name="name" type="text" placeholder="<%= copy.register.namePh %>" autocomplete="name" autocapitalize="words" spellcheck="false" maxlength="100" aria-required="false" aria-invalid="false" value="<%= typeof prevName !== 'undefined' && prevName ? prevName : '' %>" data-inline-error="err-reg-name" aria-describedby="err-reg-name">
+          <div class="err-text" id="err-reg-name" data-inline-error="reg-name" style="display:none" role="alert"><%- icon('alertTriangle', 13) %><span></span></div>
+
+          <!-- AUTH A-18: email majburiy (parol tiklash uchun asos) -->
+          <label class="lbl" for="reg-email"><%= copy.register.emailLabel || 'Email' %></label>
+          <input class="inp" id="reg-email" name="email" type="email" placeholder="<%= copy.register.emailPh %>" autocomplete="email" autocapitalize="off" spellcheck="false" inputmode="email" required aria-required="true" aria-invalid="false" value="<%= typeof prevEmail !== 'undefined' && prevEmail ? prevEmail : '' %>" data-inline-error="err-reg-email" aria-describedby="err-reg-email" data-disposable='<%= JSON.stringify(copy.errors.emailDisposable || '') %>' data-checking='<%= JSON.stringify(copy.register.emailChecking || '') %>' data-available='<%= JSON.stringify(copy.register.emailAvailable || '') %>'>
+          <div class="err-text" id="err-reg-email" data-inline-error="reg-email" style="display:none" role="alert"><%- icon('alertTriangle', 13) %><span></span></div>
+          <!-- D-07: live check status (Tekshirilmoqda... / Email mavjud) — aria-live polite -->
+          <div class="email-status" id="email-status" hidden role="status" aria-live="polite" aria-atomic="true"></div>
+          <!-- AUTH B-05: blur'da typo/disposable tekshiruv — real-time inline -->
+          <div class="email-suggest" id="email-suggest" hidden role="status" aria-live="polite" data-typo-tpl='<%= copy.register.emailTypo || "Did you mean %s?" %>'>
+            <button type="button" id="email-suggest-btn" class="email-suggest-btn"><%- icon('sparkles', 13) %> <span></span></button>
+          </div>
+
+          <label class="lbl" for="reg-username"><%= copy.login.username %></label>
+          <input class="inp" id="reg-username" name="username" type="text" placeholder="<%= copy.register.usernamePh %>" autocomplete="username" autocapitalize="off" spellcheck="false" inputmode="text" pattern="[a-zA-Z0-9_.-]{2,50}" required aria-required="true" aria-invalid="false" value="<%= typeof prevUsername !== 'undefined' && prevUsername ? prevUsername : '' %>" data-inline-error="err-reg-username" aria-describedby="err-reg-username">
+          <div class="err-text" id="err-reg-username" data-inline-error="reg-username" style="display:none" role="alert"><%- icon('alertTriangle', 13) %><span></span></div>
+
+          <label class="lbl" for="reg-password"><%= copy.login.password %></label>
+          <div class="pw-wrap">
+            <input class="inp" id="reg-password" name="password" type="password" placeholder="<%= copy.register.passwordPh %>" autocomplete="new-password" inputmode="text" minlength="15" maxlength="128" required aria-required="true" aria-describedby="caps-hint-reg pw-strength" aria-invalid="false" data-pw-check="1" style="padding-right:52px">
+            <div class="caps-hint" id="caps-hint-reg" hidden><%- icon('alertTriangle', 12) %> <span>CAPS LOCK</span></div>
+            <button type="button" class="pw-toggle" data-pw-toggle="reg-password" data-label-show="<%= copy.login.show %>" data-label-hide="<%= copy.login.hide %>" aria-label="<%= copy.login.show %>" aria-pressed="false">
+              <span data-pw-toggle-label><%- icon('eye', 16) %></span>
+            </button>
+          </div>
+          <div class="err-text" id="err-reg-password" data-inline-error="reg-password" data-breach-msg="<%= copy.register.passwordBreached || '' %>" style="display:none" role="alert"><%- icon('alertTriangle', 13) %><span></span></div>
+          <div class="strength on" id="pw-strength">
+            <div class="strength-bar"><div class="strength-fill" id="pw-strength-bar"></div></div>
+            <span class="strength-hint" id="pw-strength-hint" data-labels='<%= JSON.stringify(copy.register.passwordStrength) %>'></span>
+          </div>
+
+          <!-- B-03: invite kod (ixtiyoriy, yig'iladigan) -->
+          <div class="invite-row">
+            <button type="button" class="invite-toggle" id="invite-toggle" aria-expanded="false" aria-controls="invite-fields">
+              <%- icon('gift', 13) %> <span><%= copy.register.inviteToggle %></span> <%- icon('chevronDown', 13) %>
+            </button>
+          </div>
+          <div class="invite-fields" id="invite-fields" hidden>
+            <label class="lbl" for="reg-invite"><%= copy.register.invitePh %></label>
+            <input class="inp" id="reg-invite" name="invite" type="text" placeholder="<%= copy.register.invitePh %>" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="48" aria-invalid="false" value="<%= typeof prevInvite !== 'undefined' && prevInvite ? prevInvite : '' %>" data-inline-error="err-reg-invite" aria-describedby="err-reg-invite">
+            <div class="err-text" id="err-reg-invite" data-inline-error="reg-invite" style="display:none" role="alert"><%- icon('alertTriangle', 13) %><span></span></div>
+          </div>
+
+          <!-- B-08 §07: Cloudflare Turnstile — site key o'rnatilgan bo'lsa ko'rsatiladi
+               (secret backend'da; dev/test'da widget yashirin, honeypot+rate limit qoladi) -->
+          <% if (typeof turnstileSiteKey !== 'undefined' && turnstileSiteKey) { %>
+          <div class="turnstile-row" id="turnstile-row">
+            <div class="cf-turnstile" data-sitekey="<%= turnstileSiteKey %>" data-theme="auto" data-size="flexible" data-callback="onTurnstileSuccess" data-expired-callback="onTurnstileExpired" data-error-callback="onTurnstileExpired"></div>
+            <div class="err-text" id="err-reg-turnstile" style="display:none" role="alert"><%- icon('alertTriangle', 13) %><span></span></div>
+          </div>
+          <% } %>
+
+          <!-- AUTH D-24 §10: qonuniy rozilik (consent) — checkbox majburiy -->
+          <label class="consent-row" for="reg-consent">
+            <input type="checkbox" id="reg-consent" name="consent" value="on" <%= typeof prevConsent !== 'undefined' && prevConsent ? 'checked' : '' %> required aria-required="true" aria-describedby="err-reg-consent">
+            <span><%= copy.register.consentLabel %></span>
+          </label>
+          <div class="err-text" id="err-reg-consent" data-inline-error="reg-consent" style="display:none" role="alert"><%- icon('alertTriangle', 13) %><span></span></div>
+
+          <button type="submit" class="btn btn-primary auth-submit" data-analytics="register_submit"><span class="auth-spinner" aria-hidden="true"></span><%- icon('edit', 15) %> <%= copy.register.btn %></button>
+        </form>
+
+        <div class="bottom-cta">
+          <%= copy.register.hasAccount %> <a href="/user/login?lang=<%= lang %>"><%= copy.register.loginLink %></a>
+        </div>
+        <div class="trust trust--multi">
+          <span><%- icon('shield', 13) %> <%= copy.register.trustFree %></span>
+          <span><%- icon('lock', 13) %> <%= copy.register.trustData %></span>
+          <span><%- icon('mail', 13) %> <%= copy.register.trustEmail %></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-links" style="max-width:960px;margin:24px auto 0">
+      <a href="/" class="footer-link">← <%= copy.footer.home %></a>
+      <a href="/privacy" class="footer-link"><%= copy.footer.privacy %></a>
+      <a href="/terms" class="footer-link"><%= copy.footer.terms %></a>
+      <a href="/cookies" class="footer-link"><%= copy.footer.cookies %></a>
+      <a href="/admin/login" class="footer-link footer-link--admin"><%- icon('shield', 12) %> <%= copy.footer.admin %></a>
+    </div>
+  </main>
+
+  <script>
+    // AUTH B-05: real-time email check uchun CSRF token (x-csrf-token header)
+    window.__CSRF_TOKEN = '<%= csrfToken %>';
+  </script>
+  <!-- B-27: zxcvbn (Dropbox) kuch indikatori — parol client'da baholanadi,
+       serverga yuborilmaydi; faqat register sahifasida yuklanadi (821KB). -->
+  <script src="/js/vendor/zxcvbn.js" defer></script>
+  <!-- AUTH B-34: device fingerprint (hash) — hidden device_fp input'ni attach qiladi -->
+  <script src="/js/device-fingerprint.js" defer></script>
+  <script src="/js/auth.js" defer></script>
+  <script src="/js/register.js" defer></script>
+  <script src="/js/auth-validation.js" defer></script> <!-- AUTH D-29: contracts.js qoidalari (single source) -->
+  <!-- AUTH D-13: in-app browser guard (Telegram/WebView) — __INAPP_COPY__ mobile blokidan -->
+  <script>window.__INAPP_COPY__ = <%- JSON.stringify(copy.mobile || {}).replace(/</g, '\\u003c') %>;</script>
+  <script src="/js/inapp-guard.js" defer></script>
+  <% if (typeof turnstileSiteKey !== 'undefined' && turnstileSiteKey) { %>
+  <!-- B-08 §07: Cloudflare Turnstile — auto-render; submit widget tugaguncha bloklangan -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad" async defer></script>
+  <script>
+    window.onTurnstileLoad = function () {
+      var btn = document.querySelector('#form-reg .auth-submit');
+      if (btn) btn.disabled = true;
+    };
+    window.onTurnstileSuccess = function () {
+      var btn = document.querySelector('#form-reg .auth-submit');
+      if (btn) btn.disabled = false;
+      var err = document.getElementById('err-reg-turnstile');
+      if (err) err.style.display = 'none';
+    };
+    window.onTurnstileExpired = function () {
+      var btn = document.querySelector('#form-reg .auth-submit');
+      if (btn) btn.disabled = true;
+    };
+    // B-08 (review fix): widget yuklanmasa/render bo'lmasa forma o'lik qolmasin.
+    // 6s ichida iframe chiqmasa — tugma yana ochiladi (server fail-closed:
+    // user aniq xato ko'radi, abadiy bloklangan tugma emas).
+    setTimeout(function () {
+      var btn = document.querySelector('#form-reg .auth-submit');
+      var iframe = document.querySelector('#turnstile-row iframe');
+      if (btn && btn.disabled && !iframe) btn.disabled = false;
+    }, 6000);
+  </script>
+  <% } %>
+</body>
+</html>

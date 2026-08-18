@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="<%= lang || 'uz' %>" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <style>
+    body{background:var(--edikit-semantic-color-surface-default);min-height:100vh;transition:background .3s;font-family:'Source Sans 3',sans-serif;}
+    .navbar{position:sticky;top:0;z-index:100;background:var(--bg-overlay);backdrop-filter:blur(18px);border-bottom:1px solid var(--edikit-semantic-color-border-default);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+    .nav-logo{font-family:'Manrope',cursive;font-size:1.25rem;text-decoration:none;display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--edikit-semantic-color-action-primary),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .nav-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+    .nav-btn{padding:7px 12px;border-radius:9px;border:1px solid var(--edikit-semantic-color-border-default);background:var(--edikit-semantic-color-surface-input);color:var(--edikit-semantic-color-text-muted);font-family:'Source Sans 3',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:5px;}
+    .panel{max-width:680px;margin:0 auto;padding:24px 20px 80px;}
+    .greeting{font-family:'Manrope',cursive;font-size:1.5rem;display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+    .greeting-sub{font-size:.82rem;color:var(--edikit-semantic-color-text-muted);font-weight:700;margin-bottom:20px;}
+    .sec-card{background:var(--edikit-semantic-color-surface-raised);border-radius:16px;padding:18px 20px;border:1px solid var(--edikit-semantic-color-border-default);margin-bottom:14px;}
+    .sec-title{font-family:'Manrope',cursive;font-size:1.02rem;display:flex;align-items:center;gap:8px;margin:0 0 4px;}
+    .sec-sub{font-size:.76rem;color:var(--edikit-semantic-color-text-muted);font-weight:600;margin-bottom:14px;}
+    .toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--edikit-semantic-color-border-default);}
+    .toggle-row:last-child{border-bottom:none;}
+    .toggle-info{flex:1;}
+    .toggle-name{font-size:.85rem;font-weight:700;display:flex;align-items:center;gap:7px;}
+    .toggle-desc{font-size:.72rem;color:var(--edikit-semantic-color-text-muted);font-weight:600;margin-top:2px;}
+    .locked-note{display:inline-flex;align-items:center;gap:5px;font-size:.68rem;font-weight:700;color:var(--gold);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:6px;padding:2px 7px;margin-left:6px;}
+    .switch{position:relative;display:inline-block;width:46px;height:26px;flex-shrink:0;}
+    .switch input{opacity:0;width:0;height:0;}
+    .slider{position:absolute;cursor:pointer;inset:0;background:var(--edikit-semantic-color-surface-input);border:1px solid var(--edikit-semantic-color-border-default);border-radius:26px;transition:background .25s,border-color .25s;}
+    .slider::before{content:'';position:absolute;height:18px;width:18px;left:3px;top:3px;background:var(--edikit-semantic-color-text-muted);border-radius:50%;transition:transform .25s,background .25s;}
+    .switch input:checked + .slider{background:linear-gradient(135deg,var(--edikit-semantic-color-action-primary),#1d4ed8);border-color:transparent;}
+    .switch input:checked + .slider::before{transform:translateX(20px);background:#fff;}
+    .switch input:focus-visible + .slider{outline:2px solid var(--edikit-semantic-color-action-primary);outline-offset:2px;}
+    .switch input:disabled + .slider{cursor:not-allowed;opacity:.55;}
+    .save-bar{position:sticky;bottom:0;background:var(--bg-overlay);backdrop-filter:blur(18px);border-top:1px solid var(--edikit-semantic-color-border-default);padding:12px 0;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+    .save-btn{border-radius:10px;border:none;padding:12px 22px;cursor:pointer;font-family:'Source Sans 3',sans-serif;font-weight:700;font-size:.82rem;background:linear-gradient(135deg,var(--edikit-semantic-color-action-primary),#1d4ed8);color:#fff;display:flex;align-items:center;gap:7px;}
+    .save-btn:disabled{opacity:.55;cursor:not-allowed;}
+    .status-msg{font-size:.78rem;font-weight:700;}
+    .status-msg.ok{color:var(--green);}
+    .status-msg.fail{color:var(--edikit-semantic-color-action-primary);}
+    @media(max-width:600px){.toggle-row{align-items:flex-start;}.save-bar{flex-direction:column;}.save-btn{width:100%;justify-content:center;}}
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Asosiy qismga o'tish →</a>
+  <nav class="navbar">
+    <a href="/" class="nav-logo"><img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto"></a>
+    <div class="nav-right">
+      <a href="/user/panel" class="nav-btn" style="text-decoration:none"><%- icon('book', 14) %> Panel</a>
+      <a href="/user/security-profile" class="nav-btn" style="text-decoration:none"><%- icon('shieldCheck', 14) %> Xavfsizlik</a>
+      <button type="button" class="nav-btn" data-theme-toggle title="Light mode"><%- icon('moon', 16) %></button>
+      <a href="/user/logout" class="nav-btn" style="text-decoration:none"><%- icon('logOut', 14) %> Chiqish</a>
+    </div>
+  </nav>
+
+  <div class="panel" id="main">
+    <div class="greeting"><img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:26px;width:auto"> <%= notifCopy.title %></div>
+    <div class="greeting-sub"><%= notifCopy.subtitle %></div>
+
+    <div class="sec-card">
+      <div class="sec-title"><%- icon('send', 15) %> <%= notifCopy.channelsTitle %></div>
+      <div class="sec-sub"><%= notifCopy.channelsSub %></div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-name"><%- icon('send', 14) %> <%= notifCopy.telegram %></div>
+          <div class="toggle-desc">Telegram — O'zbekiston uchun standart kanal</div>
+        </div>
+        <label class="switch"><input type="checkbox" id="ch_telegram" <%= prefs.channels.telegram ? 'checked' : '' %> aria-label="<%= notifCopy.telegram %>"><span class="slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-name"><%- icon('mail', 14) %> <%= notifCopy.email %></div>
+          <div class="toggle-desc"><%= notifCopy.email %></div>
+        </div>
+        <label class="switch"><input type="checkbox" id="ch_email" <%= prefs.channels.email ? 'checked' : '' %> aria-label="<%= notifCopy.email %>"><span class="slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-name"><%- icon('bell', 14) %> <%= notifCopy.push %></div>
+          <div class="toggle-desc"><%= notifCopy.push %> (PWA)</div>
+        </div>
+        <label class="switch"><input type="checkbox" id="ch_push" <%= prefs.channels.push ? 'checked' : '' %> aria-label="<%= notifCopy.push %>"><span class="slider"></span></label>
+      </div>
+    </div>
+
+    <div class="sec-card">
+      <div class="sec-title"><%- icon('calendarDays', 15) %> <%= notifCopy.typesTitle %></div>
+      <div class="sec-sub"><%= notifCopy.typesSub %></div>
+      <% const types = [
+        { key: 'assignment', name: notifCopy.t_assignment, desc: notifCopy.desc_assignment },
+        { key: 'result', name: notifCopy.t_result, desc: notifCopy.desc_result },
+        { key: 'practice', name: notifCopy.t_practice, desc: notifCopy.desc_practice },
+        { key: 'deadline', name: notifCopy.t_deadline, desc: notifCopy.desc_deadline },
+        { key: 'feedback', name: notifCopy.t_feedback, desc: notifCopy.desc_feedback },
+        { key: 'security', name: notifCopy.t_security, desc: notifCopy.desc_security, locked: true },
+      ]; %>
+      <% for (const t of types) { %>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-name"><%- icon(t.key === 'security' ? 'shieldCheck' : 'checkCircle', 14) %> <%= t.name %>
+            <% if (t.locked) { %><span class="locked-note"><%- icon('lock', 11) %> <%= notifCopy.securityLocked %></span><% } %>
+          </div>
+          <div class="toggle-desc"><%= t.desc %></div>
+        </div>
+        <label class="switch"><input type="checkbox" id="tp_<%= t.key %>" <%= prefs.types[t.key] ? 'checked' : '' %> <%= t.locked ? 'disabled' : '' %> aria-label="<%= t.name %>"><span class="slider"></span></label>
+      </div>
+      <% } %>
+    </div>
+
+    <div class="save-bar">
+      <div id="status" class="status-msg" role="status" aria-live="polite"></div>
+      <button type="button" id="save-btn" class="save-btn"><%- icon('save', 14) %> <%= notifCopy.save %></button>
+    </div>
+  </div>
+
+  <script>
+    window.__CSRF__ = <%- JSON.stringify(__csrf || '') %>;
+    window.__NOTIF_COPY__ = {
+      saved: <%- JSON.stringify(notifCopy.saved) %>,
+      saveFail: <%- JSON.stringify(notifCopy.saveFail) %>,
+    };
+    document.addEventListener('DOMContentLoaded', function () {
+      var btn = document.getElementById('save-btn');
+      var status = document.getElementById('status');
+      var copy = window.__NOTIF_COPY__ || {};
+      btn.addEventListener('click', async function () {
+        var payload = {};
+        ['telegram', 'email', 'push'].forEach(function (c) {
+          var el = document.getElementById('ch_' + c);
+          if (el) payload['ch_' + c] = el.checked;
+        });
+        ['assignment', 'result', 'practice', 'deadline', 'feedback', 'security'].forEach(function (t) {
+          var el = document.getElementById('tp_' + t);
+          if (el) payload['tp_' + t] = el.checked;
+        });
+        btn.disabled = true;
+        status.className = 'status-msg';
+        status.textContent = '';
+        try {
+          var res = await fetch('/api/notifications/prefs', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': window.__CSRF__ || '',
+            },
+            body: JSON.stringify(payload),
+          });
+          var data = await res.json();
+          if (data.ok) {
+            status.className = 'status-msg ok';
+            status.textContent = copy.saved || 'Saqlandi';
+          } else {
+            status.className = 'status-msg fail';
+            status.textContent = copy.saveFail || 'Xatolik';
+          }
+        } catch (e) {
+          status.className = 'status-msg fail';
+          status.textContent = copy.saveFail || 'Xatolik';
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

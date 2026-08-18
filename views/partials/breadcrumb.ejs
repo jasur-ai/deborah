@@ -1,0 +1,25 @@
+<%
+// S17.09 — Breadcrumb: faqat DEEP builder/admin hierarchy'da.
+// Landing va shallow sahifalarda qo'shmang.
+// Locals: crumbs (array of { href, label }) — faqat 2+ item bo'lsa render.
+const _crumbs = (typeof crumbs !== 'undefined' && Array.isArray(crumbs) && crumbs.length > 1) ? crumbs : null;
+%>
+<% if (_crumbs) { %>
+<nav class="crumb" aria-label="Yo'l (breadcrumb)">
+  <ol class="crumb-list">
+    <% _crumbs.forEach((c, i) => { %>
+      <% const _last = i === _crumbs.length - 1; %>
+      <li class="crumb-item">
+        <% if (i > 0) { %>
+          <span class="crumb-sep" aria-hidden="true"><%- icon('chevronRight', 12) %></span>
+        <% } %>
+        <% if (!_last && c.href) { %>
+          <a href="<%= c.href %>" class="crumb-link"><%= c.label %></a>
+        <% } else { %>
+          <span class="crumb-link" aria-current="page"><%= c.label %></span>
+        <% } %>
+      </li>
+    <% }); %>
+  </ol>
+</nav>
+<% } %>

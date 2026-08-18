@@ -1,0 +1,84 @@
+<!-- Landing Hero (STEP 21/22) — 5-col copy + 7-col real product stage (Three-view grammar) -->
+<section class="ld-hero" aria-labelledby="ld-h1">
+  <div class="ld-container">
+    <div class="ld-hero-split">
+      <div class="ld-hero-copy">
+        <div class="ld-hero-badge"><span class="ld-badge-dot"></span> <%= copy.hero.badge %></div>
+        <h1 class="ld-hero-h1" id="ld-h1"><%= copy.hero.h1 %></h1>
+        <p class="ld-hero-sub"><%= copy.hero.sub %></p>
+        <div class="ld-hero-actions">
+          <a class="ld-btn ld-btn-primary" href="<%= path + '?role=student' %>" data-analytics="hero_cta_click" data-cta="primary">
+            <%= copy.hero.ctaPrimary %>
+          </a>
+          <a class="ld-btn ld-btn-ghost" href="#demo" data-analytics="hero_cta_click" data-cta="demo">
+            <%= copy.hero.ctaSecondary %>
+          </a>
+        </div>
+        <p class="ld-hero-participant">
+          <a href="/play" data-analytics="hero_join_code" data-cta="participant"><%= copy.hero.participantCta %></a>
+        </p>
+      </div>
+
+      <% // ── Product stage: demo data, real DOM, LEGIBLE (S22.05/06/08) ── %>
+      <% const STAGE_TILES = 'AAAAAAAAAAAAABBBBBBCCCCCCCCDDD'.split(''); // 13A · 6B · 8C · 3D = 30 (Qamrov 30/30 ga mos) %>
+      <% const STAGE_DIST = [['A', 43], ['B', 20], ['C', 27], ['D', 10]]; %>
+      <div class="ld-stage" role="img" aria-label="<%= copy.stage.label %> — <%= copy.stage.question %>" data-stage>
+        <div class="ld-stage-header">
+          <span class="ld-stage-label"><%= copy.stage.label %> · <%= copy.stage.participants %></span>
+          <span class="ld-stage-coverage" data-coverage><%= copy.stage.coverage %></span>
+        </div>
+        <div class="ld-stage-question"><%= copy.stage.question %></div>
+
+        <div class="ld-stage-main">
+          <!-- Director wide frame: response mosaic + signal rail -->
+          <div class="ld-frame ld-frame--director">
+            <div class="ld-frame-head">
+              <span class="ld-frame-title">Director</span>
+              <span class="ld-frame-live"><span class="ld-live-dot"></span> LIVE</span>
+            </div>
+            <div class="ld-mosaic" data-mosaic>
+              <% STAGE_TILES.forEach((t, i) => { %>
+                <span class="ld-mosaic-tile ld-mosaic--<%= t.toLowerCase() %>" style="--i:<%= i %>"></span>
+              <% }) %>
+            </div>
+            <div class="ld-rail" data-rail>
+              <% STAGE_DIST.forEach(([letter, w]) => { %>
+                <span class="ld-rail-seg ld-rail--<%= letter.toLowerCase() %>" style="--w:<%= w %>%"></span>
+              <% }) %>
+            </div>
+          </div>
+
+          <!-- Projector landscape frame: distribution + teacher action -->
+          <div class="ld-frame ld-frame--projector">
+            <div class="ld-frame-head"><span class="ld-frame-title">Projector</span></div>
+            <div class="ld-dist">
+              <% STAGE_DIST.forEach(([letter, w]) => { %>
+                <div class="ld-dist-row">
+                  <span class="ld-dist-letter"><%= letter %></span>
+                  <span class="ld-dist-track"><span class="ld-dist-bar ld-dist--<%= letter.toLowerCase() %>" data-dist style="--w:<%= w %>%"></span></span>
+                  <span class="ld-dist-pct"><%= w %>%</span>
+                </div>
+              <% }) %>
+            </div>
+            <div class="ld-stage-actions">
+              <span class="ld-discuss-chip"><span class="ld-discuss-ico" aria-hidden="true">◌</span> <%= copy.stage.discuss %></span>
+              <span class="ld-stage-correct"><%= copy.stage.correct %>: A</span>
+            </div>
+          </div>
+
+          <!-- Participant phone frame -->
+          <div class="ld-frame ld-frame--phone">
+            <div class="ld-phone-head"><span class="ld-phone-dot"></span> <%= copy.stage.label %></div>
+            <div class="ld-phone-question"><%= copy.stage.question %></div>
+            <div class="ld-phone-options">
+              <% copy.stage.phoneValues.forEach((opt, i) => { %>
+                <div class="ld-phone-opt <%= i === 0 ? 'ld-phone-opt--ok' : '' %>"><span class="ld-phone-letter"><%= 'ABCD'[i] %></span><%= opt %></div>
+              <% }) %>
+            </div>
+            <div class="ld-phone-submit" aria-hidden="true">✓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="<%= lang === 'uz-cyrl' ? 'uz-Cyrl' : lang %>" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= pushCopy.title || 'Push bildirishnomalar' %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/design/generated/tokens.css">
+  <link rel="stylesheet" href="/design/components/button.css">
+  <style>
+    .push-nav{display:flex;align-items:center;gap:8px;padding:14px 20px;border-bottom:1px solid var(--edikit-semantic-color-border-default);flex-wrap:wrap;}
+    .push-card{max-width:560px;margin:32px auto;padding:28px;border-radius:16px;border:1px solid var(--edikit-semantic-color-border-default);background:var(--edikit-semantic-color-surface-raised);}
+    .push-status{display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+    .push-badge{border-radius:999px;padding:5px 12px;font-size:.8rem;font-weight:600;}
+    .push-badge.on{background:rgba(46,196,108,.12);color:#2ec46c;}
+    .push-badge.off{background:rgba(244,63,94,.12);color:#f43f5e;}
+    .push-hint{color:var(--edikit-semantic-color-text-muted);font-size:.85rem;margin-bottom:20px;line-height:1.5;}
+    .push-note{background:rgba(59,130,246,.08);border-left:3px solid #3b82f6;padding:10px 14px;border-radius:8px;font-size:.8rem;color:var(--edikit-semantic-color-text-muted);margin-bottom:20px;}
+    .push-note.quiet{background:rgba(251,191,36,.08);border-left-color:#fbbf24;}
+    .push-btn{border-radius:10px;border:none;padding:11px 16px;cursor:pointer;font-weight:700;font-size:.8rem;background:var(--edikit-semantic-color-action-primary);color:#fff;display:inline-flex;align-items:center;gap:6px;}
+    .push-btn:disabled{opacity:.55;cursor:not-allowed;}
+    .push-btn.ghost{background:transparent;color:var(--edikit-semantic-color-text-muted);border:1px solid var(--edikit-semantic-color-border-default);}
+    @media(max-width:600px){.push-card{margin:16px;padding:20px;}}
+  </style>
+</head>
+<body>
+  <nav class="push-nav" aria-label="nav">
+    <a href="/user/panel" class="btn btn-ghost btn-sm"><%- icon('book', 14) %> Panel</a>
+    <a href="/user/notifications" class="btn btn-ghost btn-sm"><%- icon('bell', 14) %> <%= (notifCopy && notifCopy.title) || 'Bildirishnomalar' %></a>
+    <a href="/user/telegram/link" class="btn btn-ghost btn-sm"><%- icon('send', 14) %> Telegram</a>
+    <button type="button" class="btn btn-ghost btn-sm" data-theme-toggle title="Light mode"><%- icon('moon', 16) %></button>
+  </nav>
+
+  <main id="main">
+    <div class="push-card">
+      <div class="push-status">
+        <span id="push-badge" class="push-badge off"><%- icon('bell', 13) %> <span id="push-badge-text"><%= pushCopy.disabled || 'Push bildirishnomalar o\u2018chirilgan' %></span></span>
+      </div>
+      <div class="push-hint" id="push-subtitle"><%= pushCopy.subtitle || '' %></div>
+
+      <% if (!enabled) { %>
+        <div class="push-note"><%- icon('info', 13) %> <%= pushCopy.disabled || 'Push hozircha o\u2018chirilgan' %></div>
+      <% } else { %>
+        <div class="push-note quiet"><%- icon('clock', 13) %> <%= pushCopy.quiet || 'Tinch vaqt (22:00-08:00)' %> — <%= pushCopy.quietDesc || '' %></div>
+        <div id="push-actions">
+          <button type="button" id="push-enable" class="push-btn" hidden><%- icon('bell', 14) %> <%= pushCopy.enable || 'Bildirishnomalarni yoqish' %></button>
+          <button type="button" id="push-disable" class="push-btn ghost" hidden><%- icon('bellOff', 14) %> <%= pushCopy.disable || "O'chirish" %></button>
+        </div>
+        <div id="push-status-msg" class="push-hint" role="status" aria-live="polite" hidden></div>
+      <% } %>
+    </div>
+  </main>
+
+  <script src="/js/push.js"></script>
+  <script>
+    window.__PUSH_INIT__ = {
+      enabled: <%- enabled ? 'true' : 'false' %>,
+      vapidKey: <%- JSON.stringify(vapidKey || '') %>,
+      subscriptionCount: <%- subscriptionCount || 0 %>,
+      csrf: <%- JSON.stringify(csrf || '') %>,
+      copy: {
+        unsupported: <%- JSON.stringify(pushCopy.unsupported || '') %>,
+        enabled: <%- JSON.stringify(pushCopy.enabled || '') %>,
+        disabled: <%- JSON.stringify(pushCopy.disabled || '') %>,
+        fail: <%- JSON.stringify(pushCopy.fail || 'Xatolik yuz berdi') %>
+      }
+    };
+  </script>
+</body>
+</html>

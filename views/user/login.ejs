@@ -1,115 +1,202 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="<%= lang === 'uz-cyrl' ? 'uz-Cyrl' : lang %>" dir="ltr">
 <head>
   <%- include('../partials/head') %>
+  <link rel="stylesheet" href="/design/contexts/auth.css">
   <style>
-    .auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:30px 20px;background:radial-gradient(ellipse 55% 40% at 15% 20%,rgba(37,99,235,.08) 0%,transparent 65%),radial-gradient(ellipse 45% 35% at 85% 75%,rgba(56,189,248,.05) 0%,transparent 65%),var(--bg);}
-    .auth-wrap{width:100%;max-width:420px;}
-    .auth-header{text-align:center;margin-bottom:24px;}
-    .auth-title{font-family:var(--font-display);font-size:1.4rem;margin-bottom:4px;}
-    .auth-sub{color:var(--text-muted);font-size:.8rem;font-weight:700;}
-    .auth-box{background:var(--bg-card);border-radius:20px;padding:26px;border:1px solid var(--border-light);box-shadow:var(--shadow-lg);}
-    .tab-row{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:20px;background:rgba(255,255,255,.04);border-radius:10px;padding:4px;}
-    .tab{padding:9px;border-radius:7px;border:none;font-family:var(--font-body);font-size:.82rem;font-weight:800;cursor:pointer;transition:all .25s;background:transparent;color:var(--text-muted);display:flex;align-items:center;justify-content:center;gap:6px;}
-    .tab:hover{color:var(--text-primary);background:rgba(255,255,255,.04);}
-    .tab.on{background:var(--accent);color:#fff;}
-    .tab.on:hover{background:var(--accent);color:#fff;}
-    .msg{border-radius:10px;padding:10px 14px;font-size:.8rem;font-weight:700;margin-bottom:14px;display:<%= typeof error !== 'undefined' && error ? 'block' : 'none' %>;}
-    .msg.err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;display:<%= typeof error !== 'undefined' && error ? 'block' : 'none' %>;}
-    .lbl{font-size:.72rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:block;}
-    .inp{width:100%;background:rgba(255,255,255,.04);border:2px solid rgba(255,255,255,.07);border-radius:10px;padding:11px 14px;color:var(--text-primary);font-family:var(--font-body);font-size:.92rem;font-weight:700;outline:none;transition:border-color .25s,box-shadow .25s;margin-bottom:14px;}
-    .inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.15);}
-    .btn{width:100%;border:none;border-radius:10px;padding:12px;font-family:var(--font-body);font-size:.92rem;font-weight:900;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:7px;min-height:46px;}
-    .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#fff;}
-    .btn-secondary{background:linear-gradient(135deg,var(--blue),#1a6599);color:#fff;}
-    .btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px rgba(59,130,246,.35);}
-    .footer-links{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:18px;}
-    .footer-link{color:var(--text-muted);font-size:.76rem;font-weight:700;text-decoration:none;transition:color .2s;}
-    .footer-link:hover{color:var(--text-primary);}
-    .theme-floating{position:fixed;bottom:20px;right:20px;z-index:999;width:40px;height:40px;border-radius:50%;background:var(--bg-card);border:1px solid var(--border-light);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-lg);transition:all .3s ease;color:var(--text-muted);}
-    .theme-floating:hover{transform:scale(1.1);color:var(--text-primary);}
-    .oidc-divider{text-align:center;margin:14px 0;position:relative;font-size:.72rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;}
-    .oidc-divider span{background:var(--bg-card);padding:0 12px;position:relative;z-index:1;}
-    .oidc-divider::before{content:'';position:absolute;left:0;right:0;top:50%;height:1px;background:var(--border-light);}
-    .separator{height:0;margin:0;}
-    .btn-google{background:#4285f4;color:#fff;width:100%;border:none;border-radius:10px;padding:11px;font-family:var(--font-body);font-size:.85rem;font-weight:800;cursor:pointer;transition:all .25s;display:none;align-items:center;justify-content:center;gap:8px;text-decoration:none;}
-    .btn-google:hover{background:#3367d6;transform:translateY(-2px);box-shadow:0 4px 12px rgba(66,133,244,.4);}
+    /* STYLE STEP 24 — sahifaga xos override'lar (global token'lar bazasida) */
+    .auth-page{margin-top:0;}
   </style>
 </head>
 <body>
-  <div class="auth-page">
-    <div class="auth-wrap">
-      <div class="auth-header">
-        <img src="/images/logo-text.svg" alt="Edikit" style="height:32px;width:auto;margin-bottom:10px">
-        <div class="auth-title">Platformaga kirish</div>
-        <div class="auth-sub">Test yaratish va o'yinlarda qatnashish</div>
+  <a href="#main" class="skip-link"><%= copy.login.loginBtn %> →</a>
+  <%- include('../partials/nav') %>
+  <main id="main" class="auth-page" style="min-height:calc(100dvh - 64px)">
+    <div class="auth-shell">
+      <!-- ── Product proof (S24.01) — desktop ── -->
+      <div class="auth-proof" aria-hidden="true">
+        <div class="auth-proof-brand">
+          <img src="/images/logo-icon.svg" alt="Edikit" class="auth-proof-logo">
+          <span class="auth-proof-badge"><%- icon('shield', 12) %> Edikit</span>
+        </div>
+        <h1><%= copy.login.title %></h1>
+        <p class="auth-proof-sub"><%= copy.login.sub %></p>
+        <ul class="auth-proof-list">
+          <li><span class="auth-proof-ico"><%- icon('zap', 13) %></span><span><%= copy.login.proofLive %></span></li>
+          <li><span class="auth-proof-ico"><%- icon('barChart', 13) %></span><span><%= copy.login.proofInsight %></span></li>
+          <li><span class="auth-proof-ico"><%- icon('shield', 13) %></span><span><%= copy.login.proofSecure %></span></li>
+        </ul>
       </div>
+
+      <!-- ── Form card (440px) ── -->
       <div class="auth-box">
-        <div class="tab-row">
-          <button type="button" class="tab <%= mode === 'login' ? 'on' : '' %>" onclick="switchTab('login')"><%- icon('logIn', 14) %> Kirish</button>
-          <button type="button" class="tab <%= mode === 'reg' ? 'on' : '' %>" onclick="switchTab('reg')"><%- icon('edit', 14) %> Ro'yxat</button>
+        <div class="auth-header auth-header--split">
+          <img src="/images/logo-text.svg" alt="Edikit" class="auth-proof-logo">
+          <div class="auth-title"><%= mode === 'reg' ? copy.register.title : copy.login.title %></div>
+          <div class="auth-sub"><%= mode === 'reg' ? copy.register.sub : copy.login.sub %></div>
+        </div>
+
+        <nav class="lang-row" aria-label="Language">
+          <% AUTH_LANGS.forEach(function(l){ %>
+            <a class="lang-link <%= l === lang ? 'on' : '' %>" href="?lang=<%= l %>" hreflang="<%= l === 'uz-cyrl' ? 'uz-Cyrl' : l %>"><%= l === 'uz' ? 'O\'zbekcha' : (l === 'uz-cyrl' ? 'Ўзбекча' : (l === 'ru' ? 'Русский' : 'English')) %></a>
+          <% }); %>
+        </nav>
+
+        <div class="auth-tabs" role="tablist" aria-label="<%= copy.login.loginBtn %> / <%= copy.register.tab %>">
+          <button type="button" class="auth-tab" role="tab" id="tab-login" aria-controls="form-login" aria-selected="<%= mode === 'login' ? 'true' : 'false' %>" tabindex="<%= mode === 'login' ? '0' : '-1' %>"><%- icon('logIn', 14) %> <%= copy.login.loginBtn %></button>
+          <button type="button" class="auth-tab" role="tab" id="tab-reg" aria-controls="form-reg" aria-selected="<%= mode === 'reg' ? 'true' : 'false' %>" tabindex="<%= mode === 'reg' ? '0' : '-1' %>"><%- icon('edit', 14) %> <%= copy.register.tab %></button>
+        </div>
+
+        <!-- AUTH A-04: Google birinchi — ikkala forma (login/register) ustida, doim ko'rinadigan (oidcEnabled'da). -->
+        <% if (oidcEnabled) { %>
+          <a href="/auth/google" class="btn-google" data-analytics="login_google_start" data-google-btn>
+            <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84C8.87 7.48 11.26 5.38 12 5.38z"/></svg>
+            <span><%= copy.login.google %></span>
+          </a>
+          <div class="oidc-divider"><span><%= copy.login.or %></span></div>
+        <% } %>
+
+        <div id="auth-alert" class="msg <%= typeof error !== 'undefined' && error ? 'err' : '' %>" role="alert" aria-live="assertive" data-field="<%= typeof field !== 'undefined' && field ? field : '' %>"><%= typeof error !== 'undefined' && error ? error : '' %></div>
+        <!-- AUTH A-03: lockout countdown (Retry-After) — server retryAfter'dan to'ldiriladi -->
+        <div id="lockout-countdown" class="msg err" role="alert" aria-live="assertive"
+             data-seconds="<%= typeof retryAfter !== 'undefined' && retryAfter ? retryAfter : 0 %>"
+             data-lockout="<%= typeof lockout !== 'undefined' && lockout ? '1' : '0' %>"
+             data-copy='<%= JSON.stringify({ locked: copy.errors.locked, support: copy.errors.support }) %>'
+             style="display:<%= (typeof lockout !== 'undefined' && lockout) ? '' : 'none' %>">
+          <div class="lockout-line"><%- icon('alertTriangle', 14) %> <span data-lockout-text></span> <strong data-lockout-time></strong></div>
+          <div class="lockout-hint" data-lockout-hint></div>
         </div>
 
         <!-- Login Form -->
-        <form id="form-login" method="POST" action="/user/login" style="display:<%= mode === 'login' ? 'block' : 'none' %>">
+        <form id="form-login" class="auth-form <%= mode === 'login' ? 'is-active' : '' %>" role="tabpanel" aria-labelledby="tab-login" method="POST" action="/user/login" data-device-fp>
           <input type="hidden" name="mode" value="login">
+          <input type="hidden" name="lang" value="<%= lang %>">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-          <div class="msg<%= mode === 'login' && typeof error !== 'undefined' && error ? ' err' : '' %>"><%= mode === 'login' && typeof error !== 'undefined' ? error : '' %></div>
-          <label class="lbl">Foydalanuvchi nomi</label>
-          <input class="inp" name="username" type="text" placeholder="user" autocomplete="username" autocapitalize="off" required>
-          <label class="lbl">Parol</label>
-          <input class="inp" name="password" type="password" placeholder="••••••" autocomplete="current-password" required>
-          <button type="submit" class="btn btn-primary"><%- icon('logIn', 14) %> Kirish</button>
+
+          <label class="lbl" for="login-username"><%= copy.login.username %></label>
+          <input class="inp" id="login-username" name="username" type="text" placeholder="<%= copy.login.usernamePh %>" autocomplete="username webauthn" autocapitalize="off" spellcheck="false" inputmode="text" required aria-required="true" aria-describedby="err-username" aria-invalid="false" value="<%= mode === 'login' && typeof prevUsername !== 'undefined' && prevUsername ? prevUsername : '' %>" data-inline-error="err-username">
+          <div class="err-text" id="err-username" data-inline-error="login-username" style="display:none" role="alert"><%- icon('alertTriangle', 13) %><span><%= copy.errors.required %></span></div>
+
+          <label class="lbl" for="login-password"><%= copy.login.password %></label>
+          <div class="pw-wrap">
+            <input class="inp" id="login-password" name="password" type="password" placeholder="<%= copy.login.passwordPh %>" autocomplete="current-password" inputmode="text" required aria-required="true" aria-describedby="caps-hint-login" aria-invalid="false" style="padding-right:52px">
+            <div class="caps-hint" id="caps-hint-login" hidden><%- icon('alertTriangle', 12) %> <span>CAPS LOCK</span></div>
+            <button type="button" class="pw-toggle" data-pw-toggle="login-password" data-label-show="<%= copy.login.show %>" data-label-hide="<%= copy.login.hide %>" aria-label="<%= copy.login.show %>" aria-pressed="false">
+              <span data-pw-toggle-label><%- icon('eye', 16) %></span>
+            </button>
+          </div>
+          <!-- AUTH A-04: parol uchun inline xato (server field='password') -->
+          <div class="err-text" id="err-login-password" data-inline-error="login-password" style="display:none" role="alert"><%- icon('alertTriangle', 13) %><span></span></div>
+
+          <div class="field-row">
+            <label class="auth-remember"><input type="checkbox" name="remember" value="on"><span><%= copy.login.remember %></span></label>
+            <a href="/user/forgot?lang=<%= lang %>" class="forgot-link"><%= copy.login.forgot %></a>
+          </div>
+
+          <button type="submit" class="btn btn-primary auth-submit" data-analytics="login_password_start"><span class="auth-spinner" aria-hidden="true"></span><%- icon('logIn', 15) %> <%= copy.login.loginBtn %></button>
         </form>
 
-        <!-- Google OIDC Sign-In (shown when configured) -->
-        <div class="oidc-divider"><span>yoki</span></div>
-        <a href="/auth/google" class="btn btn-google" id="btn-google" style="display:none">
-          <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#fff" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#fff" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#fff" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          Google bilan kirish
-        </a>
-        <script>
-          fetch('/auth/status').then(r=>r.json()).then(s=>{
-            if(s.enabled) document.getElementById('btn-google').style.display='flex';
-          }).catch(()=>{});
-        </script>
-
-        <div class="separator"><span></span></div>
+        <!-- AUTH A-27: Passkey bilan kirish — Conditional UI + modal tugma (faqat login tab) -->
+        <div class="passkey-login" id="passkey-login" hidden
+             data-copy='<%= JSON.stringify({ error: copy.login.passkeyError, rate: copy.login.passkeyRate }) %>'>
+          <div class="oidc-divider"><span><%= copy.login.or %></span></div>
+          <button type="button" id="passkey-login-btn" class="passkey-btn" data-analytics="login_passkey_start">
+            <%- icon('key', 17) %> <span><%= copy.login.passkey %></span>
+          </button>
+          <p class="passkey-hint" id="passkey-login-hint" role="status" aria-live="polite"></p>
+        </div>
 
         <!-- Register Form -->
-        <form id="form-reg" method="POST" action="/user/login" style="display:<%= mode === 'reg' ? 'block' : 'none' %>">
+        <form id="form-reg" class="auth-form <%= mode === 'reg' ? 'is-active' : '' %>" role="tabpanel" aria-labelledby="tab-reg" method="POST" action="/user/login">
           <input type="hidden" name="mode" value="reg">
+          <input type="hidden" name="lang" value="<%= lang %>">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-          <div class="msg<%= mode === 'reg' && typeof error !== 'undefined' && error ? ' err' : '' %>"><%= mode === 'reg' && typeof error !== 'undefined' ? error : '' %></div>
-          <label class="lbl">Foydalanuvchi nomi</label>
-          <input class="inp" name="username" type="text" placeholder="username" autocomplete="username" autocapitalize="off" pattern="[a-zA-Z0-9_]{2,20}" required>
-          <label class="lbl">Parol</label>
-          <input class="inp" name="password" type="password" placeholder="kamida 4 ta belgi" autocomplete="new-password" minlength="4" required>
-          <button type="submit" class="btn btn-secondary"><%- icon('edit', 14) %> Ro'yxatdan o'tish</button>
+
+          <label class="lbl" for="reg-username"><%= copy.login.username %></label>
+          <input class="inp" id="reg-username" name="username" type="text" placeholder="<%= copy.register.usernamePh %>" autocomplete="username" autocapitalize="off" spellcheck="false" inputmode="text" pattern="[a-zA-Z0-9_]{2,20}" required aria-required="true" aria-invalid="false" value="<%= mode === 'reg' && typeof prevUsername !== 'undefined' && prevUsername ? prevUsername : '' %>" data-inline-error="err-reg-username" aria-describedby="err-reg-username">
+          <div class="err-text" id="err-reg-username" data-inline-error="reg-username" style="display:none" role="alert"><%- icon('alertTriangle', 13) %><span></span></div>
+
+          <!-- AUTH A-18: email majburiy (parol tiklash uchun asos) -->
+          <label class="lbl" for="reg-email"><%= copy.login.email || 'Email' %></label>
+          <input class="inp" id="reg-email" name="email" type="email" placeholder="<%= copy.register.emailPh %>" autocomplete="email" autocapitalize="off" spellcheck="false" inputmode="email" required aria-required="true" aria-invalid="false" value="<%= mode === 'reg' && typeof prevEmail !== 'undefined' && prevEmail ? prevEmail : '' %>" data-inline-error="err-reg-email" aria-describedby="err-reg-email">
+          <!-- AUTH A-21: honeypot — CSS'da ko'rinmaydi, bot'lar to'ldiradi -->
+          <div class="hp-field" aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden">
+            <label for="reg-website">Website (bot tekshiruvi)</label>
+            <input id="reg-website" name="website" type="text" tabindex="-1" autocomplete="off" value="">
+          </div>
+          <div class="err-text" id="err-reg-email" data-inline-error="reg-email" style="display:none" role="alert"><%- icon('alertTriangle', 13) %><span></span></div>
+
+          <label class="lbl" for="reg-password"><%= copy.login.password %></label>
+          <div class="pw-wrap">
+            <input class="inp" id="reg-password" name="password" type="password" placeholder="<%= copy.register.passwordPh %>" autocomplete="new-password" inputmode="text" minlength="8" required aria-required="true" aria-describedby="caps-hint-reg" aria-invalid="false" style="padding-right:52px">
+            <div class="caps-hint" id="caps-hint-reg" hidden><%- icon('alertTriangle', 12) %> <span>CAPS LOCK</span></div>
+            <button type="button" class="pw-toggle" data-pw-toggle="reg-password" data-label-show="<%= copy.login.show %>" data-label-hide="<%= copy.login.hide %>" aria-label="<%= copy.login.show %>" aria-pressed="false">
+              <span data-pw-toggle-label><%- icon('eye', 16) %></span>
+            </button>
+          </div>
+          <div class="err-text" id="err-reg-password" data-inline-error="reg-password" style="display:none" role="alert"><%- icon('alertTriangle', 13) %><span></span></div>
+          <div class="strength on" id="pw-strength">
+            <div class="strength-bar"><div class="strength-fill" id="pw-strength-bar"></div></div>
+            <span class="strength-hint" id="pw-strength-hint" data-labels='<%= JSON.stringify(copy.register.passwordStrength) %>'></span>
+          </div>
+
+          <!-- AUTH A-19: teacher arizasi tanlovi (register'da) -->
+          <label class="auth-check" style="display:flex;gap:8px;align-items:flex-start;margin:12px 0 4px;cursor:pointer;font-size:.82rem">
+            <input type="checkbox" id="reg-want-teacher" name="role" value="teacher" style="margin-top:2px;width:16px;height:16px;accent-color:var(--accent-glow)">
+            <span><%- icon('bookOpen', 14) %> <%= copy.register.teacherCta || "O'qituvchi sifatida ro'yxatdan o'tish (admin tasdiqlaydi)" %></span>
+          </label>
+          <div id="reg-teacher-fields" style="display:none;margin-top:8px">
+            <label class="lbl" for="reg-university"><%= copy.register.universityPh || 'Universitet / tashkilot' %></label>
+            <input class="inp" id="reg-university" name="university" type="text" placeholder="<%= copy.register.universityPh || 'Universitet / tashkilot' %>" autocomplete="organization" autocapitalize="words" spellcheck="false" maxlength="200" style="margin-bottom:8px">
+            <label class="lbl" for="reg-reason"><%= copy.register.reasonPh || 'Ariza matni (ixtiyoriy)' %></label>
+            <textarea class="inp" id="reg-reason" name="reason" rows="2" placeholder="<%= copy.register.reasonPh || 'Ariza matni (ixtiyoriy)' %>" maxlength="500" style="resize:vertical;margin-bottom:8px"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-secondary auth-submit" data-analytics="register_submit"><span class="auth-spinner" aria-hidden="true"></span><%- icon('edit', 15) %> <%= copy.register.btn %></button>
         </form>
-      </div>
-      <div class="footer-links">
-        <a href="/" class="footer-link">← Bosh sahifa</a>
-        <a href="/admin/login" class="footer-link">Admin panel</a>
+
+        <div class="bottom-cta" style="<%= mode === 'reg' ? '' : 'display:none' %>" id="has-account">
+          <%= copy.register.hasAccount %> <a href="?mode=login&lang=<%= lang %>"><%= copy.register.loginLink %></a>
+        </div>
+        <div class="bottom-cta" style="<%= mode === 'login' ? '' : 'display:none' %>" id="no-account">
+          <%= copy.login.noAccount %> <a href="/user/register?lang=<%= lang %>" data-analytics="login_signup_click"><%= copy.login.signup %></a>
+        </div>
+        <div class="trust"><%- icon('shield', 13) %> <%= copy.login.trust %></div>
       </div>
     </div>
-  </div>
 
-  <button type="button" class="theme-floating" data-theme-toggle aria-label="Switch theme"><%- icon('moon', 16) %></button>
+    <div class="footer-links" style="max-width:960px;margin:24px auto 0">
+      <a href="/" class="footer-link">← <%= copy.footer.home %></a>
+      <a href="/privacy" class="footer-link"><%= copy.footer.privacy %></a>
+      <a href="/terms" class="footer-link"><%= copy.footer.terms %></a>
+      <a href="/cookies" class="footer-link"><%= copy.footer.cookies %></a>
+      <a href="/admin/login" class="footer-link footer-link--admin"><%- icon('shield', 12) %> <%= copy.footer.admin %></a>
+    </div>
+  </main>
 
+  <script src="/js/auth.js" defer></script>
+  <script src="/js/auth-validation.js" defer></script> <!-- AUTH D-29: contracts.js qoidalari (single source) -->
+  <script src="/js/passkey-login.js" defer></script>
+  <script src="/js/device-fingerprint.js" defer></script>
+  <!-- AUTH D-13: in-app browser guard (Telegram/WebView) — __INAPP_COPY__ mobile blokidan -->
+  <script>window.__INAPP_COPY__ = <%- JSON.stringify(copy.mobile || {}).replace(/</g, '\\u003c') %>;</script>
+  <script src="/js/inapp-guard.js" defer></script>
   <script>
-    function switchTab(mode) {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
-      if (mode === 'login') {
-        document.querySelector('.tab-row .tab:first-child').classList.add('on');
-        document.getElementById('form-login').style.display = 'block';
-        document.getElementById('form-reg').style.display = 'none';
-      } else {
-        document.querySelector('.tab-row .tab:last-child').classList.add('on');
-        document.getElementById('form-login').style.display = 'none';
-        document.getElementById('form-reg').style.display = 'block';
+    // AUTH A-19: teacher checkbox → university/reason maydonlarini ochish
+    (function () {
+      'use strict';
+      var cb = document.getElementById('reg-want-teacher');
+      var fields = document.getElementById('reg-teacher-fields');
+      if (cb && fields) {
+        cb.addEventListener('change', function () {
+          fields.style.display = cb.checked ? 'block' : 'none';
+          var u = document.getElementById('reg-university');
+          if (u) u.required = cb.checked;
+        });
       }
-    }
+    })();
+    // AUTH D-07: lockout countdown endi public/js/auth.js'da (initLockoutCountdown)
+    // inline dublikat olib tashlandi — ikki timer raqobati yo'qoldi
   </script>
 </body>
 </html>

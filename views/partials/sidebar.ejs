@@ -25,7 +25,7 @@ const _isActive = (href) => {
 <aside class="shell-sidebar" id="shell-sidebar" role="navigation" aria-label="Asosiy navigatsiya">
   <div class="shell-side-head">
     <a href="/" class="shell-brand" aria-label="Edikit bosh sahifa">
-      <img src="/images/logo-icon.svg" alt="" class="logo-img" style="height:28px;width:auto">
+      <img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto">
       <span class="shell-brand-name">Edikit</span>
     </a>
     <button type="button" class="shell-close" data-shell-close aria-label="Yopish"><%- icon('close', 16) %></button>
@@ -134,9 +134,22 @@ const _isActive = (href) => {
     <% } %>
   </nav>
 
-  <div class="shell-side-foot">
-    <a href="/" class="shell-foot-link"><%- icon('home', 14) %> Bosh sahifa</a>
-    <button type="button" class="shell-foot-link" data-theme-toggle title="Temani almashtirish"><%- icon('moon', 14) %></button>
+  <!-- S17.11: Account menu — theme + home + logout grouped (logout primary emas) -->
+  <div class="shell-account" data-shell-account>
+    <button type="button" class="shell-account-btn" aria-haspopup="true" aria-expanded="false" aria-controls="shell-account-menu">
+      <span class="shell-nav-ico"><%- icon('user', 15) %></span>
+      <span>
+        <span class="shell-account-name"><%= _uname || _roleLabel %></span>
+        <span class="shell-account-sub"><%= _roleLabel %></span>
+      </span>
+      <span class="shell-nav-ico" style="margin-left:auto;opacity:.6"><%- icon('chevronDown', 12) %></span>
+    </button>
+    <div class="shell-account-menu" id="shell-account-menu">
+      <a href="/" class="shell-account-menu-item"><span class="shell-nav-ico"><%- icon('home', 14) %></span> Bosh sahifa</a>
+      <a href="/user/panel" class="shell-account-menu-item"><span class="shell-nav-ico"><%- icon('grid', 14) %></span> Panel</a>
+      <%- include('theme-control') %>
+      <a href="/user/logout" class="shell-account-menu-item shell-account-menu-item--logout"><span class="shell-nav-ico"><%- icon('logOut', 14) %></span> Chiqish</a>
+    </div>
   </div>
 </aside>
 

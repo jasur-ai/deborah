@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="<%= lang === 'uz-cyrl' ? 'uz-Cyrl' : lang %>" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <link rel="stylesheet" href="/css/auth.css">
+  <style>
+    /* AUTH B-16 + design-lint S37.05: inline visual style → klasslar */
+    .ta-main{max-width:520px}
+    .ta-brand{text-align:center;margin-bottom:20px}
+    .ta-title{margin-top:10px}
+    .ta-card-raised{background:var(--edikit-semantic-color-surface-raised);border:1px solid var(--edikit-semantic-color-border-subtle);border-radius:14px;padding:22px;text-align:center}
+    .ta-icon{font-size:2.2rem;line-height:1;margin-bottom:10px}
+    .ta-msg{margin:0 0 8px;font-weight:600;font-size:.95rem}
+    .ta-sub{margin:0;color:var(--edikit-semantic-color-text-secondary);font-size:.83rem;line-height:1.5}
+    .ta-note-green{margin-top:12px;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);border-radius:10px;padding:10px 12px;font-size:.82rem;text-align:left}
+    .ta-card-red{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.25);border-radius:14px;padding:22px}
+    .ta-card-raised-sm{background:var(--edikit-semantic-color-surface-raised);border:1px solid var(--edikit-semantic-color-border-subtle);border-radius:10px;padding:12px 14px;margin:10px 0;font-size:.84rem}
+    .ta-label{display:block;margin-bottom:4px;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--edikit-semantic-color-text-secondary)}
+    .ta-hint{margin:12px 0 0;color:var(--edikit-semantic-color-text-secondary);font-size:.8rem;text-align:center}
+    .ta-actions{display:flex;gap:10px;justify-content:center;margin-top:12px}
+  </style>
+</head>
+<body class="auth-body">
+  <a href="#main" class="skip-link">Asosiy qismga o'tish →</a>
+  <main class="auth-card ta-main" id="main">
+    <div class="auth-brand ta-brand">
+      <img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:44px;width:auto">
+      <div class="auth-title ta-title"><%- status === 'teacher_rejected' ? copy.rejectedTitle : copy.pendingTitle %></div>
+    </div>
+
+    <% if (status === 'teacher_pending') { %>
+      <div class="auth-status-card ta-card-raised">
+        <div class="ta-icon" aria-hidden="true">⏳</div>
+        <p class="ta-msg"><%- copy.pendingMsg %></p>
+        <p class="ta-sub"><%- copy.pendingSub %></p>
+        <% if (notification) { %>
+          <div class="ta-note-green">
+            <%- icon('checkCircle', 14) %> <%- notification.message %>
+          </div>
+        <% } %>
+      </div>
+    <% } else { %>
+      <div class="auth-status-card ta-card-red">
+        <div class="ta-icon" style="text-align:center" aria-hidden="true">🚫</div>
+        <p class="ta-msg" style="text-align:center"><%- copy.rejectedMsg %></p>
+        <% if (rejectionReason) { %>
+          <div class="ta-card-raised-sm">
+            <strong class="ta-label"><%- copy.reasonLabel %></strong>
+            <%- rejectionReason %>
+          </div>
+        <% } %>
+        <% if (notification && notification.reason) { %>
+          <div class="ta-note-green" style="margin-top:12px">
+            <%- icon('alertTriangle', 14) %> <%- notification.message %><% if (notification.reason) { %>: <%- notification.reason %><% } %>
+          </div>
+        <% } %>
+
+        <!-- AUTH B-16 §12/§13: cooldown + qayta ariza + apellyatsiya -->
+        <% if (typeof cooldown !== 'undefined' && cooldown) { %>
+          <% if (cooldown.active) { %>
+            <p class="ta-hint"><%- icon('clock', 13) %> <%= copy.cooldownActive.replace('__days__', cooldown.days) %></p>
+            <div class="ta-actions">
+              <a href="/user/register?role=teacher" class="btn btn-secondary" aria-disabled="true" style="opacity:.55;pointer-events:none"><%- icon('refresh', 14) %> <%= copy.reapplyBtn %></a>
+              <a href="mailto:support@edikit.uz?subject=Teacher%20ariza%20apellyatsiya" class="btn btn-quiet"><%- icon('mail', 14) %> <%= copy.appeal %></a>
+            </div>
+          <%          } else { %>
+            <p class="ta-hint"><%- copy.reapply %></p>
+            <div class="ta-actions">
+              <a href="/user/register?role=teacher" class="btn btn-primary"><%- icon('refresh', 14) %> <%= copy.reapplyBtn %></a>
+              <a href="mailto:support@edikit.uz?subject=Teacher%20ariza%20apellyatsiya" class="btn btn-quiet"><%- icon('mail', 14) %> <%= copy.appeal %></a>
+            </div>
+            <!-- AUTH B-36 §12: in-app apellyatsiya formasi (cooldown o'tgach) -->
+            <div class="ta-appeal" style="margin-top:18px;text-align:left">
+              <% if (typeof appealSent !== 'undefined' && appealSent) { %>
+                <p class="ta-note-green" role="status" aria-live="polite"><%- icon('checkCircle', 14) %> <%= copy.appealSent %></p>
+              <% } else { %>
+                <label for="ta-appeal-reason" style="display:block;font-size:14px;font-weight:600;margin-bottom:6px"><%- copy.appeal %></label>
+                <textarea id="ta-appeal-reason" class="inp" rows="4" maxlength="500" minlength="20" placeholder="<%= copy.appealReasonPh %>" aria-describedby="ta-appeal-err" style="width:100%;resize:vertical"></textarea>
+                <div class="err-text" id="ta-appeal-err" style="display:none" role="alert"></div>
+                <button type="button" id="ta-appeal-submit" class="btn btn-secondary" data-analytics="teacher_appeal_submit" style="margin-top:8px"><%- icon('send', 14) %> <%= copy.appealSubmit %></button>
+              <% } %>
+            </div>
+          <% } %>
+        <% } else { %>
+          <p class="ta-hint"><%- copy.reapply %></p>
+        <% } %>
+      </div>
+    <% } %>
+
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:20px">
+      <a href="/" class="btn btn-secondary"><%- icon('home', 15) %> <%- copy.home %></a>
+      <a href="/user/logout" class="btn btn-quiet"><%- icon('logOut', 15) %> <%- copy.logout %></a>
+    </div>
+  </main>
+
+  <script>
+    window.__CSRF_TOKEN = '<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>';
+  </script>
+  <script>
+    // AUTH B-36 §12: apellyatsiya — CSRF + 20-500 belgi; muvaffaqiyatda qayta yuklash
+    (function () {
+      var btn = document.getElementById('ta-appeal-submit');
+      var txt = document.getElementById('ta-appeal-reason');
+      if (!btn || !txt) return;
+      var csrf = window.__CSRF_TOKEN || '';
+      btn.addEventListener('click', function () {
+        var reason = (txt.value || '').trim();
+        var err = document.getElementById('ta-appeal-err');
+        if (reason.length < 20) {
+          if (err) { err.textContent = '<%= copy.appealReasonPh %>'; err.style.display = 'flex'; }
+          txt.focus();
+          return;
+        }
+        if (err) err.style.display = 'none';
+        btn.disabled = true;
+        fetch('/api/teacher/appeal', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrf },
+          body: JSON.stringify({ reason: reason }),
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            if (d && d.ok) { window.location.href = '/user/teacher-approval?appeal=1'; return; }
+            if (err && d) { err.textContent = d.error === 'cooldown_active' ? '<%= copy.cooldownActive.replace("__days__", "1") %>' : (d.error || 'Error'); err.style.display = 'flex'; }
+          })
+          .catch(function () { if (err) { err.textContent = 'Server error'; err.style.display = 'flex'; } })
+          .finally(function () { btn.disabled = false; });
+      });
+    })();
+  </script>
+</body>
+</html>

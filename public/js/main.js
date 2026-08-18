@@ -7,16 +7,6 @@ const $ = (id) => document.getElementById(id);
 const qs = (sel) => document.querySelector(sel);
 const qsa = (sel) => document.querySelectorAll(sel);
 
-// ── HTML Escape (XSS protection) ──
-function esc(str) {
-  return String(str || '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
 // ── Debounce ──
 function debounce(fn, delay = 300) {
   let timer;
@@ -73,68 +63,35 @@ async function copyToClipboard(text) {
   }
 }
 
-// ── Show notification (temporary) ──
-function showToast(message, type = 'ok', duration = 2000) {
-  const existing = qs('.toast');
-  if (existing) existing.remove();
+// ── Show notification / Confirm dialog ──
+// showToast va showConfirm endi /js/components/overlays.js da (S15)
+// — reusable semantic dialog/toast component'lari, inline CSS yo'q.
 
-  const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
-  toast.textContent = message;
-  toast.style.cssText = `
-    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    z-index: 9999; padding: 12px 24px; border-radius: 12px;
-    font-family: 'Nunito', sans-serif; font-size: .85rem; font-weight: 800;
-    background: ${type === 'ok' ? 'rgba(56,189,248,.15)' : 'rgba(37,99,235,.15)'};
-    border: 1px solid ${type === 'ok' ? 'rgba(56,189,248,.3)' : 'rgba(37,99,235,.3)'};
-    color: ${type === 'ok' ? 'var(--green)' : 'var(--accent)'};
-    backdrop-filter: blur(10px); box-shadow: 0 8px 30px rgba(0,0,0,.4);
-    animation: slideUp .3s ease-out;
-  `;
-  document.body.appendChild(toast);
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transition = 'opacity .3s';
-    setTimeout(() => toast.remove(), 300);
-  }, duration);
-}
-
-// ── Confirm dialog ──
-function showConfirm(title, sub, okText = 'Ha') {
-  return new Promise((resolve) => {
-    const existing = qs('.confirm-overlay');
-    if (existing) existing.remove();
-
-    const overlay = document.createElement('div');
-    overlay.className = 'confirm-overlay';
-    overlay.style.cssText = `
-      position: fixed; inset: 0; z-index: 950; display: flex;
-      align-items: center; justify-content: center;
-      padding: 20px; background: rgba(0,0,0,.6);
-      backdrop-filter: blur(4px); animation: fadeIn .15s ease;
-    `;
-    overlay.innerHTML = `
-      <div style="background:var(--surf);border-radius:18px;padding:24px;
-        width:100%;max-width:340px;border:1px solid var(--border);text-align:center;
-        animation:slideUp .2s ease;">
-        <div style="font-family:'Righteous',cursive;font-size:1.1rem;margin-bottom:6px;">${esc(title)}</div>
-        <p style="color:var(--muted);font-size:.82rem;line-height:1.6;margin-bottom:18px;">${esc(sub)}</p>
-        <div style="display:flex;gap:8px;">
-          <button id="conf-no" style="flex:1;padding:11px;border-radius:10px;border:1px solid var(--border);
-            background:rgba(255,255,255,.06);color:var(--muted);font-family:'Nunito',sans-serif;
-            font-size:.88rem;font-weight:900;cursor:pointer;">Bekor</button>
-          <button id="conf-yes" style="flex:1;padding:11px;border-radius:10px;border:none;
-            background:linear-gradient(135deg,var(--accent),#1d4ed8);color:#fff;
-            font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:900;cursor:pointer;">${esc(okText)}</button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(overlay);
-
-    overlay.querySelector('#conf-no').onclick = () => { overlay.remove(); resolve(false); };
-    overlay.querySelector('#conf-yes').onclick = () => { overlay.remove(); resolve(true); };
-    overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); resolve(false); } };
-  });
+// ── S16.04: Button pending state ──
+// Original label va width saqlanadi; duplicate submit bloklanadi.
+// Usage: const done = setPending(btn, 'Saqlanmoqda…'); try { … } finally { done(); }
+function setPending(btn, pendingLabel) {
+  if (!btn || btn.dataset.__pending) return () => {};
+  btn.dataset.__pending = '1';
+  const label = btn.querySelector('.btn-label');
+  const original = label ? label.textContent : btn.textContent;
+  const width = btn.getBoundingClientRect().width;
+  btn.classList.add('is-loading');
+  btn.setAttribute('aria-busy', 'true');
+  btn.disabled = true;
+  // width barqaror — label almashganda sakrash yo'q
+  btn.style.minWidth = width + 'px';
+  if (label) label.textContent = pendingLabel || original;
+  else btn.textContent = pendingLabel || original;
+  return function done() {
+    btn.classList.remove('is-loading');
+    btn.removeAttribute('aria-busy');
+    btn.disabled = false;
+    btn.style.minWidth = '';
+    if (label) label.textContent = original;
+    else btn.textContent = original;
+    delete btn.dataset.__pending;
+  };
 }
 
 // ── CSRF-safe fetch wrapper ──

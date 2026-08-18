@@ -1,0 +1,38 @@
+<!-- Landing how (STEP 21/22) — Ask/See/Adapt, split editorial archetype -->
+<section class="ld-how" aria-labelledby="ld-how-title" id="how">
+  <div class="ld-container">
+    <div class="ld-how-split">
+      <div class="ld-how-main">
+        <h2 class="ld-section-title" id="ld-how-title"><%= copy.how.title %></h2>
+        <div class="ld-how-tabs" data-tabs role="tablist" aria-label="<%= copy.how.title %>">
+          <button class="ld-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="how-panel-teacher" id="how-tab-teacher" data-how-tab="teacher"><%= copy.how.teacherTab %></button>
+          <button class="ld-tab" type="button" role="tab" aria-selected="false" aria-controls="how-panel-student" tabindex="-1" id="how-tab-student" data-how-tab="student"><%= copy.how.studentTab %></button>
+        </div>
+      </div>
+      <div class="ld-how-aside">
+        <div class="ld-how-steps" id="how-panel-teacher" role="tabpanel" aria-labelledby="how-tab-teacher" data-how-steps="teacher">
+          <% copy.how.teacherSteps.forEach((s, i) => { %>
+            <div class="ld-step">
+              <div class="ld-step-num"><%= i + 1 %></div>
+              <div class="ld-step-body">
+                <h3 class="ld-step-title"><%= s.title %></h3>
+                <p class="ld-step-desc"><%= s.desc %></p>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+        <div class="ld-how-steps" id="how-panel-student" role="tabpanel" aria-labelledby="how-tab-student" data-how-steps="student" hidden>
+          <% copy.how.studentSteps.forEach((s, i) => { %>
+            <div class="ld-step">
+              <div class="ld-step-num"><%= i + 1 %></div>
+              <div class="ld-step-body">
+                <h3 class="ld-step-title"><%= s.title %></h3>
+                <p class="ld-step-desc"><%= s.desc %></p>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

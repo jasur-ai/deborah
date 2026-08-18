@@ -1,20 +1,64 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="uz" dir="ltr">
 <head>
   <%- include('partials/head') %>
   <style>
-    .error-page{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px;background:var(--bg);}
-    .error-code{font-family:'Righteous',cursive;font-size:clamp(5rem,15vw,10rem);line-height:1;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-    .error-msg{font-size:1.1rem;font-weight:800;color:var(--text);margin:12px 0 24px;max-width:400px;}
-    .error-btn{padding:12px 32px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#1d4ed8);color:#fff;border:none;font-family:'Nunito',sans-serif;font-size:.93rem;font-weight:900;cursor:pointer;text-decoration:none;transition:all .2s;}
-    .error-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,99,235,.4);}
+    /* S34.04: Error sahifasi — Evidence Mark + restrained Response Mosaic (giant emoji/mascot YO'Q) */
+    .error-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--edikit-semantic-color-surface-default, #080C1A);}
+    .error-page .error-box{width:100%;max-width:480px;}
+    .error-mark{width:56px;height:56px;margin-bottom:18px;opacity:.95;}
+    .error-code{font-family:var(--font-display, 'Manrope', sans-serif);font-size:clamp(3rem,9vw,5.5rem);line-height:1;font-weight:800;color:var(--edikit-semantic-color-action-primary, #1746D1);margin-bottom:10px;letter-spacing:-.02em;}
+    .error-title{font-size:1.15rem;font-weight:700;color:var(--edikit-semantic-color-text-primary, #F2F4F8);margin-bottom:8px;}
+    .error-desc{font-size:.92rem;line-height:1.65;color:var(--edikit-semantic-color-text-secondary, #A8B0C4);margin-bottom:6px;}
+    .error-ref{font-size:.72rem;color:var(--text-tertiary, #6B7288);margin:6px 0 0;font-variant-numeric:tabular-nums;}
+    .error-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;}
+    /* S34.05: btn-primary/btn-quiet component'dan (inline gradient yo'q) */
+    .error-actions .btn{min-height:44px;}
+    .error-technical{margin-top:18px;font-size:.74rem;color:var(--text-tertiary, #6B7288);}
+    .error-technical summary{cursor:pointer;}
+    .error-technical pre{white-space:pre-wrap;margin-top:8px;padding:10px 12px;background:var(--edikit-semantic-color-surface-raised, #0F1630);border:1px solid var(--edikit-semantic-color-border-subtle, #2C3346);border-radius:8px;color:var(--edikit-semantic-color-text-muted, #8B96B3);}
   </style>
 </head>
 <body>
   <div class="error-page">
-    <div class="error-code"><%= typeof status !== 'undefined' ? status : '500' %></div>
-    <div class="error-msg"><%= typeof message !== 'undefined' ? message : 'Xatolik yuz berdi' %></div>
-    <a href="/" class="error-btn">← Bosh sahifaga</a>
+    <div class="error-box">
+      <!-- S34.04: Evidence Mark — brand illustration, playful mascot emas -->
+      <img src="/images/brand/evidence-mark.svg" alt="Edikit" class="error-mark" width="56" height="56">
+      <div class="error-code"><%= typeof status !== 'undefined' ? status : '500' %></div>
+
+      <% const errStatus = typeof status !== 'undefined' ? status : 500; %>
+      <% let stateTitle, stateDesc;
+      if (errStatus === 404) { stateTitle = 'Sahifa topilmadi'; stateDesc = (typeof message !== 'undefined' && message) ? message : 'So\'ralgan manzil mavjud emas yoki ko\'chirilgan. Manzilni tekshirib qaytadan urinib ko\'ring.'; }
+      else if (errStatus === 403) { stateTitle = 'Ruxsat yo\'q'; stateDesc = 'Bu sahifani ko\'rish uchun sizda huquq yetarli emas. Agar bu xato bo\'lsa, hisobingiz egasiga murojaat qiling.'; }
+      else if (errStatus === 503) { stateTitle = 'Vaqtinchalik ishlamayapmiz'; stateDesc = 'Xizmat hozir texnik ishlar tufayli vaqtincha to\'xtatilgan. Birozdan so\'ng qayta urinib ko\'ring.'; }
+      else { stateTitle = typeof title !== 'undefined' && String(title).indexOf('—') !== -1 ? title.split('—')[1].trim() : (typeof title !== 'undefined' ? title : 'Xatolik yuz berdi'); stateDesc = typeof message !== 'undefined' ? message : 'Nimadir noto\'g\'ri ketdi. Iltimos, qayta urinib ko\'ring.'; } %>
+
+      <h1 class="error-title"><%= stateTitle %></h1>
+      <p class="error-desc"><%= stateDesc %></p>
+
+      <!-- S34.03: opaque reference ID — prod'da stack o'rniga support uchun -->
+      <% if (typeof refId !== 'undefined' && refId) { %>
+        <p class="error-ref">Xato identifikatori: <code><%= refId %></code></p>
+      <% } %>
+
+      <div class="error-actions">
+        <!-- S34.02: primary recovery -->
+        <a href="/" class="btn btn-primary">Bosh sahifaga qaytish</a>
+        <!-- S34.02: secondary action -->
+        <a href="/user/login" class="btn btn-secondary">Kirish sahifasi</a>
+        <% if (typeof status !== 'undefined' && status === 404) { %>
+          <a href="javascript:history.back()" class="btn btn-quiet">Orqaga</a>
+        <% } %>
+      </div>
+
+      <% if (typeof stack !== 'undefined' && stack && isDev) { %>
+        <!-- S34.03: raw stack faqat dev rejimida; prod'da hech qachon -->
+        <details class="error-technical">
+          <summary>Texnik ma'lumot (faqat rivojlantirish rejimida)</summary>
+          <pre><%= stack %></pre>
+        </details>
+      <% } %>
+    </div>
   </div>
 </body>
 </html>

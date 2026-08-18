@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="uz" data-theme="dark">
+<html lang="uz" dir="ltr" data-theme="dark">
 <head>
   <%- include('../partials/head', { title, user }) %>
   <style>
     .ml-grid { display: grid; grid-template-columns: 320px 1fr; gap: 18px; }
-    .ml-panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
-    .ml-panel h3 { margin: 0 0 12px; font-size: 14px; letter-spacing: .04em; color: var(--muted); text-transform: uppercase; }
-    .ml-model { padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all .2s; }
-    .ml-model:hover { border-color: var(--accent); }
-    .ml-model.active { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+    .ml-panel { background: var(--edikit-semantic-color-surface-raised); border: 1px solid var(--edikit-semantic-color-border-default); border-radius: 12px; padding: 16px; }
+    .ml-panel h3 { margin: 0 0 12px; font-size: 14px; letter-spacing: .04em; color: var(--edikit-semantic-color-text-muted); text-transform: uppercase; }
+    .ml-model { padding: 10px 12px; border: 1px solid var(--edikit-semantic-color-border-default); border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s; }
+    .ml-model:hover { border-color: var(--edikit-semantic-color-action-primary); }
+    .ml-model.active { border-color: var(--edikit-semantic-color-action-primary); background: color-mix(in srgb, var(--edikit-semantic-color-action-primary) 8%, transparent); }
     .ml-model .mname { font-weight: 600; }
-    .ml-model .mmeta { font-size: 12px; color: var(--muted); }
+    .ml-model .mmeta { font-size: 12px; color: var(--edikit-semantic-color-text-muted); }
     .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
     .badge.draft { background: rgba(148,163,184,.15); color: #94a3b8; }
     .badge.active { background: rgba(0,229,160,.15); color: #00e5a0; }
@@ -22,25 +22,25 @@
     .badge.low { background: rgba(148,163,184,.15); color: #94a3b8; }
     .badge.medium { background: rgba(251,191,36,.15); color: #fbbf24; }
     .badge.high { background: rgba(248,113,113,.15); color: #f87171; }
-    .btn { padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; font-size: 13px; transition: all .2s; }
-    .btn:hover { border-color: var(--accent); }
-    .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn { padding: 6px 14px; border-radius: 8px; border: 1px solid var(--edikit-semantic-color-border-default); background: var(--edikit-semantic-color-surface-raised); color: var(--edikit-semantic-color-text-primary); cursor: pointer; font-size: 13px; transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s; }
+    .btn:hover { border-color: var(--edikit-semantic-color-action-primary); }
+    .btn.primary { background: var(--edikit-semantic-color-action-primary); border-color: var(--edikit-semantic-color-action-primary); color: #fff; }
     .btn.danger { background: rgba(248,113,113,.12); border-color: rgba(248,113,113,.5); color: #f87171; }
     .btn.sm { padding: 4px 10px; font-size: 12px; }
-    .input, textarea.input { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surf); color: var(--text); font-size: 13px; box-sizing: border-box; }
+    .input, textarea.input { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--edikit-semantic-color-border-default); background: var(--edikit-semantic-color-surface-raised); color: var(--edikit-semantic-color-text-primary); font-size: 13px; box-sizing: border-box; }
     textarea.input { min-height: 80px; resize: vertical; }
     .field { margin-bottom: 12px; }
-    .field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
-    .toast { position: fixed; top: 16px; right: 16px; z-index: 50; padding: 10px 16px; border-radius: 10px; background: var(--card); border: 1px solid var(--border); box-shadow: 0 8px 24px rgba(0,0,0,.3); opacity: 0; transform: translateY(-8px); transition: all .25s; font-size: 13px; }
+    .field label { display: block; font-size: 12px; color: var(--edikit-semantic-color-text-muted); margin-bottom: 4px; }
+    .toast { position: fixed; top: 16px; right: 16px; z-index: 50; padding: 10px 16px; border-radius: 10px; background: var(--edikit-semantic-color-surface-raised); border: 1px solid var(--edikit-semantic-color-border-default); box-shadow: 0 8px 24px rgba(0,0,0,.3); opacity: 0; transform: translateY(-8px); transition:color .25s,background-color .25s,border-color .25s,box-shadow .25s,transform .25s,opacity .25s; font-size: 13px; }
     .toast.show { opacity: 1; transform: translateY(0); }
     .toast.err { border-color: rgba(248,113,113,.5); }
     .toast.ok { border-color: rgba(0,229,160,.5); }
     .metric { display: inline-block; margin-right: 16px; font-size: 13px; }
     .metric b { font-size: 18px; }
-    .muted { color: var(--muted); }
+    .muted { color: var(--edikit-semantic-color-text-muted); }
     table.ml-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    table.ml-table th, table.ml-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
-    table.ml-table th { color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+    table.ml-table th, table.ml-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--edikit-semantic-color-border-default); }
+    table.ml-table th { color: var(--edikit-semantic-color-text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
     .checks { margin-top: 8px; font-size: 12px; }
     .checks .ok { color: #00e5a0; }
     .checks .no { color: #f87171; }

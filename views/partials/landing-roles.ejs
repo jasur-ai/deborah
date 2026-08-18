@@ -1,0 +1,30 @@
+<!-- Landing ikki yo'l (plan_index §3.3) — role segmentatsiya -->
+<section class="ld-roles" aria-labelledby="ld-roles-title" id="roles">
+  <div class="ld-container">
+    <h2 class="ld-section-title" id="ld-roles-title"><%= copy.roles.label %></h2>
+    <div class="ld-roles-grid">
+      <div class="ld-role-card" data-analytics="role_select" data-role="teacher">
+        <div class="ld-role-icon" aria-hidden="true">🧑‍🏫</div>
+        <h3 class="ld-role-title"><%= copy.roles.teacherTitle %></h3>
+        <p class="ld-role-sub"><%= copy.roles.teacherSub %></p>
+        <ul class="ld-role-points">
+          <% copy.roles.teacherPoints.forEach((p) => { %>
+            <li><span class="ld-check" aria-hidden="true">✓</span> <%= p %></li>
+          <% }) %>
+        </ul>
+        <a class="ld-btn ld-btn-primary" href="<%= path + '?role=teacher' %>"><%= copy.roles.teacherCta %></a>
+      </div>
+      <div class="ld-role-card" data-analytics="role_select" data-role="student">
+        <div class="ld-role-icon" aria-hidden="true">🎓</div>
+        <h3 class="ld-role-title"><%= copy.roles.studentTitle %></h3>
+        <p class="ld-role-sub"><%= copy.roles.studentSub %></p>
+        <ul class="ld-role-points">
+          <% copy.roles.studentPoints.forEach((p) => { %>
+            <li><span class="ld-check" aria-hidden="true">✓</span> <%= p %></li>
+          <% }) %>
+        </ul>
+        <a class="ld-btn ld-btn-primary" href="<%= path + '?role=student' %>"><%= copy.roles.studentCta %></a>
+      </div>
+    </div>
+  </div>
+</section>

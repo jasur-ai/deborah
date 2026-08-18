@@ -30,7 +30,7 @@ function esc(v) {
 function toast(msg, ok = true) {
   const t = $('toast');
   t.textContent = msg;
-  t.style.color = ok ? 'var(--green)' : 'var(--accent)';
+  t.style.color = ok ? 'var(--green)' : 'var(--edikit-semantic-color-action-primary)';
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2600);
 }
@@ -331,7 +331,7 @@ const WEIGHT_LABELS = {
   back_to_back: 'Ketma-ket imtihonlar',
   proctor_overload: 'Proktor yuklamasi',
   feature_mismatch: 'Xona xususiyati mos emas',
-  utilization_gap: 'Xona to'liq ishlatilmasligi',
+  utilization_gap: "Xona to'liq ishlatilmasligi",
   late_placement: 'Kechiktirilgan joylashuv',
 };
 

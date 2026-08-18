@@ -1,0 +1,26 @@
+<!-- AUTH A-13: haqiqiy ochiq ma'lumotlar stats (yolg'on emas, manba + litsenziya bilan) -->
+<% if (opendata && opendata.enabled && opendata.stats) { %>
+<section class="ld-stats" aria-labelledby="ld-stats-title">
+  <div class="ld-container">
+    <h2 class="ld-section-title ld-stats-title" id="ld-stats-title"><%= copy.stats.title %></h2>
+    <div class="ld-stats-grid">
+      <div class="ld-stat">
+        <span class="ld-stat-num" data-stat="universities"><%= opendata.stats.universities %></span>
+        <span class="ld-stat-label"><%= copy.stats.universitiesLabel %></span>
+      </div>
+      <% if (opendata.stats.studentsTotal) { %>
+      <div class="ld-stat">
+        <span class="ld-stat-num" data-stat="students"><%= opendata.stats.studentsTotal.toLocaleString('ru-RU') %></span>
+        <span class="ld-stat-label"><%= copy.stats.studentsLabel %></span>
+      </div>
+      <% } %>
+    </div>
+    <p class="ld-stats-note">
+      <%= copy.stats.sourceLabel %>
+      <a href="<%= opendata.sourceUrl || '#' %>" target="_blank" rel="noopener noreferrer"><%= opendata.source %></a>
+      <% if (opendata.asOf) { %>· <%= opendata.asOf %><% } %>
+      <% if (opendata.licenseUrl) { %>· <a href="<%= opendata.licenseUrl %>" target="_blank" rel="noopener noreferrer"><%= copy.stats.licenseLabel %></a><% } %>
+    </p>
+  </div>
+</section>
+<% } %>

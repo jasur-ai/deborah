@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <link rel="stylesheet" href="/css/admin.css">
+  <style>
+    /* AUTH B-15 — filter tabs, pagination, accessible modal */
+    .t-filter{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
+    .t-filter a{padding:8px 14px;border-radius:var(--edikit-radius-sm,8px);border:1px solid var(--edikit-semantic-color-border-subtle);background:var(--gradient-glass);color:var(--edikit-semantic-color-text-secondary);font-size:.85rem;text-decoration:none;display:inline-flex;align-items:center;gap:6px;min-height:40px}
+    .t-filter a.on{background:var(--edikit-semantic-color-action-primary);border-color:var(--edikit-semantic-color-action-primary);color:#fff;font-weight:600}
+    .t-search{display:flex;gap:8px;margin:10px 0 2px;flex-wrap:wrap}
+    .t-search input{flex:1;min-width:180px;padding:10px 12px;border-radius:var(--edikit-radius-sm,8px);border:1px solid var(--edikit-semantic-color-border-subtle);background:var(--edikit-semantic-color-surface-raised,#fff);color:var(--edikit-semantic-color-text-primary);min-height:40px}
+    .t-search button{min-height:40px;padding:0 16px}
+    .t-pager{display:flex;align-items:center;gap:10px;justify-content:flex-end;margin-top:12px;font-size:.85rem;color:var(--edikit-semantic-color-text-secondary)}
+    .t-pager a,.t-pager span{display:inline-flex;align-items:center;justify-content:center;min-height:40px;min-width:40px;padding:0 12px;border-radius:var(--edikit-radius-sm,8px);border:1px solid var(--edikit-semantic-color-border-subtle)}
+    .t-pager a{color:var(--edikit-semantic-color-text-secondary);text-decoration:none;background:var(--gradient-glass)}
+    .t-pager a[aria-disabled="true"]{opacity:.4;pointer-events:none}
+    .t-actions{display:flex;gap:6px;flex-wrap:wrap}
+    .t-actions .btn{min-height:40px;display:inline-flex;align-items:center;gap:6px}
+    /* Modal */
+    .admin-modal-card{background:var(--edikit-semantic-color-surface-default,#0d1326);border:1px solid var(--edikit-semantic-color-border-subtle);border-radius:var(--radius-2xl,16px);padding:20px;width:min(480px,94vw);box-shadow:0 24px 60px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:12px}
+    .admin-modal-title{font-size:1.05rem;font-weight:700;display:flex;align-items:center;gap:8px}
+    .admin-modal-sub{font-size:.85rem;color:var(--edikit-semantic-color-text-secondary)}
+    .admin-modal-card textarea{width:100%;min-height:96px;padding:10px 12px;border-radius:var(--edikit-radius-sm,8px);border:1px solid var(--edikit-semantic-color-border-subtle);background:var(--edikit-semantic-color-surface-raised,#fff);color:var(--edikit-semantic-color-text-primary);font:inherit;resize:vertical}
+    .admin-modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
+    .admin-modal-actions .btn{min-height:44px;padding:0 18px}
+    .t-charcount{font-size:.75rem;color:var(--edikit-semantic-color-text-muted);text-align:right;margin-top:4px}
+    .t-reason{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:.8rem}
+    /* design-lint S37.05: inline visual style → klasslar */
+    .t-badge-primary{background:var(--edikit-semantic-color-action-primary)}
+    .t-empty{color:var(--edikit-semantic-color-text-secondary);font-size:.85rem;padding:22px 0;text-align:center}
+    .t-muted{font-size:.75rem;color:var(--edikit-semantic-color-text-muted)}
+    .t-badge-amber{background:rgba(245,158,11,.15);color:var(--amber)}
+    .t-badge-danger{background:rgba(239,68,68,.15);color:var(--danger)}
+    .t-badge-green{background:rgba(0,229,160,.15);color:var(--green)}
+    .t-badge-blue{background:var(--edikit-semantic-color-action-primary)}
+    .t-reason-box{font-size:.75rem;color:var(--edikit-semantic-color-text-muted);max-width:180px;margin-top:4px}
+    .t-exp{max-width:130px}
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content →</a>
+  <nav class="admin-navbar">
+    <div class="admin-nav-left">
+      <button type="button" class="admin-nav-hamburger" aria-label="Menyu" aria-expanded="false" aria-controls="admin-sidebar" onclick="toggleAdminDrawer()"><span></span><span></span><span></span></button>
+      <a href="/" class="admin-nav-brand">
+        <span class="admin-nav-logo"><img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto"></span>
+        <span class="admin-nav-badge">ADMIN</span>
+      </a>
+    </div>
+    <div class="flex items-center gap-8">
+      <a href="/admin/dashboard" class="admin-nav-btn"><%- icon('arrowLeft', 14) %> Dashboard</a>
+      <a href="/admin/logout" class="admin-nav-btn"><%- icon('logOut', 14) %> Chiqish</a>
+    </div>
+  </nav>
+
+  <div class="admin-layout">
+    <div class="admin-drawer-overlay" id="admin-drawer-overlay" onclick="toggleAdminDrawer()"></div>
+    <div class="admin-sidebar" id="admin-sidebar">
+      <div class="admin-side-label">Bo'limlar</div>
+      <a href="/admin/teachers" class="admin-side-btn" style="--c:var(--accent-glow);--cbg:rgba(100,116,139,.14)"><span class="admin-side-ico"><%- icon('bookOpen', 16) %></span>Teacher arizalari</a>
+      <a href="/admin/dashboard" class="admin-side-btn"><span class="admin-side-ico"><%- icon('grid', 16) %></span>Dashboard</a>
+    </div>
+
+    <div class="admin-panel" id="main">
+      <div class="admin-sec-hd">
+        <div class="admin-sec-title"><%- icon('bookOpen', 18) %> Teacher arizalari <span class="badge t-badge-primary"><%= pendingCount %> kutilmoqda</span></div>
+      </div>
+
+      <div class="admin-msg" id="t-msg"></div>
+
+      <!-- B-15 §06: filter tabs -->
+      <nav class="t-filter" aria-label="Ariza filtri">
+        <% const filters = [['pending', 'Kutilmoqda'], ['approved', 'Tasdiqlangan'], ['rejected', 'Rad etilgan'], ['all', 'Barchasi']]; %>
+        <% filters.forEach(([f, label]) => { %>
+          <a class="<%= filter === f ? 'on' : '' %>" href="/admin/teachers?filter=<%= f %>&q=<%= encodeURIComponent(q) %>" aria-current="<%= filter === f ? 'page' : 'false' %>"><%= label %></a>
+        <% }) %>
+      </nav>
+
+      <!-- B-15 §06: qidiruv -->
+      <form class="t-search" method="GET" action="/admin/teachers" role="search">
+        <input type="hidden" name="filter" value="<%= filter %>">
+        <label class="sr-only" for="t-q">Qidiruv</label>
+        <input id="t-q" type="search" name="q" value="<%= q %>" placeholder="Ism, email, universitet yoki fan bo'yicha qidirish…" autocomplete="off">
+        <button type="submit" class="btn btn-secondary"><%- icon('search', 14) %> Qidirish</button>
+      </form>
+
+      <% if (rows.length === 0) { %>
+        <div class="t-empty">Natija topilmadi.</div>
+      <% } else { %>
+        <div class="table-wrap dt-wrap is-reflow"><table class="dt" data-density="default"><thead><tr>
+          <th scope="col">#</th><th scope="col">Ism</th><th scope="col">Email</th><th scope="col">Universitet</th><th scope="col">Fan</th><th scope="col">Tajriba</th><th scope="col" class="dt-ts">Sana</th><th scope="col">Status</th><th scope="col" class="dt-actions">Amallar</th>
+        </tr></thead><tbody>
+          <% rows.forEach((u, i) => { %>
+            <tr data-id="<%= u.id %>">
+              <td><%= (page - 1) * 20 + i + 1 %></td>
+              <td><strong><%= u.fullName %></strong><br><span class="t-muted">@<%= u.username %></span></td>
+              <td><%= u.email || '—' %></td>
+              <td><%= u.university || '—' %></td>
+              <td><%= u.subject || '—' %></td>
+              <td><span class="t-reason t-exp"><%= u.experience || '—' %></span></td>
+              <td class="dt-ts"><%= new Date(u.appliedAt).toLocaleDateString('uz-UZ', { day: '2-digit', month: 'short', year: 'numeric' }) %>
+                <% if (u.approval?.level === 'window-exceeded') { %><br><span class="badge t-badge-amber">Eslatma 72s</span><% } %>
+                <% if (u.approval?.level === 'escalated') { %><br><span class="badge t-badge-danger">Eskalatsiya 7k</span><% } %>
+              </td>
+              <td>
+                <% if (u.role === 'teacher_pending') { %><span class="badge t-badge-amber">Kutilmoqda</span><% } %>
+                <% if (u.role === 'teacher') { %><span class="badge t-badge-green">Tasdiqlangan</span><% } %>
+                <% if (u.role === 'teacher_rejected') { %><span class="badge t-badge-danger">Rad etilgan</span><% } %>
+              </td>
+              <td class="dt-actions">
+                <% if (u.role === 'teacher_pending') { %>
+                  <div class="t-actions">
+                    <button type="button" class="btn btn-success btn-sm" data-action="approve" data-id="<%= u.id %>" data-name="<%= u.fullName %>"><%- icon('check', 13) %> Tasdiqlash</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-action="reject" data-id="<%= u.id %>" data-name="<%= u.fullName %>"><%- icon('x', 13) %> Rad etish</button>
+                  </div>
+                <% } else { %>
+                  <span class="t-muted"><%= u.decidedBy || '—' %></span>
+                  <% if (u.role === 'teacher_rejected') { %>
+                    <div class="t-reason-box"><span class="t-reason">Sabab: <%= u.rejectionReason || '—' %></span></div>
+                  <% } %>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody></table></div>
+
+        <!-- B-15 §06: pagination -->
+        <nav class="t-pager" aria-label="Sahifalash">
+          <a href="/admin/teachers?filter=<%= filter %>&q=<%= encodeURIComponent(q) %>&page=<%= page - 1 %>" aria-disabled="<%= page <= 1 ? 'true' : 'false' %>" aria-label="Oldingi sahifa"><%- icon('arrowLeft', 14) %> Oldingi</a>
+          <span><%= page %> / <%= totalPages %> · <%= total %> ta</span>
+          <a href="/admin/teachers?filter=<%= filter %>&q=<%= encodeURIComponent(q) %>&page=<%= page + 1 %>" aria-disabled="<%= page >= totalPages ? 'true' : 'false' %>" aria-label="Keyingi sahifa">Keyingi <%- icon('chevronRight', 14) %></a>
+        </nav>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- B-15 §07/§15: accessible modal — approve/reject + justification -->
+  <div class="admin-modal-overlay" id="teacher-modal" role="dialog" aria-modal="true" aria-labelledby="teacher-modal-title" aria-describedby="teacher-modal-sub" hidden>
+    <div class="admin-modal-card">
+      <div class="admin-modal-title" id="teacher-modal-title"></div>
+      <div class="admin-modal-sub" id="teacher-modal-sub"></div>
+      <label class="sr-only" for="teacher-modal-text">Asoslanish</label>
+      <textarea id="teacher-modal-text" required minlength="10" aria-required="true" placeholder="Asoslanish (kamida 10 belgi) — audit'da saqlanadi"></textarea>
+      <div class="t-charcount" id="teacher-modal-count">0 / 500</div>
+      <div class="admin-modal-actions">
+        <button type="button" class="btn btn-secondary" id="teacher-modal-cancel">Bekor qilish</button>
+        <button type="button" class="btn btn-primary" id="teacher-modal-submit">Tasdiqlash</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // AUTH D-10 §13: 4 til admin copy (AUTH_COPY[lang].admin) — fallback bilan
+    window.__ADMIN_COPY__ = <%- JSON.stringify(adminCopy || {}) %>;
+    const CSRF = <%- JSON.stringify(csrfToken || '') %>;
+    function showMsg(text, ok) {
+      const el = document.getElementById('t-msg');
+      el.textContent = text;
+      el.style.display = 'block';
+      el.style.color = ok ? 'var(--green)' : 'var(--danger)';
+      setTimeout(() => { el.style.display = 'none'; }, 4000);
+    }
+    // AUTH A-25: re-auth (10 daqiqa TTL) — sensitive amal oldidan admin paroli
+    async function ensureReauth() {
+      const password = prompt('Xavfsizlik uchun admin parolini qayta tasdiqlang:');
+      if (password === null) return false;
+      if (!password.trim()) { alert('Parol kiritilishi shart'); return false; }
+      try {
+        const r = await fetch('/api/admin/reauth', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', 'x-csrf-token': CSRF },
+          body: JSON.stringify({ password: password.trim() }),
+        });
+        const j = await r.json();
+        if (r.ok && j.ok) return true;
+        alert('Parol noto\'g\'ri');
+        return false;
+      } catch (e) { alert('Tarmoq xatosi'); return false; }
+    }
+
+    // ── Accessible modal (B-15 §15): focus management + Esc + backdrop ──
+    let modalAction = null, modalId = null, lastFocus = null;
+    const overlay = document.getElementById('teacher-modal');
+    const textEl = document.getElementById('teacher-modal-text');
+    const countEl = document.getElementById('teacher-modal-count');
+    const submitBtn = document.getElementById('teacher-modal-submit');
+    const cancelBtn = document.getElementById('teacher-modal-cancel');
+
+    function openModal(action, id, name) {
+      modalAction = action; modalId = id;
+      const isApprove = action === 'approve';
+      document.getElementById('teacher-modal-title').innerHTML =
+        (isApprove ? '<%- icon("checkCircle", 16) %> ' : '<%- icon("alertTriangle", 16) %> ') + (isApprove ? 'Tasdiqlash' : 'Rad etish') + ': <span style="font-weight:600">' + name + '</span>';
+      document.getElementById('teacher-modal-sub').textContent =
+        isApprove ? 'Asoslanish majburiy — audit va xatda saqlanadi.' : 'Sabab majburiy — foydalanuvchiga ko\'rsatiladi, 30 kun cooldown boshlanadi.';
+      submitBtn.textContent = isApprove ? 'Tasdiqlash' : 'Rad etish';
+      submitBtn.className = 'btn ' + (isApprove ? 'btn-success' : 'btn-danger');
+      textEl.value = '';
+      countEl.textContent = '0 / 500';
+      lastFocus = document.activeElement;
+      overlay.hidden = false;
+      overlay.classList.add('active');
+      textEl.focus();
+    }
+    function closeModal() {
+      overlay.classList.remove('active');
+      overlay.hidden = true;
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+      lastFocus = null;
+    }
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+    cancelBtn.addEventListener('click', closeModal);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !overlay.hidden) closeModal();
+    });
+    textEl.addEventListener('input', () => {
+      countEl.textContent = textEl.value.length + ' / 500';
+    });
+
+    // Har bir [Tasdiqlash]/[Rad etish] tugmasi modalni ochadi
+    document.querySelectorAll('button[data-action]').forEach((btn) => {
+      btn.addEventListener('click', () => openModal(btn.dataset.action, btn.dataset.id, btn.dataset.name));
+    });
+
+    async function submitDecision() {
+      const value = textEl.value.trim();
+      if (value.length < 10) { alert('Asoslanish kamida 10 belgi bo\'lishi shart'); textEl.focus(); return; }
+      submitBtn.disabled = true;
+      try {
+        const url = '/admin/api/teachers/' + encodeURIComponent(modalId) + '/' + (modalAction === 'approve' ? 'approve' : 'reject');
+        let r = await fetch(url, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', 'x-csrf-token': CSRF },
+          body: JSON.stringify({ justification: value.slice(0, 500) }),
+        });
+        let j = await r.json();
+        // AUTH A-25 §09: re-auth talab — parol so'rab qayta urinamiz
+        if (r.status === 403 && j.error === 'reauth_required') {
+          if (!await ensureReauth()) { submitBtn.disabled = false; return; }
+          r = await fetch(url, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json', 'x-csrf-token': CSRF },
+            body: JSON.stringify({ justification: value.slice(0, 500) }),
+          });
+          j = await r.json();
+        }
+        if (r.ok && j.ok) {
+          showMsg(modalAction === 'approve' ? '✅ Tasdiqlandi' : 'Rad etildi', true);
+          document.querySelector('tr[data-id="' + modalId + '"]')?.remove();
+          closeModal();
+        } else {
+          showMsg('Xato: ' + (j.error || r.status), false);
+        }
+      } catch (e) { showMsg('Tarmoq xatosi', false); }
+      submitBtn.disabled = false;
+    }
+    submitBtn.addEventListener('click', submitDecision);
+    textEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) submitDecision();
+    });
+  </script>
+</body>
+</html>

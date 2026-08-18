@@ -1,46 +1,46 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="uz" dir="ltr">
 <head>
   <%- include('../partials/head') %>
   <link rel="stylesheet" href="/css/admin.css">
   <style>
-    .sg-gate{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:14px;margin-top:16px;font-weight:800;font-size:.84rem;border:1px solid;}
+    .sg-gate{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:14px;margin-top:16px;font-weight:600;font-size:.84rem;border:1px solid;}
     .sg-gate.pass{background:rgba(0,229,160,.08);border-color:rgba(0,229,160,.35);color:var(--green);}
     .sg-gate.fail{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.4);color:#ef4444;}
-    .sg-gate .g-blocks{font-size:.72rem;font-weight:700;margin-top:2px;color:var(--text-muted);}
+    .sg-gate .g-blocks{font-size:.72rem;font-weight:700;margin-top:2px;color:var(--edikit-semantic-color-text-muted);}
     .sg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:16px;}
-    .sg-card{background:var(--bg-card);border:1px solid var(--border-light);border-radius:14px;padding:15px;box-shadow:var(--shadow-sm);}
+    .sg-card{background:var(--edikit-semantic-color-surface-raised);border:1px solid var(--edikit-semantic-color-border-subtle);border-radius:14px;padding:15px;box-shadow:var(--shadow-sm);}
     .sg-card h3{margin:0 0 4px;font-size:.9rem;display:flex;align-items:center;gap:8px;}
-    .sg-card .desc{font-size:.7rem;color:var(--text-muted);font-weight:600;margin-bottom:10px;}
+    .sg-card .desc{font-size:.7rem;color:var(--edikit-semantic-color-text-muted);font-weight:600;margin-bottom:10px;}
     .sg-bar{height:6px;background:var(--bg-elevated);border-radius:3px;overflow:hidden;margin:6px 0;}
     .sg-bar > span{display:block;height:100%;border-radius:3px;background:var(--green);}
     .sg-bar.ok > span{background:var(--green);}
     .sg-bar.warn > span{background:var(--gold);}
     .sg-bar.bad > span{background:#ef4444;}
-    .sg-tag{font-size:.64rem;font-weight:900;padding:2px 9px;border-radius:12px;letter-spacing:.3px;text-transform:uppercase;}
+    .sg-tag{font-size:.64rem;font-weight:700;padding:2px 9px;border-radius:12px;letter-spacing:.3px;text-transform:uppercase;}
     .sg-tag.green{background:rgba(0,229,160,.12);color:var(--green);}
     .sg-tag.red{background:rgba(239,68,68,.14);color:#ef4444;}
     .sg-tag.amber{background:rgba(245,158,11,.14);color:var(--gold);}
-    .sg-tag.blue{background:rgba(37,99,235,.12);color:var(--accent);}
+    .sg-tag.blue{background:rgba(37,99,235,.12);color:var(--edikit-semantic-color-action-primary);}
     .sg-table{width:100%;border-collapse:collapse;margin-top:8px;font-size:.74rem;}
-    .sg-table th{text-align:left;font-size:.66rem;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);padding:6px 8px;border-bottom:1px solid var(--border-light);font-weight:900;}
-    .sg-table td{padding:6px 8px;border-bottom:1px dashed var(--border-light);font-weight:600;color:var(--text-primary);}
-    .sg-table td.muted{color:var(--text-muted);font-size:.68rem;}
+    .sg-table th{text-align:left;font-size:.66rem;text-transform:uppercase;letter-spacing:.5px;color:var(--edikit-semantic-color-text-muted);padding:6px 8px;border-bottom:1px solid var(--edikit-semantic-color-border-subtle);font-weight:700;}
+    .sg-table td{padding:6px 8px;border-bottom:1px dashed var(--edikit-semantic-color-border-subtle);font-weight:600;color:var(--edikit-semantic-color-text-primary);}
+    .sg-table td.muted{color:var(--edikit-semantic-color-text-muted);font-size:.68rem;}
     .sg-finding{border-left:3px solid;border-radius:8px;padding:9px 12px;margin-bottom:8px;background:var(--bg-elevated);}
     .sg-finding.critical{border-color:#ef4444;}
     .sg-finding.high{border-color:#f97316;}
     .sg-finding.medium{border-color:var(--gold);}
     .sg-finding.low{border-color:var(--blue);}
-    .sg-finding .f-title{font-weight:900;font-size:.78rem;color:var(--text-primary);}
-    .sg-finding .f-meta{font-size:.66rem;color:var(--text-muted);font-weight:700;margin-top:2px;}
-    .sg-empty{color:var(--text-muted);font-size:.74rem;font-weight:700;padding:14px;text-align:center;border:1px dashed var(--border-light);border-radius:10px;}
+    .sg-finding .f-title{font-weight:700;font-size:.78rem;color:var(--edikit-semantic-color-text-primary);}
+    .sg-finding .f-meta{font-size:.66rem;color:var(--edikit-semantic-color-text-muted);font-weight:700;margin-top:2px;}
+    .sg-empty{color:var(--edikit-semantic-color-text-muted);font-size:.74rem;font-weight:700;padding:14px;text-align:center;border:1px dashed var(--edikit-semantic-color-border-subtle);border-radius:10px;}
     .sg-section-h{display:flex;align-items:center;justify-content:space-between;margin-top:22px;}
     .sg-section-h h2{font-size:1rem;margin:0;}
-    .sg-btn{font-size:.68rem;font-weight:800;padding:5px 12px;border-radius:8px;border:1px solid var(--border-light);background:var(--bg-elevated);color:var(--text-primary);cursor:pointer;transition:all .18s;}
-    .sg-btn:hover{border-color:var(--accent);color:var(--accent);}
+    .sg-btn{font-size:.68rem;font-weight:600;padding:5px 12px;border-radius:8px;border:1px solid var(--edikit-semantic-color-border-subtle);background:var(--bg-elevated);color:var(--edikit-semantic-color-text-primary);cursor:pointer;transition:color .18s,background-color .18s,border-color .18s,box-shadow .18s,transform .18s,opacity .18s;}
+    .sg-btn:hover{border-color:var(--edikit-semantic-color-action-primary);color:var(--edikit-semantic-color-action-primary);}
     .sg-mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.68rem;}
-    .sg-rt-row{display:flex;justify-content:space-between;font-size:.72rem;font-weight:700;padding:3px 0;border-bottom:1px dashed var(--border-light);}
-    .sg-rt-row b{color:var(--text-primary);}
+    .sg-rt-row{display:flex;justify-content:space-between;font-size:.72rem;font-weight:700;padding:3px 0;border-bottom:1px dashed var(--edikit-semantic-color-border-subtle);}
+    .sg-rt-row b{color:var(--edikit-semantic-color-text-primary);}
   </style>
 </head>
 <body>
@@ -92,7 +92,7 @@
               <div class="sg-rt-row"><span>Nazoratlar</span><b><%= b.controls.implemented %>/<%= b.controls.required %></b></div>
               <div class="sg-rt-row"><span>Tahdidlar</span><b><%= b.threats %> (<%= b.unresolved.length %> ochiq)</b></div>
               <% if (b.controls.missing.length) { %>
-                <div class="sg-mono" style="margin-top:6px;color:var(--text-muted)">missing: <%= b.controls.missing.join(', ') %></div>
+                <div class="sg-mono" style="margin-top:6px;color:var(--edikit-semantic-color-text-muted)">missing: <%= b.controls.missing.join(', ') %></div>
               <% } %>
             </div>
           <% }) %>

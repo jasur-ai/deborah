@@ -1,25 +1,25 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="uz" dir="ltr">
 <head>
   <%- include('../partials/head') %>
   <link rel="stylesheet" href="/css/admin.css">
   <style>
-    .rl-gate{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:14px;margin-top:16px;font-weight:800;font-size:.84rem;border:1px solid;}
+    .rl-gate{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:14px;margin-top:16px;font-weight:600;font-size:.84rem;border:1px solid;}
     .rl-gate.pass{background:rgba(0,229,160,.08);border-color:rgba(0,229,160,.35);color:var(--green);}
     .rl-gate.fail{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.4);color:#ef4444;}
-    .rl-gate .g-blocks{font-size:.72rem;font-weight:700;margin-top:2px;color:var(--text-muted);}
+    .rl-gate .g-blocks{font-size:.72rem;font-weight:700;margin-top:2px;color:var(--edikit-semantic-color-text-muted);}
     .rl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:16px;}
-    .rl-card{background:var(--bg-card);border:1px solid var(--border-light);border-radius:14px;padding:15px;box-shadow:var(--shadow-sm);}
+    .rl-card{background:var(--edikit-semantic-color-surface-raised);border:1px solid var(--edikit-semantic-color-border-subtle);border-radius:14px;padding:15px;box-shadow:var(--shadow-sm);}
     .rl-card h3{margin:0 0 4px;font-size:.9rem;display:flex;align-items:center;gap:8px;}
-    .rl-card .desc{font-size:.7rem;color:var(--text-muted);font-weight:600;margin-bottom:10px;}
-    .rl-tag{font-size:.64rem;font-weight:900;padding:2px 9px;border-radius:12px;letter-spacing:.3px;text-transform:uppercase;}
+    .rl-card .desc{font-size:.7rem;color:var(--edikit-semantic-color-text-muted);font-weight:600;margin-bottom:10px;}
+    .rl-tag{font-size:.64rem;font-weight:700;padding:2px 9px;border-radius:12px;letter-spacing:.3px;text-transform:uppercase;}
     .rl-tag.green{background:rgba(0,229,160,.12);color:var(--green);}
     .rl-tag.red{background:rgba(239,68,68,.14);color:#ef4444;}
     .rl-tag.amber{background:rgba(245,158,11,.14);color:var(--gold);}
-    .rl-tag.blue{background:rgba(37,99,235,.12);color:var(--accent);}
-    .rl-row{display:flex;justify-content:space-between;font-size:.72rem;font-weight:700;padding:3px 0;border-bottom:1px dashed var(--border-light);}
-    .rl-row b{color:var(--text-primary);}
-    .rl-empty{color:var(--text-muted);font-size:.74rem;font-weight:700;padding:14px;text-align:center;border:1px dashed var(--border-light);border-radius:10px;}
+    .rl-tag.blue{background:rgba(37,99,235,.12);color:var(--edikit-semantic-color-action-primary);}
+    .rl-row{display:flex;justify-content:space-between;font-size:.72rem;font-weight:700;padding:3px 0;border-bottom:1px dashed var(--edikit-semantic-color-border-subtle);}
+    .rl-row b{color:var(--edikit-semantic-color-text-primary);}
+    .rl-empty{color:var(--edikit-semantic-color-text-muted);font-size:.74rem;font-weight:700;padding:14px;text-align:center;border:1px dashed var(--edikit-semantic-color-border-subtle);border-radius:10px;}
     .rl-section-h{display:flex;align-items:center;justify-content:space-between;margin-top:22px;}
     .rl-section-h h2{font-size:1rem;margin:0;}
     .rl-bar{height:6px;background:var(--bg-elevated);border-radius:3px;overflow:hidden;margin:6px 0;}
@@ -27,8 +27,8 @@
     .rl-bar.bad > span{background:#ef4444;}
     .rl-mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.68rem;}
     .rl-targets{display:flex;gap:12px;margin-top:10px;flex-wrap:wrap;}
-    .rl-target{font-size:.7rem;font-weight:800;padding:6px 12px;border-radius:10px;background:var(--bg-elevated);border:1px solid var(--border-light);}
-    .rl-target b{color:var(--accent);}
+    .rl-target{font-size:.7rem;font-weight:600;padding:6px 12px;border-radius:10px;background:var(--bg-elevated);border:1px solid var(--edikit-semantic-color-border-subtle);}
+    .rl-target b{color:var(--edikit-semantic-color-action-primary);}
   </style>
 </head>
 <body>
@@ -175,7 +175,7 @@
                 <div class="rl-row"><span><%= c.name %></span><b><%= c.ok ? '✓' : '✗' %> <%= c.detail %></b></div>
               <% }) %>
               <% if (posture.freeze.plan) { %>
-                <div class="rl-mono" style="margin-top:6px;color:var(--text-muted)">
+                <div class="rl-mono" style="margin-top:6px;color:var(--edikit-semantic-color-text-muted)">
                   <%= posture.freeze.plan.durationDays %> kun freeze • <%= posture.freeze.plan.strategy %>
                 </div>
               <% } %>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <link rel="stylesheet" href="/css/admin.css">
+  <style>
+    .rs-card{background:var(--edikit-semantic-color-surface-raised);border:1px solid var(--edikit-semantic-color-border-default);border-radius:14px;padding:16px;margin-bottom:14px;}
+    .rs-title{font-weight:700;font-size:.95rem;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+    .rs-sub{font-size:.78rem;color:var(--edikit-semantic-color-text-muted);font-weight:600;margin-bottom:10px;}
+    .rs-drop{border:2px dashed var(--edikit-semantic-color-border-default);border-radius:12px;padding:26px 16px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;}
+    .rs-drop:hover,.rs-drop.drag{border-color:var(--edikit-semantic-color-action-primary);background:rgba(37,99,235,.05);}
+    .rs-drop input[type=file]{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;}
+    .rs-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+    .rs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px;}
+    .rs-diff{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+    .rs-chip{padding:5px 10px;border-radius:8px;font-size:.74rem;font-weight:700;}
+    .rs-ok{background:rgba(0,229,160,.1);color:var(--green);border:1px solid rgba(0,229,160,.3);}
+    .rs-warn{background:rgba(245,158,11,.1);color:#f59e0b;border:1px solid rgba(245,158,11,.3);}
+    .rs-err{background:rgba(220,38,38,.1);color:#dc2626;border:1px solid rgba(220,38,38,.3);}
+    .rs-table{width:100%;border-collapse:collapse;font-size:.8rem;}
+    .rs-table th{text-align:left;color:var(--edikit-semantic-color-text-muted);font-weight:700;padding:6px 8px;border-bottom:1px solid var(--edikit-semantic-color-border-default);}
+    .rs-table td{padding:6px 8px;border-bottom:1px solid var(--edikit-semantic-color-border-default);}
+    .rs-session{border:1px solid var(--edikit-semantic-color-border-default);border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;}
+    .rs-session.active{border-color:var(--edikit-semantic-color-action-primary);background:rgba(37,99,235,.06);}
+    .rs-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+    .rs-muted{color:var(--edikit-semantic-color-text-muted);}
+    @media(max-width:560px){.rs-drop{padding:18px 10px;}.rs-table{font-size:.72rem;}}
+  </style>
+</head>
+<body>
+  <nav class="admin-navbar">
+    <div class="admin-nav-left">
+      <button type="button" class="admin-nav-hamburger" aria-label="Menyu" aria-expanded="false" aria-controls="admin-sidebar" onclick="toggleAdminDrawer()"><span></span><span></span><span></span></button>
+      <a href="/" class="admin-nav-brand">
+        <span class="admin-nav-logo"><img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto"></span>
+        <span class="admin-nav-badge">ADMIN</span>
+      </a>
+    </div>
+    <div class="flex items-center gap-8">
+      <a href="/admin/dashboard" class="admin-nav-btn"><%- icon('arrowLeft', 14) %> Dashboard</a>
+      <%- include('../partials/theme-control') %>
+      <a href="/admin/logout" class="admin-nav-btn"><%- icon('logOut', 14) %> Chiqish</a>
+    </div>
+  </nav>
+
+  <div class="admin-layout">
+    <div class="admin-drawer-overlay" id="admin-drawer-overlay" onclick="toggleAdminDrawer()"></div>
+    <div class="admin-sidebar" id="admin-sidebar">
+      <div class="admin-side-label">Bo'limlar</div>
+      <a href="/admin/users" class="admin-side-btn"><span class="admin-side-ico"><%- icon('users', 16) %></span>Foydalanuvchilar</a>
+      <a href="/admin/audit" class="admin-side-btn"><span class="admin-side-ico"><%- icon('shield', 16) %></span>Audit jurnali</a>
+      <a href="/admin/roster" class="admin-side-btn active" style="--c:var(--edikit-semantic-color-action-primary);--cbg:rgba(37,99,235,.14)"><span class="admin-side-ico"><%- icon('file', 16) %></span>Roster import</a>
+      <a href="/admin/dashboard#pane-fans" class="admin-side-btn"><span class="admin-side-ico"><%- icon('book', 16) %></span>Mock Fanlar</a>
+      <a href="/admin/dashboard#pane-results" class="admin-side-btn"><span class="admin-side-ico"><%- icon('trophy', 16) %></span>Natijalar</a>
+      <a href="/admin/vip" class="admin-side-btn"><span class="admin-side-ico"><%- icon('shield', 16) %></span>VIP</a>
+    </div>
+
+    <main class="admin-main" id="main">
+      <div class="admin-page-head">
+        <div>
+          <h1 class="admin-page-title"><%- icon('file', 20) %> <%= rosterCopy.pageTitle %></h1>
+          <p class="admin-page-sub"><%= rosterCopy.pageSub %></p>
+        </div>
+        <button type="button" class="btn btn-quiet" id="rs-refresh" onclick="rsRefreshSessions()" style="min-height:40px"><%- icon('refresh', 14) %> <%= rosterCopy.refresh %></button>
+      </div>
+
+      <div aria-live="polite" id="rs-status" style="display:none;margin-bottom:12px"></div>
+
+      <!-- 1. Upload -->
+      <div class="rs-card">
+        <div class="rs-title"><%- icon('upload', 16) %> <%= rosterCopy.upload %></div>
+        <div class="rs-sub"><%= rosterCopy.uploadSub %></div>
+        <label class="rs-drop" id="rs-drop" for="rs-file">
+          <span style="display:block;font-weight:700;margin-bottom:4px"><%- icon('upload', 18) %> <%= rosterCopy.dropHint %></span>
+          <span class="rs-muted" style="font-size:.74rem">.xlsx / .csv</span>
+          <input type="file" id="rs-file" accept=".xlsx,.csv" data-testid="roster-file-input">
+        </label>
+        <div class="rs-actions">
+          <button type="button" class="btn btn-primary" id="rs-upload-btn" onclick="rsUpload()" style="min-height:42px"><%- icon('upload', 14) %> <%= rosterCopy.chooseFile %></button>
+        </div>
+        <div id="rs-upload-result" style="margin-top:10px;font-size:.8rem"></div>
+      </div>
+
+      <!-- 2. Sessions -->
+      <div class="rs-card">
+        <div class="rs-title"><%- icon('layers', 16) %> <%= rosterCopy.sessions %></div>
+        <div class="rs-sub"><%= rosterCopy.sessionsSub %></div>
+        <div class="rs-row" style="margin-bottom:10px">
+          <select id="rs-status-filter" class="inp" aria-label="<%= rosterCopy.status %>" style="min-width:150px" onchange="rsRefreshSessions()">
+            <option value=""><%= rosterCopy.all %></option>
+            <option value="staging">staging</option>
+            <option value="reviewed">reviewed</option>
+            <option value="committed">committed</option>
+            <option value="error">error</option>
+          </select>
+        </div>
+        <div id="rs-sessions"><div class="loading"><span class="spinner" style="border-color:var(--edikit-semantic-color-text-muted);border-top-color:var(--edikit-semantic-color-action-primary)"></span></div></div>
+      </div>
+
+      <!-- 3. Mapping -->
+      <div class="rs-card" id="rs-mapping-card" style="display:none">
+        <div class="rs-title"><%- icon('grid', 16) %> <%= rosterCopy.mapping %></div>
+        <div class="rs-sub"><%= rosterCopy.mappingSub %></div>
+        <div class="rs-actions">
+          <button type="button" class="btn btn-quiet" id="rs-map-btn" onclick="rsAutoMap()"><%- icon('zap', 14) %> <%= rosterCopy.autoDetect %></button>
+        </div>
+        <div id="rs-mapping" style="margin-top:10px;font-size:.8rem"></div>
+      </div>
+
+      <!-- 4. Diff -->
+      <div class="rs-card" id="rs-diff-card" style="display:none">
+        <div class="rs-title"><%- icon('trendUp', 16) %> <%= rosterCopy.diff %></div>
+        <div class="rs-sub"><%= rosterCopy.diffSub %></div>
+        <div class="rs-diff" id="rs-diff-chips"></div>
+        <div id="rs-diff-validation" style="font-size:.78rem;margin-bottom:10px"></div>
+        <div class="rs-actions">
+          <button type="button" class="btn btn-warning" id="rs-approve-btn" onclick="rsApprove(true)"><%- icon('check', 14) %> <%= rosterCopy.approve %></button>
+          <button type="button" class="btn btn-primary" id="rs-commit-btn" onclick="rsCommit()"><%- icon('database', 14) %> <%= rosterCopy.commitBtn %></button>
+        </div>
+        <div id="rs-commit-result" style="margin-top:10px;font-size:.8rem"></div>
+      </div>
+
+      <!-- 5. Post-commit: rollback/reconcile/errors/invites -->
+      <div class="rs-card" id="rs-post-card" style="display:none">
+        <div class="rs-title"><%- icon('layers', 16) %> <%= rosterCopy.rollback %> / <%= rosterCopy.rowErrors %> / <%= rosterCopy.invites %></div>
+        <div class="rs-actions">
+          <button type="button" class="btn btn-warning" id="rs-rollback-btn" onclick="rsRollback()"><%- icon('refresh', 14) %> <%= rosterCopy.rollbackBtn %></button>
+          <button type="button" class="btn btn-quiet" onclick="rsReconcile()"><%- icon('barChart', 14) %> <%= rosterCopy.reconcileBtn %></button>
+          <a href="#" id="rs-errors-link" class="btn btn-quiet" style="text-decoration:none"><%- icon('download', 14) %> <%= rosterCopy.downloadErrors %></a>
+        </div>
+        <div id="rs-reconcile" style="margin-top:10px;font-size:.8rem"></div>
+        <div style="margin-top:16px;border-top:1px solid var(--edikit-semantic-color-border-default);padding-top:12px">
+          <div class="rs-sub"><%= rosterCopy.invitesSub %> <span class="rs-muted">(<%= rosterCopy.inviteLimit %>)</span></div>
+          <div class="rs-actions">
+            <button type="button" class="btn btn-primary" onclick="rsCreateInvites()"><%- icon('mail', 14) %> <%= rosterCopy.createInvites %></button>
+            <button type="button" class="btn btn-quiet" onclick="rsSendInvites()"><%- icon('mail', 14) %> <%= rosterCopy.sendInvites %></button>
+          </div>
+          <div id="rs-invites" style="margin-top:10px;font-size:.78rem"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/admin/roster.js"></script>
+  <script>
+    window.__ROSTER_COPY__ = <%- JSON.stringify(rosterCopy) %>;
+  </script>
+</body>
+</html>

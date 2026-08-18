@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="<%= lang === 'uz-cyrl' ? 'uz-Cyrl' : lang %>" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <link rel="stylesheet" href="/design/contexts/auth.css">
+  <style>
+    /* AUTH B-10 — Google rol modal (2-qadam) sahifaga xos */
+    .auth-page{margin-top:0;}
+    .auth-proof-list li + li { margin-top: 0; }
+    /* Prefilled profil satri */
+    .gs-profile{display:flex;align-items:center;gap:12px;padding:10px 12px;margin:0 0 14px;border:1px solid var(--border-subtle, #e5e7eb);border-radius:12px;background:var(--surface-raised, #fff);}
+    .gs-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:var(--surface-muted, #f3f4f6);}
+    .gs-avatar-fallback{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface-muted, #f3f4f6);color:var(--text-muted, #6b7280);font-weight:700;}
+    .gs-profile-txt{min-width:0;}
+    .gs-profile-txt strong{display:block;font-size:14px;color:var(--text-primary, #111827);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .gs-profile-txt small{display:block;font-size:12px;color:var(--text-muted, #6b7280);}
+    .gs-note{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--text-muted, #6b7280);margin:4px 0 0;}
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link"><%= copy.setup.continue %> →</a>
+  <%- include('../partials/nav') %>
+  <main id="main" class="auth-page" style="min-height:calc(100dvh - 64px)">
+    <div class="auth-shell">
+      <!-- ── Product proof (S24.01) — desktop ── -->
+      <div class="auth-proof" aria-hidden="true">
+        <div class="auth-proof-brand">
+          <img src="/images/logo-icon.svg" alt="Edikit" class="auth-proof-logo">
+          <span class="auth-proof-badge"><%- icon('shield', 12) %> Edikit</span>
+        </div>
+        <h1><%= copy.setup.title %></h1>
+        <p class="auth-proof-sub"><%= copy.setup.sub %></p>
+        <ul class="auth-proof-list">
+          <li><span class="auth-proof-ico"><%- icon('zap', 13) %></span><span><%= copy.setup.step1 %></span></li>
+          <li><span class="auth-proof-ico"><%- icon('userCheck', 13) %></span><span><%= copy.setup.step2 %></span></li>
+          <li><span class="auth-proof-ico"><%- icon('lock', 13) %></span><span><%= copy.setup.trust %></span></li>
+        </ul>
+      </div>
+
+      <!-- ── Rol modal card (440px) ── -->
+      <div class="auth-box">
+        <div class="auth-header auth-header--split">
+          <img src="/images/logo-text.svg" alt="Edikit" class="auth-proof-logo">
+          <div class="auth-title"><%= copy.setup.welcome %></div>
+          <div class="auth-sub"><%= copy.setup.sub %></div>
+        </div>
+
+        <nav class="lang-row" aria-label="Language">
+          <% AUTH_LANGS.forEach(function(l){ %>
+            <a class="lang-link <%= l === lang ? 'on' : '' %>" href="?lang=<%= l %>" hreflang="<%= l === 'uz-cyrl' ? 'uz-Cyrl' : l %>"><%= l === 'uz' ? 'O\'zbek' : (l === 'uz-cyrl' ? 'Ўзбекча' : (l === 'ru' ? 'Русский' : 'English')) %></a>
+          <% }); %>
+        </nav>
+
+        <div id="auth-alert" class="msg <%= typeof error !== 'undefined' && error ? 'err' : '' %>" role="alert" aria-live="assertive"><%= typeof error !== 'undefined' && error ? error : '' %></div>
+
+        <!-- Prefilled Google profili (OIDC claims; token frontend'da YO'Q) -->
+        <div class="gs-profile">
+          <% if (pending.picture) { %>
+            <img class="gs-avatar" src="<%= pending.picture %>" alt="" width="40" height="40">
+          <% } else { %>
+            <span class="gs-avatar-fallback" aria-hidden="true"><%- icon('user', 18) %></span>
+          <% } %>
+          <div class="gs-profile-txt">
+            <strong><%= pending.name || pending.email.split('@')[0] %></strong>
+            <small><%= pending.email %><%- icon('check', 12) %></small>
+          </div>
+        </div>
+
+        <form id="form-gs" class="auth-form is-active" method="POST" action="/user/google-setup" data-analytics-form="google_setup">
+          <input type="hidden" name="lang" value="<%= lang %>">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+          <!-- B-10 §07: rol kartalari — Talaba / O'qituvchi (keyboard-native radio) -->
+          <fieldset class="role-grid" id="gs-role-select">
+            <legend class="role-legend"><%= copy.setup.roleTitle %></legend>
+            <label class="role-card">
+              <input type="radio" name="role" value="student" <%= typeof prevRole !== 'undefined' && prevRole === 'teacher' ? '' : 'checked' %>>
+              <span class="role-ico"><%- icon('user', 18) %></span>
+              <span class="role-txt">
+                <strong><%= copy.setup.roleStudent %></strong>
+                <small><%= copy.setup.roleStudentHint %></small>
+              </span>
+            </label>
+            <label class="role-card">
+              <input type="radio" name="role" value="teacher" <%= typeof prevRole !== 'undefined' && prevRole === 'teacher' ? 'checked' : '' %>>
+              <span class="role-ico"><%- icon('bookOpen', 18) %></span>
+              <span class="role-txt">
+                <strong><%= copy.setup.roleTeacher %></strong>
+                <small><%= copy.setup.roleTeacherHint %></small>
+              </span>
+            </label>
+          </fieldset>
+          <p class="role-note" id="gs-teacher-note" hidden><%- icon('info', 13) %><span><%= copy.setup.teacherNote %></span></p>
+
+          <!-- B-10 §05: invite kod (URL'dan prefilled) — privilege bermaydi, marker -->
+          <label class="lbl" for="gs-invite"><%= copy.setup.inviteLabel %></label>
+          <input class="inp" id="gs-invite" name="invite" type="text" placeholder="<%= copy.setup.invitePh %>" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="64" aria-invalid="false" value="<%= typeof prevInvite !== 'undefined' && prevInvite ? prevInvite : '' %>">
+
+          <button type="submit" class="btn btn-primary auth-submit" data-analytics="google_setup_submit"><span class="auth-spinner" aria-hidden="true"></span><%- icon('check', 15) %> <%= copy.setup.continue %></button>
+        </form>
+
+        <!-- B-10 §29: Bekor qilish → boshqa usul -->
+        <form method="POST" action="/user/google-setup/cancel" class="gs-cancel">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button type="submit" class="link" data-analytics="google_setup_cancel"><%- icon('x', 13) %> <%= copy.setup.cancel %></button>
+        </form>
+
+        <div class="trust trust--multi">
+          <span><%- icon('shield', 13) %> <%= copy.setup.trustData %></span>
+          <span><%- icon('mail', 13) %> <%= copy.setup.trustEmail %></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-links" style="max-width:960px;margin:24px auto 0">
+      <a href="/" class="footer-link">← <%= copy.footer.home %></a>
+      <a href="/privacy" class="footer-link"><%= copy.footer.privacy %></a>
+      <a href="/terms" class="footer-link"><%= copy.footer.terms %></a>
+    </div>
+  </main>
+
+  <script>
+    // B-10: teacher kartasi tanlanganda izoh ko'rinadi (register bilan izchil)
+    (function () {
+      var cards = document.querySelectorAll('#gs-role-select input[name="role"]');
+      var note = document.getElementById('gs-teacher-note');
+      function sync() {
+        if (!note) return;
+        var checked = document.querySelector('#gs-role-select input[name="role"]:checked');
+        note.hidden = !(checked && checked.value === 'teacher');
+      }
+      cards.forEach(function (c) { c.addEventListener('change', sync); });
+      sync();
+    })();
+  </script>
+  <script src="/js/auth.js" defer></script>
+</body>
+</html>

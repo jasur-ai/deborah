@@ -1,0 +1,16 @@
+<%
+  // Edikit Theme Control (STYLE STEP 07 / S07.09)
+  // Accessible System/Light/Dark segmented control — icon-only emas.
+  // theme.js [data-theme-state-btn] orqali boshqaradi.
+  const tcCopy = {
+    label: (typeof copy !== 'undefined' && copy.header && copy.header.themeLabel) ? copy.header.themeLabel : 'Mavzu',
+    system: (typeof copy !== 'undefined' && copy.header && copy.header.themeSystem) ? copy.header.themeSystem : 'System',
+    light: (typeof copy !== 'undefined' && copy.header && copy.header.themeLight) ? copy.header.themeLight : 'Light',
+    dark: (typeof copy !== 'undefined' && copy.header && copy.header.themeDark) ? copy.header.themeDark : 'Dark',
+  };
+%>
+<div class="theme-segmented" role="group" aria-label="<%= tcCopy.label %>">
+  <button type="button" data-theme-state-btn="system" aria-pressed="false" title="<%= tcCopy.system %>"><%= tcCopy.system %></button>
+  <button type="button" data-theme-state-btn="light" aria-pressed="false" title="<%= tcCopy.light %>">☀ <%= tcCopy.light %></button>
+  <button type="button" data-theme-state-btn="dark" aria-pressed="false" title="<%= tcCopy.dark %>">☾ <%= tcCopy.dark %></button>
+</div>
