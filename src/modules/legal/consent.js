@@ -1,5 +1,5 @@
 /**
- * Edikit — Consent Log (AUTH D-24 §10, D-25 §07-§12)
+ * Deborah — Consent Log (AUTH D-24 §10, D-25 §07-§12)
  * ---------------------------------------------------------------------------
  * Purpose'li consent yozuvlari: `users/{key}/consents/{purpose}` =
  * `{ granted_at, version, ip_hash, revoked_at, lang }`.

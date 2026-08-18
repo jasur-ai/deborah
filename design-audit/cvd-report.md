@@ -1,4 +1,4 @@
-# Edikit CVD Report (S06.08-09)
+# Deborah CVD Report (S06.08-09)
 
 Generated: 2026-08-09T10:15:05.248Z
 Distinctness checks: 67 | PASS: 46 | INFO (grayscale, qonuniy): 13 | Warnings: 8 | Hard FAIL: 0

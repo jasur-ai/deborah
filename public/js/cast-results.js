@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Results (C5-01)
+ * Deborah — Cast Results (C5-01)
  * ------------------------------
  * Teacher report (action pack) yuklaydi va render qiladi. Student private
  * recap bu sahifadan emas — o'z panelida (own response + approved explanation).

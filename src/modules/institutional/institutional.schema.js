@@ -1,5 +1,5 @@
 /**
- * Edikit — Institutional Handoff: Final Migration, Pilot & Procurement Pack
+ * Deborah — Institutional Handoff: Final Migration, Pilot & Procurement Pack
  * (pure logic — Prompt 72)
  *
  * Prompt 72 proves the product is ready for a real institution: legacy

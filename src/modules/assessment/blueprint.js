@@ -1,5 +1,5 @@
 /**
- * Edikit — Assessment Blueprint Engine (pure logic)
+ * Deborah — Assessment Blueprint Engine (pure logic)
  *
  * Pure, DB-free functions for assessment blueprint arithmetic:
  *   - distributeCount: deterministic 50/30/20 (or any ratio) item count split

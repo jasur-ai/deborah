@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Projector Client
+ * Deborah — Cast Projector Client
  * --------------------------------
  * Public screen — private data olmaydi. Read-only.
  */

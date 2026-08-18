@@ -1,5 +1,5 @@
 /**
- * Edikit — Uch-strike Client Collector (browser adapter)
+ * Deborah — Uch-strike Client Collector (browser adapter)
  *
  * Prompt 34 — visibility/fullscreen incidentlarini yig'ib server classifier'ga
  * yuboradi (research.md §31.1 layer 1 — RAW EVIDENCE ONLY). Classification

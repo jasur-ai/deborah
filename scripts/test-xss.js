@@ -1,5 +1,5 @@
 /**
- * Edikit — XSS Security Test Suite
+ * Deborah — XSS Security Test Suite
  * 
  * Avtomatik xavfsizlik tekshiruvi: emoji, charImg, search, middleware
  * 

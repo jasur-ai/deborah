@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH A-15: HEMIS adapter unit testlari
+ * Deborah — AUTH A-15: HEMIS adapter unit testlari
  *
  * Covers:
  * 1. normalizeAccountMe — A-14 da live olingan real shape → xavfsiz profil
@@ -236,13 +236,13 @@ describe('AUTH A-15 — OAuth gating', () => {
   it('env bo\'lsa authorize URL to\'g\'ri va secret kirmaydi', async () => {
     process.env.HEMIS_OAUTH_CLIENT_ID = 'otm-client-1';
     process.env.HEMIS_OAUTH_CLIENT_SECRET = 'otm-secret-x';
-    process.env.HEMIS_OAUTH_REDIRECT_URI = 'https://edikit.uz/auth/hemis/callback';
+    process.env.HEMIS_OAUTH_REDIRECT_URI = 'https://deborah.uz/auth/hemis/callback';
     const mod = await import('../../src/modules/auth/providers/hemis.js?oauth-gated=1');
     expect(mod.isOAuthConfigured()).toBe(true);
     const url = mod.buildOAuthAuthorizeUrl('state-123');
     expect(url).toContain('client_id=otm-client-1');
     expect(url).toContain('state=state-123');
-    expect(url).toContain(encodeURIComponent('https://edikit.uz/auth/hemis/callback'));
+    expect(url).toContain(encodeURIComponent('https://deborah.uz/auth/hemis/callback'));
     expect(url).not.toContain('otm-secret-x');
     await mod.exchangeOAuthCode('code-x', {
       fetchFn: vi.fn().mockResolvedValue(jsonResponse(200, { access_token: 'at' })),

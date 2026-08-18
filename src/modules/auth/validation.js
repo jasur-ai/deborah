@@ -1,5 +1,5 @@
 /**
- * Edikit — Auth validation schemas (AUTH A-04)
+ * Deborah — Auth validation schemas (AUTH A-04)
  * -------------------------------------------------------------------
  * Zod asosidagi login/register validatsiyasi — routes/auth.js'da ishlatiladi.
  *

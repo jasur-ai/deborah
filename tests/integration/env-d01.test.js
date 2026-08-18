@@ -24,7 +24,7 @@ function runProdEnv(extraEnv = {}) {
       ADMIN_PASS: 'prodpass123!',
       TURNSTILE_SECRET_KEY: '0x00-valid-test-secret',
       COOKIE_SECURE: 'true',
-      BASE_URL: 'https://edikit.uz',
+      BASE_URL: 'https://deborah.uz',
       ...extraEnv,
     },
     encoding: 'utf8',

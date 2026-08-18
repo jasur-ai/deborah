@@ -1,5 +1,5 @@
 /**
- * Edikit — Question Public/Private DTO Contracts
+ * Deborah — Question Public/Private DTO Contracts
  *
  * Separates public question data (sent to clients) from private
  * scoring key (kept server-side only).

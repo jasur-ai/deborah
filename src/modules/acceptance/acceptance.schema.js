@@ -1,7 +1,7 @@
 /**
- * Edikit — Final System Acceptance & Handover (pure logic — Prompt 73)
+ * Deborah — Final System Acceptance & Handover (pure logic — Prompt 73)
  *
- * Prompt 73 formally accepts the whole Edikit release against the
+ * Prompt 73 formally accepts the whole Deborah release against the
  * research.md acceptance matrix (§21 Acceptance metrics, §39 Security test
  * matrix, §63 measurable product gates, §75 procurement evidence). This is a
  * CHECKPOINT prompt (10, 19, 29, 38, 49, 60, 73).

@@ -1,7 +1,7 @@
 # Tadqiqotda Ishtirok Etish Roziligi
 
-**Tadqiqot nomi:** Edikit dizayn va brend tan olinishini tekshirish (STYLE STEP 39)
-**Tashkilot:** Edikit (ta'lim platformasi)
+**Tadqiqot nomi:** Deborah dizayn va brend tan olinishini tekshirish (STYLE STEP 39)
+**Tashkilot:** Deborah (ta'lim platformasi)
 **Moderator:** __________________  **Sana:** __________________
 
 ## 1. Maqsad

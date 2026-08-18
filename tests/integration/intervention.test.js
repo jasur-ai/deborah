@@ -1,5 +1,5 @@
 /**
- * Edikit — Intervention Loop, Adaptive Practice & Support (integration tests, Prompt 55)
+ * Deborah — Intervention Loop, Adaptive Practice & Support (integration tests, Prompt 55)
  *
  * Service qatlami: graceful degradation (PG'siz → 400/error), validate-before-
  * getDb, reassessment item non-duplication (integration §19), idempotency.

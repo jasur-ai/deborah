@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Payload Control Service (C5-05)
+ * Deborah — Cast Payload Control Service (C5-05)
  * ----------------------------------------------
  * Performance budget va payload control:
  * - Socket max payload limit (server) uchun o'lchash helper'lari.

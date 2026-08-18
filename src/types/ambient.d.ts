@@ -1,5 +1,5 @@
 /**
- * Edikit — Ambient Type Declarations for Legacy JS Modules
+ * Deborah — Ambient Type Declarations for Legacy JS Modules
  *
  * These declarations allow TypeScript to understand imports from
  * existing JavaScript modules without requiring .d.ts files for each.

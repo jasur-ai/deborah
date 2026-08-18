@@ -1,5 +1,5 @@
 /**
- * Edikit — Unit Tests: Exam Command Center, Incident & Notifications (Prompt 41)
+ * Deborah — Unit Tests: Exam Command Center, Incident & Notifications (Prompt 41)
  *
  * Pure-logic coverage (Prompt 41 §18 — incident state/authorization + §15
  * security/data guard):

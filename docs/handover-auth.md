@@ -1,4 +1,4 @@
-# Auth Handover — Edikit (AUTH D-28 §06)
+# Auth Handover — Deborah (AUTH D-28 §06)
 
 > Ushbu hujjat auth tizimini yangi muhandisga / navbatchiga topshirish uchun:
 > arxitektura xaritasi, qarorlar (NIST/OWASP), manbalar va owner'lar.

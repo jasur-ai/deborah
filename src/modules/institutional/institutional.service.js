@@ -1,5 +1,5 @@
 /**
- * Edikit — Institutional Handoff Service (Prompt 72)
+ * Deborah — Institutional Handoff Service (Prompt 72)
  *
  * Service half of the institutional module:
  *   - Cutover registry: final backup/hash evidence, reconciliation parity,
@@ -84,7 +84,7 @@ export async function recordFinalBackup({ dataHash = '', records = {}, actorId =
     resourceId: 'cutover-backup',
     details: { dataHash: dataHash.slice(0, 16), records: Object.keys(records).length },
   }).catch(() => null);
-  recordMetric('edikit_institutional_backup_hash_total', 1, { labels: { result: 'ok' } });
+  recordMetric('deborah_institutional_backup_hash_total', 1, { labels: { result: 'ok' } });
 
   return { ok: true, status: 'backup-hash', evidence };
 }
@@ -109,7 +109,7 @@ export async function recordMigrationDryRun({ reviewed = false, reportHash = '',
     resourceId: 'cutover-dry-run',
     details: { reportHash: reportHash.slice(0, 16) },
   }).catch(() => null);
-  recordMetric('edikit_institutional_dry_run_total', 1, { labels: { result: 'ok' } });
+  recordMetric('deborah_institutional_dry_run_total', 1, { labels: { result: 'ok' } });
 
   return { ok: true, status: 'dry-run' };
 }
@@ -134,7 +134,7 @@ export async function recordReconciliation({ legacy = {}, migrated = {}, actorId
     resourceId: 'reconciliation',
     details: { sections: eval_.checks.length },
   }).catch(() => null);
-  recordMetric('edikit_institutional_reconcile_total', 1, { labels: { result: 'ok' } });
+  recordMetric('deborah_institutional_reconcile_total', 1, { labels: { result: 'ok' } });
 
   return { ok: true, status: 'reconciled', checks: eval_.checks };
 }
@@ -177,7 +177,7 @@ export async function executeCutover({ gate0Ok = false, legalOk = false, support
     resourceId: 'cutover',
     details: { postgresPrimary: true, legacyReadOnly: true },
   }).catch(() => null);
-  recordMetric('edikit_institutional_cutover_total', 1, { labels: { result: 'ok' } });
+  recordMetric('deborah_institutional_cutover_total', 1, { labels: { result: 'ok' } });
 
   return { ok: true, status: 'cutover', postgresPrimary: true, legacyReadOnly: true };
 }
@@ -215,7 +215,7 @@ export async function recordTraining({ role = '', completed = [], verifier = '',
     resourceId: `training:${role}`,
     details: { completedSteps: evidence.completedSteps, verifier },
   }).catch(() => null);
-  recordMetric('edikit_institutional_training_total', 1, { labels: { role, result: 'ok' } });
+  recordMetric('deborah_institutional_training_total', 1, { labels: { role, result: 'ok' } });
 
   return { ok: true, role, completedSteps: evidence.completedSteps };
 }
@@ -233,7 +233,7 @@ export async function recordPracticeExam({ completed = false, attempts = 0, part
     resourceId: 'practice-exam',
     details: { attempts, participants },
   }).catch(() => null);
-  recordMetric('edikit_institutional_practice_exam_total', 1, { labels: { result: 'ok' } });
+  recordMetric('deborah_institutional_practice_exam_total', 1, { labels: { result: 'ok' } });
 
   return { ok: true, attempts, participants };
 }
@@ -273,7 +273,7 @@ export async function recordPilotPhase({
     resourceId: `pilot:${phase}`,
     details: { decision: decision.decision, incidents: incidents.length, availability },
   }).catch(() => null);
-  recordMetric('edikit_institutional_pilot_phase_total', 1, { labels: { phase, decision: decision.decision } });
+  recordMetric('deborah_institutional_pilot_phase_total', 1, { labels: { phase, decision: decision.decision } });
 
   return { ok: decision.ok, phase, decision: decision.decision, blocks: decision.blocks };
 }
@@ -295,7 +295,7 @@ export async function recordProcurementPack({ provided = {}, owner = '', actorId
     resourceId: 'procurement-pack',
     details: { items: eval_.items, owner },
   }).catch(() => null);
-  recordMetric('edikit_institutional_procurement_pack_total', 1, { labels: { result: 'ok' } });
+  recordMetric('deborah_institutional_procurement_pack_total', 1, { labels: { result: 'ok' } });
 
   return { ok: true, items: eval_.items, owner };
 }
@@ -322,7 +322,7 @@ export async function recordExitTest({ completed = {}, bundleHash = '', restored
     resourceId: 'exit-test',
     details: { steps: eval_.steps.length, bundleHash: bundleHash.slice(0, 12) },
   }).catch(() => null);
-  recordMetric('edikit_institutional_exit_test_total', 1, { labels: { result: 'ok' } });
+  recordMetric('deborah_institutional_exit_test_total', 1, { labels: { result: 'ok' } });
 
   return { ok: true, steps: eval_.steps };
 }
@@ -369,7 +369,7 @@ export async function getInstitutionalPosture({ seed = {} } = {}) {
     ],
   };
 
-  recordMetric('edikit_institutional_gate', gate.pass ? 1 : 0, {});
+  recordMetric('deborah_institutional_gate', gate.pass ? 1 : 0, {});
 
   return {
     cutover: state.cutover,

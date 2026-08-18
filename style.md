@@ -1,6 +1,6 @@
-# Edikit — UI/UX Design Research & Style Guide
+# Deborah — UI/UX Design Research & Style Guide
 
-> **Maqsad:** 100+ global va 10 ta mahalliy (O'zbek) quiz/test platformalarini tahlil qilib, Edikit uchun eng yaxshi ranglar, joylashuv, tipografiya va dizayn patternlarini aniqlash.
+> **Maqsad:** 100+ global va 10 ta mahalliy (O'zbek) quiz/test platformalarini tahlil qilib, Deborah uchun eng yaxshi ranglar, joylashuv, tipografiya va dizayn patternlarini aniqlash.
 
 ---
 
@@ -16,7 +16,7 @@
 8. [Animatsiya & Mikro-interaksiyalar](#8-animatsiya)
 9. [Leaderboard & Natijalar](#9-leaderboard)
 10. [Responsive & Mobile Dizayn](#10-responsive-dizayn)
-11. [Edikit uchun Yakuniy Style Guide](#11-edikit-style-guide)
+11. [Deborah uchun Yakuniy Style Guide](#11-deborah-style-guide)
 
 ---
 
@@ -282,11 +282,11 @@ Bg:        #FFFFFF / #F8FAFC
 Dark:      #1E293B / #0F172A
 ```
 
-### 4.2 Edikit uchun Tavsiya Etilgan Palitra
+### 4.2 Deborah uchun Tavsiya Etilgan Palitra
 
 ```css
 /* ═══════════════════════════════════════
-   Edikit Design System — Colors
+   Deborah Design System — Colors
    ═══════════════════════════════════════ */
 
 /* ── Background System ── */
@@ -360,7 +360,7 @@ joyi o'zgaradi, lekin bir xil savol uchun doim bir xil
 
 ## 5. Tipografiya
 
-### 5.1 Font Stack (Edikit)
+### 5.1 Font Stack (Deborah)
 
 ```css
 --font-display: 'Righteous', cursive;   /* Sarlavhalar, kod, leaderboard */
@@ -901,7 +901,7 @@ Wide:    1200px+    → Max width 1200px
 
 ---
 
-## 11. Edikit Style Guide
+## 11. Deborah Style Guide
 
 ### 11.1 Design Principles
 
@@ -1021,7 +1021,7 @@ Components/
 
 ## 📊 Xulosa
 
-### Edikit UI/UX DNKsi
+### Deborah UI/UX DNKsi
 
 ```
 │═══════════════════════════════════════════════════│
@@ -1055,7 +1055,7 @@ Components/
 
 ---
 
-> **style.md v2.0** — Edikit UI/UX Design Research Document
+> **style.md v2.0** — Deborah UI/UX Design Research Document
 > 
 > 100+ global platforms + 10 local platforms analyzed
 > 20 global + 5 local top picks identified
@@ -3919,7 +3919,7 @@ Before diving into animations, here are the 10 core easing curves used across al
 
 ## 🔗 Animatsiyalarni Qo'llash Bo'yicha Tavsiyalar
 
-### Edikit Project-da Qayerda Ishlatish
+### Deborah Project-da Qayerda Ishlatish
 
 ```
 1. Game code display        → A9.2 codeGlow (variant 1)

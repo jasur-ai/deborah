@@ -1,5 +1,5 @@
 /**
- * Edikit — Final System Acceptance (e2e, Prompt 73)
+ * Deborah — Final System Acceptance (e2e, Prompt 73)
  *
  * End-to-end release scenarios:
  *   - Full acceptance cycle: submit → review → sign-off all 8 domains →

@@ -1,5 +1,5 @@
 /**
- * Edikit — Integration Tests: Socket.IO
+ * Deborah — Integration Tests: Socket.IO
  *
  * Tests Socket.IO event flow with a real server on random port.
  * Uses createApp() factory + shared helpers from setup.js.

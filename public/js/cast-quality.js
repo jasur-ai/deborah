@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Quality Lab
+ * Deborah — Cast Quality Lab
  * --------------------------
  * - Rehearsal bot scenario runner (fast_correct, wrong_cluster, ...)
  * - Preflight / Postflight findings UI

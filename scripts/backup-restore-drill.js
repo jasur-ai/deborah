@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Backup Restore / DR Drill Harness (Prompt 71, items 10–12)
+ * Deborah — Backup Restore / DR Drill Harness (Prompt 71, items 10–12)
  *
  * Zero-dependency DR rehearsal evaluation:
  *   - PostgreSQL PITR restore (item 10) — RPO ≤ 1 min, RTO ≤ 30 min (§38.4)
@@ -67,7 +67,7 @@ for (const type of reliability.BACKUP_TYPES) {
 if (jsonOut) {
   console.log(JSON.stringify({ results, pass: allPass, targets: reliability.DR_TARGETS }, null, 2));
 } else {
-  console.log('\n═══ Edikit Backup Restore / DR Drill ═══');
+  console.log('\n═══ Deborah Backup Restore / DR Drill ═══');
   console.log(`Targets: RPO ≤ ${reliability.DR_TARGETS.rpoMinutes} min, RTO ≤ ${reliability.DR_TARGETS.rtoMinutes} min`);
   for (const r of results) {
     console.log(`\n[${r.ok ? 'PASS' : 'FAIL'}] ${r.type} — ${r.label}`);

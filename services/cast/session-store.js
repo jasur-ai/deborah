@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Session Store
+ * Deborah — Cast Session Store
  * ----------------------------
  * Cast data access bitta adapter orqali. Handlerlar raw Firebase
  * path bilmaydi. Logical collections:

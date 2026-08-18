@@ -1,5 +1,5 @@
 /**
- * Edikit — Seat, Proctor, Hall Ticket & Check-in API Routes
+ * Deborah — Seat, Proctor, Hall Ticket & Check-in API Routes
  *
  * Prompt 40 REST API:
  *   - Room seat-map CRUD (room_seat_maps, versioned) — validate layout

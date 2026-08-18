@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 034: AI Question Generator 50/30/20 (Prompt 53)
+ * Deborah — Migration 034: AI Question Generator 50/30/20 (Prompt 53)
  *
  * Prompt 53 — source-grounded, difficulty-controlled item draft pipeline
  * (research.md §8 AI test generatori, §8.6 lifecycle, §21 acceptance).
@@ -212,9 +212,9 @@ export async function up(db) {
     'ai_gen_reviews',
   ];
   for (const table of newTables) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
-    await sql`GRANT DELETE ON ${sql.table(table)} TO edikit_migration`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 }
 

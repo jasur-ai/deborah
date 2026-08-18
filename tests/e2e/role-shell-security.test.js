@@ -1,5 +1,5 @@
 /**
- * Edikit — Role-Aware Shell (e2e/security, Prompt 68)
+ * Deborah — Role-Aware Shell (e2e/security, Prompt 68)
  *
  * Keyboard / mobile / accessibility checks on the rendered shell:
  *   - Skip-link present and focusable (WCAG 2.2 keyboard nav)

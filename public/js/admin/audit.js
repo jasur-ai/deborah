@@ -1,5 +1,5 @@
 /**
- * Edikit — Admin audit dashboard (AUTH C-09)
+ * Deborah — Admin audit dashboard (AUTH C-09)
  * -------------------------------------------------------------------
  * auth_audit ro'yxati: filter (action/outcome/vaqt), qidiruv (actor_id),
  * pagination. Aggregate kartalar (login success/fail rate, lockout,
@@ -146,7 +146,7 @@
       return (
         '<div class="chart-line" style="display:flex;align-items:center;gap:8px;margin:4px 0">' +
         '<span style="min-width:110px;font-size:.78rem">' + esc(label) + '</span>' +
-        '<span class="chart-bar" style="display:inline-block;height:12px;min-width:4px;background:var(--edikit-semantic-color-action-primary, #2563eb);border-radius:3px;width:' + bar * 4 + 'px" aria-hidden="true"></span>' +
+        '<span class="chart-bar" style="display:inline-block;height:12px;min-width:4px;background:var(--deborah-semantic-color-action-primary, #2563eb);border-radius:3px;width:' + bar * 4 + 'px" aria-hidden="true"></span>' +
         '<strong style="font-size:.78rem">' + val + '</strong>' +
         '</div>'
       );

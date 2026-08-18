@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast E2E (T-03): Recovery
+ * Deborah — Cast E2E (T-03): Recovery
  * -----------------------------------
  * - Disconnect participant ma'lumotlari saqlanadi (item 8)
  * - Refresh'dan keyin state tiklanadi (item 8)

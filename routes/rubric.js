@@ -1,5 +1,5 @@
 /**
- * Edikit — Rubric Builder API Routes
+ * Deborah — Rubric Builder API Routes
  */
 
 import { Router } from 'express';

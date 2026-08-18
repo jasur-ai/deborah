@@ -1,5 +1,5 @@
 /**
- * Edikit — Quiz-from-Deck (service)
+ * Deborah — Quiz-from-Deck (service)
  *
  * Prompt 59 — "Create quiz from this deck" (research.md §10):
  *   - generateQuizFromDeck: canonical deck + source packs → concepts →

@@ -1,5 +1,5 @@
 /**
- * Edikit — Scan, Reconciliation, OMR & OCR API Routes
+ * Deborah — Scan, Reconciliation, OMR & OCR API Routes
  *
  * Prompt 43 REST API:
  *   - Scan batch create (idempotent batch_key) + list/detail/summary

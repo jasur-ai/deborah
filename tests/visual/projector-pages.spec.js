@@ -1,5 +1,5 @@
 /**
- * Edikit — Visual: Projector Matrix (STYLE STEP 03 / S03.02, S03.07)
+ * Deborah — Visual: Projector Matrix (STYLE STEP 03 / S03.02, S03.07)
  * ------------------------------------------------------------------
  * Projector viewportlar: 1920×1080 (HD), 1280×720 (720p), 1024×768 (XGA).
  * Sahifa: `/play` (cast join) — projector'da real use-case (direktor katta

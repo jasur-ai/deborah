@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — HTTP Smoke + Landmark Gate (STEP 02 / S02.07–S02.09)
+ * Deborah — HTTP Smoke + Landmark Gate (STEP 02 / S02.07–S02.09)
  * --------------------------------------------------------------
  * Server'ni o'zi ishga tushiradi (NODE_ENV=test, lokal DB) va:
  *   - Ochiq sahifalar: /, /play, /user/login, /user/forgot → 200

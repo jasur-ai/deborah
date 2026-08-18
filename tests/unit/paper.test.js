@@ -1,5 +1,5 @@
 /**
- * Edikit — Unit Tests: Paper Packet, QR & Chain of Custody (Prompt 42)
+ * Deborah — Unit Tests: Paper Packet, QR & Chain of Custody (Prompt 42)
  *
  * Pure-logic coverage (Prompt 42 §18 — QR signature/replay + §15 data guard):
  *   - QR payload: signed, tamper-evident, replay-detectable (UNIQUE token)
@@ -36,7 +36,7 @@ import {
   MIN_SIGNING_KEY_LENGTH,
 } from '../../src/modules/paper/index.js';
 
-const SIGNING_KEY = 'edikit-paper-test-signing-key-0123456789abcdef';
+const SIGNING_KEY = 'deborah-paper-test-signing-key-0123456789abcdef';
 
 // ═══════════════════════════════════════════════════════════════════
 // PAGE QR — SIGN / VERIFY / REPLAY (§18, §52.3)

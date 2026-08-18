@@ -1,5 +1,5 @@
 /**
- * Edikit — QTI Import/Export API Routes
+ * Deborah — QTI Import/Export API Routes
  *
  * REST API for QTI package import, staging, and export:
  *   - Upload & security validation
@@ -51,7 +51,7 @@ const router = Router();
 
 // ── Multer setup (temp directory for uploaded QTI packages) ──
 const upload = multer({
-  dest: path.join(os.tmpdir(), 'edikit-qti-uploads'),
+  dest: path.join(os.tmpdir(), 'deborah-qti-uploads'),
   limits: { fileSize: 60 * 1024 * 1024 }, // 60MB
   fileFilter: (req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
@@ -119,7 +119,7 @@ router.post('/api/qti/upload', upload.single('file'), async (req, res) => {
 
     // ── 4. Extract and parse ──
     try {
-      const extractDir = path.join(os.tmpdir(), `edikit-qti-extract-${pkg.id}`);
+      const extractDir = path.join(os.tmpdir(), `deborah-qti-extract-${pkg.id}`);
       if (fs.existsSync(extractDir)) fs.rmSync(extractDir, { recursive: true });
       fs.mkdirSync(extractDir, { recursive: true });
 

@@ -1,5 +1,5 @@
 /**
- * Edikit — Redis Infrastructure
+ * Deborah — Redis Infrastructure
  *
  * Provides:
  *   1. Redis client (ioredis) with lifecycle

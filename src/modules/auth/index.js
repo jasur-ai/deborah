@@ -1,5 +1,5 @@
 /**
- * Edikit — Auth Module Barrel Export
+ * Deborah — Auth Module Barrel Export
  *
  * Single import point for all authorization, tenant context,
  * RLS policy, and audit modules.

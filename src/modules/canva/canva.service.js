@@ -1,5 +1,5 @@
 /**
- * Edikit — Canva Button/Connect Adapter (service)
+ * Deborah — Canva Button/Connect Adapter (service)
  *
  * Prompt 59 — Canva modal (Button) va Connect OAuth oqimlari:
  *   - linkCanvaAccount: PKCE OAuth → token vault (encrypted).

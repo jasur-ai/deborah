@@ -135,7 +135,7 @@ describe('STEP 39 — Research analysis', () => {
   });
 
   it('analyzeAll: to\'liq CSV pipeline + targets', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'edikit-research-'));
+    const dir = mkdtempSync(join(tmpdir(), 'deborah-research-'));
     const csv = (name, content) => writeFileSync(join(dir, name), content);
 
     csv('five-second.csv', 'participant_id,variant,category_correct,cta_correct\nP1,B,1,1\nP2,B,1,1\nP3,B,0,1');

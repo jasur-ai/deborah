@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 027: Academic Grade Rules & Deterministic Calculation
+ * Deborah — Migration 027: Academic Grade Rules & Deterministic Calculation
  * (Prompt 45)
  *
  * Prompt 45 — weighted, hurdle, late, exempt, resit va rounding qoidalarini
@@ -151,9 +151,9 @@ export async function up(db) {
     'grade_calculation_runs',
   ];
   for (const table of newTables) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
-    await sql`GRANT DELETE ON ${sql.table(table)} TO edikit_migration`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 }
 

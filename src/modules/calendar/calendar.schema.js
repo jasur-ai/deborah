@@ -1,5 +1,5 @@
 /**
- * Edikit — Program Calendar & Workload Schema (pure logic)
+ * Deborah — Program Calendar & Workload Schema (pure logic)
  *
  * Pure, DB-free validation & collision logic for Prompt 26:
  *   - Program event schema validation (effort/marker/moderation minutes)
@@ -531,7 +531,7 @@ export function formatLocalIcsTime(date, timezone) {
  * @param {Object} [opts] - { prodId, uidPrefix }
  * @returns {string} ICS content
  */
-export function generateIcsEvent(event = {}, { prodId = '-//Edikit//Program Calendar//EN', uidPrefix = 'edikit-event' } = {}) {
+export function generateIcsEvent(event = {}, { prodId = '-//Deborah//Program Calendar//EN', uidPrefix = 'deborah-event' } = {}) {
   const { start, end, timezone } = normalizeEventTimes(event);
   if (!start || !end) {
     throw new Error('Event start_at and end_at are required for ICS generation');

@@ -1,10 +1,10 @@
 /**
- * Edikit — Migration 038: Claude Native Adapter
+ * Deborah — Migration 038: Claude Native Adapter
  *
- * Prompt 57 — Claude'ni Edikit ichidagi streaming source-synthesis va
+ * Prompt 57 — Claude'ni Deborah ichidagi streaming source-synthesis va
  * canonical JSON provider sifatida ulash (research.md §9.2 canonical
  * document, §9.4 provider capability matrix — Claude: server API key,
- * provider UI embed emas, output Edikit render qiladi; §22.9 API key
+ * provider UI embed emas, output Deborah render qiladi; §22.9 API key
  * browserga chiqmaydi; §15 security). Precondition: Prompt 50 source
  * packs + Prompt 56 canonical deck.
  *

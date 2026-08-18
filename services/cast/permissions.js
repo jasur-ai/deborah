@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Permissions
+ * Deborah — Cast Permissions
  * --------------------------
  * Role matrix — immutable registry. Har command uchun
  * permissions.can(actor, action, session) chaqiriladi.

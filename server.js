@@ -1,5 +1,5 @@
 /**
- * Edikit — Node.js Express + Socket.io Server
+ * Deborah — Node.js Express + Socket.io Server
  * Architecture: MllyCore-inspired modular pattern
  * 
  * Layers:
@@ -27,7 +27,7 @@ import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
-// ── Edikit config modules ──
+// ── Deborah config modules ──
 import CONFIG from './src/config/env.js';
 import { initLogger, getLogger, requestIdMiddleware, requestLogMiddleware } from './src/config/logger.js';
 import features from './src/config/features.js';
@@ -71,6 +71,10 @@ import portfolioRoutes from './routes/portfolio.js';
 import notificationsRoutes from './routes/notifications.js';
 import telegramAuthRoutes from './routes/telegram-auth.js';
 import telegramBotRoutes from './routes/telegram-bot.js';
+import { createRedisService } from './src/modules/auth/redis-service.js';
+import { prometheusText } from './src/telemetry/metrics.js';
+import { createAuthRateLimiter } from './middleware/rate-limit.js';
+import { setRedisService } from './src/modules/auth/session-manager.js';
 import opendataRoutes from './routes/opendata.js';
 import castRoutes from './routes/cast.js';
 import devRoutes from './routes/dev.js';
@@ -200,7 +204,7 @@ export async function createApp() {
         retryStrategy: (times) => Math.min(times * 100, 3000),
       });
       await redisClient.connect();
-      sessionStore = new RedisStore({ client: redisClient, prefix: 'edikit:sess:' });
+      sessionStore = new RedisStore({ client: redisClient, prefix: 'deborah:sess:' });
       log.info('Redis session store connected');
     } catch (err) {
       log.warn({ err: err.message }, 'Redis session store unavailable, using MemoryStore');
@@ -225,12 +229,29 @@ export async function createApp() {
     },
   }));
 
+  // ── Redis service (AUTH D-03) — session + cache + rate limit + risk ──
+  const redisService = await createRedisService({ url: CONFIG.REDIS_URL, logger: log });
+  app.set('redisService', redisService);
+  setRedisService(redisService);
+  // AUTH C-01: auth rate limiter (register burst 3/s, per-ASN aggregatsiya)
+  const authRateLimiter = createAuthRateLimiter({ redis: redisService.client || null, redisOk: redisService.ok === true });
+  app.set('authRateLimiter', authRateLimiter);
+
   // ── CSRF token generation ──
   app.use((req, res, next) => {
     if (!req.session.csrfToken) {
       req.session.csrfToken = crypto.randomBytes(32).toString('hex');
     }
     res.locals.csrfToken = req.session.csrfToken;
+    next();
+  });
+
+  // AUTH D-11 §09: ?lang= → lang cookie (whitelist; noto'g'ri qiymat yozilmaydi)
+  app.use((req, res, next) => {
+    const q = req.query && req.query.lang;
+    if (typeof q === 'string' && ['uz', 'uz-cyrl', 'ru', 'en'].includes(q)) {
+      res.cookie('lang', q, { httpOnly: false, sameSite: 'lax', maxAge: 365 * 24 * 60 * 60 * 1000 });
+    }
     next();
   });
 
@@ -246,6 +267,10 @@ export async function createApp() {
     // Provider webhook — HMAC signature bilan himoyalangan, CSRF token shart emas
     // (Prompt 58 §11 — Manus signed webhook)
     if (req.path.startsWith('/api/webhooks/')) return next();
+    // Telegram bot callback — HMAC signature bilan himoyalangan, CSRF shart emas
+    if (req.path.startsWith('/webhooks/telegram-bot')) return next();
+    // Roster invite accept — bir martalik token bilan himoyalangan (B-12)
+    if (req.path.startsWith('/api/roster/invites/accept')) return next();
     // API endpoints are now CSRF-protected — clients must send X-CSRF-Token header
     validateCsrf(req, res, next);
   });
@@ -300,7 +325,12 @@ export async function createApp() {
   });
 
   // ── Health / Readiness endpoints ──
-  app.get('/health', (req, res) => {
+    // AUTH D-06: /metrics — Prometheus exposition (PII yo'q)
+  app.get('/metrics', (req, res) => {
+    res.set('Content-Type', 'text/plain; version=0.0.4; charset=utf-8');
+    res.send(prometheusText());
+  });
+app.get('/health', (req, res) => {
     const rateLimiterStats = app.get('socketRateLimiter')?.getStats?.() || null;
     res.json({
       status: 'ok',
@@ -326,6 +356,10 @@ export async function createApp() {
   app.use('/', indexRoutes);
   app.use('/', authRoutes);
   app.use('/admin', adminRoutes);
+  // Public auth routes — userRoutes (requireAuth) OLDIN mount qilinadi,
+  // aks holda /user/reset va /user/mfa requireAuth'ga tushib 401 qaytaradi.
+  app.use('/', mfaRoutes);
+  app.use('/', resetRoutes);
   app.use('/user', userRoutes);
   app.use('/', gameRoutes);
   app.use('/arena', arenaRoutes);
@@ -338,9 +372,7 @@ export async function createApp() {
   app.use('/', pushRoutes);
 
   // ── D-faza auth routes ──
-  app.use('/', mfaRoutes);
   app.use('/', sessionRoutes);
-  app.use('/', resetRoutes);
   app.use('/', emailVerifyRoutes);
   app.use('/', emailChangeRoutes);
   app.use('/', legalRoutes);
@@ -355,7 +387,7 @@ export async function createApp() {
   app.use('/', telegramBotRoutes);
   app.use('/', opendataRoutes);
   app.use('/', castRoutes);
-  app.use('/', devRoutes);
+  app.use('/_dev', devRoutes);
 
   // ── Academic API routes ──
   app.use('/', academicRoutes);
@@ -463,9 +495,9 @@ export async function createApp() {
     log.info({ event: 'socket:connect', id: socket.id }, `Socket connected: ${socket.id}`);
 
     // ── Socket connection metrics (Prompt 69 §10 golden signals) ──
-    incrementCounter('edikit_socket_connections_total', { help: 'Socket connections' }, { value: 1 });
+    incrementCounter('deborah_socket_connections_total', { help: 'Socket connections' }, { value: 1 });
     const connCount = (io.sockets?.sockets?.size || 0);
-    setGauge('edikit_socket_connected', connCount, { help: 'Current socket connections' });
+    setGauge('deborah_socket_connected', connCount, { help: 'Current socket connections' });
 
     // ── Socket event manual spans (Prompt 69 §09) ──
     // Har bir event handler'ini wrap qilamiz — span'da PII yozilmaydi
@@ -479,7 +511,7 @@ export async function createApp() {
     socket.on('disconnect', (reason) => {
       socketRateLimiter.onDisconnect(socket);
       const remaining = (io.sockets?.sockets?.size || 0);
-      setGauge('edikit_socket_connected', remaining, { help: 'Current socket connections' });
+      setGauge('deborah_socket_connected', remaining, { help: 'Current socket connections' });
       log.info({ event: 'socket:disconnect', id: socket.id, reason }, `Socket disconnected: ${socket.id}`);
     });
   });
@@ -516,7 +548,7 @@ if (isMainModule) {
       console.error('   Set ADMIN_USER and ADMIN_PASS in .env to non-default values.\n');
       process.exit(1);
     }
-    if (CONFIG.SESSION_SECRET === 'edikit-dev-secret') {
+    if (CONFIG.SESSION_SECRET === 'deborah-dev-secret') {
       console.error('\n❌ FATAL: Default session secret in production!');
       console.error('   Set a unique SESSION_SECRET in .env.\n');
       process.exit(1);
@@ -537,7 +569,7 @@ if (isMainModule) {
 
     console.log(`
 ╔═══════════════════════════════════════════╗
-║   ⚡ Edikit v2.0                       ║
+║   ⚡ Deborah v2.0                       ║
 ║   ─────────────────────────────────────── ║
 ║   Server:   http://${CONFIG.HOST}:${CONFIG.PORT}         ║
 ║   Status:   ${CONFIG.NODE_ENV.toUpperCase()}                    ║

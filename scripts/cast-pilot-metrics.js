@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Field Pilot Metrics (T-06)
+ * Deborah — Cast Field Pilot Metrics (T-06)
  * ----------------------------------------
  * Admin `/api/cast/telemetry` dan pilot metrikalarini yig'adi va
  * signed field report uchun jadval chiqaradi:

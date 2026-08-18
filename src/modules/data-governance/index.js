@@ -1,5 +1,5 @@
 /**
- * Edikit — Data Governance Barrel Export
+ * Deborah — Data Governance Barrel Export
  *
  * Prompt 65 — D0–D6 classification, legal hold, DSAR va multi-store
  * deletion (purge worker + receipts). Legal hold fail-open bo'lmaydi (§15).

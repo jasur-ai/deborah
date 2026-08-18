@@ -1,5 +1,5 @@
 /**
- * Edikit — AI/Content Checkpoint Routes
+ * Deborah — AI/Content Checkpoint Routes
  *
  * Prompt 60 REST API:
  *   - GET   /api/admin/ai-checkpoint/meta   — constants (version, scopes, pilots)

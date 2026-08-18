@@ -1,5 +1,5 @@
 /**
- * Edikit — E-01a: Canonical OneID (identity.js)
+ * Deborah — E-01a: Canonical OneID (identity.js)
  * ---------------------------------------------------------------------------
  * Barcha provider identifikatorlari (google_sub, hemis_id, telegram_id) bir
  * canonical `oneid_sub` ga bog'lanadi. Bitta user = bitta OneID; provider'lar

@@ -1,5 +1,5 @@
 /**
- * Edikit — Quiz-from-Deck
+ * Deborah — Quiz-from-Deck
  *
  * Prompt 59 — canonical deckdan quiz yaratish (research.md §10):
  * quizConcepts/source pack asosida 50/30/20, teacher approval,

@@ -1,4 +1,4 @@
-# Edikit Brand Assets — STYLE STEP 05
+# Deborah Brand Assets — STYLE STEP 05
 
 Evidence-Led institutional identita. Ushbu hujjat brand assetlarining yagona manbasi.
 
@@ -34,7 +34,7 @@ Favicon 16px da legible — gradient ishlatilmaydi, solid cobalt.
 
 **Clear-space:** mark atrofida kamida x-height (matn balandligi) bo'sh joy saqlanadi.
 **Taqiqlangan:** mark'ni strech qilish, gradient qo'shish, glow/filter qo'shish,
-rangni tasdiqlanmagan variantga almashtirish, "Edikit" nomini boshqa shriftda yozish.
+rangni tasdiqlanmagan variantga almashtirish, "Deborah" nomini boshqa shriftda yozish.
 
 ## 4. Variant tanlash (S05.02)
 
@@ -70,7 +70,7 @@ So'ra → Ko'r → Moslashtir   (UZ)
 
 ## 7. Evidence Gradient policy (S05.09)
 
-- **Product UI'da gradient taqiqlangan.** Primary button solid cobalt (`--edikit-semantic-color-action-primary`).
+- **Product UI'da gradient taqiqlangan.** Primary button solid cobalt (`--deborah-semantic-color-action-primary`).
 - Gradient faqat marketing/illustration contextida — OG image, poster, presentation cover.
 - `logo-icon.svg` (favicon/app icon) solid cobalt rounded-square + white mark — gradient'siz.
 
@@ -89,18 +89,18 @@ admin) ishlatilmaydi.
 
 ## 9. Alt / aria-hidden policy (S05.11)
 
-- **Logo alt har doim `"Edikit"`** — hamma joyda (nav, admin, game, favicon).
+- **Logo alt har doim `"Deborah"`** — hamma joyda (nav, admin, game, favicon).
 - Dekorativ assetlar (rail, mosaic cell'lar) — `aria-hidden="true"` yoki qo'shni
   matn/semantik element orqali tasvirlanadi.
-- Evidence Mark SVG'da `role="img"` + `aria-label="Edikit Evidence Mark"` — standalone
-  ishlatilganda; lockup'da `role="img"` + `aria-label="Edikit"`.
+- Evidence Mark SVG'da `role="img"` + `aria-label="Deborah Evidence Mark"` — standalone
+  ishlatilganda; lockup'da `role="img"` + `aria-label="Deborah"`.
 - Icon'lar (`svgIcon()` helper) — mavjud `icon-inline` bilan dekorativ.
 
 ## 10. Blind-recognition prototype (S05.12)
 
 `public/brand/gallery.html` — nom/wordmark olib tashlangan, faqat mark/rail/mosaic
 ko'rinadigan prototype. Tanilish testi: 3 panel (Evidence Mark, Signal Rail, Response
-Mosaic) alohida ko'rsatiladi — foydalanuvchi qaysi biri Edikit ekanini tanlaydi.
+Mosaic) alohida ko'rsatiladi — foydalanuvchi qaysi biri Deborah ekanini tanlaydi.
 
 ## 10a. Wordmark font limitation (S05.03 — texnik eslatma)
 

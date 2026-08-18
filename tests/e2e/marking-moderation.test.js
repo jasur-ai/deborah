@@ -1,5 +1,5 @@
 /**
- * Edikit — Marking & Moderation e2e/security tests (Prompt 46)
+ * Deborah — Marking & Moderation e2e/security tests (Prompt 46)
  *
  * E2E walk (graceful degradation without PostgreSQL):
  *   - Admin page renders with design-system chrome.
@@ -58,7 +58,7 @@ describe('marking — admin page + meta', () => {
     const res = await agent.get('/admin/marking');
     expect(res.status).toBe(200);
     expect(res.text).toContain('Marking &amp; Moderation');
-    expect(res.text).toContain('Edikit Admin');
+    expect(res.text).toContain('Deborah Admin');
   });
 
   it('GET /api/admin/marking/meta exposes constants', async () => {

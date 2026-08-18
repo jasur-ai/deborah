@@ -1,5 +1,5 @@
 /**
- * Edikit — QTI Staging Service (Preview/Approval/Commit Pipeline)
+ * Deborah — QTI Staging Service (Preview/Approval/Commit Pipeline)
  *
  * Manages the lifecycle of imported QTI items through staging:
  *   - Staging session creation from parsed QTI items

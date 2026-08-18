@@ -1,5 +1,5 @@
 /**
- * Edikit — External Integration Boundary (integration tests, Prompt 66)
+ * Deborah — External Integration Boundary (integration tests, Prompt 66)
  *
  * Service qatlami (fake DB): connection registry (idempotent, mode guard),
  * HEMIS pull→staging→diff (idempotency key), ratified-only grade push

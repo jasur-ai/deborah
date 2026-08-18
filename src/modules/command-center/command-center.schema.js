@@ -1,5 +1,5 @@
 /**
- * Edikit — Exam Command Center, Incident & Notifications (pure logic)
+ * Deborah — Exam Command Center, Incident & Notifications (pure logic)
  *
  * Prompt 41 — exam-day health, attendance va incidentlarni bitta auditable
  * command centerda boshqarish (research.md §53.4–53.7, §38.5). This module

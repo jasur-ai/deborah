@@ -1,5 +1,5 @@
 /**
- * Edikit — IndexedDB Offline Journal, Reconnect & Recovery Tests
+ * Deborah — IndexedDB Offline Journal, Reconnect & Recovery Tests
  *
  * Covers (Prompt 32, research.md §29):
  *   - Journal entry contract (validate/create)

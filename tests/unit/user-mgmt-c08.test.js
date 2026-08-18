@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH C-08 User management — Unit tests
+ * Deborah — AUTH C-08 User management — Unit tests
  * ---------------------------------------------------------------
  *  - adminBlockUser: status=blocked + blocked_at + reason; audit ACCOUNT_BLOCKED
  *  - adminUnblockUser: status=active; audit

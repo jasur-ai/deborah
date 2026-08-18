@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Confusion Signal Service (C3-10)
+ * Deborah — Cast Confusion Signal Service (C3-10)
  * ------------------------------------------------
  * Participant private quick signal (confused / too_fast / technical_issue / need_example).
  *

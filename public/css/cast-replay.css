@@ -1,4 +1,4 @@
-/* Edikit — Cast Replay (C5-02) */
+/* Deborah — Cast Replay (C5-02) */
 
 .cast-page {
   font-family: var(--cast-font, 'Source Sans 3', sans-serif);
@@ -13,7 +13,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: var(--edikit-spacing-4, 16px) var(--edikit-spacing-6, 24px)
+  padding: var(--deborah-spacing-4, 16px) var(--deborah-spacing-6, 24px)
   background: var(--cast-surface, #181c30);
   border-bottom: 1px solid var(--cast-border, #2a3050);
   position: sticky;
@@ -35,7 +35,7 @@
 .cast-btn-secondary { background: var(--cast-purple, #8b5cf6); color: #fff; }
 
 .rp-layout { max-width: 1100px; margin: 0 auto; padding: 24px 18px 60px; display: flex; flex-direction: column; gap: 18px; }
-.cast-surface { background: var(--cast-surface, #181c30); border: 1px solid var(--cast-border, #2a3050); border-radius: var(--cast-radius, 14px); padding: var(--edikit-spacing-5, 20px) var(--edikit-spacing-5, 20px) }
+.cast-surface { background: var(--cast-surface, #181c30); border: 1px solid var(--cast-border, #2a3050); border-radius: var(--cast-radius, 14px); padding: var(--deborah-spacing-5, 20px) var(--deborah-spacing-5, 20px) }
 .rp-card h3 { margin: 0 0 12px; font-size: 15px; opacity: 0.85; }
 .rp-body { font-size: 14px; line-height: 1.55; }
 .rp-muted { color: var(--cast-muted-text, #98a0c0); font-size: 13px; }
@@ -44,7 +44,7 @@
 @media (max-width: 760px) { .rp-grid-2 { grid-template-columns: 1fr; } }
 
 .rp-timeline { margin: 0; padding: 0; list-style: none; max-height: 420px; overflow: auto; }
-.rp-timeline li { display: flex; gap: 10px; align-items: baseline; padding: var(--edikit-spacing-2, 8px) 0; border-bottom: 1px dashed rgba(120, 130, 170, 0.15); }
+.rp-timeline li { display: flex; gap: 10px; align-items: baseline; padding: var(--deborah-spacing-2, 8px) 0; border-bottom: 1px dashed rgba(120, 130, 170, 0.15); }
 .rp-tl-rev { font-size: 11px; font-weight: 600; color: var(--cast-blue, #5aa7ff); background: rgba(90, 167, 255, 0.12); padding: 1px 7px; border-radius: 999px; flex-shrink: 0; }
 .rp-tl-time { font-size: 11px; color: var(--cast-muted-text, #98a0c0); flex-shrink: 0; }
 
@@ -63,8 +63,8 @@
   background: #0d101f;
   color: var(--cast-text, #eef0ff);
   border: 1px solid var(--cast-border, #2a3050);
-  border-radius: var(--edikit-radius-md, 12px);
-  padding: var(--edikit-spacing-3, 12px);
+  border-radius: var(--deborah-radius-md, 12px);
+  padding: var(--deborah-spacing-3, 12px);
   font-family: inherit;
   font-size: 13px;
   resize: vertical;

@@ -1,5 +1,5 @@
 /**
- * Edikit — Student Preflight Schema (pure logic)
+ * Deborah — Student Preflight Schema (pure logic)
  *
  * Pure, DB-free logic for Prompt 28 (Student assignment list, brief va preflight):
  *   - Availability window computation (not_started | open | closed | unscheduled)

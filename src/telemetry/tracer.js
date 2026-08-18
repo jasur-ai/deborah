@@ -1,5 +1,5 @@
 /**
- * Edikit — Lightweight Tracer (Prompt 69 §07-09)
+ * Deborah — Lightweight Tracer (Prompt 69 §07-09)
  *
  * OTel API yuzasiga mos, ammo tashqi SDK talab qilmaydigan yengil tracer:
  *   - W3C tracecontext (traceparent: 00-<traceId32>-<spanId16>-01) inject/extract

@@ -1,5 +1,5 @@
 /**
- * Edikit — Item Bank Module Tests
+ * Deborah — Item Bank Module Tests
  *
  * Covers: item bank CRUD, item CRUD with public/private split,
  * status lifecycle, clone/diff, tags/outcomes, media management.

@@ -1,5 +1,5 @@
 /**
- * Edikit — Canva Button/Connect Adapter (integration tests, Prompt 59)
+ * Deborah — Canva Button/Connect Adapter (integration tests, Prompt 59)
  *
  * Service qatlami: PKCE link flow (state CSRF → token vault encrypted),
  * Button callback → design mapping + connection upsert, create/import/

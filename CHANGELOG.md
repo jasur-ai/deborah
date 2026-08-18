@@ -1,4 +1,4 @@
-# Edikit Changelog
+# Deborah Changelog
 
 Barcha muhim o'zgarishlar (design, aksessuarlik, performance, platforma) shu yerda qayd etiladi.
 Format: [Keep a Changelog](https://keepachangelog.com/) asosida.
@@ -40,4 +40,4 @@ Format: [Keep a Changelog](https://keepachangelog.com/) asosida.
 
 ---
 
-[2.1.0]: https://github.com/edikit/edikit/releases/tag/v2.1.0
+[2.1.0]: https://github.com/deborah/deborah/releases/tag/v2.1.0

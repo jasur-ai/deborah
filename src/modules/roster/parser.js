@@ -1,5 +1,5 @@
 /**
- * Edikit — Roster File Parser
+ * Deborah — Roster File Parser
  *
  * Parses XLSX and CSV roster files with security controls:
  *   - No formula execution (sheet_to_json mode)

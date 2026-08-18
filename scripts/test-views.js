@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — All-View EJS Compile Gate (STEP 02 / S02.03–S02.05, S02.10)
+ * Deborah — All-View EJS Compile Gate (STEP 02 / S02.03–S02.05, S02.10)
  * ---------------------------------------------------------------------
  * Har bir `views/` ichidagi .ejs faylni `ejs.compile()` orqali compile qiladi.
  * Syntax xato topilsa fayl + qator + xabarni chiqarib exit 1 qaytaradi.

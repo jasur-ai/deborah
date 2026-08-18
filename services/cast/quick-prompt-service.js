@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Quick Prompt Service (C3-06)
+ * Deborah — Cast Quick Prompt Service (C3-06)
  * --------------------------------------------
  * Teacher active session ichida original testni o'zgartirmasdan
  * ad-hoc savol yuboradi. Promptlar session eventida qoladi;

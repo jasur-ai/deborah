@@ -1,5 +1,5 @@
 /**
- * Edikit — Student Evidence Portfolio & Verifiable Credentials (pure logic)
+ * Deborah — Student Evidence Portfolio & Verifiable Credentials (pure logic)
  *
  * Prompt 61 — evidence portfolio + Open Badges 2.0 / CLR / W3C VC-compatible
  * credential lifecycle (research.md §25 AI governance — human sign-off on
@@ -86,7 +86,7 @@ export function computeVcDigest({ credential = {}, issuedAt = 0, issuer = '' } =
  * Production uses crypto.randomBytes(24) — see credential.service.js
  * createShareGrant(). This function exists only for deterministic unit tests.
  */
-export function buildShareGrantToken({ itemId = 0, viewerEmail = '', expiresAt = 0, secret = 'edikit' } = {}) {
+export function buildShareGrantToken({ itemId = 0, viewerEmail = '', expiresAt = 0, secret = 'deborah' } = {}) {
   const canonical = JSON.stringify({ itemId, viewerEmail, expiresAt, secret });
   return crypto.createHash('sha256').update(canonical).digest('hex').slice(0, 32);
 }
@@ -235,7 +235,7 @@ export function serializeOpenBadges({ credential = {}, issuer = {}, now = Date.n
         issuer: {
           type: 'Profile',
           id: issuer.id || '',
-          name: issuer.name || 'Edikit',
+          name: issuer.name || 'Deborah',
         },
       },
       issuedOn: credential.issuedAt || new Date(now).toISOString(),
@@ -281,8 +281,8 @@ export function serializeVc({ credential = {}, issuer = {}, now = Date.now() } =
     vc: {
       '@context': ['https://www.w3.org/2018/credentials/v1'],
       id: `urn:uuid:${credential.vcDigest || credential.id}`,
-      type: ['VerifiableCredential', 'EdikitCredential'],
-      issuer: issuer.id || 'edikit',
+      type: ['VerifiableCredential', 'DeborahCredential'],
+      issuer: issuer.id || 'deborah',
       issuanceDate: credential.issuedAt || new Date(now).toISOString(),
       credentialSubject: {
         id: credential.recipient || '',

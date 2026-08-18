@@ -133,7 +133,7 @@ describe('AUTH B-16 — teacher SLA + limited mode', () => {
     expect(page.text).toContain('kundan keyin ochiladi');
     expect(page.text).toContain('aria-disabled="true"');
     expect(page.text).toContain('Apellyatsiya');
-    expect(page.text).toContain('mailto:support@edikit.uz');
+    expect(page.text).toContain('mailto:support@deborah.uz');
 
     // Cooldown o'tdi (10 kun o'tmishga) → enabled reapply
     await fb.set(`users/${key}/teacher_cooldown_until`, Date.now() - 1000);

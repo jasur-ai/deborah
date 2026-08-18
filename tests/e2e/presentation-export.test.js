@@ -1,5 +1,5 @@
 /**
- * Edikit — Canonical Presentation & Native Editor (e2e/security tests, Prompt 56)
+ * Deborah — Canonical Presentation & Native Editor (e2e/security tests, Prompt 56)
  *
  * Security & data guards (§15-17):
  *   - Provider raw response canonical modeldan tashqariga chiqmaydi.

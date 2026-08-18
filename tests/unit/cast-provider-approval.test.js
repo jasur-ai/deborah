@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast C4-07 Provider Registry SLA + Approval Gate Tests
+ * Deborah — Cast C4-07 Provider Registry SLA + Approval Gate Tests
  * ----------------------------------------------------------------
  * coverage: SLA fields (region/subprocessors/training/retention/deletion,
  *           item 15), provider approval gate (item 16).

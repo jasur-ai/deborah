@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Cast Retention CLI Worker (C4-07)
+ * Deborah — Cast Retention CLI Worker (C4-07)
  * -------------------------------------------
  * Retention job'ni ishga tushiradi.
  *

@@ -1,5 +1,5 @@
 /**
- * Edikit — API, Socket, Job, Webhook & Outbox Contract Audit (unit tests, Prompt 67)
+ * Deborah — API, Socket, Job, Webhook & Outbox Contract Audit (unit tests, Prompt 67)
  *
  * PURE schema testlari: zod→OpenAPI 3.1 converter, OpenAPI document build/
  * validate, route inventory (stop condition §24), cursor/idempotency/ETag
@@ -139,7 +139,7 @@ describe('api-contracts — cursor / idempotency / ETag conventions', () => {
 
   it('idempotency key format', () => {
     const k = buildIdempotencyKey({ tenantId: 1, operation: 'create-test', payload: { name: 'x' } });
-    expect(k.startsWith('edikit:1:create-test:')).toBe(true);
+    expect(k.startsWith('deborah:1:create-test:')).toBe(true);
     expect(assertIdempotencyHeader(k).ok).toBe(true);
     expect(assertIdempotencyHeader('').ok).toBe(false);
     expect(assertIdempotencyHeader('foo').ok).toBe(false);

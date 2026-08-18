@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH A-30 Admin/Teacher privilege hardening — Unit tests
+ * Deborah — AUTH A-30 Admin/Teacher privilege hardening — Unit tests
  * ---------------------------------------------------------------
  *  - adminIpAllowed: exact / CIDR / empty allowlist
  *  - adminMfaMandatory: production doim true, flag toggle

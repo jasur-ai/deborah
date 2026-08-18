@@ -1,5 +1,5 @@
 /**
- * Edikit — Reliability Guard Service (Prompt 71)
+ * Deborah — Reliability Guard Service (Prompt 71)
  *
  * Service half of the reliability module:
  *   - Rehearsal evidence registry: load profile runs, chaos drills, backup
@@ -73,7 +73,7 @@ export async function recordLoadRun({ profileId, observed = {}, dataset = {}, ac
 
   // Invalid input (unknown profileId) must not count as a run.
   if (!eval_.error) {
-    recordMetric('edikit_reliability_load_runs_total', 1, { labels: { profile: profileId, result: eval_.ok ? 'pass' : 'fail' } });
+    recordMetric('deborah_reliability_load_runs_total', 1, { labels: { profile: profileId, result: eval_.ok ? 'pass' : 'fail' } });
   }
 
   return { ...eval_, dataGuard };
@@ -102,7 +102,7 @@ export async function recordChaosDrill({ scenarioId, observed = {}, actorId = nu
 
   // Invalid input (unknown scenarioId) must not count as a drill.
   if (!eval_.error) {
-    recordMetric('edikit_reliability_chaos_drills_total', 1, { labels: { scenario: scenarioId, result: eval_.ok ? 'pass' : 'fail' } });
+    recordMetric('deborah_reliability_chaos_drills_total', 1, { labels: { scenario: scenarioId, result: eval_.ok ? 'pass' : 'fail' } });
   }
 
   return eval_;
@@ -135,7 +135,7 @@ export async function recordBackupRestore({ backupType, observed = {}, actorId =
   }).catch(() => null);
 
   if (eval_.ok && eval_.evidence) {
-    recordMetric('edikit_reliability_backup_restores_total', 1, { labels: { type: backupType, result: 'pass' } });
+    recordMetric('deborah_reliability_backup_restores_total', 1, { labels: { type: backupType, result: 'pass' } });
   }
 
   return eval_;
@@ -225,7 +225,7 @@ export async function getReliabilityPosture({ seed = {} } = {}) {
   };
 
   // Telemetry — DR readiness gate (item 17)
-  recordMetric('edikit_reliability_dr_gate', gate.pass ? 1 : 0, {});
+  recordMetric('deborah_reliability_dr_gate', gate.pass ? 1 : 0, {});
 
   return {
     load,

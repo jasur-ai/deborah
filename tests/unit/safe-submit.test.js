@@ -1,5 +1,5 @@
 /**
- * Edikit — Safe File/Code/Oral Submission unit tests (Prompt 44)
+ * Deborah — Safe File/Code/Oral Submission unit tests (Prompt 44)
  *
  * Pure-schema coverage:
  *   - Upload session contract: kind validation, MIME allowlist, size limits

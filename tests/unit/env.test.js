@@ -1,5 +1,5 @@
 /**
- * Edikit — Unit Tests: Environment Config Schema
+ * Deborah — Unit Tests: Environment Config Schema
  *
  * Tests Zod-based env validation, production safety checks,
  * and default value fallbacks.
@@ -83,12 +83,12 @@ describe('productionSchema — production safety checks', () => {
       SESSION_SECRET: 'a-very-long-secret-key-that-is-safe-42',
       ADMIN_USER: 'prodadmin',
       ADMIN_PASS: 'prodpass123!',
-      SITE_URL: 'https://edikit.uz',
+      SITE_URL: 'https://deborah.uz',
       // AUTH B-08: production'da Turnstile majburiy
       TURNSTILE_SECRET_KEY: '0x00-valid-test-secret',
       // D-01: production cookie hardening + BASE_URL majburiy
       COOKIE_SECURE: 'true',
-      BASE_URL: 'https://edikit.uz',
+      BASE_URL: 'https://deborah.uz',
     }));
     expect(result.success).toBe(true);
   });
@@ -112,7 +112,7 @@ describe('productionSchema — production safety checks', () => {
   it('should warn about default SESSION_SECRET in production', () => {
     const result = productionSchema.safeParse(validEnv({
       NODE_ENV: 'production',
-      SESSION_SECRET: 'edikit-dev-secret', // default!
+      SESSION_SECRET: 'deborah-dev-secret', // default!
       ADMIN_USER: 'prodadmin',
       ADMIN_PASS: 'prodpass123!',
     }));
@@ -125,7 +125,7 @@ describe('productionSchema — production safety checks', () => {
   it('should allow development config without warnings', () => {
     const result = productionSchema.safeParse(validEnv({
       NODE_ENV: 'development',
-      SESSION_SECRET: 'edikit-dev-secret',
+      SESSION_SECRET: 'deborah-dev-secret',
       ADMIN_USER: 'admin',
       ADMIN_PASS: 'admin',
     }));
@@ -141,7 +141,7 @@ describe('productionSchema — production safety checks', () => {
       ADMIN_USER: 'prodadmin',
       ADMIN_PASS: 'prodpass123!',
       TURNSTILE_SECRET_KEY: '0x00-valid-test-secret',
-      BASE_URL: 'https://edikit.uz',
+      BASE_URL: 'https://deborah.uz',
       // COOKIE_SECURE yozilmagan → fail-fast
     }));
     expect(result.success).toBe(false);
@@ -172,7 +172,7 @@ describe('productionSchema — production safety checks', () => {
       ADMIN_PASS: 'prodpass123!',
       TURNSTILE_SECRET_KEY: '0x00-valid-test-secret',
       COOKIE_SECURE: 'true',
-      BASE_URL: 'https://edikit.uz',
+      BASE_URL: 'https://deborah.uz',
     }));
     expect(result.success).toBe(false);
     const messages = result.error.issues.map(i => i.message).join(' ');
@@ -187,7 +187,7 @@ describe('productionSchema — production safety checks', () => {
       ADMIN_PASS: 'prodpass123!',
       TURNSTILE_SECRET_KEY: '0x00-valid-test-secret',
       COOKIE_SECURE: 'true',
-      BASE_URL: 'https://edikit.uz',
+      BASE_URL: 'https://deborah.uz',
       EMAIL_PROVIDER: 'postmark', // token yo'q → fail-fast
     }));
     expect(result.success).toBe(false);
@@ -203,7 +203,7 @@ describe('productionSchema — production safety checks', () => {
       ADMIN_PASS: 'prodpass123!',
       TURNSTILE_SECRET_KEY: '0x00-valid-test-secret',
       COOKIE_SECURE: 'true',
-      BASE_URL: 'https://edikit.uz',
+      BASE_URL: 'https://deborah.uz',
       EMAIL_PROVIDER: 'smtp', // SMTP_HOST yo'q → fail-fast
     }));
     expect(result.success).toBe(false);
@@ -218,7 +218,7 @@ describe('D-01 — yangi env maydonlari', () => {
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.EMAIL_PROVIDER).toBe('mock');
-      expect(result.data.MFA_ISSUER).toBe('Edikit');
+      expect(result.data.MFA_ISSUER).toBe('Deborah');
       expect(result.data.COOKIE_SAMESITE).toBe('lax');
       expect(result.data.HIBP_API_URL).toBe('https://api.pwnedpasswords.com/range/');
     }

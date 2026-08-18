@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Preset Registry
+ * Deborah — Cast Preset Registry
  * ------------------------------
  * Har preset immutable object sifatida: id, version, labelKey,
  * recommended, defaults. Server authoritative — client preset object

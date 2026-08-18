@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH B-02 Email schema — Integration tests
+ * Deborah — AUTH B-02 Email schema — Integration tests
  * ----------------------------------------------------
  *  - Register → welcome email email_log'da (status, emailHash — plaintext yo'q)
  *  - Verification code: codeHash + salt (plaintext code YO'Q)

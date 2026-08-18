@@ -1,5 +1,5 @@
 /**
- * Edikit — Data Classification, Privacy, Retention & Purge (e2e/security, Prompt 65)
+ * Deborah — Data Classification, Privacy, Retention & Purge (e2e/security, Prompt 65)
  *
  * Full critical-journey (research.md §27): asset inventory (D0-D6) → legal
  * hold (fail-open bo'lmaydi) → DSAR export/delete → purge worker (multi-store

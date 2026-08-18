@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Cast Bundle Budget Report (C5-05 item 1/2/3/20)
+ * Deborah — Cast Bundle Budget Report (C5-05 item 1/2/3/20)
  * --------------------------------------------------------
  * Cast critical HTML/CSS/JS compressed budgetni o'lchaydi:
  *   - Critical (initial lobby): cast-tokens.css, cast-core.css, cast-director.js,

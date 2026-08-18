@@ -1,5 +1,5 @@
 /**
- * Edikit — Versioned Cast Scoring
+ * Deborah — Versioned Cast Scoring
  * --------------------------------
  * Pure, deterministic scoring functions. Server authoritative.
  * Client clock scorega ta'sir qilmaydi — elapsed server timestamp bilan.

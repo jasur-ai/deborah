@@ -91,20 +91,20 @@ describe('AUTH D-24 §15 — security/data guard', () => {
     }
   });
 
-  it('email havolalar allowlist (security@edikit.uz / support@edikit.uz)', () => {
+  it('email havolalar allowlist (security@deborah.uz / support@deborah.uz)', () => {
     for (const lang of LEGAL_LANGS) {
       for (const doc of DOCS) {
         const text = LEGAL_DOCS[lang][doc].sections.map((s) => s.body.join(' ')).join(' ');
         for (const m of text.matchAll(/[\w.+-]+@[\w.-]+\.[a-z]{2,}/gi)) {
-          expect(['security@edikit.uz', 'support@edikit.uz'], `${lang}/${doc} email`).toContain(m[0].toLowerCase());
+          expect(['security@deborah.uz', 'support@deborah.uz'], `${lang}/${doc} email`).toContain(m[0].toLowerCase());
         }
       }
     }
   });
 
   it('legal contact har hujjatda ko\'rsatilgan', () => {
-    expect(LEGAL_CONTACT.security).toBe('security@edikit.uz');
-    expect(LEGAL_CONTACT.support).toBe('support@edikit.uz');
+    expect(LEGAL_CONTACT.security).toBe('security@deborah.uz');
+    expect(LEGAL_CONTACT.support).toBe('support@deborah.uz');
   });
 });
 
@@ -127,7 +127,7 @@ describe('AUTH D-24 — getLegalDoc / getLegalMeta / resolveLegalLang', () => {
     expect(d.lang).toBe('ru');
     expect(d.doc).toBe('privacy');
     expect(d.version).toBe(LEGAL_VERSION);
-    expect(d.contact.security).toBe('security@edikit.uz');
+    expect(d.contact.security).toBe('security@deborah.uz');
     expect(d.sections.length).toBeGreaterThan(0);
   });
 
@@ -142,6 +142,6 @@ describe('AUTH D-24 — getLegalDoc / getLegalMeta / resolveLegalLang', () => {
     const meta = getLegalMeta();
     expect(meta.version).toBe(LEGAL_VERSION);
     expect(meta.langs).toEqual(LEGAL_LANGS);
-    expect(meta.contact.security).toBe('security@edikit.uz');
+    expect(meta.contact.security).toBe('security@deborah.uz');
   });
 });

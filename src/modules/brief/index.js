@@ -1,5 +1,5 @@
 /**
- * Edikit — Assessment Brief, Policy Pack & Simulator (barrel export)
+ * Deborah — Assessment Brief, Policy Pack & Simulator (barrel export)
  */
 
 export * from './brief.schema.js';

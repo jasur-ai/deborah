@@ -1,5 +1,5 @@
 /**
- * Edikit — VIP Tizimi Brauzer Test Skripti
+ * Deborah — VIP Tizimi Brauzer Test Skripti
  *
  * HTTP session (cookie) orqali to'liq VIP funksionallikni test qiladi.
  * Serverni avtomatik import qiladi (PORT env orqali).

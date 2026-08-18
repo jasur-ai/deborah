@@ -1,5 +1,5 @@
 /**
- * Edikit — Program Quality & Accreditation Workspace (service)
+ * Deborah — Program Quality & Accreditation Workspace (service)
  *
  * Prompt 62 — curriculum map (I/R/M/A), aggregate evidence (direct/indirect),
  * finding, improvement action (owner/deadline/evidence-required close) va

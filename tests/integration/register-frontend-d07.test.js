@@ -1,5 +1,5 @@
 /**
- * Edikit — D-07 Register frontend — Integration/contract tests
+ * Deborah — D-07 Register frontend — Integration/contract tests
  * ------------------------------------------------------------
  *  - GET /user/register → D-07 elementlar (live check status, honeypot, rol)
  *  - POST /user/login (mode=reg) → success submit (redirect/200)

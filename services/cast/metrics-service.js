@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Psychometric-safe Metrics Service (C5-03)
+ * Deborah — Cast Psychometric-safe Metrics Service (C5-03)
  * --------------------------------------------------------
  * Report metrikalari hech qachon faqat percent bo'lib chiqmaydi — har doim
  * numerator + denominator bilan. Kichik namunalar suppress qilinadi,

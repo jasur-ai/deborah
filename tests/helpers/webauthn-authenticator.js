@@ -1,5 +1,5 @@
 /**
- * Edikit — WebAuthn Authenticator Simulator (AUTH A-27 tests)
+ * Deborah — WebAuthn Authenticator Simulator (AUTH A-27 tests)
  *
  * Real kripto bilan ishlaydigan sun'iy authenticator:
  *   - ECDSA P-256 keypair (node:crypto)

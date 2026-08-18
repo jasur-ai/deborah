@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH A-24: OIDC hardening unit testlari (OAuth 2.1 / RFC 9700)
+ * Deborah — AUTH A-24: OIDC hardening unit testlari (OAuth 2.1 / RFC 9700)
  * ---------------------------------------------------------
  * Guide A-24 §06/§07/§08/§11/§15/§20:
  *  - alg allowlist (RS256; HS256 rad — alg confusion)

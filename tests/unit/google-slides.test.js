@@ -1,5 +1,5 @@
 /**
- * Edikit — Google Slides Adapter (unit tests, Prompt 59)
+ * Deborah — Google Slides Adapter (unit tests, Prompt 59)
  *
  * Pure schema: PKCE, incremental OAuth URL (drive.file only), full Drive
  * scope guard (§15), create presentation request, canonical blocks →

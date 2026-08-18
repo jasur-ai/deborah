@@ -1,5 +1,5 @@
 /**
- * Edikit — Program Calendar & Workload Service
+ * Deborah — Program Calendar & Workload Service
  *
  * DB layer for Prompt 26:
  *   - Program event CRUD (draft → scheduled → published, explicit coordinator publish)

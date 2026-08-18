@@ -1,5 +1,5 @@
 /**
- * Edikit — Reliability Guard (Prompt 71)
+ * Deborah — Reliability Guard (Prompt 71)
  *
  * Usage:
  *   import * as reliability from '../modules/reliability/index.js';

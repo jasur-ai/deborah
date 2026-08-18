@@ -1,5 +1,5 @@
 /**
- * Edikit — Competency & Curriculum Graph Service
+ * Deborah — Competency & Curriculum Graph Service
  *
  * Manages versioned competency/outcome frameworks:
  *   - Competency Frameworks (top-level, e.g., "National Curriculum")
@@ -924,9 +924,9 @@ export async function exportCaseFormat(frameworkId) {
     '@context': 'https://purl.imsglobal.org/spec/case/v1p0/context.json',
     type: 'CompetencyFramework',
     identifier: frameworkId,
-    title: (await getFramework(frameworkId))?.name || 'Edikit Framework',
+    title: (await getFramework(frameworkId))?.name || 'Deborah Framework',
     competencies: competencies.map(c => ({
-      identifier: c.external_id || `edikit:${c.id}`,
+      identifier: c.external_id || `deborah:${c.id}`,
       competency_category: c.type,
       jurisdiction_identifier: c.human_coding_scheme || c.code,
       name: c.name,

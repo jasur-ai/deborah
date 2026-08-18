@@ -1,4 +1,4 @@
-Edikit — Self-hosted font licenses (STYLE STEP 08 / S08.01)
+Deborah — Self-hosted font licenses (STYLE STEP 08 / S08.01)
 ===========================================================
 
 The following font families are self-hosted in this directory and are

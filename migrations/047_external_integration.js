@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 047: External Integration Boundary (HEMIS & OneID)
+ * Deborah — Migration 047: External Integration Boundary (HEMIS & OneID)
  *
  * Prompt 66 — rasmiy contract mavjud bo'lganda roster/grade va identity
  * integration'ni xavfsiz ulash (research.md §12 identity assurance, §19

@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH B-04 Username validatsiya — Unit tests
+ * Deborah — AUTH B-04 Username validatsiya — Unit tests
  * -----------------------------------------------------
  * OWASP username: case-insensitive, NFKC, 2–50, [a-zA-Z0-9_.-],
  * rezerv so'zlar bloki, leet/confusable blok.

@@ -1,5 +1,5 @@
 /**
- * Edikit — E-01a: Canonical OneID (identity.js)
+ * Deborah — E-01a: Canonical OneID (identity.js)
  * ---------------------------------------------------------------------------
  * `oneid_sub` generatsiya + mapping: ensureOneId (idempotent), linkProviderToOneId,
  * resolveOneId, removeOneIdMapping. In-memory mock FB (hermetic — real DB tegsiz).

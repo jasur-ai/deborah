@@ -1,5 +1,5 @@
 /**
- * Edikit — Reliability Release Safety (e2e, Prompt 71, item 20)
+ * Deborah — Reliability Release Safety (e2e, Prompt 71, item 20)
  *
  * End-to-end reliability scenarios:
  *   - Isolated backup restore: restore is validated on a SYNTHETIC dataset

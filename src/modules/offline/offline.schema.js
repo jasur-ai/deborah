@@ -1,5 +1,5 @@
 /**
- * Edikit — IndexedDB Offline Journal, Reconnect & Recovery (pure logic)
+ * Deborah — IndexedDB Offline Journal, Reconnect & Recovery (pure logic)
  *
  * Prompt 32 — low-bandwidth/crash resilience (research.md §29). This module
  * is PURE (no I/O, no globals): the browser adapter (public/js/offline-
@@ -60,7 +60,7 @@ export const RECOVERY_MAX_JOURNAL = 20000;
  * browsers, so the browser adapter and this server contract must agree on a
  * non-empty salt constant.
  */
-export const JOURNAL_KEY_SALT = 'edikit-journal';
+export const JOURNAL_KEY_SALT = 'deborah-journal';
 
 // ═══════════════════════════════════════════════════════════════════
 // JOURNAL ENTRY CONTRACT
@@ -129,7 +129,7 @@ export function createJournalEntry({ seq, itemId, patch, clientTime, deviceId, e
  */
 export function deriveJournalKey({ sessionSecret, userId, attemptId, deviceId, salt = JOURNAL_KEY_SALT } = {}) {
   if (!sessionSecret) throw new Error('sessionSecret required');
-  const info = Buffer.from(`edikit-journal:v1:${attemptId}:${userId}:${deviceId}:${salt}`, 'utf8');
+  const info = Buffer.from(`deborah-journal:v1:${attemptId}:${userId}:${deviceId}:${salt}`, 'utf8');
   // HKDF-like: PRK = HMAC(salt, secret); OKM = HMAC(PRK, info || 0x01)
   const prk = crypto.createHmac('sha256', Buffer.from(String(salt), 'utf8')).update(String(sessionSecret)).digest();
   const okm = crypto.createHmac('sha256', prk).update(Buffer.concat([info, Buffer.from([1])])).digest();

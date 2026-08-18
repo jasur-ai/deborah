@@ -18,7 +18,7 @@
     align-items: center;
     justify-content: center;
     padding: 20px;
-    background: var(--edikit-semantic-color-surface-scrim, rgba(4, 8, 20, 0.55));
+    background: var(--deborah-semantic-color-surface-scrim, rgba(4, 8, 20, 0.55));
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.18s ease, visibility 0.18s ease;
@@ -30,9 +30,9 @@
 
   .session-timeout-dialog {
     width: min(92vw, 440px);
-    background: var(--edikit-semantic-color-surface-raised, #0f1630);
-    border: 1px solid var(--edikit-semantic-color-border-default, #2c3346);
-    border-radius: var(--edikit-radius-lg, 14px);
+    background: var(--deborah-semantic-color-surface-raised, #0f1630);
+    border: 1px solid var(--deborah-semantic-color-border-default, #2c3346);
+    border-radius: var(--deborah-radius-lg, 14px);
     box-shadow: 0 18px 48px rgba(0, 0, 0, 0.4);
     padding: 22px 22px 18px;
     transform: translateY(8px);
@@ -48,24 +48,24 @@
     gap: 10px;
     font-size: 1.02rem;
     font-weight: 800;
-    color: var(--edikit-semantic-color-text-primary, #f2f4f8);
+    color: var(--deborah-semantic-color-text-primary, #f2f4f8);
     margin-bottom: 8px;
   }
   .session-timeout-title svg {
-    color: var(--edikit-semantic-color-status-warning, #f2b84b);
+    color: var(--deborah-semantic-color-status-warning, #f2b84b);
     flex-shrink: 0;
   }
 
   .session-timeout-body {
     font-size: 0.9rem;
     line-height: 1.55;
-    color: var(--edikit-semantic-color-text-secondary, #a9b1c4);
+    color: var(--deborah-semantic-color-text-secondary, #a9b1c4);
     margin-bottom: 14px;
   }
 
   .session-timeout-count {
     font-weight: 800;
-    color: var(--edikit-semantic-color-text-primary, #f2f4f8);
+    color: var(--deborah-semantic-color-text-primary, #f2f4f8);
     font-variant-numeric: tabular-nums;
   }
 
@@ -84,11 +84,11 @@
     .session-timeout-backdrop {
       align-items: flex-end;
       padding: 12px;
-      background: var(--edikit-semantic-color-surface-scrim, rgba(4, 8, 20, 0.55));
+      background: var(--deborah-semantic-color-surface-scrim, rgba(4, 8, 20, 0.55));
     }
     .session-timeout-dialog {
       width: 100%;
-      border-radius: var(--edikit-radius-lg, 14px);
+      border-radius: var(--deborah-radius-lg, 14px);
       padding: 16px;
       box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.35);
     }

@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 044: Uzbek Latin/Cyrillic & Terminology Layer
+ * Deborah — Migration 044: Uzbek Latin/Cyrillic & Terminology Layer
  *
  * Prompt 63 — uz-Latn, uz-Cyrl, ru va en content/version/search'ni
  * birinchi-class qilish (research.md §58 Uzbek-first Multilingual Layer).

@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Event Store
+ * Deborah — Cast Event Store
  * --------------------------
  * Event commit + revisioned state update bitta logical operation.
  * Expected revision conflict → deterministic STALE_REVISION.

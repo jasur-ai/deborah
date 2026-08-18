@@ -1,5 +1,5 @@
 /**
- * Edikit — Immutable Publish Transaction & Assignment Snapshot (pure logic)
+ * Deborah — Immutable Publish Transaction & Assignment Snapshot (pure logic)
  *
  * Pure, DB-free logic for Prompt 27:
  *   - Canonical content hashing (reproducible version_hash)

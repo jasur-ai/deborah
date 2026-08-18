@@ -1,5 +1,5 @@
 /**
- * Edikit — Professional SVG Icon System
+ * Deborah — Professional SVG Icon System
  * 
  * Barcha ikonkalar inline SVG formatida.
  * Hech qanday tashqi bog'liqlik yo'q.

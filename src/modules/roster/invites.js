@@ -1,5 +1,5 @@
 /**
- * Edikit — Roster Invite System (AUTH A-11 §13-15)
+ * Deborah — Roster Invite System (AUTH A-11 §13-15)
  *
  * Roster commit'dan so'ng har talaba uchun aktivatsiya invite'i yaratiladi:
  *   - Token: 48 bayt (96 hex) — faqat HASH'i saqlanadi (reset token namunasi)

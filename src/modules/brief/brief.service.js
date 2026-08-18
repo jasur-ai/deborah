@@ -1,5 +1,5 @@
 /**
- * Edikit — Assessment Brief Service
+ * Deborah — Assessment Brief Service
  *
  * Versioned summative assessment briefs:
  *   - Brief CRUD (draft mutable, approved immutable)

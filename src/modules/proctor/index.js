@@ -1,5 +1,5 @@
 /**
- * Edikit — Uch-strike Client Collector & Server Classifier (Prompt 34)
+ * Deborah — Uch-strike Client Collector & Server Classifier (Prompt 34)
  *
  * Phase D #5: visibility/fullscreen incident dedupe + third-strike server
  * termination (research.md §31 proctor evidence engine).

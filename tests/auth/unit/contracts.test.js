@@ -1,5 +1,5 @@
 /**
- * Edikit — Auth API Contract unit testlari (AUTH D-30 §15-§17)
+ * Deborah — Auth API Contract unit testlari (AUTH D-30 §15-§17)
  * ---------------------------------------------------------------------------
  * Zod schemas validatsiyasi + private field scan (response'da password/token/
  * otp/secret YO'Q) + OpenAPI spec valid + zod-to-openapi-ish generate (native

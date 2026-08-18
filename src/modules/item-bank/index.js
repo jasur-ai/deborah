@@ -1,5 +1,5 @@
 /**
- * Edikit — Item Bank Module Barrel Export
+ * Deborah — Item Bank Module Barrel Export
  *
  * Provides reusable, versioned question items with public/private separation:
  *   - Item Banks (logical collections)

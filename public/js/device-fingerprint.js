@@ -1,5 +1,5 @@
 /**
- * Edikit — Device fingerprint (AUTH A-28)
+ * Deborah — Device fingerprint (AUTH A-28)
  * ---------------------------------------------------------------
  * Yengil stable hash: canvas render + navigator signalari → FNV-1a hash.
  * - Server'ga FAQAT hash yuboriladi (raw telemetry hech qachon emas).
@@ -10,7 +10,7 @@
 (function () {
   'use strict';
 
-  var CACHE_KEY = 'edikit_device_fp_v2'; // v2: 16 belgili hash (v1 8 belgi edi — server talabi {16,64})
+  var CACHE_KEY = 'deborah_device_fp_v2'; // v2: 16 belgili hash (v1 8 belgi edi — server talabi {16,64})
   var cache = null;
   try {
     cache = window.localStorage.getItem(CACHE_KEY);
@@ -48,7 +48,7 @@
       ctx.fillStyle = '#f5f7fa';
       ctx.fillRect(0, 0, 220, 40);
       ctx.fillStyle = '#123456';
-      ctx.fillText('Edikit\u2022fingerprint\u00a7' + navigator.userAgent.slice(0, 40), 2, 2);
+      ctx.fillText('Deborah\u2022fingerprint\u00a7' + navigator.userAgent.slice(0, 40), 2, 2);
       ctx.fillStyle = '#abcdef';
       ctx.fillRect(80, 8, 60, 14);
       ctx.strokeStyle = '#fedcba';
@@ -101,7 +101,7 @@
     }
     var signals = collectSignals();
     // Hash: alohida komponentlarni FNV'da birlashtirish (deterministik)
-    var h = fnv1a16('edikit|' + signals.join('|'));
+    var h = fnv1a16('deborah|' + signals.join('|'));
     // Stability guard: bo'sh bo'lsa null (canvas/JS o'chirilgan)
     if (h === '811c9dc59747b28c') return null;
     return h;
@@ -136,7 +136,7 @@
     },
   };
 
-  window.EdikitDeviceFingerprint = api;
+  window.DeborahDeviceFingerprint = api;
   // Panel/host sahifalar: barcha auth form'larga avtomatik attach
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () {

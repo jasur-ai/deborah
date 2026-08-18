@@ -1,5 +1,5 @@
 /**
- * Edikit — Board Ratification, Result Release & Grade Ledger Routes
+ * Deborah — Board Ratification, Result Release & Grade Ledger Routes
  *
  * Prompt 47 REST API:
  *   - GET  /api/admin/board/meta                       — constants for admin UI

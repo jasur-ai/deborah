@@ -1,5 +1,5 @@
 /**
- * Edikit — Submit Sealing va Signed Receipt Service
+ * Deborah — Submit Sealing va Signed Receipt Service
  *
  * Prompt 33 — pending response'larni sync qilib attemptni IMMUTABLE submit
  * qilish. Server-authoritative end-of-exam flow:

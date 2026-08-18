@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Design Audit: DB Snapshot/Restore Helper (STEP 01 / S01.09)
+ * Deborah — Design Audit: DB Snapshot/Restore Helper (STEP 01 / S01.09)
  * -------------------------------------------------------------------
  * Browser/test ishga tushishidan OLDIN data/db.json ni snapshot'laydi,
  * test'lar tugagach restore qiladi — seed ma'lumotlar buzilmaydi.

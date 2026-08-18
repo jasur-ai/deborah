@@ -1,5 +1,5 @@
 /**
- * Edikit — AI Question Generator 50/30/20 (e2e, Prompt 53)
+ * Deborah — AI Question Generator 50/30/20 (e2e, Prompt 53)
  *
  * Full generate→review→item-bank journey at pure-logic layer:
  *   - 50/30/20 blueprint → jobs (3–5 overgenerate) → candidate submit.

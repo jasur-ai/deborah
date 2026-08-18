@@ -1,5 +1,5 @@
 /**
- * Edikit — Marker Allocation, Calibration & Moderation Module Barrel
+ * Deborah — Marker Allocation, Calibration & Moderation Module Barrel
  *
  * Prompt 46 — pseudonymous marking, workload/conflict allocation, anchor
  * calibration, single/sample/second/double marking modes, disagreement &

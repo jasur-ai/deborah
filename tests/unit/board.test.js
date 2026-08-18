@@ -1,5 +1,5 @@
 /**
- * Edikit — Board Ratification, Result Release & Grade Ledger unit tests
+ * Deborah — Board Ratification, Result Release & Grade Ledger unit tests
  * (Prompt 47)
  *
  * Pure-schema coverage:
@@ -251,7 +251,7 @@ describe('buildSisPayload', () => {
     expect(p.payload.studentExternalId).toBe('hemis-42');
     expect(p.payload.snapshotHash).toBe('abc123');
     expect(p.payload.gradeLabel).toBe('B+');
-    expect(p.payload.source).toBe('edikit-board');
+    expect(p.payload.source).toBe('deborah-board');
   });
 
   it('uses the EFFECTIVE final grade (last amendment) for re-release', () => {

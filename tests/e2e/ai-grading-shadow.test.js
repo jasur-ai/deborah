@@ -1,5 +1,5 @@
 /**
- * Edikit — Written AI Grading Shadow Mode (e2e, Prompt 51)
+ * Deborah — Written AI Grading Shadow Mode (e2e, Prompt 51)
  *
  * Full teacher shadow-grading journey at pure-logic layer + HTTP:
  *   - Teacher creates job (model/version pin) → shadow run → PII redaction

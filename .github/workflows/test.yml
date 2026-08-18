@@ -1,9 +1,9 @@
-# Edikit — CI Test Pipeline
+# Deborah — CI Test Pipeline
 #
 # Runs on push and pull request to main branch.
 # Steps: lint → unit → integration → existing security/vip tests.
 
-name: Edikit CI
+name: Deborah CI
 
 on:
   push:

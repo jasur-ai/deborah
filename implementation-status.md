@@ -13,7 +13,7 @@
 | Task | Status | Details |
 |------|--------|---------|
 | Tenant/institution/user/role/permission tables | ✅ | 8 tables in migration 001 |
-| Runtime/migration/scoring DB roles | ✅ | edikit_runtime/migration/scoring with GRANTs |
+| Runtime/migration/scoring DB roles | ✅ | deborah_runtime/migration/scoring with GRANTs |
 | Transaction tenant context helper | ✅ | AsyncLocalStorage-based (getCurrentTenant, runWithTenant) |
 | RLS policies | ✅ | Migration 002 + rls.js helpers |
 | Central authorization policy service | ✅ | ABAC with role→permission→scope→attribute checks |
@@ -57,7 +57,7 @@ NEW: tests/unit/tenant-rbac.test.js          — 32 tests
 | **Role-based (RBAC)** | `authorization.js` | Platform roles: super_admin, admin, teacher, student, viewer |
 | **Attribute-based (ABAC)** | `authorization.js` | Owner checks, status checks, scope validation |
 | **Action audit** | `audit.js` | All privileged operations logged to audit_log table |
-| **DB roles** | `001_tenant_rbac.js` | edikit_runtime (CRUD), edikit_migration (ALL), edikit_scoring (SELECT) |
+| **DB roles** | `001_tenant_rbac.js` | deborah_runtime (CRUD), deborah_migration (ALL), deborah_scoring (SELECT) |
 | **Fail-safe** | `authorization.js` | Fallback to `viewer` role when PostgreSQL unavailable (fail-closed) |
 
 ### Test Results
@@ -1336,7 +1336,7 @@ Program calendar + workload orchestration complete (hard clash zero + coordinato
 | 5 assignment tables | ✅ | Migration 012: assessment_assignments, assignment_public_items, assignment_private_scores, assignment_roster_members, assignment_notifications |
 | Exact brief/policy version pins | ✅ | brief_version_id + policy_version_id FK pins on the assignment root |
 | Reproducible version_hash | ✅ | canonical SHA-256 over snapshot-recoverable content — same draft + pins → same hash |
-| Public/private split at DB level | ✅ | Public table has NO private_data column; private scores table GRANT SELECT only to edikit_scoring |
+| Public/private split at DB level | ✅ | Public table has NO private_data column; private scores table GRANT SELECT only to deborah_scoring |
 | Allowlist public snapshot builder | ✅ | buildPublicItemSnapshot — private fields structurally impossible |
 | Secret scan gate | ✅ | scanForSecrets/verifyPublicSnapshotClean — plan FAILS on any leaked key (never silently blanked) |
 | Atomic publish transaction | ✅ | Row lock → idempotency → plan → ALL snapshot + calendar + outbox writes in ONE transaction |
@@ -1367,7 +1367,7 @@ MODIFIED: src/modules/auth/audit.js           — +2 ASSIGNMENT_PUBLISH/ASSIGNME
 |-------|---------|--------------|
 | `assessment_assignments` | Publish root | status (draft/scheduled/published/cancelled), version_hash, EXACT brief/policy version pins, calendar_event_id, external_key (unique per tenant) |
 | `assignment_public_items` | PUBLIC item snapshots | allowlist columns only — NO private_data column exists (DB-level guard), per-item item_hash |
-| `assignment_private_scores` | PRIVATE scoring keys | private_data JSONB, SELECT granted ONLY to edikit_scoring |
+| `assignment_private_scores` | PRIVATE scoring keys | private_data JSONB, SELECT granted ONLY to deborah_scoring |
 | `assignment_roster_members` | Roster snapshot | unique (assignment_id, user_id), group_id/external_id preserved |
 | `assignment_notifications` | Outbox (same tx) | change_type, recipient_scope, payload, idempotency_key |
 
@@ -1380,7 +1380,7 @@ MODIFIED: src/modules/auth/audit.js           — +2 ASSIGNMENT_PUBLISH/ASSIGNME
 | **Race-safe duplicate publish** | Idempotency-first + FOR UPDATE in-transaction + UNIQUE index + 23505/'only drafts' catch → winner lookup |
 | **Immutable snapshots** | version_hash + item_hash over canonical content; verify recomputes from stored rows |
 | **Exact version pins** | brief/policy versions frozen; blueprint/randomization immutability via assessment_version pin + published flip |
-| **Scoring isolation** | edikit_scoring role SELECT-only on private scores |
+| **Scoring isolation** | deborah_scoring role SELECT-only on private scores |
 
 ### Reviewer-Found Bugs Fixed (3 review rounds)
 
@@ -1841,7 +1841,7 @@ MODIFIED: src/modules/auth/audit.js (+OFFLINE_SYNC, +RECOVERY_EXPORT, +RECOVERY_
 5. **TRANSFER hech qachon revoke qilmasdi** — revokeDeviceIds qaytarilar, lekin ACK
    row‘lari o‘chirilmasdi → endi deleteFrom bilan haqiqiy revoke.
 6. **Bo‘sh HMAC salt** — WebCrypto bo‘sh key import qila olmaydi (DataError) → non-empty
-   `JOURNAL_KEY_SALT='edikit-journal'` ikkala tomonda (browser + server aligned).
+   `JOURNAL_KEY_SALT='deborah-journal'` ikkala tomonda (browser + server aligned).
 7. **Browser spread RangeError** — `String.fromCharCode(...largeArray)` essay payload‘da
    crash → chunked base64 (0x8000-byte chunks).
 
@@ -2038,7 +2038,7 @@ monitor (not started / active / idle / disconnected / submitted / flagged — re
 
 1. **migrations/019_security_profiles.js** — `institution_security_policy`: bitta tenant = bitta row
    (UNIQUE tenant_id); min/max profile bandi (S0–S4), `seb_config_key_hash`, `require_managed_device`,
-   `allow_lan_mode`, `updated_by/at`. edikit_runtime/migration grants.
+   `allow_lan_mode`, `updated_by/at`. deborah_runtime/migration grants.
 2. **src/modules/security/security.schema.js** (pure) — S0–S4 typed controls (identity/camera/SEB/
    managed/LAN/strikes), `resolveEffectiveProfile` (below-min → clamp UP; above-max → REJECT),
    `verifySebConfigBoundary` (presence → OS gate → **UA marker data guard §15** → key unregistered
@@ -2096,7 +2096,7 @@ evidence, human review; UZ biometric storage tayyor bo'lishi precondition — re
    consent_version), `camera_consent` (UNIQUE tenant+user+assignment, granted/revoked),
    `camera_evidence` (append-only FLAGS log: UNIQUE tenant+attempt+client_seq — idempotent
    retry; storage_key + content_hash tamper-evident), `camera_evidence_review` (disposition
-   history). Grants edikit_runtime/migration.
+   history). Grants deborah_runtime/migration.
 2. **src/modules/camera/camera.schema.js** (pure) — flags whitelist (face_present,
    face_count, phone_detected, freeze_detected); **FORBIDDEN: emotion, gaze, honesty,
    misconduct, cheat_probability, attention_score — §15 data guard** (har qanday bunday
@@ -6245,7 +6245,7 @@ state-machine.js    60 | 50.96 | 100 | 59.25
 
 ### Metrika skripti — tekshirilgan ishlash
 ```
-✅ Admin login OK (edikit_admin)
+✅ Admin login OK (deborah_admin)
 🎓 Cast Field Pilot Metrics — Tier F2
 │ Setup time │ — (manual) │ <120s │
 │ Join completion │ — │ ≥95% │
@@ -6256,7 +6256,7 @@ state-machine.js    60 | 50.96 | 100 | 59.25
 ✅ SEV-0 signal yo'q
 ```
 - Login flow: GET /admin/login → `_csrf` extract → POST (form-urlencoded) → `session.regenerate()` yangi cookie → telemetry 200
-- Admin creds `.env` dan (`edikit_admin`) — `dotenv` import orqali
+- Admin creds `.env` dan (`deborah_admin`) — `dotenv` import orqali
 - Tier target'lar (setup/ACK p95) F0–F6 bo'yicha tabaqalashtirilgan
 
 ### Debug'dan topilgan
@@ -7148,7 +7148,7 @@ MODIFIED: .gitignore                 — design audit artifact qoidalari
 
 ### Precondition Check
 - STEP 03 visual audit (96 baseline): ✅
-- style.md final brand qiymatlari o'rganildi: Edikit Cobalt #255EDB, Signal Cyan, Insight Amber
+- style.md final brand qiymatlari o'rganildi: Deborah Cobalt #255EDB, Signal Cyan, Insight Amber
 
 ### Implementation Summary
 
@@ -7165,7 +7165,7 @@ MODIFIED: .gitignore                 — design audit artifact qoidalari
 | Unit test | ✅ | tests/unit/design-tokens.test.js — 12 test (validator exit, JSON parse, determinizm, theme blocklar, alias, migration doc) |
 
 ### Muhim topilmalar
-1. Semantic token'lar `--edikit-semantic-color-*` prefiksi bilan chiqadi; legacy aliaslar `var()` orqali — theme switch'da avtomatik yangi qiymatga o'tadi
+1. Semantic token'lar `--deborah-semantic-color-*` prefiksi bilan chiqadi; legacy aliaslar `var()` orqali — theme switch'da avtomatik yangi qiymatga o'tadi
 2. `:root` = dark default, `[data-theme="light"], body.theme-light` va `[data-theme="high-contrast"]` override — style.css mexanizmi bilan mos
 3. Review fix: generated fayl commit qilinishi tasdiqlandi (Render build step'siz `node server.js` — generated fayl repo'da bo'lishi shart)
 
@@ -7199,7 +7199,7 @@ MODIFIED: .gitignore                 — design audit artifact qoidalari
 | S05.08 Ask→See→Adapt verbal | ✅ | docs/brand-assets.md §6 — EN/UZ bir xil yozish qoidasi, arrow → |
 | S05.09 Evidence Gradient policy | ✅ | docs §7 — product UI'da gradient taqiq; logo-icon solid cobalt; gradient faqat marketing |
 | S05.10 Cartoon/borrowed migration | ✅ | docs §8 — cartoon'lar game-scoped (default emas), shield/particles yo'q, eski gradient mark almashtirildi |
-| S05.11 aria/alt policy | ✅ | validator views'ni skanerlaydi (order-independent + sr-only exception); alt='E' fix, sidebar/panel alt fix; logo alt doim 'Edikit' |
+| S05.11 aria/alt policy | ✅ | validator views'ni skanerlaydi (order-independent + sr-only exception); alt='E' fix, sidebar/panel alt fix; logo alt doim 'Deborah' |
 | S05.12 Blind-recognition prototype | ✅ | public/brand/gallery.html — mark/rail/mosaic panelsiz wordmark; Playwright spec 25 test |
 | Brand adoption | ✅ | logo-icon.svg yangi Evidence Mark app-icon (solid cobalt + oq mark); head.ejs ga brand.css ulandi; user-panel/admin/play/projector baselinelar yangilandi |
 | Validator + tests | ✅ | scripts/validate-brand-assets.js (55 check), tests/unit/brand-assets.test.js (13), tests/visual/brand-assets.spec.js |
@@ -7270,7 +7270,7 @@ MODIFIED: .gitignore                 — design audit artifact qoidalari
 | Yo'riqnoma | Status | Details |
 |-----------|--------|---------|
 | S07.01-02 State model + sync boot | ✅ | `public/js/theme-core.js` (pure resolver: system\|light\|dark\|hc-light\|hc-dark → resolved + colorScheme + canvas); head.ejs'dagi tiny sync boot script — FOUC'siz, first-paint oldin |
-| S07.03 Yagona attribute model | ✅ | `html[data-theme] + data-resolved-theme + data-theme-state`; `body.theme-light` dual selectorlar saqlanib compat; eski `edikit-theme` localStorage migratsiya (endi persist qilinadi) |
+| S07.03 Yagona attribute model | ✅ | `html[data-theme] + data-resolved-theme + data-theme-state`; `body.theme-light` dual selectorlar saqlanib compat; eski `deborah-theme` localStorage migratsiya (endi persist qilinadi) |
 | S07.04-05 color-scheme + meta sync | ✅ | `d.style.colorScheme` + `html[data-theme]` CSS; meta-theme-color real canvas token (#F5F7FB/#080C1A/#FFFFFF) bilan sinxron |
 | S07.06-07 Transition | ✅ | 900ms universal transition **olib tashlandi** (style.css body !important bloki); faqat body 150ms crossfade; reduced-motion instant |
 | S07.08 System runtime | ✅ | System change listener — faqat state='system' bo'lganda apply(); user override e'tiborsiz |
@@ -7316,7 +7316,7 @@ MODIFIED: .gitignore                 — design audit artifact qoidalari
 
 ### Haqiqiy bug'lar topildi (E2E orqali)
 1. **auth-pages 401 race** — `login()` allaqachon redirect bilan dashboard'ga tushadi; keyingi `page.goto(path)` ikkinchi navigatsiya qilib, session `regenerate()` yangi SID cookie'sini commit qilmagan paytda 401 qaytarardi (dark'da tasodifiy). Fix: ortiqcha goto olib tashlandi + 600ms cookie-commit window. **2/2 barqaror run (40/40).**
-2. **White baseline race** — update run'ida dashboard JS fetch tugamasdan oq screenshot baseline bo'lib qolgan edi. Fix: `#users-tbody tr` / `.panel` kutish qo'shildi. Determinizm: `LOCAL_DB_FILE` env override + Playwright webServer har run'da `/tmp/edikit-visual-db.json` tozalaydi. |
+2. **White baseline race** — update run'ida dashboard JS fetch tugamasdan oq screenshot baseline bo'lib qolgan edi. Fix: `#users-tbody tr` / `.panel` kutish qo'shildi. Determinizm: `LOCAL_DB_FILE` env override + Playwright webServer har run'da `/tmp/deborah-visual-db.json` tozalaydi. |
 
 ### Natijalar
 - **Diff gate 154/154** (avvalgi 149 + 5 yangi typography E2E), unit 108/108, typecheck 0, coverage 105/105 (100%)
@@ -7337,7 +7337,7 @@ MODIFIED: .gitignore                 — design audit artifact qoidalari
 
 | Yo'riqnoma | Status | Details |
 |-----------|--------|---------|
-| S09.01 Spacing scale | ✅ | 4px scale kengaytirildi: 0-96 (80px, 96px qo'shildi); `--edikit-spacing-20/24` |
+| S09.01 Spacing scale | ✅ | 4px scale kengaytirildi: 0-96 (80px, 96px qo'shildi); `--deborah-spacing-20/24` |
 | S09.02 Container tokenlar | ✅ | landing 1200, workspace 1280, wide 1440, reading 65ch, auth 440, studio 920 — `.container-*` class'lar |
 | S09.03 Grid primitives | ✅ | 12-col/24px, 8-col/20px (≤1024), 4-col/16px (≤640) + col-span helper'lar |
 | S09.04 Radius grammatika | ✅ | **control 8 / card 12 / modal 16 / pill 999** — sm/md/lg/xl qiymatlari lock; 6/7/9→8, 10/11/13→12, 14→16 migratsiya; 22→16 (studio dialog), 20→16 (drawer) |
@@ -7405,10 +7405,10 @@ MODIFIED: .gitignore                 — design audit artifact qoidalari
 
 ### Precondition Check
 - STEP 10 motion: ✅
-- Eski holat: `generated/tokens.css` **runtime'ga umuman yuklanmagan** (STEP 07 bo'shlig'i — barcha --edikit-* tokenlar faqat fallback qiymatlar bilan ishlagan), body::before global ambient overlay style.css'da, focus ring 2px style.css'da, !important 23 ta, 98 ta view'da inline transition:all (STEP 10'da tozalangan)
+- Eski holat: `generated/tokens.css` **runtime'ga umuman yuklanmagan** (STEP 07 bo'shlig'i — barcha --deborah-* tokenlar faqat fallback qiymatlar bilan ishlagan), body::before global ambient overlay style.css'da, focus ring 2px style.css'da, !important 23 ta, 98 ta view'da inline transition:all (STEP 10'da tozalangan)
 
 ### Topilgan haqiqiy bug'lar
-1. **CRITICAL: tokens.css yuklanmasligi** — `generated/tokens.css` hech qachon head.ejs'ga ulangani yo'q. Foundation fayllar `--edikit-*` tokenlarini ishlatadi, lekin ular runtime'da YO'Q — hammasi fallback qiymatlar bilan ishlagan. `--edikit-semantic-color-focus` fallback #2563eb, haqiqiy #0B63E5 — farq bor edi.
+1. **CRITICAL: tokens.css yuklanmasligi** — `generated/tokens.css` hech qachon head.ejs'ga ulangani yo'q. Foundation fayllar `--deborah-*` tokenlarini ishlatadi, lekin ular runtime'da YO'Q — hammasi fallback qiymatlar bilan ishlagan. `--deborah-semantic-color-focus` fallback #2563eb, haqiqiy #0B63E5 — farq bor edi.
 2. **CRITICAL: build-design-tokens.js :root override bug** — `all` map'da sorted fayllar ketma-ket flatten qilinadi; `semantic.light.json` (oxirgi) `all[path]` ni override qilardi → `:root`'da dark (#080C1A) o'rniga LIGHT (#F5F7FB) qiymatlar chiqardi. Tuzatildi: `:root` default semantic DEFAULT_THEME (semantic.dark.json) dan to'g'ridan-to'g'ri olinadi; `isInFile()` olib tashlandi.
 3. **gallery.html CDN font race** — `public/brand/gallery.html` STEP 08'da CDN olib tashlanganda qoldi: Google Fonts CDN (Nunito/Righteous). CDN sekin bo'lsa `document.fonts.ready` kutilmaydi → screenshot barqarorlashmaydi (flaky). Self-hosted (Source Sans 3 body / Manrope 800 h1) ga o'tkazildi.
 4. **mobile maxDiffPixelRatio yetmasligi** — admin-dashboard stats jonli raqamlari: desktop'da 666px/2M piksel < 0.002 limit, mobile'da 666px/329K piksel = 0.00202 > 0.002 → 0.004 (0.4%, hali ham real layout break 90%+ ni tutadi)
@@ -7423,7 +7423,7 @@ MODIFIED: .gitignore                 — design audit artifact qoidalari
 | S11.04 Focus 3px | ✅ | `focus.css` — `:focus-visible` outline 3px + offset 3px, transition:none (instant, S10.11), sticky z-index token |
 | S11.05 Forced-colors | ✅ | `forced-colors: active` — Highlight ring, ::selection, control border ButtonText |
 | S11.06 A11y utilities | ✅ | `.sr-only`, `.skip-link` (focus'da ko'rinadi), `[id] scroll-margin-top 80px`, `.scroll-mt-*` |
-| S11.08 Utilities token-only | ✅ | `.p-*`/`.px-*`/`.py-*`/`.mt-*`/`.mb-*`/`.gap-*` — faqat `--edikit-spacing-*` tokenlari |
+| S11.08 Utilities token-only | ✅ | `.p-*`/`.px-*`/`.py-*`/`.mt-*`/`.mb-*`/`.gap-*` — faqat `--deborah-spacing-*` tokenlari |
 | S11.10 Cascade layers | ✅ | reset < foundations < utilities (7 fayl @layer); unlayered style.css component'lar ustun |
 | S11.11 !important allowlist | ✅ | 23 ta (reduced-motion/HC forced-colors documented istisno) |
 | S11.12 Compatibility entrypoint | ✅ | head.ejs: tokens.css → typography → layout → motion → reset → base → focus → utilities → style.css → cast-tokens → brand → theme |
@@ -7459,12 +7459,12 @@ MODIFIED: .gitignore                 — design audit artifact qoidalari
 | S12.02 | ✅ | Size'lar 32/40/44/48px (min-height disiplinasi) |
 | S12.03 | ✅ | Microstates: hover/active/focus-visible/loading/disabled/selected |
 | S12.04 | ✅ | `.is-loading .btn-label` saqlanadi — width barqaror |
-| S12.05 | ✅ | Focus ring `--edikit-semantic-color-focus` token bilan |
+| S12.05 | ✅ | Focus ring `--deborah-semantic-color-focus` token bilan |
 | S12.06 | ✅ | danger `status-danger` semantic token (gradient emas) |
 | S12.07 | ✅ | icon-button.css: 44px hit area + [data-tip] tooltip |
 | S12.08 | ✅ | aria-pressed + ::after selected marker |
 | S12.09 | ✅ | badge.css: neutral/info/success/warning/danger |
-| S12.10 | ✅ | Gradient primary → solid Edikit Cobalt (style.css + landing.css) |
+| S12.10 | ✅ | Gradient primary → solid Deborah Cobalt (style.css + landing.css) |
 | S12.11 | ✅ | 30+ emoji button → icon() SVG (cast director/participant/results/quality-lab/replay) |
 | S12.13 | ✅ | 50 ta `$3` qoldig'i tozalandi (11 CSS fayl) |
 
@@ -7515,7 +7515,7 @@ MODIFIED: .gitignore                 — design audit artifact qoidalari
 | S13.01 | ✅ | input.css + form-field.ejs: label/required/hint/error/count anatomy |
 | S13.02 | ✅ | Placeholder faqat format/example; label'lar ko'rinadigan |
 | S13.03 | ✅ | Control 44px desktop / 48px mobile; mobile font 16px |
-| S13.04 | ✅ | Border token `--edikit-semantic-color-border-default` (>=3:1) |
+| S13.04 | ✅ | Border token `--deborah-semantic-color-border-default` (>=3:1) |
 | S13.05 | ✅ | Focus ring 3px token, border 2px doimiy (layout shift yo'q), hover != focus |
 | S13.06 | ✅ | Error (danger border+icon+text), warning (amber), success |
 | S13.07 | ✅ | read-only (dashed border, copyable) vs disabled (dimmed, not-allowed) |
@@ -7703,7 +7703,7 @@ MODIFIED: .gitignore                 — design audit artifact qoidalari
 | S17.05 | ✅ | Active = soft fill + `font-weight:700` + inset 3px indicator; hover 600 + translateX (farqli) |
 | S17.06 | ✅ | Mobile: shell drawer + public nav drawer (`translateX(100%)` → `body.nav-open`); role viewlardagi 5x inline drawer JS birlashtirildi |
 | S17.07 | ✅ | `navigation.js` unified: focus trap (Tab/first/last), Escape, overlay close, trigger focus restore — shell + public drawer ham |
-| S17.08 | ✅ | `scroll-margin-top: calc(var(--edikit-shell-header-h) + 12px)`, `env(safe-area-inset-bottom)` |
+| S17.08 | ✅ | `scroll-margin-top: calc(var(--deborah-shell-header-h) + 12px)`, `env(safe-area-inset-bottom)` |
 | S17.09 | ✅ | `breadcrumb.ejs` partial (crumbs.length > 1 guard, aria-current) + observability deep admin route'ga ulandi |
 | S17.10 | ✅ | Skip link (mavjud edi, tasdiqlandi), focus-visible outline, `#main-content` scroll-margin |
 | S17.11 | ✅ | Account menu: theme-control + home + panel + logout grouped; logout primary emas |
@@ -7777,7 +7777,7 @@ MODIFIED: .gitignore                 — design audit artifact qoidalari
 - Options berilgan tartibda render qilinadi (sort yo'q) — javoblar tartibi barqaror
 
 ### S19.05 — CVD-safe color + shape
-- 5 xil shape marker (■▲●◆✚) + `--edikit-data-viz-series-1..5` token ranglari
+- 5 xil shape marker (■▲●◆✚) + `--deborah-data-viz-series-1..5` token ranglari
 - Grayscale'da ham farqlanadi — rang ishlamasa shape yetarli
 
 ### S19.06-07 — Accessible table + direct labels
@@ -8032,7 +8032,7 @@ Keyingi qadam: **STEP 24** (Qolgan sahifalar va global consistency — F4).
 ### Topilgan haqiqiy muammolar
 - 🔴 `novalidate` submit-lock'ni buzardi (bo'sh forma server'ga ketardi) — olib tashlandi, native validation submit'ni bloklaydi
 - 🔴 check-auth S24.07 o'lik check (`|| true`) — haqiqiy copy-bank tekshiruviga aylantirildi
-- 🟠 brand-assets validator: proof logosi `alt=""` qoidani buzdi → `alt="Edikit"`
+- 🟠 brand-assets validator: proof logosi `alt=""` qoidani buzdi → `alt="Deborah"`
 - 🟠 forgot/reset'dagi raw white alpha + gradient (S24.04/12) — token'larga o'tkazildi
 
 Keyingi qadam: **STEP 25** (Teacher Workspace shell va home dashboard — F4 boshi).
@@ -8419,7 +8419,7 @@ Keyingi qadam: **STEP 35 — Empty states, onboarding va first-run experiences**
 | S35.03 | ✅ | `data/term-registry.js` — Term registry (teacher/student/test/readyTest/session/question/result/score/settings/leaderboard/invite/timer/grading) — bitta professional nom |
 | S35.04 | ✅ | Jargon approval: Mock→Namuna fanlar, PRE→Tayyor testlar, Characters→Qahramonlar, Real-time Multiplayer→Jonli ko'p ishtirokchili o'yin, Cast→Jonli sessiya; `approveJargon()` (longest-first) |
 | S35.05 | ✅ | Apostrophe normalizatsiya (U+02BB canonical): `routes/user.js` search server-side + `panel.ejs` client `searchNormalize` + `term-utils.js` |
-| S35.06 | ✅ | `public/js/i18n-formatters.js` — Intl formatNumber/Percent/Date/Duration/List (window.EdikitI18nFmt) |
+| S35.06 | ✅ | `public/js/i18n-formatters.js` — Intl formatNumber/Percent/Date/Duration/List (window.DeborahI18nFmt) |
 | S35.07 | ✅ | `dir="ltr"` **barcha 69 view'da**; `dirAuto`/`bdi` user-text bidi isolation yordamchilari |
 | S35.08 | ✅ | Pseudo-locale `pseudoLocalize` (mavjud) tasdiqlandi — validator'da |
 | S35.10 | ✅ | Missing-key fallback + telemetry (mavjud) tasdiqlandi — raw token user'ga chiqmaydi |
@@ -8463,7 +8463,7 @@ Keyingi qadam: **STEP 36 — WCAG 2.2 AA va COGA accessibility gate**.
 ### Dark theme kontrast tuzatishlari (axe dark scan natijasida — yangi coverage!)
 - `landing.css` `[data-theme='dark'] .ld-trust-more #818CF8` (avval #6366f1 = 4.03:1)
 - `navigation.css` `[data-theme='dark'] .nav-btn--primary #2563EB` + hover `#1D4ED8` (white 3.68→5.2:1; hover ham tuzatildi — axe hover'ni skanlamaydi)
-- `offline.css`: `--edikit-semantic-color-surface` → `--surface-raised` (token mavjud emas edi — fallback #fff cream banner + dark text-primary = 1.06:1)
+- `offline.css`: `--deborah-semantic-color-surface` → `--surface-raised` (token mavjud emas edi — fallback #fff cream banner + dark text-primary = 1.06:1)
 - `offline-banner.js`: `btn--primary/btn--sm` → `btn-primary/btn-sm` (orphan klass nomlari)
 
 ### Testlar
@@ -8506,8 +8506,8 @@ Keyingi qadam: **STEP 36 — WCAG 2.2 AA va COGA accessibility gate**.
 | S37.12 design:check | ✅ | `scripts/design-check.js`: tokens+contrast+lint+EJS(86 view); `--full` qo'shadi axe(9)+visual(80); port handoff axe→visual o'rtasida |
 
 ### CSS token fix'lari (S37.01 natijasida)
-- `#fff/#FFFFFF` primary/danger text → `var(--edikit-semantic-color-action-on-action, ...)` (button, navigation, table, test-builder)
-- dialog scrim → `var(--edikit-semantic-color-surface-scrim, ...)`; table error tint → `danger-soft`
+- `#fff/#FFFFFF` primary/danger text → `var(--deborah-semantic-color-action-on-action, ...)` (button, navigation, table, test-builder)
+- dialog scrim → `var(--deborah-semantic-color-surface-scrim, ...)`; table error tint → `danger-soft`
 - leaderboard medallari lokal `--lb-*` token'lar
 - icon-button tooltip: scrim doim dark — lokal `--tip-fg: #FFFFFF` (on-action dark'da ink beradi)
 - navigation dark override: `color: #FFFFFF` aniq (dark on-action token #0C1426, #2563EB'da 3.55:1 bo'lib qolardi — axe topdi)
@@ -8604,7 +8604,7 @@ kombine 303/303 ✓ · tsc 0 ✓ · design:check PASS ✓ · unit 14/14 ✓ · r
 | S40.04 Per-slice PR qoidasi | Hujjat — bir PR'da foundation+pages rewrite qilinmaydi |
 | S40.05 Per-PR gates | 7 gate ro'yxati + design:check (tokens/contrast/lint/perf/legacy/EJS) + CI workflow |
 | S40.06 Rollout sequence | dogfood → 5 teacher → 3–5 class → 1%→100% + observation window |
-| S40.07 Independent rollout | 6 mustaqil flag (EDIKIT_FF_*), blast radius kichik |
+| S40.07 Independent rollout | 6 mustaqil flag (DEBORAH_FF_*), blast radius kichik |
 | S40.08 Monitoring | Error/bounce/task-success/tickets/theme-usage/CWV dashboard ro'yxati |
 | S40.09 Rollback criteria | 5 trigger (render failure, answer-flow, a11y P0, perf 2x, teacher confusion) + 15 min rollback |
 | S40.10 SW compat | CACHE_VERSION + precache ikkala versiyada + offline parity |
@@ -8687,7 +8687,7 @@ kombine 323/323 ✓ · tsc 0 ✓ · design:check PASS ✓ · launch:gate PASS (2
 
 ### Nima qilindi
 - **`scripts/migrate-legacy.js` (YANGI)** — 23 ta safe-set alias → semantic token mapping, qamrov: views (game/ istisno — o'z lokal :root), public/css, public/design (generated istisno), public/js; `--dry` flag.
-- **96 fayl migratsiya qilindi** — inline `var(--accent/bg/text/border/...)` → `var(--edikit-semantic-color-*)` (dashboard, command-center, scheduler, panel, role/*, charts/table/navigation css va h.k.)
+- **96 fayl migratsiya qilindi** — inline `var(--accent/bg/text/border/...)` → `var(--deborah-semantic-color-*)` (dashboard, command-center, scheduler, panel, role/*, charts/table/navigation css va h.k.)
 - **`style.css` :root alias'lari semantic token'ga bog'landi** (hex → `var(token, hex)` fallback) — light-tema pariteti tuzatildi (--accent light'da endi #0033A6).
 - **`design-lint.allowlist.json`** — 119 entry muzlatildi (migratsiya inline style'larni o'zgartirgani uchun qayta generatsiya).
 - **`public/js/scheduler.js`** — pre-existing apostrophe bug tuzatildi (`to'liq`).

@@ -1,5 +1,5 @@
 /**
- * Edikit — Google OIDC Authentication Service
+ * Deborah — Google OIDC Authentication Service
  *
  * Implements the Authorization Code + PKCE flow for Google Sign-In.
  *

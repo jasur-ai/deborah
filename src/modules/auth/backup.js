@@ -1,5 +1,5 @@
 /**
- * Edikit — Auth Data Backup + DR (AUTH C-15)
+ * Deborah — Auth Data Backup + DR (AUTH C-15)
  * ------------------------------------------
  * Auth-critical data (users, credentials, sessions registry, audit) uchun
  * backup + restore verification.
@@ -39,7 +39,7 @@ export const DR_TARGETS = {
 
 /** Shifrlash kaliti — BACKUP_KEY env, aks holda SESSION_SECRET-derived (dev). */
 function backupKey() {
-  const raw = process.env.BACKUP_KEY || process.env.SESSION_SECRET || 'edikit-backup-dev-key';
+  const raw = process.env.BACKUP_KEY || process.env.SESSION_SECRET || 'deborah-backup-dev-key';
   return crypto.createHash('sha256').update(String(raw)).digest();
 }
 

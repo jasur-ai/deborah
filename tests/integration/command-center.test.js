@@ -1,5 +1,5 @@
 /**
- * Edikit — Integration Tests: Command Center & Notifications (Prompt 41)
+ * Deborah — Integration Tests: Command Center & Notifications (Prompt 41)
  *
  * Contract coverage (Prompt 41 §19 — mass notification idempotency):
  *   - buildNotificationBatch → queueNotifications idempotency contract:

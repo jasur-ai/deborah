@@ -1,5 +1,5 @@
 /**
- * Edikit — Security Guard (Prompt 70)
+ * Deborah — Security Guard (Prompt 70)
  *
  * Usage:
  *   import * as securityGuard from '../modules/security-guard/index.js';

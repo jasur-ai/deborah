@@ -1,5 +1,5 @@
 /**
- * Edikit — Theme Core unit testlari (STYLE STEP 07 / S07.12)
+ * Deborah — Theme Core unit testlari (STYLE STEP 07 / S07.12)
  * ----------------------------------------------------------
  * public/js/theme-core.js — pure resolver (DOM'siz, Node'da testable).
  *
@@ -16,7 +16,7 @@ import { resolveState, STATES, STORAGE_KEY } from '../../public/js/theme-core.js
 describe('Theme Core (S07.01) — state → resolved', () => {
   it('exposes the 5 valid states', () => {
     expect(STATES).toEqual(['system', 'light', 'dark', 'hc-light', 'hc-dark']);
-    expect(STORAGE_KEY).toBe('edikit-theme-state');
+    expect(STORAGE_KEY).toBe('deborah-theme-state');
   });
 
   it('resolves light → light / colorScheme light', () => {

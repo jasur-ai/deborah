@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   Edikit Brand Components (STYLE STEP 05)
+   Deborah Brand Components (STYLE STEP 05)
    ---------------------------------------------------------------
    1. Signal Rail      — 3px semantic primitive (S05.05)
    2. Response Mosaic  — 5×5 responsive cell pattern (S05.06)
@@ -16,7 +16,7 @@
    - error     : xato/bloklangan (alert red)
    DOM: <div class="sr-rail sr-rail--live"></div> */
 .sr-rail {
-  --sr-c: var(--edikit-semantic-color-action-primary, #1746D1);
+  --sr-c: var(--deborah-semantic-color-action-primary, #1746D1);
   --sr-live: #16A34A;
   --sr-attention: #F59E0B;
   --sr-error: #DC2626;
@@ -77,7 +77,7 @@
 .rm-mosaic {
   --rm-correct: #16A34A;
   --rm-incorrect: #DC2626;
-  --rm-pending: var(--edikit-semantic-color-border-subtle, rgba(120, 130, 160, 0.35));
+  --rm-pending: var(--deborah-semantic-color-border-subtle, rgba(120, 130, 160, 0.35));
   --rm-live: #06B6D4;
   display: grid;
   grid-template-columns: repeat(5, 1fr);

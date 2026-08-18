@@ -1,5 +1,5 @@
 /**
- * Edikit — Game Routes
+ * Deborah — Game Routes
  * Host game page and Enter game page
  */
 
@@ -112,7 +112,7 @@ router.get('/host', requireAuth, vipGateForMockPre, async (req, res) => {
   const autoMode = auto !== '0'; // default true
 
   res.render('game/host', {
-    title: 'Edikit — Host',
+    title: 'Deborah — Host',
     characters: CARTOON_CHARS,
     timeOptions: GAME_SETTINGS.TIME_OPTIONS,
     defaultTime: GAME_SETTINGS.DEFAULT_TIME,
@@ -165,7 +165,7 @@ router.get('/play', async (req, res) => {
 
   // Legacy non-Cast game enter
   res.render('game/enter', {
-    title: 'Edikit — O\'yinga Kirish',
+    title: 'Deborah — O\'yinga Kirish',
     characters: CARTOON_CHARS,
     initialCode: code,
   });
@@ -179,7 +179,7 @@ router.get('/host/:code', requireAuth, async (req, res) => {
     if (!snap.exists()) return res.redirect('/user/panel');
 
     res.render('game/host', {
-      title: `Edikit — ${code}`,
+      title: `Deborah — ${code}`,
       characters: CARTOON_CHARS,
       timeOptions: GAME_SETTINGS.TIME_OPTIONS,
       defaultTime: GAME_SETTINGS.DEFAULT_TIME,

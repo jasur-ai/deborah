@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH A-31 Massive Final Checkpoint + sign-off — Integration
+ * Deborah — AUTH A-31 Massive Final Checkpoint + sign-off — Integration
  * -------------------------------------------------------------------
  * A fazasining yakuniy security sertifikatlashi. Mavjud testlarda qamralgan
  * mavzular (CSRF 403, returnUrl allowlist, enumeration javob bir xilligi)

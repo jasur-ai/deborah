@@ -9,7 +9,7 @@ const motionCss = readFileSync(join(ROOT, 'public/design/foundations/motion.css'
 const headEjs = readFileSync(join(ROOT, 'views/partials/head.ejs'), 'utf8');
 
 describe('S10.01 — duration scale', () => {
-  const d = layout.edikit.motion.duration;
+  const d = layout.deborah.motion.duration;
   it('0/80/120/160/220/320/500/800 mavjud', () => {
     expect(d['0'].$value).toBe('0ms');
     expect(d['80'].$value).toBe('80ms');
@@ -21,13 +21,13 @@ describe('S10.01 — duration scale', () => {
     expect(d['800'].$value).toBe('800ms');
   });
   it('generated tokens CSS da bor', () => {
-    expect(tokensCss).toContain('--edikit-motion-duration-80: 80ms');
-    expect(tokensCss).toContain('--edikit-motion-duration-800: 800ms');
+    expect(tokensCss).toContain('--deborah-motion-duration-80: 80ms');
+    expect(tokensCss).toContain('--deborah-motion-duration-800: 800ms');
   });
 });
 
 describe('S10.02 — easing', () => {
-  const e = layout.edikit.motion.easing;
+  const e = layout.deborah.motion.easing;
   it('standard/enter/exit/emphasis', () => {
     expect(e.standard.$value).toEqual([0.4, 0, 0.2, 1]);
     expect(e.enter.$value).toEqual([0, 0, 0.2, 1]);
@@ -53,7 +53,7 @@ describe('S10.03 — transition: all = 0', () => {
 });
 
 describe('S10.06 — exit = enter 65-80%', () => {
-  const i = layout.edikit.motion.intent;
+  const i = layout.deborah.motion.intent;
   it('modal-exit 160 / modal 220', () => {
     const ratio = parseInt(i['modal-exit'].$value) / parseInt(i.modal.$value);
     expect(ratio).toBeGreaterThanOrEqual(0.65);

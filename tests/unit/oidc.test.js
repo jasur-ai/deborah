@@ -1,5 +1,5 @@
 /**
- * Edikit — Google OIDC Authentication Tests (Prompt 12)
+ * Deborah — Google OIDC Authentication Tests (Prompt 12)
  *
  * Tests:
  *   1. OIDC service module (isOidcEnabled, getOidcStatus, generatePkceChallenge)

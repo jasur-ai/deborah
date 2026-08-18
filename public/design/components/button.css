@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   Edikit Button Component (STYLE STEP 12, S12.01-06)
+   Deborah Button Component (STYLE STEP 12, S12.01-06)
    ---------------------------------------------------------------
    S12.01 — Variantlar: primary, secondary, quiet, danger, link, icon
    S12.02 — Size'lar: 32px dense-only, 40px default, 44px important,
@@ -18,14 +18,14 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--edikit-spacing-2, 8px);
+    gap: var(--deborah-spacing-2, 8px);
     min-height: 44px; /* S36.09: WCAG 2.5.8 touch target 44px (S12.02 default) */
-    padding: 0 var(--edikit-spacing-4, 16px);
+    padding: 0 var(--deborah-spacing-4, 16px);
     font-family: var(--font-body, inherit);
     font-size: 0.925rem;
     font-weight: 600;
     line-height: 1;
-    border-radius: var(--edikit-radius-sm, 8px); /* S09.04 control 8 */
+    border-radius: var(--deborah-radius-sm, 8px); /* S09.04 control 8 */
     border: 1px solid transparent;
     cursor: pointer;
     user-select: none;
@@ -63,57 +63,57 @@
 
   /* ── Variantlar (S12.01) ── */
   .btn-primary {
-    background: var(--edikit-semantic-color-action-primary, #1746D1); /* S12.10 solid */
-    color: var(--edikit-semantic-color-action-on-action, #FFFFFF);
+    background: var(--deborah-semantic-color-action-primary, #1746D1); /* S12.10 solid */
+    color: var(--deborah-semantic-color-action-on-action, #FFFFFF);
   }
   .btn-primary:hover:not(:disabled):not(.is-loading) {
-    background: var(--edikit-semantic-color-action-primary-hover, #1138B8);
+    background: var(--deborah-semantic-color-action-primary-hover, #1138B8);
   }
   .btn-primary:active:not(:disabled) {
-    background: var(--edikit-semantic-color-action-primary-active, #0E2E96);
+    background: var(--deborah-semantic-color-action-primary-active, #0E2E96);
   }
   .btn-primary:focus-visible {
-    outline: 3px solid var(--edikit-semantic-color-focus, #7AA8FF);
+    outline: 3px solid var(--deborah-semantic-color-focus, #7AA8FF);
     outline-offset: 3px;
   }
 
   .btn-secondary {
-    background: var(--edikit-semantic-color-surface-raised, #FFFFFF);
-    border-color: var(--edikit-semantic-color-border-default, #CBD5E1);
-    color: var(--edikit-semantic-color-text-primary, #1F2937);
+    background: var(--deborah-semantic-color-surface-raised, #FFFFFF);
+    border-color: var(--deborah-semantic-color-border-default, #CBD5E1);
+    color: var(--deborah-semantic-color-text-primary, #1F2937);
   }
   .btn-secondary:hover:not(:disabled):not(.is-loading) {
-    border-color: var(--edikit-semantic-color-action-primary-border, #AFC5FF);
-    background: var(--edikit-semantic-color-action-primary-soft, #E9EFFF);
+    border-color: var(--deborah-semantic-color-action-primary-border, #AFC5FF);
+    background: var(--deborah-semantic-color-action-primary-soft, #E9EFFF);
   }
   .btn-secondary:active:not(:disabled) {
-    background: var(--edikit-semantic-color-action-primary-soft, #E9EFFF);
+    background: var(--deborah-semantic-color-action-primary-soft, #E9EFFF);
   }
   .btn-secondary:focus-visible {
-    outline: 3px solid var(--edikit-semantic-color-focus, #7AA8FF);
+    outline: 3px solid var(--deborah-semantic-color-focus, #7AA8FF);
     outline-offset: 3px;
   }
 
   .btn-quiet {
     background: transparent;
-    color: var(--edikit-semantic-color-text-secondary, #566176);
+    color: var(--deborah-semantic-color-text-secondary, #566176);
   }
   .btn-quiet:hover:not(:disabled):not(.is-loading) {
-    background: var(--edikit-semantic-color-surface-nested, #F7F9FC);
-    color: var(--edikit-semantic-color-text-primary, #1F2937);
+    background: var(--deborah-semantic-color-surface-nested, #F7F9FC);
+    color: var(--deborah-semantic-color-text-primary, #1F2937);
   }
   .btn-quiet:active:not(:disabled) {
-    background: var(--edikit-semantic-color-surface-nested, #F7F9FC);
+    background: var(--deborah-semantic-color-surface-nested, #F7F9FC);
   }
   .btn-quiet:focus-visible {
-    outline: 3px solid var(--edikit-semantic-color-focus, #7AA8FF);
+    outline: 3px solid var(--deborah-semantic-color-focus, #7AA8FF);
     outline-offset: 3px;
   }
 
   /* S12.06 — Danger: red semantic, delete blue EMAS */
   .btn-danger {
-    background: var(--edikit-semantic-color-status-danger, #C93434);
-    color: var(--edikit-semantic-color-action-on-action, #FFFFFF);
+    background: var(--deborah-semantic-color-status-danger, #C93434);
+    color: var(--deborah-semantic-color-action-on-action, #FFFFFF);
   }
   .btn-danger:hover:not(:disabled):not(.is-loading) {
     filter: brightness(1.1);
@@ -122,42 +122,42 @@
     filter: brightness(0.95);
   }
   .btn-danger:focus-visible {
-    outline: 3px solid var(--edikit-semantic-color-status-danger, #C93434);
+    outline: 3px solid var(--deborah-semantic-color-status-danger, #C93434);
     outline-offset: 3px;
   }
 
   .btn-link {
     background: transparent;
-    color: var(--edikit-semantic-color-action-primary, #1746D1);
-    padding-inline: var(--edikit-spacing-2, 8px);
+    color: var(--deborah-semantic-color-action-primary, #1746D1);
+    padding-inline: var(--deborah-spacing-2, 8px);
     min-height: 44px; /* S36.09: WCAG 2.5.8 */
     text-decoration: underline;
     text-underline-offset: 3px;
   }
   .btn-link:hover:not(:disabled) {
-    color: var(--edikit-semantic-color-action-primary-hover, #1138B8);
+    color: var(--deborah-semantic-color-action-primary-hover, #1138B8);
     text-decoration-thickness: 2px;
   }
   .btn-link:focus-visible {
-    outline: 3px solid var(--edikit-semantic-color-focus, #7AA8FF);
+    outline: 3px solid var(--deborah-semantic-color-focus, #7AA8FF);
     outline-offset: 3px;
   }
 
   /* ── Size'lar (S12.02) ── */
   .btn-sm {
     min-height: 32px; /* dense-only (S09.09) */
-    padding: 0 var(--edikit-spacing-3, 12px);
+    padding: 0 var(--deborah-spacing-3, 12px);
     font-size: 0.85rem;
   }
   .btn-lg {
     min-height: 48px; /* important desktop (S36.09: 44px dan katta qadam) */
-    padding: 0 var(--edikit-spacing-5, 20px);
+    padding: 0 var(--deborah-spacing-5, 20px);
     font-size: 1rem;
   }
   /* 48px — mobile/frequent participant: qo'shimcha class orqali */
   .btn-xl {
     min-height: 48px;
-    padding: 0 var(--edikit-spacing-5, 20px);
+    padding: 0 var(--deborah-spacing-5, 20px);
     font-size: 1rem;
   }
   @media (max-width: 640px) {
@@ -185,10 +185,10 @@
 
   /* S12.08 — Selected state (toggle): marker + faqat icon emas */
   .btn.is-selected {
-    background: var(--edikit-semantic-color-action-primary-soft, #E9EFFF);
-    border-color: var(--edikit-semantic-color-action-primary, #1746D1);
-    color: var(--edikit-semantic-color-action-primary, #1746D1);
-    box-shadow: inset 0 0 0 1px var(--edikit-semantic-color-action-primary, #1746D1);
+    background: var(--deborah-semantic-color-action-primary-soft, #E9EFFF);
+    border-color: var(--deborah-semantic-color-action-primary, #1746D1);
+    color: var(--deborah-semantic-color-action-primary, #1746D1);
+    box-shadow: inset 0 0 0 1px var(--deborah-semantic-color-action-primary, #1746D1);
   }
   .btn.is-selected .btn-selected-marker {
     display: inline-flex;

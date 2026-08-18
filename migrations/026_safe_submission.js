@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 026: Safe File, Code & Oral Submission (Prompt 44)
+ * Deborah — Migration 026: Safe File, Code & Oral Submission (Prompt 44)
  *
  * Prompt 44 — project/file/code/audio/video assessmentlar uchun SECURE
  * RESUMABLE submission (research.md §16.3 file antivirus/sandbox, §51
@@ -264,9 +264,9 @@ export async function up(db) {
     'media_transcripts',
   ];
   for (const table of newTables) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
-    await sql`GRANT DELETE ON ${sql.table(table)} TO edikit_migration`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 }
 

@@ -10,7 +10,7 @@
   </style>
 </head>
 <body>
-  <h1>Edikit Components</h1>
+  <h1>Deborah Components</h1>
 
   <section class="group" id="group-variants">
     <h2>Variantlar (S12.01)</h2>
@@ -92,14 +92,14 @@
         hint: 'Kengaytirilgan izoh', maxlength: 200,
       }) %>
       <div class="form-field form-field--error">
-        <label class="form-field__label" for="f-bad"><span>Xatoli maydon</span><span class="form-field__required" style="color:var(--edikit-semantic-color-status-danger)">*</span></label>
+        <label class="form-field__label" for="f-bad"><span>Xatoli maydon</span><span class="form-field__required" style="color:var(--deborah-semantic-color-status-danger)">*</span></label>
         <input class="form-control" id="f-bad" name="bad" type="text" aria-invalid="true" aria-describedby="f-bad-error" value="xato qiymat">
         <span class="form-field__error" id="f-bad-error" role="alert"><%- icon('alertTriangle', 14) %><span>Bu maydon noto‘g‘ri to‘ldirildi — iltimos qayta tekshiring va qisqaroq, aniqroq ma’lumot kiriting.</span></span>
       </div>
       <div class="form-field form-field--warning">
         <label class="form-field__label" for="f-warn"><span>Ogohlantirish</span></label>
         <input class="form-control" id="f-warn" name="warn" type="text" value="eski format" aria-describedby="f-warn-error">
-        <span class="form-field__error" id="f-warn-error" style="color:var(--edikit-semantic-color-status-warning)">Bu qiymat eskirgan formatda — yangilash tavsiya etiladi</span>
+        <span class="form-field__error" id="f-warn-error" style="color:var(--deborah-semantic-color-status-warning)">Bu qiymat eskirgan formatda — yangilash tavsiya etiladi</span>
       </div>
       <div class="form-field">
         <label class="form-field__label" for="f-ro"><span>Faqat o‘qish</span></label>
@@ -312,13 +312,13 @@
       </nav>
     </div>
     <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
-      <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:220px;background:var(--edikit-semantic-color-surface-input,var(--edikit-semantic-color-surface-raised));border:1px solid var(--edikit-semantic-color-border-default);border-radius:var(--edikit-radius-md,12px);padding:14px">
+      <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:220px;background:var(--deborah-semantic-color-surface-input,var(--deborah-semantic-color-surface-raised));border:1px solid var(--deborah-semantic-color-border-default);border-radius:var(--deborah-radius-md,12px);padding:14px">
         <h3 style="margin:0 0 8px;font-size:.9rem">Active nav state (S17.05)</h3>
         <a href="#" class="shell-nav-link" style="text-decoration:none"><span class="shell-nav-ico"><%- icon('grid', 16) %></span><span>Overview</span></a>
         <a href="#" class="shell-nav-link active" style="text-decoration:none"><span class="shell-nav-ico"><%- icon('bookOpen', 16) %></span><span>Kurslar</span></a>
         <a href="#" class="shell-nav-link" style="text-decoration:none"><span class="shell-nav-ico"><%- icon('target', 16) %></span><span>Baholashlar</span></a>
       </div>
-      <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:220px;background:var(--edikit-semantic-color-surface-input,var(--edikit-semantic-color-surface-raised));border:1px solid var(--edikit-semantic-color-border-default);border-radius:var(--edikit-radius-md,12px);padding:14px">
+      <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:220px;background:var(--deborah-semantic-color-surface-input,var(--deborah-semantic-color-surface-raised));border:1px solid var(--deborah-semantic-color-border-default);border-radius:var(--deborah-radius-md,12px);padding:14px">
         <h3 style="margin:0 0 8px;font-size:.9rem">Account menu (S17.11)</h3>
         <div class="shell-account" data-shell-account>
           <button type="button" class="shell-account-btn" aria-haspopup="true" aria-expanded="false" aria-controls="demo-account-menu">
@@ -412,9 +412,9 @@
     document.querySelector('[data-toast-error]').addEventListener('click', () => showToast('Xatolik yuz berdi', 'error'));
 
     // S16 demo triggerlar
-    document.querySelector('[data-offline-demo]').addEventListener('click', () => EdikitOffline.offline());
-    document.querySelector('[data-reconnect-demo]').addEventListener('click', () => { EdikitOffline.reconnect(); let p = 0; const t = setInterval(() => { p += 20; EdikitOffline.progress(p); if (p >= 100) { clearInterval(t); EdikitOffline.online(2); } }, 300); });
-    document.querySelector('[data-online-demo]').addEventListener('click', () => EdikitOffline.online(2));
+    document.querySelector('[data-offline-demo]').addEventListener('click', () => DeborahOffline.offline());
+    document.querySelector('[data-reconnect-demo]').addEventListener('click', () => { DeborahOffline.reconnect(); let p = 0; const t = setInterval(() => { p += 20; DeborahOffline.progress(p); if (p >= 100) { clearInterval(t); DeborahOffline.online(2); } }, 300); });
+    document.querySelector('[data-online-demo]').addEventListener('click', () => DeborahOffline.online(2));
 
     // S18: init data tables
     if (window.DataTable) {

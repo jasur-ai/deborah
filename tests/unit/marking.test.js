@@ -1,5 +1,5 @@
 /**
- * Edikit — Marker Allocation, Calibration & Moderation unit tests (Prompt 46)
+ * Deborah — Marker Allocation, Calibration & Moderation unit tests (Prompt 46)
  *
  * Pure-schema coverage:
  *   - Pseudonym derivation: deterministic, non-reversible, salted

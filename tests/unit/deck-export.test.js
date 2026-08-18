@@ -1,5 +1,5 @@
 /**
- * Edikit — Deck Export (unit tests, Prompt 59)
+ * Deborah — Deck Export (unit tests, Prompt 59)
  *
  * Pure schema: export request validation + idempotency hash, attribution
  * page (§9.10), final PPTX/PDF/handout builders, accessibility check

@@ -1,6 +1,6 @@
 /* ─────────────────────────────────────────────────────────────────────
-   Edikit — Term utils (STYLE S35.03/04/05)
-   - `window.EdikitTerms`: TERMS/JARGON (data/term-registry.js bilan mos)
+   Deborah — Term utils (STYLE S35.03/04/05)
+   - `window.DeborahTerms`: TERMS/JARGON (data/term-registry.js bilan mos)
    - Apostrophe normalization: Uzbek o' g' ь variantlari -> U+02BB canonical
    - `dirAuto` / `bdi` yordamchilari: user-generated text bidi isolation
    - `approveJargon`: eski jargon'ni approved label bilan almashtirish
@@ -98,7 +98,7 @@
     return out;
   }
 
-  window.EdikitTerms = {
+  window.DeborahTerms = {
     TERMS: TERMS,
     JARGON: JARGON,
     termLabel: termLabel,

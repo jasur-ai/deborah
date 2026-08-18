@@ -1,5 +1,5 @@
 /**
- * Edikit — Security Profile & Safe Exam Browser Boundary Tests
+ * Deborah — Security Profile & Safe Exam Browser Boundary Tests
  *
  * Covers (Prompt 36):
  *   - Typed S0–S4 profile levels + rank ordering (§07)

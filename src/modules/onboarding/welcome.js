@@ -33,12 +33,12 @@ const MAX_PER_RUN = 200;
 
 function welcomeSubject(type, lang = 'uz') {
   const s = {
-    welcome: { uz: 'Xush kelibsiz — Edikit', 'uz-cyrl': 'Хуш келибсиз — Edikit', ru: 'Добро пожаловать — Edikit', en: 'Welcome — Edikit' },
+    welcome: { uz: 'Xush kelibsiz — Deborah', 'uz-cyrl': 'Хуш келибсиз — Deborah', ru: 'Добро пожаловать — Deborah', en: 'Welcome — Deborah' },
     first_result: { uz: 'Birinchi natijangiz', 'uz-cyrl': 'Биринчи натижангиз', ru: 'Ваш первый результат', en: 'Your first result' },
     tips: { uz: '3 ta foydali maslahat', 'uz-cyrl': '3 та фойдали маслаҳат', ru: '3 полезных совета', en: '3 useful tips' },
     weekly: { uz: 'Haftalik rejim tayyor', 'uz-cyrl': 'Ҳафталик режим тайёр', ru: 'Недельный план готов', en: 'Weekly plan ready' },
   };
-  return s[type]?.[lang] || s[type]?.uz || 'Edikit';
+  return s[type]?.[lang] || s[type]?.uz || 'Deborah';
 }
 
 function welcomeBody(type, lang = 'uz', ctx = {}) {
@@ -46,10 +46,10 @@ function welcomeBody(type, lang = 'uz', ctx = {}) {
   const subjectLabel = ctx.subject || '';
   const map = {
     welcome: {
-      uz: `Salom, ${name}! Edikit'ga xush kelibsiz. Bugun 5 daqiqalik birinchi amaliyot bilan boshlang — keyingi qadamda sizni birinchi g'alaba kutadi.`,
-      'uz-cyrl': `Салом, ${name}! Edikit'га хуш келибсиз. Бугун 5 дақиқалик биринчи амалиёт билан бошланг.`,
-      ru: `Привет, ${name}! Добро пожаловать в Edikit. Начните сегодня с 5-минутной практики.`,
-      en: `Hi ${name}! Welcome to Edikit. Start today with a 5-minute practice — your first win awaits.`,
+      uz: `Salom, ${name}! Deborah'ga xush kelibsiz. Bugun 5 daqiqalik birinchi amaliyot bilan boshlang — keyingi qadamda sizni birinchi g'alaba kutadi.`,
+      'uz-cyrl': `Салом, ${name}! Deborah'га хуш келибсиз. Бугун 5 дақиқалик биринчи амалиёт билан бошланг.`,
+      ru: `Привет, ${name}! Добро пожаловать в Deborah. Начните сегодня с 5-минутной практики.`,
+      en: `Hi ${name}! Welcome to Deborah. Start today with a 5-minute practice — your first win awaits.`,
     },
     first_result: {
       uz: `${name}, birinchi natijangizni ko'ring! ${subjectLabel ? subjectLabel + ' bo\'yicha ' : ''}Amaliyotda qancha to'plaganingizni tekshiring va davom eting.`,
@@ -144,7 +144,7 @@ export async function runWelcomeSequence({ now = Date.now(), deps = {} } = {}) {
         actorId: userKey,
         details: { day: d.day, type: d.type, channel: 'email' },
       }).catch(() => {});
-      recordMetric('edikit_onboarding_welcome_sent_total', 1);
+      recordMetric('deborah_onboarding_welcome_sent_total', 1);
       result.sent++;
       break; // har run'da bitta day — chastota cap
     }

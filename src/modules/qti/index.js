@@ -1,5 +1,5 @@
 /**
- * Edikit — QTI Module Barrel Export
+ * Deborah — QTI Module Barrel Export
  *
  * Exports all QTI import/export staging services.
  * All modules gracefully degrade when PostgreSQL is unavailable.

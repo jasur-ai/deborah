@@ -1,5 +1,5 @@
 /**
- * Edikit — Program Calendar & Workload Tests
+ * Deborah — Program Calendar & Workload Tests
  *
  * Covers (Prompt 26):
  *   - Event schema validation (effort/marker/moderation minutes)
@@ -454,7 +454,7 @@ describe('Calendar — ICS generation & date-change notification', () => {
     expect(ics).toContain('BEGIN:VCALENDAR');
     expect(ics).toContain('END:VCALENDAR');
     expect(ics).toContain('BEGIN:VEVENT');
-    expect(ics).toContain('UID:edikit-event-42-');
+    expect(ics).toContain('UID:deborah-event-42-');
     // UTC + Z — RFC 5545 correct; clients render the same instant in any zone
     expect(ics).toContain('DTSTART:20260901T090000Z');
     expect(ics).toContain('DTEND:20260901T110000Z');

@@ -1,5 +1,5 @@
 /**
- * Edikit — Ochiq ma'lumotlar: OTM ro'yxati + talabalar soni (AUTH A-13)
+ * Deborah — Ochiq ma'lumotlar: OTM ro'yxati + talabalar soni (AUTH A-13)
  * --------------------------------------------------------------------
  * Landing stats uchun HAQIQIY raqamlar (hech qachon yolg'on emas):
  *   - Manba (tartib bilan): data.gov.uz dataset 14037 (CSV/JSON), hemis.uz/universities.

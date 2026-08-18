@@ -1,5 +1,5 @@
 /**
- * Edikit — No-device Paper-Card Scan Service (C4-03)
+ * Deborah — No-device Paper-Card Scan Service (C4-03)
  * ---------------------------------------------------
  * Teacher device orqali four-orientation card scan. RAW FRAME HECh QACHON
  * serverga yuborilmaydi va storage'da qolmaydi (item 5/6, tugallanish sharti).

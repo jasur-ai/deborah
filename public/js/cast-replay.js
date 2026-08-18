@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Replay (C5-02)
+ * Deborah — Cast Replay (C5-02)
  * ------------------------------
  * Teacher event timeline + private reflection. Camera ruxsati so'ralmaydi.
  */

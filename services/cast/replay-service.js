@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Event Replay Service (C5-02)
+ * Deborah — Cast Event Replay Service (C5-02)
  * ------------------------------------------
  * Camera/video yozuvsiz event timeline replay. Replay input = session
  * snapshot (config/meta) + ordered events. Har revision'da reducer bilan

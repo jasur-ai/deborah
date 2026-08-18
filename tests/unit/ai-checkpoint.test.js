@@ -1,5 +1,5 @@
 /**
- * Edikit — AI/Content Checkpoint (unit tests, Prompt 60)
+ * Deborah — AI/Content Checkpoint (unit tests, Prompt 60)
  *
  * Pure schema: guards (summative AI authority, unverified source), red-team
  * malicious source scenarios, shadow benchmark, question review sample,

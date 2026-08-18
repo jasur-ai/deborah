@@ -1,5 +1,5 @@
 /**
- * Edikit — Central Authorization Policy Service (ABAC)
+ * Deborah — Central Authorization Policy Service (ABAC)
  *
  * Provides:
  *   1. Role-based permission checks (RBAC)

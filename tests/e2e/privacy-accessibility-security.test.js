@@ -1,5 +1,5 @@
 /**
- * Edikit — E2E/Security: Privacy, Accessibility & Security Negative Suite
+ * Deborah — E2E/Security: Privacy, Accessibility & Security Negative Suite
  * (Prompt 38)
  *
  * Negative contract walk at the pure-logic + graceful-degradation layer:

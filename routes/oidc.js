@@ -1,5 +1,5 @@
 /**
- * Edikit — Google OIDC Auth Routes (AUTH A-07)
+ * Deborah — Google OIDC Auth Routes (AUTH A-07)
  *
  * Routes:
  *   GET  /auth/google          → Redirect to Google consent screen

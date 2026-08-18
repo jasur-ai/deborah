@@ -1,5 +1,5 @@
 /**
- * Edikit — User Panel Routes
+ * Deborah — User Panel Routes
  * Test CRUD, search, quiz taking, mock tests, PRE tests
  */
 
@@ -411,7 +411,7 @@ router.get('/api/tests/export', async (req, res) => {
     if (!snap.exists()) return res.status(404).json({ error: 'Test topilmadi' });
     const name = (snap.val().name || 'test').replace(/[^\w\-]+/g, '_').slice(0, 40);
     res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Content-Disposition', `attachment; filename="edikit-test-${name}.json"`);
+    res.setHeader('Content-Disposition', `attachment; filename="deborah-test-${name}.json"`);
     res.send(JSON.stringify({ exportedAt: Date.now(), test: snap.val() }, null, 2));
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -470,7 +470,7 @@ router.post('/api/tests/toggle-public', async (req, res) => {
 router.get('/test-arena', (req, res) => {
   const { source, key } = req.query;
   res.render('user/test-arena', {
-    title: 'Edikit — Test Arena',
+    title: 'Deborah — Test Arena',
     characters: CARTOON_CHARS,
     initialCode: '',
     autoLoad: false,

@@ -1,5 +1,5 @@
 /**
- * Edikit — Roster import UI client (C-11)
+ * Deborah — Roster import UI client (C-11)
  * ---------------------------------------------------------------
  * Flow: upload → sessions → mapping → diff → approve/commit →
  *       rollback / reconcile / errors / invites.
@@ -83,12 +83,12 @@
     var box = $('rs-sessions');
     var statusFilter = ($('rs-status-filter') || {}).value || '';
     var q = statusFilter ? '?status=' + encodeURIComponent(statusFilter) : '';
-    box.innerHTML = '<div class="loading"><span class="spinner" style="border-color:var(--edikit-semantic-color-text-muted);border-top-color:var(--edikit-semantic-color-action-primary)"></span></div>';
+    box.innerHTML = '<div class="loading"><span class="spinner" style="border-color:var(--deborah-semantic-color-text-muted);border-top-color:var(--deborah-semantic-color-action-primary)"></span></div>';
     try {
       var r = await api('/api/roster/sessions' + q);
       var list = r.body || [];
       if (!Array.isArray(list) || list.length === 0) {
-        box.innerHTML = '<div style="font-size:.8rem;color:var(--edikit-semantic-color-text-muted)">' + esc(copy.empty || 'No sessions') + '</div>';
+        box.innerHTML = '<div style="font-size:.8rem;color:var(--deborah-semantic-color-text-muted)">' + esc(copy.empty || 'No sessions') + '</div>';
         return;
       }
       var html = '';
@@ -97,7 +97,7 @@
         html += '<div class="rs-session' + (isActive ? ' active' : '') + '" data-id="' + esc(s.id) + '">' +
           '<div>' +
           '<div style="font-weight:700;font-size:.82rem">' + esc(s.filename || '') + '</div>' +
-          '<div style="font-size:.72rem;color:var(--edikit-semantic-color-text-muted)">' + esc(s.status || '') + ' · ' + (s.totalRows || 0) + ' ' + esc(copy.rows || '') + (s.totalErrors ? ' · <span style="color:#dc2626">' + s.totalErrors + ' ' + esc(copy.errors || '') + '</span>' : '') + '</div>' +
+          '<div style="font-size:.72rem;color:var(--deborah-semantic-color-text-muted)">' + esc(s.status || '') + ' · ' + (s.totalRows || 0) + ' ' + esc(copy.rows || '') + (s.totalErrors ? ' · <span style="color:#dc2626">' + s.totalErrors + ' ' + esc(copy.errors || '') + '</span>' : '') + '</div>' +
           '</div>' +
           '<button type="button" class="btn btn-quiet" style="min-height:34px;font-size:.74rem" onclick="rsSelectSession(\'' + esc(s.id) + '\')">' + esc(copy.select || 'Select') + '</button>' +
           '</div>';
@@ -117,7 +117,7 @@
 
   function showMappingCard() {
     $('rs-mapping-card').style.display = '';
-    $('rs-mapping').innerHTML = '<div class="loading"><span class="spinner" style="border-color:var(--edikit-semantic-color-text-muted);border-top-color:var(--edikit-semantic-color-action-primary)"></span></div>';
+    $('rs-mapping').innerHTML = '<div class="loading"><span class="spinner" style="border-color:var(--deborah-semantic-color-text-muted);border-top-color:var(--deborah-semantic-color-action-primary)"></span></div>';
   }
 
   // ── Mapping ──
@@ -266,7 +266,7 @@
   window.rsReconcile = async function () {
     if (!state.sessionId) return;
     var el = $('rs-reconcile');
-    el.innerHTML = '<div class="loading"><span class="spinner" style="border-color:var(--edikit-semantic-color-text-muted);border-top-color:var(--edikit-semantic-color-action-primary)"></span></div>';
+    el.innerHTML = '<div class="loading"><span class="spinner" style="border-color:var(--deborah-semantic-color-text-muted);border-top-color:var(--deborah-semantic-color-action-primary)"></span></div>';
     var r = await api('/api/roster/sessions/' + encodeURIComponent(state.sessionId) + '/reconcile');
     el.innerHTML = '<span class="rs-chip ' + (r.body && r.body.ok ? 'rs-ok' : 'rs-err') + '">' + esc(JSON.stringify(r.body || r.body.error || '')).slice(0, 220) + '</span>';
   };
@@ -300,7 +300,7 @@
     if (!Array.isArray(list)) { el.innerHTML = ''; return; }
     var html = '<div style="font-weight:700;margin-bottom:6px">' + list.length + ' invite</div>';
     list.slice(0, 20).forEach(function (iv) {
-      html += '<div style="font-size:.74rem;padding:4px 0;border-bottom:1px solid var(--edikit-semantic-color-border-default)">' +
+      html += '<div style="font-size:.74rem;padding:4px 0;border-bottom:1px solid var(--deborah-semantic-color-border-default)">' +
         esc(iv.email || iv.identity || '') + ' · <span class="rs-chip ' + (iv.status === 'used' ? 'rs-ok' : iv.status === 'pending' ? 'rs-warn' : 'rs-err') + '" style="padding:2px 6px">' + esc(iv.status || '') + '</span></div>';
     });
     el.innerHTML = html;

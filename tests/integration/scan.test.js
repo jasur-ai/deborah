@@ -1,5 +1,5 @@
 /**
- * Edikit — Scan module integration/contract tests (Prompt 43)
+ * Deborah — Scan module integration/contract tests (Prompt 43)
  *
  * Forged/unreadable QR reconciliation contract:
  *   - forged/unreadable/missing QR → page becomes ORPHAN (never silent-drop)

@@ -1,5 +1,5 @@
 /**
- * Edikit — Accommodation Module Tests
+ * Deborah — Accommodation Module Tests
  *
  * Covers: sensitive rationale encryption, CRUD, version history,
  * assessment snapshots, effective config merging, access control.

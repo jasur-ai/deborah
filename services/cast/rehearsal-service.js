@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Rehearsal Service (C3-15)
+ * Deborah — Cast Rehearsal Service (C3-15)
  * ----------------------------------------
  * Teacher production participantlarsiz sessionni botlar bilan tekshiradi.
  *

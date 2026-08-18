@@ -1,5 +1,5 @@
 /**
- * Edikit — AI/Content Checkpoint
+ * Deborah — AI/Content Checkpoint
  *
  * Prompt 60 — measured pilot orqali AI oqimlarini yakuniy tekshirish
  * (research.md §7.7, §20, §22.15). Source, grading, questions,

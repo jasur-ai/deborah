@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — HEMIS OAuth2 LIVE TEST HARNESS (xavfsiz)
+ * Deborah — HEMIS OAuth2 LIVE TEST HARNESS (xavfsiz)
  * -------------------------------------------------
  * .env fayldan credential'larni o'qiydi (chat orqali emas).
  * Oqim: authorize -> login (CSRF + cookie) -> code -> access-token -> api/user.
@@ -112,12 +112,12 @@ async function main() {
 
   const jar = new CookieJar();
   const base = 'https://student.hemis.uz';
-  const ua = 'Edikit-HemIS-LiveTest/1.0 (educational test, own test account)';
+  const ua = 'Deborah-HemIS-LiveTest/1.0 (educational test, own test account)';
   const step = (n, msg) => console.log(`\n── [${n}] ${msg} ──`);
 
   // 1. authorize (redirectsiz — Location ushlanadi)
   step(1, 'authorize (client qabul qilinadimi?)');
-  const authUrl = buildAuthUrl({ clientId: cfg.HEMIS_CLIENT_ID, redirectUri: cfg.HEMIS_REDIRECT_URI, state: `edikit_test_${Date.now()}` });
+  const authUrl = buildAuthUrl({ clientId: cfg.HEMIS_CLIENT_ID, redirectUri: cfg.HEMIS_REDIRECT_URI, state: `deborah_test_${Date.now()}` });
   const r1 = await fetch(authUrl, { redirect: 'manual', headers: { 'user-agent': ua } });
   const loc1 = resolveUrl(authUrl, r1.headers.get('location'));
   console.log(`HTTP ${r1.status} | Location: ${loc1 ? loc1.slice(0, 90) : '(yo\'q)'}`);

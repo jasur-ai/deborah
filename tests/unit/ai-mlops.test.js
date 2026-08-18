@@ -1,5 +1,5 @@
 /**
- * Edikit — AI Evaluation, MLOps & Rollback (unit tests, Prompt 52)
+ * Deborah — AI Evaluation, MLOps & Rollback (unit tests, Prompt 52)
  *
  * Pure schema tekshiruvi (hech qanday DB/I-O yo'q):
  *   - Metrics: QWK/MAE/RMSE/exact/within-one (computeQwk Prompt 51 reuse).

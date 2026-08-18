@@ -1,5 +1,5 @@
 /**
- * Edikit — Auth Incident Response (AUTH D-26)
+ * Deborah — Auth Incident Response (AUTH D-26)
  * ---------------------------------------------------------------------------
  * Append-only incident log + response helper'lar (D-26 §06-§11).
  *

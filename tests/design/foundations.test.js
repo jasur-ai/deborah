@@ -23,8 +23,8 @@ describe('S11.02 — base semantic + ambient removed', () => {
   const base = rd('public/design/foundations/base.css');
   const style = rd('public/css/style.css');
   it('body semantic tokens', () => {
-    expect(base).toContain('--edikit-semantic-color-surface-default');
-    expect(base).toContain('--edikit-semantic-color-text-primary');
+    expect(base).toContain('--deborah-semantic-color-surface-default');
+    expect(base).toContain('--deborah-semantic-color-text-primary');
   });
   it('global body::before ambient overlay yo\'q', () => {
     expect(style).not.toMatch(/body::before\s*\{/);
@@ -55,7 +55,7 @@ describe('S11.04 — focus 3px', () => {
   });
   it('sticky z-index token', () => {
     expect(focus).toContain('[data-sticky]');
-    expect(focus).toContain('--edikit-z-index-sticky');
+    expect(focus).toContain('--deborah-z-index-sticky');
   });
 });
 
@@ -79,7 +79,7 @@ describe('S11.06 — utilities', () => {
     expect(utils).toContain('scroll-margin-top');
   });
   it('spacing utilities faqat token', () => {
-    expect(utils).toContain('var(--edikit-spacing-2, 8px)');
+    expect(utils).toContain('var(--deborah-spacing-2, 8px)');
     expect(utils).not.toContain('padding: 13px');
   });
 });

@@ -1,5 +1,5 @@
 /**
- * Edikit — Response API, ACK Sequence & Autosave Routes
+ * Deborah — Response API, ACK Sequence & Autosave Routes
  *
  * Prompt 31 (Phase D #2) REST API:
  *   - POST /api/student/attempts/:id/responses        — save a response

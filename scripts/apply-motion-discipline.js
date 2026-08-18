@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Motion discipline migrator (STYLE STEP 10, S10.03/S10.08)
+ * Deborah — Motion discipline migrator (STYLE STEP 10, S10.03/S10.08)
  * -----------------------------------------------------------------
  * `transition: all DUR EASE` → property-specific:
  *   color, background-color, border-color, box-shadow, transform, opacity, filter

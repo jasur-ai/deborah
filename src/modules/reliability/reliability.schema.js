@@ -1,5 +1,5 @@
 /**
- * Edikit — Reliability Guard: Peak Load, Chaos, Backup/DR & Release Safety
+ * Deborah — Reliability Guard: Peak Load, Chaos, Backup/DR & Release Safety
  * (pure logic — Prompt 71)
  *
  * Prompt 71 proves data integrity under exam peak and dependency failures

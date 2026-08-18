@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Socket Handler
+ * Deborah — Cast Socket Handler
  * -----------------------------
  * New Cast sessions — command/event envelope + ACK.
  * Har command: parse → authorize → service call → ACK.

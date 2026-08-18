@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast AI Co-host Shadow Adapter (C5-11)
+ * Deborah — Cast AI Co-host Shadow Adapter (C5-11)
  * -----------------------------------------------
  * Reja item 2/4: LLM adapterga faqat aggregate/de-identified input
  * beriladi (buildShadowInput natijasi) va provider timeout/cost cap

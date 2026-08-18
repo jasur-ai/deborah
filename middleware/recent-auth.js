@@ -1,5 +1,5 @@
 /**
- * Edikit — Recent Authentication Middleware (Step-Up)
+ * Deborah — Recent Authentication Middleware (Step-Up)
  *
  * Requires that the user has authenticated recently (within a configurable window)
  * before allowing sensitive operations.

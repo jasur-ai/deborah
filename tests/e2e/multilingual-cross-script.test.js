@@ -1,5 +1,5 @@
 /**
- * Edikit — Uzbek Latin/Cyrillic & Terminology Layer (e2e/security, Prompt 63)
+ * Deborah — Uzbek Latin/Cyrillic & Terminology Layer (e2e/security, Prompt 63)
  *
  * Full workflow (research.md §58): terminology version → terms (canonical +
  * all scripts + search_key) → content translation (original preserved) →

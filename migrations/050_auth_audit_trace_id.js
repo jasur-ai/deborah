@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 050: auth_audit.trace_id (AUTH D-05 §13)
+ * Deborah — Migration 050: auth_audit.trace_id (AUTH D-05 §13)
  *
  * Incident korrelyatsiyasi: auth_audit yozuvlari trace_id bilan bog'lanadi —
  * support ticket / incident'da trace'ni topish (C-09 audit bilan).

@@ -1,5 +1,5 @@
 /**
- * Edikit — AI Question Generator 50/30/20 (integration/contract, Prompt 53)
+ * Deborah — AI Question Generator 50/30/20 (integration/contract, Prompt 53)
  *
  * HTTP integration (real Express app + admin auth + CSRF):
  *   - /api/admin/ai-question-gen/meta — constants exposed.

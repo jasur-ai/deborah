@@ -1,5 +1,5 @@
 /**
- * Edikit — E2E/Security: Hall Ticket & Offline Check-in (Prompt 40)
+ * Deborah — E2E/Security: Hall Ticket & Offline Check-in (Prompt 40)
  *
  * E2E walk (Prompt 40 §20):
  *   - Pure-logic E2E: seat allocation → signed hall ticket → token verify →
@@ -32,7 +32,7 @@ import {
   MIN_SIGNING_KEY_LENGTH,
 } from '../../src/modules/seating/index.js';
 
-const SIGNING_KEY = 'edikit-e2e-hall-ticket-signing-key-0123456789';
+const SIGNING_KEY = 'deborah-e2e-hall-ticket-signing-key-0123456789';
 
 let app;
 let httpServer;

@@ -1,5 +1,5 @@
 /**
- * Edikit — Unified Provider Async Adapter (pure logic)
+ * Deborah — Unified Provider Async Adapter (pure logic)
  *
  * Prompt 58 — Gamma generation va Manus task/artifact oqimlarini unified
  * provider job contractga ulash (research.md §9.2 canonical document,
@@ -114,7 +114,7 @@ export const MANUS_DEFAULTS = {
 
 /**
  * Provider-independent presentation provider contract. Har bir adapter
- * (gamma/manus/edikit-native) shu interface'ni implement qiladi:
+ * (gamma/manus/deborah-native) shu interface'ni implement qiladi:
  *
  *   - create(params): provider job'ni yaratadi → { providerJobId }
  *   - poll({ providerJobId }): Gamma async polling → { status, previewUrl,
@@ -358,7 +358,7 @@ export function inferArtifact(url = '', kindHint = null) {
 
 /**
  * Map Gamma completed response → artifact candidates.
- * Gamma export URLs are expiring (temporary) — must be copied to Edikit
+ * Gamma export URLs are expiring (temporary) — must be copied to Deborah
  * object storage (stop condition: expiring artifact copy qilinadi).
  * @param {{ previewUrl?: string, exportUrl?: string }} opts
  */

@@ -52,7 +52,7 @@ describe('S35.05 — Apostrophe normalization (client term-utils, window shim)',
     const sandbox = { window: {}, document: {} };
     const fn = new Function('window', 'document', src);
     fn(sandbox.window, sandbox.document);
-    T = sandbox.window.EdikitTerms;
+    T = sandbox.window.DeborahTerms;
   });
 
   it('normalizeApostrophes: barcha variantlar canonical U+02BB', () => {
@@ -80,7 +80,7 @@ describe('S35.06 — Intl formatters (i18n-formatters.js)', () => {
     const sandbox = { window: {}, document: { documentElement: { getAttribute: () => 'uz-Latn' } } };
     const fn = new Function('window', 'document', src);
     fn(sandbox.window, sandbox.document);
-    F = sandbox.window.EdikitI18nFmt;
+    F = sandbox.window.DeborahI18nFmt;
   });
 
   it('formatNumber locale-aware raqam chiqaradi', () => {

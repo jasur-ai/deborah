@@ -1,5 +1,5 @@
 /**
- * Edikit — Immutable Publish Transaction & Assignment Snapshot API Routes
+ * Deborah — Immutable Publish Transaction & Assignment Snapshot API Routes
  *
  * REST API for Prompt 27:
  *   - POST /api/publish/plan — deterministic dry-run of a publish

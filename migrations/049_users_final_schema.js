@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 049: Users final schema (AUTH B-01)
+ * Deborah — Migration 049: Users final schema (AUTH B-01)
  *
  * 001_tenant_rbac.js'da yaratilgan `users` jadvalini AUTH B-01 canonical
  * schema'ga keltiradi (backward-compatible, faqat ADD COLUMN):

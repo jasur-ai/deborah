@@ -10,10 +10,10 @@
   min-width: 180px;
   max-width: min(92vw, 320px);
   padding: 6px;
-  border: 1px solid var(--edikit-semantic-color-border-default, #d3d9e6);
-  border-radius: var(--edikit-radius-md, 12px);
-  background: var(--edikit-semantic-color-surface, #ffffff);
-  color: var(--edikit-semantic-color-text-primary, #141a26);
+  border: 1px solid var(--deborah-semantic-color-border-default, #d3d9e6);
+  border-radius: var(--deborah-radius-md, 12px);
+  background: var(--deborah-semantic-color-surface, #ffffff);
+  color: var(--deborah-semantic-color-text-primary, #141a26);
   box-shadow: 0 12px 32px rgba(16, 24, 40, 0.18);
   opacity: 0;
   transform: translateY(4px) scale(0.99);
@@ -30,22 +30,22 @@
   width: 100%;
   padding: 10px 12px;
   border: none;
-  border-radius: var(--edikit-radius-sm, 8px);
+  border-radius: var(--deborah-radius-sm, 8px);
   background: transparent;
-  color: var(--edikit-semantic-color-text-primary, #141a26);
+  color: var(--deborah-semantic-color-text-primary, #141a26);
   font: inherit;
   font-size: 0.875rem;
   text-align: left;
   cursor: pointer;
 }
-.popover__item:hover { background: var(--edikit-semantic-color-surface-hover, rgba(16, 24, 40, 0.06)); }
+.popover__item:hover { background: var(--deborah-semantic-color-surface-hover, rgba(16, 24, 40, 0.06)); }
 .popover__item:focus-visible {
-  outline: 3px solid var(--edikit-semantic-color-focus-ring, #255edb);
+  outline: 3px solid var(--deborah-semantic-color-focus-ring, #255edb);
   outline-offset: -1px;
 }
 .popover__item[aria-selected="true"], .popover__item.is-active {
-  background: color-mix(in srgb, var(--edikit-semantic-color-action-primary, #255edb) 10%, transparent);
-  color: var(--edikit-semantic-color-action-primary, #255edb);
+  background: color-mix(in srgb, var(--deborah-semantic-color-action-primary, #255edb) 10%, transparent);
+  color: var(--deborah-semantic-color-action-primary, #255edb);
 }
 .popover__item[aria-disabled="true"], .popover__item.is-disabled {
   opacity: 0.5;
@@ -54,7 +54,7 @@
 .popover__sep {
   height: 1px;
   margin: 6px 4px;
-  background: var(--edikit-semantic-color-border-subtle, #e8ebf2);
+  background: var(--deborah-semantic-color-border-subtle, #e8ebf2);
 }
 
 @media (prefers-reduced-motion: reduce) {

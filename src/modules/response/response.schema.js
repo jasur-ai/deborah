@@ -1,5 +1,5 @@
 /**
- * Edikit — Response API, ACK Sequence & Autosave (pure logic)
+ * Deborah — Response API, ACK Sequence & Autosave (pure logic)
  *
  * Pure, DB-free logic for Prompt 31 (reliable autosave contract):
  *   - Response modes: first (first answer final) | editable (monotonic

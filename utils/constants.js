@@ -1,5 +1,5 @@
 /**
- * Edikit — Constants & Configuration
+ * Deborah — Constants & Configuration
  */
 
 // ── Cartoon Characters Registry ──

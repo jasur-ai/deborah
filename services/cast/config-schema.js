@@ -1,5 +1,5 @@
 /**
- * Edikit — Canonical Cast Config Schema
+ * Deborah — Canonical Cast Config Schema
  * --------------------------------------
  * Barcha Cast setup qiymatlari bitta versioned Zod schema orqali
  * parse va validate qilinadi. Teacher yuborishi mumkin bo'lmagan

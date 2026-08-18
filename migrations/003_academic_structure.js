@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 003: Academic Structure
+ * Deborah — Migration 003: Academic Structure
  *
  * Extends the existing courses table with a full academic hierarchy:
  *   - academic_terms (semester/trimester/year periods)
@@ -246,14 +246,14 @@ export async function up(db) {
   ];
 
   for (const table of academicTables) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
   }
 
   // Grant schema usage (required for roles to access tables)
-  await sql`GRANT USAGE ON SCHEMA public TO edikit_runtime`.execute(db);
-  await sql`GRANT USAGE ON SCHEMA public TO edikit_migration`.execute(db);
-  await sql`GRANT USAGE ON SCHEMA public TO edikit_scoring`.execute(db);
+  await sql`GRANT USAGE ON SCHEMA public TO deborah_runtime`.execute(db);
+  await sql`GRANT USAGE ON SCHEMA public TO deborah_migration`.execute(db);
+  await sql`GRANT USAGE ON SCHEMA public TO deborah_scoring`.execute(db);
 
   console.log('Academic structure created: 8 tables');
 }

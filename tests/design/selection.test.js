@@ -26,7 +26,7 @@ describe('S14.01-03: selection anatomy + selected state', () => {
   });
 
   it('2px cobalt selected border (no scale animation)', () => {
-    expect(bodyCss).toMatch(/border:\s*2px solid var\(--edikit-semantic-color-action-primary\)|border-color:\s*var\(--edikit-semantic-color-action-primary\)/);
+    expect(bodyCss).toMatch(/border:\s*2px solid var\(--deborah-semantic-color-action-primary\)|border-color:\s*var\(--deborah-semantic-color-action-primary\)/);
     expect(bodyCss).not.toMatch(/transform:\s*scale|scale\s*:\s*[0-9]/);
   });
 

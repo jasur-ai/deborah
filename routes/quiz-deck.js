@@ -1,5 +1,5 @@
 /**
- * Edikit — Quiz-from-Deck Routes
+ * Deborah — Quiz-from-Deck Routes
  *
  * Prompt 59:
  *   - GET   /api/admin/quiz-deck/meta          — constants

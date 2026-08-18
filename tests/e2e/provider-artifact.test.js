@@ -1,5 +1,5 @@
 /**
- * Edikit — Unified Provider Async Adapter (e2e/security tests, Prompt 58)
+ * Deborah — Unified Provider Async Adapter (e2e/security tests, Prompt 58)
  *
  * E2E flow: create → poll → artifact copy (stop condition: expiring
  * artifact copy qilinadi) va provider failure → dead-letter.

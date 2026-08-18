@@ -1,5 +1,5 @@
 /**
- * Edikit — Home Routes (plan_index §3)
+ * Deborah — Home Routes (plan_index §3)
  * Landing: til routing (/, /ru, /en, /uz-cyrl), rol CTA (?role=), copy bank.
  */
 
@@ -45,12 +45,12 @@ const UPDATED_AT = '2026-08-07';
 
 const INFO_PAGES = {
   '/shartlar': {
-    title: 'Foydalanish shartlari — Edikit',
+    title: 'Foydalanish shartlari — Deborah',
     pageTitle: 'Foydalanish shartlari',
-    pageMeta: 'Edikit platformasidan foydalanish qoidalari.',
+    pageMeta: 'Deborah platformasidan foydalanish qoidalari.',
     sections: [
       { h2: '1. Umumiy qoidalar', body: [
-        "Edikit — o'qituvchi va talabalarga mo'ljallangan ta'lim platformasi. Saytdan foydalanish orqali siz ushbu shartlarga rozilik bildirasiz.",
+        "Deborah — o'qituvchi va talabalarga mo'ljallangan ta'lim platformasi. Saytdan foydalanish orqali siz ushbu shartlarga rozilik bildirasiz.",
         'Xizmatdan foydalanishda O\'zbekiston Respublikasi qonunchiligiga rioya qilishingiz shart.',
       ] },
       { h2: '2. Hisob va xavfsizlik', body: [
@@ -65,33 +65,12 @@ const INFO_PAGES = {
         'Ushbu shartlarni buzgan holda hisoblar bloklanishi yoki o\'chirilishi mumkin.',
       ] },
       { h2: '5. Aloqa', body: [
-        'Savollar va takliflar uchun: https://t.me/edikit',
-      ] },
-    ],
-  },
-  '/privacy': {
-    title: 'Maxfiylik siyosati — Edikit',
-    pageTitle: 'Maxfiylik siyosati',
-    pageMeta: 'Qaysi ma\'lumotlar saqlanishi va qanday boshqarilishi.',
-    sections: [
-      { h2: '1. Qanday ma\'lumotlar saqlanadi', body: [
-        "Hisob ma'lumotlari (login, parol hashi) va test natijalari saqlanadi.",
-        "Kamera tasvirlari faqat maxsus nazorat rejimida, o'qituvchi ruxsati bilan yig'iladi va faqat shu sessiya uchun ishlatiladi.",
-      ] },
-      { h2: '2. Reyting nazorati', body: [
-        "Qaysi natijalar ommaviy ko'rinishini o'qituvchi belgilaydi.",
-        "Talaba faqat o'z shaxsiy natijalarini va o'qituvchi tomonidan ochilgan ma'lumotlarni ko'radi.",
-      ] },
-      { h2: '3. Kamera shartsiz Cast', body: [
-        'Jonli Cast sessiyalarida kamera yoki kuzatuv talab qilinmaydi — faqat javoblar yig\'iladi.',
-      ] },
-      { h2: '4. Ma\'lumotlarni o\'chirish', body: [
-        "Hisobingiz va ma'lumotlaringizni o'chirish so'rovi bilan admin panel orqali murojaat qiling.",
+        'Savollar va takliflar uchun: https://t.me/deborah',
       ] },
     ],
   },
   '/security': {
-    title: 'Xavfsizlik — Edikit',
+    title: 'Xavfsizlik — Deborah',
     pageTitle: 'Xavfsizlik',
     pageMeta: 'Sessiya himoyasi va ruxsatlar nazorati.',
     sections: [
@@ -107,7 +86,7 @@ const INFO_PAGES = {
     ],
   },
   '/accessibility': {
-    title: 'Qulaylik — Edikit',
+    title: 'Qulaylik — Deborah',
     pageTitle: 'Qulaylik (Accessibility)',
     pageMeta: "Interfeysning qulaylik majburiyatlari.",
     sections: [

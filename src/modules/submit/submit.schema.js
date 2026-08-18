@@ -1,5 +1,5 @@
 /**
- * Edikit — Submit Sealing va Signed Receipt (pure logic)
+ * Deborah — Submit Sealing va Signed Receipt (pure logic)
  *
  * Prompt 33 — pending response'larni sync qilib attemptni IMMUTABLE submit
  * qilish (research.md §29.5 end-of-exam failsafe). This module is PURE (no

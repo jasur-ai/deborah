@@ -1,5 +1,5 @@
 /**
- * Edikit — Immutable Publish Transaction & Assignment Snapshot Tests
+ * Deborah — Immutable Publish Transaction & Assignment Snapshot Tests
  *
  * Covers (Prompt 27):
  *   - Canonical hashing (reproducible version_hash — done condition)

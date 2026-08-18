@@ -1,5 +1,5 @@
 /**
- * Edikit — Canva Button/Connect Adapter (unit tests, Prompt 59)
+ * Deborah — Canva Button/Connect Adapter (unit tests, Prompt 59)
  *
  * Pure schema: PKCE pair build, auth URL params (minimal scopes only),
  * callback state CSRF check, Button onDesignOpen/onDesignPublish

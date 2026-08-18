@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Leaderboard Service
+ * Deborah — Cast Leaderboard Service
  * ----------------------------------
  * Deterministic ranking: ties → same rank, stable display order.
  * Privacy projections: top_n, personal_only, team_only.

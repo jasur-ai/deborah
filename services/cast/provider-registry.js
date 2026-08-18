@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Clustering Provider Registry (C3-12)
+ * Deborah — Cast Clustering Provider Registry (C3-12)
  * ----------------------------------------------------
  * Open-Response Semantic Board uchun clustering provider'lari registri.
  *
@@ -38,7 +38,7 @@ export const CLUSTERING_PROVIDER_POLICIES = {
       deletionSlaHours: 0, // lokal — darhol
     },
     approved: true, // built-in, hech qachon tashqariga chiqmaydi
-    approvedBy: 'edikit_core',
+    approvedBy: 'deborah_core',
     approvedAt: 0,
   },
   [CLUSTERING_PROVIDERS.EXTERNAL]: {

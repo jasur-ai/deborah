@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Session Choreography Service (C3-14)
+ * Deborah — Cast Session Choreography Service (C3-14)
  * ---------------------------------------------------
  * Teacher reusable block sequence yaratadi (composer); Director runtime'da
  * current/next block, timing va override'ni boshqaradi.

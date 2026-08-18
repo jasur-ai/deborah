@@ -1,5 +1,5 @@
 /**
- * Edikit — Assessment Builder & Blueprint Tests
+ * Deborah — Assessment Builder & Blueprint Tests
  *
  * Covers: 50/30/20 deterministic distribution, blueprint validation,
  * score/time arithmetic validator, seeded pool selection, secret-safe

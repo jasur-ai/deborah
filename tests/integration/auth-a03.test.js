@@ -114,7 +114,7 @@ describe('Auth — AUTH A-03 (lockout + rate limit + audit)', () => {
     expect(html).toContain('data-lockout="1"');
     expect(html).toContain('data-seconds="300"');
     expect(html).toContain('data-copy=');
-    expect(html).toContain('support@edikit.uz'); // 4-til copy
+    expect(html).toContain('support@deborah.uz'); // 4-til copy
   });
 
   it('brauzer Accept header bilan ham HTML lockout UI render bo\'ladi (JSON emas)', async () => {

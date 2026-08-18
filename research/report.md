@@ -1,4 +1,4 @@
-# Edikit Design Study — Hisobot (STEP 39)
+# Deborah Design Study — Hisobot (STEP 39)
 
 > **Status:** ⏳ Field ma'lumotlari kutilmoqda — sessiyalar tugagach
 > `scripts/research-analyze.js` chiqishi bilan to'ldiriladi.

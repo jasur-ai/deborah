@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Teacher Reflection Service (C5-02)
+ * Deborah — Cast Teacher Reflection Service (C5-02)
  * ------------------------------------------------
  * Private teacher reflection note'lari. Reflection promptlari:
  * 1. Surprise question

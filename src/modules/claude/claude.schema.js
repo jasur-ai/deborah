@@ -1,10 +1,10 @@
 /**
- * Edikit — Claude Native Adapter (pure logic)
+ * Deborah — Claude Native Adapter (pure logic)
  *
- * Prompt 57 — Claude'ni Edikit ichidagi streaming source-synthesis va
+ * Prompt 57 — Claude'ni Deborah ichidagi streaming source-synthesis va
  * canonical JSON provider sifatida ulash (research.md §9.2 canonical
  * document, §9.4 provider matrix — Claude: server API key, output
- * Edikit render qiladi; §22.9 API key browserga chiqmaydi; §22.11 AI
+ * Deborah render qiladi; §22.9 API key browserga chiqmaydi; §22.11 AI
  * references real DB'dan tekshiriladi; §28 accessibility). This module
  * is PURE (no I/O, no globals):
  *
@@ -254,7 +254,7 @@ export function buildClaudeMessages({
   if (!v.ok) return { ok: false, reason: v.reason };
 
   const system =
-    `Siz Edikit prezentatsiya yaratuvchisi. Foydalanuvchi taqdim etgan manbalardan ` +
+    `Siz Deborah prezentatsiya yaratuvchisi. Foydalanuvchi taqdim etgan manbalardan ` +
     `(${language} tilida, ${tone} uslubda, ${theme} tema, ${slideCount} slayd) canonical JSON ` +
     `presentation yaratasiz. QAT'IY TALAB: javobingiz faqat bitta JSON blok bo'lsin (json fence ichida) — ` +
     `boshqa matn yo'q. JSON struktura: { "title", "audience", "language", "learningOutcomes": [], ` +

@@ -1,5 +1,5 @@
 /**
- * Edikit — Safe File, Code & Oral Submission Routes
+ * Deborah — Safe File, Code & Oral Submission Routes
  *
  * Prompt 44 REST API:
  *   - POST /api/student/attempts/:id/uploads         — create resumable session

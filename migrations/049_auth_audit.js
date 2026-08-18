@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 049: auth_audit (AUTH A-03)
+ * Deborah — Migration 049: auth_audit (AUTH A-03)
  *
  * Auth hodisalarining PII-minimal jurnali:
  *   - ts, actor_id, action, outcome, method, ip_hash, ua, detail JSONB

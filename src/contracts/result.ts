@@ -1,5 +1,5 @@
 /**
- * Edikit — Shared Result / Error Contracts
+ * Deborah — Shared Result / Error Contracts
  *
  * Provides the canonical Result type used across all typed modules.
  * Inspired by Rust's Result<T, E> pattern.

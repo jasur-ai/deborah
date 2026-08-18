@@ -1,5 +1,5 @@
 /**
- * Edikit — Visual: Authenticated Pages (STYLE STEP 03 / S03.04-05, S03.07)
+ * Deborah — Visual: Authenticated Pages (STYLE STEP 03 / S03.04-05, S03.07)
  * ------------------------------------------------------------------------
  * User panel + admin dashboard — real UI login orqali (S03.08 credential
  * fixture: seed 'user/user', 'admin/admin'). Theme: light + dark.

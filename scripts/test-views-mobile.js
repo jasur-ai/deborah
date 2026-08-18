@@ -1,5 +1,5 @@
 /**
- * Edikit — Cross-View Mobile Optimization Test
+ * Deborah — Cross-View Mobile Optimization Test
  * Tests admin, user panel, game views for mobile readiness
  * 
  * Usage: node scripts/test-views-mobile.js
@@ -158,7 +158,7 @@ function analyzeCSS(cssPath, name, isDesignSystem = false) {
 async function main() {
   console.log(`
 ╔═══════════════════════════════════════════╗
-║  Edikit — Cross-View Mobile Optimization  ║
+║  Deborah — Cross-View Mobile Optimization  ║
 ║  ${new Date().toISOString()}         ║
 ╚═══════════════════════════════════════════╝
   `);

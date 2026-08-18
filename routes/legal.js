@@ -38,7 +38,7 @@ function renderDoc(doc) {
       if (!data) return next(); // noma'lum doc → 404 (quyida catch-all)
       res.render('legal', {
         title: data.title,
-        description: `${data.title} — Edikit (v${data.version})`,
+        description: `${data.title} — Deborah (v${data.version})`,
         lang,
         doc,
         docData: data,

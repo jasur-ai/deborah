@@ -1,5 +1,5 @@
 /**
- * Edikit — Security Tests: Server-Authoritative Answer, Time & Idempotency
+ * Deborah — Security Tests: Server-Authoritative Answer, Time & Idempotency
  *
  * Tests that:
  * 1. Server calculates elapsed time (client timeMs is ignored)

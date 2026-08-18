@@ -1,5 +1,5 @@
 /**
- * Edikit — External Integration Boundary (e2e/security, Prompt 66)
+ * Deborah — External Integration Boundary (e2e/security, Prompt 66)
  *
  * Full critical-journey (research.md §12 identity assurance, §30 Google
  * login ≠ shaxs): connection registry → HEMIS pull → ratified-only grade

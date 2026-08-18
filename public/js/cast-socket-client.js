@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Socket Client
+ * Deborah — Cast Socket Client
  * ----------------------------
  * sendCommand(type, payload) — command/event envelope + ACK.
  * - commandId: crypto.randomUUID()

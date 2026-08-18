@@ -1,5 +1,5 @@
 /**
- * Edikit — Item Bank Service (Public/Private Versioning)
+ * Deborah — Item Bank Service (Public/Private Versioning)
  *
  * Manages reusable, versioned question items:
  *   - Item Banks: logical collections (e.g., "Algebra - 9-sinf")

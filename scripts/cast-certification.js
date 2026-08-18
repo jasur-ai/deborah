@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Cast Certification Verifier (C5-12)
+ * Deborah — Cast Certification Verifier (C5-12)
  * ----------------------------------------------
  * F-tier (F4/F5/F6) uchun load certification'ni tekshiradi:
  *   1. F-tier → load-tier mapping (F4→L, F5→XL, F6→XXL)

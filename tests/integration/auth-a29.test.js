@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH A-29 Account security events — Integration tests
+ * Deborah — AUTH A-29 Account security events — Integration tests
  * ---------------------------------------------------------------
  *  - Password change: boshqa sessiya revoke + security event + notification
  *  - Email change (double opt-in): reauth → request (yangi email kod) →

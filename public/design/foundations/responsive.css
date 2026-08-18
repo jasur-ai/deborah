@@ -31,7 +31,7 @@
 }
 /* Bottom fixed controls — home indicator ustida qoladi */
 .safe-controls {
-  padding-bottom: max(var(--edikit-spacing-3, 12px), env(safe-area-inset-bottom, 0px));
+  padding-bottom: max(var(--deborah-spacing-3, 12px), env(safe-area-inset-bottom, 0px));
 }
 /* Landscape: top/side notch chetlari */
 @media (orientation: landscape) {
@@ -65,12 +65,12 @@
     .cq-test-card {
       flex-direction: column;
       align-items: stretch;
-      gap: var(--edikit-spacing-3, 12px);
+      gap: var(--deborah-spacing-3, 12px);
     }
     .cq-test-card .tc-actions { justify-content: flex-start; }
     .ws-lib-row {
       grid-template-columns: 1fr;
-      gap: var(--edikit-spacing-3, 12px);
+      gap: var(--deborah-spacing-3, 12px);
     }
     .ws-lib-actions {
       grid-column: 1 / -1;
@@ -115,7 +115,7 @@
     min-height: 48px;
     min-width: 48px;
   }
-  .coarse-spaced { gap: var(--edikit-spacing-3, 12px); }
+  .coarse-spaced { gap: var(--deborah-spacing-3, 12px); }
   /* Tooltip hover-only emas — tap'da ham ko'rinadi (S19.07) */
   [data-tip]::after { pointer-events: none; }
 }
@@ -134,7 +134,7 @@
    Ultra-wide'da giper-keng satrlarning oldini olish.
    ═══════════════════════════════════════════════════════════ */
 @media (min-width: 1600px) {
-  .container-workspace { max-width: var(--edikit-container-workspace-wide, 1440px); }
+  .container-workspace { max-width: var(--deborah-container-workspace-wide, 1440px); }
 }
 
 /* ═══════════════════════════════════════════════════════════

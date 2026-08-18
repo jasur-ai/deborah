@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   Edikit Icon-Button Component (STYLE STEP 12, S12.07-08)
+   Deborah Icon-Button Component (STYLE STEP 12, S12.07-08)
    ---------------------------------------------------------------
    S12.07 — 44px hit area, accessible name (aria-label), tooltip
             (title + data-tip), icon 20-24px dan katta EMAS
@@ -15,10 +15,10 @@
     justify-content: center;
     width: 44px;   /* S12.07 hit area */
     height: 44px;
-    border-radius: var(--edikit-radius-sm, 8px);
+    border-radius: var(--deborah-radius-sm, 8px);
     border: 1px solid transparent;
     background: transparent;
-    color: var(--edikit-semantic-color-text-secondary, #566176);
+    color: var(--deborah-semantic-color-text-secondary, #566176);
     cursor: pointer;
     position: relative;
     transition: background-color var(--motion-feedback, 120ms) var(--ease-out, ease-out),
@@ -31,14 +31,14 @@
     height: 20px;
   }
   .icon-btn:hover:not(:disabled) {
-    background: var(--edikit-semantic-color-surface-nested, #F7F9FC);
-    color: var(--edikit-semantic-color-text-primary, #1F2937);
+    background: var(--deborah-semantic-color-surface-nested, #F7F9FC);
+    color: var(--deborah-semantic-color-text-primary, #1F2937);
   }
   .icon-btn:active:not(:disabled) {
     transform: scale(0.96);
   }
   .icon-btn:focus-visible {
-    outline: 3px solid var(--edikit-semantic-color-focus, #7AA8FF);
+    outline: 3px solid var(--deborah-semantic-color-focus, #7AA8FF);
     outline-offset: 3px;
   }
   .icon-btn:disabled {
@@ -50,9 +50,9 @@
   /* S12.08 — Toggle selected: marker dot + soft bg + border */
   .icon-btn.is-selected,
   .icon-btn[aria-pressed='true'] {
-    background: var(--edikit-semantic-color-action-primary-soft, #E9EFFF);
-    border-color: var(--edikit-semantic-color-action-primary, #1746D1);
-    color: var(--edikit-semantic-color-action-primary, #1746D1);
+    background: var(--deborah-semantic-color-action-primary-soft, #E9EFFF);
+    border-color: var(--deborah-semantic-color-action-primary, #1746D1);
+    color: var(--deborah-semantic-color-action-primary, #1746D1);
   }
   .icon-btn.is-selected::after,
   .icon-btn[aria-pressed='true']::after {
@@ -74,7 +74,7 @@
     bottom: calc(100% + 8px);
     left: 50%;
     transform: translateX(-50%);
-    background: var(--edikit-semantic-color-surface-scrim, #0A0F1F);
+    background: var(--deborah-semantic-color-surface-scrim, #0A0F1F);
     /* S37: scrim ikkala theme'da dark — text doim light (on-action/text-inverse dark'da ink beradi) */
     --tip-fg: #FFFFFF;
     color: var(--tip-fg, #FFFFFF);
@@ -82,12 +82,12 @@
     font-weight: 600;
     line-height: 1;
     padding: 6px 10px;
-    border-radius: var(--edikit-radius-sm, 8px);
+    border-radius: var(--deborah-radius-sm, 8px);
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
     transition: opacity var(--motion-popup, 160ms) ease;
-    z-index: var(--edikit-z-index-toast, 40);
+    z-index: var(--deborah-z-index-toast, 40);
   }
   .icon-btn[data-tip]:hover::before,
   .icon-btn[data-tip]:focus-visible::before {

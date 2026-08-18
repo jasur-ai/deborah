@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 013: Student Assignment List, Brief & Preflight
+ * Deborah — Migration 013: Student Assignment List, Brief & Preflight
  *
  * Student-facing readiness flow (Prompt 28):
  *   - preflight_checks: one row per (assignment, student, day) holding the
@@ -90,10 +90,10 @@ export async function up(db) {
     .execute();
 
   // ── Grants ──
-  await sql`GRANT SELECT, INSERT, UPDATE ON preflight_checks TO edikit_runtime`.execute(db);
-  await sql`GRANT USAGE ON preflight_checks_id_seq TO edikit_runtime`.execute(db);
-  await sql`GRANT DELETE ON preflight_checks TO edikit_migration`.execute(db);
-  await sql`GRANT SELECT ON preflight_checks TO edikit_scoring`.execute(db);
+  await sql`GRANT SELECT, INSERT, UPDATE ON preflight_checks TO deborah_runtime`.execute(db);
+  await sql`GRANT USAGE ON preflight_checks_id_seq TO deborah_runtime`.execute(db);
+  await sql`GRANT DELETE ON preflight_checks TO deborah_migration`.execute(db);
+  await sql`GRANT SELECT ON preflight_checks TO deborah_scoring`.execute(db);
 
   console.log('Student preflight structure created: preflight_checks');
 }

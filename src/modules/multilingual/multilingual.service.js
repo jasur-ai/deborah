@@ -1,5 +1,5 @@
 /**
- * Edikit — Uzbek Latin/Cyrillic & Terminology Layer (service)
+ * Deborah — Uzbek Latin/Cyrillic & Terminology Layer (service)
  *
  * Prompt 63 — terminology bank (versioned), content translations
  * (original_text ALWAYS preserved), proper names (identity isolation),

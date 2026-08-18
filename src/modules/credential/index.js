@@ -1,5 +1,5 @@
 /**
- * Edikit — Student Evidence Portfolio & Verifiable Credentials
+ * Deborah — Student Evidence Portfolio & Verifiable Credentials
  *
  * Prompt 61 — evidence portfolio (default-private) + Open Badges/CLR/VC
  * credential lifecycle (research.md §25 AI governance, §27 academic

@@ -1,5 +1,5 @@
 /**
- * Edikit — E2E/Security: Camera Evidence ACL, Retention & Delete (Prompt 37)
+ * Deborah — E2E/Security: Camera Evidence ACL, Retention & Delete (Prompt 37)
  *
  * Security walk (graceful degradation without PostgreSQL):
  *   - Evidence review endpoint requires admin (ACL) — student/unauthenticated

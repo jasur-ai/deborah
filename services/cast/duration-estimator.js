@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Duration Estimator
+ * Deborah — Cast Duration Estimator
  * ---------------------------------
  * Config + test metadata → taxminiy davomiylik (range).
  * UI'da exact emas, range ko'rsatiladi.

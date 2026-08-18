@@ -1,12 +1,12 @@
 /**
- * Edikit — E2E: Theme Engine (STYLE STEP 07 / S07.12)
+ * Deborah — E2E: Theme Engine (STYLE STEP 07 / S07.12)
  * ---------------------------------------------------
  * Functional (screenshot'siz) tekshiruvlar — app-desktop project'ida ishlaydi.
  *
  * Qamrov:
  *  - S07.01/02  Boot: data-theme/data-resolved-theme/data-theme-state
  *               synchronous (domcontentloaded'da) — FOUC guard
- *  - S07.03     Yagona attribute model + legacy migration (edikit-theme)
+ *  - S07.03     Yagona attribute model + legacy migration (deborah-theme)
  *  - S07.04     color-scheme native form control bilan
  *  - S07.05     meta-theme-color real canvas token bilan sinxron
  *  - S07.08     System: localStorage yo'q bo'lsa OS colorScheme ishlaydi
@@ -27,7 +27,7 @@ function themeAttrs(page) {
       state: d.getAttribute('data-theme-state'),
       colorScheme: d.style.colorScheme,
       meta: (document.getElementById('meta-theme-color') || {}).getAttribute?.('content'),
-      stored: localStorage.getItem('edikit-theme-state'),
+      stored: localStorage.getItem('deborah-theme-state'),
     };
   });
 }
@@ -104,12 +104,12 @@ test('theme segmented control -- system -- returns to OS pref', async ({ browser
   await context.close();
 });
 
-// ── S07.03: Legacy migration (eski edikit-theme) ──
-test('theme legacy migration -- edikit-theme=dark -> state dark', async ({ browser }, testInfo) => {
+// ── S07.03: Legacy migration (eski deborah-theme) ──
+test('theme legacy migration -- deborah-theme=dark -> state dark', async ({ browser }, testInfo) => {
   test.skip(DESKTOP_ONLY(testInfo), 'desktop only');
   const context = await openThemedContext(browser, 'light', 'app-desktop', { explicit: false });
   const page = await context.newPage();
-  await page.addInitScript(() => localStorage.setItem('edikit-theme', 'dark'));
+  await page.addInitScript(() => localStorage.setItem('deborah-theme', 'dark'));
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   const a = await themeAttrs(page);
   expect(a.theme).toBe('dark');
@@ -135,7 +135,7 @@ test('theme projector independence -- cast sahifalarida engine yo‘q', async ({
   const page = await context.newPage();
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   // Engine faqat head.ejs ishlatadigan sahifalarda yuklanadi
-  const engineLoaded = await page.evaluate(() => typeof window.EdikitTheme === 'object');
+  const engineLoaded = await page.evaluate(() => typeof window.DeborahTheme === 'object');
   expect(engineLoaded).toBe(true);
   // Cast viewlari head.ejs ishlatmaydi (route tekshiruvi quyida emas, strukturaviy).
   // isIndependentThemePage() guard: data-cast-theme body'da bo'lsa engine hech narsa qilmaydi.
@@ -143,7 +143,7 @@ test('theme projector independence -- cast sahifalarida engine yo‘q', async ({
     const b = document.body;
     const was = b.hasAttribute('data-cast-theme');
     if (!was) b.setAttribute('data-cast-theme', 'focus_dark');
-    const result = typeof window.EdikitTheme !== 'undefined' && window.EdikitTheme.apply();
+    const result = typeof window.DeborahTheme !== 'undefined' && window.DeborahTheme.apply();
     if (!was) b.removeAttribute('data-cast-theme');
     return { result, theme: document.documentElement.getAttribute('data-theme') };
   });

@@ -6,35 +6,35 @@
   <style>
     /* AUTH B-15 — filter tabs, pagination, accessible modal */
     .t-filter{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
-    .t-filter a{padding:8px 14px;border-radius:var(--edikit-radius-sm,8px);border:1px solid var(--edikit-semantic-color-border-subtle);background:var(--gradient-glass);color:var(--edikit-semantic-color-text-secondary);font-size:.85rem;text-decoration:none;display:inline-flex;align-items:center;gap:6px;min-height:40px}
-    .t-filter a.on{background:var(--edikit-semantic-color-action-primary);border-color:var(--edikit-semantic-color-action-primary);color:#fff;font-weight:600}
+    .t-filter a{padding:8px 14px;border-radius:var(--deborah-radius-sm,8px);border:1px solid var(--deborah-semantic-color-border-subtle);background:var(--gradient-glass);color:var(--deborah-semantic-color-text-secondary);font-size:.85rem;text-decoration:none;display:inline-flex;align-items:center;gap:6px;min-height:40px}
+    .t-filter a.on{background:var(--deborah-semantic-color-action-primary);border-color:var(--deborah-semantic-color-action-primary);color:#fff;font-weight:600}
     .t-search{display:flex;gap:8px;margin:10px 0 2px;flex-wrap:wrap}
-    .t-search input{flex:1;min-width:180px;padding:10px 12px;border-radius:var(--edikit-radius-sm,8px);border:1px solid var(--edikit-semantic-color-border-subtle);background:var(--edikit-semantic-color-surface-raised,#fff);color:var(--edikit-semantic-color-text-primary);min-height:40px}
+    .t-search input{flex:1;min-width:180px;padding:10px 12px;border-radius:var(--deborah-radius-sm,8px);border:1px solid var(--deborah-semantic-color-border-subtle);background:var(--deborah-semantic-color-surface-raised,#fff);color:var(--deborah-semantic-color-text-primary);min-height:40px}
     .t-search button{min-height:40px;padding:0 16px}
-    .t-pager{display:flex;align-items:center;gap:10px;justify-content:flex-end;margin-top:12px;font-size:.85rem;color:var(--edikit-semantic-color-text-secondary)}
-    .t-pager a,.t-pager span{display:inline-flex;align-items:center;justify-content:center;min-height:40px;min-width:40px;padding:0 12px;border-radius:var(--edikit-radius-sm,8px);border:1px solid var(--edikit-semantic-color-border-subtle)}
-    .t-pager a{color:var(--edikit-semantic-color-text-secondary);text-decoration:none;background:var(--gradient-glass)}
+    .t-pager{display:flex;align-items:center;gap:10px;justify-content:flex-end;margin-top:12px;font-size:.85rem;color:var(--deborah-semantic-color-text-secondary)}
+    .t-pager a,.t-pager span{display:inline-flex;align-items:center;justify-content:center;min-height:40px;min-width:40px;padding:0 12px;border-radius:var(--deborah-radius-sm,8px);border:1px solid var(--deborah-semantic-color-border-subtle)}
+    .t-pager a{color:var(--deborah-semantic-color-text-secondary);text-decoration:none;background:var(--gradient-glass)}
     .t-pager a[aria-disabled="true"]{opacity:.4;pointer-events:none}
     .t-actions{display:flex;gap:6px;flex-wrap:wrap}
     .t-actions .btn{min-height:40px;display:inline-flex;align-items:center;gap:6px}
     /* Modal */
-    .admin-modal-card{background:var(--edikit-semantic-color-surface-default,#0d1326);border:1px solid var(--edikit-semantic-color-border-subtle);border-radius:var(--radius-2xl,16px);padding:20px;width:min(480px,94vw);box-shadow:0 24px 60px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:12px}
+    .admin-modal-card{background:var(--deborah-semantic-color-surface-default,#0d1326);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:var(--radius-2xl,16px);padding:20px;width:min(480px,94vw);box-shadow:0 24px 60px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:12px}
     .admin-modal-title{font-size:1.05rem;font-weight:700;display:flex;align-items:center;gap:8px}
-    .admin-modal-sub{font-size:.85rem;color:var(--edikit-semantic-color-text-secondary)}
-    .admin-modal-card textarea{width:100%;min-height:96px;padding:10px 12px;border-radius:var(--edikit-radius-sm,8px);border:1px solid var(--edikit-semantic-color-border-subtle);background:var(--edikit-semantic-color-surface-raised,#fff);color:var(--edikit-semantic-color-text-primary);font:inherit;resize:vertical}
+    .admin-modal-sub{font-size:.85rem;color:var(--deborah-semantic-color-text-secondary)}
+    .admin-modal-card textarea{width:100%;min-height:96px;padding:10px 12px;border-radius:var(--deborah-radius-sm,8px);border:1px solid var(--deborah-semantic-color-border-subtle);background:var(--deborah-semantic-color-surface-raised,#fff);color:var(--deborah-semantic-color-text-primary);font:inherit;resize:vertical}
     .admin-modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
     .admin-modal-actions .btn{min-height:44px;padding:0 18px}
-    .t-charcount{font-size:.75rem;color:var(--edikit-semantic-color-text-muted);text-align:right;margin-top:4px}
+    .t-charcount{font-size:.75rem;color:var(--deborah-semantic-color-text-muted);text-align:right;margin-top:4px}
     .t-reason{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:.8rem}
     /* design-lint S37.05: inline visual style → klasslar */
-    .t-badge-primary{background:var(--edikit-semantic-color-action-primary)}
-    .t-empty{color:var(--edikit-semantic-color-text-secondary);font-size:.85rem;padding:22px 0;text-align:center}
-    .t-muted{font-size:.75rem;color:var(--edikit-semantic-color-text-muted)}
+    .t-badge-primary{background:var(--deborah-semantic-color-action-primary)}
+    .t-empty{color:var(--deborah-semantic-color-text-secondary);font-size:.85rem;padding:22px 0;text-align:center}
+    .t-muted{font-size:.75rem;color:var(--deborah-semantic-color-text-muted)}
     .t-badge-amber{background:rgba(245,158,11,.15);color:var(--amber)}
     .t-badge-danger{background:rgba(239,68,68,.15);color:var(--danger)}
     .t-badge-green{background:rgba(0,229,160,.15);color:var(--green)}
-    .t-badge-blue{background:var(--edikit-semantic-color-action-primary)}
-    .t-reason-box{font-size:.75rem;color:var(--edikit-semantic-color-text-muted);max-width:180px;margin-top:4px}
+    .t-badge-blue{background:var(--deborah-semantic-color-action-primary)}
+    .t-reason-box{font-size:.75rem;color:var(--deborah-semantic-color-text-muted);max-width:180px;margin-top:4px}
     .t-exp{max-width:130px}
   </style>
 </head>
@@ -44,7 +44,7 @@
     <div class="admin-nav-left">
       <button type="button" class="admin-nav-hamburger" aria-label="Menyu" aria-expanded="false" aria-controls="admin-sidebar" onclick="toggleAdminDrawer()"><span></span><span></span><span></span></button>
       <a href="/" class="admin-nav-brand">
-        <span class="admin-nav-logo"><img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto"></span>
+        <span class="admin-nav-logo"><img src="/images/logo-icon.svg" alt="Deborah" class="logo-img" style="height:28px;width:auto"></span>
         <span class="admin-nav-badge">ADMIN</span>
       </a>
     </div>

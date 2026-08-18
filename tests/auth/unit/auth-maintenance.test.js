@@ -1,5 +1,5 @@
 /**
- * Edikit — Auth Maintenance unit testlari (AUTH D-28 §15)
+ * Deborah — Auth Maintenance unit testlari (AUTH D-28 §15)
  * ---------------------------------------------------------------------------
  * Mock: fb (in-memory) + audit (call record).
  */

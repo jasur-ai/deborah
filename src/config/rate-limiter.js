@@ -1,5 +1,5 @@
 /**
- * Edikit — Rate Limiter Configuration
+ * Deborah — Rate Limiter Configuration
  *
  * Centralized rate limits for both HTTP and Socket.io.
  * HTTP uses express-rate-limit; Socket uses in-memory sliding window.

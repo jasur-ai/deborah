@@ -9,7 +9,7 @@
  *   - lockout idempotent init (ikki timer raqobati yo'q)
  *   - submit lock (dublikat submit blok)
  *   - tab roving (aria-selected/tabindex + arrow keys)
- *   - window.EdikitAuth.csrfToken() helper
+ *   - window.DeborahAuth.csrfToken() helper
  *   - parol strength meter (zxcvbn fallback)
  */
 import { describe, it, expect } from 'vitest';
@@ -210,9 +210,9 @@ describe('AUTH D-07 — auth.js (login frontend)', () => {
     expect(doc.activeElement).toBe(loginTab);
   });
 
-  it('EdikitAuth.csrfToken() — hidden _csrf qiymatini qaytaradi', async () => {
+  it('DeborahAuth.csrfToken() — hidden _csrf qiymatini qaytaradi', async () => {
     const w = await build();
-    expect(w.EdikitAuth.csrfToken()).toBe('csrf-123');
+    expect(w.DeborahAuth.csrfToken()).toBe('csrf-123');
   });
 
   it('Google tugmasi: bosishda is-pending + aria-busy', async () => {

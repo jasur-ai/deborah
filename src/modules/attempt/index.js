@@ -1,5 +1,5 @@
 /**
- * Edikit — Attempt Lease, Identity Step & Server Timer (Prompt 30)
+ * Deborah — Attempt Lease, Identity Step & Server Timer (Prompt 30)
  *
  * Phase D #1: secure, single-writer, server-timed attempt start.
  *

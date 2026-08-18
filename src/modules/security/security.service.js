@@ -1,5 +1,5 @@
 /**
- * Edikit — Security Profile & Safe Exam Browser Boundary Service
+ * Deborah — Security Profile & Safe Exam Browser Boundary Service
  *
  * Prompt 36 — server-side half of the S0–S4 security profile enforcement:
  *   - Institution policy read/upsert (tenant-scoped, admin-only writes, audited)

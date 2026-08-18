@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ═══════════════════════════════════════════════════════════════
-# Edikit — Gate 0 Verification Runner
+# Deborah — Gate 0 Verification Runner
 # ═══════════════════════════════════════════════════════════════
 # Runs all verification gates required for Phase A release:
 #   1. Answer-key secret scan (CI gate)
@@ -50,7 +50,7 @@ run_gate() {
 
 echo ""
 echo "╔═══════════════════════════════════════════════════════╗"
-echo "║   🔐 Edikit — Gate 0 Verification Suite            ║"
+echo "║   🔐 Deborah — Gate 0 Verification Suite            ║"
 echo "║   $(date '+%Y-%m-%d %H:%M:%S')                              ║"
 echo "╚═══════════════════════════════════════════════════════╝"
 echo ""

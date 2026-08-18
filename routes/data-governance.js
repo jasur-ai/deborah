@@ -1,5 +1,5 @@
 /**
- * Edikit — Data Classification, Privacy, Retention & Purge Routes
+ * Deborah — Data Classification, Privacy, Retention & Purge Routes
  *
  * Prompt 65 REST API:
  *   - GET    /admin/data-governance                           — admin UI

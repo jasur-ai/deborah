@@ -1,5 +1,5 @@
 /**
- * Edikit — Service Worker v2.0.0
+ * Deborah — Service Worker v2.0.0
  * Cache-first strategy for static assets, network-first for pages & API
  * 
  * Cache Strategy:
@@ -12,9 +12,9 @@
 // S34.07: cache version — design asset hash bilan boshqariladi.
 // Tokens.css o'zgarganda version avtomatik yangilanadi (stale CSS/new HTML mismatch oldini oladi).
 const CACHE_VERSION = 'v2.1.0-ffb97b1d';
-const STATIC_CACHE  = 'edikit-static-' + CACHE_VERSION;
-const PAGE_CACHE    = 'edikit-pages-' + CACHE_VERSION;
-const FONT_CACHE    = 'edikit-fonts-' + CACHE_VERSION;
+const STATIC_CACHE  = 'deborah-static-' + CACHE_VERSION;
+const PAGE_CACHE    = 'deborah-pages-' + CACHE_VERSION;
+const FONT_CACHE    = 'deborah-fonts-' + CACHE_VERSION;
 const CURRENT_CACHES = [STATIC_CACHE, PAGE_CACHE, FONT_CACHE];
 
 // Assets to precache on install
@@ -49,7 +49,7 @@ const FONT_ORIGINS = [
 // Minimal offline fallback HTML
 const OFFLINE_HTML = '<!DOCTYPE html><html lang="uz"><head>' +
   '<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
-  '<title>Edikit — Offline</title>' +
+  '<title>Deborah — Offline</title>' +
   '<style>body{background:#0A0F1F;color:#E8EDF7;font-family:"Nunito",sans-serif;' +
   'display:flex;align-items:center;justify-content:center;height:100vh;text-align:center;padding:20px;margin:0}' +
   'h1{font-family:"Righteous",cursive;font-size:2.2rem;margin-bottom:8px;color:#38BDF8}' +
@@ -57,7 +57,7 @@ const OFFLINE_HTML = '<!DOCTYPE html><html lang="uz"><head>' +
   '.dot{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#38BDF8);' +
   'margin:0 auto 20px;box-shadow:0 0 30px rgba(59,130,246,.4)}</style></head>' +
   '<body><div><div class="dot"></div><h1>Offline</h1>' +
-  '<p>Edikit ishlashi uchun internet kerak<br>Iltimos, tarmoqqa ulaning</p></div></body></html>';
+  '<p>Deborah ishlashi uchun internet kerak<br>Iltimos, tarmoqqa ulaning</p></div></body></html>';
 
 
 // S34.08: client "Yangilash" bosganida waiting SW'ni aktivlashtiradi (manual reload)
@@ -79,7 +79,7 @@ self.addEventListener('push', function(event) {
   } catch (e) {
     data = {};
   }
-  var title = data.title || 'Edikit';
+  var title = data.title || 'Deborah';
   var options = {
     body: data.body || '',
     icon: '/images/pwa-icon-192.png',
@@ -124,7 +124,7 @@ self.addEventListener('install', function(event) {
   // barcha client'larga xabar yuboramiz (nonblocking, forced reload YO'Q)
   self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clients) {
     clients.forEach(function(client) {
-      client.postMessage({ type: 'EDIKIT_UPDATE_AVAILABLE' });
+      client.postMessage({ type: 'DEBORAH_UPDATE_AVAILABLE' });
     });
   });
 });
@@ -141,7 +141,7 @@ self.addEventListener('activate', function(event) {
       return Promise.all(
         keys
           .filter(function(key) {
-            return key.startsWith('edikit-') && CURRENT_CACHES.indexOf(key) === -1;
+            return key.startsWith('deborah-') && CURRENT_CACHES.indexOf(key) === -1;
           })
           .map(function(key) {
             return caches.delete(key);

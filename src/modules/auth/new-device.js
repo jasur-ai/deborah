@@ -1,5 +1,5 @@
 /**
- * Edikit — New-device detection & suspicious activity alerts (AUTH A-09)
+ * Deborah — New-device detection & suspicious activity alerts (AUTH A-09)
  * -------------------------------------------------------------------
  * A-09 (guide §6-§13, §29-§30):
  *   - Login'da ip_hash/UA `users.{key}.last_login_ip_hash` bilan solishtiriladi.

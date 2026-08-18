@@ -1,5 +1,5 @@
 /**
- * Edikit — Source Pack & Secure RAG Ingestion (pure logic)
+ * Deborah — Source Pack & Secure RAG Ingestion (pure logic)
  *
  * Prompt 50 — teacher-approved source'larni provenance/citation bilan safe
  * corpusga aylantirish (research.md §20 Phase 4 "source pack/RAG", §22.11

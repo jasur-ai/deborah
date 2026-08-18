@@ -1,5 +1,5 @@
 /**
- * Edikit — Resource Recommendation Connectors (unit tests, Prompt 54)
+ * Deborah — Resource Recommendation Connectors (unit tests, Prompt 54)
  *
  * Pure schema tekshiruvi (hech qanday DB/I-O yo'q):
  *   - Provider normalization: openalex / semantic_scholar / crossref /

@@ -1,5 +1,5 @@
 /**
- * Edikit — Paper Packet, QR & Chain of Custody API Routes
+ * Deborah — Paper Packet, QR & Chain of Custody API Routes
  *
  * Prompt 42 REST API:
  *   - Batch generation: paper_batches + paper_packets + paper_pages

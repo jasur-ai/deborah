@@ -1,5 +1,5 @@
 /**
- * Edikit — Session Manager & Recovery Codes
+ * Deborah — Session Manager & Recovery Codes
  *
  * Manages active user sessions and one-time recovery codes.
  *

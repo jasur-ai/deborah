@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Personal Progress Service (C3-09)
+ * Deborah — Cast Personal Progress Service (C3-09)
  * -------------------------------------------------
  * Roster-linked participant uchun personal progress hisoblanadi.
  * Personal best participant-private ko'rsatiladi — public opt-in

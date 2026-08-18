@@ -1,5 +1,5 @@
 /**
- * Edikit — Realtime Adapter Factory (C5-06)
+ * Deborah — Realtime Adapter Factory (C5-06)
  * -------------------------------------------
  * Socket.IO adapter'ni REALTIME_MODE bo'yicha tanlaydi:
  *   - single          → adapter qo'shilmaydi (process-local rooms)

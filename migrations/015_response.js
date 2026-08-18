@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 015: Response API, ACK Sequence & Autosave
+ * Deborah — Migration 015: Response API, ACK Sequence & Autosave
  *
  * Reliable autosave contract for MCQ, structured and essay responses
  * (Prompt 31):
@@ -144,14 +144,14 @@ export async function up(db) {
     .execute();
 
   // ── Grants ──
-  await sql`GRANT SELECT, INSERT, UPDATE ON attempt_responses TO edikit_runtime`.execute(db);
-  await sql`GRANT USAGE ON attempt_responses_id_seq TO edikit_runtime`.execute(db);
-  await sql`GRANT SELECT, INSERT ON attempt_response_revisions TO edikit_runtime`.execute(db);
-  await sql`GRANT USAGE ON attempt_response_revisions_id_seq TO edikit_runtime`.execute(db);
-  await sql`GRANT DELETE ON attempt_responses TO edikit_migration`.execute(db);
-  await sql`GRANT DELETE ON attempt_response_revisions TO edikit_migration`.execute(db);
-  await sql`GRANT SELECT ON attempt_responses TO edikit_scoring`.execute(db);
-  await sql`GRANT SELECT ON attempt_response_revisions TO edikit_scoring`.execute(db);
+  await sql`GRANT SELECT, INSERT, UPDATE ON attempt_responses TO deborah_runtime`.execute(db);
+  await sql`GRANT USAGE ON attempt_responses_id_seq TO deborah_runtime`.execute(db);
+  await sql`GRANT SELECT, INSERT ON attempt_response_revisions TO deborah_runtime`.execute(db);
+  await sql`GRANT USAGE ON attempt_response_revisions_id_seq TO deborah_runtime`.execute(db);
+  await sql`GRANT DELETE ON attempt_responses TO deborah_migration`.execute(db);
+  await sql`GRANT DELETE ON attempt_response_revisions TO deborah_migration`.execute(db);
+  await sql`GRANT SELECT ON attempt_responses TO deborah_scoring`.execute(db);
+  await sql`GRANT SELECT ON attempt_response_revisions TO deborah_scoring`.execute(db);
 
   console.log('Response/ACK/autosave structure created: attempt_responses, attempt_response_revisions');
 }

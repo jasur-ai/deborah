@@ -1,5 +1,5 @@
 /**
- * Edikit — Privacy-first Camera Evidence Pilot (Prompt 37)
+ * Deborah — Privacy-first Camera Evidence Pilot (Prompt 37)
  *
  * Usage:
  *   import * as camera from '../modules/camera/index.js';

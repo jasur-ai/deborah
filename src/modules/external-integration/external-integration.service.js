@@ -1,5 +1,5 @@
 /**
- * Edikit — Official HEMIS & OneID Adapter Boundary (service)
+ * Deborah — Official HEMIS & OneID Adapter Boundary (service)
  *
  * Prompt 66 — rasmiy contract mavjud bo'lganda roster/grade va identity
  * integration'ni xavfsiz ulash (research.md §12, §19, §27, §30).

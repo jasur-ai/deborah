@@ -1,5 +1,5 @@
 /**
- * Edikit — Client-side Utilities
+ * Deborah — Client-side Utilities
  */
 
 // ── DOM shortcuts ──

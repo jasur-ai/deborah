@@ -1,5 +1,5 @@
 /**
- * Edikit — Deck Export Routes
+ * Deborah — Deck Export Routes
  *
  * Prompt 59:
  *   - GET   /api/admin/deck-exports/meta       — constants

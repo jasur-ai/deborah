@@ -1,5 +1,5 @@
 /**
- * Edikit — Integration Tests: Camera Evidence Pilot (Prompt 37)
+ * Deborah — Integration Tests: Camera Evidence Pilot (Prompt 37)
  *
  * Contract tests against the real HTTP server (createApp factory):
  *   - Admin policy API auth guards (GET → 401; PUT without CSRF → 401/403)

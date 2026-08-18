@@ -49,10 +49,10 @@ describe('STYLE STEP 05 — Brand assets', () => {
   });
 
   describe('S05.03-04 — Wordmark lockups', () => {
-    it('horizontal va compact lockup mavjud, Edikit text bilan', () => {
+    it('horizontal va compact lockup mavjud, Deborah text bilan', () => {
       for (const f of ['wordmark-horizontal.svg', 'wordmark-compact.svg']) {
         const s = svg(f);
-        expect(s).toContain('Edikit');
+        expect(s).toContain('Deborah');
         expect(s).toMatch(/Righteous/);
         expect(s).not.toMatch(/filter=/);
       }
@@ -91,9 +91,9 @@ describe('STYLE STEP 05 — Brand assets', () => {
       expect(s).not.toMatch(/linearGradient/);
     });
 
-    it('barcha logo img alt="Edikit" (hech qanday alt="E")', () => {
+    it('barcha logo img alt="Deborah" (hech qanday alt="E")', () => {
       const host = readFileSync(join(ROOT, 'views', 'game', 'host.ejs'), 'utf8');
-      expect(host).toMatch(/logo-icon\.svg" alt="Edikit"/);
+      expect(host).toMatch(/logo-icon\.svg" alt="Deborah"/);
       expect(host).not.toMatch(/alt="E"/);
     });
   });

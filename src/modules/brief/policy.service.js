@@ -1,5 +1,5 @@
 /**
- * Edikit — Institutional Policy Pack Service
+ * Deborah — Institutional Policy Pack Service
  *
  * Typed institutional policy packs for summative assessments:
  *   - Policy CRUD (DRAFT→APPROVED lifecycle, approved immutable)

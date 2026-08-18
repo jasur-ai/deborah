@@ -1,5 +1,5 @@
 /**
- * Edikit — Integration Tests: Paper Packet, QR & Chain of Custody (Prompt 42)
+ * Deborah — Integration Tests: Paper Packet, QR & Chain of Custody (Prompt 42)
  *
  * Contract coverage (Prompt 42 §19 — packet page/count/hash):
  *   - Packet plan → page count / content hash / checksum contract
@@ -28,7 +28,7 @@ import {
   PAPER_RENDER_FLAGS,
 } from '../../src/modules/paper/index.js';
 
-const SIGNING_KEY = 'edikit-paper-integration-key-0123456789abcdef';
+const SIGNING_KEY = 'deborah-paper-integration-key-0123456789abcdef';
 
 let app;
 let httpServer;

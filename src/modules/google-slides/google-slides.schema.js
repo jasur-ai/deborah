@@ -1,9 +1,9 @@
 /**
- * Edikit — Google Slides Adapter (pure logic)
+ * Deborah — Google Slides Adapter (pure logic)
  *
  * Prompt 59 — Google Slides minimum-scope (drive.file) integratsiyasi
  * (research.md §9.9: Slides API presentations.batchUpdate atomik update,
- * Drive API orqali export; recommended scope drive.file — faqat Edikit
+ * Drive API orqali export; recommended scope drive.file — faqat Deborah
  * yaratgan yoki user explicit tanlagan fayllar; full Drive restricted
  * scope olinmasin; §22.8 Google token boshqa provider'ga uzatilmaydi).
  * This module is PURE (no I/O, no globals):
@@ -98,7 +98,7 @@ export function validateCallbackState({ state = '', expected = '' }) {
 // ═══════════════════════════════════════════════════════════════════
 
 /** Build slides.create request body (title + 1 blank slide). */
-export function buildCreatePresentationRequest({ title = 'Edikit deck' } = {}) {
+export function buildCreatePresentationRequest({ title = 'Deborah deck' } = {}) {
   return { title: String(title).slice(0, 100) };
 }
 

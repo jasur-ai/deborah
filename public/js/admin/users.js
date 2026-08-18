@@ -1,5 +1,5 @@
 /**
- * Edikit — Admin user management (AUTH C-08 + D-10)
+ * Deborah — Admin user management (AUTH C-08 + D-10)
  * -------------------------------------------------------------------
  * Ro'yxat + qidiruv (username/email) + filter (rol/status) + pagination.
  * Har user: [Bloklash] (sabab majburiy) / [Aktivlash] / [Rol] / [Sessiyalar].

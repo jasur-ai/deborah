@@ -1,5 +1,5 @@
 /**
- * Edikit — Observability Routes (Prompt 69 §12-14)
+ * Deborah — Observability Routes (Prompt 69 §12-14)
  *
  * Admin SLO dashboard:
  *   - GET /admin/observability — HTML dashboard (SLO burn-rate, alerts, metrics)

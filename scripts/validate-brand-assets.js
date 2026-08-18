@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Brand Asset Validator (STYLE STEP 05 / S05.01-02, S05.11)
+ * Deborah — Brand Asset Validator (STYLE STEP 05 / S05.01-02, S05.11)
  * ------------------------------------------------------------------
  * Evidence Mark variantlarini tekshiradi:
  *   - SVG well-formed (XML parse)
@@ -9,7 +9,7 @@
  *   - High-contrast: alpha >= 0.85, faqat qora
  *   - Inverse: qorong'i fon uchun signal-cyan node + oq rail/ticks
  *   - Struktura: 1 rail + 3 tick + 1 signal node (optical grid)
- *   - Alt policy: logo alt har doim "Edikit"
+ *   - Alt policy: logo alt har doim "Deborah"
  */
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
@@ -86,7 +86,7 @@ for (const file of FILES) {
   }
 }
 
-// Alt policy (S05.11): views'dagi logo img'lar alt="Edikit".
+// Alt policy (S05.11): views'dagi logo img'lar alt="Deborah".
 // Order-independent parse + exception: img yonida .sr-only label bo'lsa
 // alt="" to'g'ri (double-announcement oldini olish — a11y best practice).
 const VIEWS = join(ROOT, 'views');
@@ -103,13 +103,13 @@ function scanViews(dir) {
         if (!/src="[^"]*logo[^"]*"/.test(tag)) continue;
         const altMatch = /alt="([^"]*)"/.exec(tag);
         const alt = altMatch ? altMatch[1] : null;
-        if (alt === 'Edikit') continue;
+        if (alt === 'Deborah') continue;
         if (alt === '') {
           // sr-only exception: qo'shni span.sr-only bo'lsa — dekorativ, to'g'ri
           const around = src.slice(Math.max(0, m.index - 80), m.index + tag.length + 120);
           if (/<span[^>]*class="[^"]*sr-only[^"]*">/.test(around)) continue;
         }
-        check(false, `alt policy: ${name.name} — logo img alt="${alt === null ? 'yo\'q' : alt}" bo'lmasligi kerak; "Edikit" yoki sr-only label bo'lishi shart`);
+        check(false, `alt policy: ${name.name} — logo img alt="${alt === null ? 'yo\'q' : alt}" bo'lmasligi kerak; "Deborah" yoki sr-only label bo'lishi shart`);
       }
     }
   }

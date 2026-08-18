@@ -1,5 +1,5 @@
 /**
- * Edikit — Security Guard (unit, Prompt 70)
+ * Deborah — Security Guard (unit, Prompt 70)
  *
  * Pure logic tests for src/modules/security-guard/schema:
  *   - STRIDE threat model + trust boundaries + coverage math

@@ -93,10 +93,10 @@ describe('AUTH A-25 — session hardening + teacher approval (Entra PIM)', () =>
     expect(login.status).toBe(302);
 
     const setCookies = login.headers['set-cookie'] || [];
-    const rememberCookie = setCookies.find((c) => c.startsWith('edikit_remember='));
+    const rememberCookie = setCookies.find((c) => c.startsWith('deborah_remember='));
     expect(rememberCookie).toBeTruthy();
     // Express res.cookie URL-encode qiladi (`:` → `%3A`) — decode qilamiz
-    const cookieValue = decodeURIComponent(rememberCookie.split(';')[0].replace('edikit_remember=', ''));
+    const cookieValue = decodeURIComponent(rememberCookie.split(';')[0].replace('deborah_remember=', ''));
     const oldSelector = cookieValue.split(':')[0];
     expect(oldSelector).toMatch(/^[0-9a-f]{32}$/);
 

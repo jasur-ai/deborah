@@ -1,5 +1,5 @@
 /**
- * Edikit — Session Store service (AUTH A-01)
+ * Deborah — Session Store service (AUTH A-01)
  *
  * Session storage'ni bitta joydan boshqaradi: Redis (connect-redis + ioredis)
  * yoki MemoryStore fallback. Boshqa modullar faqat shu service'dan import qiladi.
@@ -29,13 +29,13 @@ import CONFIG from '../../config/env.js';
 // ── TTL konstantalari (ms) ──
 export const SESSION_TTL_REMEMBER_MS = 30 * 24 * 60 * 60 * 1000; // 30 kun
 export const SESSION_TTL_DEFAULT_MS = 8 * 60 * 60 * 1000;        // 8 soat
-export const SESSION_PREFIX = 'edikit:sess:';
+export const SESSION_PREFIX = 'deborah:sess:';
 
 // ── AUTH A-25: session hardening konstantalari ──
 export const SESSION_ABSOLUTE_TIMEOUT_MS = 12 * 60 * 60 * 1000; // 12 soat — login'dan boshlab qat'iy limit
 export const SESSION_ROTATE_INTERVAL_MS = 30 * 60 * 1000;       // 30 daqiqa — mid-session ID rotation
 export const REMEMBER_TTL_MS = 30 * 24 * 60 * 60 * 1000;        // 30 kun — remember-me selector/verifier
-const REMEMBER_COOKIE_BASE = 'edikit_remember';
+const REMEMBER_COOKIE_BASE = 'deborah_remember';
 
 /**
  * Session cookie nomi (AUTH A-02). P2 `__Host-` prefix: faqat production +
@@ -83,7 +83,7 @@ export function rotateIntervalMs() {
 export function rememberCookieName() {
   const base =
     CONFIG.SESSION_COOKIE_NAME && CONFIG.SESSION_COOKIE_NAME !== 'connect.sid'
-      ? `edikit_${String(CONFIG.SESSION_COOKIE_NAME).replace(/^__Host-/, '')}`
+      ? `deborah_${String(CONFIG.SESSION_COOKIE_NAME).replace(/^__Host-/, '')}`
       : REMEMBER_COOKIE_BASE;
   if (CONFIG.SESSION_HOST_PREFIX && CONFIG.NODE_ENV === 'production') {
     return base.startsWith('__Host-') ? base : `__Host-${base}`;

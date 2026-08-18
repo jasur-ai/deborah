@@ -1,5 +1,5 @@
 /**
- * Edikit — Security Evidence Seed (Prompt 70, items 07–09, 18)
+ * Deborah — Security Evidence Seed (Prompt 70, items 07–09, 18)
  *
  * Authoritative, human-maintained map of what is IMPLEMENTED and PROVEN in
  * the codebase, consumed by the evidence loader to feed the threat model and

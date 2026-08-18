@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast C3-15 Rehearsal + Quality Lab Tests
+ * Deborah — Cast C3-15 Rehearsal + Quality Lab Tests
  * ---------------------------------------------------
  * coverage: bot scenario validation + production isolation, bot roster
  *           (bot: namespace, isBot flag), duplicate/lost-ACK idempotency

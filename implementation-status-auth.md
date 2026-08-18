@@ -1,8 +1,8 @@
-# Edikit — AUTH implementation ledger (A-E, 191 bosqich)
+# Deborah — AUTH implementation ledger (A-E, 191 bosqich)
 
 > **Manba:** `to_do/PROMPT_GUIDE_AUTH_MASTER.md` + `PROMPT_GUIDE_AUTH (2).md` (A)
 > **Global Master Prompt:** to_do/PROMPT_GUIDE_AUTH (2).md §B — har promptdan oldin qo'llaniladi.
-> **Repository:** `/mnt/d/StartUp/edikit`
+> **Repository:** `/mnt/d/StartUp/deborah`
 > **Qoida:** keyingi prompt oldingisining `Done` sharti o'tmaguncha boshlanmaydi; checkpoint BLOCKED → keyingi faza yo'q.
 
 ## Fayllar xaritasi
@@ -70,7 +70,7 @@ Guide bo'yicha A-01 = **Redis session foundation** (MemoryStore → ioredis + co
 
 ### Precondition
 - [x] A-00 DONE (baseline)
-- [x] Redis server: **Docker orqali o'rnatildi** (`edikit-redis`, port 6379, PONG) — A-00'da BLOCKED edi
+- [x] Redis server: **Docker orqali o'rnatildi** (`deborah-redis`, port 6379, PONG) — A-00'da BLOCKED edi
 
 ### Implementation
 
@@ -91,7 +91,7 @@ Guide bo'yicha A-01 = **Redis session foundation** (MemoryStore → ioredis + co
 | Regression | ✅ | auth.test.js 74/74, auth unit'lar 47/47, A-01 integration 3/3 |
 
 ### Done shartlari
-- [x] Redis foundation: `createSessionStore` → RedisStore/prefix `edikit:sess:` (boot log: "Redis session store connected")
+- [x] Redis foundation: `createSessionStore` → RedisStore/prefix `deborah:sess:` (boot log: "Redis session store connected")
 - [x] Session schema maydonlari: remember/expiresAt/ipHash/role/isVip/createdAt/lastActiveAt
 - [x] Eski xatti-harakat saqlanadi: REDIS_URL yo'q bo'lsa MemoryStore rollback (flag bilan)
 - [x] 4 test turi: unit ✅ / integration ✅ / (E2E: auth-smoke keyingi faza) / security: cookie Expires tekshirildi
@@ -107,7 +107,7 @@ Review davomida **real bug** topildi (mock testlar uni yashirgan edi):
 | connect-redis **v10** `set()` da node-redis'ga xos `set(key,val,{expiration:{type:'EX',value}})` formasini ishlatadi — ioredis 5.11.1 + real Redis 7 buni qo'llamaydi (**ERR syntax error**, har session saqlashda ishlamaydi) | **connect-redis@8.1.0** o'rnatildi (ioredis-mos `set(key,val,ttl)`) |
 | ioredis-mock ham `expiration` formasini ignore qiladi (pttl -1) — unit test TTL'ni o'lchay olmadi | TTL tekshiruvi **real Redis** ga ko'chirildi |
 
-**Haqiqiy Redis isboti** (`scripts/auth-a01-redis-verify.js`, Docker edikit-redis):
+**Haqiqiy Redis isboti** (`scripts/auth-a01-redis-verify.js`, Docker deborah-redis):
 ```
 remember=on  → TTL 2592000s (30 kun)  ✅
 remember=off → TTL 28800s  (8 soat)   ✅
@@ -130,7 +130,7 @@ PASS — Redis per-session TTL mapping ishlayapti
 **STATUS:** ✅ DONE — cookie spec, 30 daqiqa idle timeout (modal 60s oldin), parallel limit 5 (6-chi → eng eski revoke). 138/138 vitest PASS.
 
 ### Precondition
-- [x] A-01 Redis session yashil (Docker edikit-redis, TTL isboti)
+- [x] A-01 Redis session yashil (Docker deborah-redis, TTL isboti)
 
 ### Implementation
 
@@ -928,7 +928,7 @@ Tasdiq: `auth-a21-checkpoint` + `auth-a01` 6/6 PASS, db.json toza.
 | A-23 §webhook | ✅ | `src/modules/email/webhook.js` — bounce/complaint → suppress (email_suppressed) + idempotency (email_log event_id) + user notification_last |
 | A-23 §integration | ✅ | email-verify sendVerifyCode → sendEmail; reset request → sendEmail; register → welcome; teacher approved → email; register email → MX+disposable validation |
 | A-23 §audit | ✅ | AUDIT_ACTIONS: EMAIL_SENT/EMAIL_BOUNCE/EMAIL_SUPPRESS/EMAIL_TEMPLATE_MISSING |
-| A-23 §docs | ✅ | `docs/email-deliverability.md` — SPF/DKIM/DMARC record'lar, mail.edikit.uz subdomain, monitoring |
+| A-23 §docs | ✅ | `docs/email-deliverability.md` — SPF/DKIM/DMARC record'lar, mail.deborah.uz subdomain, monitoring |
 | A-23 §webhook route | ✅ | `routes/email-webhook.js` — POST /api/webhooks/email (HMAC token verify, test rejimida fail-closed), CSRF bypass prefix |
 
 **Testlar:**
@@ -1499,7 +1499,7 @@ Tasdiq: `auth-a21-checkpoint` + `auth-a01` 6/6 PASS, db.json toza.
 |---|---|---|
 | B-04 §06 format qoidalari | ✅ | `src/modules/auth/username.js` (yangi): USERNAME_MIN/MAX 2–50, USERNAME_REGEX `^[a-zA-Z0-9_.-]+$` (kirill/emoji/space yo'q — login identifier) |
 | B-04 §07 normalizatsiya | ✅ | `normalizeUsername()` — NFKC + trim + lowercase; canonical DB'da saqlanadi ("Smith" → 'smith'); parseLogin/parseRegister schema'dan OLDIN normalize (full-width login/register ishlaydi) |
-| B-04 §08 rezerv so'zlar | ✅ | RESERVED_USERNAMES: admin/administrator/root/support/system/test/edikit — register'da blok (`usernameReserved`), 4 tilda i18n |
+| B-04 §08 rezerv so'zlar | ✅ | RESERVED_USERNAMES: admin/administrator/root/support/system/test/deborah — register'da blok (`usernameReserved`), 4 tilda i18n |
 | B-04 §09 confusable/leet | ✅ | `isConfusableReserved` + LEET_MAP ('1'→'i','4'→'a','3'→'e','5'→'s','7'→'t','0'→'o','@'→'a','$'→'s','8'→'b','!''→'i') — '4dm1n'/'adm1n' blok (P1) |
 | B-04 §10 band → inline | ✅ | duplicate Smith/smith → "taken" (safeKey unique), error register sahifasida field='username' |
 | B-04 §11 username.js | ✅ | validate()/normalize()/isReserved() — `validateUsername`, `normalizeUsername`, `isReserved`, `isConfusableReserved` |
@@ -2413,7 +2413,7 @@ PROMPT_GUIDE_AUTH_B to'liq bajarildi (B-01..B-33, 34/37 — B-34/35/36 yangi sec
 | §14 Opt-out | ✅ | Marketing xabari faqat `notif_prefs.channels.email === true` (B-21 default false — privacy-first); `marketing_disabled` ham honor qilinadi; integration: real `/api/notifications/prefs` ch_email=false → skip |
 | §15 Suppress | ✅ | `email_status='bounced'` + `email_suppressed/{safeKey(email)}` — integration: real webhook HardBounce (A-23) → job skip |
 | §16 Security/data guard | ✅ | PII minimal (email+username+subject); preview'da parol/OTP yo'q (unit test) |
-| §18 Audit + metrics | ✅ | `onboarding:reengage_sent` / `onboarding:reengage_opted_out` + `edikit_onboarding_reengage_sent_total`, `reengage.opted_out` |
+| §18 Audit + metrics | ✅ | `onboarding:reengage_sent` / `onboarding:reengage_opted_out` + `deborah_onboarding_reengage_sent_total`, `reengage.opted_out` |
 | §25 Idempotency | ✅ | `onboarding/{key}/reengageSent` {r7,r14} — ikkinchi run 0; welcome bilan bir xil pattern |
 | Trigger | ✅ | server.js'da welcomeTimer bilan birga hourly `runReEngagementSequence` (unref, fail-open) |
 
@@ -2600,7 +2600,7 @@ PROMPT_GUIDE_AUTH_B to'liq bajarildi (B-01..B-33, 34/37 — B-34/35/36 yangi sec
 | §10 Permanent lock | ✅ | `users.status='blocked'` — admin block; login generic xato (countdown emas, enumeration yo'q); support qarori bilan |
 | §11 Progressive penalty | ✅ | `lock_strikes` per user — har blok sikli uzayadi (15→60→120) |
 | §12 Audit | ✅ | `auth.lockout.triggered` (strike bilan) · `auth.lockout.released` · `auth.account.blocked` · `auth.account.unblocked` |
-| §13 UX | ✅ | countdown + support@edikit.uz (A-03'da mavjud; 60+ daqiqa'da support urg'u) |
+| §13 UX | ✅ | countdown + support@deborah.uz (A-03'da mavjud; 60+ daqiqa'da support urg'u) |
 | §14 A11y | ✅ | countdown `role="alert" aria-live="assertive"` (A-03'da mavjud) |
 | §16 4 til | ✅ | lockout/support stringlar auth-i18n'da (4 til) |
 | §17 Bypass yo'q | ✅ | test: turli IP'lar bilan ham per-account tutadi (unit); permanent'da unlock rad (409 ACCOUNT_BLOCKED) |
@@ -2859,7 +2859,7 @@ PROMPT_GUIDE_AUTH_B to'liq bajarildi (B-01..B-33, 34/37 — B-34/35/36 yangi sec
 | Geofence | OneID/davlat tizimlari **UZ IP** talab qiladi — server UZ'da yoki UZ proxy; xorijiy serverdan 451 |
 | Litsenziya/me'yoriy | Raqamli hukumat to'g'risidagi qonunlar + shaxsiy ma'lumotlar to'g'risidagi qonun (O'RQ-547); DSAR majburiyati |
 
-**Xulosa:** Xususiy ta'lim platformasi (Edikit) uchun OneID integratsiyasi **faqat RHM bilan rasmiy shartnoma** asosida mumkin. Hozircha shartnoma mavjud emas → kod yozilmaydi. Google/parol/Telegram/HEMIS login **fallback sifatida to'liq ishlayveradi** (§14, §28).
+**Xulosa:** Xususiy ta'lim platformasi (Deborah) uchun OneID integratsiyasi **faqat RHM bilan rasmiy shartnoma** asosida mumkin. Hozircha shartnoma mavjud emas → kod yozilmaydi. Google/parol/Telegram/HEMIS login **fallback sifatida to'liq ishlayveradi** (§14, §28).
 
 ---
 
@@ -3218,7 +3218,7 @@ PROMPT_GUIDE_AUTH_B to'liq bajarildi (B-01..B-33, 34/37 — B-34/35/36 yangi sec
 | §06 inline error render | ✅ | Server xatosi → field-level reveal (inp-error + aria-invalid + matn) — A-04 saqlangan |
 | §06 show/hide | ✅ | Parol toggle (aria-pressed + label swap) saqlangan |
 | §06 autofill | ✅ | Markup autocomplete attrlari to'g'ri (`username webauthn`, `current-password`); qo'shimcha JS shart emas |
-| §16 CSRF | ✅ | `window.EdikitAuth.csrfToken()` helper (fetch oqimlari uchun); forma POST'lar hidden `_csrf` bilan |
+| §16 CSRF | ✅ | `window.DeborahAuth.csrfToken()` helper (fetch oqimlari uchun); forma POST'lar hidden `_csrf` bilan |
 | §12 A11y | ✅ | aria-live/role=alert, skip-link, roving tabindex + arrow keys (testlarda tasdiqlangan) |
 | §19 Unit test | ✅ | `tests/unit/auth-frontend-d07.test.js` — jsdom'da real auth.js: toggle, error reveal/clear, lockout (blok, countdown, idempotent), submit lock, tablar, csrfToken, strength |
 | §20 Integration/contract test | ✅ | `tests/integration/auth-frontend-d07.test.js` — CSRF/inline-error/lockout markup, XSS escape (`prevUsername`), xato login field-level, **data-copy EJS-escape kontrakti** |
@@ -3763,7 +3763,7 @@ PROMPT_GUIDE_AUTH_B to'liq bajarildi (B-01..B-33, 34/37 — B-34/35/36 yangi sec
 | D-16 §28 Coverage | ✅ | register/email/teacher mavjud + yangi testlar — v8 o'lchandi (D-15 bilan birga) |
 
 **Topilma (infratuzilma flake):**
-- `dsar-idor.test.js` (D-23) va `journey-login-session.test.js` (D-17) child server spawn qiladi **`LOCAL_DB_FILE`siz** → ikkalasi real `data/db.json`'ga parallel yozadi → `npm run test:auth` (parallel) 9 ta flaky fail. Serial (`--no-file-parallelism`) 225/225 toza. **Fix: spawn env'ga `LOCAL_DB_FILE: '/tmp/edikit-<test>-db.json'` qo'shish** — ps'ga xabar berildi (fayllar ps'niki).
+- `dsar-idor.test.js` (D-23) va `journey-login-session.test.js` (D-17) child server spawn qiladi **`LOCAL_DB_FILE`siz** → ikkalasi real `data/db.json`'ga parallel yozadi → `npm run test:auth` (parallel) 9 ta flaky fail. Serial (`--no-file-parallelism`) 225/225 toza. **Fix: spawn env'ga `LOCAL_DB_FILE: '/tmp/deborah-<test>-db.json'` qo'shish** — ps'ga xabar berildi (fayllar ps'niki).
 
 **FILES_CHANGED (wsl):**
 | Fayl | O'zgarish |
@@ -4080,7 +4080,7 @@ Email provider abstraction ustiga: failover (primary down → secondary), cost t
 
 **NOTES:**
 - E2E flakiness kuzatildi (403 CSRF) — sabab: eski `node server.js` jarayonlari port 3477'ni egallab, eski DB/sessiya bilan ishlayotgan server'ga ulanish edi. `reuseExistingServer:false` + run oldi pkill → 3/3 toza run.
-- Playwright webServer `LOCAL_DB_FILE=/tmp/edikit-visual-db.json` — production DB'ga tegmaydi.
+- Playwright webServer `LOCAL_DB_FILE=/tmp/deborah-visual-db.json` — production DB'ga tegmaydi.
 
 **NEXT_READY:** D-19 (ps bilan bo'linish). D-27 checkpoint'gacha D-19..D-26 qoldi.
 ### AUTH D-24 — Legal sahifalar + Roziman checkbox ✅ (wsl qismi)

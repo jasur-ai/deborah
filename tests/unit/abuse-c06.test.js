@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH C-06 Credential stuffing + OTP bombing — Unit tests
+ * Deborah — AUTH C-06 Credential stuffing + OTP bombing — Unit tests
  * -------------------------------------------------------------------
  *  - detectStuffing: IP ko'p account (block), password spray (challenge),\n *    device ko'p account (challenge), past daraja (alert/ok)\n *  - detectOtpBomb: per-user 3/soat, per-IP 10/soat\n *  - fail-open: Redis yo'q → ok\n *  - passHash: parol hech qachon log'da/Redis'da emas\n */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';

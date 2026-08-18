@@ -1,5 +1,5 @@
 /**
- * Edikit — Legacy JS Adapter Boundary
+ * Deborah — Legacy JS Adapter Boundary
  *
  * Provides typed wrappers for importing legacy JavaScript modules
  * (routes/, middleware/, utils/, socket/, firebase/) from new TypeScript code.

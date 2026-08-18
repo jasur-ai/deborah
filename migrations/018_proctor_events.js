@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 018: Uch-strike Client Collector & Server Classifier
+ * Deborah — Migration 018: Uch-strike Client Collector & Server Classifier
  *
  * Prompt 34 — visibility/fullscreen incidentlarini dedupe qilib THIRD strike'da
  * server termination (research.md §31 — Proctor evidence engine: raw event →
@@ -86,10 +86,10 @@ export async function up(db) {
     .execute();
 
   // ── Grants ──
-  await sql`GRANT SELECT, INSERT ON proctor_events TO edikit_runtime`.execute(db);
-  await sql`GRANT USAGE ON proctor_events_id_seq TO edikit_runtime`.execute(db);
-  await sql`GRANT DELETE ON proctor_events TO edikit_migration`.execute(db);
-  await sql`GRANT SELECT ON proctor_events TO edikit_scoring`.execute(db);
+  await sql`GRANT SELECT, INSERT ON proctor_events TO deborah_runtime`.execute(db);
+  await sql`GRANT USAGE ON proctor_events_id_seq TO deborah_runtime`.execute(db);
+  await sql`GRANT DELETE ON proctor_events TO deborah_migration`.execute(db);
+  await sql`GRANT SELECT ON proctor_events TO deborah_scoring`.execute(db);
 
   // ── Attempt epoch column (teacher reopen — Prompt 34 §14) ──
   // Prompt 32 residual: attempts jadvalida epoch ustuni yo'q edi; reopen uchun

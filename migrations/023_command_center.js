@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 023: Exam Command Center, Incident & Notifications (Prompt 41)
+ * Deborah — Migration 023: Exam Command Center, Incident & Notifications (Prompt 41)
  *
  * Prompt 41 — exam-day health, attendance va incidentlarni bitta auditable
  * command centerda boshqarish (research.md §53.4–53.7, §38.5 incident
@@ -277,9 +277,9 @@ export async function up(db) {
     'postmortem_action_items',
   ];
   for (const table of newTables) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
-    await sql`GRANT DELETE ON ${sql.table(table)} TO edikit_migration`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 }
 

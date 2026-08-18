@@ -1,5 +1,5 @@
 /**
- * Edikit — Test Setup Helper
+ * Deborah — Test Setup Helper
  *
  * Provides:
  *   1. Shared app instance (createApp factory)

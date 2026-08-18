@@ -27,7 +27,7 @@ const MX_CACHE_MAX = 5000; // review fix: xotira guard (spam register urinishlar
 const COMMON_DOMAINS = [
   'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com',
   'mail.ru', 'yandex.ru', 'yandex.com', 'icloud.com',
-  'proton.me', 'protonmail.com', 'edikit.uz', 'aol.com',
+  'proton.me', 'protonmail.com', 'deborah.uz', 'aol.com',
 ];
 
 // Aniq (ma'lum) typo xaritalari — Levenshtein 1 dan ham ishonchli.
@@ -241,7 +241,7 @@ export function smtpDialog(host, opts = {}) {
 
         if (stage === 'banner') {
           stage = 'ehlo';
-          send('EHLO edikit.uz');
+          send('EHLO deborah.uz');
         } else if (stage === 'ehlo') {
           stage = 'mailfrom';
           send(`MAIL FROM:<${from}>`);
@@ -253,7 +253,7 @@ export function smtpDialog(host, opts = {}) {
           if (res.retry) {
             greylisted = true;
             stage = 'ehlo'; // greylisting — dialogni qayta boshlaymiz (§25)
-            send('EHLO edikit.uz');
+            send('EHLO deborah.uz');
           } else {
             finish({ mailbox: res.mailbox, code });
             return;
@@ -279,7 +279,7 @@ export async function smtpProbe(domain, deps = {}) {
     if (!Array.isArray(records) || records.length === 0) return { mailbox: 'unknown' };
     const host = records[0].exchange;
     const res = await (deps.dialog || smtpDialog)(host, {
-      from: 'probe@edikit.uz',
+      from: 'probe@deborah.uz',
       to: `probe@${domain}`,
     });
     return res;

@@ -1,5 +1,5 @@
 /**
- * Edikit — Security Tests
+ * Deborah — Security Tests
  *
  * Tests:
  *   1. Argon2 password hashing (hashPassword, verifyPassword, isLegacyHash)

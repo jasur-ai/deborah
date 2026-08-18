@@ -3,9 +3,9 @@
 <head>
   <%- include('../partials/head') %>
   <style>
-    body{background:var(--edikit-semantic-color-surface-default);min-height:100vh;}
+    body{background:var(--deborah-semantic-color-surface-default);min-height:100vh;}
     .quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;}
-    .queue-head{display:flex;align-items:center;justify-content:space-between;background:var(--edikit-semantic-color-surface-raised);border:1px solid var(--edikit-semantic-color-border-default);border-radius:14px;padding:14px 16px;margin-bottom:18px;}
+    .queue-head{display:flex;align-items:center;justify-content:space-between;background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-default);border-radius:14px;padding:14px 16px;margin-bottom:18px;}
   </style>
 </head>
 <body>
@@ -14,7 +14,7 @@
     <div class="topbar">
       <h1>Baholovchi — grading queue</h1>
       <div class="topbar-right">
-        <span style="font-size:.74rem;font-weight:600;color:var(--edikit-semantic-color-text-muted)">Salom, <span style="color:var(--edikit-semantic-color-text-primary)"><%= username %></span></span>
+        <span style="font-size:.74rem;font-weight:600;color:var(--deborah-semantic-color-text-muted)">Salom, <span style="color:var(--deborah-semantic-color-text-primary)"><%= username %></span></span>
       </div>
     </div>
 
@@ -23,7 +23,7 @@
         <span class="shell-role-ico" style="color:var(--purple);display:flex"><%- icon('clipboard', 18) %></span>
         <div>
           <div style="font-weight:700;font-size:.9rem">Queue holati</div>
-          <div style="font-size:.74rem;color:var(--edikit-semantic-color-text-muted);font-weight:700">Kutayotgan ishlar: 0 · Ishda: 0 · Yakunlangan: 0</div>
+          <div style="font-size:.74rem;color:var(--deborah-semantic-color-text-muted);font-weight:700">Kutayotgan ishlar: 0 · Ishda: 0 · Yakunlangan: 0</div>
         </div>
       </div>
       <span style="font-size:.72rem;font-weight:700;color:var(--purple)"><%- icon('checkCircle', 13) %> <%= canScore ? 'Score huquqi aktiv' : "O'qish rejimi" %></span>
@@ -37,10 +37,10 @@
         <a href="/admin/marking" style="display:inline-block;margin-top:12px;text-decoration:none;color:var(--purple);font-weight:700;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
       </div>
       <div class="role-card">
-        <div class="rc-ico" style="background:rgba(248,113,113,.12);color:var(--edikit-semantic-color-action-primary)"><%- icon('alertTriangle', 20) %></div>
+        <div class="rc-ico" style="background:rgba(248,113,113,.12);color:var(--deborah-semantic-color-action-primary)"><%- icon('alertTriangle', 20) %></div>
         <div class="rc-title">Consideration</div>
         <div class="rc-sub">Appeal va maxsus holatlar</div>
-        <a href="/admin/consideration" style="display:inline-block;margin-top:12px;text-decoration:none;color:var(--edikit-semantic-color-action-primary);font-weight:700;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
+        <a href="/admin/consideration" style="display:inline-block;margin-top:12px;text-decoration:none;color:var(--deborah-semantic-color-action-primary);font-weight:700;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
       </div>
     </div>
 

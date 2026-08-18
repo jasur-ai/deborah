@@ -1,5 +1,5 @@
 <%#
-  Edikit — Form Field Partial (STYLE STEP 13, S13.01)
+  Deborah — Form Field Partial (STYLE STEP 13, S13.01)
   -----------------------------------------------------
   Foydalanish (EJS ichida): include('form-field', { id, name, type, label,
   required, placeholder, hint, error, value, autocomplete, maxlength })
@@ -45,7 +45,7 @@
   <% if (label) { %>
     <label class="form-field__label" for="<%= id %>">
       <span><%= label %></span>
-      <% if (required) { %><span class="form-field__required" aria-hidden="true" style="color:var(--edikit-semantic-color-status-danger)">*</span><% } %>
+      <% if (required) { %><span class="form-field__required" aria-hidden="true" style="color:var(--deborah-semantic-color-status-danger)">*</span><% } %>
       <% if (optional) { %><span class="form-field__optional">(<%= optional %>)</span><% } %>
     </label>
   <% } %>
@@ -102,7 +102,7 @@
       <%- icon('alertTriangle', 14) %><span><%= error %></span>
     </span>
   <% } else if (warning) { %>
-    <span class="form-field__error" id="<%= id %>-error" style="color:var(--edikit-semantic-color-status-warning)">
+    <span class="form-field__error" id="<%= id %>-error" style="color:var(--deborah-semantic-color-status-warning)">
       <span><%= warning %></span>
     </span>
   <% } %>

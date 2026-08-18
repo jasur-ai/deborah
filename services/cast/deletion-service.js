@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Deletion Service (C4-07)
+ * Deborah — Cast Deletion Service (C4-07)
  * ----------------------------------------
  * Deletion pipeline (item 6-11):
  *  - Expired active DB recordlarni delete/anonymize.

@@ -1,7 +1,7 @@
 /**
- * Edikit — E-02: HEMIS push webhook route
+ * Deborah — E-02: HEMIS push webhook route
  * -------------------------------------------------
- * POST /api/webhooks/hemis — HEMIS → Edikit push (talabalar/ballar o'zgarishi).
+ * POST /api/webhooks/hemis — HEMIS → Deborah push (talabalar/ballar o'zgarishi).
  *   - HMAC-SHA256: X-Hemis-Signature == HMAC(body, HEMIS_WEBHOOK_SECRET)
  *   - IP allowlist: HEMIS_WEBHOOK_IP_ALLOWLIST (opsional)
  *   - Idempotent: hemis_webhook_log/{eventId}

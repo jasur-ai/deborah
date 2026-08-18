@@ -1,5 +1,5 @@
 /**
- * Edikit — Canonical Presentation & Native Editor MVP (service)
+ * Deborah — Canonical Presentation & Native Editor MVP (service)
  *
  * Prompt 56 — provider-independent slide document, structured editor va
  * export skeleton. Graceful degradation: PostgreSQL bo'lmasa write path'lar
@@ -81,7 +81,7 @@ export async function createPresentation({
       theme,
       aspect_ratio: '16:9',
       status: PRESENTATION_STATUS.DRAFT,
-      provider: provider ? JSON.stringify({ name: provider.name || 'edikit-native', jobId: provider.jobId || null }) : JSON.stringify({}),
+      provider: provider ? JSON.stringify({ name: provider.name || 'deborah-native', jobId: provider.jobId || null }) : JSON.stringify({}),
       created_by: actorId,
     })
     .returning(['id'])

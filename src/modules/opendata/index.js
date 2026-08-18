@@ -1,5 +1,5 @@
 /**
- * Edikit — Ochiq ma'lumotlar moduli (AUTH A-13)
+ * Deborah — Ochiq ma'lumotlar moduli (AUTH A-13)
  */
 export {
   getStats,

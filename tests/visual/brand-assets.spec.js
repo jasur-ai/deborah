@@ -1,5 +1,5 @@
 /**
- * Edikit — Visual: Brand Assets (STYLE STEP 05 / S05.01–S05.12)
+ * Deborah — Visual: Brand Assets (STYLE STEP 05 / S05.01–S05.12)
  * ------------------------------------------------------------------
  * Blind-recognition gallery (public/brand/gallery.html):
  *   - Evidence Mark variantlari + 16/24/32/64px legibility

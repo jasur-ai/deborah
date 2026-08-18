@@ -1,5 +1,5 @@
 /**
- * Edikit — Env Config Contract
+ * Deborah — Env Config Contract
  *
  * Canonical TypeScript type for environment configuration.
  * Mirrors the Zod schema in src/config/env.js.

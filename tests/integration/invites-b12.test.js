@@ -115,7 +115,7 @@ describe('AUTH B-12 — Invite aktivatsiya view', () => {
     // Google bog'lash havolasi token'ni uzatadi (B-13 tayyor)
     expect(html).toContain(`/auth/google?invite=${encodeURIComponent(inv.tokenHash)}`);
     // Welcoming + button
-    expect(html).toContain('Siz Edikit platformasiga taklif qilindingiz');
+    expect(html).toContain('Siz Deborah platformasiga taklif qilindingiz');
     expect(html).toContain('Taklifni qabul qilish');
   });
 

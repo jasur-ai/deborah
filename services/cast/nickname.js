@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Safe Alias Generator & Identity Policy (C4-06)
+ * Deborah — Cast Safe Alias Generator & Identity Policy (C4-06)
  * --------------------------------------------------------------
  * Child-safe identity:
  *  - Safe alias generator locale catalog bo'yicha (item 5).

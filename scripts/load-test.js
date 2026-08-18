@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Peak Load Test Harness (Prompt 71, items 07 & 18)
+ * Deborah — Peak Load Test Harness (Prompt 71, items 07 & 18)
  *
  * Zero-dependency load profile SLO evaluation for an exam window:
  * T−30 join ramp / T0 start / autosave steady-state / submit burst.
@@ -74,7 +74,7 @@ for (const profile of reliability.LOAD_PROFILES) {
 if (jsonOut) {
   console.log(JSON.stringify({ results, pass: allPass }, null, 2));
 } else {
-  console.log('\n═══ Edikit Peak Load Test ═══');
+  console.log('\n═══ Deborah Peak Load Test ═══');
   for (const r of results) {
     console.log(`\n[${r.ok ? 'PASS' : 'FAIL'}] ${r.profile} — ${r.label}`);
     for (const c of r.checks || []) {

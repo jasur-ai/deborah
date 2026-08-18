@@ -1,5 +1,5 @@
 /**
- * Edikit — Auth Maintenance (AUTH D-28)
+ * Deborah — Auth Maintenance (AUTH D-28)
  * ---------------------------------------------------------------------------
  * Maintenance runbook operator script'larining audit/log qismi.
  *

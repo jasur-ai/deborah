@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Quick Prompt (C3-06) Tests
+ * Deborah — Cast Quick Prompt (C3-06) Tests
  * ------------------------------------------
  * coverage: validateQuickPrompt, buildPromptQuestion, generatePromptQuestionId,
  *           saveToLibrary, getFromLibrary, listLibrary, QUICK_PROMPT_TYPES,

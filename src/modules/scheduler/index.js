@@ -1,5 +1,5 @@
 /**
- * Edikit — Exam Scheduling Solver Module Barrel Export
+ * Deborah — Exam Scheduling Solver Module Barrel Export
  *
  * Prompt 39 — period, room, student va proctor constraintlari bilan
  * explainable exam schedule (deterministic solver + human approval +

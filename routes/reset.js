@@ -1,5 +1,5 @@
 /**
- * Edikit — Parol tiklash (plan_login §5 — Ekran 2 & 3, AUTH A-06)
+ * Deborah — Parol tiklash (plan_login §5 — Ekran 2 & 3, AUTH A-06)
  * --------------------------------------------------------------
  * HTML:
  *   GET  /user/reset?token=... → token verify: valid → yangi parol formasi,

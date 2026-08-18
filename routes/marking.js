@@ -1,5 +1,5 @@
 /**
- * Edikit — Marker Allocation, Calibration & Moderation Routes
+ * Deborah — Marker Allocation, Calibration & Moderation Routes
  *
  * Prompt 46 REST API:
  *   - GET  /api/admin/marking/meta                  — constants for the admin UI

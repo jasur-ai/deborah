@@ -1,5 +1,5 @@
 /**
- * Edikit — Uzbek Latin/Cyrillic & Terminology Layer (integration tests, Prompt 63)
+ * Deborah — Uzbek Latin/Cyrillic & Terminology Layer (integration tests, Prompt 63)
  *
  * Service qatlami (fake DB): terminology version create/publish, term
  * add + cross-script search_key, content translation (original preserved),

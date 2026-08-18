@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH A-29 Account security events — Unit tests
+ * Deborah — AUTH A-29 Account security events — Unit tests
  * ---------------------------------------------------------------
  *  - recordAccountEvent → users.{id}.security_events (PII-minimal)
  *  - getAccountEvents: faqat agregatlar (ip_hash/raw UA/email YO'Q), sort, cap

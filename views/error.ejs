@@ -4,26 +4,26 @@
   <%- include('partials/head') %>
   <style>
     /* S34.04: Error sahifasi — Evidence Mark + restrained Response Mosaic (giant emoji/mascot YO'Q) */
-    .error-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--edikit-semantic-color-surface-default, #080C1A);}
+    .error-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--deborah-semantic-color-surface-default, #080C1A);}
     .error-page .error-box{width:100%;max-width:480px;}
     .error-mark{width:56px;height:56px;margin-bottom:18px;opacity:.95;}
-    .error-code{font-family:var(--font-display, 'Manrope', sans-serif);font-size:clamp(3rem,9vw,5.5rem);line-height:1;font-weight:800;color:var(--edikit-semantic-color-action-primary, #1746D1);margin-bottom:10px;letter-spacing:-.02em;}
-    .error-title{font-size:1.15rem;font-weight:700;color:var(--edikit-semantic-color-text-primary, #F2F4F8);margin-bottom:8px;}
-    .error-desc{font-size:.92rem;line-height:1.65;color:var(--edikit-semantic-color-text-secondary, #A8B0C4);margin-bottom:6px;}
+    .error-code{font-family:var(--font-display, 'Manrope', sans-serif);font-size:clamp(3rem,9vw,5.5rem);line-height:1;font-weight:800;color:var(--deborah-semantic-color-action-primary, #1746D1);margin-bottom:10px;letter-spacing:-.02em;}
+    .error-title{font-size:1.15rem;font-weight:700;color:var(--deborah-semantic-color-text-primary, #F2F4F8);margin-bottom:8px;}
+    .error-desc{font-size:.92rem;line-height:1.65;color:var(--deborah-semantic-color-text-secondary, #A8B0C4);margin-bottom:6px;}
     .error-ref{font-size:.72rem;color:var(--text-tertiary, #6B7288);margin:6px 0 0;font-variant-numeric:tabular-nums;}
     .error-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;}
     /* S34.05: btn-primary/btn-quiet component'dan (inline gradient yo'q) */
     .error-actions .btn{min-height:44px;}
     .error-technical{margin-top:18px;font-size:.74rem;color:var(--text-tertiary, #6B7288);}
     .error-technical summary{cursor:pointer;}
-    .error-technical pre{white-space:pre-wrap;margin-top:8px;padding:10px 12px;background:var(--edikit-semantic-color-surface-raised, #0F1630);border:1px solid var(--edikit-semantic-color-border-subtle, #2C3346);border-radius:8px;color:var(--edikit-semantic-color-text-muted, #8B96B3);}
+    .error-technical pre{white-space:pre-wrap;margin-top:8px;padding:10px 12px;background:var(--deborah-semantic-color-surface-raised, #0F1630);border:1px solid var(--deborah-semantic-color-border-subtle, #2C3346);border-radius:8px;color:var(--deborah-semantic-color-text-muted, #8B96B3);}
   </style>
 </head>
 <body>
   <div class="error-page">
     <div class="error-box">
       <!-- S34.04: Evidence Mark — brand illustration, playful mascot emas -->
-      <img src="/images/brand/evidence-mark.svg" alt="Edikit" class="error-mark" width="56" height="56">
+      <img src="/images/brand/evidence-mark.svg" alt="Deborah" class="error-mark" width="56" height="56">
       <div class="error-code"><%= typeof status !== 'undefined' ? status : '500' %></div>
 
       <% const errStatus = typeof status !== 'undefined' ? status : 500; %>

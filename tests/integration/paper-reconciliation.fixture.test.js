@@ -1,5 +1,5 @@
 /**
- * Edikit — Paper Reconciliation Fixture Suite (Prompt 49)
+ * Deborah — Paper Reconciliation Fixture Suite (Prompt 49)
  *
  * Integration/contract test: scanned paper pages'ni student/questionga
  * ZERO page loss bilan reconcile qilish (research.md §52.5, Prompt 43).

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Layout discipline migrator (STYLE STEP 09, S09.01/S09.04)
+ * Deborah — Layout discipline migrator (STYLE STEP 09, S09.01/S09.04)
  * ----------------------------------------------------------------
  * - `padding: Npx` (to'liq 4-tomon shorthand) → 4px scale qiymatlarga
  *   6→8, 10→12, 14→16, 18→20, 22→24, 26→24, 30→32
@@ -18,7 +18,7 @@ const PADDING_MAP = {
 
 // padding qiymatini token'ga aylantirish (to'liq shorthand: faqat bitta px)
 function padToken(n) {
-  return `var(--edikit-spacing-${n / 4}, ${n}px)`;
+  return `var(--deborah-spacing-${n / 4}, ${n}px)`;
 }
 
 let total = 0;

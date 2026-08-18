@@ -1,5 +1,5 @@
 /**
- * Edikit — Rubric Builder & Anchor Model Service
+ * Deborah — Rubric Builder & Anchor Model Service
  *
  * Manages analytic rubrics for written work grading:
  *   - Rubrics (versioned templates with DRAFT→PUBLISHED→DEPRECATED lifecycle)

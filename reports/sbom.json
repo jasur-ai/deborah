@@ -7,14 +7,14 @@
     "timestamp": "2026-08-18T03:56:34.504Z",
     "tools": [
       {
-        "vendor": "edikit",
+        "vendor": "deborah",
         "name": "security-ci",
         "version": "1.0.0"
       }
     ],
     "component": {
       "type": "application",
-      "name": "edikit",
+      "name": "deborah",
       "version": "2.0.0"
     }
   },

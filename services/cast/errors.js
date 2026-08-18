@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Error Module
+ * Deborah — Cast Error Module
  * --------------------------
  * Stable, contract-level error codes va helper constructor.
  * Client bu kodlar orqali UI state'ni boshqaradi.

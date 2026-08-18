@@ -1,5 +1,5 @@
 /**
- * Edikit — IndexedDB Offline Journal, Reconnect & Recovery Service
+ * Deborah — IndexedDB Offline Journal, Reconnect & Recovery Service
  *
  * Prompt 32 — server-side half of the offline resilience contract
  * (research.md §29). The browser keeps an encrypted IndexedDB journal; this

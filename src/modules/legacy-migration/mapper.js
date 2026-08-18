@@ -1,5 +1,5 @@
 /**
- * Edikit — Legacy Data Migration Mapper
+ * Deborah — Legacy Data Migration Mapper
  *
  * Maps legacy Firebase/JSON data structures to the PostgreSQL canonical schema.
  * All functions are PURE — they do NOT write to any database.
@@ -605,7 +605,7 @@ export function generateDryRunReport(analysis) {
   const lines = [];
 
   lines.push('╔═══════════════════════════════════════════════════════════════╗');
-  lines.push('║        Edikit — Legacy JSON/Firebase Migration Dry-Run       ║');
+  lines.push('║        Deborah — Legacy JSON/Firebase Migration Dry-Run       ║');
   lines.push('╚═══════════════════════════════════════════════════════════════╝');
   lines.push('');
 

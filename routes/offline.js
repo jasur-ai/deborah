@@ -1,5 +1,5 @@
 /**
- * Edikit — IndexedDB Offline Journal, Reconnect & Recovery Routes
+ * Deborah — IndexedDB Offline Journal, Reconnect & Recovery Routes
  *
  * Prompt 32 (Phase D #3) REST API:
  *   - POST /api/student/attempts/:id/offline/sync  — reconnect batch sync

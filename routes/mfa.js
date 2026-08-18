@@ -1,5 +1,5 @@
 /**
- * Edikit — MFA/TOTP Routes (AUTH A-26)
+ * Deborah — MFA/TOTP Routes (AUTH A-26)
  *
  * Flow:
  *   1. User parol bilan login qiladi → server hasActiveMfa tekshiradi →

@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Session Choreography Schema (C3-14)
+ * Deborah — Cast Session Choreography Schema (C3-14)
  * --------------------------------------------------
  * Teacher reusable block sequence yaratadi. Har block typed config'ga ega.
  * Block enum (15):

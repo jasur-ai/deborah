@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Hinge Recommendation Engine (C3-02)
+ * Deborah — Cast Hinge Recommendation Engine (C3-02)
  * -------------------------------------------------
  * Pure rule engine: evidence → structured suggestion (MOVE_ON | DISCUSS | RETEACH).
  *

@@ -1,5 +1,5 @@
 /**
- * Edikit — Transcript / diploma parser (AUTH A-12 §08-09)
+ * Deborah — Transcript / diploma parser (AUTH A-12 §08-09)
  * --------------------------------------------------------
  * Safe file parsing for portfolio import:
  *   - Excel (.xlsx/.csv): reuses the A-10 roster parser (parseRosterFile),

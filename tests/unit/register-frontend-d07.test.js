@@ -1,5 +1,5 @@
 /**
- * Edikit — D-07 Register frontend (public/js/register.js) — Unit tests
+ * Deborah — D-07 Register frontend (public/js/register.js) — Unit tests
  * --------------------------------------------------------------------
  * jsdom environment'da register.js'ning DOM logikasini tekshiramiz:
  *   - rol kartalari → teacher-note + teacher-app-fields (A-19/B-29)
@@ -145,7 +145,7 @@ describe('D-07 — email live check (debounce 300ms, B-05)', () => {
     email.dispatchEvent(new Event('input'));
     email.value = 'ab@';
     email.dispatchEvent(new Event('input'));
-    email.value = 'user@edikit.uz';
+    email.value = 'user@deborah.uz';
     email.dispatchEvent(new Event('input'));
     expect(fetchMock).not.toHaveBeenCalled(); // hali debounce kutmoqda
     await vi.advanceTimersByTimeAsync(400);
@@ -156,7 +156,7 @@ describe('D-07 — email live check (debounce 300ms, B-05)', () => {
     vi.useFakeTimers();
     await bootRegister();
     const email = document.getElementById('reg-email');
-    email.value = 'user@edikit.uz';
+    email.value = 'user@deborah.uz';
     email.dispatchEvent(new Event('input'));
     await vi.advanceTimersByTimeAsync(400);
     await Promise.resolve(); // fetch .then larini yugurtirish
@@ -206,7 +206,7 @@ describe('D-07 — email live check (debounce 300ms, B-05)', () => {
   it('blur da darhol tekshiradi (debounce ni kutmaydi)', async () => {
     await bootRegister();
     const email = document.getElementById('reg-email');
-    email.value = 'user@edikit.uz';
+    email.value = 'user@deborah.uz';
     email.dispatchEvent(new Event('blur'));
     await Promise.resolve();
     await Promise.resolve();

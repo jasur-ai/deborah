@@ -1,5 +1,5 @@
 /**
- * Edikit — Teacher Approval Routes (AUTH A-19)
+ * Deborah — Teacher Approval Routes (AUTH A-19)
  *
  * Admin teacher arizalarini ko'radi va tasdiqlaydi/rad etadi.
  *

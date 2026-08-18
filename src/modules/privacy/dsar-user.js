@@ -1,5 +1,5 @@
 /**
- * Edikit — User DSAR Service (AUTH D-23)
+ * Deborah — User DSAR Service (AUTH D-23)
  * ---------------------------------------------------------------------------
  * O'zbekiston shaxsiy ma'lumotlar qonuni (D-22): foydalanuvchi huquqlari —
  * eksport, tuzatish, o'chirish, cheklash.

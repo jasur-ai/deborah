@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Director Client
+ * Deborah — Cast Director Client
  * ------------------------------
  * Host barcha primary live commandlarni shu yerdan boshqaradi.
  * Har control sendCommand() wrapper orqali; pending'da spinner + lock.

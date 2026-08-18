@@ -28,7 +28,7 @@ beforeAll(async () => {
   // bilan toza module graph yaratamiz, keyin env qo'yib server'ni import qilamiz.
   vi.resetModules();
   process.env.TELEGRAM_BOT_TOKEN = 'a16-test-bot-token-0123456789';
-  process.env.TELEGRAM_BOT_USERNAME = 'EdikitTestBot';
+  process.env.TELEGRAM_BOT_USERNAME = 'DeborahTestBot';
   const envMod = await import('../../src/config/env.js');
   CONFIG = envMod.default;
   const serverMod = await import('../../server.js');
@@ -91,7 +91,7 @@ describe('AUTH A-16 — Telegram OTP flow', () => {
     expect(res.status).toBe(200);
     expect(/^\d{6}$/.test(res.body.previewCode)).toBe(true);
     expect(res.body.previewLink).toContain('start=');
-    expect(res.body.botUsername).toBe('EdikitTestBot');
+    expect(res.body.botUsername).toBe('DeborahTestBot');
   });
 
   it('invalid phone → 400', async () => {

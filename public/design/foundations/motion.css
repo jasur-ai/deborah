@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   Edikit Motion Foundations (STYLE STEP 10)
+   Deborah Motion Foundations (STYLE STEP 10)
    ---------------------------------------------------------------
    1. Duration + easing token'lari (S10.01-02) — 0/80/120/160/220/
       320/500/800ms, intent-based; bounce/elastic productive UI'da yo'q
@@ -12,36 +12,36 @@
 /* ── 1. Duration + easing token'lari (S10.01-02) ── */
 :root {
   /* Duration scale */
-  --motion-dur-0:       var(--edikit-motion-duration-0, 0ms);
-  --motion-dur-80:      var(--edikit-motion-duration-80, 80ms);
-  --motion-dur-120:     var(--edikit-motion-duration-120, 120ms);
-  --motion-dur-160:     var(--edikit-motion-duration-160, 160ms);
-  --motion-dur-220:     var(--edikit-motion-duration-220, 220ms);
-  --motion-dur-320:     var(--edikit-motion-duration-320, 320ms);
-  --motion-dur-500:     var(--edikit-motion-duration-500, 500ms);
-  --motion-dur-800:     var(--edikit-motion-duration-800, 800ms);
+  --motion-dur-0:       var(--deborah-motion-duration-0, 0ms);
+  --motion-dur-80:      var(--deborah-motion-duration-80, 80ms);
+  --motion-dur-120:     var(--deborah-motion-duration-120, 120ms);
+  --motion-dur-160:     var(--deborah-motion-duration-160, 160ms);
+  --motion-dur-220:     var(--deborah-motion-duration-220, 220ms);
+  --motion-dur-320:     var(--deborah-motion-duration-320, 320ms);
+  --motion-dur-500:     var(--deborah-motion-duration-500, 500ms);
+  --motion-dur-800:     var(--deborah-motion-duration-800, 800ms);
 
   /* Usage intent (S10.05) */
-  --motion-feedback:     var(--edikit-motion-intent-feedback, 120ms);
-  --motion-hover:        var(--edikit-motion-intent-hover, 80ms);
-  --motion-popup:        var(--edikit-motion-intent-popup, 160ms);
-  --motion-modal:        var(--edikit-motion-intent-modal, 220ms);
-  --motion-modal-exit:   var(--edikit-motion-intent-modal-exit, 160ms);
-  --motion-page:         var(--edikit-motion-intent-page, 320ms);
-  --motion-page-exit:    var(--edikit-motion-intent-page-exit, 240ms);
-  --motion-milestone:    var(--edikit-motion-intent-milestone, 500ms);
+  --motion-feedback:     var(--deborah-motion-intent-feedback, 120ms);
+  --motion-hover:        var(--deborah-motion-intent-hover, 80ms);
+  --motion-popup:        var(--deborah-motion-intent-popup, 160ms);
+  --motion-modal:        var(--deborah-motion-intent-modal, 220ms);
+  --motion-modal-exit:   var(--deborah-motion-intent-modal-exit, 160ms);
+  --motion-page:         var(--deborah-motion-intent-page, 320ms);
+  --motion-page-exit:    var(--deborah-motion-intent-page-exit, 240ms);
+  --motion-milestone:    var(--deborah-motion-intent-milestone, 500ms);
 
   /* Easing (S10.02) */
-  --ease-standard: cubic-bezier(var(--edikit-motion-easing-standard, 0.4, 0, 0.2, 1));
-  --ease-enter:    cubic-bezier(var(--edikit-motion-easing-enter, 0, 0, 0.2, 1));
-  --ease-exit:     cubic-bezier(var(--edikit-motion-easing-exit, 0.4, 0, 1, 1));
-  --ease-emphasis: cubic-bezier(var(--edikit-motion-easing-emphasis, 0.2, 0.8, 0.2, 1));
+  --ease-standard: cubic-bezier(var(--deborah-motion-easing-standard, 0.4, 0, 0.2, 1));
+  --ease-enter:    cubic-bezier(var(--deborah-motion-easing-enter, 0, 0, 0.2, 1));
+  --ease-exit:     cubic-bezier(var(--deborah-motion-easing-exit, 0.4, 0, 1, 1));
+  --ease-emphasis: cubic-bezier(var(--deborah-motion-easing-emphasis, 0.2, 0.8, 0.2, 1));
 }
 
 /* ── 2. Property-specific transition yordamchilari (S10.03, S10.08) ──
    Layout animatsiya (width/height/margin/top/left) TAQIQ — faqat
    transform/opacity/color/box-shadow. */
-@keyframes edikit-transition-none {}
+@keyframes deborah-transition-none {}
 .tr-prop {
   transition-property: transform, opacity, background-color, border-color, color, box-shadow, filter;
   transition-duration: var(--motion-feedback);
@@ -80,7 +80,7 @@
   }
   /* Functional state static equivalent — urgent timer red, shimmer o'rniga solid */
   .proj-timer.urgent { animation: none !important; color: var(--cast-red, #ef4444); font-weight: 800; }
-  .skeleton, .skeleton-shimmer, [class*="skeleton"] { animation: none !important; background: var(--edikit-semantic-color-surface-raised, #1e293b); }
+  .skeleton, .skeleton-shimmer, [class*="skeleton"] { animation: none !important; background: var(--deborah-semantic-color-surface-raised, #1e293b); }
   .hero-anim, [class*="hero-anim"], .ambient, [class*="ambient"] { animation: none !important; }
   /* Accessibility: focus still visible (instant, S10.11) */
   :focus-visible { outline-offset: 2px; }
@@ -119,7 +119,7 @@
 
 /* ── 6. Focus ring — instant, stable (S10.11) ── */
 :focus-visible {
-  outline: 2px solid var(--edikit-semantic-color-focus, #2563eb);
+  outline: 2px solid var(--deborah-semantic-color-focus, #2563eb);
   outline-offset: 2px;
   transition: none; /* focus ring animatsiyasiz — keyboard aksiya tez */
 }

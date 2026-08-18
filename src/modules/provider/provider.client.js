@@ -1,5 +1,5 @@
 /**
- * Edikit — Unified Provider Async Clients (Gamma + Manus)
+ * Deborah — Unified Provider Async Clients (Gamma + Manus)
  *
  * Prompt 58 — server-side provider clients. API keys faqat env'da
  * (GAMMA_API_KEY, MANUS_API_KEY, MANUS_WEBHOOK_SECRET) — hech qachon
@@ -60,10 +60,10 @@ async function fetchWithRetry(url, options = {}, { fetchImpl = globalThis.fetch,
       if (timer) clearTimeout(timer);
       // ── Provider telemetry (guarded — hech qachon request'ni buzmaydi) ──
       try {
-        incrementCounter('edikit_provider_requests_total', { help: 'Provider requests' }, { value: 1, labels: { provider, status: String(res.status) } });
-        observeHistogram('edikit_provider_latency_ms', Date.now() - started, { help: 'Provider latency', labels: { provider } });
+        incrementCounter('deborah_provider_requests_total', { help: 'Provider requests' }, { value: 1, labels: { provider, status: String(res.status) } });
+        observeHistogram('deborah_provider_latency_ms', Date.now() - started, { help: 'Provider latency', labels: { provider } });
         if (!res.ok) {
-          incrementCounter('edikit_provider_errors_total', { help: 'Provider errors' }, { value: 1, labels: { provider, status: String(res.status) } });
+          incrementCounter('deborah_provider_errors_total', { help: 'Provider errors' }, { value: 1, labels: { provider, status: String(res.status) } });
         }
       } catch (_) { /* telemetry xatosi request'ni buzmasin */ }
       if (shouldRetryError(res.status) && attempt < maxAttempts - 1) {

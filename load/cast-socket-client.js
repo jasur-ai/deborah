@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Load Socket Client (C5-09 item 1)
+ * Deborah — Cast Load Socket Client (C5-09 item 1)
  * -------------------------------------------------
  * Real socket.io-client asosida ishlaydigan synthetic participant.
  *

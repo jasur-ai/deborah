@@ -1,5 +1,5 @@
 /**
- * Edikit — AI Question Generator 50/30/20 (unit tests, Prompt 53)
+ * Deborah — AI Question Generator 50/30/20 (unit tests, Prompt 53)
  *
  * Pure schema tekshiruvi (hech qanday DB/I-O yo'q):
  *   - 50/30/20 count property testi: easy+medium+hard === N har doim.

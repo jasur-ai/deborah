@@ -1,5 +1,5 @@
 /**
- * Edikit — Telegram OTP Auth Routes (AUTH A-16, P3)
+ * Deborah — Telegram OTP Auth Routes (AUTH A-16, P3)
  * --------------------------------------------------
  *   POST /api/auth/telegram/start   { phone }         → start-token + 6-kod
  *   POST /api/auth/telegram/verify  { telegram_id, code } → verify + login/link

@@ -1,5 +1,5 @@
 /**
- * Edikit — Marker Allocation, Calibration & Moderation (pure logic)
+ * Deborah — Marker Allocation, Calibration & Moderation (pure logic)
  *
  * Prompt 46 — pseudonymous marking va risk-based moderation workflow
  * (research.md §17 P2-5/6, §54.3 conflict rules). This module is PURE
@@ -86,7 +86,7 @@ export const MARKING_DEFAULTS = {
  * @param {string} [params.salt] - server secret (keeps pseudonym unguessable)
  * @returns {string} e.g. "S-7F3A9C21"
  */
-export function derivePseudonym({ tenantId = 1, submissionVersionId = 0, salt = 'edikit-marking' } = {}) {
+export function derivePseudonym({ tenantId = 1, submissionVersionId = 0, salt = 'deborah-marking' } = {}) {
   const hash = createHash('sha256').update(`${tenantId}:${submissionVersionId}:${salt}`).digest('hex').slice(0, 8).toUpperCase();
   return `S-${hash}`;
 }

@@ -11,18 +11,18 @@
   display: flex; align-items: baseline; justify-content: space-between;
   gap: 12px; flex-wrap: wrap;
 }
-.ev-metric-label { font-weight: 700; font-size: .82rem; color: var(--edikit-semantic-color-text-primary); }
-.ev-metric-value { font-weight: 800; font-variant-numeric: tabular-nums; color: var(--edikit-semantic-color-action-primary); }
-.ev-metric-unit { font-size: .68rem; font-weight: 600; color: var(--edikit-semantic-color-text-muted); }
-.ev-metric-context { font-size: .72rem; color: var(--edikit-semantic-color-text-muted); margin-top: 2px; font-weight: 600; }
+.ev-metric-label { font-weight: 700; font-size: .82rem; color: var(--deborah-semantic-color-text-primary); }
+.ev-metric-value { font-weight: 800; font-variant-numeric: tabular-nums; color: var(--deborah-semantic-color-action-primary); }
+.ev-metric-unit { font-size: .68rem; font-weight: 600; color: var(--deborah-semantic-color-text-muted); }
+.ev-metric-context { font-size: .72rem; color: var(--deborah-semantic-color-text-muted); margin-top: 2px; font-weight: 600; }
 
 /* ── S19.10: Insufficient evidence ── */
 .ev-insufficient {
   display: flex; align-items: center; gap: 10px;
-  padding: 14px 16px; border: 1px dashed var(--edikit-semantic-color-text-muted, #94A3B8);
-  border-radius: var(--edikit-radius-md, 12px);
+  padding: 14px 16px; border: 1px dashed var(--deborah-semantic-color-text-muted, #94A3B8);
+  border-radius: var(--deborah-radius-md, 12px);
   background: var(--bg-elevated, rgba(148,163,184,.06));
-  color: var(--edikit-semantic-color-text-muted);
+  color: var(--deborah-semantic-color-text-muted);
 }
 .ev-insufficient-ico { font-size: 1.2rem; }
 .ev-insufficient-title { font-weight: 700; font-size: .82rem; }
@@ -32,7 +32,7 @@
 .ev-dist { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
 .ev-dist-row {
   display: flex; align-items: center; gap: 8px;
-  font-size: .76rem; font-weight: 600; color: var(--edikit-semantic-color-text-primary);
+  font-size: .76rem; font-weight: 600; color: var(--deborah-semantic-color-text-primary);
 }
 .ev-dist-opt {
   flex: 0 0 auto; min-width: 120px; max-width: 45%;
@@ -51,23 +51,23 @@
   min-width: 2px;
 }
 .ev-dist-num { flex: 0 0 auto; text-align: right; font-variant-numeric: tabular-nums; }
-.ev-dist-num b { color: var(--edikit-semantic-color-text-primary); }
-.ev-dist-frac { font-size: .68rem; color: var(--edikit-semantic-color-text-muted); font-weight: 600; }
+.ev-dist-num b { color: var(--deborah-semantic-color-text-primary); }
+.ev-dist-frac { font-size: .68rem; color: var(--deborah-semantic-color-text-muted); font-weight: 600; }
 
 /* ── S19.09: No-response neutral (incorrectdan farqli) ── */
 .ev-nr {
   display: flex; align-items: center; gap: 6px; margin-top: 8px;
-  font-size: .72rem; color: var(--edikit-semantic-color-text-muted); font-weight: 600;
+  font-size: .72rem; color: var(--deborah-semantic-color-text-muted); font-weight: 600;
 }
-.ev-nr-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--edikit-semantic-color-text-muted, #94A3B8); }
-.ev-nr b { color: var(--edikit-semantic-color-text-primary); font-variant-numeric: tabular-nums; }
+.ev-nr-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--deborah-semantic-color-text-muted, #94A3B8); }
+.ev-nr b { color: var(--deborah-semantic-color-text-primary); font-variant-numeric: tabular-nums; }
 
 /* ── Revote paired bars (S19.01) ── */
 .ev-pair { display: flex; flex-direction: column; gap: 10px; }
 .ev-pair-row { display: flex; flex-direction: column; gap: 4px; }
 .ev-pair-bars { display: flex; flex-direction: column; gap: 3px; }
 .ev-pair-line { display: flex; align-items: center; gap: 8px; }
-.ev-pair-lbl { flex: 0 0 44px; font-size: .68rem; font-weight: 700; color: var(--edikit-semantic-color-text-muted); }
+.ev-pair-lbl { flex: 0 0 44px; font-size: .68rem; font-weight: 700; color: var(--deborah-semantic-color-text-muted); }
 .ev-pair-line .ev-dist-track { height: 14px; }
 
 /* ── Confidence 2×2 (S19.01) ── */
@@ -76,30 +76,30 @@
   gap: 10px; margin-top: 4px;
 }
 .ev-conf-cell {
-  padding: 12px; border: 1px solid var(--edikit-semantic-color-border-default, var(--edikit-semantic-color-border-subtle));
-  border-radius: var(--edikit-radius-md, 12px); background: var(--edikit-semantic-color-surface-raised, var(--edikit-semantic-color-surface-raised));
+  padding: 12px; border: 1px solid var(--deborah-semantic-color-border-default, var(--deborah-semantic-color-border-subtle));
+  border-radius: var(--deborah-radius-md, 12px); background: var(--deborah-semantic-color-surface-raised, var(--deborah-semantic-color-surface-raised));
 }
 .ev-conf-cell-head {
-  display: flex; align-items: center; gap: 6px; font-size: .74rem; font-weight: 700; color: var(--edikit-semantic-color-text-muted);
+  display: flex; align-items: center; gap: 6px; font-size: .74rem; font-weight: 700; color: var(--deborah-semantic-color-text-muted);
 }
-.ev-conf-cell-val { font-size: 1.4rem; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--edikit-semantic-color-text-primary); margin: 4px 0 2px; }
-.ev-conf-cell-hint { font-size: .7rem; color: var(--edikit-semantic-color-text-muted); font-weight: 600; }
+.ev-conf-cell-val { font-size: 1.4rem; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--deborah-semantic-color-text-primary); margin: 4px 0 2px; }
+.ev-conf-cell-hint { font-size: .7rem; color: var(--deborah-semantic-color-text-muted); font-weight: 600; }
 
 /* ── Progress line (S19.01) ── */
 .ev-line svg { width: 100%; height: auto; display: block; }
-.ev-line-path { fill: none; stroke: var(--edikit-semantic-color-action-primary); stroke-width: 2.5; stroke-linecap: round; }
-.ev-line-dot { fill: var(--edikit-semantic-color-surface-raised, var(--edikit-semantic-color-surface-raised)); stroke: var(--edikit-semantic-color-action-primary); stroke-width: 2; }
+.ev-line-path { fill: none; stroke: var(--deborah-semantic-color-action-primary); stroke-width: 2.5; stroke-linecap: round; }
+.ev-line-dot { fill: var(--deborah-semantic-color-surface-raised, var(--deborah-semantic-color-surface-raised)); stroke: var(--deborah-semantic-color-action-primary); stroke-width: 2; }
 .ev-line-labels { display: flex; justify-content: space-between; margin-top: 4px; gap: 4px; flex-wrap: wrap; }
-.ev-line-lbl { display: inline-flex; align-items: center; gap: 4px; font-size: .7rem; font-weight: 600; color: var(--edikit-semantic-color-text-muted); }
+.ev-line-lbl { display: inline-flex; align-items: center; gap: 4px; font-size: .7rem; font-weight: 600; color: var(--deborah-semantic-color-text-muted); }
 .ev-line-values { display: flex; justify-content: space-between; margin-top: 4px; }
 .ev-line-val { font-size: .78rem; font-weight: 700; font-variant-numeric: tabular-nums; }
 
 /* ── S19.06: Accessible table alternative ── */
 .ev-table-alt { margin-top: 10px; }
-.ev-table-alt summary { cursor: pointer; font-size: .72rem; font-weight: 700; color: var(--edikit-semantic-color-action-primary); }
+.ev-table-alt summary { cursor: pointer; font-size: .72rem; font-weight: 700; color: var(--deborah-semantic-color-action-primary); }
 .ev-table-alt table { width: 100%; margin-top: 6px; font-size: .74rem; border-collapse: collapse; }
-.ev-table-alt th, .ev-table-alt td { padding: 5px 8px; text-align: left; border-bottom: 1px solid var(--edikit-semantic-color-border-default, var(--edikit-semantic-color-border-subtle)); }
-.ev-table-alt thead th { font-size: .66rem; text-transform: uppercase; letter-spacing: .04em; color: var(--edikit-semantic-color-text-muted); }
+.ev-table-alt th, .ev-table-alt td { padding: 5px 8px; text-align: left; border-bottom: 1px solid var(--deborah-semantic-color-border-default, var(--deborah-semantic-color-border-subtle)); }
+.ev-table-alt thead th { font-size: .66rem; text-transform: uppercase; letter-spacing: .04em; color: var(--deborah-semantic-color-text-muted); }
 
 /* ── S19.11: Projector — distance readable (≥24px labels, ≥16px bars) ──
    Director kompakt varianti — projection context'da override. */
@@ -115,7 +115,7 @@
 .proj-screen .ev-nr { font-size: 1.1rem; }
 
 /* CVD-safe: marker colors ishlamasa shape yetarli (S19.05) */
-.ev-dist-row.is-no-response .ev-dist-bar { background: var(--edikit-semantic-color-text-muted, #94A3B8) !important; }
+.ev-dist-row.is-no-response .ev-dist-bar { background: var(--deborah-semantic-color-text-muted, #94A3B8) !important; }
 
 /* Reduced motion — transitionlar to'xtaydi (S19.08) */
 @media (prefers-reduced-motion: reduce) {

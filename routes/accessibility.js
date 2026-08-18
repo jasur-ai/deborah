@@ -1,5 +1,5 @@
 /**
- * Edikit — WCAG 2.2 AA & Artifact Accessibility Routes
+ * Deborah — WCAG 2.2 AA & Artifact Accessibility Routes
  *
  * Prompt 64 REST API:
  *   - GET    /admin/accessibility                          — admin UI

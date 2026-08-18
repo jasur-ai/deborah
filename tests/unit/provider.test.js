@@ -1,5 +1,5 @@
 /**
- * Edikit — Unified Provider Async Adapter (unit tests, Prompt 58)
+ * Deborah — Unified Provider Async Adapter (unit tests, Prompt 58)
  *
  * Pure schema + client tekshiruvi (no DB/network):
  *   - validateProviderRequest + requestHash (idempotency)

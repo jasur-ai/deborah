@@ -1,5 +1,5 @@
 /**
- * Edikit — AI Evaluation, MLOps & Rollback (pure logic)
+ * Deborah — AI Evaluation, MLOps & Rollback (pure logic)
  *
  * Prompt 52 — golden set, deployment gate, drift va model rollbackni
  * production boshqaruviga aylantirish (research.md §7.7 metrics, §20

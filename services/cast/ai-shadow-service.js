@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast AI Co-host Shadow Service (C5-11)
+ * Deborah — Cast AI Co-host Shadow Service (C5-11)
  * ------------------------------------------------
  * Pure shadow module: AI hech qachon live action bajarmaydi, faqat
  * recommendation card sifatida suggestion beradi va teacher qaror

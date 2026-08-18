@@ -6,8 +6,8 @@
  */
 (function () {
   'use strict';
-  if (typeof window === 'undefined' || window.__edikitSwitchInit) return;
-  window.__edikitSwitchInit = true;
+  if (typeof window === 'undefined' || window.__deborahSwitchInit) return;
+  window.__deborahSwitchInit = true;
 
   const PENDING_MS = 750;
 

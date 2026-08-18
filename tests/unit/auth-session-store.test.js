@@ -64,7 +64,7 @@ describe('AUTH A-01 — session-store (Redis session foundation)', () => {
     await r.close();
   });
 
-  it('prefix edikit:sess: — Redis kalitlari izolyatsiya qilingan', async () => {
+  it('prefix deborah:sess: — Redis kalitlari izolyatsiya qilingan', async () => {
     const client = new Redis();
     const r = await createSessionStore({ client });
     const sess = { cookie: { maxAge: 60000 } };

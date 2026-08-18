@@ -1,5 +1,5 @@
 /**
- * Edikit — Tenant Context Helper
+ * Deborah — Tenant Context Helper
  *
  * Resolves the current tenant from request/session and provides
  * helper functions for tenant-scoped database queries.

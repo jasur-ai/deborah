@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   Edikit Badge Component (STYLE STEP 12, S12.09)
+   Deborah Badge Component (STYLE STEP 12, S12.09)
    ---------------------------------------------------------------
    S12.09 — Variantlar faqat: neutral, info, success, warning, danger.
             Badge text 1-2 so'z bo'ladi (UI qoidasi — to'liq jumla
@@ -31,25 +31,25 @@
   }
 
   .badge-neutral {
-    background: var(--edikit-semantic-color-surface-nested, #F7F9FC);
-    color: var(--edikit-semantic-color-text-secondary, #566176);
-    border-color: var(--edikit-semantic-color-border-subtle, #E2E8F0);
+    background: var(--deborah-semantic-color-surface-nested, #F7F9FC);
+    color: var(--deborah-semantic-color-text-secondary, #566176);
+    border-color: var(--deborah-semantic-color-border-subtle, #E2E8F0);
   }
   .badge-info {
-    background: var(--edikit-semantic-color-action-signal-soft, #E0F4FA);
-    color: var(--edikit-semantic-color-action-signal, #007C91);
+    background: var(--deborah-semantic-color-action-signal-soft, #E0F4FA);
+    color: var(--deborah-semantic-color-action-signal, #007C91);
   }
   .badge-success {
-    background: var(--edikit-semantic-color-status-success-soft, #E8F7EF);
-    color: var(--edikit-semantic-color-status-success, #137A43);
+    background: var(--deborah-semantic-color-status-success-soft, #E8F7EF);
+    color: var(--deborah-semantic-color-status-success, #137A43);
   }
   .badge-warning {
-    background: var(--edikit-semantic-color-status-warning-soft, #FFF4D6);
-    color: var(--edikit-semantic-color-status-warning, #9A5B00);
+    background: var(--deborah-semantic-color-status-warning-soft, #FFF4D6);
+    color: var(--deborah-semantic-color-status-warning, #9A5B00);
   }
   .badge-danger {
-    background: var(--edikit-semantic-color-status-danger-soft, #FDECEC);
-    color: var(--edikit-semantic-color-status-danger, #C93434);
+    background: var(--deborah-semantic-color-status-danger-soft, #FDECEC);
+    color: var(--deborah-semantic-color-status-danger, #C93434);
   }
 
   @media (forced-colors: active) {

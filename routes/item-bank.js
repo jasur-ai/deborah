@@ -1,5 +1,5 @@
 /**
- * Edikit — Item Bank API Routes
+ * Deborah — Item Bank API Routes
  *
  * REST API for reusable question bank with public/private versioning:
  *   - Item bank CRUD

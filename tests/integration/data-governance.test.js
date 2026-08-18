@@ -1,5 +1,5 @@
 /**
- * Edikit — Data Classification, Privacy, Retention & Purge (integration tests, Prompt 65)
+ * Deborah — Data Classification, Privacy, Retention & Purge (integration tests, Prompt 65)
  *
  * Service qatlami (fake DB): asset registration (idempotent, classification,
  * KMS/UZ guards), legal hold place/release, purge worker legal-hold

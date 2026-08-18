@@ -1,5 +1,5 @@
 /**
- * Edikit — Realtime / Multi-node Configuration (C5-06)
+ * Deborah — Realtime / Multi-node Configuration (C5-06)
  * -----------------------------------------------------
  * Tier L va undan yuqori uchun multiple Socket.IO node, shared adapter va
  * durable state ishlashini ta'minlaydigan config + policy moduli.

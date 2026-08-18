@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Server Timer Service
+ * Deborah — Cast Server Timer Service
  * -----------------------------------
  * Off / soft / strict timer — server timestamp va revision bilan.
  * Timer callback'da expected question ID + revision tekshiriladi (stale → no-op).

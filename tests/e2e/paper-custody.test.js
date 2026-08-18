@@ -1,5 +1,5 @@
 /**
- * Edikit — E2E/Security: Paper Packet Print & Custody Authorization (Prompt 42)
+ * Deborah — E2E/Security: Paper Packet Print & Custody Authorization (Prompt 42)
  *
  * E2E walk (Prompt 42 §20):
  *   - Pure-logic E2E: packet plan → signed page QR → verify → secret scan
@@ -29,7 +29,7 @@ import {
   CUSTODY_EVENT_TYPES,
 } from '../../src/modules/paper/index.js';
 
-const SIGNING_KEY = 'edikit-paper-e2e-custody-key-0123456789abcd';
+const SIGNING_KEY = 'deborah-paper-e2e-custody-key-0123456789abcd';
 
 let app;
 let httpServer;

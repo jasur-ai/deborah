@@ -1,5 +1,5 @@
 /**
- * Edikit — Student Preflight Tests
+ * Deborah — Student Preflight Tests
  *
  * Covers (Prompt 28):
  *   - Constants: availability statuses, preflight statuses, blocker codes/messages, device checks

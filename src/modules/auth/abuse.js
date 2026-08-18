@@ -1,5 +1,5 @@
 /**
- * Edikit — Abuse detection (AUTH C-06)
+ * Deborah — Abuse detection (AUTH C-06)
  * -------------------------------------------------------------------
  * Credential stuffing + password spray + OTP bombing — Redis counters.
  *

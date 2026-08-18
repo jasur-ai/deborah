@@ -1,5 +1,5 @@
 /**
- * Edikit — Resource Recommendation Connectors (barrel, Prompt 54)
+ * Deborah — Resource Recommendation Connectors (barrel, Prompt 54)
  *
  * research.md §11 manba tavsiyasi, §19 provider adapter contract,
  * §34 RAG source-pack. Verified metadata bilan maqola/paper/video/

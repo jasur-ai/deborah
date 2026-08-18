@@ -1,5 +1,5 @@
 /**
- * Edikit — Role-Aware Shell (RBAC for the frontend shell)
+ * Deborah — Role-Aware Shell (RBAC for the frontend shell)
  *
  * Prompt 68 — teacher, student, admin, proctor, marker va board journeylarini
  * yagona accessible shell'da tugatish (research.md §4.3 rollar, §28 a11y).

@@ -1,5 +1,5 @@
 /**
- * Edikit — API, Socket, Job, Webhook & Outbox Contract Audit (e2e/security, Prompt 67)
+ * Deborah — API, Socket, Job, Webhook & Outbox Contract Audit (e2e/security, Prompt 67)
  *
  * Full critical-journey (research.md §18/§19): route inventory → zod→OpenAPI
  * contract → socket allowlist → webhook raw-signature/replay/dedup →

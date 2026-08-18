@@ -1,5 +1,5 @@
 /**
- * Edikit — Intervention Loop, Adaptive Practice & Support Routes
+ * Deborah — Intervention Loop, Adaptive Practice & Support Routes
  *
  * Prompt 55 REST API (admin — requireAdmin):
  *   - GET  /api/admin/interventions/meta           — constants for admin UI

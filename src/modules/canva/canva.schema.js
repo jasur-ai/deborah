@@ -1,5 +1,5 @@
 /**
- * Edikit — Canva Button/Connect Adapter (pure logic)
+ * Deborah — Canva Button/Connect Adapter (pure logic)
  *
  * Prompt 59 — Canva modal (Button) va Connect OAuth integratsiyasini
  * canonical deck bilan yopish (research.md §9.8 Canva Button — modal

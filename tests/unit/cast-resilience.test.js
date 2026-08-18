@@ -1,5 +1,5 @@
 /**
- * Edikit — Hybrid va low-bandwidth mode (C4-02) Tests
+ * Deborah — Hybrid va low-bandwidth mode (C4-02) Tests
  * ----------------------------------------------------
  * coverage: resolveParticipantDelivery (in_room/remote/hybrid), bucketNetworkQuality
  * (latency/loss thresholds — item 8), deliveryFingerprint stability (item 15),

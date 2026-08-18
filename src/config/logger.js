@@ -1,5 +1,5 @@
 /**
- * Edikit — Structured Logger
+ * Deborah — Structured Logger
  *
  * Uses Pino for structured JSON logging.
  * Provides:

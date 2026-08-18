@@ -1,5 +1,5 @@
 /**
- * Edikit — Origin/Referer Allowlist Middleware
+ * Deborah — Origin/Referer Allowlist Middleware
  *
  * Protects against CSRF attacks by verifying that POST/PUT/PATCH/DELETE
  * requests come from an allowed origin.

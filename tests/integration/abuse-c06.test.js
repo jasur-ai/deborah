@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH C-06 Credential stuffing + OTP bombing — Integration tests
+ * Deborah — AUTH C-06 Credential stuffing + OTP bombing — Integration tests
  * --------------------------------------------------------------------------
  *  - verify/send OTP bomb: 3+ send → 429 (per-user)
  *  - login stuffing: 10 turli account fail (bir IP) → block javob

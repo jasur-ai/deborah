@@ -1,5 +1,5 @@
 /**
- * Edikit — Accommodation API Routes
+ * Deborah — Accommodation API Routes
  *
  * Endpoints (ordered to avoid route collision — snapshot routes BEFORE :id):
  *   POST   /api/accommodations                          — Create new accommodation

@@ -1,5 +1,5 @@
 /**
- * Edikit — Source Pack & Secure RAG Ingestion (integration/contract, Prompt 50)
+ * Deborah — Source Pack & Secure RAG Ingestion (integration/contract, Prompt 50)
  *
  * HTTP integration (real Express app + admin auth + CSRF) + tenant vector
  * ACL contract:

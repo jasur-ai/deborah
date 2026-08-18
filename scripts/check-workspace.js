@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Teacher Workspace Validator (STYLE STEP 25)
+ * Deborah — Teacher Workspace Validator (STYLE STEP 25)
  * ------------------------------------------------------
  * S25.01 — 820px single → 1280px workspace grid (shell + content)
  * S25.02 — header greeting + `Yangi test` primary + `Quick Prompt` secondary
@@ -69,7 +69,7 @@ if (panel.includes('ws-skeleton-card') && panel.includes('Qayta urinish') && pan
 else bad('S25.07: loading/error/empty toliq emas');
 
 // ── S25.08: density preference ──
-if (wsJs.includes('edikit-ws-density') && wsCss.includes('data-ws-density'))
+if (wsJs.includes('deborah-ws-density') && wsCss.includes('data-ws-density'))
   ok('S25.08: density preference (localStorage)');
 else bad('S25.08: density preference yoq');
 

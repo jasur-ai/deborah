@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Session Choreography UI (C3-14)
+ * Deborah — Cast Session Choreography UI (C3-14)
  * ---------------------------------------------
  * Composer: block add/reorder/duplicate/edit/delete + keyboard move up/down.
  * Dashboard: current/next block, elapsed/remaining, coverage, health.

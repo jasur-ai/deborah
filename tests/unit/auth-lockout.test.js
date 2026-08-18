@@ -1,5 +1,5 @@
 /**
- * Edikit — Auth Lockout & Rate Limit Service Unit Tests (AUTH A-03)
+ * Deborah — Auth Lockout & Rate Limit Service Unit Tests (AUTH A-03)
  *
  * Covers:
  *   - per-user hard lockout (failed_attempts / locked_until in DB)

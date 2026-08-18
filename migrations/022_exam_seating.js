@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 022: Seat, Proctor, Hall Ticket & Check-in (Prompt 40)
+ * Deborah — Migration 022: Seat, Proctor, Hall Ticket & Check-in (Prompt 40)
  *
  * Prompt 40 — published schedule asosida seat/proctor assignment va
  * offline-tolerant check-in (research.md §15 relational schema, §53.3 Seating):

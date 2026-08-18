@@ -1,5 +1,5 @@
 /**
- * Edikit — AI Question Generator 50/30/20 (DB service)
+ * Deborah — AI Question Generator 50/30/20 (DB service)
  *
  * Prompt 53 — source-grounded, difficulty-controlled item draft pipeline.
  * Graceful degradation (PostgreSQL absent in CI): write path'lar

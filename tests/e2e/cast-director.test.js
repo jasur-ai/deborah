@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast E2E (T-03): Director controls
+ * Deborah — Cast E2E (T-03): Director controls
  * -------------------------------------------
  * Real socket orqali director flow:
  * - Session start (item 5)

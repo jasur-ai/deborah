@@ -1,5 +1,5 @@
 /**
- * Edikit — E2E/Security: Room Outage / Evacuation Drill (Prompt 41)
+ * Deborah — E2E/Security: Room Outage / Evacuation Drill (Prompt 41)
  *
  * E2E walk (Prompt 41 §20):
  *   - Pure-logic E2E drill: network outage incident → action (evacuation

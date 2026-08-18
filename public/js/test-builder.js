@@ -525,7 +525,7 @@
     const input = $('#tb-import-input');
     zone.addEventListener('click', () => input.click());
     zone.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); } });
-    zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.style.borderColor = 'var(--edikit-semantic-color-action-primary)'; });
+    zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.style.borderColor = 'var(--deborah-semantic-color-action-primary)'; });
     zone.addEventListener('dragleave', () => { zone.style.borderColor = ''; });
     zone.addEventListener('drop', (e) => { e.preventDefault(); zone.style.borderColor = ''; const f = e.dataTransfer.files[0]; f && parseExcel(f); });
     input.addEventListener('change', () => { const f = input.files[0]; f && parseExcel(f); });
@@ -625,7 +625,7 @@
       ['Eng katta sayyora?', 'Mars', 'Yupiter', 'Saturn', 'Neptun', 1],
     ];
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(data), 'Savollar');
-    XLSX.writeFile(wb, 'edikit-template.xlsx');
+    XLSX.writeFile(wb, 'deborah-template.xlsx');
   }
 
   // ── Escape helpers ──

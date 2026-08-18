@@ -37,6 +37,6 @@ motion.modal.enter          → modal enter animatsiya
 
 ## Alias qoidasi (S04.03)
 
-Component CSS'da faqat `--edikit-semantic-*` variable'lari ishlatiladi.
-`--edikit-primitive-*` faqat semantic fayllar ichida alias manbai sifatida
+Component CSS'da faqat `--deborah-semantic-*` variable'lari ishlatiladi.
+`--deborah-primitive-*` faqat semantic fayllar ichida alias manbai sifatida
 ruxsat etiladi.

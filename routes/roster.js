@@ -1,5 +1,5 @@
 /**
- * Edikit — Roster Upload & Staging API Routes
+ * Deborah — Roster Upload & Staging API Routes
  *
  * Endpoints:
  *   POST   /api/roster/upload     — Upload and parse a roster file (XLSX/CSV)
@@ -86,7 +86,7 @@ function requireRosterManager(req, res, next) {
 }
 
 // ── Multer: temporary upload directory ──
-const uploadDir = path.resolve(os.tmpdir(), 'edikit-roster-uploads');
+const uploadDir = path.resolve(os.tmpdir(), 'deborah-roster-uploads');
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
 const storage = multer.diskStorage({

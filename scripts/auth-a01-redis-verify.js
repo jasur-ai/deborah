@@ -1,13 +1,13 @@
 /**
- * AUTH A-01 — Real Redis TTL verification (Docker: edikit-redis)
+ * AUTH A-01 — Real Redis TTL verification (Docker: deborah-redis)
  * -----------------------------------------------------------------
  * ioredis-mock `expiration` set() formasini qo'llamagani uchun TTL unit testda
  * o'lchanmaydi. Bu script haqiqiy Redis'ga qarshi isbotlaydi (HTTP qatlamisiz —
  * drvfs fetch quirk'laridan holi):
- *   - cookie.expires = now + 30 kun  → `edikit:sess:<sid>` TTL ≈ 2592000s
+ *   - cookie.expires = now + 30 kun  → `deborah:sess:<sid>` TTL ≈ 2592000s
  *   - cookie.expires = now + 8 soat  → TTL ≈ 28800s
  *
- * Ishlatish:  docker exec edikit-redis redis-cli ping  (Redis tirik bo'lishi kerak)
+ * Ishlatish:  docker exec deborah-redis redis-cli ping  (Redis tirik bo'lishi kerak)
  *   node scripts/auth-a01-redis-verify.js
  *
  * Exit: 0 = PASS, 1 = FAIL

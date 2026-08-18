@@ -1,5 +1,5 @@
 /**
- * Edikit — Admin Panel Routes
+ * Deborah — Admin Panel Routes
  * Users, Fans (Mock), PRE Tests, Results, Stats
  */
 
@@ -12,6 +12,9 @@ import { recordMetric } from '../src/telemetry/index.js';
 import { DB_PATHS } from '../utils/constants.js';
 import crypto from 'crypto';
 import { safeKey } from '../utils/helpers.js';
+// AUTH A-19/B-15: teacher approval + B-34 signup review queue
+import teacherRoutes from './admin/teachers.js';
+import signupReviewRoutes from './admin/signup-reviews.js';
 // C4-08: institution governance — policy CRUD, publish, diff, migration preview, audit export
 import {
   createInstitutionPolicy,
@@ -35,6 +38,8 @@ import { PRESET_REGISTRY } from '../services/cast/presets.js';
 const router = Router();
 
 router.use(requireAdmin);
+router.use(teacherRoutes);
+router.use(signupReviewRoutes);
 
 // ── Dashboard ──
 router.get('/dashboard', async (req, res) => {

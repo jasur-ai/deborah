@@ -1,5 +1,5 @@
 /**
- * Edikit — Google Slides Adapter (service)
+ * Deborah — Google Slides Adapter (service)
  *
  * Prompt 59 — Google Slides minimum-scope integratsiyasi:
  *   - startGoogleLink: PKCE OAuth → drive.file scope authorize URL.

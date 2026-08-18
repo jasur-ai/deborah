@@ -22,7 +22,7 @@ describe('AUTH B-06 — verify template 4 til', () => {
       expect(tpl.subject.length).toBeGreaterThan(0);
       expect(tpl.html).toContain('123456');
       expect(tpl.text).toContain('123456');
-      expect(tpl.subject).toContain('Edikit');
+      expect(tpl.subject).toContain('Deborah');
     }
   });
 

@@ -1,5 +1,5 @@
 /**
- * Edikit — Server Smoke Test
+ * Deborah — Server Smoke Test
  *
  * Starts the server with `node server.js`, tests ALL routes,
  * health endpoints, and API endpoints with proper cookie + CSRF handling.
@@ -174,7 +174,7 @@ function cleanup() {
 
 async function main() {
   console.log('\n╔═══════════════════════════════════════════╗');
-  console.log('║   🔥 Edikit — Server Smoke Test        ║');
+  console.log('║   🔥 Deborah — Server Smoke Test        ║');
   console.log('╚═══════════════════════════════════════════╝\n');
 
   // ── Step 1: Start server ──

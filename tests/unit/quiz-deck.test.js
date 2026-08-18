@@ -1,5 +1,5 @@
 /**
- * Edikit — Quiz-from-Deck (unit tests, Prompt 59)
+ * Deborah — Quiz-from-Deck (unit tests, Prompt 59)
  *
  * Pure schema: concept extraction (§10), 50/30/20 blueprint, deterministic
  * question generation with per-question source citation, needs-review on

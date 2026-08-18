@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Quality Lab (C3-15)
+ * Deborah — Cast Quality Lab (C3-15)
  * ----------------------------------
  * Preflight (test/session boshlanishidan oldin) va postflight (sessionʻdan
  * keyin) quality report. Findinglar severity + field path + question ID +

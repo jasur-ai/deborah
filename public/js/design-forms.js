@@ -1,5 +1,5 @@
 /**
- * Edikit — Form field enhancements (STYLE STEP 13)
+ * Deborah — Form field enhancements (STYLE STEP 13)
  * --------------------------------------------------
  * S13.01 — live character counter: .form-field__count[data-for][data-max]
  *          maxlength'dan oshsa data-over attribute qo'yiladi (CSS red).

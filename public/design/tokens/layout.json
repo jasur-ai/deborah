@@ -1,6 +1,6 @@
 {
   "$schema": "https://design-tokens.github.io/community-group/format/",
-  "edikit": {
+  "deborah": {
     "spacing": {
       "$description": "4px scale spacing (S09.01) — 0,4,8,12,16,20,24,32,40,48,64,80,96. 2px interval tokenlar yo'q.",
       "$type": "dimension",

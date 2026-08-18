@@ -1,5 +1,5 @@
 /**
- * Edikit — Input & Form Field (STYLE STEP 13)
+ * Deborah — Input & Form Field (STYLE STEP 13)
  * ---------------------------------------------
  * S13.01 — form field anatomy: label, required/optional, control, hint, error, count
  * S13.03 — control min-height 44px (desktop) / 48px (mobile); mobile font 16px+
@@ -13,23 +13,23 @@
 /* ── S13.01: Field anatomy ── */
 .form-field {
   display: block;
-  margin-block-end: var(--edikit-spacing-4, 16px);
+  margin-block-end: var(--deborah-spacing-4, 16px);
 }
 
 .form-field__label {
   display: flex;
   align-items: center;
-  gap: var(--edikit-spacing-2, 8px);
-  margin-block-end: var(--edikit-spacing-2, 8px);
-  font-size: var(--edikit-typography-font-size-sm, 14px);
+  gap: var(--deborah-spacing-2, 8px);
+  margin-block-end: var(--deborah-spacing-2, 8px);
+  font-size: var(--deborah-typography-font-size-sm, 14px);
   font-weight: 700;
-  color: var(--edikit-semantic-color-text-primary);
+  color: var(--deborah-semantic-color-text-primary);
 }
 
 .form-field__label .form-field__optional {
-  font-size: var(--edikit-typography-font-size-xs, 12px);
+  font-size: var(--deborah-typography-font-size-xs, 12px);
   font-weight: 500;
-  color: var(--edikit-semantic-color-text-secondary);
+  color: var(--deborah-semantic-color-text-secondary);
 }
 
 /* ── Control base ── */
@@ -37,21 +37,21 @@
   display: block;
   width: 100%;
   min-height: 44px; /* S13.03 desktop */
-  padding: var(--edikit-spacing-2, 8px) var(--edikit-spacing-3, 12px);
-  font-size: var(--edikit-typography-font-size-md, 16px); /* S13.03 mobile >= 16px */
+  padding: var(--deborah-spacing-2, 8px) var(--deborah-spacing-3, 12px);
+  font-size: var(--deborah-typography-font-size-md, 16px); /* S13.03 mobile >= 16px */
   font-family: inherit;
   line-height: 1.4;
-  color: var(--edikit-semantic-color-text-primary);
-  background: var(--edikit-semantic-color-surface-control, var(--edikit-semantic-color-surface-elevated));
-  border: 2px solid var(--edikit-semantic-color-border-default); /* S13.04 >= 3:1 */
-  border-radius: var(--edikit-radius-sm, 8px);
+  color: var(--deborah-semantic-color-text-primary);
+  background: var(--deborah-semantic-color-surface-control, var(--deborah-semantic-color-surface-elevated));
+  border: 2px solid var(--deborah-semantic-color-border-default); /* S13.04 >= 3:1 */
+  border-radius: var(--deborah-radius-sm, 8px);
   transition: border-color 120ms ease, box-shadow 120ms ease;
   -webkit-appearance: none;
   appearance: none;
 }
 
 .form-control::placeholder {
-  color: var(--edikit-semantic-color-text-tertiary, var(--edikit-semantic-color-text-secondary));
+  color: var(--deborah-semantic-color-text-tertiary, var(--deborah-semantic-color-text-secondary));
   font-weight: 400;
   opacity: 1;
 }
@@ -61,31 +61,31 @@
 
 /* ── S13.05: Hover vs Focus — vizual farqli ── */
 .form-control:hover:not(:disabled):not(:focus) {
-  border-color: var(--edikit-semantic-color-border-strong);
+  border-color: var(--deborah-semantic-color-border-strong);
 }
 
 .form-control:focus {
-  outline: 3px solid var(--edikit-semantic-color-focus, oklch(55% 0.2 264));
+  outline: 3px solid var(--deborah-semantic-color-focus, oklch(55% 0.2 264));
   outline-offset: 2px;
-  border-color: var(--edikit-semantic-color-action-primary);
-  box-shadow: 0 0 0 1px var(--edikit-semantic-color-action-primary);
+  border-color: var(--deborah-semantic-color-action-primary);
+  box-shadow: 0 0 0 1px var(--deborah-semantic-color-action-primary);
 }
 
 /* ── S13.06: Error / Warning / Success ── */
 .form-field--error .form-control,
 .form-control[aria-invalid='true'] {
-  border-color: var(--edikit-semantic-color-status-danger);
-  background-color: color-mix(in srgb, var(--edikit-semantic-color-status-danger) 4%, transparent);
+  border-color: var(--deborah-semantic-color-status-danger);
+  background-color: color-mix(in srgb, var(--deborah-semantic-color-status-danger) 4%, transparent);
 }
 .form-field--error .form-control:focus {
-  outline-color: var(--edikit-semantic-color-status-danger);
-  box-shadow: 0 0 0 1px var(--edikit-semantic-color-status-danger);
+  outline-color: var(--deborah-semantic-color-status-danger);
+  box-shadow: 0 0 0 1px var(--deborah-semantic-color-status-danger);
 }
 .form-field--warning .form-control {
-  border-color: var(--edikit-semantic-color-status-warning);
+  border-color: var(--deborah-semantic-color-status-warning);
 }
 .form-field--success .form-control {
-  border-color: var(--edikit-semantic-color-status-success);
+  border-color: var(--deborah-semantic-color-status-success);
 }
 
 /* Error / hint / count text */
@@ -94,37 +94,37 @@
 .form-field__count {
   display: flex;
   align-items: flex-start;
-  gap: var(--edikit-spacing-1, 4px);
-  margin-block-start: var(--edikit-spacing-2, 8px);
-  font-size: var(--edikit-typography-font-size-sm, 14px);
+  gap: var(--deborah-spacing-1, 4px);
+  margin-block-start: var(--deborah-spacing-2, 8px);
+  font-size: var(--deborah-typography-font-size-sm, 14px);
   line-height: 1.35;
 }
-.form-field__error { color: var(--edikit-semantic-color-status-danger); font-weight: 600; }
+.form-field__error { color: var(--deborah-semantic-color-status-danger); font-weight: 600; }
 .form-field__error svg { flex: 0 0 auto; margin-block-start: 1px; }
-.form-field__hint { color: var(--edikit-semantic-color-text-secondary); }
+.form-field__hint { color: var(--deborah-semantic-color-text-secondary); }
 .form-field__count {
   justify-content: flex-end;
-  color: var(--edikit-semantic-color-text-tertiary, var(--edikit-semantic-color-text-secondary));
+  color: var(--deborah-semantic-color-text-tertiary, var(--deborah-semantic-color-text-secondary));
   font-variant-numeric: tabular-nums;
 }
-.form-field__count[data-over] { color: var(--edikit-semantic-color-status-danger); font-weight: 600; }
+.form-field__count[data-over] { color: var(--deborah-semantic-color-status-danger); font-weight: 600; }
 
 /* ── S13.07: Read-only vs Disabled ── */
 .form-control:read-only {
   background: transparent;
   border-style: dashed;
-  color: var(--edikit-semantic-color-text-primary);
+  color: var(--deborah-semantic-color-text-primary);
   cursor: default;
 }
 .form-control:disabled,
 .form-control[disabled] {
-  background: var(--edikit-semantic-color-surface-sunken, oklch(0.93 0 0));
-  border-color: var(--edikit-semantic-color-border-subtle, var(--edikit-semantic-color-border-default));
-  color: var(--edikit-semantic-color-text-disabled, var(--edikit-semantic-color-text-tertiary));
+  background: var(--deborah-semantic-color-surface-sunken, oklch(0.93 0 0));
+  border-color: var(--deborah-semantic-color-border-subtle, var(--deborah-semantic-color-border-default));
+  color: var(--deborah-semantic-color-text-disabled, var(--deborah-semantic-color-text-tertiary));
   cursor: not-allowed;
   opacity: 1;
 }
-.form-field--disabled .form-field__label { color: var(--edikit-semantic-color-text-disabled, var(--edikit-semantic-color-text-tertiary)); }
+.form-field--disabled .form-field__label { color: var(--deborah-semantic-color-text-disabled, var(--deborah-semantic-color-text-tertiary)); }
 
 /* ── Textarea ── */
 textarea.form-control {

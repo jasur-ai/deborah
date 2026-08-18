@@ -1,5 +1,5 @@
 /**
- * Edikit — Written AI Grading Shadow Mode (pure logic)
+ * Deborah — Written AI Grading Shadow Mode (pure logic)
  *
  * Prompt 51 — rubric/evidence structured AI draft'ni student/final
  * grade'dan YASHIRIN shadow rejimda ishlatish (research.md §7.4 rubric

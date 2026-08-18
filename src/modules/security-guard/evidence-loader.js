@@ -1,5 +1,5 @@
 /**
- * Edikit — Security Guard Evidence Loader (Prompt 70, items 07–09, 18)
+ * Deborah — Security Guard Evidence Loader (Prompt 70, items 07–09, 18)
  *
  * Turns runtime signals into the evidence the threat model / ASVS matrix
  * gate consumes:
@@ -60,10 +60,10 @@ const AUDIT_PROVES_CONTROL = {
 };
 
 const METRIC_PROVES_CONTROL = {
-  edikit_security_release_gate: 'immutable_audit_log',
-  edikit_security_findings_accepted_total: 'immutable_audit_log',
-  edikit_http_requests_total: 'session_redis_store',
-  edikit_socket_connections_total: 'per_event_rate_limit',
+  deborah_security_release_gate: 'immutable_audit_log',
+  deborah_security_findings_accepted_total: 'immutable_audit_log',
+  deborah_http_requests_total: 'session_redis_store',
+  deborah_socket_connections_total: 'per_event_rate_limit',
 };
 
 /**

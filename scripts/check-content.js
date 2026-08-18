@@ -44,7 +44,7 @@ if (existsSync('routes/user.js')) {
 }
 if (existsSync('views/user/panel.ejs')) {
   const p = readFileSync('views/user/panel.ejs', 'utf8');
-  if (p.includes('EdikitTerms') && p.includes('searchNormalize')) ok('S35.05: panel client searchNormalize');
+  if (p.includes('DeborahTerms') && p.includes('searchNormalize')) ok('S35.05: panel client searchNormalize');
   else bad('S35.05: panel.ejs client normalizatsiya yo\'q');
 }
 if (existsSync('public/js/term-utils.js')) {

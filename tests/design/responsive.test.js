@@ -69,8 +69,8 @@ describe('STEP 20 — Responsive, container queries, safe areas', () => {
 
   describe('S20.08: Ultra-wide guard', () => {
     it('workspace max 1440-1600px + reading 65ch', () => {
-      expect(layout).toMatch(/--edikit-container-workspace-wide,\s*1440px/);
-      expect(layout).toMatch(/--edikit-container-reading,\s*65ch/);
+      expect(layout).toMatch(/--deborah-container-workspace-wide,\s*1440px/);
+      expect(layout).toMatch(/--deborah-container-reading,\s*65ch/);
     });
     it('ultra-wide clamps workspace', () => {
       expect(resp).toMatch(/@media \(min-width: 1600px\)/);

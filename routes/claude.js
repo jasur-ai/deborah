@@ -1,5 +1,5 @@
 /**
- * Edikit — Claude Native Adapter Routes
+ * Deborah — Claude Native Adapter Routes
  *
  * Prompt 57 REST API (admin — requireAdmin):
  *   - GET  /api/admin/claude/meta                 — constants for admin UI

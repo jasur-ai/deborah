@@ -133,7 +133,7 @@
 <!-- ══ S1: ENTER CODE ══ -->
 <div class="screen on" id="s-code">
   <a href="/" class="toplink">← Orqaga</a>
-  <div class="logo"><img src="/images/logo-icon.svg" alt="Edikit"></div>
+  <div class="logo"><img src="/images/logo-icon.svg" alt="Deborah"></div>
   <p style="color:var(--muted);font-size:.82rem;font-weight:700;margin-bottom:24px;">O'yinga qo'shilish</p>
   <div class="box">
     <div class="box-title">O'yin kodini kiriting</div>
@@ -169,7 +169,7 @@
 <!-- ══ S4: LOBBY ══ -->
 <div class="screen" id="s-lobby">
   <div class="lobby-wrap">
-    <div class="logo" style="font-size:1.5rem;margin-bottom:4px;"><img src="/images/logo-icon.svg" alt="Edikit" style="height:24px"> Lobby</div>
+    <div class="logo" style="font-size:1.5rem;margin-bottom:4px;"><img src="/images/logo-icon.svg" alt="Deborah" style="height:24px"> Lobby</div>
     <div class="lob-label">O'YIN KODI</div>
     <div class="lob-code" id="lob-code">—</div>
     <div class="lob-count" id="lob-count">0 o'yinchi</div>
@@ -335,14 +335,14 @@
 
     // Rejoin: check session storage
     try {
-      const ss = JSON.parse(sessionStorage.getItem('edikit_player') || 'null');
+      const ss = JSON.parse(sessionStorage.getItem('deborah_player') || 'null');
       if (ss && ss.code && urlCode && urlCode === ss.code) {
         code = ss.code; name = ss.name; emoji = ss.emoji;
         rejoinSession();
         return;
       }
-      sessionStorage.removeItem('edikit_player');
-    } catch (_) { sessionStorage.removeItem('edikit_player'); }
+      sessionStorage.removeItem('deborah_player');
+    } catch (_) { sessionStorage.removeItem('deborah_player'); }
   });
 
   // ── STEP 1: Check Code ──
@@ -392,7 +392,7 @@
   };
 
   socket.on('player:joined', (data) => {
-    sessionStorage.setItem('edikit_player', JSON.stringify({ code, name, emoji }));
+    sessionStorage.setItem('deborah_player', JSON.stringify({ code, name, emoji }));
     startLobby();
   });
 
@@ -586,7 +586,7 @@
     stopTimer();
     $('end-lb').innerHTML = renderLbAll(data.leaderboard || []);
     goTo('s-end');
-    sessionStorage.removeItem('edikit_player');
+    sessionStorage.removeItem('deborah_player');
   });
 
   socket.on('error', (data) => {
@@ -617,7 +617,7 @@
         return;
       }
       if (data.status === 'expired') {
-        sessionStorage.removeItem('edikit_player');
+        sessionStorage.removeItem('deborah_player');
         goTo('s-code');
         $('code-inp').value = '';
         showMsg('code-msg', 'O\'yin sessiyasi tugagan. Yangi kod kiriting.');

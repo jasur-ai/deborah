@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH A-07: Google OIDC unit testlari
+ * Deborah — AUTH A-07: Google OIDC unit testlari
  * ----------------------------------------------------------
  * Guide A-07 §7/§12/§13/§17/§23:
  *  - state + nonce 32 bayt (buildAuthUrl session'da)

@@ -1,5 +1,5 @@
 /**
- * Edikit — WCAG 2.2 AA & Artifact Accessibility (integration tests, Prompt 64)
+ * Deborah — WCAG 2.2 AA & Artifact Accessibility (integration tests, Prompt 64)
  *
  * Service qatlami (fake DB): settings idempotent upsert, audit ACR record
  * (needs_review + audit trail), gap FSM (verified requires human verifier),

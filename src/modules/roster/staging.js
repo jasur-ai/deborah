@@ -1,5 +1,5 @@
 /**
- * Edikit — Roster Staging Area
+ * Deborah — Roster Staging Area
  *
  * Stores parsed roster rows before committing to the academic DB.
  * Provides:

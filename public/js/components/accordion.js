@@ -1,5 +1,5 @@
 /**
- * Edikit — Accordion (STYLE STEP 14, S14.09)
+ * Deborah — Accordion (STYLE STEP 14, S14.09)
  * ----------------------------------------------
  * Header BUTTON + aria-expanded + aria-controls.
  * [data-accordion] wrapper ichida:
@@ -42,8 +42,8 @@
 
   function init() {
     document.querySelectorAll('[data-accordion]').forEach(function (w) {
-      if (!w.__edikitAccordion) {
-        w.__edikitAccordion = true;
+      if (!w.__deborahAccordion) {
+        w.__deborahAccordion = true;
         initAccordion(w);
       }
     });

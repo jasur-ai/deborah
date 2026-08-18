@@ -1,5 +1,5 @@
 /**
- * Edikit — PWA Install Prompt Validation
+ * Deborah — PWA Install Prompt Validation
  * Tests all criteria needed for Chrome/Edge "Add to Home Screen" prompt
  * 
  * Usage: node scripts/test-pwa.js
@@ -448,7 +448,7 @@ function printSummary() {
 async function main() {
   console.log(`
 ╔═══════════════════════════════════════════╗
-║   Edikit — PWA Install Prompt Validation  ║
+║   Deborah — PWA Install Prompt Validation  ║
 ║   ${new Date().toISOString()}    ║
 ╚═══════════════════════════════════════════╝
   `);

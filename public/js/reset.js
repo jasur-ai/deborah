@@ -1,5 +1,5 @@
 /**
- * Edikit — Reset password page client UX (plan_login §5)
+ * Deborah — Reset password page client UX (plan_login §5)
  * ------------------------------------------------------
  * - Password show/hide toggle
  * - Strength meter (min 8 + letter + digit)
@@ -63,7 +63,7 @@
 
       var label = labels[score] || '';
       hint.textContent = label;
-      hint.style.color = score >= 3 ? 'var(--edikit-semantic-color-status-success, #22c55e)' : 'var(--edikit-semantic-color-text-muted, #94a3b8)';
+      hint.style.color = score >= 3 ? 'var(--deborah-semantic-color-status-success, #22c55e)' : 'var(--deborah-semantic-color-text-muted, #94a3b8)';
 
       var ok = v.length >= 8 && /[a-zA-Z]/.test(v) && /\d/.test(v);
       input.setCustomValidity(ok ? '' : ' ');

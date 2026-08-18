@@ -1,5 +1,5 @@
 /**
- * Edikit — HEMIS Identity Routes (AUTH A-15)
+ * Deborah — HEMIS Identity Routes (AUTH A-15)
  * -------------------------------------------
  * REST-first account linking (A-14 da live tasdiqlangan yo'l):
  *   GET  /api/auth/hemis/status   — bog'langanmi (authenticated)
@@ -13,7 +13,7 @@
  * SECURITY:
  *   - HEMIS paroli HECH QACHON saqlanmaydi/log'ga chiqmaydi.
  *   - Rate limit 10/15 daqiqa per IP + per user (checkLinkLimit).
- *   - hemis_id unique — bitta HEMIS akkaunt bitta Edikit akkauntiga
+ *   - hemis_id unique — bitta HEMIS akkaunt bitta Deborah akkauntiga
  *     (users_hemis_index mapping; IDOR/account takeover guard).
  *   - CSRF: global validateCsrf (x-csrf-token yoki _csrf) barcha POST'da.
  *   - OAuth callback state — session'dagi qiymat bilan solishtiriladi.

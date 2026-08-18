@@ -1,5 +1,5 @@
 /**
- * Edikit — AI Question Generator 50/30/20 Module Barrel
+ * Deborah — AI Question Generator 50/30/20 Module Barrel
  *
  * Prompt 53 — source-grounded, difficulty-controlled item draft pipeline
  * (research.md §8, §8.6 lifecycle). Pure schema (50/30/20 counts,

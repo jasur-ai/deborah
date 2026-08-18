@@ -1,5 +1,5 @@
 /**
- * Edikit — Uzbek Latin/Cyrillic & Terminology Layer
+ * Deborah — Uzbek Latin/Cyrillic & Terminology Layer
  *
  * Prompt 63 — uz-Latn, uz-Cyrl, ru va en content/version/search'ni
  * birinchi-class qilish (research.md §58). Deterministic transliteration,

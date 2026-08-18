@@ -20,7 +20,7 @@ const LANGS = ['uz', 'uz-cyrl', 'ru', 'en'];
 
 function sampleData(name, lang) {
   if (name === 'verify') return { code: '111111', lang };
-  if (name === 'reset') return { resetUrl: 'https://edikit.uz/user/reset?token=abc', lang };
+  if (name === 'reset') return { resetUrl: 'https://deborah.uz/user/reset?token=abc', lang };
   if (name === 'teacher_rejected') return { username: 'user1', lang, reason: 'Hujjatlar to‘liq emas' };
   if (name === 'security') {
     return { type: 'suspicious', username: 'user1', lang, device: 'Chrome', browser: 'Windows', city: 'Toshkent', time: '12:30' };
@@ -80,8 +80,8 @@ describe('AUTH B-20 email templates', () => {
   it('welcome: CTA “Birinchi amaliyotni boshlang” mavjud (barcha tillar)', () => {
     for (const lang of LANGS) {
       const t = renderWelcome({ username: 'user1', lang });
-      expect(t.html).toContain('edikit.uz/user/onboarding');
-      expect(t.text).toContain('edikit.uz/user/onboarding');
+      expect(t.html).toContain('deborah.uz/user/onboarding');
+      expect(t.text).toContain('deborah.uz/user/onboarding');
       expect(t.html).toContain('background:#1d4ed8'); // CTA button
     }
   });
@@ -105,7 +105,7 @@ describe('AUTH B-20 email templates', () => {
         expect(t.html).toContain('Windows');
         expect(t.html).toContain('Toshkent');
         expect(t.html).toContain('12:30');
-        expect(t.html).toContain('edikit.uz/user/panel#security');
+        expect(t.html).toContain('deborah.uz/user/panel#security');
         expect(t.html).not.toContain('ipHash');
         expect(t.html).not.toContain('userAgent');
         expect(t.text).toContain('Toshkent');
@@ -119,8 +119,8 @@ describe('AUTH B-20 email templates', () => {
   it('breach: CTA “Parolni o‘zgartirish” va breach xabari', () => {
     for (const lang of LANGS) {
       const t = renderBreach({ username: 'u', lang });
-      expect(t.html).toContain('edikit.uz/user/panel#security');
-      expect(t.text).toContain('edikit.uz/user/panel#security');
+      expect(t.html).toContain('deborah.uz/user/panel#security');
+      expect(t.text).toContain('deborah.uz/user/panel#security');
       expect(t.html).toContain('background:#1d4ed8'); // CTA
     }
   });
@@ -128,7 +128,7 @@ describe('AUTH B-20 email templates', () => {
   it('token/parol hech qachon emailda (verify faqat kod, reset faqat havola)', () => {
     const v = renderTemplate('verify', { code: '123456', lang: 'en' });
     expect(v.html).toContain('123456'); // kod — ruxsat
-    const r = renderTemplate('reset', { resetUrl: 'https://edikit.uz/user/reset?token=abc', lang: 'en' });
+    const r = renderTemplate('reset', { resetUrl: 'https://deborah.uz/user/reset?token=abc', lang: 'en' });
     expect(r.html).toContain('token=abc'); // havola — ruxsat
     // hech qayerda plaintext parol yo‘q
     const all = EMAIL_TEMPLATES.map((n) => {

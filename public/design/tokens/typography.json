@@ -1,6 +1,6 @@
 {
   "$schema": "https://design-tokens.github.io/community-group/format/",
-  "edikit": {
+  "deborah": {
     "typography": {
       "$description": "STEP 08 — Professional type stack: Source Sans 3 (UI/body), Manrope (display/marketing), IBM Plex Mono (code/timer/numeric). Nunito + Righteous operational ishlatilmaydi (S08.12). Self-hosted (public/fonts, SIL OFL 1.1).",
       "font-family": {

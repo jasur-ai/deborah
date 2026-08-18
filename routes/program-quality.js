@@ -1,5 +1,5 @@
 /**
- * Edikit — Program Quality & Accreditation Workspace Routes
+ * Deborah — Program Quality & Accreditation Workspace Routes
  *
  * Prompt 62 REST API:
  *   - GET    /admin/program-quality                 — admin UI

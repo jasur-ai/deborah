@@ -1,5 +1,5 @@
 /**
- * Edikit — PostgreSQL Infrastructure
+ * Deborah — PostgreSQL Infrastructure
  *
  * Provides:
  *   1. Kysely query builder instance (typed)

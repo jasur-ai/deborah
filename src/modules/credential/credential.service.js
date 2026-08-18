@@ -1,5 +1,5 @@
 /**
- * Edikit — Student Evidence Portfolio & Verifiable Credentials (service)
+ * Deborah — Student Evidence Portfolio & Verifiable Credentials (service)
  *
  * Prompt 61 — evidence portfolio + credential lifecycle:
  *   - ensurePortfolio / addPortfolioItem / setItemVisibility / listPortfolio

@@ -1,5 +1,5 @@
 /**
- * Edikit — Integration Tests: Health & Readiness Endpoints
+ * Deborah — Integration Tests: Health & Readiness Endpoints
  *
  * Tests the /health and /ready endpoints added in Prompt 02.
  * Uses the app factory (no server start needed for GET routes).

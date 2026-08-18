@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Security Fuzz Suite: DAST/API/Socket (Prompt 70, items 10–12)
+ * Deborah — Security Fuzz Suite: DAST/API/Socket (Prompt 70, items 10–12)
  *
  * Zero-dependency fuzz cases over the red-team classes from research §39:
  *
@@ -170,7 +170,7 @@ const summary = { total: results.length, passed: results.length - failed.length,
 if (jsonOut) {
   console.log(JSON.stringify({ summary, results }, null, 2));
 } else {
-  console.log('\n═══ Edikit Security Fuzz Suite ═══');
+  console.log('\n═══ Deborah Security Fuzz Suite ═══');
   for (const r of results) {
     console.log(`[${r.pass ? 'PASS' : 'FAIL'}] ${r.id} ${r.name} — ${r.detail || 'blocked'}`);
   }

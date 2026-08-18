@@ -1,5 +1,5 @@
 /**
- * Edikit — Attempt Lease, Identity Step & Server Timer (pure logic)
+ * Deborah — Attempt Lease, Identity Step & Server Timer (pure logic)
  *
  * Pure, DB-free logic for Prompt 30 (Phase D #1):
  *   - Identity level model: policy security profile (S0–S4) → required

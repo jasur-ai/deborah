@@ -1,5 +1,5 @@
 /**
- * Edikit — Claude Native Adapter (e2e/security tests, Prompt 57)
+ * Deborah — Claude Native Adapter (e2e/security tests, Prompt 57)
  *
  * E2E flow: sources → messages → (mocked) Claude output → strict
  * canonical extraction → citation mapping → validated artifact.

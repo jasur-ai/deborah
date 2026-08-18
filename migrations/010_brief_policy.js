@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 010: Assessment Brief, Policy Pack & Simulator
+ * Deborah — Migration 010: Assessment Brief, Policy Pack & Simulator
  *
  * Adds versioned assessment briefs and typed institutional policies:
  *   - assessment_briefs: versioned summative assessment brief (AI-use A0–A4,
@@ -217,9 +217,9 @@ export async function up(db) {
     'simulator_runs',
   ];
   for (const table of newTables) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
-    await sql`GRANT DELETE ON ${sql.table(table)} TO edikit_migration`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 
   console.log('Brief/Policy structure created: 6 tables');

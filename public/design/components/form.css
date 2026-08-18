@@ -1,5 +1,5 @@
 /**
- * Edikit — Form Layout & Error Summary (STYLE STEP 13)
+ * Deborah — Form Layout & Error Summary (STYLE STEP 13)
  * -----------------------------------------------------
  * S13.09 — submit xatosida user input saqlanadi; error summary first invalid
  *          fieldga link beradi (autofocus + scroll).
@@ -12,36 +12,36 @@
 .form-stack {
   display: flex;
   flex-direction: column;
-  gap: var(--edikit-spacing-4, 16px);
+  gap: var(--deborah-spacing-4, 16px);
 }
 
 .form-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
-  gap: var(--edikit-spacing-4, 16px);
+  gap: var(--deborah-spacing-4, 16px);
 }
 
 /* ── S13.09: Error summary ── */
 .error-summary {
-  margin-block-end: var(--edikit-spacing-4, 16px);
-  padding: var(--edikit-spacing-3, 12px) var(--edikit-spacing-4, 16px);
-  border: 2px solid var(--edikit-semantic-color-status-danger);
-  border-radius: var(--edikit-radius-sm, 8px);
-  background: color-mix(in srgb, var(--edikit-semantic-color-status-danger) 6%, transparent);
-  color: var(--edikit-semantic-color-text-primary);
+  margin-block-end: var(--deborah-spacing-4, 16px);
+  padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-4, 16px);
+  border: 2px solid var(--deborah-semantic-color-status-danger);
+  border-radius: var(--deborah-radius-sm, 8px);
+  background: color-mix(in srgb, var(--deborah-semantic-color-status-danger) 6%, transparent);
+  color: var(--deborah-semantic-color-text-primary);
 }
 .error-summary__title {
   display: flex;
   align-items: center;
-  gap: var(--edikit-spacing-2, 8px);
-  margin: 0 0 var(--edikit-spacing-2, 8px);
-  font-size: var(--edikit-typography-font-size-sm, 14px);
+  gap: var(--deborah-spacing-2, 8px);
+  margin: 0 0 var(--deborah-spacing-2, 8px);
+  font-size: var(--deborah-typography-font-size-sm, 14px);
   font-weight: 700;
-  color: var(--edikit-semantic-color-status-danger);
+  color: var(--deborah-semantic-color-status-danger);
 }
 .error-summary ul { margin: 0; padding-inline-start: 20px; }
-.error-summary li { margin-block-end: 4px; font-size: var(--edikit-typography-font-size-sm, 14px); }
-.error-summary a { color: var(--edikit-semantic-color-status-danger); font-weight: 600; text-underline-offset: 2px; }
+.error-summary li { margin-block-end: 4px; font-size: var(--deborah-typography-font-size-sm, 14px); }
+.error-summary a { color: var(--deborah-semantic-color-status-danger); font-weight: 600; text-underline-offset: 2px; }
 .error-summary a:hover { text-decoration: none; }
 
 /* ── S13.10: Password toggle ── */
@@ -57,18 +57,18 @@
   width: 44px; /* S13.03: 44px minimum touch target */
   height: 44px;
   padding: 0;
-  color: var(--edikit-semantic-color-text-secondary);
+  color: var(--deborah-semantic-color-text-secondary);
   background: transparent;
   border: none;
-  border-radius: var(--edikit-radius-sm, 8px);
+  border-radius: var(--deborah-radius-sm, 8px);
   cursor: pointer;
 }
-.pw-toggle:hover { color: var(--edikit-semantic-color-text-primary); background: oklch(0 0 0 / 0.06); }
+.pw-toggle:hover { color: var(--deborah-semantic-color-text-primary); background: oklch(0 0 0 / 0.06); }
 .pw-toggle:focus-visible {
-  outline: 3px solid var(--edikit-semantic-color-focus, oklch(55% 0.2 264));
+  outline: 3px solid var(--deborah-semantic-color-focus, oklch(55% 0.2 264));
   outline-offset: 2px;
 }
-.pw-toggle[aria-pressed='true'] { color: var(--edikit-semantic-color-action-primary); }
+.pw-toggle[aria-pressed='true'] { color: var(--deborah-semantic-color-action-primary); }
 
 /* ── S13.12: text-spacing override tolerant ── */
 @media (forced-colors: active) {

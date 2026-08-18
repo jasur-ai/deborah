@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Misconception Map (C3-05)
+ * Deborah — Cast Misconception Map (C3-05)
  * -----------------------------------------
  * Distractor metadata teacher tasdiqlaydigan misconception signaliga aylanadi.
  * - Har question option'ida misconceptionId (optional).

@@ -1,5 +1,5 @@
 /**
- * Edikit — Theme Core (STYLE STEP 07 / S07.01)
+ * Deborah — Theme Core (STYLE STEP 07 / S07.01)
  * ---------------------------------------------
  * Pure theme state machine. Browser va Node (unit test) da ishlaydi.
  * DOM'ga tegmagan — faqat resolve qiladi.
@@ -14,7 +14,7 @@
 (function (root) {
   'use strict';
 
-  var STORAGE_KEY = 'edikit-theme-state';
+  var STORAGE_KEY = 'deborah-theme-state';
   var STATES = ['system', 'light', 'dark', 'hc-light', 'hc-dark'];
 
   /**
@@ -49,7 +49,7 @@
     };
   }
 
-  root.EdikitThemeCore = {
+  root.DeborahThemeCore = {
     STORAGE_KEY: STORAGE_KEY,
     STATES: STATES,
     resolveState: resolveState,

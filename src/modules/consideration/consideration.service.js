@@ -1,5 +1,5 @@
 /**
- * Edikit — Special Consideration, Deferral, Resit, Appeal & Scoring
+ * Deborah — Special Consideration, Deferral, Resit, Appeal & Scoring
  * Incident Service
  *
  * DB layer for Prompt 48 (research.md §72, §71.7):
@@ -49,7 +49,7 @@ const NON_HUMAN_DECIDERS = ['ai', 'system', 'auto', 'automated', 'bot', 'model',
 // ── Encryption config for sensitive evidence (mirrors accommodation) ──
 const ENCRYPTION_ALGORITHM = 'aes-256-gcm';
 const ENCRYPTION_KEY = crypto.createHash('sha256')
-  .update(process.env.EVIDENCE_ENCRYPTION_KEY || 'edikit-evidence-dev-key-2026')
+  .update(process.env.EVIDENCE_ENCRYPTION_KEY || 'deborah-evidence-dev-key-2026')
   .digest();
 
 function getTenantId() {

@@ -1,5 +1,5 @@
 /**
- * Edikit — Unit Tests: Seat, Proctor, Hall Ticket & Check-in (Prompt 40)
+ * Deborah — Unit Tests: Seat, Proctor, Hall Ticket & Check-in (Prompt 40)
  *
  * Pure-logic coverage (Prompt 40 §18 — seat capacity/accommodation):
  *   - Seat-map layout validation (rows/seats grid, accessible feature rule)
@@ -64,7 +64,7 @@ const GOOD_LAYOUT = {
   ],
 };
 
-const SIGNING_KEY = 'edikit-test-signing-key-0123456789abcdef';
+const SIGNING_KEY = 'deborah-test-signing-key-0123456789abcdef';
 
 // ═══════════════════════════════════════════════════════════════════
 // SEAT-MAP VALIDATION

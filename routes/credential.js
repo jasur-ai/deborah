@@ -1,5 +1,5 @@
 /**
- * Edikit — Portfolio & Verifiable Credential Routes
+ * Deborah — Portfolio & Verifiable Credential Routes
  *
  * Prompt 61 REST API (credentials only — portfolio moved to routes/portfolio.js, AUTH A-12):
  *   - GET    /api/user/credentials          — my credentials

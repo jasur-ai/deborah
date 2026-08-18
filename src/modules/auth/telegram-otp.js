@@ -1,8 +1,8 @@
 /**
- * Edikit — Telegram OTP Auth Core (AUTH A-16, P3)
+ * Deborah — Telegram OTP Auth Core (AUTH A-16, P3)
  * -------------------------------------------------
  * UzExam pattern — xavfsiz versiya:
- *   1. start: 20-byte start-token (t.me/EdikitBot?start=<token>) + 6-xonali kod.
+ *   1. start: 20-byte start-token (t.me/DeborahBot?start=<token>) + 6-xonali kod.
  *      Kod HASH'lab saqlanadi (sha256(code:salt)), log'ga hech qachon chiqmaydi.
  *   2. Bot callback: HMAC-SHA256 (bot_token bilan) — signature verify.
  *   3. verify: kod bitta foydalanish (consume) + 5 daqiqa TTL.

@@ -1,7 +1,7 @@
 /**
- * Edikit — QTI Export Service (Canonical → QTI)
+ * Deborah — QTI Export Service (Canonical → QTI)
  *
- * Converts Edikit canonical items back to QTI 2.x XML format.
+ * Converts Deborah canonical items back to QTI 2.x XML format.
  * Supports round-trip parity for all mapped interaction types.
  *
  * Generates:
@@ -388,7 +388,7 @@ export function generateManifest(manifest) {
   }).join('\n');
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<manifest identifier="${manifest.identifier || 'edikit_export'}" xmlns="http://www.imsglobal.org/xsd/imscp_v1p1"
+<manifest identifier="${manifest.identifier || 'deborah_export'}" xmlns="http://www.imsglobal.org/xsd/imscp_v1p1"
   xmlns:imsmd="http://www.imsglobal.org/xsd/imsmd_v1p2"
   xmlns:imsqti="http://www.imsglobal.org/xsd/imsqti_v2p2"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -399,7 +399,7 @@ export function generateManifest(manifest) {
   </metadata>
   <organizations>
     <organization identifier="org_1" structure="hierarchical">
-      <item identifier="item_set_1" identifierref="resource_set_1" title="${escapeXml(manifest.title || 'Edikit Export')}"/>
+      <item identifier="item_set_1" identifierref="resource_set_1" title="${escapeXml(manifest.title || 'Deborah Export')}"/>
     </organization>
   </organizations>
   <resources>

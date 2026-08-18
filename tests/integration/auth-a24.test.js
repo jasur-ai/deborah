@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH A-24: OIDC hardening integration testlari
+ * Deborah — AUTH A-24: OIDC hardening integration testlari
  * ---------------------------------------------------------
  * Alohida NODE server spawn qilinadi — OIDC YOQILGAN (GOOGLE_CLIENT_ID bilan).
  * Guide A-24 §08/§15:

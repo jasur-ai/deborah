@@ -1,5 +1,5 @@
 /**
- * Edikit — Camera Evidence Review (teacher, human review only)
+ * Deborah — Camera Evidence Review (teacher, human review only)
  *
  * Prompt 37 — review timeline + disposition UI. Qarorlar faqat inson
  * tomonidan: cleared | reviewed | discarded. Avtomatik misconduct yo'q.

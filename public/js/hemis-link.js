@@ -1,5 +1,5 @@
 /**
- * Edikit — HEMIS akkaunt bog'lash client (C-10)
+ * Deborah — HEMIS akkaunt bog'lash client (C-10)
  * ---------------------------------------------------------------
  * - Bog'lash: POST /api/auth/hemis/link (HEMIS login + parol)
  * - Bekor qilish: POST /api/auth/hemis/unlink

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — E-01b: OneID backfill migration tooling
+ * Deborah — E-01b: OneID backfill migration tooling
  * ---------------------------------------------------------------------------
  * `oneid_sub` bo'lmagan barcha user'larga canonical OneID beradi.
  * Idempotent: mavjud OneID'li user'lar SKIP qilinadi — takroriy yugurish xavfsiz.

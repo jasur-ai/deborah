@@ -1,5 +1,5 @@
 /**
- * Edikit — Integration Tests: Seat & Proctor Property Tests (Prompt 40)
+ * Deborah — Integration Tests: Seat & Proctor Property Tests (Prompt 40)
  *
  * Property/contract coverage (Prompt 40 §19 — proctor clash/workload):
  *   - For many SEEDED random instances, allocateProctorDuties produces:

@@ -1,5 +1,5 @@
 /**
- * Edikit — IndexedDB Offline Journal, Reconnect & Recovery (Prompt 32)
+ * Deborah — IndexedDB Offline Journal, Reconnect & Recovery (Prompt 32)
  *
  * Phase D #3: low-bandwidth/crash resilience — encrypted local journal,
  * lossless reconnect sync, emergency recovery packages.

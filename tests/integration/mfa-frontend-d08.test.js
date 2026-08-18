@@ -1,5 +1,5 @@
 /**
- * Edikit — D-08 MFA login frontend — Integration/contract tests
+ * Deborah — D-08 MFA login frontend — Integration/contract tests
  * ---------------------------------------------------------------
  *  - GET /user/mfa: challenge yo'q → redirect; challenge bor → sahifa
  *  - D-08 elementlar: single-digit inputs, backup toggle, resend, mfa.js

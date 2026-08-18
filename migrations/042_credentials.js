@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 042: Student Evidence Portfolio & Verifiable Credentials
+ * Deborah — Migration 042: Student Evidence Portfolio & Verifiable Credentials
  *
  * Prompt 61 — student evidence portfolio + Open Badges/CLR/VC-compatible
  * credential lifecycle (research.md §25 AI governance — human sign-off on

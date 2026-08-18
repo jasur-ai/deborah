@@ -33,12 +33,12 @@ bilan:
 
 | Flag | Context | Nima boshqaradi |
 |------|---------|-----------------|
-| `EDIKIT_FF_THEME` | theme | Design tokens/semantic palette |
-| `EDIKIT_FF_LANDING` | landing | Public landing sahifasi |
-| `EDIKIT_FF_AUTH` | auth | Login/register/forgot |
-| `EDIKIT_FF_WORKSPACE` | workspace | User panel / test builder |
-| `EDIKIT_FF_CAST` | cast | Cast director/participant/projector |
-| `EDIKIT_FF_ADMIN` | admin | Admin dashboard/panellari |
+| `DEBORAH_FF_THEME` | theme | Design tokens/semantic palette |
+| `DEBORAH_FF_LANDING` | landing | Public landing sahifasi |
+| `DEBORAH_FF_AUTH` | auth | Login/register/forgot |
+| `DEBORAH_FF_WORKSPACE` | workspace | User panel / test builder |
+| `DEBORAH_FF_CAST` | cast | Cast director/participant/projector |
+| `DEBORAH_FF_ADMIN` | admin | Admin dashboard/panellari |
 
 **Manbalar (priority):** query (`?ff_cast=0`, faqat non-prod) → env → cookie →
 default ON.
@@ -49,7 +49,7 @@ boshlanganda flag yopiladi va session davomida o'zgarmaydi.
 
 **Rollout pattern:**
 ```
-EDIKIT_FF_CAST=0  →  tanlangan test ishlab chiqarishga (query/cookie)
+DEBORAH_FF_CAST=0  →  tanlangan test ishlab chiqarishga (query/cookie)
                   →  1% foydalanuvchi (infra)
                   →  5% → 25% → 50% → 100%
                   →  flag'ni olib tashlash (cleanup release)
@@ -89,7 +89,7 @@ CI: `.github/workflows/design.yml` + `design:check:full` (S37/38 gate'lar).
 1. Internal dogfood      — butun jamoa 2 hafta (bug report yo'li ochiq)
 2. 5 teacher pilot       — 1 hafta, haftalik feedback sessiya
 3. 3–5 class pilot       — real sinovlar, task success o'lchanadi (S39)
-4. Percentage rollout    — 1% → 5% → 25% → 50% → 100% (EDIKIT_FF_*)
+4. Percentage rollout    — 1% → 5% → 25% → 50% → 100% (DEBORAH_FF_*)
 5. Observation window    — har bosqichda ≥ 3 kun monitoring
 ```
 
@@ -120,7 +120,7 @@ Quyidagilardan **bittasi** trigger bo'lsa — kontekst flag'i OFF qilinadi
 4. **Performance threshold** — LCP/INP target'dan 2x oshish
 5. **Severe teacher confusion** — 2+ teacher bir xil UX muammosi haqida xabar
 
-Rollback: `EDIKIT_FF_<CTX>=0` → legacy visual shell (agar mavjud bo'lsa) yoki
+Rollback: `DEBORAH_FF_<CTX>=0` → legacy visual shell (agar mavjud bo'lsa) yoki
 oldingi deploy versiyasi. Rollback 15 daqiqada amalga oshirilishi kerak.
 
 ## 8. SW/cache compatibility (S40.10)
@@ -141,14 +141,14 @@ Har release'da yangilanadi:
 - 🆕 Feature flag tizimi (`utils/feature-flags.js`) — 6 kontekst
 - 📊 Legacy usage baseline: 1375 (CSS 328 + views 1047)
 - 📄 Migration docs (bu fayl)
-- Deprecated: `var(--accent)` → `var(--edikit-semantic-color-action-primary)`
+- Deprecated: `var(--accent)` → `var(--deborah-semantic-color-action-primary)`
   (davom etmoqda — cleanup release'da tugaydi)
 
 ## 10. Cleanup release (S40.12)
 
 Rollout 100% bo'lgach — alohida major release:
 
-1. Barcha `EDIKIT_FF_*` env'lar va flag kodlarini olib tashlash
+1. Barcha `DEBORAH_FF_*` env'lar va flag kodlarini olib tashlash
 2. `public/css/style.css` legacy bloklarini (accent palitra override'lar) o'chirish
 3. Legacy alias'lar (S40.03 ro'yxati) semantic token'lardan ajratish
 4. View'lardagi inline `var(--legacy)` → semantic token'ga ko'chirish (1047 ta)

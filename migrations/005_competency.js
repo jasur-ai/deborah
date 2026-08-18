@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 005: Competency & Curriculum Graph
+ * Deborah — Migration 005: Competency & Curriculum Graph
  *
  * Adds versioned competency/outcome framework support:
  *   - competency_frameworks: top-level frameworks (e.g., "National Curriculum",
@@ -262,10 +262,10 @@ export async function up(db) {
   ];
 
   for (const table of newTables) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
-    await sql`GRANT DELETE ON ${sql.table(table)} TO edikit_migration`.execute(db);
-    await sql`GRANT SELECT ON ${sql.table(table)} TO edikit_scoring`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
+    await sql`GRANT SELECT ON ${sql.table(table)} TO deborah_scoring`.execute(db);
   }
 
   console.log('Competency structure created: 5 tables');

@@ -1,5 +1,5 @@
 /**
- * Edikit — AI Question Generator 50/30/20 Routes
+ * Deborah — AI Question Generator 50/30/20 Routes
  *
  * Prompt 53 REST API (admin — requireAdmin):
  *   - GET  /api/admin/ai-question-gen/meta        — constants for admin UI

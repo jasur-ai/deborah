@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH A-28 Risk-based auth — Unit tests
+ * Deborah — AUTH A-28 Risk-based auth — Unit tests
  * ---------------------------------------------------------------
  *  - computeRiskScore: weights, clamp 0..1, tier
  *  - riskTier: boundary (0.3 / 0.7)

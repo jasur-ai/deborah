@@ -1,5 +1,5 @@
 /**
- * Edikit — Security Profile & Safe Exam Browser Boundary (pure logic)
+ * Deborah — Security Profile & Safe Exam Browser Boundary (pure logic)
  *
  * Prompt 36 (Phase D): connects S0–S4 security profiles to typed policy and
  * client/server enforcement. Pure, DB-free logic:

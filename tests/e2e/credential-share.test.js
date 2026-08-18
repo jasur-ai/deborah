@@ -1,5 +1,5 @@
 /**
- * Edikit — Portfolio & Verifiable Credential (e2e/security, Prompt 61)
+ * Deborah — Portfolio & Verifiable Credential (e2e/security, Prompt 61)
  *
  * Teacher multi-step flow: portfolio (default-private) → credential
  * definition (draft → publish) → issue (guarded, idempotent) → selective

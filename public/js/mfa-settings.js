@@ -1,5 +1,5 @@
 /**
- * Edikit — MFA/TOTP Settings client (AUTH A-26)
+ * Deborah — MFA/TOTP Settings client (AUTH A-26)
  *
  * Handles the MFA panel on the security profile page:
  *   - load status (none/pending/active)
@@ -139,7 +139,7 @@
   function showBackupCodes(codes) {
     hide(setupEl); show(backupEl);
     codesEl.innerHTML = codes.map(function (c) {
-      return '<span style="background:var(--edikit-semantic-color-surface-input);border:1px solid var(--edikit-semantic-color-border-default);border-radius:8px;padding:6px 8px;text-align:center">' + esc(c) + '</span>';
+      return '<span style="background:var(--deborah-semantic-color-surface-input);border:1px solid var(--deborah-semantic-color-border-default);border-radius:8px;padding:6px 8px;text-align:center">' + esc(c) + '</span>';
     }).join('');
   }
 
@@ -148,7 +148,7 @@
     var blob = new Blob([pendingBackupCodes.join('\n')], { type: 'text/plain' });
     var a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'edikit-mfa-backup-codes.txt';
+    a.download = 'deborah-mfa-backup-codes.txt';
     a.click();
     URL.revokeObjectURL(a.href);
   });
@@ -160,11 +160,11 @@
       var w = window.open('', '_blank', 'width=420,height=520');
       if (!w) return;
       w.document.write(
-        '<html><head><title>Edikit MFA Backup Codes</title>' +
+        '<html><head><title>Deborah MFA Backup Codes</title>' +
         '<style>body{font-family:monospace;padding:24px}h1{font-size:16px}' +
         '.code{display:block;padding:6px;font-size:14px;letter-spacing:1px}' +
         '@media print{button{display:none}}</style></head><body>' +
-        '<h1>Edikit — MFA Backup Codes</h1>' +
+        '<h1>Deborah — MFA Backup Codes</h1>' +
         pendingBackupCodes.map(function (c) { return '<span class="code">' + esc(c) + '</span>'; }).join('') +
         '<button onclick="window.print()" style="margin-top:16px;padding:8px 16px">Print</button>' +
         '</body></html>'

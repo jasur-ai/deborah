@@ -1,7 +1,7 @@
 /**
- * Edikit — Account Linking Service
+ * Deborah — Account Linking Service
  *
- * Manages linking multiple authentication methods to a single Edikit account.
+ * Manages linking multiple authentication methods to a single Deborah account.
  *
  * Flow:
  *   1. User requests to link a new auth method (e.g., Google to existing password account)

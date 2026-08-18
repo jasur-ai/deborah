@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH A-30 Admin/Teacher privilege hardening — Integration
+ * Deborah — AUTH A-30 Admin/Teacher privilege hardening — Integration
  * -------------------------------------------------------------------
  *  - Admin MFA mandatory: login MFA'siz → forced enroll → enable → session
  *  - Admin login MFA challenge: verify (wrong 403, right 200)
@@ -167,7 +167,7 @@ describe('AUTH A-30 — Admin/Teacher privilege hardening', () => {
     const sid = cookieHeader.match(/(?:^|;\s*)(connect\.sid=[^;]+)/);
     expect(sid).toBeTruthy();
     // remember cookie yo'q
-    expect(cookieHeader).not.toContain('edikit_remember');
+    expect(cookieHeader).not.toContain('deborah_remember');
   });
 
   it('A-30 §08: admin login lockout — 3 xato → 4-chi urinish blok', async () => {
@@ -278,7 +278,7 @@ describe('AUTH A-30 — Admin/Teacher privilege hardening', () => {
     // run'da esa beforeAll tozalagani uchun shu yerda qayta o'rnatamiz).
     const rec0 = await fb.get('mfa_totp/admin');
     if (!rec0.exists() || rec0.val().status !== 'active') {
-      const setup = await setupTotp('admin', { accountName: 'Edikit Admin' });
+      const setup = await setupTotp('admin', { accountName: 'Deborah Admin' });
       const en = await enableTotp('admin', await generate({ secret: setup.secret }));
       expect(en.ok).toBe(true);
     }

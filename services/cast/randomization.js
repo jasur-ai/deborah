@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Deterministic Randomization
+ * Deborah — Cast Deterministic Randomization
  * -----------------------------------------
  * Server-side seeded PRNG (mulberry32) + seeded shuffle.
  * Question va option order stable seed + stable IDs bilan qayta tiklanadi.

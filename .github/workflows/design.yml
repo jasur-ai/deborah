@@ -1,4 +1,4 @@
-# Edikit — Design Gate (STYLE STEP 37/38)
+# Deborah — Design Gate (STYLE STEP 37/38)
 #
 # S37.08/09/10 — PR'da design lint + visual regression matrix ishlaydi:
 #   - Raw component color / transition:all / infinite motion / tiny text / inline style = hard error
@@ -11,7 +11,7 @@
 #   - exception faqat owner + expires + measured justification bilan
 #
 # On: pull_request (main) + push (main)
-name: Edikit Design Gate
+name: Deborah Design Gate
 
 on:
   push:

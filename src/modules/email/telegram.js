@@ -23,7 +23,7 @@ import { timingSafeEqual, hashValue } from '../auth/telegram-otp.js';
 import { getNotifPrefs, setNotifPrefs, checkNotifRate, recordNotifSent } from '../student/notifications.js';
 
 const BOT_TOKEN = CONFIG.TELEGRAM_BOT_TOKEN || '';
-const BOT_USERNAME = CONFIG.TELEGRAM_BOT_USERNAME || 'EdikitBot';
+const BOT_USERNAME = CONFIG.TELEGRAM_BOT_USERNAME || 'DeborahBot';
 const ENABLED = CONFIG.TELEGRAM_ENABLED !== false && Boolean(BOT_TOKEN);
 
 const LINK_TOKEN_TTL_MS = 5 * 60 * 1000; // 5 daqiqa

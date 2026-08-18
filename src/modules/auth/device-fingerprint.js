@@ -1,5 +1,5 @@
 /**
- * Edikit — Device fingerprint storage (AUTH A-28, user_devices)
+ * Deborah — Device fingerprint storage (AUTH A-28, user_devices)
  * -------------------------------------------------------------------
  * `users.{userId}.devices.{fingerprintHash}`:
  *   { first_seen, last_seen, lastCity, lastIpHash, userAgent, trusted, riskEvents[] }

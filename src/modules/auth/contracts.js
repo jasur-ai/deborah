@@ -1,5 +1,5 @@
 /**
- * Edikit — Auth API Contract (AUTH D-30)
+ * Deborah — Auth API Contract (AUTH D-30)
  * ---------------------------------------------------------------------------
  * Barcha auth request/response'lar uchun SHARED Zod schemas — client (D-29)
  * va server (validation.js) yagona manba sifatida import qiladi (§06, §12).

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — CVD (Color Vision Deficiency) Checker (STYLE STEP 06 / S06.08-09)
+ * Deborah — CVD (Color Vision Deficiency) Checker (STYLE STEP 06 / S06.08-09)
  * --------------------------------------------------------------------------
  * Status va answer ranglarini protanopia/deuteranopia/tritanopia/grayscale
  * simulation'dan o'tkazib, "ma'no saqlanishini" tekshiradi:
@@ -152,7 +152,7 @@ for (const c of REDUNDANT_CHECKS) {
 mkdirSync(AUDIT_DIR, { recursive: true });
 const passCount = rows.filter((r) => r.pass === 'PASS').length + auditResults.filter((a) => a.pass === 'PASS').length;
 const lines = [];
-lines.push('# Edikit CVD Report (S06.08-09)');
+lines.push('# Deborah CVD Report (S06.08-09)');
 lines.push('');
 lines.push(`Generated: ${new Date().toISOString()}`);
 lines.push(`Distinctness checks: ${checks} | PASS: ${passCount} | INFO (grayscale, qonuniy): ${rows.filter((r) => r.pass === 'INFO').length} | Warnings: ${warnings.length} | Hard FAIL: ${fails.length}`);

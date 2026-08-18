@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Confidence Lens (C3-04)
+ * Deborah — Cast Confidence Lens (C3-04)
  * -------------------------------------
  * Selected questionlarda answer bilan confidence (low/medium/high) yig'iladi
  * va private aggregate matrix yaratiladi (teacher-director kanali).

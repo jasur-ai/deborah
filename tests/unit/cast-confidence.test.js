@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Confidence Lens tests (C3-04)
+ * Deborah — Cast Confidence Lens tests (C3-04)
  * --------------------------------------------
  * - Missing confidence coverage
  * - First/revote confidence alohida

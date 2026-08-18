@@ -1,5 +1,5 @@
 /**
- * Edikit — Portfolio module (AUTH A-12)
+ * Deborah — Portfolio module (AUTH A-12)
  * -------------------------------------
  * Transcript/diploma import + evidence portfolio on the local DB.
  */

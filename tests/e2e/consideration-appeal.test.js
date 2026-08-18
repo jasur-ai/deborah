@@ -1,5 +1,5 @@
 /**
- * Edikit — Special Consideration, Deferral, Resit, Appeal & Scoring
+ * Deborah — Special Consideration, Deferral, Resit, Appeal & Scoring
  * Incident e2e/security tests (Prompt 48)
  *
  * E2E walk (graceful degradation without PostgreSQL):
@@ -60,7 +60,7 @@ describe('consideration — admin page + meta', () => {
     const res = await agent.get('/admin/consideration');
     expect(res.status).toBe(200);
     expect(res.text).toContain('Special Consideration');
-    expect(res.text).toContain('Edikit Admin');
+    expect(res.text).toContain('Deborah Admin');
   });
 
   it('GET /api/admin/cases/meta exposes constants', async () => {

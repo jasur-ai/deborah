@@ -1,5 +1,5 @@
 /**
- * Edikit — Gate 0 Security Integration Tests
+ * Deborah — Gate 0 Security Integration Tests
  *
  * Verifies the security invariants required for Gate 0 release:
  *   1. Arena owner enforcement (only host can add bots, control game)
@@ -264,7 +264,7 @@ describe('Disconnect Recovery', () => {
   it('should serve landing page after disconnect (server stateless)', async () => {
     const res = await request.get('/');
     expect(res.status).toBe(200);
-    expect(res.text).toContain('Edikit');
+    expect(res.text).toContain('Deborah');
   });
 
   it('health endpoint should report uptime', async () => {

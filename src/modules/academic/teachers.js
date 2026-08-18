@@ -1,5 +1,5 @@
 /**
- * Edikit — Teacher Assignment Service
+ * Deborah — Teacher Assignment Service
  *
  * Manages teacher/co-teacher/grader assignments for course offerings.
  * All operations are tenant-scoped.

@@ -1,5 +1,5 @@
 /**
- * Edikit — Unit Tests: Helper Utilities
+ * Deborah — Unit Tests: Helper Utilities
  *
  * Tests for: esc, safeKey, normStr, hashPass, fmtTime, generateGameCode,
  *           shuffleArray, normalizeQuestion, calculatePoints, buildLeaderboard

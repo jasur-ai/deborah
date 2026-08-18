@@ -1,4 +1,4 @@
-# Edikit — E-faza taklif rejasi (AUTH D-27 §30 / handover §25)
+# Deborah — E-faza taklif rejasi (AUTH D-27 §30 / handover §25)
 
 > **Holat:** KELISHILGAN ✅ (23:03) — D-faza (D-07..D-32) ikkala agent imzosi bilan yopildi (2026-08-17).
 > E-faza (ekstra) operator qaroriga ko'ra boshlanadi (§23). Reja PS tomonidan tuzildi,
@@ -62,7 +62,7 @@ Qabul: mavjud Google flow regression (oidc 64/64) + yangi provider mock testlari
 Joriy holat: HEMIS REST to'liq (restLogin + fetchAccountMe, base URL safety, timeout/AbortController, tracing span, geofence 451, rate limit 10/15 daqiqa); roster B-12 to'liq (upload/sessions/map/preview/approve/rollback + MFA step-up).
 
 E-02 qadamlari (har biri test bilan):
-1. **Push webhook endpoint** — HEMIS → Edikit push (talabalar/ballar o'zgarishi); hmac signature (email webhook allowlist naqshida)
+1. **Push webhook endpoint** — HEMIS → Deborah push (talabalar/ballar o'zgarishi); hmac signature (email webhook allowlist naqshida)
 2. **Retry + idempotency** — muvaffaqiyatsiz push'lar retry (exponential backoff), event_id idempotency (email-infra naqshida)
 3. **Sync moduli** — pull (mavjud) + push (yangi) birlashtirish; B-12 roster shared modul ustida
 4. **Audit** — sync event'lari audit + metric

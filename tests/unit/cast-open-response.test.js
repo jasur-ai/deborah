@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast C3-12 Open-Response Semantic Board Tests
+ * Deborah — Cast C3-12 Open-Response Semantic Board Tests
  * -------------------------------------------------------
  * coverage: private collection + opaque IDs, PII/profanity SAFE_HOLD
  *           (hech qachon providerga yuborilmaydi), provider invalid schema,

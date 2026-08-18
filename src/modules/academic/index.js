@@ -1,5 +1,5 @@
 /**
- * Edikit — Academic Module Barrel Export
+ * Deborah — Academic Module Barrel Export
  *
  * Exports all academic hierarchy services:
  *   - terms: academic term, faculty, program management

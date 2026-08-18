@@ -1,5 +1,5 @@
 /**
- * Edikit — Graceful Shutdown Handler
+ * Deborah — Graceful Shutdown Handler
  *
  * Drains and closes all infrastructure services in order:
  *   1. HTTP server (stop accepting new connections)

@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Participant Client
+ * Deborah — Cast Participant Client
  * ---------------------------------
  * Client state enum: WAITING / THINKING / OPEN / SELECTED / SENDING /
  * SAVED / RETRYING / LOCKED / PAUSED / REVEAL / ENDED.

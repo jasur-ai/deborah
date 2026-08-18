@@ -1,5 +1,5 @@
 /**
- * Edikit — Rubric Module Tests
+ * Deborah — Rubric Module Tests
  */
 
 import { describe, it, expect } from 'vitest';

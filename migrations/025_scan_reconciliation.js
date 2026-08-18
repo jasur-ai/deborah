@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 025: Scan, Reconciliation, OMR & OCR (Prompt 43)
+ * Deborah — Migration 025: Scan, Reconciliation, OMR & OCR (Prompt 43)
  *
  * Prompt 43 — scanned paper pages'ni silent loss'siz student/questionga
  * reconcile qilish (research.md §52.5 scan quality gate, §16 security):
@@ -233,9 +233,9 @@ export async function up(db) {
     'scan_ocr_transcripts',
   ];
   for (const table of newTables) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
-    await sql`GRANT DELETE ON ${sql.table(table)} TO edikit_migration`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 }
 

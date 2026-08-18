@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Forms Validator (STYLE STEP 13)
+ * Deborah — Forms Validator (STYLE STEP 13)
  * -----------------------------------------
  * S13.01 — form field anatomy (label + control + hint/error) mavjud
  * S13.02 — placeholder label o'rnida EMAS (view'larda label shart)
@@ -34,19 +34,19 @@ if (/min-height: 44px/.test(inp)) ok('S13.03: control 44px desktop');
 else bad('S13.03: 44px desktop yoq');
 if (/@media \(max-width: 640px\)[\s\S]*min-height: 48px/.test(inp)) ok('S13.03: 48px mobile');
 else bad('S13.03: 48px mobile yoq');
-if (/font-size: 16px/.test(inp) || /font-size: var\(--edikit-typography-font-size-md[^)]*\), 16px\)/.test(inp)) ok('S13.03: mobile font 16px');
+if (/font-size: 16px/.test(inp) || /font-size: var\(--deborah-typography-font-size-md[^)]*\), 16px\)/.test(inp)) ok('S13.03: mobile font 16px');
 else bad('S13.03: mobile font 16px yoq');
-if (inp.includes('--edikit-semantic-color-border-default')) ok('S13.04: border token (>= 3:1)');
+if (inp.includes('--deborah-semantic-color-border-default')) ok('S13.04: border token (>= 3:1)');
 else bad('S13.04: border token yoq');
-if (inp.includes('outline: 3px solid var(--edikit-semantic-color-focus')) ok('S13.05: focus ring token');
+if (inp.includes('outline: 3px solid var(--deborah-semantic-color-focus')) ok('S13.05: focus ring token');
 else bad('S13.05: focus ring token yoq');
 if (inp.includes(':hover:not(:disabled):not(:focus)')) ok('S13.05: hover != focus');
 else bad('S13.05: hover/focus farqi yoq');
 
 // ── S13.06: states ──
-if (inp.includes('aria-invalid') && inp.includes('--edikit-semantic-color-status-danger')) ok('S13.06: error state (danger border)');
+if (inp.includes('aria-invalid') && inp.includes('--deborah-semantic-color-status-danger')) ok('S13.06: error state (danger border)');
 else bad('S13.06: error state yoq');
-if (inp.includes('--edikit-semantic-color-status-warning')) ok('S13.06: warning state');
+if (inp.includes('--deborah-semantic-color-status-warning')) ok('S13.06: warning state');
 else bad('S13.06: warning state yoq');
 
 // ── S13.07: read-only vs disabled ──

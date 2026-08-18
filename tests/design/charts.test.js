@@ -52,8 +52,8 @@ describe('STEP 19 — Charts & evidence visualization', () => {
       expect(charts).toMatch(/ev-dist-marker/);
     });
     it('series tokens in CSS', () => {
-      expect(tokens).toMatch(/--edikit-data-viz-series-1:/);
-      expect(charts).toMatch(/--edikit-data-viz-series-1/);
+      expect(tokens).toMatch(/--deborah-data-viz-series-1:/);
+      expect(charts).toMatch(/--deborah-data-viz-series-1/);
     });
   });
 

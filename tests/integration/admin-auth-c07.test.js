@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH C-07 Admin auth (alohida session + Strict) — Integration
+ * Deborah — AUTH C-07 Admin auth (alohida session + Strict) — Integration
  * ------------------------------------------------------------------------
  *  - Admin login sahifasi: turnstileSiteKey render (4 til'da emas — admin
  *    stringlar uz (default), §17)

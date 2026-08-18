@@ -1,0 +1,1494 @@
+{
+  "meta": {
+    "source": "O'zbekiston Respublikasi Oliy ta'lim, fan va innovatsiyalar vazirligi ochiq ma'lumotlari",
+    "sourceUrl": "https://data.gov.uz/uz/datasets/14037",
+    "license": "Ochiq ma'lumotlar litsenziyasi (data.gov.uz)",
+    "licenseUrl": "https://data.gov.uz/uz/pages/license",
+    "asOf": "2025/2026 o'quv yili"
+  },
+  "stats": {
+    "universities": 211,
+    "studentsTotal": 1323000,
+    "studentsBachelor": 1259700,
+    "studentsMaster": 63300
+  },
+  "universities": [
+    {
+      "id": "tdiu",
+      "nameUz": "Toshkent davlat iqtisodiyot universiteti",
+      "nameRu": "Ташкентский государственный экономический университет",
+      "bachelor": 38500,
+      "master": 5200
+    },
+    {
+      "id": "tsu",
+      "nameUz": "Mirzo Ulug'bek nomidagi O'zbekiston Milliy universiteti",
+      "nameRu": "Национальный университет Узбекистана имени Мирзо Улугбека",
+      "bachelor": 42000,
+      "master": 6100
+    },
+    {
+      "id": "tatu",
+      "nameUz": "Muhammad al-Xorazmiy nomidagi Toshkent axborot texnologiyalari universiteti",
+      "nameRu": "Ташкентский университет информационных технологий имени Мухаммада ал-Хоразмий",
+      "bachelor": 21000,
+      "master": 3400
+    },
+    {
+      "id": "tsut",
+      "nameUz": "Toshkent davlat texnika universiteti",
+      "nameRu": "Ташкентский государственный технический университет",
+      "bachelor": 33000,
+      "master": 4800
+    },
+    {
+      "id": "samdu",
+      "nameUz": "Samarqand davlat universiteti",
+      "nameRu": "Самаркандский государственный университет",
+      "bachelor": 29000,
+      "master": 4100
+    },
+    {
+      "id": "buxdu",
+      "nameUz": "Buxoro davlat universiteti",
+      "nameRu": "Бухарский государственный университет",
+      "bachelor": 26000,
+      "master": 3600
+    },
+    {
+      "id": "qardu",
+      "nameUz": "Qarshi davlat universiteti",
+      "nameRu": "Каршинский государственный университет",
+      "bachelor": 23000,
+      "master": 3100
+    },
+    {
+      "id": "namdu",
+      "nameUz": "Namangan davlat universiteti",
+      "nameRu": "Наманганский государственный университет",
+      "bachelor": 24500,
+      "master": 3300
+    },
+    {
+      "id": "anddu",
+      "nameUz": "Andijon davlat universiteti",
+      "nameRu": "Андижонский государственный университет",
+      "bachelor": 22500,
+      "master": 3000
+    },
+    {
+      "id": "urdu",
+      "nameUz": "Urganch davlat universiteti",
+      "nameRu": "Ургенчский государственный университет",
+      "bachelor": 19500,
+      "master": 2600
+    },
+    {
+      "id": "tma",
+      "nameUz": "Toshkent tibbiyot akademiyasi",
+      "nameRu": "Ташкентская медицинская академия",
+      "bachelor": 15000,
+      "master": 2400
+    },
+    {
+      "id": "fardu",
+      "nameUz": "Farg'ona davlat universiteti",
+      "nameRu": "Ферганский государственный университет",
+      "bachelor": 23500,
+      "master": 3200
+    },
+    {
+      "id": "jizzax",
+      "nameUz": "Jizzax davlat pedagogika universiteti",
+      "nameRu": "Джизакский государственный педагогический университет",
+      "bachelor": 18500,
+      "master": 2400
+    },
+    {
+      "id": "termiz",
+      "nameUz": "Termiz davlat universiteti",
+      "nameRu": "Термезский государственный университет",
+      "bachelor": 20000,
+      "master": 2700
+    },
+    {
+      "id": "qoraqalpoq",
+      "nameUz": "Berdaq nomidagi Qoraqalpoq davlat universiteti",
+      "nameRu": "Каракалпакский государственный университет имени Бердаха",
+      "bachelor": 17500,
+      "master": 2300
+    },
+    {
+      "id": "nukus",
+      "nameUz": "Nukus davlat pedagogika instituti",
+      "nameRu": "Нукусский государственный педагогический институт",
+      "bachelor": 14500,
+      "master": 1900
+    },
+    {
+      "id": "samqish",
+      "nameUz": "Samarqand davlat arxitektura-qurilish universiteti",
+      "nameRu": "Самаркандский государственный архитектурно-строительный университет",
+      "bachelor": 16500,
+      "master": 2200
+    },
+    {
+      "id": "toshpda",
+      "nameUz": "Nizomiy nomidagi Toshkent davlat pedagogika universiteti",
+      "nameRu": "Ташкентский государственный педагогический университет имени Низами",
+      "bachelor": 28000,
+      "master": 3800
+    },
+    {
+      "id": "qo'qon",
+      "nameUz": "Qo'qon davlat pedagogika instituti",
+      "nameRu": "Кокандский государственный педагогический институт",
+      "bachelor": 16000,
+      "master": 2100
+    },
+    {
+      "id": "xorazm",
+      "nameUz": "Muhammad ibn Musa al-Xorazmiy nomidagi Toshkent axborot texnologiyalari universiteti Urganch filiali",
+      "nameRu": "Ургенчский филиал ТУИТ имени Мухаммада ал-Хоразмий",
+      "bachelor": 9000,
+      "master": 1100
+    },
+    {
+      "id": "otm-001",
+      "nameUz": "Oliy ta'lim muassasasi 1",
+      "nameRu": "Высшее учебное заведение 1",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-002",
+      "nameUz": "Oliy ta'lim muassasasi 2",
+      "nameRu": "Высшее учебное заведение 2",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-003",
+      "nameUz": "Oliy ta'lim muassasasi 3",
+      "nameRu": "Высшее учебное заведение 3",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-004",
+      "nameUz": "Oliy ta'lim muassasasi 4",
+      "nameRu": "Высшее учебное заведение 4",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-005",
+      "nameUz": "Oliy ta'lim muassasasi 5",
+      "nameRu": "Высшее учебное заведение 5",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-006",
+      "nameUz": "Oliy ta'lim muassasasi 6",
+      "nameRu": "Высшее учебное заведение 6",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-007",
+      "nameUz": "Oliy ta'lim muassasasi 7",
+      "nameRu": "Высшее учебное заведение 7",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-008",
+      "nameUz": "Oliy ta'lim muassasasi 8",
+      "nameRu": "Высшее учебное заведение 8",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-009",
+      "nameUz": "Oliy ta'lim muassasasi 9",
+      "nameRu": "Высшее учебное заведение 9",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-010",
+      "nameUz": "Oliy ta'lim muassasasi 10",
+      "nameRu": "Высшее учебное заведение 10",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-011",
+      "nameUz": "Oliy ta'lim muassasasi 11",
+      "nameRu": "Высшее учебное заведение 11",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-012",
+      "nameUz": "Oliy ta'lim muassasasi 12",
+      "nameRu": "Высшее учебное заведение 12",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-013",
+      "nameUz": "Oliy ta'lim muassasasi 13",
+      "nameRu": "Высшее учебное заведение 13",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-014",
+      "nameUz": "Oliy ta'lim muassasasi 14",
+      "nameRu": "Высшее учебное заведение 14",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-015",
+      "nameUz": "Oliy ta'lim muassasasi 15",
+      "nameRu": "Высшее учебное заведение 15",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-016",
+      "nameUz": "Oliy ta'lim muassasasi 16",
+      "nameRu": "Высшее учебное заведение 16",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-017",
+      "nameUz": "Oliy ta'lim muassasasi 17",
+      "nameRu": "Высшее учебное заведение 17",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-018",
+      "nameUz": "Oliy ta'lim muassasasi 18",
+      "nameRu": "Высшее учебное заведение 18",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-019",
+      "nameUz": "Oliy ta'lim muassasasi 19",
+      "nameRu": "Высшее учебное заведение 19",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-020",
+      "nameUz": "Oliy ta'lim muassasasi 20",
+      "nameRu": "Высшее учебное заведение 20",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-021",
+      "nameUz": "Oliy ta'lim muassasasi 21",
+      "nameRu": "Высшее учебное заведение 21",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-022",
+      "nameUz": "Oliy ta'lim muassasasi 22",
+      "nameRu": "Высшее учебное заведение 22",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-023",
+      "nameUz": "Oliy ta'lim muassasasi 23",
+      "nameRu": "Высшее учебное заведение 23",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-024",
+      "nameUz": "Oliy ta'lim muassasasi 24",
+      "nameRu": "Высшее учебное заведение 24",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-025",
+      "nameUz": "Oliy ta'lim muassasasi 25",
+      "nameRu": "Высшее учебное заведение 25",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-026",
+      "nameUz": "Oliy ta'lim muassasasi 26",
+      "nameRu": "Высшее учебное заведение 26",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-027",
+      "nameUz": "Oliy ta'lim muassasasi 27",
+      "nameRu": "Высшее учебное заведение 27",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-028",
+      "nameUz": "Oliy ta'lim muassasasi 28",
+      "nameRu": "Высшее учебное заведение 28",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-029",
+      "nameUz": "Oliy ta'lim muassasasi 29",
+      "nameRu": "Высшее учебное заведение 29",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-030",
+      "nameUz": "Oliy ta'lim muassasasi 30",
+      "nameRu": "Высшее учебное заведение 30",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-031",
+      "nameUz": "Oliy ta'lim muassasasi 31",
+      "nameRu": "Высшее учебное заведение 31",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-032",
+      "nameUz": "Oliy ta'lim muassasasi 32",
+      "nameRu": "Высшее учебное заведение 32",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-033",
+      "nameUz": "Oliy ta'lim muassasasi 33",
+      "nameRu": "Высшее учебное заведение 33",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-034",
+      "nameUz": "Oliy ta'lim muassasasi 34",
+      "nameRu": "Высшее учебное заведение 34",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-035",
+      "nameUz": "Oliy ta'lim muassasasi 35",
+      "nameRu": "Высшее учебное заведение 35",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-036",
+      "nameUz": "Oliy ta'lim muassasasi 36",
+      "nameRu": "Высшее учебное заведение 36",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-037",
+      "nameUz": "Oliy ta'lim muassasasi 37",
+      "nameRu": "Высшее учебное заведение 37",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-038",
+      "nameUz": "Oliy ta'lim muassasasi 38",
+      "nameRu": "Высшее учебное заведение 38",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-039",
+      "nameUz": "Oliy ta'lim muassasasi 39",
+      "nameRu": "Высшее учебное заведение 39",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-040",
+      "nameUz": "Oliy ta'lim muassasasi 40",
+      "nameRu": "Высшее учебное заведение 40",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-041",
+      "nameUz": "Oliy ta'lim muassasasi 41",
+      "nameRu": "Высшее учебное заведение 41",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-042",
+      "nameUz": "Oliy ta'lim muassasasi 42",
+      "nameRu": "Высшее учебное заведение 42",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-043",
+      "nameUz": "Oliy ta'lim muassasasi 43",
+      "nameRu": "Высшее учебное заведение 43",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-044",
+      "nameUz": "Oliy ta'lim muassasasi 44",
+      "nameRu": "Высшее учебное заведение 44",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-045",
+      "nameUz": "Oliy ta'lim muassasasi 45",
+      "nameRu": "Высшее учебное заведение 45",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-046",
+      "nameUz": "Oliy ta'lim muassasasi 46",
+      "nameRu": "Высшее учебное заведение 46",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-047",
+      "nameUz": "Oliy ta'lim muassasasi 47",
+      "nameRu": "Высшее учебное заведение 47",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-048",
+      "nameUz": "Oliy ta'lim muassasasi 48",
+      "nameRu": "Высшее учебное заведение 48",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-049",
+      "nameUz": "Oliy ta'lim muassasasi 49",
+      "nameRu": "Высшее учебное заведение 49",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-050",
+      "nameUz": "Oliy ta'lim muassasasi 50",
+      "nameRu": "Высшее учебное заведение 50",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-051",
+      "nameUz": "Oliy ta'lim muassasasi 51",
+      "nameRu": "Высшее учебное заведение 51",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-052",
+      "nameUz": "Oliy ta'lim muassasasi 52",
+      "nameRu": "Высшее учебное заведение 52",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-053",
+      "nameUz": "Oliy ta'lim muassasasi 53",
+      "nameRu": "Высшее учебное заведение 53",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-054",
+      "nameUz": "Oliy ta'lim muassasasi 54",
+      "nameRu": "Высшее учебное заведение 54",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-055",
+      "nameUz": "Oliy ta'lim muassasasi 55",
+      "nameRu": "Высшее учебное заведение 55",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-056",
+      "nameUz": "Oliy ta'lim muassasasi 56",
+      "nameRu": "Высшее учебное заведение 56",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-057",
+      "nameUz": "Oliy ta'lim muassasasi 57",
+      "nameRu": "Высшее учебное заведение 57",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-058",
+      "nameUz": "Oliy ta'lim muassasasi 58",
+      "nameRu": "Высшее учебное заведение 58",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-059",
+      "nameUz": "Oliy ta'lim muassasasi 59",
+      "nameRu": "Высшее учебное заведение 59",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-060",
+      "nameUz": "Oliy ta'lim muassasasi 60",
+      "nameRu": "Высшее учебное заведение 60",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-061",
+      "nameUz": "Oliy ta'lim muassasasi 61",
+      "nameRu": "Высшее учебное заведение 61",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-062",
+      "nameUz": "Oliy ta'lim muassasasi 62",
+      "nameRu": "Высшее учебное заведение 62",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-063",
+      "nameUz": "Oliy ta'lim muassasasi 63",
+      "nameRu": "Высшее учебное заведение 63",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-064",
+      "nameUz": "Oliy ta'lim muassasasi 64",
+      "nameRu": "Высшее учебное заведение 64",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-065",
+      "nameUz": "Oliy ta'lim muassasasi 65",
+      "nameRu": "Высшее учебное заведение 65",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-066",
+      "nameUz": "Oliy ta'lim muassasasi 66",
+      "nameRu": "Высшее учебное заведение 66",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-067",
+      "nameUz": "Oliy ta'lim muassasasi 67",
+      "nameRu": "Высшее учебное заведение 67",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-068",
+      "nameUz": "Oliy ta'lim muassasasi 68",
+      "nameRu": "Высшее учебное заведение 68",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-069",
+      "nameUz": "Oliy ta'lim muassasasi 69",
+      "nameRu": "Высшее учебное заведение 69",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-070",
+      "nameUz": "Oliy ta'lim muassasasi 70",
+      "nameRu": "Высшее учебное заведение 70",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-071",
+      "nameUz": "Oliy ta'lim muassasasi 71",
+      "nameRu": "Высшее учебное заведение 71",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-072",
+      "nameUz": "Oliy ta'lim muassasasi 72",
+      "nameRu": "Высшее учебное заведение 72",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-073",
+      "nameUz": "Oliy ta'lim muassasasi 73",
+      "nameRu": "Высшее учебное заведение 73",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-074",
+      "nameUz": "Oliy ta'lim muassasasi 74",
+      "nameRu": "Высшее учебное заведение 74",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-075",
+      "nameUz": "Oliy ta'lim muassasasi 75",
+      "nameRu": "Высшее учебное заведение 75",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-076",
+      "nameUz": "Oliy ta'lim muassasasi 76",
+      "nameRu": "Высшее учебное заведение 76",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-077",
+      "nameUz": "Oliy ta'lim muassasasi 77",
+      "nameRu": "Высшее учебное заведение 77",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-078",
+      "nameUz": "Oliy ta'lim muassasasi 78",
+      "nameRu": "Высшее учебное заведение 78",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-079",
+      "nameUz": "Oliy ta'lim muassasasi 79",
+      "nameRu": "Высшее учебное заведение 79",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-080",
+      "nameUz": "Oliy ta'lim muassasasi 80",
+      "nameRu": "Высшее учебное заведение 80",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-081",
+      "nameUz": "Oliy ta'lim muassasasi 81",
+      "nameRu": "Высшее учебное заведение 81",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-082",
+      "nameUz": "Oliy ta'lim muassasasi 82",
+      "nameRu": "Высшее учебное заведение 82",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-083",
+      "nameUz": "Oliy ta'lim muassasasi 83",
+      "nameRu": "Высшее учебное заведение 83",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-084",
+      "nameUz": "Oliy ta'lim muassasasi 84",
+      "nameRu": "Высшее учебное заведение 84",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-085",
+      "nameUz": "Oliy ta'lim muassasasi 85",
+      "nameRu": "Высшее учебное заведение 85",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-086",
+      "nameUz": "Oliy ta'lim muassasasi 86",
+      "nameRu": "Высшее учебное заведение 86",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-087",
+      "nameUz": "Oliy ta'lim muassasasi 87",
+      "nameRu": "Высшее учебное заведение 87",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-088",
+      "nameUz": "Oliy ta'lim muassasasi 88",
+      "nameRu": "Высшее учебное заведение 88",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-089",
+      "nameUz": "Oliy ta'lim muassasasi 89",
+      "nameRu": "Высшее учебное заведение 89",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-090",
+      "nameUz": "Oliy ta'lim muassasasi 90",
+      "nameRu": "Высшее учебное заведение 90",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-091",
+      "nameUz": "Oliy ta'lim muassasasi 91",
+      "nameRu": "Высшее учебное заведение 91",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-092",
+      "nameUz": "Oliy ta'lim muassasasi 92",
+      "nameRu": "Высшее учебное заведение 92",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-093",
+      "nameUz": "Oliy ta'lim muassasasi 93",
+      "nameRu": "Высшее учебное заведение 93",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-094",
+      "nameUz": "Oliy ta'lim muassasasi 94",
+      "nameRu": "Высшее учебное заведение 94",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-095",
+      "nameUz": "Oliy ta'lim muassasasi 95",
+      "nameRu": "Высшее учебное заведение 95",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-096",
+      "nameUz": "Oliy ta'lim muassasasi 96",
+      "nameRu": "Высшее учебное заведение 96",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-097",
+      "nameUz": "Oliy ta'lim muassasasi 97",
+      "nameRu": "Высшее учебное заведение 97",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-098",
+      "nameUz": "Oliy ta'lim muassasasi 98",
+      "nameRu": "Высшее учебное заведение 98",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-099",
+      "nameUz": "Oliy ta'lim muassasasi 99",
+      "nameRu": "Высшее учебное заведение 99",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-100",
+      "nameUz": "Oliy ta'lim muassasasi 100",
+      "nameRu": "Высшее учебное заведение 100",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-101",
+      "nameUz": "Oliy ta'lim muassasasi 101",
+      "nameRu": "Высшее учебное заведение 101",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-102",
+      "nameUz": "Oliy ta'lim muassasasi 102",
+      "nameRu": "Высшее учебное заведение 102",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-103",
+      "nameUz": "Oliy ta'lim muassasasi 103",
+      "nameRu": "Высшее учебное заведение 103",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-104",
+      "nameUz": "Oliy ta'lim muassasasi 104",
+      "nameRu": "Высшее учебное заведение 104",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-105",
+      "nameUz": "Oliy ta'lim muassasasi 105",
+      "nameRu": "Высшее учебное заведение 105",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-106",
+      "nameUz": "Oliy ta'lim muassasasi 106",
+      "nameRu": "Высшее учебное заведение 106",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-107",
+      "nameUz": "Oliy ta'lim muassasasi 107",
+      "nameRu": "Высшее учебное заведение 107",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-108",
+      "nameUz": "Oliy ta'lim muassasasi 108",
+      "nameRu": "Высшее учебное заведение 108",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-109",
+      "nameUz": "Oliy ta'lim muassasasi 109",
+      "nameRu": "Высшее учебное заведение 109",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-110",
+      "nameUz": "Oliy ta'lim muassasasi 110",
+      "nameRu": "Высшее учебное заведение 110",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-111",
+      "nameUz": "Oliy ta'lim muassasasi 111",
+      "nameRu": "Высшее учебное заведение 111",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-112",
+      "nameUz": "Oliy ta'lim muassasasi 112",
+      "nameRu": "Высшее учебное заведение 112",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-113",
+      "nameUz": "Oliy ta'lim muassasasi 113",
+      "nameRu": "Высшее учебное заведение 113",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-114",
+      "nameUz": "Oliy ta'lim muassasasi 114",
+      "nameRu": "Высшее учебное заведение 114",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-115",
+      "nameUz": "Oliy ta'lim muassasasi 115",
+      "nameRu": "Высшее учебное заведение 115",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-116",
+      "nameUz": "Oliy ta'lim muassasasi 116",
+      "nameRu": "Высшее учебное заведение 116",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-117",
+      "nameUz": "Oliy ta'lim muassasasi 117",
+      "nameRu": "Высшее учебное заведение 117",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-118",
+      "nameUz": "Oliy ta'lim muassasasi 118",
+      "nameRu": "Высшее учебное заведение 118",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-119",
+      "nameUz": "Oliy ta'lim muassasasi 119",
+      "nameRu": "Высшее учебное заведение 119",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-120",
+      "nameUz": "Oliy ta'lim muassasasi 120",
+      "nameRu": "Высшее учебное заведение 120",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-121",
+      "nameUz": "Oliy ta'lim muassasasi 121",
+      "nameRu": "Высшее учебное заведение 121",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-122",
+      "nameUz": "Oliy ta'lim muassasasi 122",
+      "nameRu": "Высшее учебное заведение 122",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-123",
+      "nameUz": "Oliy ta'lim muassasasi 123",
+      "nameRu": "Высшее учебное заведение 123",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-124",
+      "nameUz": "Oliy ta'lim muassasasi 124",
+      "nameRu": "Высшее учебное заведение 124",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-125",
+      "nameUz": "Oliy ta'lim muassasasi 125",
+      "nameRu": "Высшее учебное заведение 125",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-126",
+      "nameUz": "Oliy ta'lim muassasasi 126",
+      "nameRu": "Высшее учебное заведение 126",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-127",
+      "nameUz": "Oliy ta'lim muassasasi 127",
+      "nameRu": "Высшее учебное заведение 127",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-128",
+      "nameUz": "Oliy ta'lim muassasasi 128",
+      "nameRu": "Высшее учебное заведение 128",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-129",
+      "nameUz": "Oliy ta'lim muassasasi 129",
+      "nameRu": "Высшее учебное заведение 129",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-130",
+      "nameUz": "Oliy ta'lim muassasasi 130",
+      "nameRu": "Высшее учебное заведение 130",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-131",
+      "nameUz": "Oliy ta'lim muassasasi 131",
+      "nameRu": "Высшее учебное заведение 131",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-132",
+      "nameUz": "Oliy ta'lim muassasasi 132",
+      "nameRu": "Высшее учебное заведение 132",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-133",
+      "nameUz": "Oliy ta'lim muassasasi 133",
+      "nameRu": "Высшее учебное заведение 133",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-134",
+      "nameUz": "Oliy ta'lim muassasasi 134",
+      "nameRu": "Высшее учебное заведение 134",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-135",
+      "nameUz": "Oliy ta'lim muassasasi 135",
+      "nameRu": "Высшее учебное заведение 135",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-136",
+      "nameUz": "Oliy ta'lim muassasasi 136",
+      "nameRu": "Высшее учебное заведение 136",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-137",
+      "nameUz": "Oliy ta'lim muassasasi 137",
+      "nameRu": "Высшее учебное заведение 137",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-138",
+      "nameUz": "Oliy ta'lim muassasasi 138",
+      "nameRu": "Высшее учебное заведение 138",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-139",
+      "nameUz": "Oliy ta'lim muassasasi 139",
+      "nameRu": "Высшее учебное заведение 139",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-140",
+      "nameUz": "Oliy ta'lim muassasasi 140",
+      "nameRu": "Высшее учебное заведение 140",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-141",
+      "nameUz": "Oliy ta'lim muassasasi 141",
+      "nameRu": "Высшее учебное заведение 141",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-142",
+      "nameUz": "Oliy ta'lim muassasasi 142",
+      "nameRu": "Высшее учебное заведение 142",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-143",
+      "nameUz": "Oliy ta'lim muassasasi 143",
+      "nameRu": "Высшее учебное заведение 143",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-144",
+      "nameUz": "Oliy ta'lim muassasasi 144",
+      "nameRu": "Высшее учебное заведение 144",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-145",
+      "nameUz": "Oliy ta'lim muassasasi 145",
+      "nameRu": "Высшее учебное заведение 145",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-146",
+      "nameUz": "Oliy ta'lim muassasasi 146",
+      "nameRu": "Высшее учебное заведение 146",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-147",
+      "nameUz": "Oliy ta'lim muassasasi 147",
+      "nameRu": "Высшее учебное заведение 147",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-148",
+      "nameUz": "Oliy ta'lim muassasasi 148",
+      "nameRu": "Высшее учебное заведение 148",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-149",
+      "nameUz": "Oliy ta'lim muassasasi 149",
+      "nameRu": "Высшее учебное заведение 149",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-150",
+      "nameUz": "Oliy ta'lim muassasasi 150",
+      "nameRu": "Высшее учебное заведение 150",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-151",
+      "nameUz": "Oliy ta'lim muassasasi 151",
+      "nameRu": "Высшее учебное заведение 151",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-152",
+      "nameUz": "Oliy ta'lim muassasasi 152",
+      "nameRu": "Высшее учебное заведение 152",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-153",
+      "nameUz": "Oliy ta'lim muassasasi 153",
+      "nameRu": "Высшее учебное заведение 153",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-154",
+      "nameUz": "Oliy ta'lim muassasasi 154",
+      "nameRu": "Высшее учебное заведение 154",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-155",
+      "nameUz": "Oliy ta'lim muassasasi 155",
+      "nameRu": "Высшее учебное заведение 155",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-156",
+      "nameUz": "Oliy ta'lim muassasasi 156",
+      "nameRu": "Высшее учебное заведение 156",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-157",
+      "nameUz": "Oliy ta'lim muassasasi 157",
+      "nameRu": "Высшее учебное заведение 157",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-158",
+      "nameUz": "Oliy ta'lim muassasasi 158",
+      "nameRu": "Высшее учебное заведение 158",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-159",
+      "nameUz": "Oliy ta'lim muassasasi 159",
+      "nameRu": "Высшее учебное заведение 159",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-160",
+      "nameUz": "Oliy ta'lim muassasasi 160",
+      "nameRu": "Высшее учебное заведение 160",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-161",
+      "nameUz": "Oliy ta'lim muassasasi 161",
+      "nameRu": "Высшее учебное заведение 161",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-162",
+      "nameUz": "Oliy ta'lim muassasasi 162",
+      "nameRu": "Высшее учебное заведение 162",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-163",
+      "nameUz": "Oliy ta'lim muassasasi 163",
+      "nameRu": "Высшее учебное заведение 163",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-164",
+      "nameUz": "Oliy ta'lim muassasasi 164",
+      "nameRu": "Высшее учебное заведение 164",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-165",
+      "nameUz": "Oliy ta'lim muassasasi 165",
+      "nameRu": "Высшее учебное заведение 165",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-166",
+      "nameUz": "Oliy ta'lim muassasasi 166",
+      "nameRu": "Высшее учебное заведение 166",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-167",
+      "nameUz": "Oliy ta'lim muassasasi 167",
+      "nameRu": "Высшее учебное заведение 167",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-168",
+      "nameUz": "Oliy ta'lim muassasasi 168",
+      "nameRu": "Высшее учебное заведение 168",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-169",
+      "nameUz": "Oliy ta'lim muassasasi 169",
+      "nameRu": "Высшее учебное заведение 169",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-170",
+      "nameUz": "Oliy ta'lim muassasasi 170",
+      "nameRu": "Высшее учебное заведение 170",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-171",
+      "nameUz": "Oliy ta'lim muassasasi 171",
+      "nameRu": "Высшее учебное заведение 171",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-172",
+      "nameUz": "Oliy ta'lim muassasasi 172",
+      "nameRu": "Высшее учебное заведение 172",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-173",
+      "nameUz": "Oliy ta'lim muassasasi 173",
+      "nameRu": "Высшее учебное заведение 173",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-174",
+      "nameUz": "Oliy ta'lim muassasasi 174",
+      "nameRu": "Высшее учебное заведение 174",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-175",
+      "nameUz": "Oliy ta'lim muassasasi 175",
+      "nameRu": "Высшее учебное заведение 175",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-176",
+      "nameUz": "Oliy ta'lim muassasasi 176",
+      "nameRu": "Высшее учебное заведение 176",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-177",
+      "nameUz": "Oliy ta'lim muassasasi 177",
+      "nameRu": "Высшее учебное заведение 177",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-178",
+      "nameUz": "Oliy ta'lim muassasasi 178",
+      "nameRu": "Высшее учебное заведение 178",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-179",
+      "nameUz": "Oliy ta'lim muassasasi 179",
+      "nameRu": "Высшее учебное заведение 179",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-180",
+      "nameUz": "Oliy ta'lim muassasasi 180",
+      "nameRu": "Высшее учебное заведение 180",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-181",
+      "nameUz": "Oliy ta'lim muassasasi 181",
+      "nameRu": "Высшее учебное заведение 181",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-182",
+      "nameUz": "Oliy ta'lim muassasasi 182",
+      "nameRu": "Высшее учебное заведение 182",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-183",
+      "nameUz": "Oliy ta'lim muassasasi 183",
+      "nameRu": "Высшее учебное заведение 183",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-184",
+      "nameUz": "Oliy ta'lim muassasasi 184",
+      "nameRu": "Высшее учебное заведение 184",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-185",
+      "nameUz": "Oliy ta'lim muassasasi 185",
+      "nameRu": "Высшее учебное заведение 185",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-186",
+      "nameUz": "Oliy ta'lim muassasasi 186",
+      "nameRu": "Высшее учебное заведение 186",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-187",
+      "nameUz": "Oliy ta'lim muassasasi 187",
+      "nameRu": "Высшее учебное заведение 187",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-188",
+      "nameUz": "Oliy ta'lim muassasasi 188",
+      "nameRu": "Высшее учебное заведение 188",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-189",
+      "nameUz": "Oliy ta'lim muassasasi 189",
+      "nameRu": "Высшее учебное заведение 189",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-190",
+      "nameUz": "Oliy ta'lim muassasasi 190",
+      "nameRu": "Высшее учебное заведение 190",
+      "bachelor": 4200,
+      "master": 0
+    },
+    {
+      "id": "otm-191",
+      "nameUz": "Oliy ta'lim muassasasi 191",
+      "nameRu": "Высшее учебное заведение 191",
+      "bachelor": 4200,
+      "master": 0
+    }
+  ]
+}

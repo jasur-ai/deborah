@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 007: Rubric Builder & Anchor Model
+ * Deborah — Migration 007: Rubric Builder & Anchor Model
  *
  * Adds analytic rubric support for written work grading:
  *   - rubrics: top-level rubric templates (versioned)
@@ -195,10 +195,10 @@ export async function up(db) {
   // ── Grant permissions ──
   const newTables = ['rubrics', 'rubric_versions', 'rubric_criteria', 'rubric_anchors', 'item_rubric_pins'];
   for (const table of newTables) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
-    await sql`GRANT DELETE ON ${sql.table(table)} TO edikit_migration`.execute(db);
-    await sql`GRANT SELECT ON ${sql.table(table)} TO edikit_scoring`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
+    await sql`GRANT SELECT ON ${sql.table(table)} TO deborah_scoring`.execute(db);
   }
 
   console.log('Rubric structure created: 5 tables');

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Contrast Checker (STYLE STEP 06 / S06.04-06, S06.07, S06.12)
+ * Deborah — Contrast Checker (STYLE STEP 06 / S06.04-06, S06.07, S06.12)
  * ----------------------------------------------------------------------
  * Semantic token pairlarini WCAG 2.2 formula bilan tekshiradi:
  *   - Normal text            ≥ 4.5:1
@@ -102,7 +102,7 @@ function loadTokens() {
   for (const file of themeFiles) {
     const parsed = JSON.parse(readFileSync(resolve(TOKENS_DIR, file), 'utf-8'));
     const t = {};
-    flattenInto(parsed.edikit?.semantic || {}, ['edikit', 'semantic'], file, t);
+    flattenInto(parsed.deborah?.semantic || {}, ['deborah', 'semantic'], file, t);
     const tResolved = {};
     // resolve: avval shu theme ichida, keyin base'da
     const lookup = (ref) => t[ref]?.$value ?? baseResolved[ref]?.$value;
@@ -152,19 +152,19 @@ const g = (t, p) => t[p]?.$value;
 // ── Pair spec ──
 // { fg, bg, target, note, large? } — target: 4.5 normal / 3.0 UI / 7.0 teacher
 const PAIRS = [
-  { fg: 'edikit.semantic.color.text.primary', bg: 'edikit.semantic.color.surface.default', target: 4.5, note: 'text.primary on surface' },
-  { fg: 'edikit.semantic.color.text.secondary', bg: 'edikit.semantic.color.surface.default', target: 4.5, note: 'text.secondary on surface' },
-  { fg: 'edikit.semantic.color.text.muted', bg: 'edikit.semantic.color.surface.default', target: 4.5, note: 'text.muted on surface' },
-  { fg: 'edikit.semantic.color.text.primary', bg: 'edikit.semantic.color.surface.raised', target: 4.5, note: 'text.primary on raised' },
-  { fg: 'edikit.semantic.color.text.muted', bg: 'edikit.semantic.color.surface.raised', target: 4.5, note: 'text.muted on raised' },
-  { fg: 'edikit.semantic.color.action.primary', bg: 'edikit.semantic.color.surface.raised', target: 3.0, note: 'action.primary on raised (UI)', large: true },
-  { fg: 'edikit.semantic.color.action.on-action', bg: 'edikit.semantic.color.action.primary', target: 4.5, note: 'on-action text on primary button' },
-  { fg: 'edikit.semantic.color.text.primary', bg: 'edikit.semantic.color.surface.default', target: 7.0, soft: true, note: 'teacher/projector primary — ≥7:1 soft target (S06.05)' },
-  { fg: 'edikit.semantic.color.text.inverse', bg: 'edikit.semantic.color.action.primary', target: 4.5, note: 'text.inverse on primary action' },
-  { fg: 'edikit.semantic.color.status.success', bg: 'edikit.semantic.color.surface.raised', target: 3.0, note: 'status.success indicator (UI)', large: true },
-  { fg: 'edikit.semantic.color.status.warning', bg: 'edikit.semantic.color.surface.raised', target: 3.0, note: 'status.warning indicator (UI)', large: true },
-  { fg: 'edikit.semantic.color.status.danger', bg: 'edikit.semantic.color.surface.raised', target: 3.0, note: 'status.danger indicator (UI)', large: true },
-  { fg: 'edikit.semantic.color.border.strong', bg: 'edikit.semantic.color.surface.default', target: 3.0, note: 'border.strong vs surface (UI boundary)', large: true },
+  { fg: 'deborah.semantic.color.text.primary', bg: 'deborah.semantic.color.surface.default', target: 4.5, note: 'text.primary on surface' },
+  { fg: 'deborah.semantic.color.text.secondary', bg: 'deborah.semantic.color.surface.default', target: 4.5, note: 'text.secondary on surface' },
+  { fg: 'deborah.semantic.color.text.muted', bg: 'deborah.semantic.color.surface.default', target: 4.5, note: 'text.muted on surface' },
+  { fg: 'deborah.semantic.color.text.primary', bg: 'deborah.semantic.color.surface.raised', target: 4.5, note: 'text.primary on raised' },
+  { fg: 'deborah.semantic.color.text.muted', bg: 'deborah.semantic.color.surface.raised', target: 4.5, note: 'text.muted on raised' },
+  { fg: 'deborah.semantic.color.action.primary', bg: 'deborah.semantic.color.surface.raised', target: 3.0, note: 'action.primary on raised (UI)', large: true },
+  { fg: 'deborah.semantic.color.action.on-action', bg: 'deborah.semantic.color.action.primary', target: 4.5, note: 'on-action text on primary button' },
+  { fg: 'deborah.semantic.color.text.primary', bg: 'deborah.semantic.color.surface.default', target: 7.0, soft: true, note: 'teacher/projector primary — ≥7:1 soft target (S06.05)' },
+  { fg: 'deborah.semantic.color.text.inverse', bg: 'deborah.semantic.color.action.primary', target: 4.5, note: 'text.inverse on primary action' },
+  { fg: 'deborah.semantic.color.status.success', bg: 'deborah.semantic.color.surface.raised', target: 3.0, note: 'status.success indicator (UI)', large: true },
+  { fg: 'deborah.semantic.color.status.warning', bg: 'deborah.semantic.color.surface.raised', target: 3.0, note: 'status.warning indicator (UI)', large: true },
+  { fg: 'deborah.semantic.color.status.danger', bg: 'deborah.semantic.color.surface.raised', target: 3.0, note: 'status.danger indicator (UI)', large: true },
+  { fg: 'deborah.semantic.color.border.strong', bg: 'deborah.semantic.color.surface.default', target: 3.0, note: 'border.strong vs surface (UI boundary)', large: true },
 ];
 
 // ── Main ──
@@ -194,7 +194,7 @@ for (const themeFile of themeList) {
     let rgb = c.rgb;
     let alpha = c.alpha;
     if (alpha < 1) {
-      const canvas = getColor('edikit.semantic.color.surface.default');
+      const canvas = getColor('deborah.semantic.color.surface.default');
       rgb = composite(c.rgb, alpha, canvas ? canvas.rgb : [255, 255, 255]);
     }
     bgCache[path] = { rgb, raw: alpha < 1 ? `composited(${c.raw})` : c.raw };
@@ -244,7 +244,7 @@ for (const themeFile of themeList) {
 // ta'minlashi tekshiriladi. Gradient (Oklch->sRGB) stops ixtiyoriy:
 // oklchByHex dan olingan brand ranglar orasida eng qorong'isi worst-stop.
 {
-  const scrimPath = 'edikit.semantic.color.surface.scrim';
+  const scrimPath = 'deborah.semantic.color.surface.scrim';
   const scrimRaw = g(themes['semantic.light.json'], scrimPath);
   const scrim = parseColor(scrimRaw);
   const hasScrim = !!scrim;
@@ -274,7 +274,7 @@ for (const themeFile of themeList) {
 mkdirSync(AUDIT_DIR, { recursive: true });
 const passCount = rows.filter((r) => r.pass === 'PASS').length;
 const lines = [];
-lines.push('# Edikit Contrast Report (S06.12)');
+lines.push('# Deborah Contrast Report (S06.12)');
 lines.push('');
 lines.push(`Generated: ${new Date().toISOString()}`);
 lines.push(`Pair check: ${checks} | PASS: ${passCount} | FAIL: ${fails.length} (buffer 0.2–0.5 near threshold)`)

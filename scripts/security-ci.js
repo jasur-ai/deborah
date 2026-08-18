@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Security CI Gates (Prompt 70, item 09)
+ * Deborah — Security CI Gates (Prompt 70, item 09)
  *
  * Zero-dependency, runnable in CI without network:
  *
@@ -244,8 +244,8 @@ function runSbom() {
     version: 1,
     metadata: {
       timestamp: new Date().toISOString(),
-      tools: [{ vendor: 'edikit', name: 'security-ci', version: '1.0.0' }],
-      component: { type: 'application', name: pkg.name || 'edikit', version: pkg.version || '0.0.0' },
+      tools: [{ vendor: 'deborah', name: 'security-ci', version: '1.0.0' }],
+      component: { type: 'application', name: pkg.name || 'deborah', version: pkg.version || '0.0.0' },
     },
     components,
   };
@@ -284,7 +284,7 @@ for (const [name, fn] of Object.entries(gates)) {
 if (jsonOut) {
   console.log(JSON.stringify({ gates: results, pass: allPass }, null, 2));
 } else {
-  console.log('\n═══ Edikit Security CI Gates ═══');
+  console.log('\n═══ Deborah Security CI Gates ═══');
   for (const [name, r] of Object.entries(results)) {
     const icon = r.pass ? 'PASS' : 'FAIL';
     if (name === 'sast') console.log(`[${icon}] SAST — ${r.findings.length} findings (${r.critical} critical)`);

@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   Edikit Theme Foundations (STYLE STEP 07)
+   Deborah Theme Foundations (STYLE STEP 07)
    ---------------------------------------------------------------
    1. color-scheme (S07.04) — native form controls resolved theme bilan
    2. Root crossfade (S07.06) — faqat canvas/text 150ms; universal 900ms YO'Q
@@ -40,15 +40,15 @@ body {
   gap: 2px;
   padding: 3px;
   border-radius: 999px;
-  background: var(--edikit-semantic-color-surface-nested, rgba(120, 130, 160, 0.14));
-  border: 1px solid var(--edikit-semantic-color-border-subtle, rgba(120, 130, 160, 0.25));
+  background: var(--deborah-semantic-color-surface-nested, rgba(120, 130, 160, 0.14));
+  border: 1px solid var(--deborah-semantic-color-border-subtle, rgba(120, 130, 160, 0.25));
   font-size: 12px;
 }
 .theme-segmented button {
   appearance: none;
   border: none;
   background: transparent;
-  color: var(--edikit-semantic-color-text-secondary, inherit);
+  color: var(--deborah-semantic-color-text-secondary, inherit);
   font: inherit;
   font-weight: 700;
   padding: 5px 10px;
@@ -56,13 +56,13 @@ body {
   cursor: pointer;
   transition: background-color 120ms ease, color 120ms ease;
 }
-.theme-segmented button:hover { color: var(--edikit-semantic-color-text-primary, inherit); }
+.theme-segmented button:hover { color: var(--deborah-semantic-color-text-primary, inherit); }
 .theme-segmented button.is-active {
-  background: var(--edikit-semantic-color-action-primary, #1746D1);
-  color: var(--edikit-semantic-color-action-on-action, #FFFFFF);
+  background: var(--deborah-semantic-color-action-primary, #1746D1);
+  color: var(--deborah-semantic-color-action-on-action, #FFFFFF);
 }
 .theme-segmented button:focus-visible {
-  outline: 2px solid var(--edikit-semantic-color-focus, #0B63E5);
+  outline: 2px solid var(--deborah-semantic-color-focus, #0B63E5);
   outline-offset: 1px;
 }
 @media (prefers-reduced-motion: reduce) {

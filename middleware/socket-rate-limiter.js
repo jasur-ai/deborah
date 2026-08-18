@@ -1,5 +1,5 @@
 /**
- * Edikit — Socket.io Rate Limiter Middleware
+ * Deborah — Socket.io Rate Limiter Middleware
  *
  * Two-layer rate limiting for Socket.io:
  *   1. Per-IP connection limiting (max N connections / 60s)

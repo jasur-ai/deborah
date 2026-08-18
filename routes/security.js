@@ -1,5 +1,5 @@
 /**
- * Edikit — Security Profile & Safe Exam Browser Boundary Routes
+ * Deborah — Security Profile & Safe Exam Browser Boundary Routes
  *
  * Prompt 36 (Phase D) REST API:
  *   - GET  /api/admin/security/policy        — institution S0–S4 band + SEB

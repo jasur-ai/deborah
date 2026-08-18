@@ -1,4 +1,4 @@
-# Edikit Design Audit — Baseline (STEP 01)
+# Deborah Design Audit — Baseline (STEP 01)
 
 > **STEP 01 — Repository baseline, backup va scope lock**
 > Sana: 2026-08-06 | Tuzuvchi: Buffy (implementation agent)
@@ -68,12 +68,12 @@ Hozirgi ma'lum natijalar (so'nggi verifikatsiya):
 - **Manba:** `style.md` (3972 qator, 11 bo'lim + A1–A10 animatsiya ilovalari)
 - **Ustunlik qoidasi:** STEP 11–46 bo'limlar (rang, tipografiya, layout, component,
   motion) oldingi rang draftlaridan ustun. Xususan:
-  - §4 Ranglar palitrasi (4.2 Edikit tavsiya palitra)
+  - §4 Ranglar palitrasi (4.2 Deborah tavsiya palitra)
   - §5 Tipografiya (5.1 font stack, 5.2 scale, 5.3 weights)
   - §6 Layout & Grid (6.1 breakpoints, 6.2 patternlar)
   - §7 Card & Component (7.1–7.5)
   - §8 Animatsiya & mikro-interaksiya (8.1 timing, 8.2 core)
-  - §11 Edikit Style Guide (11.1–11.5: tokens, spacing, shadow, z-index)
+  - §11 Deborah Style Guide (11.1–11.5: tokens, spacing, shadow, z-index)
   - A1–A10 animatsiya ilovalari (10×10 variatsiya)
 - **Ushbu hujjat:** `implementation-status.md` oxirida design rejalar ketma-ketligi
   qayd etiladi.

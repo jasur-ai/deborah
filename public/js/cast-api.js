@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast API Client
+ * Deborah — Cast API Client
  * -------------------------
  * Har write request'ga CSRF header qo'shadi.
  * window.__BOOT__.csrfToken yoki window.__CSRF_TOKEN dan token oladi.

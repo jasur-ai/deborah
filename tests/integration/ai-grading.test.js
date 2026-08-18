@@ -1,5 +1,5 @@
 /**
- * Edikit — Written AI Grading Shadow Mode (integration/contract, Prompt 51)
+ * Deborah — Written AI Grading Shadow Mode (integration/contract, Prompt 51)
  *
  * HTTP integration (real Express app + admin auth + CSRF):
  *   - /api/admin/ai-grading/meta — constants exposed.

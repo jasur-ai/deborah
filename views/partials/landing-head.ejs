@@ -7,7 +7,7 @@
 
 <!-- ═══════════ THEME BOOT (S07.02) — tiny synchronous, FOUC'siz ═══════════ -->
 <script>
-(function(){var K='edikit-theme-state',L='edikit-theme',s=null;try{s=localStorage.getItem(K)}catch(_){}if(!s){try{var l=localStorage.getItem(L);if(l==='light'||l==='dark'){s=l;try{localStorage.setItem(K,s)}catch(_){}}}catch(_){}}
+(function(){var K='deborah-theme-state',L='deborah-theme',s=null;try{s=localStorage.getItem(K)}catch(_){}if(!s){try{var l=localStorage.getItem(L);if(l==='light'||l==='dark'){s=l;try{localStorage.setItem(K,s)}catch(_){}}}catch(_){}}
 var STATES=['system','light','dark','hc-light','hc-dark'];if(STATES.indexOf(s)<0)s='system';
 var dc=document.documentElement.getAttribute('data-cast-theme');if(!dc&&document.body&&document.body.getAttribute('data-cast-theme'))dc=1;
 if(!dc){
@@ -35,7 +35,7 @@ var mc=document.getElementById('meta-theme-color');if(mc)mc.setAttribute('conten
 
 <!-- Open Graph (S23.06) — actual product positioning + product poster -->
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Edikit">
+<meta property="og:site_name" content="Deborah">
 <meta property="og:title" content="<%= title %>">
 <meta property="og:description" content="<%= description %>">
 <meta property="og:image" content="<%= siteUrl + '/images/product/poster.webp' %>">
@@ -57,14 +57,14 @@ var mc=document.getElementById('meta-theme-color');if(mc)mc.setAttribute('conten
   "@graph": [
     {
       "@type": "WebSite",
-      "name": "Edikit",
+      "name": "Deborah",
       "url": "<%= siteUrl + path %>",
       "inLanguage": "<%= lang === 'uz-cyrl' ? 'uz' : lang %>",
       "description": "<%= description.replace(/"/g, '\\"') %>"
     },
     {
       "@type": "WebApplication",
-      "name": "Edikit",
+      "name": "Deborah",
       "applicationCategory": "EducationalApplication",
       "url": "<%= siteUrl + path %>",
       "operatingSystem": "Any",

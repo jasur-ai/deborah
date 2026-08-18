@@ -1,5 +1,5 @@
 /**
- * Edikit — Landing product stage (STEP 22 S22.07)
+ * Deborah — Landing product stage (STEP 22 S22.07)
  * Hero stage'ning optional animatsiyasi: prefers-reduced-motion yoki
  * Save-Data rejimida static variant default qoladi (fallback).
  * Animatsiya CSS keyframes (landing.css: ld-rail-grow / ld-fade-in) orqali,

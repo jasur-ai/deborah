@@ -1,5 +1,5 @@
 /**
- * Edikit — Institutional Handoff (e2e, Prompt 72, item 20)
+ * Deborah — Institutional Handoff (e2e, Prompt 72, item 20)
  *
  * End-to-end release scenarios:
  *   - Full cutover rehearsal: backup → dry-run → reconcile → cutover →

@@ -1,5 +1,5 @@
 /**
- * Edikit — Tenant, RBAC & ABAC Tests (Prompt 11)
+ * Deborah — Tenant, RBAC & ABAC Tests (Prompt 11)
  *
  * Tests:
  *   1. Tenant context helper (runWithTenant, getCurrentTenant)

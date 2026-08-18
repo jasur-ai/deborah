@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Vote → Discuss → Revote tests (C3-03)
+ * Deborah — Cast Vote → Discuss → Revote tests (C3-03)
  * -----------------------------------------------------
  * - First vote immutable (attemptNo=1) — overwrite urinishi rad etiladi
  * - Discussion without lock rejection

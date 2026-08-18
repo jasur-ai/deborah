@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Student Question Forge Service (C3-13)
+ * Deborah — Cast Student Question Forge Service (C3-13)
  * -----------------------------------------------------
  * Student savol, javob, explanation va source draftini yuboradi.
  * Teacher edit/approve qilgachgina draft live savol (Quick Prompt) yoki

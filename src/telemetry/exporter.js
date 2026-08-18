@@ -76,8 +76,8 @@ export function buildOtlpPayload(spans) {
   }));
   return {
     resourceSpans: [{
-      resource: { attributes: toKeyValue({ 'service.name': 'edikit-auth' }) },
-      scopeSpans: [{ scope: { name: 'edikit', version: '1.0.0' }, spans: otlpSpans }],
+      resource: { attributes: toKeyValue({ 'service.name': 'deborah-auth' }) },
+      scopeSpans: [{ scope: { name: 'deborah', version: '1.0.0' }, spans: otlpSpans }],
     }],
   };
 }

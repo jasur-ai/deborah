@@ -16,12 +16,12 @@
  *
  * Manbalar (priority yuqoridan pastga):
  *   1. Query:    ?ff_<ctx>=0|1        — dev/testing uchun (NODE_ENV !== production)
- *   2. Env:      EDIKIT_FF_<CTX>=0|1  — infra level rollout
- *   3. Cookie:   edikit_ff_<ctx>       — session-stable (S40.02: active session
+ *   2. Env:      DEBORAH_FF_<CTX>=0|1  — infra level rollout
+ *   3. Cookie:   deborah_ff_<ctx>       — session-stable (S40.02: active session
  *                                         o'rtasida visual shell almashtirilmaydi)
  *   4. Default:  ON (yangi dizayn — redesign allaqachon production default)
  *
- * Rollout pattern: EDIKIT_FF_<CTX>=0 → 1 foiz ishlatuvchilarga (query/cookie
+ * Rollout pattern: DEBORAH_FF_<CTX>=0 → 1 foiz ishlatuvchilarga (query/cookie
  * orqali), xatolik kuzatiladi, keyin 100%.
  */
 /** Cookie'ni o'qish (minimal parse — helpers.getCookie yo'qligi uchun lokal). */
@@ -38,9 +38,9 @@ function readCookie(header, name) {
 // Barcha kontekstlar — yangi dizayn default ON
 export const FLAG_CONTEXTS = ['theme', 'landing', 'auth', 'workspace', 'cast', 'admin'];
 
-/** Flag nomini kanonik formaga keltirish: 'theme' → 'EDIKIT_FF_THEME', 'cast' → 'EDIKIT_FF_CAST' */
+/** Flag nomini kanonik formaga keltirish: 'theme' → 'DEBORAH_FF_THEME', 'cast' → 'DEBORAH_FF_CAST' */
 export function envName(ctx) {
-  return `EDIKIT_FF_${ctx.toUpperCase()}`;
+  return `DEBORAH_FF_${ctx.toUpperCase()}`;
 }
 
 /**
@@ -63,7 +63,7 @@ export function resolveFlag(req, ctx) {
   if (env === '1') return true;
 
   // 3. Cookie (session-stable)
-  const cookieVal = req?.headers?.cookie ? readCookie(req.headers.cookie, `edikit_ff_${ctx}`) : null;
+  const cookieVal = req?.headers?.cookie ? readCookie(req.headers.cookie, `deborah_ff_${ctx}`) : null;
   if (cookieVal === '0') return false;
   if (cookieVal === '1') return true;
 
@@ -92,7 +92,7 @@ export function sessionStableContexts() {
 
 /**
  * Session-stable cookie'ni hisoblash: agar flag default (ON) dan farq qilsa,
- * `edikit_ff_<ctx>=<0|1>` cookie'ini o'rnatish kerak. Farq bo'lmasa — null
+ * `deborah_ff_<ctx>=<0|1>` cookie'ini o'rnatish kerak. Farq bo'lmasa — null
  * (cookie o'rnatilmaydi, default yetarli).
  * @returns {Array<{name: string, value: string, maxAge: number}>}
  */
@@ -103,7 +103,7 @@ export function sessionStableCookies(req) {
     // Flag ON (default) bo'lsa — cookie shart emas; OFF bo'lsa — mustahkamlaymiz
     if (!enabled) {
       cookies.push({
-        name: `edikit_ff_${ctx}`,
+        name: `deborah_ff_${ctx}`,
         value: '0',
         maxAge: 7 * 24 * 60 * 60, // 7 kun
       });

@@ -12,7 +12,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { rmSync } from 'node:fs';
 
-const DB_FILE = '/tmp/edikit-d26-drill-db.json';
+const DB_FILE = '/tmp/deborah-d26-drill-db.json';
 
 let fb;
 let recordSession;

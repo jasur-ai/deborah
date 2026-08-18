@@ -1,5 +1,5 @@
 /**
- * Edikit — Alert Rules & Runbook Annotations (Prompt 69 §13-14)
+ * Deborah — Alert Rules & Runbook Annotations (Prompt 69 §13-14)
  *
  * research.md §38.5 incident runbooks + §38.4 SLO:
  *   - SLO burn-rate alerts (fast/critical burn)
@@ -68,8 +68,8 @@ export function evaluateAlerts(snapshot, opts = {}) {
   }
 
   // ── 2. Provider circuit alerts ──
-  const providerReq = sumCounter(snapshot, (n) => n.startsWith('edikit_provider_requests_total'));
-  const providerErr = sumCounter(snapshot, (n) => n.startsWith('edikit_provider_errors_total'));
+  const providerReq = sumCounter(snapshot, (n) => n.startsWith('deborah_provider_requests_total'));
+  const providerErr = sumCounter(snapshot, (n) => n.startsWith('deborah_provider_errors_total'));
   if (providerReq > 20) {
     const errRate = providerErr / providerReq;
     if (errRate >= 0.25) {
@@ -92,7 +92,7 @@ export function evaluateAlerts(snapshot, opts = {}) {
   }
 
   // ── 3. Cost / quota alerts ──
-  const costCents = sumCounter(snapshot, (n) => n.startsWith('edikit_provider_cost_cents_total'));
+  const costCents = sumCounter(snapshot, (n) => n.startsWith('deborah_provider_cost_cents_total'));
   const costBudget = opts.costBudgetCents || 50000; // $500 default
   if (costCents >= costBudget) {
     alerts.push({
@@ -186,8 +186,8 @@ export function evaluateAlerts(snapshot, opts = {}) {
     });
   }
 
-  // Quota — gauge edikit_provider_quota_fraction (0..1)
-  const quotaGauges = (snapshot.gauges || []).filter((g) => g.name === 'edikit_provider_quota_fraction');
+  // Quota — gauge deborah_provider_quota_fraction (0..1)
+  const quotaGauges = (snapshot.gauges || []).filter((g) => g.name === 'deborah_provider_quota_fraction');
   for (const g of quotaGauges) {
     const quotaUsed = g.value;
     const quotaWarn = opts.quotaWarningFraction || 0.8;

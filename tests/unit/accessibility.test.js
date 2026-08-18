@@ -1,5 +1,5 @@
 /**
- * Edikit — WCAG 2.2 AA & Artifact Accessibility (unit tests, Prompt 64)
+ * Deborah — WCAG 2.2 AA & Artifact Accessibility (unit tests, Prompt 64)
  *
  * PURE schema testlari: contrast math (1.4.3/1.4.11), axe-style rule set
  * (landmark/heading/label/focus/skip-link/timer/target-size/reduced-motion/

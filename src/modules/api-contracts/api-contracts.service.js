@@ -1,5 +1,5 @@
 /**
- * Edikit — API, Socket, Job, Webhook & Outbox Contract Audit (service)
+ * Deborah — API, Socket, Job, Webhook & Outbox Contract Audit (service)
  *
  * Prompt 67 — barcha module boundarylarini versionlangan Zod/OpenAPI/event
  * contractlar bilan birlashtirish (research.md §18, §19).
@@ -412,8 +412,8 @@ export async function enqueueOutbox({
 
   // ── Queue telemetry: enqueue count + payload size (guarded) ──
   try {
-    incrementCounter('edikit_outbox_enqueued_total', { help: 'Outbox messages enqueued' }, { value: 1, labels: { outboxType } });
-    observeHistogram('edikit_outbox_payload_size_bytes', JSON.stringify(payload).length, { help: 'Outbox payload size', labels: { outboxType } });
+    incrementCounter('deborah_outbox_enqueued_total', { help: 'Outbox messages enqueued' }, { value: 1, labels: { outboxType } });
+    observeHistogram('deborah_outbox_payload_size_bytes', JSON.stringify(payload).length, { help: 'Outbox payload size', labels: { outboxType } });
   } catch (_) {}
 
   const existing = await db.selectFrom('outbox_messages')
@@ -483,8 +483,8 @@ export async function processOutboxMessage({ messageId = null, deliver = null, p
     await audit({ action: AUDIT_ACTIONS.OUTBOX_DELIVERED, userId: processedBy, resourceType: 'outbox_messages', resourceId: msg.id, details: { outboxType: msg.outbox_type, attempts: msg.attempts + 1 } }).catch(() => {});
     // ── Queue telemetry: processed + latency (guarded) ──
     try {
-      incrementCounter('edikit_outbox_processed_total', { help: 'Outbox messages processed' }, { value: 1, labels: { outboxType: msg.outbox_type, status: 'delivered' } });
-      observeHistogram('edikit_outbox_process_latency_ms', Date.now() - (new Date(msg.created_at || Date.now())).getTime(), { help: 'Outbox processing latency' });
+      incrementCounter('deborah_outbox_processed_total', { help: 'Outbox messages processed' }, { value: 1, labels: { outboxType: msg.outbox_type, status: 'delivered' } });
+      observeHistogram('deborah_outbox_process_latency_ms', Date.now() - (new Date(msg.created_at || Date.now())).getTime(), { help: 'Outbox processing latency' });
     } catch (_) {}
     return { ok: true, status: OUTBOX_STATUS.DELIVERED };
   }

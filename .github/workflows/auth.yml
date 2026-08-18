@@ -1,4 +1,4 @@
-# Edikit — AUTH CI/CD Pipeline (D-20)
+# Deborah — AUTH CI/CD Pipeline (D-20)
 #
 # Auth alohida pipeline: typecheck → unit+integration → security → e2e → a11y → build.
 # Deploy stage (staging → prod blue-green) wsl qismi (D-20 Stage 7 / D-21 runbook).

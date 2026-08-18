@@ -1,5 +1,5 @@
 /**
- * Edikit — Remember-me selector/verifier (AUTH A-25 §07)
+ * Deborah — Remember-me selector/verifier (AUTH A-25 §07)
  *
  * OWASP "remember me" pattern:
  *   - **selector** (random 16B hex) — cookie'da ochiq; DB'dagi yozuvni topish uchun.

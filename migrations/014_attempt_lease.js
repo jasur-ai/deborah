@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 014: Attempt Lease, Identity Step & Server Timer
+ * Deborah — Migration 014: Attempt Lease, Identity Step & Server Timer
  *
  * Secure attempt start (Prompt 30 — Phase D #1):
  *   - attempts: one row per authorized student attempt, pinned to the EXACT
@@ -153,15 +153,15 @@ export async function up(db) {
     .execute();
 
   // ── Grants ──
-  await sql`GRANT SELECT, INSERT, UPDATE ON attempts TO edikit_runtime`.execute(db);
-  await sql`GRANT USAGE ON attempts_id_seq TO edikit_runtime`.execute(db);
-  await sql`GRANT SELECT, INSERT, UPDATE ON attempt_devices TO edikit_runtime`.execute(db);
-  await sql`GRANT USAGE ON attempt_devices_id_seq TO edikit_runtime`.execute(db);
-  await sql`GRANT SELECT, INSERT, UPDATE ON attempt_leases TO edikit_runtime`.execute(db);
-  await sql`GRANT USAGE ON attempt_leases_id_seq TO edikit_runtime`.execute(db);
-  await sql`GRANT DELETE ON attempts TO edikit_migration`.execute(db);
-  await sql`GRANT DELETE ON attempt_leases TO edikit_migration`.execute(db);
-  await sql`GRANT SELECT ON attempts TO edikit_scoring`.execute(db);
+  await sql`GRANT SELECT, INSERT, UPDATE ON attempts TO deborah_runtime`.execute(db);
+  await sql`GRANT USAGE ON attempts_id_seq TO deborah_runtime`.execute(db);
+  await sql`GRANT SELECT, INSERT, UPDATE ON attempt_devices TO deborah_runtime`.execute(db);
+  await sql`GRANT USAGE ON attempt_devices_id_seq TO deborah_runtime`.execute(db);
+  await sql`GRANT SELECT, INSERT, UPDATE ON attempt_leases TO deborah_runtime`.execute(db);
+  await sql`GRANT USAGE ON attempt_leases_id_seq TO deborah_runtime`.execute(db);
+  await sql`GRANT DELETE ON attempts TO deborah_migration`.execute(db);
+  await sql`GRANT DELETE ON attempt_leases TO deborah_migration`.execute(db);
+  await sql`GRANT SELECT ON attempts TO deborah_scoring`.execute(db);
 
   console.log('Secure attempt structure created: attempts, attempt_devices, attempt_leases');
 }

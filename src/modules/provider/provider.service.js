@@ -1,5 +1,5 @@
 /**
- * Edikit — Unified Provider Async Adapter (service)
+ * Deborah — Unified Provider Async Adapter (service)
  *
  * Prompt 58 — Gamma generation va Manus task/artifact oqimlarini unified
  * provider job contractga ulash. Graceful degradation: PostgreSQL bo'lmasa
@@ -9,7 +9,7 @@
  *     → provider create (Gamma: generations, Manus: files+project+task)
  *     → persist job + event + audit.
  *   - pollGammaJob: async polling with backoff → completed'da artifacts'
- *     ni map qilib expiring export'ni Edikit object storage'ga copy qiladi.
+ *     ni map qilib expiring export'ni Deborah object storage'ga copy qiladi.
  *   - cancelProviderJob: Gamma cancel (idempotent).
  *   - handleManusWebhook: signed webhook verify → out-of-order seq handling
  *     → task completed'da artifacts fetch + object storage copy.
@@ -180,7 +180,7 @@ async function transitionJob(db, jobId, to, { error = null } = {}) {
   return { ok: true };
 }
 
-/** Copy an expiring provider artifact to Edikit object storage. */
+/** Copy an expiring provider artifact to Deborah object storage. */
 async function copyArtifactToStorage({ db, tenantId, provider, jobId, artifact, fetchImpl = null }) {
   if (!artifact?.url) return { ok: false, error: 'artifact has no url' };
   const dl = await downloadArtifact({ url: artifact.url, fetchImpl });
@@ -318,7 +318,7 @@ export async function createProviderJob({
     if (!createError) {
       // Step 2: project per course/teacher
       if (!providerProjectId) {
-        const proj = await manusCreateProject({ name: title ? `${title} — course` : 'Edikit', fetchImpl });
+        const proj = await manusCreateProject({ name: title ? `${title} — course` : 'Deborah', fetchImpl });
         if (!proj.ok) createError = proj.error;
         else providerProjectId = proj.projectId;
       }

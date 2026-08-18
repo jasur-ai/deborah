@@ -1,5 +1,5 @@
 /**
- * Edikit — Reliability Guard (unit, Prompt 71)
+ * Deborah — Reliability Guard (unit, Prompt 71)
  *
  * Pure logic tests for src/modules/reliability/schema:
  *   - Load profile SLO evaluation (peak load SLO test, item 18)

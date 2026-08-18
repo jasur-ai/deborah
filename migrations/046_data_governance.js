@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 046: Data Classification, Privacy, Retention & Purge
+ * Deborah — Migration 046: Data Classification, Privacy, Retention & Purge
  *
  * Prompt 65 — D0–D6 data classification, legal hold, DSAR va multi-store
  * deletion'ni operational qilish (research.md §27 data governance —

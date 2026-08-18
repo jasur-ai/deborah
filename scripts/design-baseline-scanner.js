@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Design Audit: Baseline Scanner (STEP 01 / S01.05)
+ * Deborah — Design Audit: Baseline Scanner (STEP 01 / S01.05)
  * -----------------------------------------------------------
  * UI fayllar bo'ylab antikvarlik belgilarini skanerlaydi:
  *   - raw hex / rgb / rgba ranglar (token'ga olinmagan)

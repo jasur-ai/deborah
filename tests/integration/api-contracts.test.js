@@ -1,5 +1,5 @@
 /**
- * Edikit — API, Socket, Job, Webhook & Outbox Contract Audit (integration tests, Prompt 67)
+ * Deborah — API, Socket, Job, Webhook & Outbox Contract Audit (integration tests, Prompt 67)
  *
  * Service qatlami (fake DB): route inventory (undocumented privileged
  * detection), contract save/publish (zod→OpenAPI + sensitive guard), socket

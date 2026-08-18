@@ -1,5 +1,5 @@
 /**
- * Edikit — Unit Tests: Exam Scheduling Solver (Prompt 39)
+ * Deborah — Unit Tests: Exam Scheduling Solver (Prompt 39)
  *
  * Pure-logic coverage:
  *   - Deterministic seeded PRNG (same seed → same schedule)

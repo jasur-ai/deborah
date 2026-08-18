@@ -1,5 +1,5 @@
 /**
- * Edikit — Response API, ACK Sequence & Autosave (Prompt 31)
+ * Deborah — Response API, ACK Sequence & Autosave (Prompt 31)
  *
  * Phase D #2: reliable autosave contract for MCQ/structured/essay responses.
  *

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %> — Edikit Admin</title>
+  <title><%= title %> — Deborah Admin</title>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/admin.css">
 </head>
@@ -12,8 +12,8 @@
   <div class="adm-shell">
     <aside class="adm-sidebar">
       <div class="adm-brand">
-        <img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto">
-        <span>Edikit</span>
+        <img src="/images/logo-icon.svg" alt="Deborah" class="logo-img" style="height:28px;width:auto">
+        <span>Deborah</span>
       </div>
       <nav class="adm-nav">
         <a href="/admin/dashboard">Dashboard</a>
@@ -228,7 +228,7 @@
           <span><b>No intro</b> ${g.summary?.missingIntroduction ?? 0}</span>
           <span><b>No assessment</b> ${g.summary?.missingAssessment ?? 0}</span>
           <span><b>Over-assessed</b> ${g.summary?.overAssessed ?? 0}</span>
-        </div>` + (gs.length ? gs.map((x) => `<div class="adm-row" style="border:1px solid var(--edikit-semantic-color-border-default);border-radius:8px;padding:8px;margin:4px 0;font-size:12px">
+        </div>` + (gs.length ? gs.map((x) => `<div class="adm-row" style="border:1px solid var(--deborah-semantic-color-border-default);border-radius:8px;padding:8px;margin:4px 0;font-size:12px">
           <b>${esc(x.kind)}</b> — ${esc(x.code)}: ${esc(x.detail)}</div>`).join('') : '<p class="adm-muted">Gap yo&rsquo;q</p>');
       await loadEvidence();
       await loadFindings();
@@ -259,11 +259,11 @@
     try {
       const { findings } = await api(`/api/admin/program-quality/findings?mapId=${id}`);
       $('actionBox').innerHTML = findings.map((f) => `
-        <div style="border:1px solid var(--edikit-semantic-color-border-default);border-radius:10px;padding:10px;margin:8px 0">
+        <div style="border:1px solid var(--deborah-semantic-color-border-default);border-radius:10px;padding:10px;margin:8px 0">
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
             <b>#${f.id}</b> <span>${esc(f.title)}</span>
             <span class="chip chip-${f.status === 'resolved' ? 'ok' : 'warn'}">${esc(f.status)}</span>
-            <span style="font-size:12px;color:var(--edikit-semantic-color-text-muted)">target ${f.target_pct}% · observed ${f.observed_pct ?? 'n/a'}%</span>
+            <span style="font-size:12px;color:var(--deborah-semantic-color-text-muted)">target ${f.target_pct}% · observed ${f.observed_pct ?? 'n/a'}%</span>
           </div>
           <div id="actions-${f.id}" style="margin-top:6px;font-size:13px"></div>
         </div>`).join('') || '<p class="adm-muted">Finding yo&rsquo;q</p>';
@@ -272,10 +272,10 @@
         const fa = actions.filter((a) => a.finding_id === f.id);
         const el = $('actions-' + f.id);
         if (el) el.innerHTML = fa.map((a) => `
-          <div style="border-left:3px solid var(--edikit-semantic-color-border-default);padding:6px 10px;margin:4px 0">
+          <div style="border-left:3px solid var(--deborah-semantic-color-border-default);padding:6px 10px;margin:4px 0">
             <b>${esc(a.title)}</b> — owner: <i>${esc(a.owner)}</i> · deadline: ${esc((a.deadline || '').slice(0, 10))}
             <span class="chip chip-${a.status === 'closed' ? 'ok' : 'warn'}">${esc(a.status)}</span>
-            <span style="font-size:12px;color:var(--edikit-semantic-color-text-muted)">follow-ups: ${a.followUpCount ?? 0}</span>
+            <span style="font-size:12px;color:var(--deborah-semantic-color-text-muted)">follow-ups: ${a.followUpCount ?? 0}</span>
           </div>`).join('') || 'Action yo&rsquo;q';
       }
     } catch (e) { /* silent */ }

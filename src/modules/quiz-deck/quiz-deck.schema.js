@@ -1,5 +1,5 @@
 /**
- * Edikit — Quiz-from-Deck (pure logic)
+ * Deborah — Quiz-from-Deck (pure logic)
  *
  * Prompt 59 — canonical deckdan quiz yaratish (research.md §10: "Create
  * quiz from this presentation" — slide title emas, source pack va

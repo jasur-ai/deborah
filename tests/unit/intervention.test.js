@@ -1,5 +1,5 @@
 /**
- * Edikit — Intervention Loop, Adaptive Practice & Support (unit tests, Prompt 55)
+ * Deborah — Intervention Loop, Adaptive Practice & Support (unit tests, Prompt 55)
  *
  * Pure schema tekshiruvi (hech qanday DB/I-O yo'q):
  *   - Misconception → intervention mapping (§47 #1).

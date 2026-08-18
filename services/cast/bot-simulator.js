@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Bot Simulator (C3-15)
+ * Deborah — Cast Bot Simulator (C3-15)
  * ------------------------------------
  * Rehearsal sessionlarda production participantlarsiz botlar bilan test.
  *

@@ -1,5 +1,5 @@
 /**
- * Edikit — Claude Native Adapter (integration tests, Prompt 57)
+ * Deborah — Claude Native Adapter (integration tests, Prompt 57)
  *
  * Service qatlami: graceful degradation (PG'siz → 400/error),
  * validate-before-getDb, idempotency (request_hash), success flow

@@ -30,7 +30,7 @@ export const EMAIL_LOG_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
 let _hashKey = null;
 function hashKey() {
   if (_hashKey) return _hashKey;
-  const raw = process.env.EMAIL_HASH_KEY || process.env.SESSION_SECRET || 'edikit-email-hash-dev';
+  const raw = process.env.EMAIL_HASH_KEY || process.env.SESSION_SECRET || 'deborah-email-hash-dev';
   _hashKey = crypto.createHash('sha256').update(String(raw)).digest();
   return _hashKey;
 }

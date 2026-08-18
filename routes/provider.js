@@ -1,5 +1,5 @@
 /**
- * Edikit — Unified Provider Async Adapter Routes
+ * Deborah — Unified Provider Async Adapter Routes
  *
  * Prompt 58 REST API:
  *   - GET   /api/admin/provider/meta                  — constants for UI

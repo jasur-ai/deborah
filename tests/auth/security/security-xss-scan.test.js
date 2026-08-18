@@ -100,7 +100,7 @@ describe('AUTH D-18 §13 — secret scan (fixtureda ham haqiqiy secret yoq)', ()
 
   it('token-vault kaliti haqiqiy emas (SESSION_SECRET test env dan)', () => {
     const src = read('src/modules/auth/mfa-totp.js');
-    expect(src).not.toContain('ci-secret-for-edikit-42');
+    expect(src).not.toContain('ci-secret-for-deborah-42');
   });
 });
 

@@ -1,5 +1,5 @@
 /**
- * Edikit — WebAuthn (Passkey) Service Unit Tests (AUTH A-27)
+ * Deborah — WebAuthn (Passkey) Service Unit Tests (AUTH A-27)
  *
  * Haqiqiy kripto bilan: sun'iy authenticator (tests/helpers) simplewebauthn
  * v13 verification pipeline'ini to'liq bosib o'tadi — origin/rpId/challenge/
@@ -85,16 +85,16 @@ describe('WebAuthn / Passkey Service (AUTH A-27)', () => {
     vi.clearAllMocks();
     Object.keys(testStore).forEach((k) => delete testStore[k]);
     w = await import('../../src/modules/auth/webauthn.js');
-    w.setRpConfig({ name: 'Edikit Test', id: 'localhost', origin: 'http://localhost:3000' });
+    w.setRpConfig({ name: 'Deborah Test', id: 'localhost', origin: 'http://localhost:3000' });
   });
 
   describe('RP Configuration', () => {
     it('returns current RP config and rpFromRequest', () => {
-      expect(w.getRpConfig().name).toBe('Edikit Test');
-      const req = { protocol: 'http', get: (h) => (h === 'host' ? 'edikit.test:4000' : undefined) };
+      expect(w.getRpConfig().name).toBe('Deborah Test');
+      const req = { protocol: 'http', get: (h) => (h === 'host' ? 'deborah.test:4000' : undefined) };
       const rp = w.rpFromRequest(req);
-      expect(rp.id).toBe('edikit.test');
-      expect(rp.origin).toBe('http://edikit.test:4000');
+      expect(rp.id).toBe('deborah.test');
+      expect(rp.origin).toBe('http://deborah.test:4000');
     });
   });
 

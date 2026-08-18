@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Cast Load Report (C5-09 items 16-19)
+ * Deborah — Cast Load Report (C5-09 items 16-19)
  * ----------------------------------------------
  * Load scenario natijalarini SLO (release threshold) bilan solishtiradi va
  * har tier uchun certification xulosasini chiqaradi.

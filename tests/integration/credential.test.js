@@ -1,5 +1,5 @@
 /**
- * Edikit — Portfolio & Verifiable Credential (integration tests, Prompt 61)
+ * Deborah — Portfolio & Verifiable Credential (integration tests, Prompt 61)
  *
  * Service qatlami: issueCredential (guarded + idempotent), revoke/renew/
  * appeal flows, share grant create/verify/revoke, credential verifier

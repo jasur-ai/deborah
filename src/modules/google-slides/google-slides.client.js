@@ -1,5 +1,5 @@
 /**
- * Edikit — Google Slides Client (server-side)
+ * Deborah — Google Slides Client (server-side)
  *
  * Prompt 59 — Google Slides API (research §9.9): create presentation,
  * presentations.batchUpdate atomik update, Drive API export. Tokenlar

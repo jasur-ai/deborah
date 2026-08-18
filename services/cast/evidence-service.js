@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Evidence Service (C3-01)
+ * Deborah — Cast Evidence Service (C3-01)
  * --------------------------------------
  * Question lock'dan keyin teacher-private evidence hisoblaydi.
  * - Har bir ishtirokchi statusga ajratiladi: accepted / wrong / no_response /

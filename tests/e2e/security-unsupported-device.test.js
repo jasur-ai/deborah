@@ -1,5 +1,5 @@
 /**
- * Edikit — Security Profile & Unsupported Device E2E Walk (Prompt 36)
+ * Deborah — Security Profile & Unsupported Device E2E Walk (Prompt 36)
  *
  * E2E/security test at the pure-logic layer (PostgreSQL absent in CI — same
  * convention as teacher-core.checkpoint.test.js): walks the full Prompt 36

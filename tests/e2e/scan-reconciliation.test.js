@@ -1,5 +1,5 @@
 /**
- * Edikit — Scan module e2e/security tests (Prompt 43)
+ * Deborah — Scan module e2e/security tests (Prompt 43)
  *
  * OMR/OCR low-confidence manual-route flow + API walk (graceful
  * degradation) + security guards:

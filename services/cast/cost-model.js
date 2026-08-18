@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Capacity & Infrastructure Cost Model (C5-10)
+ * Deborah — Cast Capacity & Infrastructure Cost Model (C5-10)
  * -----------------------------------------------------------
  * Har certified tier uchun compute, realtime, egress, storage,
  * observability va support costini inputlardan hisoblaydi.

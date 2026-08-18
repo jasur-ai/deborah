@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Edikit Auth API",
+    "title": "Deborah Auth API",
     "version": "1.0.0",
-    "description": "Edikit auth API contract (D-30) — versionlanadi; breaking change → v2 (deprecation 6 oy, §24)."
+    "description": "Deborah auth API contract (D-30) — versionlanadi; breaking change → v2 (deprecation 6 oy, §24)."
   },
   "servers": [
     {

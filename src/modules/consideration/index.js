@@ -1,5 +1,5 @@
 /**
- * Edikit — Special Consideration, Deferral, Resit, Appeal & Scoring
+ * Deborah — Special Consideration, Deferral, Resit, Appeal & Scoring
  * Incident Module Barrel
  *
  * Prompt 48 — sensitive case, attempt lineage, remedy va wrong-key rescore

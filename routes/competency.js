@@ -1,5 +1,5 @@
 /**
- * Edikit — Competency & Curriculum Graph API Routes
+ * Deborah — Competency & Curriculum Graph API Routes
  *
  * Provides REST API endpoints for competency management:
  *   - Framework CRUD

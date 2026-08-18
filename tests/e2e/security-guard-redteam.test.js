@@ -1,5 +1,5 @@
 /**
- * Edikit — Security Guard Red-Team (e2e, Prompt 70, item 20)
+ * Deborah — Security Guard Red-Team (e2e, Prompt 70, item 20)
  *
  * AI adversarial / provider-cost abuse suite:
  *   - Full red-team corpus run through the pure detector (adversarial inputs)

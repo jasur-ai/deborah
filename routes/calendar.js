@@ -1,5 +1,5 @@
 /**
- * Edikit — Program Calendar & Workload API Routes
+ * Deborah — Program Calendar & Workload API Routes
  *
  * REST API for Prompt 26:
  *   - Program event CRUD (draft → scheduled → published, hard-clash-gated)

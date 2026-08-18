@@ -1,5 +1,5 @@
 /**
- * Edikit — Uch-strike Client Collector & Server Classifier Routes
+ * Deborah — Uch-strike Client Collector & Server Classifier Routes
  *
  * Prompt 34 (Phase D #5) REST API:
  *   - POST /api/student/attempts/:id/proctor/events — browser collector

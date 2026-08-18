@@ -1,5 +1,5 @@
 /**
- * Edikit — Legacy Migration Mapper Tests
+ * Deborah — Legacy Migration Mapper Tests
  *
  * Covers: user mapping, test mapping, mock fan mapping, pre-group mapping,
  * result mapping, enrollment mapping, comprehensive analysis, report generation.
@@ -455,7 +455,7 @@ describe('Legacy Migration — Report Generation', () => {
       });
 
       const report = generateDryRunReport(analysis);
-      expect(report).toContain('Edikit');
+      expect(report).toContain('Deborah');
       expect(report).toContain('Migration Dry-Run');
       expect(report).toContain('1 users');
       expect(report).toContain('MIGRATION PLAN');

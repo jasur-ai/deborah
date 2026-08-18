@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Analytics Event Pipeline (C5-04)
+ * Deborah — Cast Analytics Event Pipeline (C5-04)
  * -----------------------------------------------
  * Product/reliability analytics — structured, PII-minimized eventlar.
  *

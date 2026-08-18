@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Motion discipline for EJS views (STYLE STEP 10, S10.03)
+ * Deborah — Motion discipline for EJS views (STYLE STEP 10, S10.03)
  * ---------------------------------------------------------------
  * `transition:all .2s` → `transition:color .2s,background-color .2s,
  * border-color .2s,box-shadow .2s,transform .2s,opacity .2s`

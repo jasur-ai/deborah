@@ -1,5 +1,5 @@
 /**
- * Edikit — Board Ratification, Result Release & Grade Ledger Schema
+ * Deborah — Board Ratification, Result Release & Grade Ledger Schema
  *
  * Prompt 47 — provisional markni authorized board orqali immutable final
  * resultga aylantirish (research.md §49.15, §67.1 steps 14–16). Pure
@@ -306,7 +306,7 @@ export function buildSisPayload({ decision = null, run = null, user = null, vers
       gradeLabel: run?.grade_label ?? null,
       snapshotHash: decision?.snapshot_hash || null,
       ratifiedAt: decision?.decided_at || null,
-      source: 'edikit-board',
+      source: 'deborah-board',
     },
   };
 }

@@ -1,5 +1,5 @@
 /**
- * Edikit — Grade / Board / Case Integration & Security Suite (Prompt 49)
+ * Deborah — Grade / Board / Case Integration & Security Suite (Prompt 49)
  *
  * End-to-end HTTP integration of the final result governance chain:
  * grading rule → board ratification → release → wrong-key rescore →

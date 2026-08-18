@@ -1,5 +1,5 @@
 /**
- * Edikit — QTI Module Tests
+ * Deborah — QTI Module Tests
  *
  * Covers: security validation, parser/mapping, staging service, export, barrel export.
  * All tests PURE — graceful degradation when PostgreSQL unavailable.

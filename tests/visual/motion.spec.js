@@ -1,5 +1,5 @@
 /**
- * Edikit — Visual: Motion Foundations (STYLE STEP 10)
+ * Deborah — Visual: Motion Foundations (STYLE STEP 10)
  * ---------------------------------------------------
  * S10.03 — transition: all yo'q (property-specific)
  * S10.08 — layout animatsiya yo'q

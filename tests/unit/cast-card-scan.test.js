@@ -1,5 +1,5 @@
 /**
- * Edikit — No-device Paper-Card Mode (C4-03) Tests
+ * Deborah — No-device Paper-Card Mode (C4-03) Tests
  * --------------------------------------------------
  * coverage: normalizeCardId format, assertOrientation, assessConfidence
  * (glare/occlusion threshold — item 9), mapOrientationToOption (four-orientation

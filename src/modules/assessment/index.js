@@ -1,5 +1,5 @@
 /**
- * Edikit — Assessment Builder Module (barrel export)
+ * Deborah — Assessment Builder Module (barrel export)
  */
 
 export * from './blueprint.js';

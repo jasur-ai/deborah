@@ -25,7 +25,7 @@ describe('AUTH D-14 §18 — security suite skeleton', () => {
     const req = await createRequest();
     const res = await req.get('/user/login');
     // SESSION_SECRET / haqiqiy API kalitlari render qilinmaydi
-    expect(res.text).not.toContain('test-secret-for-edikit-42');
+    expect(res.text).not.toContain('test-secret-for-deborah-42');
     expect(res.text).not.toContain('TURNSTILE_SECRET_KEY');
     expect(res.text).not.toContain('TELEGRAM_BOT_TOKEN');
   });

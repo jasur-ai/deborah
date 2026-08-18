@@ -1,5 +1,5 @@
 /**
- * Edikit — Roster Mapper: Column Mapping, Validation & Diff Engine
+ * Deborah — Roster Mapper: Column Mapping, Validation & Diff Engine
  *
  * Converts raw parsed roster rows into a structured diff for admin review.
  * Stages: column mapping → required/duplicate/referential validation →

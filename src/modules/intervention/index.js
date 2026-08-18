@@ -1,5 +1,5 @@
 /**
- * Edikit — Intervention Loop, Adaptive Practice & Support (barrel, Prompt 55)
+ * Deborah — Intervention Loop, Adaptive Practice & Support (barrel, Prompt 55)
  *
  * research.md §47 #1 Assessment-to-Intervention Loop, #6 Adaptive Mastery
  * Practice (P3 formative only), #10 Ethical Student Success Engine

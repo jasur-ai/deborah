@@ -1,5 +1,5 @@
 /**
- * Edikit — HEMIS Identity Provider Adapter (AUTH A-15)
+ * Deborah — HEMIS Identity Provider Adapter (AUTH A-15)
  * ------------------------------------------------------
  * REST-first: talaba o'z HEMIS login/paroli bilan akkauntini bog'laydi.
  * A-14 da live tasdiqlangan yo'l:
@@ -196,7 +196,7 @@ export async function restLogin({ login, password }, opts = {}) {
   try {
     res = await fetchFn(`${baseUrl}/rest/v1/auth/login`, {
       method: 'POST',
-      headers: { 'content-type': 'application/json', 'user-agent': 'Edikit-Auth/1.0' },
+      headers: { 'content-type': 'application/json', 'user-agent': 'Deborah-Auth/1.0' },
       body: JSON.stringify({ login, password, username: login }),
       signal: ctrl.signal,
       redirect: 'manual',
@@ -230,7 +230,7 @@ export async function fetchAccountMe(token, opts = {}) {
   let res;
   try {
     res = await fetchFn(`${baseUrl}/rest/v1/account/me`, {
-      headers: { authorization: `Bearer ${token}`, 'user-agent': 'Edikit-Auth/1.0' },
+      headers: { authorization: `Bearer ${token}`, 'user-agent': 'Deborah-Auth/1.0' },
       signal: ctrl.signal,
       redirect: 'manual',
     });
@@ -326,7 +326,7 @@ export async function fetchOAuthUser(accessToken, opts = {}) {
   let res;
   try {
     res = await fetchFn(`${BASE_URL}/oauth/api/user?fields=id,uuid,type,name,login,email,university_id,groups`, {
-      headers: { authorization: `Bearer ${accessToken}`, 'user-agent': 'Edikit-Auth/1.0' },
+      headers: { authorization: `Bearer ${accessToken}`, 'user-agent': 'Deborah-Auth/1.0' },
       signal: ctrl.signal,
     });
   } catch {

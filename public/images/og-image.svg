@@ -108,7 +108,7 @@
     <circle cx="212" cy="80" r="4" fill="#38BDF8" opacity=".35"/>
   </g>
 
-  <!-- Edikit Text -->
+  <!-- Deborah Text -->
   <text x="520" y="250" font-family="'Righteous', 'Segoe UI', system-ui, sans-serif"
         font-size="96" font-weight="700" letter-spacing="-1" fill="url(#textGrad)"
         filter="drop-shadow(0 4px 20px rgba(0,0,0,.5))">

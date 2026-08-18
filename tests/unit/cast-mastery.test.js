@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Mastery, Transfer va Redemption (C3-08) Tests
+ * Deborah — Cast Mastery, Transfer va Redemption (C3-08) Tests
  * ------------------------------------------------------------
  * coverage: validateTransferMapping, buildMasteryContract,
  *           computeLearningProgress, checkRedemptionLimit, buildNextStep,

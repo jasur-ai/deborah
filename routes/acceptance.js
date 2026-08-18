@@ -1,5 +1,5 @@
 /**
- * Edikit — Final System Acceptance Routes (Prompt 73)
+ * Deborah — Final System Acceptance Routes (Prompt 73)
  *
  *   - GET  /admin/acceptance                     — release acceptance
  *     dashboard (requireAdmin)

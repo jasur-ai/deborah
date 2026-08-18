@@ -16,42 +16,42 @@
 }
 .dt-search-ico {
   position: absolute; left: 10px; pointer-events: none;
-  color: var(--edikit-semantic-color-text-muted, var(--edikit-semantic-color-text-muted)); display: inline-flex;
+  color: var(--deborah-semantic-color-text-muted, var(--deborah-semantic-color-text-muted)); display: inline-flex;
 }
 .dt-search-input {
   width: 100%; padding: 8px 12px 8px 32px;
-  background: var(--edikit-semantic-color-surface-input, var(--edikit-semantic-color-surface-raised));
-  border: 1px solid var(--edikit-semantic-color-border-default, var(--edikit-semantic-color-border-subtle));
-  border-radius: var(--edikit-radius-sm, 8px);
-  color: var(--edikit-semantic-color-text-primary); font-family: 'Source Sans 3', sans-serif;
+  background: var(--deborah-semantic-color-surface-input, var(--deborah-semantic-color-surface-raised));
+  border: 1px solid var(--deborah-semantic-color-border-default, var(--deborah-semantic-color-border-subtle));
+  border-radius: var(--deborah-radius-sm, 8px);
+  color: var(--deborah-semantic-color-text-primary); font-family: 'Source Sans 3', sans-serif;
   font-size: .8rem; font-weight: 600;
   transition: border-color .2s ease, box-shadow .2s ease;
 }
 .dt-search-input:focus {
-  outline: none; border-color: var(--edikit-semantic-color-action-primary);
+  outline: none; border-color: var(--deborah-semantic-color-action-primary);
   box-shadow: 0 0 0 3px var(--accent-alpha, rgba(37,99,235,.15));
 }
-.dt-search-input::placeholder { color: var(--edikit-semantic-color-text-muted, var(--edikit-semantic-color-text-muted)); opacity: .8; }
+.dt-search-input::placeholder { color: var(--deborah-semantic-color-text-muted, var(--deborah-semantic-color-text-muted)); opacity: .8; }
 .dt-search-status {
-  position: absolute; right: 10px; color: var(--edikit-semantic-color-text-muted, var(--edikit-semantic-color-text-muted));
+  position: absolute; right: 10px; color: var(--deborah-semantic-color-text-muted, var(--deborah-semantic-color-text-muted));
   display: inline-flex; align-items: center;
 }
 .dt-search-status[aria-hidden="true"] { display: none; }
 .dt-search-clear {
   position: absolute; right: 8px; display: none;
   background: none; border: none; padding: 2px; cursor: pointer;
-  color: var(--edikit-semantic-color-text-muted, var(--edikit-semantic-color-text-muted)); border-radius: 4px;
+  color: var(--deborah-semantic-color-text-muted, var(--deborah-semantic-color-text-muted)); border-radius: 4px;
 }
-.dt-search-clear:hover { color: var(--edikit-semantic-color-text-primary); }
+.dt-search-clear:hover { color: var(--deborah-semantic-color-text-primary); }
 .dt-search.has-value .dt-search-clear { display: inline-flex; }
 .dt-search.has-value .dt-search-status { right: 30px; }
 
 /* Result count (S18.06) */
 .dt-count {
-  font-size: .72rem; font-weight: 600; color: var(--edikit-semantic-color-text-muted, var(--edikit-semantic-color-text-muted));
+  font-size: .72rem; font-weight: 600; color: var(--deborah-semantic-color-text-muted, var(--deborah-semantic-color-text-muted));
   white-space: nowrap;
 }
-.dt-count b { color: var(--edikit-semantic-color-action-primary); font-variant-numeric: tabular-nums; }
+.dt-count b { color: var(--deborah-semantic-color-action-primary); font-variant-numeric: tabular-nums; }
 
 /* ── S18.07: Active filter chips — visible, removable, clear-all ── */
 .dt-filters {
@@ -60,31 +60,31 @@
 }
 .dt-filters-label {
   font-size: .7rem; font-weight: 700; text-transform: uppercase;
-  letter-spacing: .04em; color: var(--edikit-semantic-color-text-muted, var(--edikit-semantic-color-text-muted));
+  letter-spacing: .04em; color: var(--deborah-semantic-color-text-muted, var(--deborah-semantic-color-text-muted));
 }
 .dt-chip {
   display: inline-flex; align-items: center; gap: 5px;
   padding: 4px 8px 4px 10px;
   background: var(--accent-alpha, rgba(37,99,235,.1));
-  color: var(--edikit-semantic-color-action-primary); border: 1px solid var(--accent-alpha, rgba(37,99,235,.25));
+  color: var(--deborah-semantic-color-action-primary); border: 1px solid var(--accent-alpha, rgba(37,99,235,.25));
   border-radius: 50px; font-size: .72rem; font-weight: 600;
 }
 .dt-chip button {
   background: none; border: none; padding: 0; cursor: pointer;
   color: inherit; display: inline-flex; border-radius: 50%;
 }
-.dt-chip button:hover { color: var(--edikit-semantic-color-text-primary); }
+.dt-chip button:hover { color: var(--deborah-semantic-color-text-primary); }
 .dt-chip button:focus-visible {
-  outline: 3px solid var(--edikit-semantic-color-focus-ring, #255EDB);
+  outline: 3px solid var(--deborah-semantic-color-focus-ring, #255EDB);
   outline-offset: 2px;
 }
 .dt-clear-all {
   background: none; border: none; padding: 4px 8px;
-  color: var(--edikit-semantic-color-text-muted, var(--edikit-semantic-color-text-muted));
+  color: var(--deborah-semantic-color-text-muted, var(--deborah-semantic-color-text-muted));
   font-family: 'Source Sans 3', sans-serif; font-size: .72rem; font-weight: 700;
   cursor: pointer; border-radius: 6px; text-decoration: underline;
 }
-.dt-clear-all:hover { color: var(--edikit-semantic-color-status-danger, #ef4444); }
+.dt-clear-all:hover { color: var(--deborah-semantic-color-status-danger, #ef4444); }
 
 /* Hidden filter state yo'q — faqat aria-live region (SR announcement) */
 .dt-live {

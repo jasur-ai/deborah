@@ -1,5 +1,5 @@
 /**
- * Edikit — Passkey settings client (AUTH A-27)
+ * Deborah — Passkey settings client (AUTH A-27)
  *
  * Security profile sahifasidagi Passkeylar bo'limi:
  *   - ro'yxat (deviceName, lastUsed, backedUp)
@@ -104,10 +104,10 @@
         ? '<span style="display:inline-flex;align-items:center;gap:4px;font-size:.66rem;font-weight:700;background:rgba(0,229,160,.1);color:var(--green);border:1px solid rgba(0,229,160,.3);border-radius:6px;padding:2px 7px">● ' + t('sync', 'Sync') + '</span>'
         : '<span style="display:inline-flex;align-items:center;gap:4px;font-size:.66rem;font-weight:700;background:rgba(59,130,246,.1);color:var(--blue);border:1px solid rgba(59,130,246,.3);border-radius:6px;padding:2px 7px">● ' + deviceLabel + '</span>';
       var deviceName = p.deviceName || deviceLabel;
-      return '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--edikit-semantic-color-border-default)">'
+      return '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--deborah-semantic-color-border-default)">'
         + '<div style="min-width:0">'
         + '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:.82rem;font-weight:700">' + escapeAttr(deviceName) + '</span>' + chip + '</div>'
-        + '<div style="font-size:.68rem;color:var(--edikit-semantic-color-text-muted);font-weight:600;margin-top:3px">' + t('lastUsed', 'Oxirgi kirish') + ': ' + used + '</div>'
+        + '<div style="font-size:.68rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-top:3px">' + t('lastUsed', 'Oxirgi kirish') + ': ' + used + '</div>'
         + '</div>'
         + '<div style="display:flex;gap:6px;flex-wrap:wrap">'
         + '<button type="button" class="verify-btn" data-rename="' + p.id + '" data-name="' + escapeAttr(deviceName) + '" aria-label="' + renameLabel + ': ' + escapeAttr(deviceName) + '" style="background:linear-gradient(135deg,#2563eb,#1e40af);padding:7px 12px;font-size:.74rem;white-space:nowrap;min-height:44px">' + renameLabel + '</button>'
@@ -139,7 +139,7 @@
     input.maxLength = 50;
     input.value = currentName || '';
     input.setAttribute('aria-label', renamePrompt);
-    input.style.cssText = 'flex:1;min-width:140px;padding:8px 10px;border-radius:8px;border:1px solid var(--edikit-semantic-color-border-default);background:var(--edikit-semantic-color-surface-input);color:var(--edikit-semantic-color-text-primary);font-size:.8rem';
+    input.style.cssText = 'flex:1;min-width:140px;padding:8px 10px;border-radius:8px;border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-primary);font-size:.8rem';
 
     var save = document.createElement('button');
     save.type = 'button';

@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 030: Special Consideration, Deferral, Resit, Appeal &
+ * Deborah — Migration 030: Special Consideration, Deferral, Resit, Appeal &
  * Scoring Incident (Prompt 48)
  *
  * Prompt 48 — sensitive case, attempt lineage, remedy va wrong-key rescore
@@ -297,9 +297,9 @@ export async function up(db) {
     'rescore_runs',
   ];
   for (const table of newTables) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
-    await sql`GRANT DELETE ON ${sql.table(table)} TO edikit_migration`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 }
 

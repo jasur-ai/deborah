@@ -1,5 +1,5 @@
 /**
- * Edikit — Academic Grade Rules unit tests (Prompt 45)
+ * Deborah — Academic Grade Rules unit tests (Prompt 45)
  *
  * Pure-schema coverage:
  *   - Decimal arithmetic (scaled integers, NO float drift)

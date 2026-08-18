@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 037: Canonical Presentation & Native Editor MVP
+ * Deborah — Migration 037: Canonical Presentation & Native Editor MVP
  *
  * Prompt 56 — provider-independent slide document, outline flow va
  * accessible native editor (research.md §9.2 canonical document, §35

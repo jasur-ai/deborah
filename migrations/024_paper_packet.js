@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 024: Paper Packet, QR & Chain of Custody (Prompt 42)
+ * Deborah — Migration 024: Paper Packet, QR & Chain of Custody (Prompt 42)
  *
  * Prompt 42 — approved examdan per-student/form paper packet va custody
  * ledger yaratish (research.md §52 Hybrid Paper Exam Factory, §16 security):
@@ -188,9 +188,9 @@ export async function up(db) {
   // ── Grant permissions ──
   const newTables = ['paper_batches', 'paper_packets', 'paper_pages', 'paper_custody_ledger'];
   for (const table of newTables) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
-    await sql`GRANT DELETE ON ${sql.table(table)} TO edikit_migration`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 }
 

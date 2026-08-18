@@ -1,5 +1,5 @@
 /**
- * Edikit — Answer Command Contract
+ * Deborah — Answer Command Contract
  *
  * Typed schemas for answer submission and ACK protocol.
  * Answer processing is server-authoritative:

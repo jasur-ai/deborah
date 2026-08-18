@@ -1,5 +1,5 @@
 /**
- * Edikit — Role-Aware Shell (integration/contract, Prompt 68)
+ * Deborah — Role-Aware Shell (integration/contract, Prompt 68)
  *
  * HTTP integration against the real Express app:
  *   - Kritik bug regression: views/partials/sidebar.ejs mavjud bo'lmagani

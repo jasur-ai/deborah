@@ -1,5 +1,5 @@
 /**
- * Edikit — Uzbek Latin/Cyrillic & Terminology Layer (unit tests, Prompt 63)
+ * Deborah — Uzbek Latin/Cyrillic & Terminology Layer (unit tests, Prompt 63)
  *
  * Deterministic transliteration (golden set), script detection, name/
  * apostrophe normalization, ambiguous token highlight, cross-script search

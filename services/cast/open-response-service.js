@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Open-Response Service (C3-12)
+ * Deborah — Cast Open-Response Service (C3-12)
  * --------------------------------------------
  * Open-Response Semantic Board.
  *

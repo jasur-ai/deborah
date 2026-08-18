@@ -1,5 +1,5 @@
 /**
- * Edikit — Canonical Presentation & Native Editor (integration tests, Prompt 56)
+ * Deborah — Canonical Presentation & Native Editor (integration tests, Prompt 56)
  *
  * Service qatlami: graceful degradation (PG'siz → 400/error), validate-before-
  * getDb, idempotent save, published-immutable guard. PostgreSQL yo'q muhitda

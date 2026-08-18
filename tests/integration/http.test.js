@@ -1,5 +1,5 @@
 /**
- * Edikit — Integration Tests: HTTP Routes
+ * Deborah — Integration Tests: HTTP Routes
  *
  * Tests critical HTTP routes without starting a server.
  * Uses createApp() factory → supertest.
@@ -20,7 +20,7 @@ describe('Landing page', () => {
     const supertest = await import('supertest');
     const res = await supertest.default(app).get('/');
     expect(res.status).toBe(200);
-    expect(res.text).toContain('Edikit');
+    expect(res.text).toContain('Deborah');
   });
 });
 

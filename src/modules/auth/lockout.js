@@ -1,5 +1,5 @@
 /**
- * Edikit — Auth Lockout & Rate Limit service (AUTH A-03)
+ * Deborah — Auth Lockout & Rate Limit service (AUTH A-03)
  * -------------------------------------------------------------------
  * Login brute-force himoyasi:
  *   - per-IP:  `AUTH_LOCKOUT_IP_FAILURES` xato / 15 daqiqa → `AUTH_LOCKOUT_IP_MS` lock

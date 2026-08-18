@@ -1,5 +1,5 @@
 /**
- * Edikit — Safe File, Code & Oral Submission Service
+ * Deborah — Safe File, Code & Oral Submission Service
  *
  * DB layer for Prompt 44 (research.md §16.3, §51):
  *   - Resumable upload session (session_key idempotency), chunk append
@@ -55,7 +55,7 @@ function getTenantId() {
 }
 
 function receiptSecret() {
-  const secret = process.env.SESSION_SECRET || 'edikit-dev-secret';
+  const secret = process.env.SESSION_SECRET || 'deborah-dev-secret';
   return secret.length >= 32 ? secret : secret.padEnd(32, 'x');
 }
 

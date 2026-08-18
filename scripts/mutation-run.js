@@ -1,5 +1,5 @@
 /**
- * Edikit — Lightweight Mutation Testing (AUTH D-33 §06/§24)
+ * Deborah — Lightweight Mutation Testing (AUTH D-33 §06/§24)
  * ---------------------------------------------------------------------------
  * stryker o'rnini bosuvchi yengil runner: kritik auth modullariga maqsadli
  * mutatsiyalar qo'llaydi (vaqtincha, git restore bilan qaytariladi), tegishli

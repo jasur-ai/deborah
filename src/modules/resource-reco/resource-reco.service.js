@@ -1,5 +1,5 @@
 /**
- * Edikit — Resource Recommendation Connectors (service)
+ * Deborah — Resource Recommendation Connectors (service)
  *
  * Prompt 54 — verified metadata bilan manba tavsiyasi. Graceful
  * degradation: PostgreSQL bo'lmasa write path'lar 'PostgreSQL required'

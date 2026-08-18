@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast POE Service (C3-11)
+ * Deborah — Cast POE Service (C3-11)
  * -----------------------------------
  * Prediction → Observation → Explanation flow.
  * Uchta alohida phase va record; prediction/explanation bitta participant ID bilan bog'lanadi.

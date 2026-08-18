@@ -1,5 +1,5 @@
 /**
- * Edikit — QTI Package Security Validator
+ * Deborah — QTI Package Security Validator
  *
  * Security validation for uploaded QTI packages (ZIP archives containing
  * XML manifests and assessment items):

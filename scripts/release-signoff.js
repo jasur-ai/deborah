@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Release Sign-off / Acceptance Report CLI (Prompt 73, item 25)
+ * Deborah — Release Sign-off / Acceptance Report CLI (Prompt 73, item 25)
  *
  * Zero-dependency release acceptance harness:
  *   - Generates the full release acceptance report over the 8 sign-off
@@ -77,7 +77,7 @@ const report = await acceptance.getReleaseReport({
 if (jsonOut) {
   console.log(JSON.stringify({ release: report.release, gate: report.gate, deferredGuard: report.deferredGuard, claimGuard: report.claimGuard, backlog: report.backlog.length }, null, 2));
 } else {
-  console.log('\n═══ Edikit Release Acceptance Report ═══');
+  console.log('\n═══ Deborah Release Acceptance Report ═══');
   console.log(`Acceptance target: ${report.acceptanceTarget}`);
   console.log('');
   for (const d of report.domains) {

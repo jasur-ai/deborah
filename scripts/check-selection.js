@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Selection validator (STYLE STEP 14)
+ * Deborah — Selection validator (STYLE STEP 14)
  * ----------------------------------------------
  * S14.01 — radio/checkbox/switch usage rules documented in CSS
  * S14.02 — selectable card: hidden native radio + label + marker
@@ -34,7 +34,7 @@ if (sel.includes('.choice--radio') && sel.includes('.choice--checkbox')) ok('S14
 else bad('S14.01: radio/checkbox variantlar yoq');
 if (sel.includes('.choice__input:checked + .choice__mark')) ok('S14.01: native :checked semantics');
 else bad('S14.01: :checked semantics yoq');
-if (/border:\s*2px solid var\(--edikit-semantic-color-action-primary\)|border-color:\s*var\(--edikit-semantic-color-action-primary\)/.test(sel)) ok('S14.03: selected 2px cobalt border');
+if (/border:\s*2px solid var\(--deborah-semantic-color-action-primary\)|border-color:\s*var\(--deborah-semantic-color-action-primary\)/.test(sel)) ok('S14.03: selected 2px cobalt border');
 else bad('S14.03: 2px cobalt border yoq');
 if (!/transform:\s*scale|scale\s*:\s*[0-9]/.test(sel)) ok('S14.03: scale animatsiya yoq');
 else bad('S14.03: scale animatsiya bor');

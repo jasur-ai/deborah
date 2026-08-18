@@ -1,4 +1,4 @@
-/* Edikit — Cast Participant */
+/* Deborah — Cast Participant */
 
 /* S31.08: topbar — player badge + network status, safe-area aware */
 .part-topbar {
@@ -189,7 +189,7 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
 .part-submit {
   width: 100%;
   font-size: 1rem;
-  padding: var(--edikit-spacing-4, 16px);
+  padding: var(--deborah-spacing-4, 16px);
 }
 
 .part-err {
@@ -261,7 +261,7 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
   padding: 12px 14px;
   background: var(--cast-surface-2, rgba(255,255,255,0.04));
   border: 1px solid var(--cast-border, rgba(255,255,255,0.1));
-  border-radius: var(--edikit-radius-md, 12px);
+  border-radius: var(--deborah-radius-md, 12px);
 }
 .part-confidence-label {
   font-size: 0.82rem;
@@ -297,7 +297,7 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
   padding: 12px 14px;
   background: var(--cast-surface-2, rgba(255,255,255,0.04));
   border: 1px solid var(--cast-border, rgba(255,255,255,0.1));
-  border-radius: var(--edikit-radius-md, 12px);
+  border-radius: var(--deborah-radius-md, 12px);
   width: 100%;
   max-width: 440px;
 }
@@ -309,13 +309,13 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
 }
 .part-goal-bar {
   height: 8px;
-  border-radius: var(--edikit-radius-sm, 8px);
+  border-radius: var(--deborah-radius-sm, 8px);
   background: var(--cast-surface-2, rgba(255,255,255,0.06));
   overflow: hidden;
 }
 .part-goal-fill {
   height: 100%;
-  border-radius: var(--edikit-radius-sm, 8px);
+  border-radius: var(--deborah-radius-sm, 8px);
   background: linear-gradient(90deg, var(--cast-focus, #38bdf8), var(--cast-green, #34d399));
   transition: width 0.5s ease;
 }
@@ -332,8 +332,8 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
 }
 .part-personal-best {
   margin-top: 8px;
-  padding: var(--edikit-spacing-3, 12px) var(--edikit-spacing-4, 16px)
-  border-radius: var(--edikit-radius-md, 12px);
+  padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-4, 16px)
+  border-radius: var(--deborah-radius-md, 12px);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -368,7 +368,7 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
   padding: 12px 14px;
   background: var(--cast-surface-2, rgba(255,255,255,0.04));
   border: 1px solid var(--cast-border, rgba(255,255,255,0.1));
-  border-radius: var(--edikit-radius-md, 12px);
+  border-radius: var(--deborah-radius-md, 12px);
   width: 100%;
   max-width: 440px;
   text-align: left;
@@ -383,7 +383,7 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
   width: 100%;
   box-sizing: border-box;
   font-size: 0.9rem;
-  padding: var(--edikit-spacing-3, 12px);
+  padding: var(--deborah-spacing-3, 12px);
   border-radius: 8px;
   border: 1px solid var(--cast-border, rgba(255,255,255,0.15));
   background: var(--cast-surface-2, rgba(255,255,255,0.05));
@@ -429,7 +429,7 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
   margin-top: 18px;
   padding: 12px;
   border: 1px solid var(--cast-border, rgba(255,255,255,0.12));
-  border-radius: var(--edikit-radius-lg, 16px);
+  border-radius: var(--deborah-radius-lg, 16px);
   background: rgba(255,255,255,0.04);
 }
 .part-confusion-label {
@@ -450,7 +450,7 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: var(--edikit-spacing-2, 8px) var(--edikit-spacing-3, 12px); /* S12 fix */
+  padding: var(--deborah-spacing-2, 8px) var(--deborah-spacing-3, 12px); /* S12 fix */
   border-radius: 999px;
   border: 1px solid var(--cast-border, rgba(255,255,255,0.18));
   background: var(--cast-surface, #1e2330);
@@ -476,7 +476,7 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
   margin-top: 14px;
   padding: 12px;
   border: 1px solid var(--cast-border, rgba(255,255,255,0.12));
-  border-radius: var(--edikit-radius-lg, 16px);
+  border-radius: var(--deborah-radius-lg, 16px);
   background: rgba(255,255,255,0.04);
 }
 .part-wall-label {
@@ -494,7 +494,7 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
 .part-wall-item {
   font-size: 0.82rem;
   padding: 8px 10px;
-  border-radius: var(--edikit-radius-md, 12px);
+  border-radius: var(--deborah-radius-md, 12px);
   background: rgba(255,255,255,0.06);
   border-left: 3px solid var(--cast-accent, #6366f1);
 }
@@ -510,7 +510,7 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
 .part-poe-img {
   max-width: 100%;
   max-height: 40vh;
-  border-radius: var(--edikit-radius-lg, 16px);
+  border-radius: var(--deborah-radius-lg, 16px);
   border: 1px solid var(--cast-border, rgba(255,255,255,0.14));
   object-fit: contain;
 }
@@ -535,7 +535,7 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
 }
 .part-poe-agg-row {
   font-size: 0.85rem;
-  padding: var(--edikit-spacing-2, 8px) var(--edikit-spacing-3, 12px)
+  padding: var(--deborah-spacing-2, 8px) var(--deborah-spacing-3, 12px)
   border-radius: 8px;
   background: rgba(255,255,255,0.05);
   margin-top: 4px;
@@ -588,10 +588,10 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
 .forge-tf-rows { display: flex; gap: 12px; flex-wrap: wrap; }
 .forge-tf-row {
   display: flex; align-items: center; gap: 6px; padding: 8px 12px;
-  background: rgba(255,255,255,0.06); border-radius: var(--edikit-radius-md, 12px); cursor: pointer; font-size: 0.9rem;
+  background: rgba(255,255,255,0.06); border-radius: var(--deborah-radius-md, 12px); cursor: pointer; font-size: 0.9rem;
 }
 .forge-opt-answer {
-  display: flex; align-items: center; gap: 6px; padding: var(--edikit-spacing-2, 8px) var(--edikit-spacing-2, 8px) margin-top: 4px;
+  display: flex; align-items: center; gap: 6px; padding: var(--deborah-spacing-2, 8px) var(--deborah-spacing-2, 8px) margin-top: 4px;
   background: rgba(255,255,255,0.05); border-radius: 8px; font-size: 0.88rem; cursor: pointer;
 }
 .cast-btn-ghost {
@@ -600,7 +600,7 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
 }
 .cast-btn-ghost:hover { border-color: rgba(255,255,255,0.55); color: var(--cast-text, #e5e7eb); }
 .part-forge-status {
-  margin-top: 10px; padding: var(--edikit-spacing-3, 12px) var(--edikit-spacing-3, 12px) border-radius: var(--edikit-radius-md, 12px); font-size: 0.88rem;
+  margin-top: 10px; padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-3, 12px) border-radius: var(--deborah-radius-md, 12px); font-size: 0.88rem;
 }
 .forge-status-ok { background: rgba(34,197,94,0.15); color: #86efac; }
 .forge-status-rejected { background: rgba(239,68,68,0.15); color: #fca5a5; }
@@ -649,7 +649,7 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
 /* ── C3-17 Power-ups (participant) ── */
 .part-powerups {
   margin-top: 12px;
-  padding: var(--edikit-spacing-3, 12px) var(--edikit-spacing-3, 12px)
+  padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-3, 12px)
   border-radius: 12px;
   background: rgba(139,92,246,0.10);
   border: 1px solid rgba(139,92,246,0.25);
@@ -668,7 +668,7 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
 }
 .powerup-btn {
   font-size: 0.8rem;
-  padding: var(--edikit-spacing-2, 8px) var(--edikit-spacing-3, 12px)
+  padding: var(--deborah-spacing-2, 8px) var(--deborah-spacing-3, 12px)
 }
 .powerup-btn:disabled {
   opacity: 0.5;
@@ -683,7 +683,7 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
 /* ── C4-01 Team Challenge (participant) ── */
 .part-team {
   margin-top: 12px;
-  padding: var(--edikit-spacing-3, 12px) var(--edikit-spacing-3, 12px)
+  padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-3, 12px)
   border-radius: 12px;
   background: rgba(56,189,248,0.10);
   border: 1px solid rgba(56,189,248,0.25);
@@ -715,7 +715,7 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
 }
 .part-team-reporter {
   margin-top: 8px;
-  padding: var(--edikit-spacing-2, 8px) var(--edikit-spacing-3, 12px)
+  padding: var(--deborah-spacing-2, 8px) var(--deborah-spacing-3, 12px)
   border-radius: 8px;
   background: rgba(251,191,36,0.15);
   color: #fbbf24;
@@ -730,7 +730,7 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
   gap: 8px;
   margin: 10px 0;
   padding: 8px 12px;
-  border-radius: var(--edikit-radius-md, 12px);
+  border-radius: var(--deborah-radius-md, 12px);
   font-size: 0.8rem;
   font-weight: 700;
   background: rgba(255,255,255,0.06);
@@ -756,36 +756,36 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
 
 /* ═══ STYLE S32 — Personal leaderboard (participant-private) ═══ */
 .part-leaderboard {
-  margin: var(--edikit-spacing-3, 12px) 0;
-  padding: var(--edikit-spacing-3, 12px) var(--edikit-spacing-4, 16px);
-  border-radius: var(--edikit-radius-md, 12px);
-  background: var(--edikit-surface-elevated, #1b2030);
-  border: 1px solid var(--edikit-border-subtle, #2c3346);
+  margin: var(--deborah-spacing-3, 12px) 0;
+  padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-4, 16px);
+  border-radius: var(--deborah-radius-md, 12px);
+  background: var(--deborah-surface-elevated, #1b2030);
+  border: 1px solid var(--deborah-border-subtle, #2c3346);
 }
 
 .part-leaderboard-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--edikit-spacing-2, 8px);
-  margin-bottom: var(--edikit-spacing-2, 8px);
+  gap: var(--deborah-spacing-2, 8px);
+  margin-bottom: var(--deborah-spacing-2, 8px);
 }
 
 .part-leaderboard-title {
-  font-size: var(--edikit-typography-heading-xs, 15px);
+  font-size: var(--deborah-typography-heading-xs, 15px);
   font-weight: 700;
-  color: var(--edikit-text-primary, #f2f4f8);
+  color: var(--deborah-text-primary, #f2f4f8);
 }
 
 .part-leaderboard-badge {
-  font-size: var(--edikit-typography-body-s, 12px);
+  font-size: var(--deborah-typography-body-s, 12px);
   font-weight: 600;
-  color: var(--edikit-primary, #5b7cfa);
-  background: var(--edikit-surface-active, #1f2a4d);
-  border-radius: var(--edikit-radius-full, 999px);
+  color: var(--deborah-primary, #5b7cfa);
+  background: var(--deborah-surface-active, #1f2a4d);
+  border-radius: var(--deborah-radius-full, 999px);
   padding: 2px 10px;
 }
 
 .part-leaderboard-body .lb-row {
-  background: var(--edikit-surface-muted, #252b3d);
+  background: var(--deborah-surface-muted, #252b3d);
 }

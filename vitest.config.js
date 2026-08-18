@@ -6,7 +6,7 @@ import { join } from 'node:path';
 // (LOCAL_DB_FILE — local-db.js tomonidan qo'llab-quvvatlanadi).
 // Bu testlarni parallel/ketma-ket run'larda bir-biridan izolyatsiya qiladi
 // va real data/db.json hech qachon buzilmaydi/dirty bo'lmaydi.
-const TEST_DB_FILE = join(tmpdir(), `edikit-test-db-${process.pid}.json`);
+const TEST_DB_FILE = join(tmpdir(), `deborah-test-db-${process.pid}.json`);
 
 export default defineConfig({
   test: {
@@ -27,15 +27,15 @@ export default defineConfig({
       NODE_ENV: 'test',
       LOCAL_DB_FILE: TEST_DB_FILE,
       PORT: '3459',
-      SESSION_SECRET: 'test-secret-for-edikit-42',
+      SESSION_SECRET: 'test-secret-for-deborah-42',
       SESSION_MAX_AGE: '86400000',
       ADMIN_USER: 'testadmin',
       ADMIN_PASS: 'testpass',
       HOST: '127.0.0.1',
       LOG_LEVEL: 'silent',
       // AUTH B-22: Telegram bot — test'da mock token (haqiqiy API'ga chiqmaydi)
-      TELEGRAM_BOT_TOKEN: 'test-bot-token-for-edikit-42',
-      TELEGRAM_BOT_USERNAME: 'EdikitTestBot',
+      TELEGRAM_BOT_TOKEN: 'test-bot-token-for-deborah-42',
+      TELEGRAM_BOT_USERNAME: 'DeborahTestBot',
       TELEGRAM_ENABLED: 'true',
     },
     // Coverage config (optional)

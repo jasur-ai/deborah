@@ -1,5 +1,5 @@
 /**
- * Edikit — Email Verify API (AUTH A-18)
+ * Deborah — Email Verify API (AUTH A-18)
  * --------------------------------------
  * POST /api/auth/verify/send      — kod qayta yuborish (resend, cooldown 60s)
  * POST /api/auth/verify/complete  — kodni tekshirish + email_verified=true

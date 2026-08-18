@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH B-04 Username validatsiya — Integration tests
+ * Deborah — AUTH B-04 Username validatsiya — Integration tests
  * -------------------------------------------------------------
  *  - Case-insensitive unique: 'Smith' → 'smith'; 'smith' qayta bloklanadi
  *  - Dots/dash usernames register + login

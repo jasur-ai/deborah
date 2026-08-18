@@ -1,5 +1,5 @@
 /**
- * Edikit — Typography Foundation unit testlari (STYLE STEP 08 / S08.01-12)
+ * Deborah — Typography Foundation unit testlari (STYLE STEP 08 / S08.01-12)
  * ------------------------------------------------------------------------
  * Token'lar + validator bilan birga:
  *  - S08.01  Self-hosted font fayllar mavjud
@@ -16,7 +16,7 @@ import { join } from 'path';
 
 const ROOT = join(__dirname, '../..');
 
-const typo = JSON.parse(readFileSync(join(ROOT, 'public/design/tokens/typography.json'), 'utf8')).edikit.typography;
+const typo = JSON.parse(readFileSync(join(ROOT, 'public/design/tokens/typography.json'), 'utf8')).deborah.typography;
 const typeCss = readFileSync(join(ROOT, 'public/design/foundations/typography.css'), 'utf8');
 const styleCss = readFileSync(join(ROOT, 'public/css/style.css'), 'utf8');
 

@@ -1,8 +1,8 @@
 /**
- * Edikit — Migration 050: HEMIS account link (AUTH A-15)
+ * Deborah — Migration 050: HEMIS account link (AUTH A-15)
  *
  * REST-first HEMIS linking: talaba o'z HEMIS akkauntini bog'laydi.
- * users.hemis_id — UNIQUE (bitta hemis_id bitta Edikit akkauntiga).
+ * users.hemis_id — UNIQUE (bitta hemis_id bitta Deborah akkauntiga).
  * hemis_profile — JSON (fullName, university, group, source, linkedAt);
  * HEMIS paroli HECH QACHON saqlanmaydi.
  *

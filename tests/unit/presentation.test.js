@@ -1,5 +1,5 @@
 /**
- * Edikit — Canonical Presentation & Native Editor (unit tests, Prompt 56)
+ * Deborah — Canonical Presentation & Native Editor (unit tests, Prompt 56)
  *
  * Pure schema tekshiruvi (hech qanday DB/I-O yo'q):
  *   - Canonical document validation (§9.2).

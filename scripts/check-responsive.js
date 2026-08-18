@@ -56,8 +56,8 @@ check('hover only on fine pointer', /@media \(hover: hover\) and \(pointer: fine
 check('coarse target >= 48px', /@media \(pointer: coarse\)/.test(resp) && /min-height:\s*48px/.test(resp));
 
 console.log('S20.08 — Ultra-wide guard (workspace max 1440-1600px, reading 65ch):');
-check('workspace max token', /--edikit-container-workspace/.test(layout) && /--edikit-container-workspace-wide/.test(layout));
-check('reading 65ch', /--edikit-container-reading,\s*65ch/.test(layout));
+check('workspace max token', /--deborah-container-workspace/.test(layout) && /--deborah-container-workspace-wide/.test(layout));
+check('reading 65ch', /--deborah-container-reading,\s*65ch/.test(layout));
 
 console.log('S20.09 — Mobile replacement (functionality not display:none):');
 const tableCss = read('public/design/components/table.css');

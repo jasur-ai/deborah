@@ -1,5 +1,5 @@
 /**
- * Edikit — E-04b: Multi-provider OIDC registry (oidc.js)
+ * Deborah — E-04b: Multi-provider OIDC registry (oidc.js)
  * ---------------------------------------------------------------------------
  * `PROVIDERS` registry — Google default; `getProvider`/`listProviders` orqali
  * provider-agnostic kirish. Issuer provider'dan olinadi (A-24 §7 EXACT).

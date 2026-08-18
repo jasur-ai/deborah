@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast E2E (T-03): Projector safe projection
+ * Deborah — Cast E2E (T-03): Projector safe projection
  * ---------------------------------------------------
  * - Projector sahifasi public projection render qiladi (item 7)
  * - Projection HTML'ida answer key (correctOptionIds) YO'Q (item 7)

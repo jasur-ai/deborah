@@ -1,5 +1,5 @@
 /**
- * Edikit — Local JSON Database Engine
+ * Deborah — Local JSON Database Engine
  * 
  * Firebase Realtime Database API ni emulate qiladi.
  * JSON fayl asosida ishlaydi — hech qanday tashqi bog'liqlik yo'q.

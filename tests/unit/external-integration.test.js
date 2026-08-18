@@ -1,5 +1,5 @@
 /**
- * Edikit — External Integration Boundary (unit tests, Prompt 66)
+ * Deborah — External Integration Boundary (unit tests, Prompt 66)
  *
  * PURE schema testlari: adapter interface contract (research §19),
  * source-of-truth field mapping, HEMIS pull job FSM (idempotency/retry/

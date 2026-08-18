@@ -1,5 +1,5 @@
 /**
- * Edikit — Written AI Grading Shadow Mode (unit tests, Prompt 51)
+ * Deborah — Written AI Grading Shadow Mode (unit tests, Prompt 51)
  *
  * Pure schema tekshiruvi (hech qanday DB/I-O yo'q):
  *   - PII redaction: passport/ID/phone/email/name → [REDACTED].

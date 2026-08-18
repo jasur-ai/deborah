@@ -1,5 +1,5 @@
 /**
- * Edikit — Authentication Middleware
+ * Deborah — Authentication Middleware
  * Uses express-session for session management
  */
 

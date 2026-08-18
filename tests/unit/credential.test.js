@@ -1,5 +1,5 @@
 /**
- * Edikit — Portfolio & Verifiable Credential (unit tests, Prompt 61)
+ * Deborah — Portfolio & Verifiable Credential (unit tests, Prompt 61)
  *
  * Pure schema: eligibility (deterministic), issuer authorization, status
  * lifecycle FSM, Open Badges/CLR/VC serialization (no raw submission),
@@ -135,7 +135,7 @@ describe('credential — serialization (Open Badges / CLR / VC)', () => {
   };
 
   it('Open Badges 2.0 assertion — no raw submission', () => {
-    const r = serializeOpenBadges({ credential, issuer: { id: 'edikit', name: 'Edikit' } });
+    const r = serializeOpenBadges({ credential, issuer: { id: 'deborah', name: 'Deborah' } });
     expect(r.ok).toBe(true);
     expect(r.format).toBe('open_badges_2.0');
     expect(r.assertion['@context']).toBe('https://w3id.org/openbadges/v2');
@@ -151,7 +151,7 @@ describe('credential — serialization (Open Badges / CLR / VC)', () => {
   });
 
   it('W3C VC serialization with competency evidence', () => {
-    const r = serializeVc({ credential, issuer: { id: 'edikit' } });
+    const r = serializeVc({ credential, issuer: { id: 'deborah' } });
     expect(r.ok).toBe(true);
     expect(r.format).toBe('vc_1.1');
     expect(r.vc.credentialSubject.competency).toHaveLength(2);

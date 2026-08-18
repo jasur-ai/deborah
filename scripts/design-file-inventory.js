@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Design Audit: UI File Inventory (STEP 01 / S01.04)
+ * Deborah — Design Audit: UI File Inventory (STEP 01 / S01.04)
  * -----------------------------------------------------------
  * Har UI fayl uchun: line count, inline <style> bloklari, inline style=
  * atributlari, <script> bloklari va !important soni.

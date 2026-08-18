@@ -1,5 +1,5 @@
 /**
- * Edikit — Resource Recommendation Connectors Routes
+ * Deborah — Resource Recommendation Connectors Routes
  *
  * Prompt 54 REST API (admin — requireAdmin):
  *   - GET  /api/admin/resource-reco/meta       — constants for admin UI

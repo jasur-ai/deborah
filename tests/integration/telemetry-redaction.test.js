@@ -1,5 +1,5 @@
 /**
- * Edikit — Telemetry integration/contract tests (Prompt 69 §19)
+ * Deborah — Telemetry integration/contract tests (Prompt 69 §19)
  *
  *   - HTTP trace middleware: traceparent header qaytariladi, trace context
  *     HTTP so'rov orqali uzatiladi (research §38.3).

@@ -1,5 +1,5 @@
 /**
- * Edikit — Seed/Demo Ma'lumotlar (40+ fake data entries)
+ * Deborah — Seed/Demo Ma'lumotlar (40+ fake data entries)
  * 
  * Local JSON database uchun to'liq demo ma'lumotlar.
  * Admin panelda ko'rinadigan barcha bo'limlar to'ldirilgan.

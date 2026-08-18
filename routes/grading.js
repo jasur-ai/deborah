@@ -1,5 +1,5 @@
 /**
- * Edikit — Academic Grade Rules & Deterministic Calculation Routes
+ * Deborah — Academic Grade Rules & Deterministic Calculation Routes
  *
  * Prompt 45 REST API:
  *   - POST /api/admin/grading/rules            — create rule + first draft version

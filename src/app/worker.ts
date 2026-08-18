@@ -1,5 +1,5 @@
 /**
- * Edikit — Worker Entrypoint (TypeScript Boundary)
+ * Deborah — Worker Entrypoint (TypeScript Boundary)
  *
  * This is the canonical entrypoint for background workers.
  * Worker processes should import from here rather than from
@@ -43,7 +43,7 @@ export function getWorkers(): WorkerManifest[] {
 const isMainModule = process.argv[1]?.endsWith('worker.ts') ?? false;
 
 if (isMainModule) {
-  console.log('Edikit Worker — Registered workers:');
+  console.log('Deborah Worker — Registered workers:');
   REGISTERED_WORKERS.forEach((w) => {
     console.log(`  - ${w.name}: ${w.description}${w.cron ? ` (cron: ${w.cron})` : ''}`);
   });

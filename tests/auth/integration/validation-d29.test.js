@@ -15,7 +15,7 @@ import { rmSync } from 'node:fs';
 const PORT = 3598; // unique port
 const BASE = `http://localhost:${PORT}`;
 const XFF = '203.0.113.97';
-const DB_FILE = '/tmp/edikit-validation-d29-db.json';
+const DB_FILE = '/tmp/deborah-validation-d29-db.json';
 
 let child;
 

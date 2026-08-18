@@ -1,5 +1,5 @@
 /**
- * Edikit — Roster Module Barrel Export
+ * Deborah — Roster Module Barrel Export
  *
  * Exports all roster upload/parse/staging services.
  * All modules gracefully degrade when tools are unavailable.

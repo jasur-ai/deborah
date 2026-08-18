@@ -1,5 +1,5 @@
 /**
- * Edikit — API, Socket, Job, Webhook & Outbox Contract Audit (PURE logic)
+ * Deborah — API, Socket, Job, Webhook & Outbox Contract Audit (PURE logic)
  *
  * Prompt 67 — barcha module boundarylarini versionlangan Zod/OpenAPI/event
  * contractlar bilan birlashtirish (research.md §18 service boundaries va
@@ -134,7 +134,7 @@ export function buildOpenApiDocument({ routes = [], contracts = [] } = {}) {
   }
   return {
     openapi: '3.1.0',
-    info: { title: 'Edikit API', version: API_VERSION },
+    info: { title: 'Deborah API', version: API_VERSION },
     paths,
     components: { schemas },
   };
@@ -211,22 +211,22 @@ export function assertCursor({ cursor = '', kind = 'id', key = 'id' } = {}) {
 
 /**
  * Idempotency key convention — POST write path'lar uchun majburiy.
- * Format: `edikit:{tenantId}:{operation}:{sha256-hash}` (64+ chars).
+ * Format: `deborah:{tenantId}:{operation}:{sha256-hash}` (64+ chars).
  */
 export function buildIdempotencyKey({ tenantId = '', operation = '', payload = null } = {}) {
   const hash = crypto
     .createHash('sha256')
     .update(JSON.stringify(payload ?? {}))
     .digest('hex');
-  return `edikit:${tenantId}:${operation}:${hash}`;
+  return `deborah:${tenantId}:${operation}:${hash}`;
 }
 
 /** Idempotency-Key header validation (fail-closed). */
 export function assertIdempotencyHeader(header = '') {
   if (!header) return { ok: false, reason: 'Idempotency-Key header is required for this write path' };
   const parts = String(header).split(':');
-  if (parts.length !== 4 || parts[0] !== 'edikit') {
-    return { ok: false, reason: 'invalid Idempotency-Key format (expected edikit:tenant:operation:hash)' };
+  if (parts.length !== 4 || parts[0] !== 'deborah') {
+    return { ok: false, reason: 'invalid Idempotency-Key format (expected deborah:tenant:operation:hash)' };
   }
   if (!/^[0-9a-f]{64}$/.test(parts[3])) return { ok: false, reason: 'invalid idempotency hash segment' };
   return { ok: true };

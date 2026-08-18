@@ -1,5 +1,5 @@
 /**
- * Edikit — Privacy-first Camera Pilot (browser adapter)
+ * Deborah — Privacy-first Camera Pilot (browser adapter)
  *
  * Prompt 37 — local inference, limited evidence, human review.
  *

@@ -1,5 +1,5 @@
 /**
- * Edikit — Canva Button/Connect Adapter Routes
+ * Deborah — Canva Button/Connect Adapter Routes
  *
  * Prompt 59 REST API:
  *   - GET   /api/admin/canva/status            — config/scope status
@@ -96,7 +96,7 @@ router.post('/api/admin/canva/unlink', requireAdmin, async (req, res) => {
 /** POST /api/admin/canva/design — create design. */
 router.post('/api/admin/canva/design', requireAdmin, async (req, res) => {
   try {
-    const r = await createCanvaDesign({ title: req.body?.title || 'Edikit deck', actorId: actorId(req) });
+    const r = await createCanvaDesign({ title: req.body?.title || 'Deborah deck', actorId: actorId(req) });
     if (!r.ok) return res.status(400).json({ error: r.error });
     res.json({ ok: true, designId: r.designId, designUrl: r.designUrl });
   } catch (e) {

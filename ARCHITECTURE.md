@@ -1,8 +1,8 @@
-# Edikit — Architecture Document
+# Deborah — Architecture Document
 
 ## 📊 Architecture Comparison
 
-### Edikit Architecture (Current)
+### Deborah Architecture (Current)
 ```
 server.js                    → Express + Socket.io + all middleware
 ├── routes/                  → Route handlers (modular) — all business logic
@@ -69,7 +69,7 @@ Client (arena)     → socket.emit('arena:botAnswer') → Server processes → s
 ## 📁 Directory Structure
 
 ```
-edikit/
+deborah/
 ├── server.js                    ← Express + Socket.io server
 ├── routes/                      ← Route handlers (all logic lives here)
 │   ├── index.js                 → Landing page

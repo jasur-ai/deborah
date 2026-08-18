@@ -1,5 +1,5 @@
 /**
- * Edikit — Exam Scheduling Solver (pure logic)
+ * Deborah — Exam Scheduling Solver (pure logic)
  *
  * Prompt 39 — period, room, student va proctor constraintlari bilan
  * EXPLAINABLE exam schedule yaratish (research.md §15 relational schema,

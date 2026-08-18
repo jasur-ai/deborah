@@ -1,5 +1,5 @@
 /**
- * Edikit — Geo-Lite: ip → shahar + timezone (P1 lokal DB)
+ * Deborah — Geo-Lite: ip → shahar + timezone (P1 lokal DB)
  * -------------------------------------------------------------------
  * AUTH A-09 §29: shahar aniqlash P1'da (lokal DB) — maxmind/paketli
  * geoip o'rniga kichik statik jadval + kelajakda to'liq DB uchun nuqta.

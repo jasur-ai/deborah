@@ -90,7 +90,7 @@ describe('AUTH D-24 — legal sahifalar', () => {
   it('content xavfsiz render — kontakt + EJS escape', async () => {
     const res = await fresh().get('/privacy');
     expect(res.status).toBe(200);
-    expect(res.text).toContain('support@edikit.uz');
+    expect(res.text).toContain('support@deborah.uz');
     // Hujjat matnida hech qanday havola atrofida onerror bo'lmasligi kerak —
     // faqat logo (server tomonidan qo'shilgan) onerror ishlatishi mumkin.
     // Toza tekshiruv: kontent bo'limlarida raw `<script` ochilmagan.

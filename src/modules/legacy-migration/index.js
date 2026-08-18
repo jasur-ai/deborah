@@ -1,5 +1,5 @@
 /**
- * Edikit — Legacy Migration Module Barrel Export
+ * Deborah — Legacy Migration Module Barrel Export
  *
  * Provides tools for analyzing and mapping legacy JSON/Firebase data
  * to the PostgreSQL canonical schema for a dry-run migration report.

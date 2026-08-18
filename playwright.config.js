@@ -1,5 +1,5 @@
 /**
- * Edikit — Playwright Visual Test Config (STYLE STEP 03)
+ * Deborah — Playwright Visual Test Config (STYLE STEP 03)
  * -------------------------------------------------------
  * S03.01: Desktop 1440×900, small desktop 1280×800, tablet 768×1024,
  *         mobile 390×844, 320×568 projectlar.

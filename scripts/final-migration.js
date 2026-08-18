@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Final Migration / Institutional Cutover CLI (Prompt 72, items 07–09)
+ * Deborah — Final Migration / Institutional Cutover CLI (Prompt 72, items 07–09)
  *
  * Zero-dependency final migration harness:
  *   - Reads data/db.json (legacy source), computes final SHA-256 backup hash.
@@ -94,7 +94,7 @@ if (jsonOut) {
   process.exit(0);
 }
 
-console.log('\n═══ Edikit Final Migration — Cutover Evidence ═══');
+console.log('\n═══ Deborah Final Migration — Cutover Evidence ═══');
 console.log(`Legacy source:  ${DB_FILE}`);
 console.log(`Data hash:      ${dataHash ? dataHash.slice(0, 32) + '…' : 'N/A'}`);
 console.log('');

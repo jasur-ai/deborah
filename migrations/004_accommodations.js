@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 004: Accommodations
+ * Deborah — Migration 004: Accommodations
  *
  * Adds accommodation support for students:
  *   - accommodations (extra time, reader, font/contrast, breaks, etc.)
@@ -131,8 +131,8 @@ export async function up(db) {
   const newTables = ['accommodations', 'accommodation_versions', 'accommodation_snapshots'];
 
   for (const table of newTables) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
   }
 
   console.log('Accommodation structure created: 3 tables');

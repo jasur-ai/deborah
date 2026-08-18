@@ -1,5 +1,5 @@
 /**
- * Edikit — Security Guard Service (Prompt 70)
+ * Deborah — Security Guard Service (Prompt 70)
  *
  * Service half of the security-guard module:
  *   - Finding registry (in-memory, seeded from evidence) with owner / SLA /
@@ -101,7 +101,7 @@ export async function acceptFinding({ id, owner = null, rationale = null, accept
     details: { severity: finding.severity, owner, acceptedUntil },
   }).catch(() => null);
 
-  recordMetric('edikit_security_findings_accepted_total', 1, { labels: { severity: finding.severity } });
+  recordMetric('deborah_security_findings_accepted_total', 1, { labels: { severity: finding.severity } });
 
   return { ok: true, finding };
 }
@@ -135,7 +135,7 @@ export async function remediateFinding({ id, retestDate = null, verifiedBy = nul
     details: { testName, verifiedBy },
   }).catch(() => null);
 
-  recordMetric('edikit_security_findings_remediated_total', 1, { labels: { severity: finding.severity } });
+  recordMetric('deborah_security_findings_remediated_total', 1, { labels: { severity: finding.severity } });
 
   return { ok: true, finding };
 }
@@ -180,7 +180,7 @@ export async function getSecurityPosture({
   };
 
   // Telemetry — release gate status (item 17: privileged metric)
-  recordMetric('edikit_security_release_gate', gate.pass ? 1 : 0, {});
+  recordMetric('deborah_security_release_gate', gate.pass ? 1 : 0, {});
 
   return {
     threat,

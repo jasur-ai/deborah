@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   Edikit Utilities (STYLE STEP 11, S11.06, S11.08)
+   Deborah Utilities (STYLE STEP 11, S11.06, S11.08)
    ---------------------------------------------------------------
    A11y utilities: .sr-only, .skip-link, .scroll-mt-*.
    Spacing/layout utilities — faqat token'lar bilan (S11.08);
@@ -24,15 +24,15 @@
   /* ── S11.06: Skip link — focus'da ko'rinadi ── */
   .skip-link {
     position: absolute;
-    left: var(--edikit-spacing-2, 8px);
-    top: var(--edikit-spacing-2, 8px);
+    left: var(--deborah-spacing-2, 8px);
+    top: var(--deborah-spacing-2, 8px);
     transform: translateY(-200%);
-    z-index: var(--edikit-z-index-system, 60);
-    background: var(--edikit-semantic-color-surface-raised, var(--edikit-semantic-color-surface-raised));
-    color: var(--edikit-semantic-color-text-primary, var(--edikit-semantic-color-text-primary));
-    padding: var(--edikit-spacing-2, 8px) var(--edikit-spacing-4, 16px);
-    border-radius: var(--edikit-radius-sm, 8px);
-    border: 1px solid var(--edikit-semantic-color-focus, #2563eb);
+    z-index: var(--deborah-z-index-system, 60);
+    background: var(--deborah-semantic-color-surface-raised, var(--deborah-semantic-color-surface-raised));
+    color: var(--deborah-semantic-color-text-primary, var(--deborah-semantic-color-text-primary));
+    padding: var(--deborah-spacing-2, 8px) var(--deborah-spacing-4, 16px);
+    border-radius: var(--deborah-radius-sm, 8px);
+    border: 1px solid var(--deborah-semantic-color-focus, #2563eb);
     text-decoration: none;
     transition: transform var(--motion-feedback, 120ms);
   }
@@ -44,29 +44,29 @@
   [id] {
     scroll-margin-top: var(--scroll-margin, 80px);
   }
-  .scroll-mt-4 { scroll-margin-top: var(--edikit-spacing-4, 16px); }
-  .scroll-mt-6 { scroll-margin-top: var(--edikit-spacing-6, 24px); }
-  .scroll-mt-8 { scroll-margin-top: var(--edikit-spacing-8, 32px); }
+  .scroll-mt-4 { scroll-margin-top: var(--deborah-spacing-4, 16px); }
+  .scroll-mt-6 { scroll-margin-top: var(--deborah-spacing-6, 24px); }
+  .scroll-mt-8 { scroll-margin-top: var(--deborah-spacing-8, 32px); }
 
   /* ── S11.08: Spacing utilities — faqat spacing token'lari ── */
-  .p-1 { padding: var(--edikit-spacing-1, 4px); }
-  .p-2 { padding: var(--edikit-spacing-2, 8px); }
-  .p-3 { padding: var(--edikit-spacing-3, 12px); }
-  .p-4 { padding: var(--edikit-spacing-4, 16px); }
-  .p-6 { padding: var(--edikit-spacing-6, 24px); }
-  .px-2 { padding-inline: var(--edikit-spacing-2, 8px); }
-  .px-4 { padding-inline: var(--edikit-spacing-4, 16px); }
-  .py-2 { padding-block: var(--edikit-spacing-2, 8px); }
-  .py-4 { padding-block: var(--edikit-spacing-4, 16px); }
-  .gap-1 { gap: var(--edikit-spacing-1, 4px); }
-  .gap-2 { gap: var(--edikit-spacing-2, 8px); }
-  .gap-3 { gap: var(--edikit-spacing-3, 12px); }
-  .gap-4 { gap: var(--edikit-spacing-4, 16px); }
-  .mt-1 { margin-top: var(--edikit-spacing-1, 4px); }
-  .mt-2 { margin-top: var(--edikit-spacing-2, 8px); }
-  .mt-4 { margin-top: var(--edikit-spacing-4, 16px); }
-  .mb-2 { margin-bottom: var(--edikit-spacing-2, 8px); }
-  .mb-4 { margin-bottom: var(--edikit-spacing-4, 16px); }
+  .p-1 { padding: var(--deborah-spacing-1, 4px); }
+  .p-2 { padding: var(--deborah-spacing-2, 8px); }
+  .p-3 { padding: var(--deborah-spacing-3, 12px); }
+  .p-4 { padding: var(--deborah-spacing-4, 16px); }
+  .p-6 { padding: var(--deborah-spacing-6, 24px); }
+  .px-2 { padding-inline: var(--deborah-spacing-2, 8px); }
+  .px-4 { padding-inline: var(--deborah-spacing-4, 16px); }
+  .py-2 { padding-block: var(--deborah-spacing-2, 8px); }
+  .py-4 { padding-block: var(--deborah-spacing-4, 16px); }
+  .gap-1 { gap: var(--deborah-spacing-1, 4px); }
+  .gap-2 { gap: var(--deborah-spacing-2, 8px); }
+  .gap-3 { gap: var(--deborah-spacing-3, 12px); }
+  .gap-4 { gap: var(--deborah-spacing-4, 16px); }
+  .mt-1 { margin-top: var(--deborah-spacing-1, 4px); }
+  .mt-2 { margin-top: var(--deborah-spacing-2, 8px); }
+  .mt-4 { margin-top: var(--deborah-spacing-4, 16px); }
+  .mb-2 { margin-bottom: var(--deborah-spacing-2, 8px); }
+  .mb-4 { margin-bottom: var(--deborah-spacing-4, 16px); }
   .flex { display: flex; }
   .items-center { align-items: center; }
   .justify-between { justify-content: space-between; }

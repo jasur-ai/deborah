@@ -1,5 +1,5 @@
 /**
- * Edikit — Dev Seed Script (VIP + Migration)
+ * Deborah — Dev Seed Script (VIP + Migration)
  * Run: node scripts/seed-dev.js
  * Adds isVip fields to existing users + creates VIP demo users
  */

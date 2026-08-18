@@ -1,5 +1,5 @@
 /**
- * Edikit — Ochiq ma'lumotlar Routes (AUTH A-13)
+ * Deborah — Ochiq ma'lumotlar Routes (AUTH A-13)
  * ---------------------------------------------
  *   - GET  /api/opendata/stats            — public landing stats (real, source+license)
  *   - POST /api/admin/opendata/refresh    — admin force refresh (audit opendata:refresh)

@@ -1,4 +1,4 @@
-# Edikit — F-faza taklifi: Field validation + Release (D/E yopilgach)
+# Deborah — F-faza taklifi: Field validation + Release (D/E yopilgach)
 
 **Sana:** 2026-08-18 · **Precondition:** D-faza (377/377) + E-faza (486/486) yashil, ikkala agent imzosi ✅
 **Qolgan yagona:** OPERATOR §17 imzosi (Security/Privacy/Legal/Ops/Product)

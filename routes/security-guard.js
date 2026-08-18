@@ -1,5 +1,5 @@
 /**
- * Edikit — Security Guard Routes (Prompt 70)
+ * Deborah — Security Guard Routes (Prompt 70)
  *
  *   - GET  /admin/security-guard           — threat model + ASVS + findings
  *     + red-team dashboard (requireAdmin)

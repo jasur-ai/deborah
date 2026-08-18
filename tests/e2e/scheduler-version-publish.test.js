@@ -1,5 +1,5 @@
 /**
- * Edikit — E2E/Security: Schedule Version & Publish (Prompt 39)
+ * Deborah — E2E/Security: Schedule Version & Publish (Prompt 39)
  *
  * Version lifecycle + publish-gate E2E walk (Prompt 39 §20):
  *   - Full version lifecycle: solver run → DRAFT → approve → PUBLISH, with

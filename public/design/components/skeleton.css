@@ -9,8 +9,8 @@
 .skeleton {
   position: relative;
   overflow: hidden;
-  background: var(--edikit-semantic-color-surface-muted, rgba(16, 24, 40, 0.06));
-  border-radius: var(--edikit-radius-md, 12px);
+  background: var(--deborah-semantic-color-surface-muted, rgba(16, 24, 40, 0.06));
+  border-radius: var(--deborah-radius-md, 12px);
 }
 .skeleton::after {
   content: '';
@@ -20,12 +20,12 @@
   background: linear-gradient(
     90deg,
     transparent,
-    color-mix(in srgb, var(--edikit-semantic-color-surface, #fff) 55%, transparent),
+    color-mix(in srgb, var(--deborah-semantic-color-surface, #fff) 55%, transparent),
     transparent
   );
-  animation: edikit-skeleton-shimmer 1.4s ease infinite;
+  animation: deborah-skeleton-shimmer 1.4s ease infinite;
 }
-@keyframes edikit-skeleton-shimmer {
+@keyframes deborah-skeleton-shimmer {
   100% { transform: translateX(100%); }
 }
 
@@ -55,7 +55,7 @@
 }
 
 /* aria-busy region'da skeletonlar yumshoq pulsatsiya qilmasin (shimmer yetarli) */
-[aria-busy="true"] .skeleton { background: var(--edikit-semantic-color-surface-muted, rgba(16, 24, 40, 0.06)); }
+[aria-busy="true"] .skeleton { background: var(--deborah-semantic-color-surface-muted, rgba(16, 24, 40, 0.06)); }
 
 @media (prefers-reduced-motion: reduce) {
   .skeleton::after { animation: none; display: none; }

@@ -1,5 +1,5 @@
 /**
- * Edikit — Institutional Handoff Routes (Prompt 72)
+ * Deborah — Institutional Handoff Routes (Prompt 72)
  *
  *   - GET  /admin/institutional                 — cutover/training/pilot/
  *     procurement readiness dashboard (requireAdmin)

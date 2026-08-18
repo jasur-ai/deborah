@@ -1,5 +1,5 @@
 /**
- * Edikit — Team Challenge & shared-device (C4-01) Tests
+ * Deborah — Team Challenge & shared-device (C4-01) Tests
  * ------------------------------------------------------
  * coverage: team model/safe name, assignment modes (random/balanced/roster),
  * team count guard, absence/late-join recompute, talk seconds validation,

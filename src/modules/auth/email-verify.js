@@ -1,5 +1,5 @@
 /**
- * Edikit — Email Verify Core (AUTH A-18, P0)
+ * Deborah — Email Verify Core (AUTH A-18, P0)
  * -------------------------------------------------
  * Register'da email majburiy + verify (OTP 6-kod).
  *

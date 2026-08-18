@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %> — Edikit Admin</title>
+  <title><%= title %> — Deborah Admin</title>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/admin.css">
 </head>
@@ -12,8 +12,8 @@
   <div class="adm-shell">
     <aside class="adm-sidebar">
       <div class="adm-brand">
-        <img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto">
-        <span>Edikit</span>
+        <img src="/images/logo-icon.svg" alt="Deborah" class="logo-img" style="height:28px;width:auto">
+        <span>Deborah</span>
       </div>
       <nav class="adm-nav">
         <a href="/admin/dashboard">Dashboard</a>
@@ -132,7 +132,7 @@
 
   $('btnCreate').addEventListener('click', async () => {
     try {
-      const r = await api('/api/admin/canva/design', { method: 'POST', body: { title: 'Edikit deck' } });
+      const r = await api('/api/admin/canva/design', { method: 'POST', body: { title: 'Deborah deck' } });
       $('opStatus').textContent = 'Design: ' + esc(r.designId);
     } catch (e) { $('opStatus').textContent = '✗ ' + e.message; }
   });

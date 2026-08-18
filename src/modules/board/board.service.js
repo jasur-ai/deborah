@@ -1,5 +1,5 @@
 /**
- * Edikit — Board Ratification, Result Release & Grade Ledger Service
+ * Deborah — Board Ratification, Result Release & Grade Ledger Service
  *
  * DB layer for Prompt 47 (research.md §49.15, §67.1 steps 14–16):
  *   - Board role/meeting/attendee management with conflict declarations.

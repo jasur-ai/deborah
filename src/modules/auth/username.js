@@ -1,5 +1,5 @@
 /**
- * Edikit — Username validatsiya va normalizatsiya (AUTH B-04)
+ * Deborah — Username validatsiya va normalizatsiya (AUTH B-04)
  * -----------------------------------------------------------
  * OWASP username rules:
  *   - case-insensitive ("Smith" == "smith") — DB'da canonical lowercase
@@ -32,7 +32,7 @@ export const RESERVED_USERNAMES = new Set([
   'support',
   'system',
   'test',
-  'edikit',
+  'deborah',
 ]);
 
 /** Leet o'rnini bosuvchilar — '4dm1n' → 'admin' aniqlash uchun (P1). */

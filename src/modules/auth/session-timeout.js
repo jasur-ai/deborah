@@ -1,5 +1,5 @@
 /**
- * Edikit — Session idle timeout helpers (AUTH A-02)
+ * Deborah — Session idle timeout helpers (AUTH A-02)
  *
  * Sof funksiyalar — middleware'dan va unit testlardan ishlatiladi.
  * Idle timeout: sessiya harakatsizlik limitidan oshsa bekor qilinadi.

@@ -1,5 +1,5 @@
 /**
- * Edikit — Passkey login client (AUTH A-27)
+ * Deborah — Passkey login client (AUTH A-27)
  *
  * Ikkala usul (reddit PSA):
  *   1. Conditional UI — `autocomplete="username webauthn"` + page-load init

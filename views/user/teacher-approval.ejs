@@ -8,15 +8,15 @@
     .ta-main{max-width:520px}
     .ta-brand{text-align:center;margin-bottom:20px}
     .ta-title{margin-top:10px}
-    .ta-card-raised{background:var(--edikit-semantic-color-surface-raised);border:1px solid var(--edikit-semantic-color-border-subtle);border-radius:14px;padding:22px;text-align:center}
+    .ta-card-raised{background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:14px;padding:22px;text-align:center}
     .ta-icon{font-size:2.2rem;line-height:1;margin-bottom:10px}
     .ta-msg{margin:0 0 8px;font-weight:600;font-size:.95rem}
-    .ta-sub{margin:0;color:var(--edikit-semantic-color-text-secondary);font-size:.83rem;line-height:1.5}
+    .ta-sub{margin:0;color:var(--deborah-semantic-color-text-secondary);font-size:.83rem;line-height:1.5}
     .ta-note-green{margin-top:12px;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);border-radius:10px;padding:10px 12px;font-size:.82rem;text-align:left}
     .ta-card-red{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.25);border-radius:14px;padding:22px}
-    .ta-card-raised-sm{background:var(--edikit-semantic-color-surface-raised);border:1px solid var(--edikit-semantic-color-border-subtle);border-radius:10px;padding:12px 14px;margin:10px 0;font-size:.84rem}
-    .ta-label{display:block;margin-bottom:4px;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--edikit-semantic-color-text-secondary)}
-    .ta-hint{margin:12px 0 0;color:var(--edikit-semantic-color-text-secondary);font-size:.8rem;text-align:center}
+    .ta-card-raised-sm{background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:10px;padding:12px 14px;margin:10px 0;font-size:.84rem}
+    .ta-label{display:block;margin-bottom:4px;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--deborah-semantic-color-text-secondary)}
+    .ta-hint{margin:12px 0 0;color:var(--deborah-semantic-color-text-secondary);font-size:.8rem;text-align:center}
     .ta-actions{display:flex;gap:10px;justify-content:center;margin-top:12px}
   </style>
 </head>
@@ -24,7 +24,7 @@
   <a href="#main" class="skip-link">Asosiy qismga o'tish →</a>
   <main class="auth-card ta-main" id="main">
     <div class="auth-brand ta-brand">
-      <img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:44px;width:auto">
+      <img src="/images/logo-icon.svg" alt="Deborah" class="logo-img" style="height:44px;width:auto">
       <div class="auth-title ta-title"><%- status === 'teacher_rejected' ? copy.rejectedTitle : copy.pendingTitle %></div>
     </div>
 
@@ -61,13 +61,13 @@
             <p class="ta-hint"><%- icon('clock', 13) %> <%= copy.cooldownActive.replace('__days__', cooldown.days) %></p>
             <div class="ta-actions">
               <a href="/user/register?role=teacher" class="btn btn-secondary" aria-disabled="true" style="opacity:.55;pointer-events:none"><%- icon('refresh', 14) %> <%= copy.reapplyBtn %></a>
-              <a href="mailto:support@edikit.uz?subject=Teacher%20ariza%20apellyatsiya" class="btn btn-quiet"><%- icon('mail', 14) %> <%= copy.appeal %></a>
+              <a href="mailto:support@deborah.uz?subject=Teacher%20ariza%20apellyatsiya" class="btn btn-quiet"><%- icon('mail', 14) %> <%= copy.appeal %></a>
             </div>
           <%          } else { %>
             <p class="ta-hint"><%- copy.reapply %></p>
             <div class="ta-actions">
               <a href="/user/register?role=teacher" class="btn btn-primary"><%- icon('refresh', 14) %> <%= copy.reapplyBtn %></a>
-              <a href="mailto:support@edikit.uz?subject=Teacher%20ariza%20apellyatsiya" class="btn btn-quiet"><%- icon('mail', 14) %> <%= copy.appeal %></a>
+              <a href="mailto:support@deborah.uz?subject=Teacher%20ariza%20apellyatsiya" class="btn btn-quiet"><%- icon('mail', 14) %> <%= copy.appeal %></a>
             </div>
             <!-- AUTH B-36 §12: in-app apellyatsiya formasi (cooldown o'tgach) -->
             <div class="ta-appeal" style="margin-top:18px;text-align:left">

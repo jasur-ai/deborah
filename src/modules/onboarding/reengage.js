@@ -177,8 +177,8 @@ export async function runReEngagementSequence({ now = Date.now(), deps = {} } = 
       const sent = await send({
         to: email,
         subject: reengageSubject(step.type, lang, { username: u.username || userKey }),
-        html: `<div style="font-family:Arial,sans-serif;color:#1a1a1a;background:#ffffff;max-width:520px;margin:0 auto;padding:24px"><h1 style="font-size:20px;line-height:1.3;margin:0 0 12px;color:#111111">${reengageSubject(step.type, lang, { username: u.username || userKey })}</h1><p style="font-size:15px;line-height:1.6;margin:0 0 16px;color:#1a1a1a">${reengageBody(step.type, lang, ctx)}</p><a href="https://edikit.uz/user/panel" style="display:inline-block;background:#1463ff;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:6px;font-size:14px;font-weight:600">${lang === 'ru' ? 'Перейти в панель' : lang === 'en' ? 'Go to panel' : lang === 'uz-cyrl' ? 'Панелга ўтиш' : 'Panelga o\'tish'}</a></div>`,
-        text: `${reengageSubject(step.type, lang, { username: u.username || userKey })}\n\n${reengageBody(step.type, lang, ctx)}\n\nhttps://edikit.uz/user/panel`,
+        html: `<div style="font-family:Arial,sans-serif;color:#1a1a1a;background:#ffffff;max-width:520px;margin:0 auto;padding:24px"><h1 style="font-size:20px;line-height:1.3;margin:0 0 12px;color:#111111">${reengageSubject(step.type, lang, { username: u.username || userKey })}</h1><p style="font-size:15px;line-height:1.6;margin:0 0 16px;color:#1a1a1a">${reengageBody(step.type, lang, ctx)}</p><a href="https://deborah.uz/user/panel" style="display:inline-block;background:#1463ff;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:6px;font-size:14px;font-weight:600">${lang === 'ru' ? 'Перейти в панель' : lang === 'en' ? 'Go to panel' : lang === 'uz-cyrl' ? 'Панелга ўтиш' : 'Panelga o\'tish'}</a></div>`,
+        text: `${reengageSubject(step.type, lang, { username: u.username || userKey })}\n\n${reengageBody(step.type, lang, ctx)}\n\nhttps://deborah.uz/user/panel`,
         tag: `reengage-${step.key}`,
       }).catch(() => ({ ok: false }));
 
@@ -193,7 +193,7 @@ export async function runReEngagementSequence({ now = Date.now(), deps = {} } = 
         actorId: userKey,
         details: { step: step.key, day: step.minInactiveDays, segment: ctx.segment, channel: 'email' },
       }).catch(() => {});
-      recordMetric('edikit_onboarding_reengage_sent_total', 1);
+      recordMetric('deborah_onboarding_reengage_sent_total', 1);
       result.sent++;
       break; // §10: har run'da bitta day — chastota cap
     }

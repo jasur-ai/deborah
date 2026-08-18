@@ -43,14 +43,14 @@ describe('STEP 13 — Input & form field components', () => {
     it('44px desktop, 48px mobile, mobile font 16px', () => {
       expect(inp).toMatch(/min-height: 44px/);
       expect(inp).toMatch(/@media \(max-width: 640px\)[\s\S]*min-height: 48px/);
-      expect(inp).toMatch(/font-size: var\(--edikit-typography-font-size-md, 16px\)/);
+      expect(inp).toMatch(/font-size: var\(--deborah-typography-font-size-md, 16px\)/);
     });
   });
 
   describe('S13.04-05 — border + focus', () => {
     it('border token va focus ring layout-shift yoq', () => {
-      expect(inp).toContain('--edikit-semantic-color-border-default');
-      expect(inp).toContain('outline: 3px solid var(--edikit-semantic-color-focus');
+      expect(inp).toContain('--deborah-semantic-color-border-default');
+      expect(inp).toContain('outline: 3px solid var(--deborah-semantic-color-focus');
       // Border doim 2px — focus'da border-width o'zgarmaydi (layout shift yoq)
       expect(inp).toMatch(/border: 2px solid/);
     });
@@ -63,8 +63,8 @@ describe('STEP 13 — Input & form field components', () => {
   describe('S13.06-07 — states', () => {
     it('error (danger), warning (amber) states', () => {
       expect(inp).toContain('aria-invalid');
-      expect(inp).toContain('--edikit-semantic-color-status-danger');
-      expect(inp).toContain('--edikit-semantic-color-status-warning');
+      expect(inp).toContain('--deborah-semantic-color-status-danger');
+      expect(inp).toContain('--deborah-semantic-color-status-warning');
     });
 
     it('read-only != disabled', () => {

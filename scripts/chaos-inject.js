@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Chaos Injection Drill Harness (Prompt 71, items 08–09 & 19)
+ * Deborah — Chaos Injection Drill Harness (Prompt 71, items 08–09 & 19)
  *
  * Zero-dependency failure-injection drills over the dependency catalogue:
  *   - reconnect-storm / app-node-kill (item 08)
@@ -76,7 +76,7 @@ for (const scenario of reliability.CHAOS_SCENARIOS) {
 if (jsonOut) {
   console.log(JSON.stringify({ results, pass: allPass }, null, 2));
 } else {
-  console.log('\n═══ Edikit Chaos Injection Drills ═══');
+  console.log('\n═══ Deborah Chaos Injection Drills ═══');
   for (const r of results) {
     console.log(`\n[${r.ok ? 'PASS' : 'FAIL'}] ${r.scenario} — ${r.label}`);
     for (const c of r.checks || []) {

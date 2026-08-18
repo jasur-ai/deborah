@@ -1,5 +1,5 @@
 /**
- * Edikit — Tabs (STYLE STEP 14, S14.07)
+ * Deborah — Tabs (STYLE STEP 14, S14.07)
  * ----------------------------------------
  * ARIA tabs pattern: role=tablist/tab/tabpanel.
  * - Arrow-key nav (Left/Right, Up/Down), Home/End
@@ -81,8 +81,8 @@
 
   function init() {
     document.querySelectorAll('[data-tabs]').forEach(function (w) {
-      if (!w.__edikitTabs) {
-        w.__edikitTabs = true;
+      if (!w.__deborahTabs) {
+        w.__deborahTabs = true;
         initTabs(w);
       }
     });

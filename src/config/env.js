@@ -1,5 +1,5 @@
 /**
- * Edikit — Environment Configuration Schema
+ * Deborah — Environment Configuration Schema
  *
  * Uses Zod to validate and parse environment variables at startup.
  * Fails fast with clear error messages for missing/invalid config.
@@ -147,7 +147,7 @@ const baseSchema = z.object({
   // ── Web Push (AUTH B-23) — VAPID juftligi; secret prod'da KMS/env'da ──
   VAPID_PUBLIC_KEY: z.string().optional(),
   VAPID_PRIVATE_KEY: z.string().optional(),
-  VAPID_SUBJECT: z.string().url().optional().default('mailto:no-reply@edikit.uz'),
+  VAPID_SUBJECT: z.string().url().optional().default('mailto:no-reply@deborah.uz'),
   PUSH_ENABLED: z
     .string()
     .default('true')
@@ -184,7 +184,7 @@ const baseSchema = z.object({
 
   // ── Email (D-01: provider schema — mock|smtp|postmark) ──
   EMAIL_PROVIDER: z.enum(['mock', 'smtp', 'postmark']).default('mock'),
-  EMAIL_FROM: z.string().default('Edikit <no-reply@edikit.uz>'),
+  EMAIL_FROM: z.string().default('Deborah <no-reply@deborah.uz>'),
   EMAIL_SENDING_DOMAIN: z.string().optional(),
   EMAIL_API_KEY: z.string().optional(), // postmark server token (D-01 alias)
   POSTMARK_SERVER_TOKEN: z.string().optional(),
@@ -201,7 +201,7 @@ const baseSchema = z.object({
   HIBP_API_URL: z.string().url().default('https://api.pwnedpasswords.com/range/'),
 
   // ── MFA (D-01) — TOTP issuer (QR label) + KMS encrypt kaliti ──
-  MFA_ISSUER: z.string().min(1).default('Edikit'),
+  MFA_ISSUER: z.string().min(1).default('Deborah'),
   KMS_KEY_ARN: z.string().optional(), // prod'da MFA_ENCRYPTION_KEY o'rniga KMS
   // AUTH E-06: KMS bilan shifrlangan 32-bayt master key (base64) + region
   KMS_ENCRYPTED_MASTER_KEY: z.string().optional(),
@@ -270,7 +270,7 @@ const productionSchema = baseSchema.superRefine((data, ctx) => {
     }
 
     // In production, SESSION_SECRET must not be default
-    if (data.SESSION_SECRET === 'edikit-dev-secret') {
+    if (data.SESSION_SECRET === 'deborah-dev-secret') {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message:
@@ -279,14 +279,10 @@ const productionSchema = baseSchema.superRefine((data, ctx) => {
       });
     }
 
-    // In production, SITE_URL is recommended
+    // In production, SITE_URL is recommended (faqat ogohlantirish — hard-fail emas)
     if (!data.SITE_URL) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message:
-          'SITE_URL is recommended in production (for OG image generation).',
-        path: ['SITE_URL'],
-      });
+      // eslint-disable-next-line no-console
+      console.warn('[config] SITE_URL is recommended in production (for OG image generation).');
     }
 
     // AUTH B-08 (review fix): Turnstile secret bo'lmasa register bot-guard
@@ -357,7 +353,7 @@ function buildConfig() {
     NODE_ENV: env('NODE_ENV'),
     PORT: env('PORT'),
     HOST: env('HOST'),
-    SESSION_SECRET: env('SESSION_SECRET') || 'edikit-dev-secret',
+    SESSION_SECRET: env('SESSION_SECRET') || 'deborah-dev-secret',
     SESSION_MAX_AGE: env('SESSION_MAX_AGE') || '86400000',
     SESSION_COOKIE_NAME: env('SESSION_COOKIE_NAME'),
     SESSION_HOST_PREFIX: env('SESSION_HOST_PREFIX'),
@@ -461,9 +457,9 @@ function buildConfig() {
 
     const header = isProd
       ? ['\n╔══════════════════════════════════════════════╗',
-         '║   ❌ EDIKIT CONFIGURATION ERROR             ║',
+         '║   ❌ DEBORAH CONFIGURATION ERROR             ║',
          '╚══════════════════════════════════════════════╝']
-      : ['\n── Edikit Config Warnings ──'];
+      : ['\n── Deborah Config Warnings ──'];
 
     const footer = isProd
       ? ['Fix these issues in your .env file or environment variables.', '']

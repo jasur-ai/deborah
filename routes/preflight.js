@@ -1,5 +1,5 @@
 /**
- * Edikit — Student Assignment List, Brief & Preflight API Routes
+ * Deborah — Student Assignment List, Brief & Preflight API Routes
  *
  * Prompt 28 REST API:
  *   - GET  /api/student/assignments        — assignments the student is

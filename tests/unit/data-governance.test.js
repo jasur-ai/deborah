@@ -1,5 +1,5 @@
 /**
- * Edikit — Data Classification, Privacy, Retention & Purge (unit tests, Prompt 65)
+ * Deborah — Data Classification, Privacy, Retention & Purge (unit tests, Prompt 65)
  *
  * PURE schema testlari: D0-D6 classification, access matrix (fail-closed),
  * UZ boundary (D4+), KMS requirement (D3+), retention compute, legal hold

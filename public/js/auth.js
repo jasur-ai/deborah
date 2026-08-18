@@ -1,5 +1,5 @@
 /**
- * Edikit — Auth page client UX (AUTH D-07 — modular refactor)
+ * Deborah — Auth page client UX (AUTH D-07 — modular refactor)
  * ============================================================
  * Login/register sahifalari (login.ejs, register.ejs, invite.ejs,
  * google-setup.ejs, admin/login.ejs) uchun bitta yengil modul.
@@ -13,7 +13,7 @@
  *    login.ejs'dagi inline dublikat script shu yerga ko'chirildi (register.ejs
  *    ham shu funksiya orqali ishlaydi; ikki timer raqobati yo'qoldi)
  *  - inline xato input'ga yozishda tozalanadi (error → yechim UX)
- *  - window.EdikitAuth.csrfToken() — fetch asosidagi oqimlar uchun CSRF helper
+ *  - window.DeborahAuth.csrfToken() — fetch asosidagi oqimlar uchun CSRF helper
  *
  * Registerspesifik (rol kartalari, invite, email live check, HIBP breach) —
  * public/js/register.js'da, alohida faylda (B-03/D-07).
@@ -41,8 +41,8 @@
     return el ? el.value : '';
   }
   if (typeof window !== 'undefined' && window) {
-    var EdikitAuth = window.EdikitAuth || (window.EdikitAuth = {});
-    EdikitAuth.csrfToken = csrfToken;
+    var DeborahAuth = window.DeborahAuth || (window.DeborahAuth = {});
+    DeborahAuth.csrfToken = csrfToken;
   }
 
   // ── Google tugmasi — ikki marta bosish/navigatsiyani bloklash (A-04) ────
@@ -223,7 +223,7 @@
 
       var label = labels[score] || '';
       hint.textContent = label;
-      hint.style.color = score >= need ? 'var(--edikit-semantic-color-status-success, #22c55e)' : 'var(--edikit-semantic-color-text-muted, #94a3b8)';
+      hint.style.color = score >= need ? 'var(--deborah-semantic-color-status-success, #22c55e)' : 'var(--deborah-semantic-color-text-muted, #94a3b8)';
 
       // Live invalid: NIST min uzunlik (8 MFA / 15 oddiy) — server bilan bir xil.
       // Client faqat UX; server (password-policy.evaluatePassword) yagona truth.

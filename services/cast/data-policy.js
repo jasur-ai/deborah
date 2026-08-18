@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Data Policy (C4-07)
+ * Deborah — Cast Data Policy (C4-07)
  * -----------------------------------
  * Har Cast data class uchun purpose, retention days, expiry action.
  *

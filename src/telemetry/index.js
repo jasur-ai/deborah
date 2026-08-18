@@ -1,5 +1,5 @@
 /**
- * Edikit — Telemetry Facade (Prompt 69)
+ * Deborah — Telemetry Facade (Prompt 69)
  *
  * OTel-style observability uchun yagona kirish nuqtasi:
  *   - Tracer (W3C traceparent, AsyncLocalStorage context propagation)

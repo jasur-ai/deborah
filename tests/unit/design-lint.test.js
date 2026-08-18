@@ -45,7 +45,7 @@ describe('S37.05 — inline style klassifikatsiya', () => {
 
 describe('S37.03 — infinite animation allowlist', () => {
   it('loading spinner + approved milestone animatsiyalar allowlistda', () => {
-    for (const name of ['btn-spin', 'edikit-spin', 'edikit-skeleton-shimmer', 'switch-pulse', 'tb-pulse', 'offline-blink']) {
+    for (const name of ['btn-spin', 'deborah-spin', 'deborah-skeleton-shimmer', 'switch-pulse', 'tb-pulse', 'offline-blink']) {
       expect(ALLOW_INFINITE_ANIMS.has(name), name).toBe(true);
     }
   });
@@ -64,7 +64,7 @@ describe('S37.07 — deprecated token alias regex', () => {
   it('var(--muted)/var(--accent) ni topadi', () => {
     expect('color: var(--muted)'.match(DEPRECATED_ALIASES)).toBeTruthy();
     expect('background: var(--accent)'.match(DEPRECATED_ALIASES)).toBeTruthy();
-    expect('color: var(--edikit-semantic-color-text-primary)'.match(DEPRECATED_ALIASES)).toBeNull();
+    expect('color: var(--deborah-semantic-color-text-primary)'.match(DEPRECATED_ALIASES)).toBeNull();
   });
 });
 

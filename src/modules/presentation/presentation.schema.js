@@ -1,5 +1,5 @@
 /**
- * Edikit — Canonical Presentation & Native Editor MVP (pure logic)
+ * Deborah — Canonical Presentation & Native Editor MVP (pure logic)
  *
  * Prompt 56 — provider-independent slide document, outline flow va
  * accessible native editor (research.md §9.2 canonical document, §35

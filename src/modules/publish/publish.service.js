@@ -1,5 +1,5 @@
 /**
- * Edikit — Immutable Publish Transaction & Assignment Snapshot Service
+ * Deborah — Immutable Publish Transaction & Assignment Snapshot Service
  *
  * Atomic publish of an assessment draft into a SCHEDULED assignment:
  *   - Single PostgreSQL transaction writes ALL snapshots together

@@ -1,5 +1,5 @@
 /**
- * Edikit — External Integration Boundary (HEMIS & OneID) Routes
+ * Deborah — External Integration Boundary (HEMIS & OneID) Routes
  *
  * Prompt 66 REST API:
  *   - GET    /admin/external-integration                      — admin UI

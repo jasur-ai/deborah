@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 001: Tenant, RBAC & Academic Scope
+ * Deborah — Migration 001: Tenant, RBAC & Academic Scope
  *
  * Creates the multi-tenant foundation:
  *   - tenants (institutions)
@@ -244,42 +244,42 @@ export async function up(db) {
   // Create application-level PostgreSQL roles for runtime/migration/scoping separation
   // These use DO blocks so they're idempotent (won't fail if roles already exist)
   await sql`DO $$ BEGIN
-    CREATE ROLE edikit_runtime WITH LOGIN PASSWORD NULL INHERIT NOCREATEDB NOCREATEROLE;
+    CREATE ROLE deborah_runtime WITH LOGIN PASSWORD NULL INHERIT NOCREATEDB NOCREATEROLE;
   EXCEPTION WHEN duplicate_object THEN NULL;
   END $$;`.execute(db);
 
   await sql`DO $$ BEGIN
-    CREATE ROLE edikit_migration WITH LOGIN PASSWORD NULL INHERIT NOCREATEDB CREATEROLE;
+    CREATE ROLE deborah_migration WITH LOGIN PASSWORD NULL INHERIT NOCREATEDB CREATEROLE;
   EXCEPTION WHEN duplicate_object THEN NULL;
   END $$;`.execute(db);
 
   await sql`DO $$ BEGIN
-    CREATE ROLE edikit_scoring WITH LOGIN PASSWORD NULL INHERIT NOCREATEDB NOCREATEROLE;
+    CREATE ROLE deborah_scoring WITH LOGIN PASSWORD NULL INHERIT NOCREATEDB NOCREATEROLE;
   EXCEPTION WHEN duplicate_object THEN NULL;
   END $$;`.execute(db);
 
   // Grant table permissions to roles
   // Runtime: SELECT, INSERT, UPDATE on all tenant tables
   for (const table of ['tenants', 'users', 'roles', 'permissions', 'role_permissions', 'user_roles', 'courses', 'audit_log']) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
   }
 
   // Migration: ALL permissions (including DDL)
-  await sql`GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO edikit_migration`.execute(db);
-  await sql`GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO edikit_migration`.execute(db);
+  await sql`GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO deborah_migration`.execute(db);
+  await sql`GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO deborah_migration`.execute(db);
 
   // Scoring: SELECT only (read-only)
   for (const table of ['user_roles', 'audit_log']) {
-    await sql`GRANT SELECT ON ${sql.table(table)} TO edikit_scoring`.execute(db);
+    await sql`GRANT SELECT ON ${sql.table(table)} TO deborah_scoring`.execute(db);
   }
 
   // Grant schema usage (required for roles to access tables)
-  await sql`GRANT USAGE ON SCHEMA public TO edikit_runtime`.execute(db);
-  await sql`GRANT USAGE ON SCHEMA public TO edikit_migration`.execute(db);
-  await sql`GRANT USAGE ON SCHEMA public TO edikit_scoring`.execute(db);
+  await sql`GRANT USAGE ON SCHEMA public TO deborah_runtime`.execute(db);
+  await sql`GRANT USAGE ON SCHEMA public TO deborah_migration`.execute(db);
+  await sql`GRANT USAGE ON SCHEMA public TO deborah_scoring`.execute(db);
 
-  console.log('DB roles created: edikit_runtime, edikit_migration, edikit_scoring');
+  console.log('DB roles created: deborah_runtime, deborah_migration, deborah_scoring');
 }
 
 /**

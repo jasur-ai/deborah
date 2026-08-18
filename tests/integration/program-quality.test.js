@@ -1,5 +1,5 @@
 /**
- * Edikit — Program Quality & Accreditation Workspace (integration tests, Prompt 62)
+ * Deborah — Program Quality & Accreditation Workspace (integration tests, Prompt 62)
  *
  * Service qatlami (fake DB): curriculum map CRUD/version, course↔outcome
  * mapping (idempotent upsert), evidence aggregation + minimum cell

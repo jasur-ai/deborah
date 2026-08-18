@@ -1,5 +1,5 @@
 /**
- * Edikit — Authentication Routes
+ * Deborah — Authentication Routes
  * User login/register and admin login
  *
  * Security:
@@ -436,7 +436,7 @@ router.post('/admin/login', redirectIfAdmin, async (req, res) => {
       if (status.status !== 'active') {
         // Enroll yo'q → forced enrollment (QR + secret, bir marta ko'rsatiladi)
         try {
-          const setup = await setupTotp(ADMIN_MFA_ACCOUNT, { accountName: 'Edikit Admin' });
+          const setup = await setupTotp(ADMIN_MFA_ACCOUNT, { accountName: 'Deborah Admin' });
           if (!setup.ok) return renderErr('MFA sozlash xatoligi');
           const qr = await qrcode.toDataURL(setup.otpauth, { width: 220, margin: 1 }).catch(() => null);
           req.session.adminMfaEnroll = {
@@ -840,6 +840,13 @@ router.get('/user/login', redirectIfAuth, (req, res) => {
 
 // ── User Login Action (rate-limited, CSRF-protected, plan_login §3.1) ──
 router.post('/user/login',
+  // AUTH C-01: auth rate limiter (login/register burst + per-account/ASN)
+  (req, res, next) => {
+    const limiter = req.app?.get('authRateLimiter');
+    if (!limiter) return next();
+    const key = (req.body && req.body.mode === 'reg') ? 'register' : 'login';
+    return limiter(key)(req, res, next);
+  },
   // AUTH D-05 §08: auth.login / auth.register span (mode bo'yicha).
   authSpanMiddleware((req) => (req.body && req.body.mode === 'reg' ? 'auth.register' : 'auth.login'),
     (req) => ({ 'auth.mode': req.body && req.body.mode === 'reg' ? 'register' : 'login' })),
@@ -1019,7 +1026,7 @@ router.post('/user/login',
       // userData snapshot'ini beramiz — 2-oyna DB read qilinmaydi.
       const lock = await checkUserLockout(userKey, userData);
       // AUTH C-02 §10: permanent blok (admin status='blocked') — countdown emas,
-      // generic xato (enumeration yo'q). Support hal qiladi (support@edikit.uz).
+      // generic xato (enumeration yo'q). Support hal qiladi (support@deborah.uz).
       if (lock.permanent) {
         logAuthEvent({
           action: AUDIT_ACTIONS.AUTH_LOGIN,

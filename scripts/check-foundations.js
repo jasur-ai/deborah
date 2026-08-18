@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Foundations Validator (STYLE STEP 11)
+ * Deborah — Foundations Validator (STYLE STEP 11)
  * ----------------------------------------------
  * S11.01 — reset.css mavjud + box-sizing
  * S11.02 — body::before ambient overlay GLOBAL yo'q
@@ -35,7 +35,7 @@ const styleCss = rd('public/css/style.css');
 if (!/body::before\s*\{/.test(styleCss)) ok('S11.02: global body::before ambient overlay yo\'q');
 else bad('S11.02: body::before hali style.css\'da');
 if (styleCss.includes('--ambient-1')) ok('S11.02: ambient tokenlar saqlangan (kontekst uchun)');
-if (rd('public/design/foundations/base.css').includes('edikit-semantic-color-surface-default')) ok('S11.02: body semantic tokens');
+if (rd('public/design/foundations/base.css').includes('deborah-semantic-color-surface-default')) ok('S11.02: body semantic tokens');
 else bad('S11.02: body semantic token emas');
 
 // ── S11.04: focus 3px ──

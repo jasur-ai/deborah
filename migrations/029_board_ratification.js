@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 029: Board Ratification, Result Release & Grade Ledger
+ * Deborah — Migration 029: Board Ratification, Result Release & Grade Ledger
  * (Prompt 47)
  *
  * Prompt 47 — provisional markni authorized board orqali immutable final
@@ -239,9 +239,9 @@ export async function up(db) {
     'sis_outbox',
   ];
   for (const table of newTables) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
-    await sql`GRANT DELETE ON ${sql.table(table)} TO edikit_migration`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 }
 

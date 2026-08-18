@@ -1,5 +1,5 @@
 /**
- * Edikit — Accommodation Service
+ * Deborah — Accommodation Service
  *
  * Manages student accommodations for assessments:
  *   - extra_time: additional minutes for time-limited assessments
@@ -29,7 +29,7 @@ import crypto from 'crypto';
 // For development, a deterministic key is derived from app config.
 const ENCRYPTION_ALGORITHM = 'aes-256-gcm';
 const ENCRYPTION_KEY = crypto.createHash('sha256')
-  .update(process.env.ACCOMMODATION_ENCRYPTION_KEY || 'edikit-accommodation-dev-key-2026')
+  .update(process.env.ACCOMMODATION_ENCRYPTION_KEY || 'deborah-accommodation-dev-key-2026')
   .digest();
 
 // ── Roles that can view sensitive rationale ──

@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Load Scenarios (C5-09 item 2..15)
+ * Deborah — Cast Load Scenarios (C5-09 item 2..15)
  * ------------------------------------------------
  * Tier'lar va yuqori-yuk scenario'lari. Har bir scenario:
  *  - generator orqali virtual participant'lar ochadi

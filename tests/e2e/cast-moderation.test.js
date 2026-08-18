@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast E2E (T-03): Moderation boundary
+ * Deborah — Cast E2E (T-03): Moderation boundary
  * ----------------------------------------------
  * - Unmoderated text public projector/participant projection'da YO'Q (item 11)
  * - Moderated text faqat tasdiqlangandan keyin ko'rinadi (item 11)

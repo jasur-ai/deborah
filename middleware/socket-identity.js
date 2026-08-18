@@ -1,5 +1,5 @@
 /**
- * Edikit — Socket Identity & Authorization Middleware
+ * Deborah — Socket Identity & Authorization Middleware
  *
  * Provides:
  *  1. Short-lived HMAC-signed socket tickets (prove identity without replay)
@@ -30,7 +30,7 @@ const TICKET_TTL_MS = 30 * 60 * 1000; // 30 minutes
 const RECONNECT_TICKET_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 export function createSocketIdentity(sessionSecret) {
-  const secret = sessionSecret || 'edikit-dev-secret';
+  const secret = sessionSecret || 'deborah-dev-secret';
 
   /**
    * Generate an HMAC-SHA256 ticket.

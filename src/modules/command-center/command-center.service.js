@@ -1,5 +1,5 @@
 /**
- * Edikit — Exam Command Center, Incident & Notifications Service
+ * Deborah — Exam Command Center, Incident & Notifications Service
  *
  * DB layer for Prompt 41:
  *   - Incidents: create (idempotent via external_key), transition state

@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 039: Unified Provider Job Contract (Gamma + Manus)
+ * Deborah — Migration 039: Unified Provider Job Contract (Gamma + Manus)
  *
  * Prompt 58 — Gamma generation va Manus task/artifact oqimlarini unified
  * provider job contractga ulash (research.md §9.2 canonical document,
@@ -19,7 +19,7 @@
  *   - provider_job_events: unified job progress/event log (seq).
  *   - provider_circuit_breakers: retry/circuit per tenant+provider.
  *   - provider_dead_letters: qayta ishlamaydigan provider failure'lar.
- *   - provider_artifacts: expiring provider artifact → Edikit object
+ *   - provider_artifacts: expiring provider artifact → Deborah object
  *     storage copy registry (stop condition: expiring artifact copy).
  *
  * SECURITY / DATA GUARD (Prompt 58 §15-17):
@@ -82,7 +82,7 @@ export async function up(db) {
     .addColumn('export_url', 'text')
     // Expiring provider export (PDF/PPTX) — copy qilinishi kerak
     .addColumn('artifact_key', 'varchar(300)')
-    // Edikit object storage key (copied, non-expiring)
+    // Deborah object storage key (copied, non-expiring)
     .addColumn('artifact_meta', 'jsonb', (col) => col.defaultTo(sql`'{}'::jsonb`))
     // { format, size, sha256, storageType, copiedAt, sourceUrl }
     .addColumn('attribution', 'jsonb', (col) => col.defaultTo(sql`'[]'::jsonb`))

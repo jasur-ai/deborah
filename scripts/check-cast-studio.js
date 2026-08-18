@@ -39,7 +39,7 @@ else ok('S28.02: panel partial include qiladi');
 
 // ── S28.03: neutral cards, no rainbow ──
 console.log('— S28.03 neutral cards');
-if (!css.includes('--edikit-semantic-color-action-primary-soft')) bad('S28.03: token-based selected state yo‘q');
+if (!css.includes('--deborah-semantic-color-action-primary-soft')) bad('S28.03: token-based selected state yo‘q');
 else ok('S28.03: token selected state mavjud');
 if (/[#][0-9a-fA-F]{3,6}\b/.test(css)) { bad('S28.03/S28.11: raw hex color topildi'); } else ok('S28.03/S28.11: raw hex yo‘q (hammasi token)');
 

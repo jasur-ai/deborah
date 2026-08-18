@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH C-04 Risk score service — Integration/contract tests
+ * Deborah — AUTH C-04 Risk score service — Integration/contract tests
  * --------------------------------------------------------------------
  *  - yangi qurilmada password change → requireLowRisk step-up blok (403)
  *  - trusted qurilmada (device trust) → password change o'tadi (200)

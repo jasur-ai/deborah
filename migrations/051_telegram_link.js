@@ -1,7 +1,7 @@
 /**
- * Edikit — Migration 051: Telegram link (AUTH A-16, P3)
+ * Deborah — Migration 051: Telegram link (AUTH A-16, P3)
  *
- * users.telegram_id — UNIQUE (bitta Telegram akkaunt bitta Edikit
+ * users.telegram_id — UNIQUE (bitta Telegram akkaunt bitta Deborah
  * akkauntiga). Telegram OTP auth / 2-step uchun mapping.
  *
  * Security:

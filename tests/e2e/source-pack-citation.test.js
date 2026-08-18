@@ -1,5 +1,5 @@
 /**
- * Edikit — Source Pack & Secure RAG Ingestion (e2e, Prompt 50)
+ * Deborah — Source Pack & Secure RAG Ingestion (e2e, Prompt 50)
  *
  * Full teacher-source journey at pure-logic + HTTP layer:
  *   - Teacher creates pack → adds URL/text source → extraction →

@@ -1,5 +1,5 @@
 /**
- * Edikit — Uzbek Latin/Cyrillic & Terminology Layer Routes
+ * Deborah — Uzbek Latin/Cyrillic & Terminology Layer Routes
  *
  * Prompt 63 REST API:
  *   - GET    /admin/multilingual                        — admin UI

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %> — Edikit Admin</title>
+  <title><%= title %> — Deborah Admin</title>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/admin.css">
 </head>
@@ -12,8 +12,8 @@
   <div class="adm-shell">
     <aside class="adm-sidebar">
       <div class="adm-brand">
-        <img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto">
-        <span>Edikit</span>
+        <img src="/images/logo-icon.svg" alt="Deborah" class="logo-img" style="height:28px;width:auto">
+        <span>Deborah</span>
       </div>
       <nav class="adm-nav">
         <a href="/admin/dashboard">Dashboard</a>
@@ -167,11 +167,11 @@
       `<span><b>Passed</b> ${s.passed ?? 0}/${s.total ?? 0}</span>` +
       `<span><b>Phase G</b> ${r.phase_g_ready ? 'Ready' : 'Not ready'}</span>`;
     $('pilotList').innerHTML = pilots.map((p) => `
-      <div class="adm-row" style="border:1px solid var(--edikit-semantic-color-border-default);border-radius:10px;padding:10px;margin:6px 0">
+      <div class="adm-row" style="border:1px solid var(--deborah-semantic-color-border-default);border-radius:10px;padding:10px;margin:6px 0">
         <div style="flex:1">
           <b>${esc(p.pilot)}</b>
           <span class="chip chip-${p.ok ? 'ok' : 'err'}">${p.ok ? 'PASS' : 'FAIL'}</span>
-          <div style="margin-top:6px;font-size:12px;color:var(--edikit-semantic-color-text-muted)">${(p.checks || []).map((c) => `${esc(c.id)}: ${c.ok ? '✓' : '✗'} ${esc(c.detail || '')}`).join(' · ')}</div>
+          <div style="margin-top:6px;font-size:12px;color:var(--deborah-semantic-color-text-muted)">${(p.checks || []).map((c) => `${esc(c.id)}: ${c.ok ? '✓' : '✗'} ${esc(c.detail || '')}`).join(' · ')}</div>
         </div>
       </div>`).join('') || '<p class="adm-muted">Pilot yo\u2018q</p>';
     if (risks.length) {

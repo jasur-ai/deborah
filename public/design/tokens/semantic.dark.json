@@ -1,18 +1,18 @@
 {
   "$schema": "https://design-tokens.github.io/community-group/format/",
-  "edikit": {
+  "deborah": {
     "semantic": {
       "$description": "Semantic tokens — dark theme. Path'lar light bilan BIR XIL (S04.05 parity validator). Cobalt dark-action variantlari ishlatiladi.",
       "color": {
         "action": {
-          "primary": { "$type": "color", "$value": "{edikit.primitive.cobalt.cobalt-dark-action}", "$description": "Primary action — Edikit Cobalt dark" },
-          "primary-hover": { "$type": "color", "$value": "{edikit.primitive.cobalt.cobalt-dark-pressed}", "$description": "Primary action hover dark" },
-          "primary-active": { "$type": "color", "$value": "{edikit.primitive.cobalt.cobalt-dark-pressed}", "$description": "Primary action pressed dark" },
+          "primary": { "$type": "color", "$value": "{deborah.primitive.cobalt.cobalt-dark-action}", "$description": "Primary action — Deborah Cobalt dark" },
+          "primary-hover": { "$type": "color", "$value": "{deborah.primitive.cobalt.cobalt-dark-pressed}", "$description": "Primary action hover dark" },
+          "primary-active": { "$type": "color", "$value": "{deborah.primitive.cobalt.cobalt-dark-pressed}", "$description": "Primary action pressed dark" },
           "primary-soft": { "$type": "color", "$value": "rgba(122,168,255,0.14)", "$description": "Soft action fill dark" },
           "primary-border": { "$type": "color", "$value": "rgba(122,168,255,0.35)", "$description": "Action outline dark" },
           "on-action": { "$type": "color", "$value": "#0C1426", "$description": "Text on primary action (dark — contrast uchun ink)" },
-          "signal": { "$type": "color", "$value": "{edikit.primitive.signal.signal-dark}", "$description": "Signal Cyan dark" },
-          "insight": { "$type": "color", "$value": "{edikit.primitive.insight.insight-dark}", "$description": "Insight Amber dark" }
+          "signal": { "$type": "color", "$value": "{deborah.primitive.signal.signal-dark}", "$description": "Signal Cyan dark" },
+          "insight": { "$type": "color", "$value": "{deborah.primitive.insight.insight-dark}", "$description": "Insight Amber dark" }
         },
         "surface": {
           "default": { "$type": "color", "$value": "#080C1A", "$description": "Page background dark — S06.03" },
@@ -48,9 +48,9 @@
           "danger-soft": { "$type": "color", "$value": "rgba(255,68,102,0.12)" }
         },
         "brand": {
-          "cobalt": { "$type": "color", "$value": "{edikit.primitive.cobalt.cobalt-dark-action}", "$description": "Edikit Cobalt brand dark" },
-          "signal": { "$type": "color", "$value": "{edikit.primitive.signal.signal-dark}", "$description": "Edikit Signal Cyan brand dark" },
-          "insight": { "$type": "color", "$value": "{edikit.primitive.insight.insight-dark}", "$description": "Edikit Insight Amber brand dark" }
+          "cobalt": { "$type": "color", "$value": "{deborah.primitive.cobalt.cobalt-dark-action}", "$description": "Deborah Cobalt brand dark" },
+          "signal": { "$type": "color", "$value": "{deborah.primitive.signal.signal-dark}", "$description": "Deborah Signal Cyan brand dark" },
+          "insight": { "$type": "color", "$value": "{deborah.primitive.insight.insight-dark}", "$description": "Deborah Insight Amber brand dark" }
         }
       }
     }

@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH B-05 Email validatsiya endpoint — Integration tests
+ * Deborah — AUTH B-05 Email validatsiya endpoint — Integration tests
  * -------------------------------------------------------------------
  *  - POST /api/validate/email: disposable → blok, typo → suggestion,
  *    CSRF talab qilinadi (global validateCsrf)
@@ -56,12 +56,12 @@ describe('AUTH B-05 — /api/validate/email', () => {
 
   it('to\'g\'ri email → ok, suggestion yo\'q', async () => {
     const { agent, csrf } = await withCsrf();
-    const res = await agent.post('/api/validate/email').set('x-csrf-token', csrf).send({ email: 'user@edikit.uz' });
+    const res = await agent.post('/api/validate/email').set('x-csrf-token', csrf).send({ email: 'user@deborah.uz' });
     expect(res.status).toBe(200);
     expect(res.body.ok).toBe(true);
     expect(res.body.suggestion).toBeNull();
     // PII: javobda email yoki PII maydon yo'q
-    expect(JSON.stringify(res.body)).not.toContain('user@edikit.uz');
+    expect(JSON.stringify(res.body)).not.toContain('user@deborah.uz');
   });
 
   it('CSRF yo\'q → 403 (global validateCsrf)', async () => {

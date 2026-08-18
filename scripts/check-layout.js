@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Layout Foundation Validator (STYLE STEP 09)
+ * Deborah — Layout Foundation Validator (STYLE STEP 09)
  * -----------------------------------------------------
  * S09.01 — spacing faqat 4px scale (0,4,8,12,16,20,24,32,40,48,64,80,96)
  * S09.04 — radius grammar: control 8 / card 12 / modal 16 / pill faqat status
@@ -21,7 +21,7 @@ const bad = (msg) => { errors.push(msg); console.log('❌', msg); };
 // ── S09.01: 4px spacing scale ──
 const layoutJson = join(ROOT, 'public/design/tokens/layout.json');
 const layout = JSON.parse(readFileSync(layoutJson, 'utf8'));
-const spacing = layout.edikit?.spacing || {};
+const spacing = layout.deborah?.spacing || {};
 const SPACING_SCALE = [0, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96];
 const spacingValues = Object.values(spacing)
   .filter((v) => v && v.$value && String(v.$value).endsWith('px'))
@@ -39,7 +39,7 @@ for (const v of [80, 96]) {
 }
 
 // ── S09.02: container tokenlari ──
-const containers = layout.edikit?.container || {};
+const containers = layout.deborah?.container || {};
 const REQUIRED_CONTAINERS = ['landing', 'workspace', 'reading', 'auth', 'studio'];
 for (const c of REQUIRED_CONTAINERS) {
   if (containers[c]?.$value) ok(`S09.02: container-${c} = ${containers[c].$value}`);
@@ -47,7 +47,7 @@ for (const c of REQUIRED_CONTAINERS) {
 }
 
 // ── S09.04: radius grammar ──
-const radius = layout.edikit?.radius || {};
+const radius = layout.deborah?.radius || {};
 const R = {
   sm: 8, md: 12, lg: 16, xl: 20, pill: 999,
 };
@@ -58,19 +58,19 @@ for (const [k, expected] of Object.entries(R)) {
 }
 
 // ── S09.06: elevation + z-index qatlamlari ──
-const elevation = layout.edikit?.elevation || {};
+const elevation = layout.deborah?.elevation || {};
 for (const layer of ['canvas', 'surface', 'sticky', 'modal', 'toast']) {
   if (elevation[layer]) ok(`S09.06: elevation-${layer} mavjud`);
   else bad(`S09.06: elevation-${layer} yo'q`);
 }
-const zidx = layout.edikit?.['z-index'] || {};
+const zidx = layout.deborah?.['z-index'] || {};
 for (const layer of ['base', 'sticky', 'dropdown', 'modal', 'toast', 'system']) {
   if (zidx[layer]) ok(`S09.06: z-index-${layer} mavjud`);
   else bad(`S09.06: z-index-${layer} yo'q`);
 }
 
 // ── S09.09: density ──
-const density = layout.edikit?.density || {};
+const density = layout.deborah?.density || {};
 if (density.comfortable && density.compact) ok('S09.09: density comfortable + compact mavjud');
 else bad('S09.09: density tokenlari to\'liq emas');
 

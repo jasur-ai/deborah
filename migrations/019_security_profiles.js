@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 019: Security Profile & Safe Exam Browser Boundary
+ * Deborah — Migration 019: Security Profile & Safe Exam Browser Boundary
  *
  * Prompt 36 (Phase D): connects S0–S4 security profiles to typed policy and
  * client/server enforcement. The institution (tenant) declares the ALLOWED
@@ -64,9 +64,9 @@ export async function up(db) {
     .execute();
 
   // ── Grants ──
-  await sql`GRANT SELECT, INSERT, UPDATE ON institution_security_policy TO edikit_runtime`.execute(db);
-  await sql`GRANT USAGE ON institution_security_policy_id_seq TO edikit_runtime`.execute(db);
-  await sql`GRANT SELECT, DELETE ON institution_security_policy TO edikit_migration`.execute(db);
+  await sql`GRANT SELECT, INSERT, UPDATE ON institution_security_policy TO deborah_runtime`.execute(db);
+  await sql`GRANT USAGE ON institution_security_policy_id_seq TO deborah_runtime`.execute(db);
+  await sql`GRANT SELECT, DELETE ON institution_security_policy TO deborah_migration`.execute(db);
 
   console.log('Security profile structure created: institution_security_policy (S0–S4 bounds + SEB key + managed/LAN flags)');
 }

@@ -1,5 +1,5 @@
 /**
- * Edikit — Settings frontend (AUTH D-09)
+ * Deborah — Settings frontend (AUTH D-09)
  *
  * settings.ejs bilan ishlaydi:
  *   - Accordion: .settings-acc-head[data-acc] ↔ #acc-* body (aria-expanded,

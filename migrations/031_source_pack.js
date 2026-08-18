@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 031: Source Pack & Secure RAG Ingestion (Prompt 50)
+ * Deborah — Migration 031: Source Pack & Secure RAG Ingestion (Prompt 50)
  *
  * Prompt 50 — teacher-approved source'lar (PDF/DOCX/PPTX/URL/text) ni
  * provenance/citation bilan safe corpusga aylantirish (research.md §20 Phase 4
@@ -176,9 +176,9 @@ export async function up(db) {
   // ── Grants (sql-template pattern) ──
   const newTables = ['source_packs', 'sources', 'source_chunks', 'source_approvals'];
   for (const table of newTables) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
-    await sql`GRANT DELETE ON ${sql.table(table)} TO edikit_migration`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 }
 

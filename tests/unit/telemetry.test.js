@@ -1,5 +1,5 @@
 /**
- * Edikit — Telemetry unit tests (Prompt 69)
+ * Deborah — Telemetry unit tests (Prompt 69)
  *
  *   - W3C traceparent parse/build (context propagation)
  *   - AsyncLocalStorage context propagation
@@ -178,25 +178,25 @@ describe('redaction — PII/answer/token guard (research §15, §16)', () => {
 
 describe('metrics — registry', () => {
   it('increments counters with labels', () => {
-    incrementCounter('edikit_http_requests_total', {}, { value: 3, labels: { method: 'GET' } });
-    incrementCounter('edikit_http_requests_total', {}, { value: 1, labels: { method: 'GET' } });
+    incrementCounter('deborah_http_requests_total', {}, { value: 3, labels: { method: 'GET' } });
+    incrementCounter('deborah_http_requests_total', {}, { value: 1, labels: { method: 'GET' } });
     const snap = snapshotMetrics();
-    const c = snap.counters.find((x) => x.name === 'edikit_http_requests_total');
+    const c = snap.counters.find((x) => x.name === 'deborah_http_requests_total');
     expect(c.value).toBe(4);
     expect(c.labels.method).toBe('GET');
   });
 
   it('computes histogram percentiles', () => {
-    for (let i = 1; i <= 100; i++) observeHistogram('edikit_ack_latency_ms', i, {});
+    for (let i = 1; i <= 100; i++) observeHistogram('deborah_ack_latency_ms', i, {});
     const snap = snapshotMetrics();
-    const h = snap.histograms.find((x) => x.name === 'edikit_ack_latency_ms');
+    const h = snap.histograms.find((x) => x.name === 'deborah_ack_latency_ms');
     expect(h.count).toBe(100);
     expect(h.p50).toBeGreaterThanOrEqual(50);
     expect(h.p95).toBeGreaterThanOrEqual(95);
   });
 
   it('sets gauges', () => {
-    setGauge('edikit_socket_connected', 42, {});
+    setGauge('deborah_socket_connected', 42, {});
     const snap = snapshotMetrics();
     expect(snap.gauges[0].value).toBe(42);
   });
@@ -231,7 +231,7 @@ describe('SLO — availability & burn-rate (research §38.4)', () => {
 
 describe('SLO — evaluateSlo from metrics snapshot', () => {
   it('answers healthy → all ok', () => {
-    for (let i = 0; i < 1000; i++) observeHistogram('edikit_answer_save_duration', 120, {});
+    for (let i = 0; i < 1000; i++) observeHistogram('deborah_answer_save_duration', 120, {});
     const snap = snapshotMetrics();
     const results = evaluateSlo(snap, { sinceMs: 24 * 3600000 });
     const answerSlo = results.find((s) => s.id === 'answer_save_availability');
@@ -247,8 +247,8 @@ describe('SLO — evaluateSlo from metrics snapshot', () => {
 describe('alerts — rules + runbook annotations (research §38.5)', () => {
   it('fires critical alert on fast SLO burn', () => {
     // 50% error rate → critical burn
-    for (let i = 0; i < 500; i++) observeHistogram('edikit_answer_save_duration', 120, {});
-    incrementCounter('edikit_answer_save_errors_total', {}, { value: 250 });
+    for (let i = 0; i < 500; i++) observeHistogram('deborah_answer_save_duration', 120, {});
+    incrementCounter('deborah_answer_save_errors_total', {}, { value: 250 });
     const snap = snapshotMetrics();
     const alerts = evaluateAlerts(snap, { sinceMs: 30 * 86400000 });
     const critical = alerts.find((a) => a.id === 'slo_critical_answer_save_availability');
@@ -258,21 +258,21 @@ describe('alerts — rules + runbook annotations (research §38.5)', () => {
   });
 
   it('fires provider circuit alert on high error rate', () => {
-    incrementCounter('edikit_provider_requests_total', {}, { value: 100, labels: { provider: 'gamma', status: '500' } });
-    incrementCounter('edikit_provider_errors_total', {}, { value: 30, labels: { provider: 'gamma', status: '500' } });
+    incrementCounter('deborah_provider_requests_total', {}, { value: 100, labels: { provider: 'gamma', status: '500' } });
+    incrementCounter('deborah_provider_errors_total', {}, { value: 30, labels: { provider: 'gamma', status: '500' } });
     const alerts = evaluateAlerts(snapshotMetrics());
     expect(alerts.some((a) => a.id === 'provider_circuit_open')).toBe(true);
     expect(alerts.find((a) => a.id === 'provider_circuit_open').runbook).toBe(RUNBOOKS.provider_outage.path);
   });
 
   it('fires cost alert over budget', () => {
-    incrementCounter('edikit_provider_cost_cents_total', {}, { value: 60000 }); // $600 > $500 budget
+    incrementCounter('deborah_provider_cost_cents_total', {}, { value: 60000 }); // $600 > $500 budget
     const alerts = evaluateAlerts(snapshotMetrics(), { costBudgetCents: 50000 });
     expect(alerts.some((a) => a.id === 'ai_cost_over_budget')).toBe(true);
   });
 
   it('fires quota alert near limit', () => {
-    setGauge('edikit_provider_quota_fraction', 0.96, { labels: { provider: 'gamma' } });
+    setGauge('deborah_provider_quota_fraction', 0.96, { labels: { provider: 'gamma' } });
     const alerts = evaluateAlerts(snapshotMetrics());
     expect(alerts.some((a) => a.id === 'provider_quota_gamma')).toBe(true);
     expect(alerts.find((a) => a.id === 'provider_quota_gamma').severity).toBe('critical');

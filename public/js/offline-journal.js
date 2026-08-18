@@ -1,5 +1,5 @@
 /**
- * Edikit — IndexedDB Offline Journal (browser adapter)
+ * Deborah — IndexedDB Offline Journal (browser adapter)
  *
  * Prompt 32 — low-bandwidth/crash resilience (research.md §29). Keeps an
  * encrypted local journal of every response edit and syncs losslessly with
@@ -32,7 +32,7 @@
 (function (global) {
   'use strict';
 
-  const DB_NAME = 'edikit-offline';
+  const DB_NAME = 'deborah-offline';
   const DB_VERSION = 1;
   const STORE_JOURNAL = 'journal';
   const STORE_META = 'meta';
@@ -42,7 +42,7 @@
    * Derive the AES-GCM key — MUST match src/modules/offline/offline.schema.js
    * deriveJournalKey (server): PRK = HMAC-SHA256(key=salt, msg=sessionSecret);
    * OKM = HMAC-SHA256(key=PRK, msg=info || 0x01) where info =
-   * `edikit-journal:v1:${attemptId}:${userId}:${deviceId}:${salt}`. Keeping the
+   * `deborah-journal:v1:${attemptId}:${userId}:${deviceId}:${salt}`. Keeping the
    * browser derivation identical to the server keeps the "same contract"
    * claim true (e.g. for future server-assisted decryption of exports).
    */
@@ -50,14 +50,14 @@
     const enc = new TextEncoder();
     // Must equal server JOURNAL_KEY_SALT (offline.schema.js) — non-empty so
     // WebCrypto importKey never throws DataError on a zero-length HMAC key.
-    const salt = 'edikit-journal';
+    const salt = 'deborah-journal';
     // PRK = HMAC-SHA256(key=salt, msg=sessionSecret)
     const saltKey = await crypto.subtle.importKey(
       'raw', enc.encode(salt), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
     );
     const prk = await crypto.subtle.sign('HMAC', saltKey, enc.encode(String(sessionSecret)));
     // OKM = HMAC-SHA256(key=PRK, msg=info || 0x01)
-    const info = enc.encode(`edikit-journal:v1:${attemptId}:${userId}:${deviceId}:${salt}`);
+    const info = enc.encode(`deborah-journal:v1:${attemptId}:${userId}:${deviceId}:${salt}`);
     const infoPlusOne = new Uint8Array(info.length + 1);
     infoPlusOne.set(info, 0);
     infoPlusOne[info.length] = 1;

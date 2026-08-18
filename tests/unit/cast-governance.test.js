@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast C4-06 Governance Service Tests
+ * Deborah — Cast C4-06 Governance Service Tests
  * ---------------------------------------------
  * coverage: minor-safe policy (bypass qilib bo'lmaydi), moderation state
  *           machine (RECEIVED→…→WITHDRAWN, AUTO_FLAGGED review), permission

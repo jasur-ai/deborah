@@ -1,5 +1,5 @@
 /**
- * Edikit — Assessment Brief, Policy Pack & Simulator Tests
+ * Deborah — Assessment Brief, Policy Pack & Simulator Tests
  *
  * Covers: typed policy schema, brief schema, A0–A4 AI-use levels,
  * locked-field denylist, material-change diff, publish blockers,

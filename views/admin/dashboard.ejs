@@ -11,7 +11,7 @@
     <div class="admin-nav-left">
       <button type="button" class="admin-nav-hamburger" aria-label="Menyu" aria-expanded="false" aria-controls="admin-sidebar" onclick="toggleAdminDrawer()"><span></span><span></span><span></span></button>
       <a href="/" class="admin-nav-brand">
-        <span class="admin-nav-logo"><img src="/images/logo-icon.svg" alt="Edikit" class="logo-img" style="height:28px;width:auto"></span>
+        <span class="admin-nav-logo"><img src="/images/logo-icon.svg" alt="Deborah" class="logo-img" style="height:28px;width:auto"></span>
         <span class="admin-nav-badge">ADMIN</span>
       </a>
     </div>
@@ -27,7 +27,7 @@
     <!-- Sidebar -->
     <div class="admin-sidebar" id="admin-sidebar">
       <div class="admin-side-label"><%= (adminCopy.navSections || 'Bo\'limlar') %></div>
-      <button class="admin-side-btn <%= activeTab === 'danger' ? 'active' : '' %>" onclick="switchTab('danger')" style="--c:var(--edikit-semantic-color-action-primary);--cbg:rgba(37,99,235,.14)"><span class="admin-side-ico"><%- icon('alertTriangle', 16) %></span><%= (adminCopy.navUsers || 'Foydalanuvchilar') %></button>
+      <button class="admin-side-btn <%= activeTab === 'danger' ? 'active' : '' %>" onclick="switchTab('danger')" style="--c:var(--deborah-semantic-color-action-primary);--cbg:rgba(37,99,235,.14)"><span class="admin-side-ico"><%- icon('alertTriangle', 16) %></span><%= (adminCopy.navUsers || 'Foydalanuvchilar') %></button>
       <button class="admin-side-btn <%= activeTab === 'fans' ? 'active' : '' %>" onclick="switchTab('fans')"><span class="admin-side-ico"><%- icon('book', 16) %></span><%= (adminCopy.navFans || 'Namuna fanlar') %></button>
       <button class="admin-side-btn <%= activeTab === 'pre' ? 'active' : '' %>" onclick="switchTab('pre')" style="--c:var(--accent-purple);--cbg:rgba(100,116,139,.14)"><span class="admin-side-ico"><%- icon('layers', 16) %></span><%= (adminCopy.navPre || 'Tayyor testlar') %></button>
       <button class="admin-side-btn <%= activeTab === 'results' ? 'active' : '' %>" onclick="switchTab('results')"><span class="admin-side-ico"><%- icon('trophy', 16) %></span><%= (adminCopy.navResults || 'Natijalar') %></button>
@@ -135,15 +135,15 @@
           <button type="button" class="admin-refresh-btn" onclick="loadFans()"><%- icon('refresh', 12) %></button>
         </div>
         <!-- Inline Excel upload for Fans -->
-        <div style="background:var(--edikit-semantic-color-surface-raised);border:1px solid var(--edikit-semantic-color-border-subtle);border-radius:14px;padding:16px;margin-bottom:14px">
+        <div style="background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:14px;padding:16px;margin-bottom:14px">
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
             <input class="inp" id="fan-name" placeholder="Fan nomi (masalan: Matematika)" style="flex:1;min-width:140px;margin-bottom:0">
             <div id="fan-drop-zone" onclick="document.getElementById('fan-excel-inp').click()" style="flex:1;min-width:140px;border:2px dashed rgba(56,189,248,.3);border-radius:10px;padding:10px;text-align:center;cursor:pointer;background:rgba(56,189,248,.04);transition:color .2s">,background-color .2s">,border-color .2s">,box-shadow .2s">,transform .2s">,opacity .2s">
-              <p id="fan-excel-lbl" style="color:var(--edikit-semantic-color-text-muted);font-size:.8rem;font-weight:700"><%- icon('upload', 14) %> Excel faylni yuklang</p>
+              <p id="fan-excel-lbl" style="color:var(--deborah-semantic-color-text-muted);font-size:.8rem;font-weight:700"><%- icon('upload', 14) %> Excel faylni yuklang</p>
             </div>
-            <button type="button" id="save-fan-btn" onclick="saveFanFromExcel()" style="background:linear-gradient(135deg,var(--edikit-semantic-color-action-primary),var(--edikit-semantic-color-action-primary-hover));border:none;border-radius:9px;padding:9px 18px;color:#fff;font-family:var(--font-body);font-size:.85rem;font-weight:700;cursor:pointer;white-space:nowrap"><%- icon('save', 14) %> Saqlash</button>
+            <button type="button" id="save-fan-btn" onclick="saveFanFromExcel()" style="background:linear-gradient(135deg,var(--deborah-semantic-color-action-primary),var(--deborah-semantic-color-action-primary-hover));border:none;border-radius:9px;padding:9px 18px;color:#fff;font-family:var(--font-body);font-size:.85rem;font-weight:700;cursor:pointer;white-space:nowrap"><%- icon('save', 14) %> Saqlash</button>
           </div>
-          <button type="button" onclick="downloadFanTemplate()" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--edikit-semantic-color-border-subtle);border-radius:9px;padding:8px 14px;color:var(--edikit-semantic-color-text-muted);font-family:var(--font-body);font-size:.78rem;font-weight:600;cursor:pointer"><%- icon('download', 12) %> Excel shablon yuklab olish</button>
+          <button type="button" onclick="downloadFanTemplate()" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:9px;padding:8px 14px;color:var(--deborah-semantic-color-text-muted);font-family:var(--font-body);font-size:.78rem;font-weight:600;cursor:pointer"><%- icon('download', 12) %> Excel shablon yuklab olish</button>
         </div>
         <input type="file" id="fan-excel-inp" accept=".xlsx,.xls" style="display:none">
         <div id="fans-list"><div class="admin-empty">Yuklanmoqda...</div></div>
@@ -156,17 +156,17 @@
           <button type="button" class="admin-refresh-btn" onclick="loadPreGroups()"><%- icon('refresh', 12) %></button>
         </div>
         <!-- Inline Excel upload for PRE -->
-        <div style="background:var(--edikit-semantic-color-surface-raised);border:1px solid var(--edikit-semantic-color-border-subtle);border-radius:14px;padding:16px;margin-bottom:14px">
+        <div style="background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:14px;padding:16px;margin-bottom:14px">
           <input class="inp" id="pre-title" placeholder="Guruh sarlavhasi (masalan: Fizika 2024)" style="margin-bottom:9px">
           <div id="pre-drop-zone" onclick="document.getElementById('pre-excel-inp').click()" style="border:2px dashed rgba(100,116,139,.3);border-radius:10px;padding:12px;text-align:center;cursor:pointer;background:rgba(100,116,139,.04);transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s;margin-bottom:9px">
-            <p id="pre-excel-lbl" style="color:var(--edikit-semantic-color-text-muted);font-size:.8rem;font-weight:700"><%- icon('upload', 14) %> Excel faylni yuklang (25 savol = 1 subtest)</p>
+            <p id="pre-excel-lbl" style="color:var(--deborah-semantic-color-text-muted);font-size:.8rem;font-weight:700"><%- icon('upload', 14) %> Excel faylni yuklang (25 savol = 1 subtest)</p>
           </div>
-          <button type="button" onclick="downloadFanTemplate()" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--edikit-semantic-color-border-subtle);border-radius:9px;padding:8px 14px;color:var(--edikit-semantic-color-text-muted);font-family:var(--font-body);font-size:.78rem;font-weight:600;cursor:pointer;margin-bottom:8px"><%- icon('download', 12) %> Excel shablon yuklab olish</button>
+          <button type="button" onclick="downloadFanTemplate()" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:9px;padding:8px 14px;color:var(--deborah-semantic-color-text-muted);font-family:var(--font-body);font-size:.78rem;font-weight:600;cursor:pointer;margin-bottom:8px"><%- icon('download', 12) %> Excel shablon yuklab olish</button>
           <div id="pre-preview" style="display:none;background:rgba(100,116,139,.07);border:1px solid rgba(100,116,139,.2);border-radius:10px;padding:11px 13px;margin-bottom:9px">
             <div id="pre-preview-title" style="font-size:.78rem;font-weight:600;color:var(--accent-purple);margin-bottom:7px"></div>
             <div id="pre-chunk-list"></div>
           </div>
-          <div id="pre-saving" style="display:none;align-items:center;gap:8px;font-size:.8rem;font-weight:700;color:var(--edikit-semantic-color-text-muted);margin-top:8px"><div class="spin-sm"></div><span>Saqlanmoqda...</span></div>
+          <div id="pre-saving" style="display:none;align-items:center;gap:8px;font-size:.8rem;font-weight:700;color:var(--deborah-semantic-color-text-muted);margin-top:8px"><div class="spin-sm"></div><span>Saqlanmoqda...</span></div>
           <div id="pre-prog-bar" style="display:none;background:rgba(255,255,255,.07);border-radius:50px;height:7px;margin-top:8px;overflow:hidden"><div id="pre-prog-fill" style="background:linear-gradient(90deg,var(--accent-purple),var(--accent-glow));height:100%;border-radius:50px;transition:width .3s;width:0%"></div></div>
           <button type="button" id="save-pre-btn" onclick="savePreFromExcel()" style="width:100%;background:linear-gradient(135deg,var(--accent-purple),#7c3aed);border:none;border-radius:9px;padding:10px;color:#fff;font-family:var(--font-body);font-size:.88rem;font-weight:700;cursor:pointer"><%- icon('layers', 14) %> Barcha subtestlarni saqlash</button>
           <div class="admin-msg" id="pre-msg"></div>
@@ -195,7 +195,7 @@
         </div>
 
         <!-- Grant Form -->
-        <div style="background:var(--edikit-semantic-color-surface-raised);border:1px solid var(--edikit-semantic-color-border-subtle);border-radius:14px;padding:16px;margin-bottom:14px">
+        <div style="background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:14px;padding:16px;margin-bottom:14px">
           <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
           <div style="flex:1;min-width:200px">
             <label class="lbl" for="vip-username">Foydalanuvchi nomi</label>
@@ -210,7 +210,7 @@
           <div class="admin-msg" id="vip-msg"></div>
           <div id="vip-result" style="display:none;margin-top:10px;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.25);border-radius:10px;padding:12px 15px">
             <div style="font-size:.82rem;font-weight:600;color:var(--green);margin-bottom:4px">✅ VIP berildi!</div>
-            <div id="vip-result-detail" style="font-size:.78rem;color:var(--edikit-semantic-color-text-secondary)"></div>
+            <div id="vip-result-detail" style="font-size:.78rem;color:var(--deborah-semantic-color-text-secondary)"></div>
           </div>
         </div>
 
@@ -229,7 +229,7 @@
         </div>
 
         <!-- Create policy form -->
-        <div style="background:var(--edikit-semantic-color-surface-raised);border:1px solid var(--edikit-semantic-color-border-subtle);border-radius:14px;padding:16px;margin-bottom:14px">
+        <div style="background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:14px;padding:16px;margin-bottom:14px">
           <div style="font-size:.85rem;font-weight:600;margin-bottom:10px">Yangi policy draft</div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
             <div style="flex:2;min-width:220px">
@@ -347,7 +347,7 @@
       try {
         const r = await fetch('/admin/api/cast/policies');
         const d = await r.json();
-        if (!r.ok) { wrap.innerHTML = '<div class="admin-empty" style="color:var(--edikit-semantic-color-action-primary)">' + escHtml(d.error || 'Xato') + '</div>'; return; }
+        if (!r.ok) { wrap.innerHTML = '<div class="admin-empty" style="color:var(--deborah-semantic-color-action-primary)">' + escHtml(d.error || 'Xato') + '</div>'; return; }
         if (!d.policies.length) {
           wrap.innerHTML = '<div class="admin-empty">Hozircha policy yo\'q — yuqoridan yarating</div>';
           return;
@@ -358,7 +358,7 @@
           const lims = Object.entries(p.limits).map(([k, v]) => k + '=' + v).join(', ') || '—';
           const pres = p.approvedPresets.length ? p.approvedPresets.join(', ') : 'hamma';
           return `
-            <div style="background:var(--edikit-semantic-color-surface-raised);border:1px solid var(--edikit-semantic-color-border-subtle);border-radius:14px;padding:14px 16px;margin-bottom:10px">
+            <div style="background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:14px;padding:14px 16px;margin-bottom:10px">
               <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
                 <div style="font-size:.86rem;font-weight:600">${escHtml(p.policyId)} ${badge(p.status)} ${p.isEffective ? '<span class="badge badge-info" style="background:rgba(56,189,248,.15);color:#38bdf8">● Faol</span>' : ''}</div>
                 <div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -367,7 +367,7 @@
                   <button type="button" class="admin-mini-btn" onclick="auditGovernance('${p.policyId}')">Audit</button>
                 </div>
               </div>
-              <div style="font-size:.75rem;color:var(--edikit-semantic-color-text-secondary);margin-top:6px;line-height:1.7">
+              <div style="font-size:.75rem;color:var(--deborah-semantic-color-text-secondary);margin-top:6px;line-height:1.7">
                 <div>🛡 Locked: ${escHtml(locked)}</div>
                 <div>⛔ Limits: ${escHtml(lims)}</div>
                 <div>✅ Approved presets: ${escHtml(pres)}</div>
@@ -376,7 +376,7 @@
             </div>`;
         }).join('');
         wrap.innerHTML = rows + (d.effective ? `<div class="admin-msg" style="color:var(--green)">Faol policy: ${escHtml(d.effective.policyId)} v${d.effective.version}</div>` : '<div class="admin-msg">Faol policy yo\'q — yaratib publish qiling</div>');
-      } catch (e) { wrap.innerHTML = '<div class="admin-empty" style="color:var(--edikit-semantic-color-action-primary)">' + escHtml(e.message) + '</div>'; }
+      } catch (e) { wrap.innerHTML = '<div class="admin-empty" style="color:var(--deborah-semantic-color-action-primary)">' + escHtml(e.message) + '</div>'; }
     }
 
     async function publishGovernance(policyId) {
@@ -524,7 +524,7 @@
       ];
       const ws = XLSX.utils.aoa_to_sheet(data);
       XLSX.utils.book_append_sheet(wb, ws, 'Savollar');
-      XLSX.writeFile(wb, 'edikit-fan-template.xlsx');
+      XLSX.writeFile(wb, 'deborah-fan-template.xlsx');
     }
     
     function parseQuestionsFromWB(wb) {
@@ -654,7 +654,7 @@
           </div>`;
         }).join('');
       } catch(e) {
-        wrap.innerHTML = '<div class="admin-empty" style="color:var(--edikit-semantic-color-action-primary)">Yuklab bo\'lmadi</div>';
+        wrap.innerHTML = '<div class="admin-empty" style="color:var(--deborah-semantic-color-action-primary)">Yuklab bo\'lmadi</div>';
       }
     }
     
@@ -723,7 +723,7 @@
           </div>
         `).join('');
       } catch(e) {
-        wrap.innerHTML = '<div class="admin-empty" style="color:var(--edikit-semantic-color-action-primary)">Yuklab bo\'lmadi</div>';
+        wrap.innerHTML = '<div class="admin-empty" style="color:var(--deborah-semantic-color-action-primary)">Yuklab bo\'lmadi</div>';
       }
     }
 
@@ -778,7 +778,7 @@
             `).join('')}
           </tbody></table></div>`;
       } catch(e) {
-        wrap.innerHTML = '<div class="admin-empty" style="color:var(--edikit-semantic-color-action-primary)">Yuklab bo\'lmadi</div>';
+        wrap.innerHTML = '<div class="admin-empty" style="color:var(--deborah-semantic-color-action-primary)">Yuklab bo\'lmadi</div>';
       }
     }
 
@@ -898,7 +898,7 @@
           </div>
         `).join('');
       } catch(e) {
-        wrap.innerHTML = '<div class="admin-empty" style="color:var(--edikit-semantic-color-action-primary)">Yuklab bo\'lmadi</div>';
+        wrap.innerHTML = '<div class="admin-empty" style="color:var(--deborah-semantic-color-action-primary)">Yuklab bo\'lmadi</div>';
       }
     }
 
@@ -931,7 +931,7 @@
           `).join('')}
         `;
       } catch(e) {
-        wrap.innerHTML = '<div class="admin-empty" style="color:var(--edikit-semantic-color-action-primary);">Yuklab bo\'lmadi</div>';
+        wrap.innerHTML = '<div class="admin-empty" style="color:var(--deborah-semantic-color-action-primary);">Yuklab bo\'lmadi</div>';
       }
     }
 

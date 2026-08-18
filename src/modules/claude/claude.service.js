@@ -1,5 +1,5 @@
 /**
- * Edikit — Claude Native Adapter (service)
+ * Deborah — Claude Native Adapter (service)
  *
  * Prompt 57 — streaming source-synthesis job orchestration. Graceful
  * degradation: PostgreSQL bo'lmasa write path'lar 'PostgreSQL required'

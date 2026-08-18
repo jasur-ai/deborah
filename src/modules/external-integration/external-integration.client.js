@@ -1,5 +1,5 @@
 /**
- * Edikit — External Integration Adapter Clients (HEMIS & OneID)
+ * Deborah — External Integration Adapter Clients (HEMIS & OneID)
  *
  * Prompt 66 — rasmiy contract mavjud bo'lganda roster/grade va identity
  * integration'ni xavfsiz ulash. Har bir provider uchun adapter client:

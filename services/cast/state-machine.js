@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Server State Machine
+ * Deborah — Cast Server State Machine
  * -----------------------------------
  * Pure applyEvent(state, event) reducer + allowed transitions.
  * Side effect yo'q — reducer faqat state qaytaradi.

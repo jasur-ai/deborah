@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Design Token Build (STYLE STEP 04 / S04.07-09)
+ * Deborah — Design Token Build (STYLE STEP 04 / S04.07-09)
  * ----------------------------------------------------------
  * DTCG token fayllarini o'qiydi, alias'larni resolve qiladi va:
  *   1. public/design/generated/tokens.css          — deterministic CSS custom props
@@ -86,8 +86,8 @@ for (const [path, tok] of Object.entries(resolved)) {
 }
 
 // ── 5. CSS nomlash ──
-// edikit.primitive.cobalt.cobalt-500 → --edikit-primitive-cobalt-cobalt-500
-// edikit.semantic.color.action.primary → --edikit-semantic-color-action-primary
+// deborah.primitive.cobalt.cobalt-500 → --deborah-primitive-cobalt-cobalt-500
+// deborah.semantic.color.action.primary → --deborah-semantic-color-action-primary
 function cssVarName(path) {
   return '--' + path.split('.').join('-').replace(/([A-Z0-9]+)/g, '-$1').toLowerCase().replace(/--+/g, '-');
 }
@@ -157,12 +157,12 @@ function oklchOverrideBlock(selector, vars) {
 // faylidan to'g'ridan-to'g'ri olinadi.
 const rootVars = {};
 for (const [path, tok] of Object.entries(resolved)) {
-  if (path.startsWith('edikit.semantic')) continue; // dark bloki quyida
+  if (path.startsWith('deborah.semantic')) continue; // dark bloki quyida
   rootVars[cssVarName(path)] = tok.$value;
 }
-if (byFile[DEFAULT_THEME]?.edikit?.semantic) {
+if (byFile[DEFAULT_THEME]?.deborah?.semantic) {
   const defaultSemantic = {};
-  flattenInto(byFile[DEFAULT_THEME].edikit.semantic, ['edikit', 'semantic'], defaultSemantic);
+  flattenInto(byFile[DEFAULT_THEME].deborah.semantic, ['deborah', 'semantic'], defaultSemantic);
   for (const [path, tok] of Object.entries(defaultSemantic)) {
     rootVars[cssVarName(path)] = resolveValue(tok.$value);
   }
@@ -175,10 +175,10 @@ for (const file of tokenFiles.sort()) {
   const selector = THEME_SELECTORS[file];
   if (!selector || file === DEFAULT_THEME) continue;
   const themeVars = {};
-  const semantic = byFile[file]?.edikit?.semantic;
+  const semantic = byFile[file]?.deborah?.semantic;
   if (!semantic) continue;
   const t = {};
-  flattenInto(semantic, ['edikit', 'semantic'], t);
+  flattenInto(semantic, ['deborah', 'semantic'], t);
   for (const [path, tok] of Object.entries(t)) {
     themeVars[cssVarName(path)] = resolveValue(tok.$value);
   }
@@ -191,11 +191,11 @@ lines.push('/* ── Backward-compatible legacy aliases (S04.08) ──');
 lines.push('/* ⚠️ DEPRECATED — yangi code semantic token ishlatishi kerak:  */');
 lines.push('/*    color.action.primary, color.surface.default, ...          */');
 lines.push(':root {');
-lines.push('  --accent: var(--edikit-semantic-color-action-primary);');
-lines.push('  --bg: var(--edikit-semantic-color-surface-default);');
-lines.push('  --card: var(--edikit-semantic-color-surface-raised);');
-lines.push('  --text: var(--edikit-semantic-color-text-primary);');
-lines.push('  --muted: var(--edikit-semantic-color-text-muted);');
+lines.push('  --accent: var(--deborah-semantic-color-action-primary);');
+lines.push('  --bg: var(--deborah-semantic-color-surface-default);');
+lines.push('  --card: var(--deborah-semantic-color-surface-raised);');
+lines.push('  --text: var(--deborah-semantic-color-text-primary);');
+lines.push('  --muted: var(--deborah-semantic-color-text-muted);');
 lines.push('}');
 lines.push('');
 
@@ -213,17 +213,17 @@ writeFileSync(resolve(GENERATED_DIR, 'tokens.flat.json'), JSON.stringify(flat, n
 // ── 8. Contrast fixture (S04.09) ──
 const contrastPairs = [];
 for (const themeFile of ['semantic.light.json', 'semantic.dark.json', 'semantic.high-contrast.json']) {
-  const semantic = byFile[themeFile]?.edikit?.semantic;
+  const semantic = byFile[themeFile]?.deborah?.semantic;
   if (!semantic) continue;
   const t = {};
-  flattenInto(semantic, ['edikit', 'semantic'], t);
+  flattenInto(semantic, ['deborah', 'semantic'], t);
   const g = (p) => resolveValue(t[p]?.$value);
   contrastPairs.push({
     theme: themeFile.replace('semantic.', '').replace('.json', ''),
     pairs: [
-      { fg: g('edikit.semantic.color.text.primary'), bg: g('edikit.semantic.color.surface.default'), target: 4.5, note: 'text.primary on surface' },
-      { fg: g('edikit.semantic.color.text.muted'), bg: g('edikit.semantic.color.surface.raised'), target: 4.5, note: 'text.muted on raised' },
-      { fg: g('edikit.semantic.color.action.primary'), bg: g('edikit.semantic.color.surface.raised'), target: 3.0, note: 'action.primary on raised (UI)' },
+      { fg: g('deborah.semantic.color.text.primary'), bg: g('deborah.semantic.color.surface.default'), target: 4.5, note: 'text.primary on surface' },
+      { fg: g('deborah.semantic.color.text.muted'), bg: g('deborah.semantic.color.surface.raised'), target: 4.5, note: 'text.muted on raised' },
+      { fg: g('deborah.semantic.color.action.primary'), bg: g('deborah.semantic.color.surface.raised'), target: 3.0, note: 'action.primary on raised (UI)' },
     ],
   });
 }

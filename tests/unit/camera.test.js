@@ -1,5 +1,5 @@
 /**
- * Edikit — Privacy-first Camera Evidence Pilot Tests
+ * Deborah — Privacy-first Camera Evidence Pilot Tests
  *
  * Covers (Prompt 37):
  *   - Evidence flag whitelist + forbidden fields (emotion/gaze/honesty/

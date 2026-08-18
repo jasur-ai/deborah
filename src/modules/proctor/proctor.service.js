@@ -1,5 +1,5 @@
 /**
- * Edikit — Uch-strike Client Collector & Server Classifier Service
+ * Deborah — Uch-strike Client Collector & Server Classifier Service
  *
  * Prompt 34 — server-side half of the proctor evidence engine (research.md
  * §31). Receives raw browser events, classifies them (threshold + dedupe),

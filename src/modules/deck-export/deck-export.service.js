@@ -1,5 +1,5 @@
 /**
- * Edikit — Deck Export (service)
+ * Deborah — Deck Export (service)
  *
  * Prompt 59 — canonical deckdan final PPTX/PDF/handout export:
  *   - exportDeck: validate → idempotency (request_hash) → build final →

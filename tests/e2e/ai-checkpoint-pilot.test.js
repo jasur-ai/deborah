@@ -1,5 +1,5 @@
 /**
- * Edikit — AI/Content Checkpoint teacher multi-feature pilot (e2e, Prompt 60)
+ * Deborah — AI/Content Checkpoint teacher multi-feature pilot (e2e, Prompt 60)
  *
  * Teacher measured pilot: source red-team + grading shadow benchmark +
  * question review + citation check + intervention + deck comparison +

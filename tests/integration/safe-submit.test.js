@@ -1,5 +1,5 @@
 /**
- * Edikit — Safe File/Code/Oral Submission integration tests (Prompt 44)
+ * Deborah — Safe File/Code/Oral Submission integration tests (Prompt 44)
  *
  * Service-contract coverage (graceful degradation without PG) + code
  * sandbox escape / resource-limit contract:

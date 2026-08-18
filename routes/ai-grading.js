@@ -1,5 +1,5 @@
 /**
- * Edikit — Written AI Grading Shadow Mode Routes
+ * Deborah — Written AI Grading Shadow Mode Routes
  *
  * Prompt 51 REST API (admin — requireAdmin):
  *   - GET  /api/admin/ai-grading/meta             — constants for admin UI

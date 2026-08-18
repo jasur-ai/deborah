@@ -1,5 +1,5 @@
 /**
- * Edikit — Auth OpenAPI generator (AUTH D-30 §07)
+ * Deborah — Auth OpenAPI generator (AUTH D-30 §07)
  * ---------------------------------------------------------------------------
  * `src/modules/auth/contracts.js` ENDPOINTS registridan OpenAPI 3.1 spec
  * yaratadi (zod 4 native `toJSONSchema()` — yangi dependency yo'q).
@@ -40,7 +40,7 @@ export function scanPrivateFields(contract, endpointKey) {
 }
 
 /** OpenAPI 3.1 spec yaratadi (§07). */
-export function buildOpenApiSpec({ title = 'Edikit Auth API', version = '1.0.0' } = {}) {
+export function buildOpenApiSpec({ title = 'Deborah Auth API', version = '1.0.0' } = {}) {
   const paths = {};
   let privateFieldViolations = 0;
 
@@ -102,7 +102,7 @@ export function buildOpenApiSpec({ title = 'Edikit Auth API', version = '1.0.0' 
 
   return {
     openapi: '3.1.0',
-    info: { title, version, description: 'Edikit auth API contract (D-30) — versionlanadi; breaking change → v2 (deprecation 6 oy, §24).' },
+    info: { title, version, description: 'Deborah auth API contract (D-30) — versionlanadi; breaking change → v2 (deprecation 6 oy, §24).' },
     servers: [{ url: '/api/v1' }],
     paths,
     components: { securitySchemes: SECURITY_SCHEMES },

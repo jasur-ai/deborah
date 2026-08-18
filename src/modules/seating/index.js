@@ -1,5 +1,5 @@
 /**
- * Edikit — Seat, Proctor, Hall Ticket & Check-in Module Barrel Export
+ * Deborah — Seat, Proctor, Hall Ticket & Check-in Module Barrel Export
  *
  * Prompt 40 — published schedule asosida seat/proctor assignment va
  * offline-tolerant check-in (research.md §15, §53.3 Seating).

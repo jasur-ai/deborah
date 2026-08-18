@@ -1,5 +1,5 @@
 /**
- * Edikit — Mobile Optimization Test Suite
+ * Deborah — Mobile Optimization Test Suite
  * Automated testing: meta tags, manifest, service worker, responsive checks
  * 
  * Usage: node scripts/test-mobile.js
@@ -104,7 +104,7 @@ async function testManifest() {
   const manifest = await res.json();
 
   check('Valid JSON manifest', !!manifest);
-  check('name: "Edikit"', manifest.name === 'Edikit');
+  check('name: "Deborah"', manifest.name === 'Deborah');
   check('short_name present', !!manifest.short_name);
   check('start_url: "/"', manifest.start_url === '/');
   check('scope: "/"', manifest.scope === '/');
@@ -246,7 +246,7 @@ async function testSWRegistration() {
 async function main() {
   console.log(`
 ╔═══════════════════════════════════════════╗
-║   Edikit — Mobile Optimization Test Suite ║
+║   Deborah — Mobile Optimization Test Suite ║
 ║   ${new Date().toISOString()}       ║
 ╚═══════════════════════════════════════════╝
   `);

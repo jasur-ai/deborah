@@ -1,5 +1,5 @@
 /**
- * Edikit — Scan module unit tests (Prompt 43)
+ * Deborah — Scan module unit tests (Prompt 43)
  *
  * Pure logic tests: quality gate, QR decode/routing, out-of-order,
  * duplicate/missing/orphan detection, OMR confidence, completion blocker,

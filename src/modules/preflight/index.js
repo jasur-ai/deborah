@@ -1,5 +1,5 @@
 /**
- * Edikit — Student Preflight (barrel export)
+ * Deborah — Student Preflight (barrel export)
  */
 
 export * from './preflight.schema.js';

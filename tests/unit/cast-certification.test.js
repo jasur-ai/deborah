@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast F4-F6 Certification Verifier testlari (C5-12)
+ * Deborah — Cast F4-F6 Certification Verifier testlari (C5-12)
  *
  * scripts/cast-certification.js logikasini tekshiradi:
  *  - F-tier → load-tier mapping (F4→L, F5→XL, F6→XXL)

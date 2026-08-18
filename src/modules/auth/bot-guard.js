@@ -1,5 +1,5 @@
 /**
- * Edikit — Bot Guard (AUTH B-08)
+ * Deborah — Bot Guard (AUTH B-08)
  * -------------------------------------------------
  * Register'ni bot'lardan himoyalash — layered:
  *   1. Honeypot (A-21, yashirin field) — bot'lar to'ldiradi → silent 200.

@@ -1,5 +1,5 @@
 /**
- * Edikit — Integration Tests: Reconnect / Load Suite (Prompt 38)
+ * Deborah — Integration Tests: Reconnect / Load Suite (Prompt 38)
  *
  * Reconnect storm va load holatida secure attemptning yakuniy tekshiruvi.
  * Contract tests against the real HTTP server (createApp factory):

@@ -1,5 +1,5 @@
 /**
- * Edikit — Privacy-first Camera Evidence Pilot Routes
+ * Deborah — Privacy-first Camera Evidence Pilot Routes
  *
  * Prompt 37 REST API:
  *   - GET  /api/admin/camera/policy           — pilot policy (requireAdmin)

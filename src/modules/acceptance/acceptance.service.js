@@ -1,5 +1,5 @@
 /**
- * Edikit — Final System Acceptance & Handover Service (Prompt 73)
+ * Deborah — Final System Acceptance & Handover Service (Prompt 73)
  *
  * Service half of the acceptance module:
  *   - Sign-off registry: per-domain evidence, reviewer, sign-off state.
@@ -64,7 +64,7 @@ export async function submitDomainEvidence({ domainId = '', provided = {}, owner
     resourceId: `domain:${domainId}`,
     details: { evidenceCount: eval_.evidenceCount, criticalRisk: Boolean(criticalRiskOwner) },
   }).catch(() => null);
-  recordMetric('edikit_acceptance_evidence_total', 1, { labels: { domain: domainId } });
+  recordMetric('deborah_acceptance_evidence_total', 1, { labels: { domain: domainId } });
 
   return { ok: true, domain: domainId, status: SIGN_OFF_STATUS.SUBMITTED, evidenceCount: eval_.evidenceCount };
 }
@@ -93,7 +93,7 @@ export async function reviewDomain({ domainId = '', reviewer = '', outcome = 'pa
     resourceId: `domain:${domainId}`,
     details: { from: current.status, to, outcome },
   }).catch(() => null);
-  recordMetric('edikit_acceptance_review_total', 1, { labels: { domain: domainId, outcome } });
+  recordMetric('deborah_acceptance_review_total', 1, { labels: { domain: domainId, outcome } });
 
   return { ok: true, domain: domainId, status: to };
 }
@@ -119,7 +119,7 @@ export async function signOffDomain({ domainId = '', signer = '' } = {}) {
     resourceId: `domain:${domainId}`,
     details: {},
   }).catch(() => null);
-  recordMetric('edikit_acceptance_sign_off_total', 1, { labels: { domain: domainId } });
+  recordMetric('deborah_acceptance_sign_off_total', 1, { labels: { domain: domainId } });
 
   return { ok: true, domain: domainId, status: SIGN_OFF_STATUS.SIGNED };
 }
@@ -152,7 +152,7 @@ export async function recordBacklogItem({ title = '', priority = '', owner = '',
     resourceId: item.id,
     details: { priority, title },
   }).catch(() => null);
-  recordMetric('edikit_acceptance_backlog_total', 1, { labels: { priority } });
+  recordMetric('deborah_acceptance_backlog_total', 1, { labels: { priority } });
 
   return { ok: true, item };
 }
@@ -188,7 +188,7 @@ export async function getReleaseReport({ seed = {}, claims = null } = {}) {
 
   const gatePass = gate.ok && deferredGuard.ok && (!claimGuard || claimGuard.ok);
 
-  recordMetric('edikit_acceptance_release_gate', gatePass ? 1 : 0, {});
+  recordMetric('deborah_acceptance_release_gate', gatePass ? 1 : 0, {});
 
   return {
     domains,

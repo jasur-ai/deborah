@@ -1,5 +1,5 @@
 /**
- * Edikit — Telemetry e2e/security tests (Prompt 69 §20)
+ * Deborah — Telemetry e2e/security tests (Prompt 69 §20)
  *
  * Synthetic incident senariylari:
  *   - Provider error rate spayki → circuit alert fire bo'ladi + runbook link
@@ -63,9 +63,9 @@ describe('synthetic incident — provider circuit (research §38.5)', () => {
   it('provider error spike opens the circuit with runbook link', () => {
     // 30/100 xatolar (30%) → circuit OPEN
     for (let i = 0; i < 100; i++) {
-      incrementCounter('edikit_provider_requests_total', {}, { value: 1, labels: { provider: 'gamma', status: i < 30 ? '500' : '200' } });
+      incrementCounter('deborah_provider_requests_total', {}, { value: 1, labels: { provider: 'gamma', status: i < 30 ? '500' : '200' } });
     }
-    incrementCounter('edikit_provider_errors_total', {}, { value: 30, labels: { provider: 'gamma', status: '500' } });
+    incrementCounter('deborah_provider_errors_total', {}, { value: 30, labels: { provider: 'gamma', status: '500' } });
 
     const snap = telemetrySnapshot();
     const fired = snap.alerts.find((a) => a.id === 'provider_circuit_open');
@@ -81,7 +81,7 @@ describe('synthetic incident — provider circuit (research §38.5)', () => {
 
 describe('synthetic incident — quota & cost alerts', () => {
   it('quota near limit fires critical alert', () => {
-    setGauge('edikit_provider_quota_fraction', 0.98, { labels: { provider: 'manus' } });
+    setGauge('deborah_provider_quota_fraction', 0.98, { labels: { provider: 'manus' } });
     const snap = telemetrySnapshot();
     const fired = snap.alerts.find((a) => a.id === 'provider_quota_manus');
     expect(fired).toBeTruthy();
@@ -89,7 +89,7 @@ describe('synthetic incident — quota & cost alerts', () => {
   });
 
   it('cost over budget fires alert', () => {
-    incrementCounter('edikit_provider_cost_cents_total', {}, { value: 75000 }); // $750
+    incrementCounter('deborah_provider_cost_cents_total', {}, { value: 75000 }); // $750
     const snap = telemetrySnapshot({ costBudgetCents: 50000 });
     expect(snap.alerts.some((a) => a.id === 'ai_cost_over_budget')).toBe(true);
   });
@@ -102,8 +102,8 @@ describe('synthetic incident — quota & cost alerts', () => {
 describe('synthetic incident — SLO burn (research §38.4)', () => {
   it('answer save error surge triggers critical burn alert', () => {
     // 1000 ta javob saqlash, 400 tasi xato (40%)
-    for (let i = 0; i < 1000; i++) observeHistogram('edikit_answer_save_duration', 120, {});
-    incrementCounter('edikit_answer_save_errors_total', {}, { value: 400 });
+    for (let i = 0; i < 1000; i++) observeHistogram('deborah_answer_save_duration', 120, {});
+    incrementCounter('deborah_answer_save_errors_total', {}, { value: 400 });
 
     const snap = telemetrySnapshot({ sinceMs: 30 * 86400000 });
     const slo = snap.slos.find((s) => s.id === 'answer_save_availability');

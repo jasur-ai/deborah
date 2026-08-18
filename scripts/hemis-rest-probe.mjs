@@ -6,7 +6,7 @@ import { parseEnv } from './hemis-live-test.mjs';
 
 const cfg = parseEnv(readFileSync('scripts/hemis-test.env', 'utf8'));
 const BASE = (cfg.HEMIS_BASE_URL || 'https://student.hemis.uz').replace(/\/+$/, '');
-const UA = 'Edikit-HemIS-A14Probe/1.0 (own test account, educational)';
+const UA = 'Deborah-HemIS-A14Probe/1.0 (own test account, educational)';
 
 function redactToken(t) {
   if (!t) return 'NONE';

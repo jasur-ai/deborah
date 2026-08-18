@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Boot Rehydration Job (C5-06 item 10)
+ * Deborah — Cast Boot Rehydration Job (C5-06 item 10)
  * ---------------------------------------------------
  * Node restart'dan so'ng durable state (Firebase) asosida ACTIVE
  * question timer'larini qayta tiklaydi. State timestamp authoritative:

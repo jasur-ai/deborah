@@ -1,5 +1,5 @@
 /**
- * Edikit — Institutional Handoff (unit, Prompt 72)
+ * Deborah — Institutional Handoff (unit, Prompt 72)
  *
  * Pure logic tests for src/modules/institutional/schema:
  *   - Cutover FSM transitions + final backup evidence + reconciliation parity

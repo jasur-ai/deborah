@@ -1,5 +1,5 @@
 /**
- * Edikit — Teacher Core Checkpoint (Prompt 29)
+ * Deborah — Teacher Core Checkpoint (Prompt 29)
  *
  * Final verification of the Teacher Core journey — competencydan student
  * preflightgacha (Prompt 20–28). Walks the FULL flow at the pure-logic layer:

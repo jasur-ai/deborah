@@ -1,5 +1,5 @@
 /**
- * Edikit — E2E: Typography (STYLE STEP 08 / S08.02, S08.04, S08.11)
+ * Deborah — E2E: Typography (STYLE STEP 08 / S08.02, S08.04, S08.11)
  * -----------------------------------------------------------------
  * Functional tekshiruvlar — app-desktop project'ida:
  *  - S08.02  Uzbek (Oʻ/Gʻ) + Uzbek Cyrillic (Ў/ғ) + Russian glyphlar

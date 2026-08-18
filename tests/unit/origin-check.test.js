@@ -1,5 +1,5 @@
 /**
- * Edikit — Origin Check Middleware Tests
+ * Deborah — Origin Check Middleware Tests
  *
  * Tests:
  *   1. Origin allowlist — allowed origins pass

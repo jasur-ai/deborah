@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Design Token Validator (STYLE STEP 04 / S04.05-06)
+ * Deborah — Design Token Validator (STYLE STEP 04 / S04.05-06)
  * ------------------------------------------------------------
  * DTCG token fayllarini tekshiradi:
  *   - Alias cycle (S04.06)
@@ -131,11 +131,11 @@ export function validateTokens(dir = TOKENS_DIR) {
     for (const file of themeFiles) {
       const semantic = findSemantic(byFile[file]);
       if (!semantic) {
-        errors.push(`${file}: edikit.semantic guruhi topilmadi`);
+        errors.push(`${file}: deborah.semantic guruhi topilmadi`);
         continue;
       }
       const paths = new Set();
-      collectLeafPaths(semantic, ['edikit', 'semantic'], paths);
+      collectLeafPaths(semantic, ['deborah', 'semantic'], paths);
       themePaths.set(file, paths);
     }
     const reference = themeFiles[0];
@@ -155,12 +155,12 @@ export function validateTokens(dir = TOKENS_DIR) {
   }
 
   // ── 6. S04.03: primitive'lar component'da to'g'ridan-to'g'ri — semantic
-  //    fayllar faqat edikit.semantic ichida bo'lishi kerak ──
+  //    fayllar faqat deborah.semantic ichida bo'lishi kerak ──
   for (const file of themeFiles) {
     const parsed = byFile[file];
-    const keys = Object.keys(parsed.edikit || {});
+    const keys = Object.keys(parsed.deborah || {});
     if (keys.length !== 1 || keys[0] !== 'semantic') {
-      errors.push(`${file}: semantic theme fayl faqat edikit.semantic ichida bo'lishi kerak (S04.03) — topildi: ${keys.join(', ')}`);
+      errors.push(`${file}: semantic theme fayl faqat deborah.semantic ichida bo'lishi kerak (S04.03) — topildi: ${keys.join(', ')}`);
     }
   }
 
@@ -181,7 +181,7 @@ function flattenInto(node, prefix, file, out) {
 }
 
 function findSemantic(node) {
-  return node?.edikit?.semantic || null;
+  return node?.deborah?.semantic || null;
 }
 
 function collectLeafPaths(node, prefix, out) {

@@ -1,7 +1,7 @@
 /**
- * Edikit — QTI Parser & Interaction→Canonical Mapping Engine
+ * Deborah — QTI Parser & Interaction→Canonical Mapping Engine
  *
- * Parses QTI 2.1/2.2 packages into Edikit's canonical item format.
+ * Parses QTI 2.1/2.2 packages into Deborah's canonical item format.
  * Supports major interaction types with explicit unsupported feature reporting.
  *
  * QTI interaction types supported:
@@ -211,7 +211,7 @@ export function detectMultipleInteractions(xmlContent) {
 // ═══════════════════════════════════════════════════════════════════
 
 /**
- * Map a QTI interaction to the canonical Edikit item format.
+ * Map a QTI interaction to the canonical Deborah item format.
  * Returns both the mapped data and any unsupported features.
  */
 export function mapInteractionToCanonical(interactionType, xmlContent) {

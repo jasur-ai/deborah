@@ -40,15 +40,15 @@ describe('AUTH D-16 §27 — template 4 til bir xil struktur', () => {
       const r = renderWelcome({ username: 'student42', lang });
       expect(r.text).toContain('student42');
       // CTA struktur — onboarding havolasi 4 tilda bir xil
-      expect(r.html).toContain('https://edikit.uz/user/onboarding');
+      expect(r.html).toContain('https://deborah.uz/user/onboarding');
       expect(r.subject).toBeTruthy();
     }
   });
 
   it('renderReset: resetUrl 4 tilda', () => {
     for (const lang of LANGS) {
-      const r = renderReset({ resetUrl: 'https://edikit.uz/user/reset?token=abc', lang });
-      expect(r.html).toContain('https://edikit.uz/user/reset?token=abc');
+      const r = renderReset({ resetUrl: 'https://deborah.uz/user/reset?token=abc', lang });
+      expect(r.html).toContain('https://deborah.uz/user/reset?token=abc');
     }
   });
 });

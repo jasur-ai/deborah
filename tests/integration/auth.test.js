@@ -1,5 +1,5 @@
 /**
- * Edikit — Login/Register/Forgot testlari (plan_login §4)
+ * Deborah — Login/Register/Forgot testlari (plan_login §4)
  * ----------------------------------------------------------
  * 4 til rendering, Google OIDC, show/hide parol, kuch indikatori,
  * login/register flow (CSRF bilan), forgot flow (enumeration-safe).
@@ -98,7 +98,7 @@ describe('Auth — login sahifasi (4 til)', () => {
 
   it('GET /user/login?lang=en, ru, uz-cyrl — tegishli tilda', async () => {
     const en = await (await fetch(`${serverUrl}/user/login?lang=en`)).text();
-    expect(en).toContain('Sign in to Edikit');
+    expect(en).toContain('Sign in to Deborah');
     const ru = await (await fetch(`${serverUrl}/user/login?lang=ru`)).text();
     expect(ru).toContain('Вход в платформу');
     const cyrl = await (await fetch(`${serverUrl}/user/login?lang=uz-cyrl`)).text();

@@ -1,5 +1,5 @@
 /**
- * Edikit — Response API, ACK Sequence & Autosave Tests
+ * Deborah — Response API, ACK Sequence & Autosave Tests
  *
  * Covers (Prompt 31):
  *   - Response mode resolution (question type + policy override)

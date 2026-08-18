@@ -1,5 +1,5 @@
 /**
- * Edikit — WCAG 2.2 AA & Artifact Accessibility (e2e/security, Prompt 64)
+ * Deborah — WCAG 2.2 AA & Artifact Accessibility (e2e/security, Prompt 64)
  *
  * Full critical-journey UAT (research.md §26.1, §29): user settings →
  * automated audit (ACR) → gap backlog → human verification (close blocker)

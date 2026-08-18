@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast E2E (T-03): Setup
+ * Deborah — Cast E2E (T-03): Setup
  * -------------------------------
  * Real browser (Playwright chromium) + real server (createApp).
  * - Server/bootstrap fixture ishlaydi (item 1)

@@ -1,6 +1,6 @@
 {
   "$schema": "https://design-tokens.github.io/community-group/format/",
-  "edikit": {
+  "deborah": {
     "semantic": {
       "$description": "Semantic tokens — high-contrast theme (WCAG AAA targets). Path'lar light/dark bilan BIR XIL (S04.05).",
       "color": {
@@ -48,9 +48,9 @@
           "danger-soft": { "$type": "color", "$value": "#FFD9D9" }
         },
         "brand": {
-          "cobalt": { "$type": "color", "$value": "#0033A6", "$description": "HC Edikit Cobalt brand" },
-          "signal": { "$type": "color", "$value": "#005866", "$description": "HC Edikit Signal brand" },
-          "insight": { "$type": "color", "$value": "#6B3F00", "$description": "HC Edikit Insight brand" }
+          "cobalt": { "$type": "color", "$value": "#0033A6", "$description": "HC Deborah Cobalt brand" },
+          "signal": { "$type": "color", "$value": "#005866", "$description": "HC Deborah Signal brand" },
+          "insight": { "$type": "color", "$value": "#6B3F00", "$description": "HC Deborah Insight brand" }
         }
       }
     }

@@ -1,5 +1,5 @@
 /**
- * Edikit — Program Quality & Accreditation Workspace (e2e/security, Prompt 62)
+ * Deborah — Program Quality & Accreditation Workspace (e2e/security, Prompt 62)
  *
  * Close-the-loop workflow (research.md §56.3): curriculum map → course↔outcome
  * mapping → direct/indirect evidence aggregation (with minimum cell

@@ -1,4 +1,4 @@
-# Edikit Design System — Governance (STEP 41 / S41.11)
+# Deborah Design System — Governance (STEP 41 / S41.11)
 
 > **Maqsad:** Design official launch'dan keyin drift qilmaydi — owner, kontribyutsiya
 > jarayoni, deprecation policy va davriy audit aniq.

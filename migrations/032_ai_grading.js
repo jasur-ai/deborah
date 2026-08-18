@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 032: Written AI Grading Shadow Mode (Prompt 51)
+ * Deborah — Migration 032: Written AI Grading Shadow Mode (Prompt 51)
  *
  * Prompt 51 — rubric/evidence structured AI draft'ni student/final
  * grade'dan YASHIRIN shadow rejimda ishlatish (research.md §7.4 rubric
@@ -203,9 +203,9 @@ export async function up(db) {
     'ai_human_overrides',
   ];
   for (const table of newTables) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
-    await sql`GRANT DELETE ON ${sql.table(table)} TO edikit_migration`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 }
 

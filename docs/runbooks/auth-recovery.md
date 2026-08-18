@@ -31,7 +31,7 @@
 ### 3.2 Restore (15-30 daqiqa)
 ```bash
 # 1) Serverni to'xtating (yozuvlar to'xtashi shart)
-pm2 stop edikit  # yoki systemctl stop edikit
+pm2 stop deborah  # yoki systemctl stop deborah
 
 # 2) Joriy buzilgan holatni arxivlab qo'ying (rollback uchun)
 cp -r data/db.json data/db.json.corrupt-$(date +%s)
@@ -57,7 +57,7 @@ NODE_ENV=test SESSION_SECRET=... node -e "
 
 ### 3.4 Qayta ishga tushirish
 ```bash
-pm2 start edikit
+pm2 start deborah
 curl -s http://localhost:<port>/health   # 200
 curl -s http://localhost:<port>/user/login  # 200
 ```
@@ -72,7 +72,7 @@ curl -s http://localhost:<port>/user/login  # 200
 node scripts/backup-restore-drill.js --all
 ```
 Har oy test muhitida to'liq drill: fresh DB → restore → login/session/MFA verify → sign-off.
-`recordBackupRestore` audit + metric yozadi (`edikit_reliability_backup_restores_total`).
+`recordBackupRestore` audit + metric yozadi (`deborah_reliability_backup_restores_total`).
 
 ## 6. Observability
 - `latestBackupInfo().ageMs` — backup_age gauge (D-06 alert: > 26 soat → warning, > 50 soat → page).

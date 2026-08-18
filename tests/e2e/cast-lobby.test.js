@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast E2E (T-03): Lobby & join
+ * Deborah — Cast E2E (T-03): Lobby & join
  * --------------------------------------
  * - Participant join form ko'rinadi (item 2/4)
  * - Join kodi bilan participant qo'shiladi (item 4)

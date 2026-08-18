@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Clustering Adapter (C3-12)
+ * Deborah — Cast Clustering Adapter (C3-12)
  * -----------------------------------------
  * Open-Response Semantic Board uchun semantic clustering adapter'lari.
  *

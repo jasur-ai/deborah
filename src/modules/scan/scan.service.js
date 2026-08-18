@@ -1,5 +1,5 @@
 /**
- * Edikit — Scan, Reconciliation, OMR & OCR Service
+ * Deborah — Scan, Reconciliation, OMR & OCR Service
  *
  * DB layer for Prompt 43 (research.md §52.5, §16):
  *   - Scan batch create (idempotent batch_key), page ingest with quality
@@ -49,7 +49,7 @@ function getTenantId() {
 }
 
 function signingKey() {
-  const secret = process.env.SESSION_SECRET || 'edikit-dev-secret';
+  const secret = process.env.SESSION_SECRET || 'deborah-dev-secret';
   return secret.length >= 32 ? secret : secret.padEnd(32, 'x');
 }
 

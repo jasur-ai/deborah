@@ -1,5 +1,5 @@
 /**
- * Edikit — Infrastructure Tests
+ * Deborah — Infrastructure Tests
  *
  * Tests for:
  *   1. PostgreSQL pool/health check/Kysely (graceful degradation)
@@ -117,7 +117,7 @@ describe('Object Storage (local mode)', () => {
 
   it('should put and get a file', async () => {
     const key = `test/test-${Date.now()}.txt`;
-    const content = Buffer.from('Hello Edikit!');
+    const content = Buffer.from('Hello Deborah!');
 
     const putResult = await storage.put(key, content, 'text/plain');
     expect(putResult.key).toBe(key);
@@ -126,7 +126,7 @@ describe('Object Storage (local mode)', () => {
     const getResult = await storage.get(key);
     expect(getResult).not.toBeNull();
     expect(getResult.key).toBe(key);
-    expect(getResult.data.toString()).toBe('Hello Edikit!');
+    expect(getResult.data.toString()).toBe('Hello Deborah!');
 
     // Cleanup
     await storage.delete(key);

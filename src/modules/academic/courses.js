@@ -1,5 +1,5 @@
 /**
- * Edikit — Course Offering, Group & Enrollment Service
+ * Deborah — Course Offering, Group & Enrollment Service
  *
  * CRUD for term-specific course offerings, student groups, and enrollments.
  * All operations are tenant-scoped with audit logging.

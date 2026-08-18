@@ -1,5 +1,5 @@
 /**
- * Edikit — Admin/Teacher Privilege Hardening (AUTH A-30)
+ * Deborah — Admin/Teacher Privilege Hardening (AUTH A-30)
  * -------------------------------------------------------------------
  * OWASP privileged-account hardening:
  *   - MFA mandatory (admin/teacher) — production'da DOIM (bypass yo'q),

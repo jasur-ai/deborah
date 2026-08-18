@@ -1,5 +1,5 @@
 /**
- * Edikit — Landing client (plan_index §3/§9, STEP 21)
+ * Deborah — Landing client (plan_index §3/§9, STEP 21)
  * Demo modal (focus trap), how tabs, analytics event'lar, scroll depth.
  * Deferred (landing.js at bottom) — INP uchun minimal.
  * (STEP 21 S21.07: stats/count-up olib tashlandi — fake proof yo'q.)

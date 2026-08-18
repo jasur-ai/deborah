@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────────────────────────────────
-   Edikit PWA Update Banner (STYLE S34.08)
+   Deborah PWA Update Banner (STYLE S34.08)
    - New service worker available → nonblocking banner + "Yangilash" action
    - Active Cast session'da forced reload qilinmaydi (manual click required)
    - Banner keyboard accessible (button), dismissible, reduced-motion aware
@@ -15,7 +15,7 @@
   var banner = null;
   var dismissUntil = null;
   try {
-    dismissUntil = parseInt(localStorage.getItem('edikit-update-dismiss') || '0', 10);
+    dismissUntil = parseInt(localStorage.getItem('deborah-update-dismiss') || '0', 10);
   } catch (_) { /* private mode */ }
 
   function showBanner() {
@@ -35,7 +35,7 @@
     banner.querySelector('.update-banner-action').addEventListener('click', function () {
       banner.remove();
       banner = null;
-      localStorage.setItem('edikit-update-dismiss', String(Date.now() + 1000 * 60 * 60)); // 1 soat
+      localStorage.setItem('deborah-update-dismiss', String(Date.now() + 1000 * 60 * 60)); // 1 soat
       // S34.08: faqat foydalanuvchi bosganda reload — Cast'da ham forced emas.
       // Race: reg.waiting yo'q bo'lsa reload qilinmaydi (eski SW'da qolishning oldini oladi).
       navigator.serviceWorker.getRegistration().then(function (reg) {
@@ -52,13 +52,13 @@
     banner.querySelector('.update-banner-close').addEventListener('click', function () {
       banner.remove();
       banner = null;
-      try { localStorage.setItem('edikit-update-dismiss', String(Date.now() + 1000 * 60 * 30)); } catch (_) {}
+      try { localStorage.setItem('deborah-update-dismiss', String(Date.now() + 1000 * 60 * 30)); } catch (_) {}
     });
   }
 
-  // SW install'da xabar yuboradi (service-worker.js 'EDIKIT_UPDATE_AVAILABLE')
+  // SW install'da xabar yuboradi (service-worker.js 'DEBORAH_UPDATE_AVAILABLE')
   navigator.serviceWorker.addEventListener('message', function (event) {
-    if (event.data && event.data.type === 'EDIKIT_UPDATE_AVAILABLE') {
+    if (event.data && event.data.type === 'DEBORAH_UPDATE_AVAILABLE') {
       showBanner();
     }
   });

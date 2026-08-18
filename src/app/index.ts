@@ -1,5 +1,5 @@
 /**
- * Edikit — Application Module
+ * Deborah — Application Module
  *
  * This is the TypeScript module boundary for new code.
  * Legacy JS code (routes/, middleware/, utils/, socket/, firebase/)
@@ -19,7 +19,7 @@
  *     modules/       → Feature modules (auth, quiz, arena, admin)
  */
 
-export const APP_NAME = 'Edikit';
+export const APP_NAME = 'Deborah';
 export const APP_VERSION = '2.0.0';
 
 export interface AppInfo {

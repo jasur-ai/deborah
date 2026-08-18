@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH A-06: Parol tiklash flow (API + to'liq oqim)
+ * Deborah — AUTH A-06: Parol tiklash flow (API + to'liq oqim)
  * ----------------------------------------------------------
  * Guide A-06 §25-27:
  *  - Unit: token uzunlik/unique; expiry; bitta foydalanish; Zod.

@@ -1,4 +1,4 @@
-/* Edikit — Cast Director */
+/* Deborah — Cast Director */
 
 .dir-topbar {
   display: flex;
@@ -161,11 +161,11 @@
 .lobby-link { font-size: 0.85rem; color: var(--cast-muted-text); word-break: break-all; }
 
 .lobby-stats { display: flex; gap: 12px; margin-bottom: 20px; }
-.stat-box { padding: 12px 20px; background: var(--cast-surface-2); border-radius: var(--edikit-radius-md, 12px); }
+.stat-box { padding: 12px 20px; background: var(--cast-surface-2); border-radius: var(--deborah-radius-md, 12px); }
 .stat-num { font-size: 1.8rem; font-weight: 700; color: var(--cast-green); }
 .stat-label { font-size: 0.75rem; color: var(--cast-muted-text); }
 
-.cast-btn-lg { font-size: 1.1rem; padding: var(--edikit-spacing-4, 16px) var(--edikit-spacing-8, 32px) }
+.cast-btn-lg { font-size: 1.1rem; padding: var(--deborah-spacing-4, 16px) var(--deborah-spacing-8, 32px) }
 
 /* Question */
 .dir-q-meta {
@@ -193,7 +193,7 @@
   margin-top: 28px;
   width: 100%;
   max-width: 900px;
-  padding: var(--edikit-spacing-5, 20px);
+  padding: var(--deborah-spacing-5, 20px);
   text-align: left;
 }
 .ev-title { font-weight: 700; margin-bottom: 14px; }
@@ -202,7 +202,7 @@
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 12px;
 }
-.ev-cell { background: var(--cast-surface-2); padding: var(--edikit-spacing-3, 12px); border-radius: 8px; }
+.ev-cell { background: var(--cast-surface-2); padding: var(--deborah-spacing-3, 12px); border-radius: 8px; }
 .ev-cell b { display: block; font-size: 1.2rem; }
 .ev-cell span { font-size: 0.75rem; color: var(--cast-muted-text); }
 
@@ -248,7 +248,7 @@
   gap: 6px;
   padding: 8px;
   border: 1px solid var(--cast-border);
-  border-radius: var(--edikit-radius-md, 12px);
+  border-radius: var(--deborah-radius-md, 12px);
   box-shadow: var(--cast-shadow, 0 12px 30px rgba(0,0,0,.35));
 }
 .rail-time-btn { justify-content: flex-start; }
@@ -283,7 +283,7 @@
   padding: 10px 12px;
   background: var(--cast-surface-2);
   border: 1px solid var(--cast-border);
-  border-radius: var(--edikit-radius-sm, 8px);
+  border-radius: var(--deborah-radius-sm, 8px);
 }
 .dir-metric-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--cast-muted-text); }
 .dir-metric-val { font-size: 1.15rem; font-weight: 700; color: var(--cast-text); }
@@ -361,13 +361,13 @@
 }
 .ev-dist-track {
   height: 10px;
-  border-radius: var(--edikit-radius-sm, 8px);
+  border-radius: var(--deborah-radius-sm, 8px);
   background: var(--cast-surface-2, rgba(255, 255, 255, 0.06));
   overflow: hidden;
 }
 .ev-dist-bar {
   height: 100%;
-  border-radius: var(--edikit-radius-sm, 8px);
+  border-radius: var(--deborah-radius-sm, 8px);
   background: linear-gradient(90deg, var(--cast-green, #34d399), #22c55e);
   transition: width 0.4s ease;
 }
@@ -386,7 +386,7 @@
 /* ── C3-02 Hinge recommendation card ── */
 .hinge-card {
   margin-top: 14px;
-  padding: var(--edikit-spacing-4, 16px);
+  padding: var(--deborah-spacing-4, 16px);
   border: 1px solid rgba(167, 139, 250, 0.35);
   background: linear-gradient(135deg, rgba(167, 139, 250, 0.08), rgba(56, 189, 248, 0.05));
 }
@@ -433,7 +433,7 @@
 .hinge-btn {
   font-size: 0.75rem;
   font-weight: 600;
-  padding: var(--edikit-spacing-2, 8px) var(--edikit-spacing-3, 12px)
+  padding: var(--deborah-spacing-2, 8px) var(--deborah-spacing-3, 12px)
   border-radius: 8px;
   border: 1px solid var(--cast-border, rgba(255, 255, 255, 0.15));
   background: var(--cast-surface-2, rgba(255, 255, 255, 0.05));
@@ -451,7 +451,7 @@
 .rail-revote { display: flex; gap: 8px; }
 .vm-card {
   margin-top: 14px;
-  padding: var(--edikit-spacing-4, 16px);
+  padding: var(--deborah-spacing-4, 16px);
   border: 1px solid rgba(56, 189, 248, 0.3);
   background: linear-gradient(135deg, rgba(56, 189, 248, 0.06), rgba(167, 139, 250, 0.05));
 }
@@ -469,7 +469,7 @@
 .vm-cell {
   background: var(--cast-surface-2, rgba(255, 255, 255, 0.05));
   border-radius: 8px;
-  padding: var(--edikit-spacing-3, 12px) var(--edikit-spacing-3, 12px)
+  padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-3, 12px)
   border: 1px solid var(--cast-border, rgba(255, 255, 255, 0.1));
 }
 .vm-cell b { display: block; font-size: 1.15rem; }
@@ -493,7 +493,7 @@
   width: 100%;
   max-width: 560px;
   max-height: 85vh;
-  border-radius: var(--edikit-radius-lg, 16px) var(--edikit-radius-lg, 16px) 0 0; /* S09.04 */
+  border-radius: var(--deborah-radius-lg, 16px) var(--deborah-radius-lg, 16px) 0 0; /* S09.04 */
   padding: 20px 24px 28px;
   display: flex;
   flex-direction: column;
@@ -550,7 +550,7 @@
 .qp-opt-del { font-size: 0.75rem; padding: 4px 8px; }
 #qp-add-opt { align-self: flex-start; font-size: 0.8rem; }
 .qp-errors {
-  padding: var(--edikit-spacing-3, 12px);
+  padding: var(--deborah-spacing-3, 12px);
   font-size: 0.8rem;
   color: var(--cast-red, #f87171);
   border: 1px solid rgba(248, 113, 113, 0.3);
@@ -578,7 +578,7 @@
   font-family: inherit;
   font-size: 0.78rem;
   font-weight: 600;
-  padding: var(--edikit-spacing-2, 8px) var(--edikit-spacing-3, 12px)
+  padding: var(--deborah-spacing-2, 8px) var(--deborah-spacing-3, 12px)
   border-radius: 999px;
   border: 1px solid var(--cast-border, rgba(255,255,255,0.18));
   background: rgba(248, 113, 113, 0.12);
@@ -597,8 +597,8 @@
 .wall-queue { margin-top: 10px; padding: 12px; }
 .wall-card {
   border: 1px solid var(--cast-border, rgba(255,255,255,0.12));
-  border-radius: var(--edikit-radius-md, 12px);
-  padding: var(--edikit-spacing-3, 12px);
+  border-radius: var(--deborah-radius-md, 12px);
+  padding: var(--deborah-spacing-3, 12px);
   margin-top: 8px;
   background: rgba(255,255,255,0.04);
 }
@@ -613,7 +613,7 @@
   font-size: 0.65rem;
   font-weight: 600;
   padding: 2px 6px;
-  border-radius: var(--edikit-radius-sm, 8px);
+  border-radius: var(--deborah-radius-sm, 8px);
   background: rgba(251, 146, 60, 0.15);
   color: #fdba74;
 }
@@ -637,7 +637,7 @@
 }
 .poe-exemplar {
   border: 1px solid var(--cast-border, rgba(255,255,255,0.12));
-  border-radius: var(--edikit-radius-md, 12px);
+  border-radius: var(--deborah-radius-md, 12px);
   padding: 8px 10px;
   margin-top: 6px;
   background: rgba(255,255,255,0.04);
@@ -672,14 +672,14 @@
 .orb-col {
   background: rgba(255,255,255,0.04);
   border: 1px solid var(--cast-border, rgba(255,255,255,0.12));
-  border-radius: var(--edikit-radius-md, 12px);
-  padding: var(--edikit-spacing-3, 12px);
+  border-radius: var(--deborah-radius-md, 12px);
+  padding: var(--deborah-spacing-3, 12px);
   min-height: 90px;
 }
 .orb-col-title { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.4px; margin-bottom: 8px; }
 .orb-list { font-size: 0.82rem; }
 .orb-item {
-  padding: var(--edikit-spacing-2, 8px) var(--edikit-spacing-2, 8px);
+  padding: var(--deborah-spacing-2, 8px) var(--deborah-spacing-2, 8px);
   border-radius: 8px;
   background: rgba(255,255,255,0.06);
   margin-top: 4px;
@@ -688,7 +688,7 @@
 .orb-unclustered { border-left: 3px solid #22c55e; }
 .orb-cluster {
   border: 1px solid var(--cast-border, rgba(255,255,255,0.12));
-  border-radius: var(--edikit-radius-md, 12px);
+  border-radius: var(--deborah-radius-md, 12px);
   padding: 8px;
   margin-top: 6px;
   background: rgba(255,255,255,0.05);
@@ -741,8 +741,8 @@
   background: rgba(255,255,255,0.04);
   border: 1px solid var(--cast-border, rgba(255,255,255,0.12));
   border-left: 3px solid #eab308;
-  border-radius: var(--edikit-radius-md, 12px);
-  padding: var(--edikit-spacing-3, 12px) var(--edikit-spacing-3, 12px)
+  border-radius: var(--deborah-radius-md, 12px);
+  padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-3, 12px)
 }
 .forge-status-approved { border-left-color: #22c55e; }
 .forge-status-rejected { border-left-color: #ef4444; opacity: 0.75; }
@@ -773,7 +773,7 @@
 .chor-cell {
   background: rgba(255,255,255,0.05);
   border: 1px solid var(--cast-border, rgba(255,255,255,0.12));
-  border-radius: var(--edikit-radius-md, 12px);
+  border-radius: var(--deborah-radius-md, 12px);
   padding: 8px 10px;
 }
 .chor-cell-label {
@@ -790,7 +790,7 @@
   background: rgba(255,255,255,0.04);
   border: 1px solid var(--cast-border, rgba(255,255,255,0.12));
   border-radius: 8px;
-  padding: var(--edikit-spacing-2, 8px) var(--edikit-spacing-3, 12px)
+  padding: var(--deborah-spacing-2, 8px) var(--deborah-spacing-3, 12px)
   cursor: pointer;
   transition: background 0.12s ease, border-color 0.12s ease;
 }
@@ -810,8 +810,8 @@
 .sp-dist { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; max-height: 30vh; overflow-y: auto; }
 .sp-dist-row { display: flex; align-items: center; gap: 8px; }
 .sp-dist-label { width: 34px; font-size: 0.72rem; font-weight: 600; color: var(--cast-muted-text, #9ca3af); }
-.sp-dist-track { flex: 1; height: 14px; border-radius: var(--edikit-radius-sm, 8px); background: rgba(255,255,255,0.08); overflow: hidden; }
-.sp-dist-fill { height: 100%; border-radius: var(--edikit-radius-sm, 8px); background: linear-gradient(90deg, #6366f1, #8b5cf6); transition: width 0.4s ease; }
+.sp-dist-track { flex: 1; height: 14px; border-radius: var(--deborah-radius-sm, 8px); background: rgba(255,255,255,0.08); overflow: hidden; }
+.sp-dist-fill { height: 100%; border-radius: var(--deborah-radius-sm, 8px); background: linear-gradient(90deg, #6366f1, #8b5cf6); transition: width 0.4s ease; }
 .sp-dist-num { width: 28px; text-align: right; font-size: 0.75rem; font-weight: 600; }
 
 /* ── C3-17 Power-ups (director) ── */
@@ -854,7 +854,7 @@
 }
 .card-scan-video {
   width: 100%;
-  border-radius: var(--edikit-radius-md, 12px);
+  border-radius: var(--deborah-radius-md, 12px);
   background: #000;
   min-height: 220px;
   object-fit: cover;
@@ -871,7 +871,7 @@
 }
 .card-scan-ori-btn {
   font-size: 0.8rem;
-  padding: var(--edikit-spacing-2, 8px) var(--edikit-spacing-3, 12px)
+  padding: var(--deborah-spacing-2, 8px) var(--deborah-spacing-3, 12px)
 }
 .card-scan-ori-active {
   outline: 2px solid #6366f1;
@@ -898,7 +898,7 @@
 }
 .card-correct-box {
   margin-top: 10px;
-  padding: var(--edikit-spacing-3, 12px);
-  border-radius: var(--edikit-radius-md, 12px);
+  padding: var(--deborah-spacing-3, 12px);
+  border-radius: var(--deborah-radius-md, 12px);
   background: rgba(255,255,255,0.05);
 }

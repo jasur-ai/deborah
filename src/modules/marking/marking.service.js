@@ -1,5 +1,5 @@
 /**
- * Edikit — Marker Allocation, Calibration & Moderation Service
+ * Deborah — Marker Allocation, Calibration & Moderation Service
  *
  * DB layer for Prompt 46 (research.md §17 P2-5/6, §54.3):
  *   - Allocation: create marking assignment (conflict-checked, workload
@@ -44,7 +44,7 @@ function getTenantId() {
 }
 
 function pseudonymSalt() {
-  const secret = process.env.SESSION_SECRET || 'edikit-dev-secret';
+  const secret = process.env.SESSION_SECRET || 'deborah-dev-secret';
   return secret.length >= 32 ? secret : secret.padEnd(32, 'x');
 }
 

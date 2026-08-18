@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 017: Submit Sealing va Signed Receipt
+ * Deborah — Migration 017: Submit Sealing va Signed Receipt
  *
  * Prompt 33 — pending response'larni sync qilib attemptni IMMUTABLE submit
  * qilish (research.md §29.5 end-of-exam failsafe, §5 lifecycle):
@@ -107,14 +107,14 @@ export async function up(db) {
     .execute();
 
   // ── Grants ──
-  await sql`GRANT SELECT, INSERT, UPDATE ON attempt_seals TO edikit_runtime`.execute(db);
-  await sql`GRANT USAGE ON attempt_seals_id_seq TO edikit_runtime`.execute(db);
-  await sql`GRANT SELECT, INSERT, UPDATE ON scoring_outbox TO edikit_runtime`.execute(db);
-  await sql`GRANT USAGE ON scoring_outbox_id_seq TO edikit_runtime`.execute(db);
-  await sql`GRANT DELETE ON attempt_seals TO edikit_migration`.execute(db);
-  await sql`GRANT DELETE ON scoring_outbox TO edikit_migration`.execute(db);
-  await sql`GRANT SELECT ON attempt_seals TO edikit_scoring`.execute(db);
-  await sql`GRANT SELECT, UPDATE ON scoring_outbox TO edikit_scoring`.execute(db);
+  await sql`GRANT SELECT, INSERT, UPDATE ON attempt_seals TO deborah_runtime`.execute(db);
+  await sql`GRANT USAGE ON attempt_seals_id_seq TO deborah_runtime`.execute(db);
+  await sql`GRANT SELECT, INSERT, UPDATE ON scoring_outbox TO deborah_runtime`.execute(db);
+  await sql`GRANT USAGE ON scoring_outbox_id_seq TO deborah_runtime`.execute(db);
+  await sql`GRANT DELETE ON attempt_seals TO deborah_migration`.execute(db);
+  await sql`GRANT DELETE ON scoring_outbox TO deborah_migration`.execute(db);
+  await sql`GRANT SELECT ON attempt_seals TO deborah_scoring`.execute(db);
+  await sql`GRANT SELECT, UPDATE ON scoring_outbox TO deborah_scoring`.execute(db);
 
   console.log('Submit sealing structure created: attempt_seals, scoring_outbox');
 }

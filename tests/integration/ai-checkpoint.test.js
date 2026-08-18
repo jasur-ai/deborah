@@ -1,5 +1,5 @@
 /**
- * Edikit — AI/Content Checkpoint (integration tests, Prompt 60)
+ * Deborah — AI/Content Checkpoint (integration tests, Prompt 60)
  *
  * Service qatlami: runAiCheckpoint — idempotent (request_hash), tenant
  * scoped, audit, Phase G readiness persist; outage/failure drill through

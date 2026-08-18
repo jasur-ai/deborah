@@ -1,7 +1,7 @@
 /* ─────────────────────────────────────────────────────────────────────
-   Edikit — Locale-aware formatters (STYLE S35.06)
+   Deborah — Locale-aware formatters (STYLE S35.06)
    - Number, percent, date, duration va list formatting `Intl` bilan.
-   - `window.EdikitI18nFmt` — barcha sahifalarda foydalanish mumkin.
+   - `window.DeborahI18nFmt` — barcha sahifalarda foydalanish mumkin.
    - Locale tanlanmagan bo'lsa default (uz-Latn) ishlatiladi.
    ───────────────────────────────────────────────────────────────────── */
 (function () {
@@ -87,7 +87,7 @@
     cache = {};
   }
 
-  window.EdikitI18nFmt = {
+  window.DeborahI18nFmt = {
     locale: locale,
     setLocale: setLocale,
     formatNumber: formatNumber,

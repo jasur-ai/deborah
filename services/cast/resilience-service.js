@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Resilience & Network Service (C4-02)
+ * Deborah — Cast Resilience & Network Service (C4-02)
  * ---------------------------------------------------
  * Hybrid va low-bandwidth mode support.
  *

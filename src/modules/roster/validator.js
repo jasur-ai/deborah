@@ -1,5 +1,5 @@
 /**
- * Edikit — Roster File Validator
+ * Deborah — Roster File Validator
  *
  * Security validation for uploaded roster files (XLSX/CSV):
  *   1. Extension allowlist (.xlsx, .csv)

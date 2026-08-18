@@ -1,5 +1,5 @@
 /**
- * Edikit — E-02: HEMIS push webhook testlari
+ * Deborah — E-02: HEMIS push webhook testlari
  * ---------------------------------------------------------------------------
  * HMAC signature, IP allowlist, idempotency, event allowlist — hermetic (in-memory mock).
  */

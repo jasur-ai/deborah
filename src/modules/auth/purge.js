@@ -1,5 +1,5 @@
 /**
- * Edikit — Auth Data Retention + Purge Jobs (AUTH C-14)
+ * Deborah — Auth Data Retention + Purge Jobs (AUTH C-14)
  * -----------------------------------------------------
  * Scheduled, idempotent retention purge (UZ data law — minimal saqlash).
  *

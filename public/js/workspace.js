@@ -1,5 +1,5 @@
 /**
- * Edikit — Teacher Workspace UX (STYLE STEP 25)
+ * Deborah — Teacher Workspace UX (STYLE STEP 25)
  * ----------------------------------------------
  * - S25.08: density preference (localStorage, critical widgets yashirilmaydi)
  * - S25.08: saved search (oxirgi qidiruv saqlanadi — filter emas, xavfsiz)
@@ -9,8 +9,8 @@
  */
 (function () {
   'use strict';
-  var DENSITY_KEY = 'edikit-ws-density';
-  var SEARCH_KEY = 'edikit-ws-search';
+  var DENSITY_KEY = 'deborah-ws-density';
+  var SEARCH_KEY = 'deborah-ws-search';
 
   document.addEventListener('DOMContentLoaded', function () {
     initDensity();

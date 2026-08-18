@@ -1,5 +1,5 @@
 /**
- * Edikit — Telemetry Middleware (Prompt 69 §08-09)
+ * Deborah — Telemetry Middleware (Prompt 69 §08-09)
  *
  * 1. HTTP trace middleware: request header'laridan traceparent o'qiladi (yoki
  *    yangi root trace yaratiladi), butun request davomida context propagation
@@ -55,11 +55,11 @@ export function telemetryMiddleware(req, res, next) {
     const durationMs = Date.now() - start;
     const status = res.statusCode;
 
-    incrementCounter('edikit_http_requests_total', { help: 'HTTP requests' }, { value: 1, labels: { method: req.method, status: String(status) } });
-    observeHistogram('edikit_http_request_duration_ms', durationMs, { help: 'HTTP request duration' });
+    incrementCounter('deborah_http_requests_total', { help: 'HTTP requests' }, { value: 1, labels: { method: req.method, status: String(status) } });
+    observeHistogram('deborah_http_request_duration_ms', durationMs, { help: 'HTTP request duration' });
 
     if (status >= 500) {
-      incrementCounter('edikit_http_errors_total', { help: 'HTTP 5xx errors' }, { value: 1, labels: { method: req.method, status: String(status) } });
+      incrementCounter('deborah_http_errors_total', { help: 'HTTP 5xx errors' }, { value: 1, labels: { method: req.method, status: String(status) } });
     }
 
     endSpan(span, {
@@ -102,9 +102,9 @@ export function wrapSocketEvent(socket, event, handler) {
     const start = Date.now();
     const finish = (ok = true) => {
       const durationMs = Date.now() - start;
-      incrementCounter('edikit_socket_events_total', { help: 'Socket events' }, { value: 1, labels: { event } });
-      observeHistogram('edikit_socket_event_duration_ms', durationMs, { help: 'Socket event duration' });
-      if (!ok) incrementCounter('edikit_socket_event_errors_total', { help: 'Socket event errors' }, { value: 1, labels: { event } });
+      incrementCounter('deborah_socket_events_total', { help: 'Socket events' }, { value: 1, labels: { event } });
+      observeHistogram('deborah_socket_event_duration_ms', durationMs, { help: 'Socket event duration' });
+      if (!ok) incrementCounter('deborah_socket_event_errors_total', { help: 'Socket event errors' }, { value: 1, labels: { event } });
       endSpan(span, {
         status: ok ? 'ok' : 'error',
         attributes: { 'socket.event_duration_ms': durationMs },

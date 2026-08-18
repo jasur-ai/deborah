@@ -102,7 +102,7 @@ afterEach(() => {
 
 describe('AUTH D-26 §15 — incident log (append-only)', () => {
   it('createIncident → yozuv (id, type, severity, timeline boshlang\'ich)', async () => {
-    const r = await createIncident({ type: 'credential_leak', severity: 'S1', owner: 'soc@edikit.uz', reason: 'HIBP alert' });
+    const r = await createIncident({ type: 'credential_leak', severity: 'S1', owner: 'soc@deborah.uz', reason: 'HIBP alert' });
     expect(r.ok).toBe(true);
     const rec = testStore.incidents[r.id];
     expect(rec.id).toBe(r.id);
@@ -129,12 +129,12 @@ describe('AUTH D-26 §15 — incident log (append-only)', () => {
 
   it('closeIncident → status closed + postmortem + timeline append', async () => {
     const { id } = await createIncident({ type: 'email_compromise', severity: 'S2' });
-    const r = await closeIncident(id, { postmortem: 'Root cause: phish; fix: ...', reviewer: 'legal@edikit.uz' });
+    const r = await closeIncident(id, { postmortem: 'Root cause: phish; fix: ...', reviewer: 'legal@deborah.uz' });
     expect(r.ok).toBe(true);
     const rec = testStore.incidents[id];
     expect(rec.status).toBe('closed');
     expect(rec.postmortem).toContain('phish');
-    expect(rec.reviewer).toBe('legal@edikit.uz');
+    expect(rec.reviewer).toBe('legal@deborah.uz');
     expect(rec.closed_at).toBeGreaterThan(0);
   });
 

@@ -1,5 +1,5 @@
 /**
- * Edikit — Pedagogically Safe Power-ups (C3-17) Tests
+ * Deborah — Pedagogically Safe Power-ups (C3-17) Tests
  * -----------------------------------------------------
  * coverage: isPowerUpsEnabled, allowedTypes, isTypeAllowed (registry — random
  * elimination/sabotage EXCLUDED), initInventory, activatePowerUp (idempotent,

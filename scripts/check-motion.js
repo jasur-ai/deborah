@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Motion Foundation Validator (STYLE STEP 10)
+ * Deborah — Motion Foundation Validator (STYLE STEP 10)
  * -----------------------------------------------------
  * S10.01 — duration scale 0/80/120/160/220/320/500/800
  * S10.03 — transition: all = 0
@@ -19,7 +19,7 @@ const bad = (m) => { errors.push(m); console.log('❌', m); };
 
 // ── S10.01: duration scale ──
 const layout = JSON.parse(readFileSync(join(ROOT, 'public/design/tokens/layout.json'), 'utf8'));
-const durations = layout.edikit.motion.duration;
+const durations = layout.deborah.motion.duration;
 const REQUIRED = [0, 80, 120, 160, 220, 320, 500, 800];
 for (const d of REQUIRED) {
   const val = durations[String(d)]?.$value;
@@ -28,7 +28,7 @@ for (const d of REQUIRED) {
 }
 
 // Intentlar (S10.05/06)
-const intent = layout.edikit.motion.intent;
+const intent = layout.deborah.motion.intent;
 for (const k of ['feedback', 'hover', 'popup', 'modal', 'modal-exit', 'page', 'page-exit', 'milestone']) {
   if (intent[k]?.$value) ok(`S10.05: intent-${k} = ${intent[k].$value}`);
   else bad(`S10.05: intent-${k} yo'q`);
@@ -41,7 +41,7 @@ if (ratio >= 0.65 && ratio <= 0.8) ok(`S10.06: modal-exit enter'ning ${Math.roun
 else bad(`S10.06: modal-exit ${Math.round(ratio * 100)}% — 65-80% bo'lishi kerak`);
 
 // Easing (S10.02) — bounce/elastic yo'q
-const easings = layout.edikit.motion.easing;
+const easings = layout.deborah.motion.easing;
 if (easings.standard && easings.enter && easings.exit && easings.emphasis) ok('S10.02: standard/enter/exit/emphasis easing mavjud');
 else bad('S10.02: easing tokenlari to\'liq emas');
 

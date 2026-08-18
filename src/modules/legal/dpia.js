@@ -1,5 +1,5 @@
 /**
- * Edikit — DPIA (Data Protection Impact Assessment) — AUTH D-25 §06
+ * Deborah — DPIA (Data Protection Impact Assessment) — AUTH D-25 §06
  * ---------------------------------------------------------------------------
  * Auth PII inventarizatsiyasi, processing maqsadi, risk + mitigation,
  * retention, DSAR, review jadvali (§27 — har yili yoki PII o'zgarishida).

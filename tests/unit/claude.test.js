@@ -1,5 +1,5 @@
 /**
- * Edikit — Claude Native Adapter (unit tests, Prompt 57)
+ * Deborah — Claude Native Adapter (unit tests, Prompt 57)
  *
  * Pure schema tekshiruvi (no DB/network):
  *   - validateSynthesisRequest + requestHash (idempotency)

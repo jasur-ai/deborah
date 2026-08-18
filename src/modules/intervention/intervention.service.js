@@ -1,5 +1,5 @@
 /**
- * Edikit — Intervention Loop, Adaptive Practice & Support (service)
+ * Deborah — Intervention Loop, Adaptive Practice & Support (service)
  *
  * Prompt 55 — assessment evidence'dan teacher-approved action, reassessment
  * va formative mastery oqimi. Graceful degradation: PostgreSQL bo'lmasa

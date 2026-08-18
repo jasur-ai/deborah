@@ -1,5 +1,5 @@
 /**
- * Edikit — Academic Term, Faculty & Program Service
+ * Deborah — Academic Term, Faculty & Program Service
  *
  * CRUD operations for the core academic hierarchy.
  * All operations are tenant-scoped with audit logging.

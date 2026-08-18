@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Synthetic Monitor (C5-08, item 13)
+ * Deborah — Cast Synthetic Monitor (C5-08, item 13)
  * -------------------------------------------------
  * Real Cast flow'ni periodik tekshiradi:
  *   login → preflight → session → director open → join → answer → close → reveal

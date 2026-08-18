@@ -1,4 +1,4 @@
-# Edikit — Final Acceptance (STYLE 41 step audit)
+# Deborah — Final Acceptance (STYLE 41 step audit)
 
 > **Status:** ✅ 41/41 step yopilgan — yakuniy deliverable checklist audit.
 > Har item: evidence + status (✅ done / ⏳ pending / 🟡 qisman).

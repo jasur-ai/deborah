@@ -20,8 +20,8 @@ import { logEmailRecord } from './log.js';
 
 // D-01: EMAIL_FROM/EMAIL_SENDING_DOMAIN env schema'dan (Zod validated);
 // eski MAIL_* nomlari backward-compat fallback sifatida qoladi.
-const DEFAULT_FROM = process.env.EMAIL_FROM || process.env.MAIL_FROM || 'Edikit <no-reply@edikit.uz>';
-const SENDING_DOMAIN = process.env.EMAIL_SENDING_DOMAIN || process.env.MAIL_SENDING_DOMAIN || 'mail.edikit.uz';
+const DEFAULT_FROM = process.env.EMAIL_FROM || process.env.MAIL_FROM || 'Deborah <no-reply@deborah.uz>';
+const SENDING_DOMAIN = process.env.EMAIL_SENDING_DOMAIN || process.env.MAIL_SENDING_DOMAIN || 'mail.deborah.uz';
 
 const RETRY_DELAYS_MS = [1000, 3000, 9000]; // 3 marta (exponential backoff)
 

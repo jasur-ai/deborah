@@ -1,5 +1,5 @@
 /**
- * Edikit — Seat, Proctor, Hall Ticket & Check-in Service
+ * Deborah — Seat, Proctor, Hall Ticket & Check-in Service
  *
  * DB layer for Prompt 40:
  *   - Room seat-map CRUD (room_seat_maps, versioned)
@@ -49,7 +49,7 @@ function getTenantId() {
  * stable per deployment. Falls back to a fixed dev key (tests/CI).
  */
 function signingKey() {
-  const secret = process.env.SESSION_SECRET || 'edikit-dev-secret';
+  const secret = process.env.SESSION_SECRET || 'deborah-dev-secret';
   return secret.length >= MIN_SIGNING_KEY_LENGTH ? secret : secret.padEnd(MIN_SIGNING_KEY_LENGTH, 'x');
 }
 

@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Misconception Map (C3-05) Tests
+ * Deborah — Cast Misconception Map (C3-05) Tests
  * ----------------------------------------------
  * coverage: recordMisconceptionDecision, buildDominantDistractorCard,
  *           buildOptionMisconceptionMap, getMisconception, pinMisconceptionVersion

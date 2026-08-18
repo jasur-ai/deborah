@@ -1,5 +1,5 @@
 /**
- * Edikit — AI Evaluation, MLOps & Rollback Module Barrel
+ * Deborah — AI Evaluation, MLOps & Rollback Module Barrel
  *
  * Prompt 52 — golden set, deployment gate, drift va model rollbackni
  * production boshqaruviga aylantirish. Pure schema (metrics, calibration,

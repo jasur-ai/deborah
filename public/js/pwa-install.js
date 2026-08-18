@@ -1,5 +1,5 @@
 /**
- * Edikit — PWA install prompt (AUTH D-13 §14)
+ * Deborah — PWA install prompt (AUTH D-13 §14)
  * ---------------------------------------------------------------------------
  * - beforeinstallprompt: deferred prompt saqlanadi (browser hukmron emas).
  * - 3-sessiya qoidasi: localStorage visit counter — 3-tashrifdan keyin banner.
@@ -11,8 +11,8 @@
 (function () {
   'use strict';
 
-  var VISIT_KEY = 'edikit_pwa_visits';
-  var PROMPT_KEY = 'edikit_pwa_prompted';
+  var VISIT_KEY = 'deborah_pwa_visits';
+  var PROMPT_KEY = 'deborah_pwa_prompted';
   var THRESHOLD = 3; // 3-sessiya qoidasi (D-13 §14)
 
   var deferredPrompt = null;
@@ -50,7 +50,7 @@
 
     var text = document.createElement('div');
     text.className = 'pwa-install-text';
-    text.textContent = "Edikit'ni ilova sifatida o'rnating — tezroq va offline ishlaydi";
+    text.textContent = "Deborah'ni ilova sifatida o'rnating — tezroq va offline ishlaydi";
 
     var installBtn = document.createElement('button');
     installBtn.type = 'button';

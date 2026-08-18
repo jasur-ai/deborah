@@ -1,5 +1,5 @@
 /**
- * Edikit — Uzbek Latin/Cyrillic & Terminology Layer (pure logic)
+ * Deborah — Uzbek Latin/Cyrillic & Terminology Layer (pure logic)
  *
  * Prompt 63 — uz-Latn, uz-Cyrl, ru va en content/version/search'ni
  * birinchi-class qilish (research.md §58). This module is PURE (no I/O):

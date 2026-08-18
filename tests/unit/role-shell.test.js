@@ -1,5 +1,5 @@
 /**
- * Edikit — Role-Aware Shell (unit, Prompt 68)
+ * Deborah — Role-Aware Shell (unit, Prompt 68)
  *
  * Pure logic tests for middleware/roles.js:
  *   - Role definitions + per-role nav (teacher/student/admin/proctor/marker/board)

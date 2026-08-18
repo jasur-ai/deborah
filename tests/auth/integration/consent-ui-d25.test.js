@@ -15,7 +15,7 @@ const PORT = 3594; // unique port
 const BASE = `http://localhost:${PORT}`;
 const PW = 'sirli-parol-2026';
 const XFF = '203.0.113.95';
-const DB_FILE = '/tmp/edikit-consent-d25-db.json';
+const DB_FILE = '/tmp/deborah-consent-d25-db.json';
 
 let child;
 

@@ -1,5 +1,5 @@
 /**
- * Edikit — AI/Content Checkpoint (service)
+ * Deborah — AI/Content Checkpoint (service)
  *
  * Prompt 60 — measured pilot'ni ishga tushirish: barcha pilot'lar
  * (red-team, shadow benchmark, question review, citation, intervention,

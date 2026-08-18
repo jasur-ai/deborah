@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Reasoning Capture (C3-07) Tests
+ * Deborah — Cast Reasoning Capture (C3-07) Tests
  * ----------------------------------------------
  * coverage: REASONING_CHAR_LIMIT, REASONING_MODERATION_STATE,
  *           submitReasoning (validation), getPublicReasoning,

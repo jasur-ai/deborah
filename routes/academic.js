@@ -1,5 +1,5 @@
 /**
- * Edikit — Academic API Routes
+ * Deborah — Academic API Routes
  *
  * Provides CRUD endpoints for the academic hierarchy:
  *   GET/POST  /api/academic/terms

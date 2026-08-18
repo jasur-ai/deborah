@@ -6,7 +6,7 @@
  * public/fonts/{family}-{subset}-{weight}.woff2
  *
  * Kerakli subsetlar: latin, latin-ext, cyrillic, cyrillic-ext
- * (greek/vietnamese skip — Edikit uchun kerak emas).
+ * (greek/vietnamese skip — Deborah uchun kerak emas).
  */
 import { execFileSync } from 'child_process';
 import { writeFileSync, mkdirSync } from 'fs';

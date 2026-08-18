@@ -36,7 +36,7 @@ describe('STEP 12 — Base component library (F2)', () => {
     });
 
     it('S12.05: focus ring token bilan', () => {
-      expect(css).toMatch(/focus-visible[^}]*--edikit-semantic-color-focus|outline: 3px/);
+      expect(css).toMatch(/focus-visible[^}]*--deborah-semantic-color-focus|outline: 3px/);
     });
 
     it('S12.06: danger — status-danger semantic token, gradient emas', () => {

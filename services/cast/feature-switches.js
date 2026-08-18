@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Feature Kill Switches (C5-08, item 12)
+ * Deborah — Cast Feature Kill Switches (C5-08, item 12)
  * ----------------------------------------------------
  * Incident paytida qismni darhol o'chirish uchun switch'lar.
  *

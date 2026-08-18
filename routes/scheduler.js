@@ -1,5 +1,5 @@
 /**
- * Edikit — Exam Scheduling Solver API Routes
+ * Deborah — Exam Scheduling Solver API Routes
  *
  * REST API for Prompt 39:
  *   - Room inventory CRUD (exam_rooms)

@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Backpressure & Degradation Service (C5-07)
+ * Deborah — Cast Backpressure & Degradation Service (C5-07)
  * --------------------------------------------------------
  * Saturation paytida answer/host command prioritetda qoladi; decorative
  * update (P3) kamayadi. Tugallanish sharti: degraded mode'da accepted-answer

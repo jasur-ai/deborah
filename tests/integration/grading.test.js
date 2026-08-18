@@ -1,5 +1,5 @@
 /**
- * Edikit — Academic Grade Rules integration tests (Prompt 45)
+ * Deborah — Academic Grade Rules integration tests (Prompt 45)
  *
  * Service-contract coverage (graceful degradation without PG) +
  * missing/exempt/resit fixture contracts (Prompt 45 §19):

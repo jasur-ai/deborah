@@ -1,5 +1,5 @@
 /**
- * Edikit — Unified Provider Async Adapter (Gamma + Manus)
+ * Deborah — Unified Provider Async Adapter (Gamma + Manus)
  *
  * Prompt 58 — Gamma generation va Manus task/artifact oqimlarini unified
  * provider job contractga ulash. PresentationProvider interface

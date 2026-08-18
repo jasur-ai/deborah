@@ -113,7 +113,7 @@ export async function submitOrient({ userKey, subject = null, goal = null, demoS
     userAgent,
     details: { step: 'first_win', subject: subject || null },
   });
-  recordMetric('edikit_onboarding_orient_done_total', 1);
+  recordMetric('deborah_onboarding_orient_done_total', 1);
   return { ok: true, state: record };
 }
 
@@ -141,7 +141,7 @@ export async function skipOrient({ userKey, ip, userAgent }) {
     userAgent,
     details: { step: 'first_win' },
   });
-  recordMetric('edikit_onboarding_skip_total', 1);
+  recordMetric('deborah_onboarding_skip_total', 1);
   return { ok: true, state: record };
 }
 
@@ -208,7 +208,7 @@ export async function startFirstWin({ userKey, subject, lang = 'uz', ip, userAge
     userAgent,
     details: { subject: record.firstWin.subject },
   });
-  recordMetric('edikit_onboarding_first_win_start_total', 1);
+  recordMetric('deborah_onboarding_first_win_start_total', 1);
   return { ok: true, state: record };
 }
 
@@ -300,7 +300,7 @@ export async function completeFirstWin({ userKey, lang = 'uz', ip, userAgent }) 
     userAgent,
     details: { subject: fw.subject, score, total: FIRST_WIN_ITEMS, percent },
   });
-  recordMetric('edikit_onboarding_first_win_complete_total', 1);
+  recordMetric('deborah_onboarding_first_win_complete_total', 1);
   return {
     ok: true,
     summary: {
@@ -410,7 +410,7 @@ export async function submitChecklistItem({ userKey, itemId, done, ip, userAgent
     userAgent,
     details: { itemId, done: !!done, step: record.step, progress: checklistProgress(record.checklist, fwDone) },
   });
-  if (allDone) recordMetric('edikit_onboarding_checklist_complete_total', 1);
+  if (allDone) recordMetric('deborah_onboarding_checklist_complete_total', 1);
   return {
     ok: true,
     step: record.step,

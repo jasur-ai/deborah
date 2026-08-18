@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH B-03 Register forma — Unit tests
+ * Deborah — AUTH B-03 Register forma — Unit tests
  * ----------------------------------------------
  * parseRegister'ning B-03 yangi maydonlari: name (ishm) + invite kod.
  */
@@ -51,9 +51,9 @@ describe('AUTH B-03 — parseRegister name/invite', () => {
   });
 
   it('invite to\'g\'ri format ([A-Za-z0-9-]{6,48}) → qabul', () => {
-    const r = parseRegister({ ...BASE, invite: 'INV-2026-EDIKIT' });
+    const r = parseRegister({ ...BASE, invite: 'INV-2026-DEBORAH' });
     expect(r.ok).toBe(true);
-    expect(r.invite).toBe('INV-2026-EDIKIT');
+    expect(r.invite).toBe('INV-2026-DEBORAH');
   });
 
   it('invite bo\'sh → invite undefined', () => {

@@ -1,5 +1,5 @@
 /**
- * Edikit — Row-Level Security (RLS) Policy Definitions
+ * Deborah — Row-Level Security (RLS) Policy Definitions
  *
  * Defines PostgreSQL RLS policies for tenant-scoped tables.
  * These policies ensure that even if a query bypasses application-level

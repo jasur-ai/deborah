@@ -1,5 +1,5 @@
 /**
- * Edikit — Deck → Quiz → Export end-to-end (Prompt 59)
+ * Deborah — Deck → Quiz → Export end-to-end (Prompt 59)
  *
  * To'liq oqim: canonical deck → extractQuizConcepts → 50/30/20 quiz
  * (citation bilan) → teacher approval → publish → deck export (attribution

@@ -1,4 +1,4 @@
-# Edikit — Operator Sign-off xulosasi (AUTH §17)
+# Deborah — Operator Sign-off xulosasi (AUTH §17)
 
 **Sana:** 2026-08-18 · **Faza:** D (D-07..D-32) + **E (E-01..E-07)** — A/B/C/D/E hammasi yashil
 

@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Director Constants
+ * Deborah — Cast Director Constants
  * ---------------------------------
  * Barcha Cast enum'lari va config uchun canonical qadriyatlar.
  * Server va client bir xil registry'ni ishlatadi.

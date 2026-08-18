@@ -1,5 +1,5 @@
 /**
- * Edikit — Academic Grade Rules & Deterministic Calculation Service
+ * Deborah — Academic Grade Rules & Deterministic Calculation Service
  *
  * DB layer for Prompt 45 (research.md §18 GradingService, §72):
  *   - Versioned rule CRUD: draft → approved (immutable once approved —

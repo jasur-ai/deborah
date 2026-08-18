@@ -1,5 +1,5 @@
 /**
- * Edikit — Assessment Brief & Policy Schema (pure logic)
+ * Deborah — Assessment Brief & Policy Schema (pure logic)
  *
  * Pure, DB-free validation for Prompt 25:
  *   - AI-use levels A0–A4 (research.md §27.2)

@@ -78,7 +78,7 @@ console.log('\nS34.08 — Update banner');
 if (!existsSync('public/js/update-banner.js')) bad('S34.08: update-banner.js yo q');
 else {
   const ub = readFileSync('public/js/update-banner.js', 'utf8');
-  if (!/EDIKIT_UPDATE_AVAILABLE/.test(ub)) bad('S34.08: update message handler yo q');
+  if (!/DEBORAH_UPDATE_AVAILABLE/.test(ub)) bad('S34.08: update message handler yo q');
   else ok('S34.08: update message handler');
   if (!/location\.reload/.test(ub)) bad('S34.08: reload action yo q');
   else ok('S34.08: manual reload action');

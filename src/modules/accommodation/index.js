@@ -1,5 +1,5 @@
 /**
- * Edikit — Accommodation Module Barrel Export
+ * Deborah — Accommodation Module Barrel Export
  *
  * Provides accommodation management for students including:
  * - CRUD for accommodation records

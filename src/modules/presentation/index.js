@@ -1,5 +1,5 @@
 /**
- * Edikit — Canonical Presentation & Native Editor MVP (barrel, Prompt 56)
+ * Deborah — Canonical Presentation & Native Editor MVP (barrel, Prompt 56)
  *
  * research.md §9.2 canonical document (provider-independent slide JSON),
  * §35 native editor (structured blocks, reorder, theme, notes, citations,

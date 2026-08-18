@@ -1,5 +1,5 @@
 /**
- * Edikit — Uch-strike Client Collector & Server Classifier Tests
+ * Deborah — Uch-strike Client Collector & Server Classifier Tests
  *
  * Covers (Prompt 34, research.md §31):
  *   - Raw event validation (shape contract)

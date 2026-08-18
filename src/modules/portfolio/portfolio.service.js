@@ -1,5 +1,5 @@
 /**
- * Edikit — Portfolio service (AUTH A-12)
+ * Deborah — Portfolio service (AUTH A-12)
  * --------------------------------------
  * Local-DB (fb) based portfolio storage:
  *   - portfolio_profiles/{userId}      — user's portfolio meta (isPublic)

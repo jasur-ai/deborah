@@ -1,5 +1,5 @@
 /**
- * Edikit — Unified Provider Async Adapter (integration tests, Prompt 58)
+ * Deborah — Unified Provider Async Adapter (integration tests, Prompt 58)
  *
  * Service qatlami: graceful degradation (PG'siz → 400/error),
  * validate-before-getDb, idempotency (request_hash), Gamma create flow

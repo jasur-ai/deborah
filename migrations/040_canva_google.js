@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 040: Canva, Google Slides, Export va Quiz-from-Deck
+ * Deborah — Migration 040: Canva, Google Slides, Export va Quiz-from-Deck
  *
  * Prompt 59 — Canva modal/OAuth va Google Slides minimum-scope
  * integratsiyasini canonical deck bilan yopish (research.md §9.8 Canva

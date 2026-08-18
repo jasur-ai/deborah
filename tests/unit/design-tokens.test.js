@@ -72,7 +72,7 @@ describe('STYLE STEP 04 — Design token system', () => {
     });
 
     it('semantic intent tokenlar mavjud (color.action.primary)', () => {
-      expect(css).toMatch(/--edikit-semantic-color-action-primary:/);
+      expect(css).toMatch(/--deborah-semantic-color-action-primary:/);
     });
 
     it('light/dark/high-contrast theme blocklar mavjud', () => {
@@ -82,13 +82,13 @@ describe('STYLE STEP 04 — Design token system', () => {
 
     it('theme qiymatlari farqlanadi (parity ≠ identical values)', () => {
       // surface-default: dark (:root) vs light vs high-contrast
-      const vals = [...css.matchAll(/--edikit-semantic-color-surface-default:\s*([^;]+);/g)].map((m) => m[1].trim());
+      const vals = [...css.matchAll(/--deborah-semantic-color-surface-default:\s*([^;]+);/g)].map((m) => m[1].trim());
       expect(vals.length).toBeGreaterThanOrEqual(2);
       expect(new Set(vals).size).toBeGreaterThan(1);
     });
 
     it('backward-compat alias `--accent` semantic token\'ga havola qiladi', () => {
-      expect(css).toMatch(/--accent:\s*var\(--edikit-semantic-color-action-primary\)/);
+      expect(css).toMatch(/--accent:\s*var\(--deborah-semantic-color-action-primary\)/);
     });
 
     it('unresolved alias qolmagan (hech qanday braced ref)', () => {

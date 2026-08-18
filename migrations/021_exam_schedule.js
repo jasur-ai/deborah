@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 021: Exam Scheduling Solver
+ * Deborah — Migration 021: Exam Scheduling Solver
  *
  * Prompt 39 — period, room, student va proctor constraintlari bilan
  * explainable exam schedule (research.md §15 relational schema, §26 exam
@@ -230,9 +230,9 @@ export async function up(db) {
     'scheduler_weight_config',
   ];
   for (const table of newTables) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
-    await sql`GRANT DELETE ON ${sql.table(table)} TO edikit_migration`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 
   console.log('Exam schedule structure created: 5 tables');

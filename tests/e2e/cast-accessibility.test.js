@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast E2E (T-03): Accessibility
+ * Deborah — Cast E2E (T-03): Accessibility
  * ----------------------------------------
  * - Keyboard-only: login form focusable, submit via Enter (item 10)
  * - Mobile 320px viewport render (item 12)

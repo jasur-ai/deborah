@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Auth Validator (STYLE STEP 24)
+ * Deborah — Auth Validator (STYLE STEP 24)
  * -----------------------------------------
  * S24.01 — split shell (product proof + 440px form), centered void EMAS
  * S24.02 — proper tab semantics (role=tablist/tab, aria-selected, tabindex)
@@ -54,9 +54,9 @@ else bad('S24.03: labels/autocomplete/inputmode toliq emas');
 
 // ── S24.04: no raw white alpha on light (semantic tokens) ──
 if (!/rgba\(255,\s*255,\s*255,\s*0\.0[0-9]\)/.test(authCss) &&
-    authCss.includes('--edikit-semantic-color-surface-input') === false &&
-    authCss.includes('--edikit-semantic-color-border-default') &&
-    authCss.includes('--edikit-semantic-color-surface-raised'))
+    authCss.includes('--deborah-semantic-color-surface-input') === false &&
+    authCss.includes('--deborah-semantic-color-border-default') &&
+    authCss.includes('--deborah-semantic-color-surface-raised'))
   ok('S24.04: light theme semantic tokens (raw white alpha yoq)');
 else bad('S24.04: hali raw white alpha yoki semantic token yoq');
 

@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast C3-11 Prediction → Observation → Explanation (POE) Tests
+ * Deborah — Cast C3-11 Prediction → Observation → Explanation (POE) Tests
  * -----------------------------------------------------------------------
  * coverage: contract validation, media validation/readiness/failure,
  *           prediction (with & without confidence), explanation records,

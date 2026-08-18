@@ -1,5 +1,5 @@
 /**
- * Edikit — Auth client validation (AUTH D-29 §06/§26/§27/§28)
+ * Deborah — Auth client validation (AUTH D-29 §06/§26/§27/§28)
  * ---------------------------------------------------------------------------
  * Qoidalar MANBAYI: GET /api/auth/validation-rules — contracts.js'dagi SHARED
  * Zod schemas'dan toJSONSchema() orqali chiqariladi. Klient qoidani qo'lda
@@ -102,7 +102,7 @@
     if (regPassword) applyToInput(regPassword, 'register', 'password', 'change');
   }
 
-  window.EdikitValidation = {
+  window.DeborahValidation = {
     loadRules: loadRules,
     validate: validate,
     getRules: function () { return rules; },

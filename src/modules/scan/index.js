@@ -1,5 +1,5 @@
 /**
- * Edikit — Scan, Reconciliation, OMR & OCR Module Barrel Export
+ * Deborah — Scan, Reconciliation, OMR & OCR Module Barrel Export
  *
  * Prompt 43 — scanned paper pages'ni silent loss'siz student/questionga
  * reconcile qilish (research.md §52.5 scan quality gate, §16 security).

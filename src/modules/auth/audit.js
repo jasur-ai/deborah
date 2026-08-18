@@ -1,5 +1,5 @@
 /**
- * Edikit — Privileged Action Audit Trail
+ * Deborah — Privileged Action Audit Trail
  *
  * Logs all security-sensitive operations to the audit_log table.
  * Gracefully degrades when PostgreSQL is not configured (logs to console instead).

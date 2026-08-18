@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Question Wall Moderation Service (C3-10)
+ * Deborah — Cast Question Wall Moderation Service (C3-10)
  * --------------------------------------------------------
  * Free-text question faqat moderationdan keyin public bo'ladi.
  *

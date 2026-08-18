@@ -1,5 +1,5 @@
 /**
- * Edikit — Uch-strike Client Collector & Server Classifier (pure logic)
+ * Deborah — Uch-strike Client Collector & Server Classifier (pure logic)
  *
  * Prompt 34 — visibility/fullscreen incidentlarini dedupe qilib THIRD strike'da
  * server termination (research.md §31 — Proctor evidence engine). This module

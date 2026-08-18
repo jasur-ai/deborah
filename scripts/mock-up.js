@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Test Bot (mock-up.js)
+ * Deborah — Cast Test Bot (mock-up.js)
  * 
  * Socket.io-based bot simulator for real-time testing.
  * Bot answers emit arena:botAnswer events so host sees live answer counts.

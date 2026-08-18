@@ -55,9 +55,9 @@ describe('AUTH D-25 §06 — DPIA struktura', () => {
   });
 
   it('markDpiaReviewed — operator imzosi + nextReviewDue', () => {
-    const reviewed = markDpiaReviewed({ reviewer: 'legal@edikit.uz', date: '2026-08-17' });
+    const reviewed = markDpiaReviewed({ reviewer: 'legal@deborah.uz', date: '2026-08-17' });
     expect(reviewed.reviewedAt).toBe('2026-08-17');
-    expect(reviewed.reviewer).toBe('legal@edikit.uz');
+    expect(reviewed.reviewer).toBe('legal@deborah.uz');
     expect(reviewed.nextReviewDue).toBe('2026-08-17');
     expect(reviewed.pii.length).toBeGreaterThan(0);
   });

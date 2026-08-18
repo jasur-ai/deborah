@@ -1,5 +1,5 @@
 /**
- * Edikit — Security Guard (integration, Prompt 70)
+ * Deborah — Security Guard (integration, Prompt 70)
  *
  * Service-level tests:
  *   - Finding lifecycle: seed → accept (guard blocks critical/high) →

@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Capabilities
+ * Deborah — Cast Capabilities
  * ---------------------------
  * Test imkoniyatlarini safe metadata sifatida hisoblaydi.
  * Blocker = Cast'ni boshlab bo'lmaydi; Warning = davom etsa ham ogohlantirish.

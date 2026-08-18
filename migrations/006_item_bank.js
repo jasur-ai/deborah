@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 006: Item Bank (Public/Private Versioning)
+ * Deborah — Migration 006: Item Bank (Public/Private Versioning)
  *
  * Adds versioned question/item bank support:
  *   - item_banks: logical collections (e.g., "Algebra - 9-sinf")
@@ -217,15 +217,15 @@ export async function up(db) {
   ];
 
   for (const table of newTables) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
-    await sql`GRANT DELETE ON ${sql.table(table)} TO edikit_migration`.execute(db);
-    await sql`GRANT SELECT ON ${sql.table(table)} TO edikit_scoring`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
+    await sql`GRANT SELECT ON ${sql.table(table)} TO deborah_scoring`.execute(db);
   }
 
   // Restrict private_data access to scoring role
   await sql`
-    GRANT SELECT (private_data) ON items TO edikit_scoring
+    GRANT SELECT (private_data) ON items TO deborah_scoring
   `.execute(db);
 
   console.log('Item bank structure created: 6 tables');

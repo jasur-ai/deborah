@@ -1,5 +1,5 @@
 /**
- * Edikit — Resource Recommendation Connectors (pure logic)
+ * Deborah — Resource Recommendation Connectors (pure logic)
  *
  * Prompt 54 — maqola, paper, video, news va institutional materialni
  * verified metadata bilan tavsiya qilish (research.md §11 manba tavsiyasi,

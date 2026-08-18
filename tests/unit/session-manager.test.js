@@ -1,5 +1,5 @@
 /**
- * Edikit — Session Manager Unit Tests
+ * Deborah — Session Manager Unit Tests
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 

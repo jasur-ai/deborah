@@ -1,5 +1,5 @@
 /**
- * Edikit — Written AI Grading Shadow Mode (DB service)
+ * Deborah — Written AI Grading Shadow Mode (DB service)
  *
  * Prompt 51 — rubric/evidence structured AI draft'ni shadow rejimda
  * ishlatish. Graceful degradation (PostgreSQL absent in CI): write

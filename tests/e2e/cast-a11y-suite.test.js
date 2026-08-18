@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Accessibility Test (T-05)
+ * Deborah — Cast Accessibility Test (T-05)
  * ----------------------------------------
  * Real Playwright chromium orqali:
  *  1. Automated a11y scan (aria-live, labels, alt, landmarks)

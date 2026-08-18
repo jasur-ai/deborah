@@ -1,5 +1,5 @@
 /**
- * Edikit — SLO Definitions & Burn-Rate (Prompt 69 §12)
+ * Deborah — SLO Definitions & Burn-Rate (Prompt 69 §12)
  *
  * research.md §38.4 SLO misollari asosida:
  *   - answer save availability 99.95% exam window
@@ -19,10 +19,10 @@
  *
  * STUB SLO'LAR (scaffold): ack_p95_latency, grading_job_sla va
  * reconnect_recovery SLO'lari hozircha production producer'larsiz — ular
- * o'lchanadigan metriclar (edikit_ack_latency_ms, edikit_grading_jobs_total,
- * edikit_socket_reconnect_total) socket/grading flow'lariga ulanganda jonli
+ * o'lchanadigan metriclar (deborah_ack_latency_ms, deborah_grading_jobs_total,
+ * deborah_socket_reconnect_total) socket/grading flow'lariga ulanganda jonli
  * ma'lumot ko'rsatadi. answer_save_availability esa allqachon real
- * (edikit_answer_save_duration + edikit_answer_save_errors_total).
+ * (deborah_answer_save_duration + deborah_answer_save_errors_total).
  */
 
 // ── SLO ta'riflari ──
@@ -201,29 +201,29 @@ export function evaluateSlo(snapshot, opts = {}) {
   const now = opts.now || Date.now();
   const sinceMs = opts.sinceMs || (30 * 24 * 60 * 60 * 1000);
 
-  // ── Answer save: histogram 'edikit_answer_save_duration' count vs good ──
+  // ── Answer save: histogram 'deborah_answer_save_duration' count vs good ──
   // Soddalashtirilgan: answer_save histogram'idagi 500ms dan past bo'lganlar "good".
-  const answerHist = (snapshot.histograms || []).find((h) => h.name === 'edikit_answer_save_duration');
+  const answerHist = (snapshot.histograms || []).find((h) => h.name === 'deborah_answer_save_duration');
   const total = answerHist?.count || 0;
   // good = count - (xatolar) — biz xatolarni alohida counter'da tutamiz.
   const answerErrors = (snapshot.counters || [])
-    .filter((c) => c.name === 'edikit_answer_save_errors_total')
+    .filter((c) => c.name === 'deborah_answer_save_errors_total')
     .reduce((a, c) => a + c.value, 0);
   const good = Math.max(0, total - answerErrors);
 
-  const ackHist = (snapshot.histograms || []).find((h) => h.name === 'edikit_ack_latency_ms');
+  const ackHist = (snapshot.histograms || []).find((h) => h.name === 'deborah_ack_latency_ms');
   const reconnect = (snapshot.counters || [])
-    .filter((c) => c.name === 'edikit_reconnect_total' || c.name === 'edikit_socket_reconnect_total')
+    .filter((c) => c.name === 'deborah_reconnect_total' || c.name === 'deborah_socket_reconnect_total')
     .reduce((a, c) => a + c.value, 0);
   const reconnectOk = (snapshot.counters || [])
-    .filter((c) => c.name === 'edikit_reconnect_ok_total' || c.name === 'edikit_socket_reconnect_ok_total')
+    .filter((c) => c.name === 'deborah_reconnect_ok_total' || c.name === 'deborah_socket_reconnect_ok_total')
     .reduce((a, c) => a + c.value, 0);
 
   const gradingTotal = (snapshot.counters || [])
-    .filter((c) => c.name === 'edikit_grading_jobs_total')
+    .filter((c) => c.name === 'deborah_grading_jobs_total')
     .reduce((a, c) => a + c.value, 0);
   const gradingOk = (snapshot.counters || [])
-    .filter((c) => c.name === 'edikit_grading_jobs_ok_total')
+    .filter((c) => c.name === 'deborah_grading_jobs_ok_total')
     .reduce((a, c) => a + c.value, 0);
 
   // ── AUTH D-06 §07: auth SLO ma'lumotlari (Prometheus nomli counter'lar) ──

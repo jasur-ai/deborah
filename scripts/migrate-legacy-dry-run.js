@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Edikit — Legacy JSON/Firebase Migration Dry-Run Script
+ * Deborah — Legacy JSON/Firebase Migration Dry-Run Script
  *
  * Reads data/db.json, analyzes all legacy records, and generates
  * a structured migration report without writing to any database.

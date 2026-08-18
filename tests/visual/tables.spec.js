@@ -32,7 +32,7 @@ test.describe('STEP 18 — Tables', () => {
     await expect(table).toHaveAttribute('data-density', 'default');
     await page.locator(`${DEMO} .dt-density button[data-density="compact"]`).click();
     await expect(table).toHaveAttribute('data-density', 'compact');
-    const pref = await page.evaluate(() => localStorage.getItem('edikit-dt-density'));
+    const pref = await page.evaluate(() => localStorage.getItem('deborah-dt-density'));
     expect(pref).toBe('compact');
     await page.reload();
     await expect(table).toHaveAttribute('data-density', 'compact');

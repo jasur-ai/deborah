@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH C-05 Impossible travel + velocity — Unit tests
+ * Deborah — AUTH C-05 Impossible travel + velocity — Unit tests
  * ---------------------------------------------------------------
  *  - travelFeasible: 800 km/soat threshold (C-05 §06)
  *  - geoFromIp: shahar + timezone (C-05 §08, Asia/Tashkent)

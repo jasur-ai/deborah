@@ -21,17 +21,17 @@ describe('STYLE STEP 06 — Color pipeline', () => {
   describe('S06.01 — Final palette', () => {
     it('Cobalt primary action #1746D1 (cobalt-500)', () => {
       const p = tokensOf('primitive.color.json');
-      expect(p.edikit.primitive.cobalt['cobalt-500'].$value).toBe('#1746D1');
+      expect(p.deborah.primitive.cobalt['cobalt-500'].$value).toBe('#1746D1');
     });
     it('Dark action #7AA8FF, Signal, Insight, Ink, Paper final qiymatlar', () => {
       const p = tokensOf('primitive.color.json');
-      expect(p.edikit.primitive.cobalt['cobalt-dark-action'].$value).toBe('#7AA8FF');
-      expect(p.edikit.primitive.signal['signal-light'].$value).toBe('#007C91');
-      expect(p.edikit.primitive.signal['signal-dark'].$value).toBe('#52D0D8');
-      expect(p.edikit.primitive.insight['insight-light'].$value).toBe('#9B5E00');
-      expect(p.edikit.primitive.insight['insight-dark'].$value).toBe('#F2B84B');
-      expect(p.edikit.primitive.foundation.ink.$value).toBe('#0C1426');
-      expect(p.edikit.primitive.foundation.paper.$value).toBe('#F6F8FC');
+      expect(p.deborah.primitive.cobalt['cobalt-dark-action'].$value).toBe('#7AA8FF');
+      expect(p.deborah.primitive.signal['signal-light'].$value).toBe('#007C91');
+      expect(p.deborah.primitive.signal['signal-dark'].$value).toBe('#52D0D8');
+      expect(p.deborah.primitive.insight['insight-light'].$value).toBe('#9B5E00');
+      expect(p.deborah.primitive.insight['insight-dark'].$value).toBe('#F2B84B');
+      expect(p.deborah.primitive.foundation.ink.$value).toBe('#0C1426');
+      expect(p.deborah.primitive.foundation.paper.$value).toBe('#F6F8FC');
     });
   });
 
@@ -40,7 +40,7 @@ describe('STYLE STEP 06 — Color pipeline', () => {
       const p = tokensOf('primitive.color.json');
       const brands = ['cobalt-100', 'cobalt-500', 'cobalt-600', 'cobalt-dark-action', 'signal-light', 'signal-dark', 'insight-light', 'insight-dark'];
       for (const b of brands) {
-        expect(p.edikit.primitive.cobalt[b]?.$oklch || p.edikit.primitive.signal[b]?.$oklch || p.edikit.primitive.insight[b]?.$oklch, b).toMatch(/^oklch\(/);
+        expect(p.deborah.primitive.cobalt[b]?.$oklch || p.deborah.primitive.signal[b]?.$oklch || p.deborah.primitive.insight[b]?.$oklch, b).toMatch(/^oklch\(/);
       }
     });
     it('generated CSS @supports oklch block chiqaradi', () => {
@@ -54,8 +54,8 @@ describe('STYLE STEP 06 — Color pipeline', () => {
     it('har theme surface.sunken parity mavjud', () => {
       for (const f of ['semantic.light.json', 'semantic.dark.json', 'semantic.high-contrast.json']) {
         const t = tokensOf(f);
-        expect(t.edikit.semantic.color.surface.sunken.$value, f).toBeTruthy();
-        expect(t.edikit.semantic.color.surface.default.$value, f).toBeTruthy();
+        expect(t.deborah.semantic.color.surface.sunken.$value, f).toBeTruthy();
+        expect(t.deborah.semantic.color.surface.default.$value, f).toBeTruthy();
       }
     });
   });
@@ -76,7 +76,7 @@ describe('STYLE STEP 06 — Color pipeline', () => {
     it('color.surface.scrim solid token 3 theme da', () => {
       for (const f of ['semantic.light.json', 'semantic.dark.json', 'semantic.high-contrast.json']) {
         const t = tokensOf(f);
-        expect(t.edikit.semantic.color.surface.scrim.$value, f).toBeTruthy();
+        expect(t.deborah.semantic.color.surface.scrim.$value, f).toBeTruthy();
       }
     });
   });

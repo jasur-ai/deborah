@@ -1,5 +1,5 @@
 /**
- * Edikit — Student Preflight Service
+ * Deborah — Student Preflight Service
  *
  * Prompt 28 (Student assignment list, brief va preflight):
  *   - getStudentAssignments: assignments where the student is in the PUBLISHED

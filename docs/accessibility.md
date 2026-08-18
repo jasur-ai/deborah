@@ -1,10 +1,10 @@
-# Accessibility Statement — Edikit (STYLE S36.12)
+# Accessibility Statement — Deborah (STYLE S36.12)
 
 **Yangilangan:** 2026-08-08
 
 ## Maqsad
 
-Edikit WCAG 2.2 AA darajasida foydalanish mumkin bo'lishiga intiladi.
+Deborah WCAG 2.2 AA darajasida foydalanish mumkin bo'lishiga intiladi.
 Bu hujjat — tested scope, known limitations, kontakt va yangilanish sanasini
 **honest** ko'rsatadi (S36.12).
 

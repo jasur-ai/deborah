@@ -1,5 +1,5 @@
 /**
- * Edikit — Unit Tests: Logger
+ * Deborah — Unit Tests: Logger
  *
  * Tests Pino structured logger initialization, redaction,
  * and request ID middleware.

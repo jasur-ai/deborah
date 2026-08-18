@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Whole-Class Goal va Personal Best (C3-09) Tests
+ * Deborah — Cast Whole-Class Goal va Personal Best (C3-09) Tests
  * ---------------------------------------------------------------
  * coverage: validateClassGoal, computeClassGoalProgress, buildGoalCompleteEvent,
  *           evidenceToGoalCounters, computeComparableFingerprint,

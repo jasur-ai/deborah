@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   EDIKIT LANDING — Universitar platforma (plan_index §3, style.md §11)
+   DEBORAH LANDING — Universitar platforma (plan_index §3, style.md §11)
    Dark-first · glass surfaces · bento grid · glow accents
    Dekorativ animatsiyalar YO'Q (plan_index §5; STEP 22 S22.01)
    ═══════════════════════════════════════════════════════════════ */
@@ -82,7 +82,7 @@
   z-index: 100;
   background: var(--ld-primary);
   color: #fff;
-  padding: var(--edikit-spacing-3, 12px) var(--edikit-spacing-4, 16px)
+  padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-4, 16px)
   border-radius: 8px;
   font-weight: 700;
   transition: top 0.2s;
@@ -115,14 +115,14 @@
   padding: 3px;
   background: var(--ld-surface);
   border: 1px solid var(--ld-border);
-  border-radius: var(--edikit-radius-md, 12px);
+  border-radius: var(--deborah-radius-md, 12px);
 }
 .ld-lang {
   font-size: 0.72rem;
   font-weight: 700;
   color: var(--ld-muted);
   text-decoration: none;
-  padding: var(--edikit-spacing-2, 8px) var(--edikit-spacing-2, 8px)
+  padding: var(--deborah-spacing-2, 8px) var(--deborah-spacing-2, 8px)
   border-radius: 8px;
   min-height: 32px;
   display: inline-flex;
@@ -511,7 +511,7 @@
   background: var(--ld-surface);
   border: 1px solid var(--ld-border);
   border-radius: var(--ld-radius-lg);
-  padding: var(--edikit-spacing-8, 32px);
+  padding: var(--deborah-spacing-8, 32px);
   text-align: left;
   transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
@@ -648,7 +648,7 @@
   position: absolute;
   top: 14px; right: 14px;
   width: 38px; height: 38px;
-  border-radius: var(--edikit-radius-md, 12px);
+  border-radius: var(--deborah-radius-md, 12px);
   border: 1px solid var(--ld-border);
   background: transparent;
   color: var(--ld-muted);

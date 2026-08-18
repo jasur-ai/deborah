@@ -1,5 +1,5 @@
 /**
- * Edikit — In-app browser guard (AUTH D-13 §17, security)
+ * Deborah — In-app browser guard (AUTH D-13 §17, security)
  * -------------------------------------------------------------------
  * Telegram/WhatsApp/Instagram kabi ilovalarning ichki brauzerlarida
  * login/parol kiritish xavfsiz emas (JS inject, tarix kuzatuvi).

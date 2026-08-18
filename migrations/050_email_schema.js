@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 050: Email schema (AUTH B-02)
+ * Deborah — Migration 050: Email schema (AUTH B-02)
  *
  * Email bilan bog'liq barcha jadvallar (guide §06-§11):
  *   - verification_codes   (email_verify|mfa_reset|password_reset; code_hash)

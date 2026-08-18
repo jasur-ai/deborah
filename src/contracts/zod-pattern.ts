@@ -1,5 +1,5 @@
 /**
- * Edikit — Zod Contract Export Pattern
+ * Deborah — Zod Contract Export Pattern
  *
  * This file documents the standard pattern for creating TypeScript-safe
  * contracts using Zod. All new feature modules should follow this pattern.

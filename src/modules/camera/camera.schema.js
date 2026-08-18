@@ -1,5 +1,5 @@
 /**
- * Edikit — Privacy-first Camera Evidence Pilot (pure logic)
+ * Deborah — Privacy-first Camera Evidence Pilot (pure logic)
  *
  * Prompt 37 — local inference, LIMITED evidence, human review (research.md
  * §27 — evidence portfolio, surveillance emas). Pure, DB-free logic:

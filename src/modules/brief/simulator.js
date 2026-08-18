@@ -1,5 +1,5 @@
 /**
- * Edikit — Roster / Accommodation Simulator
+ * Deborah — Roster / Accommodation Simulator
  *
  * Pure simulation of how a roster of students would experience a summative
  * assessment under a given brief + policy pack + per-student accommodations.
@@ -279,7 +279,7 @@ export function generateHumanReadableReport({
 } = {}) {
   const lines = [];
   lines.push('═══════════════════════════════════════════════');
-  lines.push('  EDIKIT — PUBLISH READINESS REPORT');
+  lines.push('  DEBORAH — PUBLISH READINESS REPORT');
   lines.push('═══════════════════════════════════════════════');
   lines.push('');
 

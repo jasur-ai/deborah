@@ -1,5 +1,5 @@
 /**
- * Edikit — Visual: Layout Foundations (STYLE STEP 09, S09.02/03/09/11)
+ * Deborah — Visual: Layout Foundations (STYLE STEP 09, S09.02/03/09/11)
  * ---------------------------------------------------------------------
  * Container width, grid breakpoints, density compact scoping.
  * 320px / 900px / 1920px+ ultra-wide tekshiruv (S09.11).

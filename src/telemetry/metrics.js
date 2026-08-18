@@ -1,5 +1,5 @@
 /**
- * Edikit — Metrics Registry (Prompt 69 §10)
+ * Deborah — Metrics Registry (Prompt 69 §10)
  *
  * Platform + domain metrics (research.md §38.1 golden signals, §38.2 domain
  * metrics). OTel Metrics API yuzasiga mos yengil registry:

@@ -1,5 +1,5 @@
 /**
- * Edikit — Privacy-first Camera Evidence Pilot Service
+ * Deborah — Privacy-first Camera Evidence Pilot Service
  *
  * Prompt 37 — server-side half of the camera pilot:
  *   - Pilot policy get (tenant-scoped, defaults when no row)

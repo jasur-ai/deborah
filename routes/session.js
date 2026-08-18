@@ -1,5 +1,5 @@
 /**
- * Edikit — Session routes
+ * Deborah — Session routes
  * --------------------------------------------------------------
  * AUTH A-02 (keepalive):
  *   POST /api/session/ping      → 204 (idle timer reset; touchSession)

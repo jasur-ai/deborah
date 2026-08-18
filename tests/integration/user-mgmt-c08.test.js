@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH C-08 User management — Integration/contract tests
+ * Deborah — AUTH C-08 User management — Integration/contract tests
  * ------------------------------------------------------------------
  *  - /admin/api/users: qidiruv/filter/pagination/email+role+status
  *  - blok → login blok (generic xato) + audit

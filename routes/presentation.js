@@ -1,5 +1,5 @@
 /**
- * Edikit — Canonical Presentation & Native Editor Routes
+ * Deborah — Canonical Presentation & Native Editor Routes
  *
  * Prompt 56 REST API (admin — requireAdmin):
  *   - GET  /api/admin/presentations/meta          — constants for admin UI

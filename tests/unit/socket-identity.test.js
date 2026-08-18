@@ -1,5 +1,5 @@
 /**
- * Edikit — Socket Identity Unit Tests
+ * Deborah — Socket Identity Unit Tests
  *
  * Tests:
  *   1. createTicket / verifyTicket — HMAC-signed tickets

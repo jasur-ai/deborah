@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast C3-10 Confusion Signal + Question Wall Moderation Tests
+ * Deborah — Cast C3-10 Confusion Signal + Question Wall Moderation Tests
  * ----------------------------------------------------------------------
  * coverage: signal enum/cooldown/dedupe, identity-hidden aggregate,
  *           wall text validation, PII/profanity flags, moderation lifecycle,

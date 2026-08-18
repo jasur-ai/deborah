@@ -1,5 +1,5 @@
 /**
- * Edikit — Pedagogically Safe Power-ups (C3-17)
+ * Deborah — Pedagogically Safe Power-ups (C3-17)
  * ----------------------------------------------
  * Power-up faqat teacher-enabled presetda ishlaydi va correctness recordni
  * O'ZGARTIRMAYDI (item 9 — raw evidence immutable).

@@ -1,5 +1,5 @@
 /**
- * Edikit — API, Socket, Job, Webhook & Outbox Contract Audit Routes
+ * Deborah — API, Socket, Job, Webhook & Outbox Contract Audit Routes
  *
  * Prompt 67 REST API:
  *   - GET    /admin/api-contracts                            — admin UI

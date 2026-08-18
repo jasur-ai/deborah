@@ -1,5 +1,5 @@
 /**
- * Edikit — Intervention Loop, Adaptive Practice & Support (e2e/security tests, Prompt 55)
+ * Deborah — Intervention Loop, Adaptive Practice & Support (e2e/security tests, Prompt 55)
  *
  * Security & data guards (§15-17):
  *   - Teacher approval'siz intervention assign qilinmaydi (AI assign emas).

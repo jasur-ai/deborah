@@ -1,5 +1,5 @@
 /**
- * Edikit — E-04a: JWKS key rotation monitoring (oidc.js)
+ * Deborah — E-04a: JWKS key rotation monitoring (oidc.js)
  * ---------------------------------------------------------------------------
  * Yangi `kid` paydo bo'lsa → `oidc:jwks:rotated` audit event; grace window
  * 24 soat; JWKS unreachable → fail-soft (verify keyin hal qiladi).

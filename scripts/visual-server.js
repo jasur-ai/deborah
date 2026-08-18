@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Visual Test Server bootstrap (platform-mos)
+ * Deborah — Visual Test Server bootstrap (platform-mos)
  *
  * Playwright webServer komandasi Windows'da ishlamaydi (POSIX `rm -f`,
  * `VAR=val` sintaksisi). Bu skript toza DB + test credential'lari bilan
@@ -16,7 +16,7 @@ import { fileURLToPath, pathToFileURL } from 'url';
 
 // STEP 08: har run alohida TOZA DB — dashboard jonli raqamlar run'lararo
 // o'sib, baseline'ni eskirib qoldirmasligi uchun (deterministik screenshotlar).
-const dbFile = join(tmpdir(), 'edikit-visual-db.json');
+const dbFile = join(tmpdir(), 'deborah-visual-db.json');
 rmSync(dbFile, { force: true });
 
 process.env.LOCAL_DB_FILE = dbFile;

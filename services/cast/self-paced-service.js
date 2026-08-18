@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Self-Paced Race Service (C3-16)
+ * Deborah — Cast Self-Paced Race Service (C3-16)
  * ----------------------------------------------
  * Self-paced mode'da har participant o'z sur'atida yuguradi:
  * - Per-participant cursor: personalized question order + position

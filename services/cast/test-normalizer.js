@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Question Normalizer
+ * Deborah — Cast Question Normalizer
  * ----------------------------------
  * Har qanday formatdagi questionni Cast canonical formatga o'tkazadi:
  * - stable question ID (q_01, q_02, ...)

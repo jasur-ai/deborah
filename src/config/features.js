@@ -1,5 +1,5 @@
 /**
- * Edikit — Feature Flag Service
+ * Deborah — Feature Flag Service
  *
  * Controls feature availability across the application.
  * Supports:

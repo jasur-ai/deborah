@@ -1,5 +1,5 @@
 /**
- * Edikit — Safe File/Code/Oral Submission e2e/security tests (Prompt 44)
+ * Deborah — Safe File/Code/Oral Submission e2e/security tests (Prompt 44)
  *
  * E2E walk (Prompt 44 §13-15, §19-20):
  *   - API walk (graceful degradation without PostgreSQL): admin page

@@ -1,4 +1,4 @@
-/* Edikit — Cast Results (C5-01) */
+/* Deborah — Cast Results (C5-01) */
 
 .cast-page {
   font-family: var(--cast-font, 'Source Sans 3', sans-serif);
@@ -13,7 +13,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: var(--edikit-spacing-4, 16px) var(--edikit-spacing-6, 24px)
+  padding: var(--deborah-spacing-4, 16px) var(--deborah-spacing-6, 24px)
   background: var(--cast-surface, #181c30);
   border-bottom: 1px solid var(--cast-border, #2a3050);
   position: sticky;
@@ -38,7 +38,7 @@
 
 .res-layout { max-width: 1100px; margin: 0 auto; padding: 24px 18px 60px; display: flex; flex-direction: column; gap: 18px; }
 
-.cast-surface { background: var(--cast-surface, #181c30); border: 1px solid var(--cast-border, #2a3050); border-radius: var(--cast-radius, 14px); padding: var(--edikit-spacing-5, 20px) var(--edikit-spacing-5, 20px) }
+.cast-surface { background: var(--cast-surface, #181c30); border: 1px solid var(--cast-border, #2a3050); border-radius: var(--cast-radius, 14px); padding: var(--deborah-spacing-5, 20px) var(--deborah-spacing-5, 20px) }
 
 .res-hero { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .res-hero h2 { margin: 0; font-size: 22px; }
@@ -70,7 +70,7 @@
 
 /* AI modal */
 .res-modal-backdrop { position: fixed; inset: 0; background: rgba(8, 10, 20, 0.7); display: flex; align-items: center; justify-content: center; z-index: 60; padding: 20px; }
-.res-modal { background: var(--cast-surface, #181c30); border: 1px solid var(--cast-border, #2a3050); border-radius: var(--cast-radius, 14px); padding: var(--edikit-spacing-6, 24px); max-width: 640px; width: 100%; max-height: 80vh; overflow: auto; }
+.res-modal { background: var(--cast-surface, #181c30); border: 1px solid var(--cast-border, #2a3050); border-radius: var(--cast-radius, 14px); padding: var(--deborah-spacing-6, 24px); max-width: 640px; width: 100%; max-height: 80vh; overflow: auto; }
 .res-modal h3 { margin-top: 0; }
-.res-pre { background: #0d101f; border: 1px solid var(--cast-border, #2a3050); border-radius: var(--edikit-radius-md, 12px); padding: var(--edikit-spacing-4, 16px); font-size: 12px; max-height: 45vh; overflow: auto; white-space: pre-wrap; word-break: break-word; }
+.res-pre { background: #0d101f; border: 1px solid var(--cast-border, #2a3050); border-radius: var(--deborah-radius-md, 12px); padding: var(--deborah-spacing-4, 16px); font-size: 12px; max-height: 45vh; overflow: auto; white-space: pre-wrap; word-break: break-word; }
 .res-modal-actions { display: flex; justify-content: flex-end; margin-top: 14px; }

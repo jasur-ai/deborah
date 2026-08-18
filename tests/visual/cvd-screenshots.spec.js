@@ -1,5 +1,5 @@
 /**
- * Edikit — Visual: CVD Matrix (STYLE STEP 06 / S06.08)
+ * Deborah — Visual: CVD Matrix (STYLE STEP 06 / S06.08)
  * ------------------------------------------------------------------
  * public/brand/cvd-test.html — status + answer option + focus state
  * (redundant encoding: color+icon+text, color+shape+letter).

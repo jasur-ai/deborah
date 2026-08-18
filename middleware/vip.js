@@ -1,5 +1,5 @@
 /**
- * Edikit — VIP Access Control Middleware
+ * Deborah — VIP Access Control Middleware
  * 
  * 🔒 YASHIRIN FUNKSIYA: Bu middleware "VIP" (maxsus foydalanuvchi) tizimini boshqaradi.
  *    Hech qachon oddiy foydalanuvchiga "VIP", "Premium" yoki "Maxsus huquq" kabi

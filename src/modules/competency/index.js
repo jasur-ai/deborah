@@ -1,5 +1,5 @@
 /**
- * Edikit — Competency & Curriculum Graph Module Barrel Export
+ * Deborah — Competency & Curriculum Graph Module Barrel Export
  *
  * Provides versioned competency/outcome framework management:
  *   - Framework CRUD (create/get/list/update)

@@ -1,5 +1,5 @@
 /**
- * Edikit — Special Consideration, Deferral, Resit, Appeal & Scoring
+ * Deborah — Special Consideration, Deferral, Resit, Appeal & Scoring
  * Incident unit tests (Prompt 48)
  *
  * Pure-schema coverage:

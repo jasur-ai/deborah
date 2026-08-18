@@ -32,13 +32,13 @@ describe('STEP 40 — Feature flags', () => {
   });
 
   it('env orqali OFF qilish mumkin', () => {
-    process.env.EDIKIT_FF_CAST = '0';
+    process.env.DEBORAH_FF_CAST = '0';
     expect(resolveFlag({}, 'cast')).toBe(false);
     expect(resolveFlag({}, 'theme')).toBe(true);
   });
 
   it('env orqali ON', () => {
-    process.env.EDIKIT_FF_CAST = '1';
+    process.env.DEBORAH_FF_CAST = '1';
     expect(resolveFlag({}, 'cast')).toBe(true);
   });
 
@@ -54,10 +54,10 @@ describe('STEP 40 — Feature flags', () => {
 
   it('cookie session-stable (env > cookie > default)', () => {
     // env yo'q, cookie OFF
-    expect(resolveFlag({ headers: { cookie: 'edikit_ff_theme=0' } }, 'theme')).toBe(false);
+    expect(resolveFlag({ headers: { cookie: 'deborah_ff_theme=0' } }, 'theme')).toBe(false);
     // env ON, cookie OFF — env ustun
-    process.env.EDIKIT_FF_THEME = '1';
-    expect(resolveFlag({ headers: { cookie: 'edikit_ff_theme=0' } }, 'theme')).toBe(true);
+    process.env.DEBORAH_FF_THEME = '1';
+    expect(resolveFlag({ headers: { cookie: 'deborah_ff_theme=0' } }, 'theme')).toBe(true);
   });
 
   it('sessionStableContexts: theme va cast', () => {
@@ -66,7 +66,7 @@ describe('STEP 40 — Feature flags', () => {
   });
 
   it('resolveFlagsForTest: env-only', () => {
-    process.env.EDIKIT_FF_ADMIN = '0';
+    process.env.DEBORAH_FF_ADMIN = '0';
     const f = resolveFlagsForTest(process.env);
     expect(f.admin).toBe(false);
     expect(f.theme).toBe(true);

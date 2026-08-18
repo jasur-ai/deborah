@@ -1,5 +1,5 @@
 /**
- * Edikit — Admin Exam Scheduler UI (Prompt 39)
+ * Deborah — Admin Exam Scheduler UI (Prompt 39)
  *
  * Tabs: Solver | Versions | Rooms | Periods | Weights
  *  - Solver: JSON exam input + seed → POST /api/admin/scheduler/run →
@@ -30,7 +30,7 @@ function esc(v) {
 function toast(msg, ok = true) {
   const t = $('toast');
   t.textContent = msg;
-  t.style.color = ok ? 'var(--green)' : 'var(--edikit-semantic-color-action-primary)';
+  t.style.color = ok ? 'var(--green)' : 'var(--deborah-semantic-color-action-primary)';
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2600);
 }

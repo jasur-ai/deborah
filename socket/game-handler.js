@@ -1,5 +1,5 @@
 /**
- * Edikit — Socket.io Game Handlers
+ * Deborah — Socket.io Game Handlers
  * 
  * Manages real-time game events:
  * - Player join/leave lobby

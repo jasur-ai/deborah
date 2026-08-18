@@ -1,5 +1,5 @@
 /**
- * Edikit — Reliability Guard (integration, Prompt 71)
+ * Deborah — Reliability Guard (integration, Prompt 71)
  *
  * Service-level tests:
  *   - recordLoadRun with data guard + audit + metric

@@ -1,4 +1,4 @@
-/* Edikit — Cast Projector */
+/* Deborah — Cast Projector */
 
 .proj-screen {
   min-height: 100vh; min-height: 100svh;
@@ -71,7 +71,7 @@
   justify-content: center;
   min-width: 48px;
   height: 48px;
-  border-radius: var(--edikit-radius-md, 12px);
+  border-radius: var(--deborah-radius-md, 12px);
   background: var(--cast-surface-2);
   font-weight: 700;
   flex-shrink: 0;
@@ -157,7 +157,7 @@
 .proj-confusion, .proj-wall {
   position: fixed;
   bottom: calc(24px + env(safe-area-inset-bottom, 0px));
-  padding: var(--edikit-spacing-4, 16px) var(--edikit-spacing-5, 20px)
+  padding: var(--deborah-spacing-4, 16px) var(--deborah-spacing-5, 20px)
   border-radius: 16px;
   background: rgba(20, 22, 30, 0.85);
   backdrop-filter: blur(8px);
@@ -185,7 +185,7 @@
 .proj-wall-item {
   font-size: 0.95rem;
   padding: 8px 12px;
-  border-radius: var(--edikit-radius-md, 12px);
+  border-radius: var(--deborah-radius-md, 12px);
   background: rgba(255,255,255,0.06);
   border-left: 3px solid var(--cast-accent, #6366f1);
 }
@@ -197,7 +197,7 @@
   bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   transform: translateX(-50%);
   max-width: 70vw;
-  padding: var(--edikit-spacing-4, 16px) var(--edikit-spacing-5, 20px)
+  padding: var(--deborah-spacing-4, 16px) var(--deborah-spacing-5, 20px)
   border-radius: 16px;
   background: rgba(20, 22, 30, 0.9);
   backdrop-filter: blur(8px);
@@ -213,7 +213,7 @@
 .proj-poe-img {
   max-width: 100%;
   max-height: 55vh;
-  border-radius: var(--edikit-radius-lg, 16px);
+  border-radius: var(--deborah-radius-lg, 16px);
   object-fit: contain;
 }
 .proj-poe-text {
@@ -233,7 +233,7 @@
 }
 .proj-poe-agg-row, .proj-poe-exemplar {
   font-size: 1rem;
-  padding: var(--edikit-spacing-2, 8px) var(--edikit-spacing-3, 12px)
+  padding: var(--deborah-spacing-2, 8px) var(--deborah-spacing-3, 12px)
   border-radius: 8px;
   background: rgba(255,255,255,0.06);
   margin-top: 6px;
@@ -258,8 +258,8 @@
 .proj-orb-cluster {
   background: rgba(255,255,255,0.06);
   border: 1px solid var(--cast-border, rgba(255,255,255,0.14));
-  border-radius: var(--edikit-radius-lg, 16px);
-  padding: var(--edikit-spacing-4, 16px);
+  border-radius: var(--deborah-radius-lg, 16px);
+  padding: var(--deborah-spacing-4, 16px);
 }
 .proj-orb-cluster-head {
   display: flex;

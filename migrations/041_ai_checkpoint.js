@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 041: AI/Content Checkpoint runs
+ * Deborah — Migration 041: AI/Content Checkpoint runs
  *
  * Prompt 60 — AI/content checkpoint (measured pilot). Source, AI grading,
  * questions, resources va presentation oqimlarini yakuniy tekshirish

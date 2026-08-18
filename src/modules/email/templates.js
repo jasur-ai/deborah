@@ -16,7 +16,7 @@
 
 import { AUTH_LANGS, DEFAULT_AUTH_LANG } from '../../../data/auth-i18n.js';
 
-const BRAND = 'Edikit';
+const BRAND = 'Deborah';
 
 /** Har bir til uchun UI matnlar (spam-free, qisqa). */
 const T = {
@@ -28,14 +28,14 @@ const T = {
     resetBody: "Parolingizni tiklash uchun quyidagi tugmani bosing. Havola 15 daqiqa amal qiladi.",
     resetBtn: 'Parolni tiklash',
     welcomeTitle: 'Xush kelibsiz',
-    welcomeBody: "Edikit hisobingiz muvaffaqiyatli yaratildi. Tizimdan kirishingiz mumkin.",
+    welcomeBody: "Deborah hisobingiz muvaffaqiyatli yaratildi. Tizimdan kirishingiz mumkin.",
     teacherApprovedTitle: "O‘qituvchi arizasi qabul qilindi",
     teacherApprovedBody: "O‘qituvchi arizangiz tasdiqlandi. Endi darslarni boshqarishingiz mumkin.",
     teacherApprovedCta: 'Birinchi testingizni yarating',
     teacherRejectedTitle: "O‘qituvchi arizasi rad etildi",
     teacherRejectedBody: "O‘qituvchi arizangiz rad etildi. Savollaringiz bo‘lsa, administrator bilan bog‘laning.",
     inviteTitle: 'Sinflarga taklif',
-    inviteBody: "Siz Edikit platformasiga taklif qilindingiz. Ro‘yxatdan o‘tish uchun quyidagi tugmani bosing. Havola 7 kun amal qiladi.",
+    inviteBody: "Siz Deborah platformasiga taklif qilindingiz. Ro‘yxatdan o‘tish uchun quyidagi tugmani bosing. Havola 7 kun amal qiladi.",
     inviteBtn: 'Taklifni qabul qilish',
     inviteGroup: 'Guruh',
     welcomeBtn: 'Birinchi amaliyotni boshlang',
@@ -78,14 +78,14 @@ const T = {
     resetBody: "Паролингизни тиклаш учун қуйидаги тугмани босинг. Ҳаvolа 15 дақиқа амал қилади.",
     resetBtn: 'Паролни тиклаш',
     welcomeTitle: 'Хуш келибсиз',
-    welcomeBody: "Edikit ҳисобингиз муваффақиятли яратилди. Тизимга киришингиз мумкин.",
+    welcomeBody: "Deborah ҳисобингиз муваффақиятли яратилди. Тизимга киришингиз мумкин.",
     teacherApprovedTitle: "Ўқитувчи аризаси қабул қилинди",
     teacherApprovedBody: "Ўқитувчи аризангиз тасдиқланди. Энди дарсларни бошқаришингиз мумкин.",
     teacherApprovedCta: 'Биринчи тестингизни яратинг',
     teacherRejectedTitle: "Ўқитувчи аризаси рад этилди",
     teacherRejectedBody: "Ўқитувчи аризангиз рад этилди. Саволларингиз бўлса, администратор билан боғланинг.",
     inviteTitle: 'Синфларга таклиф',
-    inviteBody: "Сиз Edikit платформасига таклиф қилиндингиз. Рўйхатдан ўтиш учун қуйидаги тугмани босинг. Ҳаvolа 7 кун амал қилади.",
+    inviteBody: "Сиз Deborah платформасига таклиф қилиндингиз. Рўйхатдан ўтиш учун қуйидаги тугмани босинг. Ҳаvolа 7 кун амал қилади.",
     inviteBtn: 'Таклифни қабул қилиш',
     inviteGroup: 'Гуруҳ',
     welcomeBtn: 'Биринчи амалиётни бошланг',
@@ -128,14 +128,14 @@ const T = {
     resetBody: 'Нажмите кнопку ниже, чтобы сбросить пароль. Ссылка действительна 15 минут.',
     resetBtn: 'Сбросить пароль',
     welcomeTitle: 'Добро пожаловать',
-    welcomeBody: 'Ваш аккаунт Edikit успешно создан. Вы можете войти в систему.',
+    welcomeBody: 'Ваш аккаунт Deborah успешно создан. Вы можете войти в систему.',
     teacherApprovedTitle: 'Заявка учителя одобрена',
     teacherApprovedBody: 'Ваша заявка учителя одобрена. Теперь вы можете управлять занятиями.',
     teacherApprovedCta: 'Создать первый тест',
     teacherRejectedTitle: 'Заявка учителя отклонена',
     teacherRejectedBody: 'Ваша заявка учителя отклонена. При вопросах обратитесь к администратору.',
     inviteTitle: 'Приглашение в классы',
-    inviteBody: 'Вас пригласили на платформу Edikit. Нажмите кнопку ниже, чтобы зарегистрироваться. Ссылка действительна 7 дней.',
+    inviteBody: 'Вас пригласили на платформу Deborah. Нажмите кнопку ниже, чтобы зарегистрироваться. Ссылка действительна 7 дней.',
     inviteBtn: 'Принять приглашение',
     inviteGroup: 'Группа',
     welcomeBtn: 'Начать первую тренировку',
@@ -178,14 +178,14 @@ const T = {
     resetBody: 'Click the button below to reset your password. The link is valid for 15 minutes.',
     resetBtn: 'Reset password',
     welcomeTitle: 'Welcome',
-    welcomeBody: 'Your Edikit account has been created. You can now sign in.',
+    welcomeBody: 'Your Deborah account has been created. You can now sign in.',
     teacherApprovedTitle: 'Teacher application approved',
     teacherApprovedBody: 'Your teacher application has been approved. You can now manage classes.',
     teacherApprovedCta: 'Create your first test',
     teacherRejectedTitle: 'Teacher application declined',
     teacherRejectedBody: 'Your teacher application was declined. Contact an administrator if you have questions.',
     inviteTitle: 'Class invitation',
-    inviteBody: 'You have been invited to the Edikit platform. Click the button below to sign up. The link is valid for 7 days.',
+    inviteBody: 'You have been invited to the Deborah platform. Click the button below to sign up. The link is valid for 7 days.',
     inviteBtn: 'Accept invitation',
     inviteGroup: 'Group',
     welcomeBtn: 'Start your first practice',
@@ -369,9 +369,9 @@ export function renderWelcome({ username, lang }) {
     preheader,
     `<h1 style="font-size:20px;margin:0 0 8px;color:#0f172a">${t.welcomeTitle}</h1>
      <p style="font-size:15px;line-height:1.6;color:#334155;margin:0 0 4px">${t.welcomeBody}</p>`,
-    { href: 'https://edikit.uz/user/onboarding', label: t.welcomeBtn },
+    { href: 'https://deborah.uz/user/onboarding', label: t.welcomeBtn },
   );
-  const text = `${t.hello}${username ? `, ${esc(username)}` : ''}!\n\n${t.welcomeTitle}\n\n${t.welcomeBody}\n\n${t.welcomeBtn}: https://edikit.uz/user/onboarding\n\n${t.ignore}\n${t.footer}`;
+  const text = `${t.hello}${username ? `, ${esc(username)}` : ''}!\n\n${t.welcomeTitle}\n\n${t.welcomeBody}\n\n${t.welcomeBtn}: https://deborah.uz/user/onboarding\n\n${t.ignore}\n${t.footer}`;
   return { subject: `${t.welcomeTitle} — ${BRAND}`, html, text, preheader };
 }
 
@@ -446,14 +446,14 @@ export function renderSecurity({ type = 'new_device', username, device, browser,
     `<h1 style="font-size:20px;margin:0 0 8px;color:#0f172a">${title}</h1>
      <p style="font-size:15px;line-height:1.6;color:#334155;margin:0 0 12px">${t[bodyKey]}</p>
      ${details}`,
-    { href: 'https://edikit.uz/user/panel#security', label: t.securityAction },
+    { href: 'https://deborah.uz/user/panel#security', label: t.securityAction },
   );
   const textDetails = [
     device || browser ? `${t.securityDevice}: ${esc([device, browser].filter(Boolean).join(' / '))}` : '',
     city ? `${t.securityCity}: ${esc(city)}` : '',
     time ? `${t.securityTime}: ${esc(time)}` : '',
   ].filter(Boolean).join('\n');
-  const text = `${t.hello}${username ? `, ${esc(username)}` : ''}!\n\n${title}\n\n${t[bodyKey]}${textDetails ? `\n\n${textDetails}` : ''}\n\n${t.securityAction}: https://edikit.uz/user/panel#security\n\n${t.ignore}\n${t.footer}`;
+  const text = `${t.hello}${username ? `, ${esc(username)}` : ''}!\n\n${title}\n\n${t[bodyKey]}${textDetails ? `\n\n${textDetails}` : ''}\n\n${t.securityAction}: https://deborah.uz/user/panel#security\n\n${t.ignore}\n${t.footer}`;
   return { subject: `${title} — ${BRAND}`, html, text, preheader };
 }
 
@@ -466,9 +466,9 @@ export function renderBreach({ username, lang }) {
     preheader,
     `<h1 style="font-size:20px;margin:0 0 8px;color:#0f172a">${t.breachTitle}</h1>
      <p style="font-size:15px;line-height:1.6;color:#334155;margin:0 0 4px">${t.breachBody}</p>`,
-    { href: 'https://edikit.uz/user/panel#security', label: t.breachBtn },
+    { href: 'https://deborah.uz/user/panel#security', label: t.breachBtn },
   );
-  const text = `${t.hello}${username ? `, ${esc(username)}` : ''}!\n\n${t.breachTitle}\n\n${t.breachBody}\n\n${t.breachBtn}: https://edikit.uz/user/panel#security\n\n${t.ignore}\n${t.footer}`;
+  const text = `${t.hello}${username ? `, ${esc(username)}` : ''}!\n\n${t.breachTitle}\n\n${t.breachBody}\n\n${t.breachBtn}: https://deborah.uz/user/panel#security\n\n${t.ignore}\n${t.footer}`;
   return { subject: `${t.breachTitle} — ${BRAND}`, html, text, preheader };
 }
 

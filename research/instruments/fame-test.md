@@ -10,7 +10,7 @@
 ## Procedure
 1. Elementni 2 soniya ko'rsatish
 2. **Recognized** (binary): “Buni ilgari ko'rganmisiz?” — keyin qaysi produkttaga
-   tegishli ekanini so'rash (Name recall: `Edikit` deyish)
+   tegishli ekanini so'rash (Name recall: `Deborah` deyish)
 3. **Uniqueness** (1–7): “Bu boshqa ta'lim/platforma logotiplaridan qanchalik farqlanadi?”
 4. **Association** (open): “Bu sizga nimani eslatadi?” → thematic coding
 

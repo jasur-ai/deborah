@@ -1,5 +1,5 @@
 /**
- * Edikit — AI Question Generator 50/30/20 (pure logic)
+ * Deborah — AI Question Generator 50/30/20 (pure logic)
  *
  * Prompt 53 — source-grounded, difficulty-controlled item draft pipeline
  * (research.md §8 AI test generatori, §8.1 50/30/20 default, §8.3 pipeline,

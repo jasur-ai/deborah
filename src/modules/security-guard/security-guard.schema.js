@@ -1,5 +1,5 @@
 /**
- * Edikit — Security Guard: Threat Model, ASVS Matrix, Findings & Red-Team
+ * Deborah — Security Guard: Threat Model, ASVS Matrix, Findings & Red-Team
  * (pure logic — Prompt 70)
  *
  * Prompt 70 turns web/API/socket/upload/RAG/AI security into a
@@ -308,7 +308,7 @@ export const ASVS_LEVEL_RANK = { L1: 1, L2: 2, L3: 3 };
 export const EVIDENCE_STATUS = ['not_started', 'in_progress', 'automated', 'manual', 'accepted'];
 
 /**
- * ASVS 5.0 target requirement matrix — the controls Edikit targets per chapter
+ * ASVS 5.0 target requirement matrix — the controls Deborah targets per chapter
  * (research §16 architecture, §39 test matrix). Each row: chapter, short
  * requirement, target ASVS level, verification type.
  *

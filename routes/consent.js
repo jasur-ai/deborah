@@ -1,5 +1,5 @@
 /**
- * Edikit — Consent API (AUTH D-25 §10-§11)
+ * Deborah — Consent API (AUTH D-25 §10-§11)
  * ---------------------------------------------------------------------------
  * GET  /api/consent/status  — barcha purpose'lar holati (settings/DSAR)
  * POST /api/consent/revoke  — consent bekor qilish (reauth, fail-closed)

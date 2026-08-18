@@ -1,5 +1,5 @@
 /**
- * Edikit — Shared Token Vault (AES-256-GCM)
+ * Deborah — Shared Token Vault (AES-256-GCM)
  *
  * Prompt 59 — Canva va Google Slides adapter'larining OAuth tokenlarini
  * DB'da saqlash uchun bitta umumiy vault (duplikatsiya yo'q, §22.9 —
@@ -14,7 +14,7 @@
 import crypto from 'crypto';
 
 function getVaultKey() {
-  const k = process.env.ENCRYPTION_KEY || process.env.SESSION_SECRET || 'edikit-dev-secret';
+  const k = process.env.ENCRYPTION_KEY || process.env.SESSION_SECRET || 'deborah-dev-secret';
   return crypto.createHash('sha256').update(String(k)).digest();
 }
 

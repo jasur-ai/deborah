@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Observability (C5-08)
+ * Deborah — Cast Observability (C5-08)
  * -----------------------------------
  * Live health metrics + PII-safe structured logs + support-bundle inputs.
  *

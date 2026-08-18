@@ -1,6 +1,6 @@
 #!/bin/bash
 # Cast E2E smoke test v2 — natija faylga yoziladi
-cd /mnt/d/StartUp/edikit
+cd /mnt/d/StartUp/deborah
 OUT=/tmp/cast-e2e-out.txt
 : > "$OUT"
 

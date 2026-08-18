@@ -1,5 +1,5 @@
 /**
- * Edikit — Intervention Loop, Adaptive Practice & Support (pure logic)
+ * Deborah — Intervention Loop, Adaptive Practice & Support (pure logic)
  *
  * Prompt 55 — assessment evidence'dan teacher-approved action, reassessment
  * va formative mastery oqimi (research.md §47 #1 Assessment-to-Intervention

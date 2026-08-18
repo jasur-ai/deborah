@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Mastery, Transfer va Redemption Service (C3-08)
+ * Deborah — Cast Mastery, Transfer va Redemption Service (C3-08)
  * --------------------------------------------------------------
  * Teacher equivalent transfer yoki redemption itemini ishga tushiradi;
  * learning progress original leaderboarddan alohida saqlanadi.

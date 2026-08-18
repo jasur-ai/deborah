@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Answer-Key Secret Scanner (Gate 0 CI Gate)
+ * Deborah — Answer-Key Secret Scanner (Gate 0 CI Gate)
  *
  * Scans EJS views for unprotected correct-answer fields that should
  * only exist in private scoring paths.

@@ -26,7 +26,7 @@ test.describe('S11 foundations', () => {
       const focusBlocks = styles.filter((r) =>
         (r.selectorText || '').includes(':focus-visible') &&
         (r.style.getPropertyValue('outline-width') === '3px' ||
-         r.style.getPropertyValue('outline-width').includes('var(--edikit-focus-ring-width)'))
+         r.style.getPropertyValue('outline-width').includes('var(--deborah-focus-ring-width)'))
       );
       return {
         count: focusBlocks.length,
@@ -79,7 +79,7 @@ test.describe('S11 foundations', () => {
       probe.remove();
       // Tokendagi spacing-4 16px bo'lishi kerak
       const root = getComputedStyle(document.documentElement);
-      const spacing4 = root.getPropertyValue('--edikit-spacing-4').trim();
+      const spacing4 = root.getPropertyValue('--deborah-spacing-4').trim();
       return { marginBottom: hasVar, spacing4 };
     });
     expect(utils.marginBottom).not.toBe('');

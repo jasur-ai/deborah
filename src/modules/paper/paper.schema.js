@@ -1,5 +1,5 @@
 /**
- * Edikit — Paper Packet, QR & Chain of Custody (pure logic)
+ * Deborah — Paper Packet, QR & Chain of Custody (pure logic)
  *
  * Prompt 42 — approved examdan per-student/form paper packet va custody
  * ledger yaratish (research.md §52 Hybrid Paper Exam Factory, §16 security).
@@ -120,7 +120,7 @@ export function canonicalStringify(value) {
 
 /** SHA-256 hex digest of canonical JSON. */
 export function canonicalHash(value) {
-  return createHmac('sha256', 'edikit-paper-hash').update(canonicalStringify(value)).digest('hex');
+  return createHmac('sha256', 'deborah-paper-hash').update(canonicalStringify(value)).digest('hex');
 }
 
 /**
@@ -128,9 +128,9 @@ export function canonicalHash(value) {
  * student (not random) so regeneration is reproducible, but opaque (never
  * leaks meaning).
  */
-export function deriveOpaquePacketId({ assignmentId, variant = null, studentUserId = null, seed = 'edikit-paper' } = {}) {
+export function deriveOpaquePacketId({ assignmentId, variant = null, studentUserId = null, seed = 'deborah-paper' } = {}) {
   const input = canonicalStringify({ seed, assignmentId, variant: variant || null, studentUserId: studentUserId || null });
-  return createHmac('sha256', 'edikit-opaque-id').update(input).digest('hex').slice(0, OPAQUE_ID_BYTES * 2);
+  return createHmac('sha256', 'deborah-opaque-id').update(input).digest('hex').slice(0, OPAQUE_ID_BYTES * 2);
 }
 
 /** Human-readable backup code (printed). */

@@ -10,7 +10,7 @@ const headEjs = readFileSync(join(ROOT, 'views/partials/head.ejs'), 'utf8');
 
 describe('S09.01 — 4px spacing scale', () => {
   const SPACING_SCALE = [0, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96];
-  const spacing = layout.edikit.spacing;
+  const spacing = layout.deborah.spacing;
   const values = Object.values(spacing)
     .map((v) => parseInt(String(v.$value), 10))
     .filter((n) => !isNaN(n));
@@ -24,14 +24,14 @@ describe('S09.01 — 4px spacing scale', () => {
     expect(values).toContain(80);
     expect(values).toContain(96);
   });
-  it('generated tokens CSS da --edikit-spacing-20/24 bor', () => {
-    expect(tokensCss).toContain('--edikit-spacing-20: 80px');
-    expect(tokensCss).toContain('--edikit-spacing-24: 96px');
+  it('generated tokens CSS da --deborah-spacing-20/24 bor', () => {
+    expect(tokensCss).toContain('--deborah-spacing-20: 80px');
+    expect(tokensCss).toContain('--deborah-spacing-24: 96px');
   });
 });
 
 describe('S09.02 — container tokenlar', () => {
-  const c = layout.edikit.container;
+  const c = layout.deborah.container;
   it('barcha container tokenlar mavjud', () => {
     expect(c.landing.$value).toBe('1200px');
     expect(c.workspace.$value).toBe('1280px');
@@ -45,7 +45,7 @@ describe('S09.02 — container tokenlar', () => {
 });
 
 describe('S09.03 — grid primitives', () => {
-  const g = layout.edikit.grid;
+  const g = layout.deborah.grid;
   it('12/8/4 col + 24/20/16 gutter', () => {
     expect(g.cols.desktop.$value).toBe('12');
     expect(g.cols.tablet.$value).toBe('8');
@@ -61,7 +61,7 @@ describe('S09.03 — grid primitives', () => {
 });
 
 describe('S09.04 — radius grammar', () => {
-  const r = layout.edikit.radius;
+  const r = layout.deborah.radius;
   it('control 8 / card 12 / modal 16 / pill 999', () => {
     expect(r.sm.$value).toBe('8px');
     expect(r.md.$value).toBe('12px');
@@ -82,8 +82,8 @@ describe('S09.04 — radius grammar', () => {
 });
 
 describe('S09.06 — elevation + z-index layers', () => {
-  const e = layout.edikit.elevation;
-  const z = layout.edikit['z-index'];
+  const e = layout.deborah.elevation;
+  const z = layout.deborah['z-index'];
   it('elevation qatlamlari', () => {
     for (const layer of ['canvas', 'surface', 'sticky', 'modal', 'toast']) {
       expect(e[layer], `elevation-${layer}`).toBeTruthy();
@@ -103,7 +103,7 @@ describe('S09.06 — elevation + z-index layers', () => {
 });
 
 describe('S09.09 — density', () => {
-  const d = layout.edikit.density;
+  const d = layout.deborah.density;
   it('comfortable + compact mavjud, compact kichikroq', () => {
     const ch = (x) => parseInt(d[x]['control-height'].$value);
     expect(ch('comfortable')).toBe(40);

@@ -1,5 +1,5 @@
 /**
- * Edikit — Theme Engine v4 (STYLE STEP 07)
+ * Deborah — Theme Engine v4 (STYLE STEP 07)
  * ----------------------------------------
  * S07.01  States: system|light|dark|hc-light|hc-dark → data-resolved-theme
  * S07.02  Head'dagi tiny sync boot (head.ejs) — FOUC yo'q
@@ -16,9 +16,9 @@
 (function () {
   'use strict';
 
-  var core = window.EdikitThemeCore || { STATES: ['system', 'light', 'dark', 'hc-light', 'hc-dark'], resolveState: function () {} };
-  var STORAGE_KEY = core.STORAGE_KEY || 'edikit-theme-state';
-  var LEGACY_KEY = 'edikit-theme'; // eski dark/light toggle key (migration)
+  var core = window.DeborahThemeCore || { STATES: ['system', 'light', 'dark', 'hc-light', 'hc-dark'], resolveState: function () {} };
+  var STORAGE_KEY = core.STORAGE_KEY || 'deborah-theme-state';
+  var LEGACY_KEY = 'deborah-theme'; // eski dark/light toggle key (migration)
 
   var mqLight = null;
   var mqContrast = null;
@@ -41,7 +41,7 @@
   function readState() {
     var raw = null;
     try { raw = localStorage.getItem(STORAGE_KEY); } catch (_) {}
-    // Legacy migration (S07.03): eski edikit-theme='light'|'dark' → state
+    // Legacy migration (S07.03): eski deborah-theme='light'|'dark' → state
     if (!raw) {
       try {
         var legacy = localStorage.getItem(LEGACY_KEY);
@@ -143,7 +143,7 @@
     });
   }
 
-  window.EdikitTheme = {
+  window.DeborahTheme = {
     apply: apply,
     setState: setState,
     toggle: toggle,

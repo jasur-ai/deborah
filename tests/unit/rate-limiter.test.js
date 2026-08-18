@@ -1,5 +1,5 @@
 /**
- * Edikit — Rate Limiter Tests
+ * Deborah — Rate Limiter Tests
  *
  * Tests:
  *   1. SlidingWindowCounter — unit tests

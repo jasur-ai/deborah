@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH A-14: HEMIS Live Test Harness xavfsizligi
+ * Deborah — AUTH A-14: HEMIS Live Test Harness xavfsizligi
  *
  * Tests that:
  * 1. REDACT hech qachon secret'ni to'liq ko'rsatmaydi (faqat 4+3 belgi mask)
@@ -70,11 +70,11 @@ describe('AUTH A-14 — HEMIS live-test harness', () => {
     const url = buildAuthUrl({
       clientId: '8',
       redirectUri: 'http://hemis-oauth-test.lc/index.php?x=1&y=2',
-      state: 'edikit_test_123 abc',
+      state: 'deborah_test_123 abc',
     });
     expect(url).toContain('client_id=8');
     expect(url).toContain(encodeURIComponent('http://hemis-oauth-test.lc/index.php?x=1&y=2'));
-    expect(url).toContain(encodeURIComponent('edikit_test_123 abc'));
+    expect(url).toContain(encodeURIComponent('deborah_test_123 abc'));
     expect(url).not.toContain('secret');
     expect(url).not.toContain('Vt5dnZtzK');
     expect(url.startsWith('https://student.hemis.uz/oauth/authorize?')).toBe(true);

@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast E2E (T-03): Answer flow
+ * Deborah — Cast E2E (T-03): Answer flow
  * -------------------------------------
  * Socket.io-client orqali real server'da:
  * - Participant join + answer (item 5)

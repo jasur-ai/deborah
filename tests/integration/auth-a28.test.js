@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH A-28 Risk-based auth — Integration tests
+ * Deborah — AUTH A-28 Risk-based auth — Integration tests
  * ---------------------------------------------------------------
  *  - Yangi qurilma (device_fp) login → session riskTier=unknown, riskStepup
  *  - /api/auth/device/trust: reauth talab → 403; reauth'dan keyin 200

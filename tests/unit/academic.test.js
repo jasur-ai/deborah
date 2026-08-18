@@ -1,5 +1,5 @@
 /**
- * Edikit — Academic Module Unit Tests
+ * Deborah — Academic Module Unit Tests
  *
  * Tests all academic hierarchy service functions with mocked PostgreSQL.
  * Since the modules gracefully degrade when Postgres is unavailable,

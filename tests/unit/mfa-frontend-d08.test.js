@@ -1,5 +1,5 @@
 /**
- * Edikit — D-08 MFA login step (public/js/mfa.js) — Unit tests
+ * Deborah — D-08 MFA login step (public/js/mfa.js) — Unit tests
  * --------------------------------------------------------------
  * jsdom environment'da mfa.js DOM logikasini tekshiramiz:
  *   - single-digit 6 input: avto-next, backspace, arrow keys

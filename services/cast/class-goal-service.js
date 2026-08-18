@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Whole-Class Goal Service (C3-09)
+ * Deborah — Cast Whole-Class Goal Service (C3-09)
  * ------------------------------------------------
  * Competitiondan tashqari class cooperative progress ko'rsatiladi.
  * Projector cardda individual ayb/rank ko'rsatilmaydi — faqat

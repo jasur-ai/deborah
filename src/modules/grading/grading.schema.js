@@ -1,5 +1,5 @@
 /**
- * Edikit — Academic Grade Rules & Deterministic Calculation (pure logic)
+ * Deborah — Academic Grade Rules & Deterministic Calculation (pure logic)
  *
  * Prompt 45 — weighted, hurdle, late, exempt, resit va rounding qoidalarini
  * VERSIONLANGAN DSL'da hisoblash (research.md §18 GradingService, §72

@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast AI Co-host Shadow E2E (C5-11)
+ * Deborah — Cast AI Co-host Shadow E2E (C5-11)
  * --------------------------------------------
  * Socket-only (browser kerak emas). Real server'da auth'li socket orqali:
  * - cohostMode off → shadow:run rad etiladi

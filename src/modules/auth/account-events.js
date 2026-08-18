@@ -1,5 +1,5 @@
 /**
- * Edikit — Account security events feed (AUTH A-29)
+ * Deborah — Account security events feed (AUTH A-29)
  * -------------------------------------------------------------------
  * A-29 (guide §04, §07-§08, §18):
  *   - `users.{id}.security_events.{id}` — password/email change, login,

@@ -1,5 +1,5 @@
 /**
- * Edikit — Cartoon Characters Registry
+ * Deborah — Cartoon Characters Registry
  * ----------------------------------------
  * animation: 'always'  — doim harakatda
  * animation: 'hover'   — faqat ustiga bossada

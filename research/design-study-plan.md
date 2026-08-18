@@ -1,4 +1,4 @@
-# Edikit Design Study Plan (STYLE STEP 39)
+# Deborah Design Study Plan (STYLE STEP 39)
 
 > **Maqsad:** “Official, mature, distinctive” dizayn qarori real teacher/participant
 > behavior va validated scales bilan tekshiriladi. Stakeholder ta'mi emas — evidence.
@@ -47,8 +47,8 @@ qaysi variantni ko'rganini bilmaydi:
 
 | Variant | Tavsif |
 |---------|--------|
-| A. Current Edikit | Joriy production (STEP 1–38 natijasi) |
-| B. New Edikit | Yangi visual identity (evidence mark, signal rail, cobalt palette) |
+| A. Current Deborah | Joriy production (STEP 1–38 natijasi) |
+| B. New Deborah | Yangi visual identity (evidence mark, signal rail, cobalt palette) |
 | C. Generic blue SaaS | Generic enterprise SaaS estetikasi (control) |
 | D. Playful quiz | Bright gamified quiz estetikasi (control) |
 

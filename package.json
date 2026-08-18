@@ -1,7 +1,7 @@
 {
-  "name": "edikit",
+  "name": "deborah",
   "version": "2.0.0",
-  "description": "Edikit — Real-time multiplayer quiz platform (Node.js Edition)",
+  "description": "Deborah — Real-time multiplayer quiz platform (Node.js Edition)",
   "type": "module",
   "main": "server.js",
   "scripts": {

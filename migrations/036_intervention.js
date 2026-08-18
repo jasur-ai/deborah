@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 036: Intervention Loop, Adaptive Practice & Support
+ * Deborah — Migration 036: Intervention Loop, Adaptive Practice & Support
  *
  * Prompt 55 — assessment evidence'dan teacher-approved action, reassessment
  * va formative mastery oqimi (research.md §47 #1 Assessment-to-Intervention

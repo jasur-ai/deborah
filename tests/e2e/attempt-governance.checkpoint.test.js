@@ -1,5 +1,5 @@
 /**
- * Edikit — Attempt/Proctoring Checkpoint (Prompt 38)
+ * Deborah — Attempt/Proctoring Checkpoint (Prompt 38)
  *
  * Phase D final verification — secure attemptni mock exam, reconnect storm va
  * accessibility holatida yakuniy tekshirish. Teacher Core checkpoint (Prompt

@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 012: Immutable Publish Transaction & Assignment Snapshot
+ * Deborah — Migration 012: Immutable Publish Transaction & Assignment Snapshot
  *
  * Atomic publish of an assessment draft into a SCHEDULED assignment with
  * public/private/roster/accommodation snapshots (Prompt 27):
@@ -8,7 +8,7 @@
  *   - assignment_public_items: PUBLIC item snapshots (stem/options only —
  *     NEVER private scoring keys)
  *   - assignment_private_scores: PRIVATE scoring snapshots (answer keys) —
- *     DB role restricted (edikit_scoring only)
+ *     DB role restricted (deborah_scoring only)
  *   - assignment_roster_members: roster membership snapshot at publish time
  *   - assignment_notifications: notification outbox written in the SAME
  *     transaction (atomic with the publish)
@@ -18,7 +18,7 @@
  *     the same draft + pins always yield the same version_hash
  *   - Row lock + external_key give publish idempotency / race protection
  *   - Public/private split is enforced at the DB level: private scores table
- *     grants SELECT only to edikit_scoring, and public item rows physically
+ *     grants SELECT only to deborah_scoring, and public item rows physically
  *     cannot hold private_data (column does not exist there)
  *   - Partial publish is impossible: all inserts happen inside the caller's
  *     transaction; a failure rolls back everything
@@ -233,14 +233,14 @@ export async function up(db) {
     'assignment_notifications',
   ];
   for (const table of newTables) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
-    await sql`GRANT DELETE ON ${sql.table(table)} TO edikit_migration`.execute(db);
-    await sql`GRANT SELECT ON ${sql.table(table)} TO edikit_scoring`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
+    await sql`GRANT SELECT ON ${sql.table(table)} TO deborah_scoring`.execute(db);
   }
 
   // Private scoring keys restricted to scoring role
-  await sql`GRANT SELECT (private_data) ON assignment_private_scores TO edikit_scoring`.execute(db);
+  await sql`GRANT SELECT (private_data) ON assignment_private_scores TO deborah_scoring`.execute(db);
 
   console.log('Assignment publish structure created: 5 tables');
 }

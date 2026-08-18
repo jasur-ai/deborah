@@ -5,13 +5,13 @@
   <link rel="stylesheet" href="/design/contexts/auth.css">
   <style>
     /* S24.12 — admin: same family, no neon, distinct cobalt flag */
-    .auth-admin-flag{background:var(--edikit-semantic-color-brand-cobalt);}
+    .auth-admin-flag{background:var(--deborah-semantic-color-brand-cobalt);}
     .auth-box{max-width:440px;margin:0 auto;}
     .admin-topbar{
       display:flex;align-items:center;justify-content:space-between;
       padding:14px 20px;gap:12px;
-      border-bottom:1px solid var(--edikit-semantic-color-divider);
-      background:var(--edikit-semantic-color-surface-raised);
+      border-bottom:1px solid var(--deborah-semantic-color-divider);
+      background:var(--deborah-semantic-color-surface-raised);
     }
     .admin-topbar .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:.9rem;}
     .admin-topbar .brand img{height:26px;width:auto;}
@@ -21,7 +21,7 @@
 <body>
   <a href="#main" class="skip-link">Kirish →</a>
   <div class="admin-topbar">
-    <span class="brand"><img src="/images/logo-icon.svg" alt="Edikit"> Edikit</span>
+    <span class="brand"><img src="/images/logo-icon.svg" alt="Deborah"> Deborah</span>
     <%- include('../partials/theme-control') %>
   </div>
   <main id="main" class="auth-page auth-page--top" style="padding-top:clamp(28px,6vh,64px)">
@@ -32,8 +32,8 @@
           <div class="auth-title">Admin Panel</div>
           <div class="auth-sub">Faqat administratorlar uchun</div>
           <% if (typeof mfaRequired !== 'undefined' && mfaRequired) { %>
-          <div class="auth-mfa-note" style="margin-top:12px;padding:10px 12px;border-radius:10px;background:rgba(2,132,199,.08);border:1px solid rgba(2,132,199,.25);font-size:.76rem;font-weight:700;color:var(--edikit-semantic-color-text-muted);display:flex;gap:8px;align-items:center">
-            <span style="flex-shrink:0;color:var(--edikit-semantic-color-action-primary)"><%- icon('shield', 14) %></span>
+          <div class="auth-mfa-note" style="margin-top:12px;padding:10px 12px;border-radius:10px;background:rgba(2,132,199,.08);border:1px solid rgba(2,132,199,.25);font-size:.76rem;font-weight:700;color:var(--deborah-semantic-color-text-muted);display:flex;gap:8px;align-items:center">
+            <span style="flex-shrink:0;color:var(--deborah-semantic-color-action-primary)"><%- icon('shield', 14) %></span>
             <span>Xavfsizlik uchun admin hisobi ikki bosqichli tekshiruv (2FA) bilan himoyalangan — kirishda tasdiqlash talab qilinadi.</span>
           </div>
           <% } %>

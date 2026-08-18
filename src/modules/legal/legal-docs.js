@@ -1,5 +1,5 @@
 /**
- * Edikit — Legal Documents (AUTH D-24)
+ * Deborah — Legal Documents (AUTH D-24)
  * ---------------------------------------------------------------------------
  * Privacy policy + Terms + Cookie policy — 4 til (uz / uz-cyrl / ru / en).
  * Auth'ga oid bo'limlar (D-24 §07-§09): email/telegram_id/hemis_id/device
@@ -8,7 +8,7 @@
  *
  * Qoidalar:
  *  - Secret/parol hech qachon hujjatda YO'Q (D-24 §15).
- *  - Havolalar allowlist: faqat security@edikit.uz / support@edikit.uz.
+ *  - Havolalar allowlist: faqat security@deborah.uz / support@deborah.uz.
  *  - Har o'zgarishda version + changelog (D-24 §27).
  *  - Aniq, adolatli, tushunarli til (universitar daraja).
  */
@@ -18,8 +18,8 @@ export const DEFAULT_LEGAL_LANG = 'uz';
 export const LEGAL_VERSION = '1.0.0';
 export const LEGAL_LAST_REVIEWED = '2026-08-17';
 export const LEGAL_CONTACT = {
-  security: 'security@edikit.uz',
-  support: 'support@edikit.uz',
+  security: 'security@deborah.uz',
+  support: 'support@deborah.uz',
 };
 
 /** Noma'lum til → default. */
@@ -67,7 +67,7 @@ export const LEGAL_DOCS = {
       title: 'Maxfiylik siyosati',
       sections: [
         { id: 'intro', heading: 'Kirish', body: [
-          'Edikit — taʼlim platformasi (keyingi oʼrinlarda «Xizmat»). Ushbu Maxfiylik siyosati Xizmatdan foydalanishda shaxsiy maʼlumotlaringiz qanday yigʼilishi, ishlatilishi, saqlanishi va himoya qilinishini tushuntiradi.',
+          'Deborah — taʼlim platformasi (keyingi oʼrinlarda «Xizmat»). Ushbu Maxfiylik siyosati Xizmatdan foydalanishda shaxsiy maʼlumotlaringiz qanday yigʼilishi, ishlatilishi, saqlanishi va himoya qilinishini tushuntiradi.',
           'Xizmatdan foydalanish orqali siz ushbu siyosat shartlariga rozilik bildirasiz. Rozilik bermasangiz, Xizmatdan foydalanmang.',
         ] },
         { id: 'data', heading: 'Qanday maʼlumotlar yigʼiladi', body: [
@@ -89,7 +89,7 @@ export const LEGAL_DOCS = {
         ] },
         { id: 'dsar', heading: 'Sizning huquqlaringiz (DSAR)', body: [
           'Oʼzbekiston qonunchiligiga muvofiq quyidagi huquqlarga egasiz: maʼlumotlaringizdan nusxa olish (eksport), notoʼgʼri maʼlumotlarni tuzatish, qayta ishlashni cheklash, hisobni oʼchirish.',
-          'Bularni «Sozlamalar → Maxfiylik» boʼlimida yoki security@edikit.uz orqali soʼrashingiz mumkin. Soʼrov 30 kun ichida koʼrib chiqiladi.',
+          'Bularni «Sozlamalar → Maxfiylik» boʼlimida yoki security@deborah.uz orqali soʼrashingiz mumkin. Soʼrov 30 kun ichida koʼrib chiqiladi.',
           'Qonuniy majburiyat (masalan, sud qarori) boʼlsa, oʼchirish vaqtincha cheklanishi mumkin.',
         ] },
         { id: 'law', heading: 'Qonunchilik', body: [
@@ -97,7 +97,7 @@ export const LEGAL_DOCS = {
           'Operator maʼlumotlarni qonun talab qilgan hollardan tashqari uchinchi shaxslarga bermaydi.',
         ] },
         { id: 'contact', heading: 'Bogʼlanish', body: [
-          'Maxfiylik boʼyicha savollar uchun: security@edikit.uz (xavfsizlik masalalari) yoki support@edikit.uz (umumiy savollar).',
+          'Maxfiylik boʼyicha savollar uchun: security@deborah.uz (xavfsizlik masalalari) yoki support@deborah.uz (umumiy savollar).',
           'Ushbu siyosatga oʼzgartirish kiritilsa, yangi versiya va sana ushbu sahifada koʼrsatiladi.',
         ] },
       ],
@@ -106,7 +106,7 @@ export const LEGAL_DOCS = {
       title: 'Foydalanish shartlari',
       sections: [
         { id: 'intro', heading: 'Kirish', body: [
-          'Ushbu shartlar Edikit Xizmatidan foydalanish qoidalarini belgilaydi. Roʼyxatdan oʼtish orqali siz ushbu shartlarga rozilik bildirasiz.',
+          'Ushbu shartlar Deborah Xizmatidan foydalanish qoidalarini belgilaydi. Roʼyxatdan oʼtish orqali siz ushbu shartlarga rozilik bildirasiz.',
         ] },
         { id: 'account', heading: 'Hisob', body: [
           'Har bir foydalanuvchi bitta hisob yaratishi mumkin. Hisob maʼlumotlari (foydalanuvchi nomi, parol) faqat oʼzingizga tegishli boʼlishi shart.',
@@ -128,7 +128,7 @@ export const LEGAL_DOCS = {
         ] },
         { id: 'blocking', heading: 'Hisobni bloklash', body: [
           'Quyidagi hollarda hisob vaqtincha yoki doimiy bloklanishi mumkin: parolni koʼp marta notoʼgʼri kiritish, bot/avtomatlashtirilgan hujumlar, suiisteʼmol, qoidalarni buzish.',
-          'Bloklangan foydalanuvchi sababni support@edikit.uz orqali soʼrashi mumkin.',
+          'Bloklangan foydalanuvchi sababni support@deborah.uz orqali soʼrashi mumkin.',
         ] },
         { id: 'abuse', heading: 'Suiisteʼmol', body: [
           'Taqiqlanadi: boshqa foydalanuvchi hisobiga kirishga urinish, Xizmatni buzish, spam, taʼlim jarayonini firibgarlik bilan buzish, noqonuniy kontent tarqatish.',
@@ -173,7 +173,7 @@ export const LEGAL_DOCS = {
       title: 'Макфийлик сиёсати',
       sections: [
         { id: 'intro', heading: 'Кириш', body: [
-          'Edikit — таълим платформаси (кейинги ўринларда «Хизмат»). Ушбу Макфийлик сиёсати Хизматдан фойдаланишда шахсий маълумотларингиз қандай йиғилиши, ишлатилиши, сақланиши ва ҳимоя қилинишини тушунтиради.',
+          'Deborah — таълим платформаси (кейинги ўринларда «Хизмат»). Ушбу Макфийлик сиёсати Хизматдан фойдаланишда шахсий маълумотларингиз қандай йиғилиши, ишлатилиши, сақланиши ва ҳимоя қилинишини тушунтиради.',
           'Хизматдан фойдаланиш орқали сиз ушбу сиёсат шартларига розилик билдирасиз. Розилик бермасангиз, Хизматдан фойдаланманг.',
         ] },
         { id: 'data', heading: 'Қандай маълумотлар йиғилади', body: [
@@ -195,7 +195,7 @@ export const LEGAL_DOCS = {
         ] },
         { id: 'dsar', heading: 'Сизнинг ҳуқуқларингиз (DSAR)', body: [
           'Ўзбекистон қонунчилигига мувофиқ қуйидаги ҳуқуқларга эгасиз: маълумотларингиздан нусха олиш (экспорт), нотўғри маълумотларни тузатиш, қайта ишлашни чеклаш, ҳисобни ўчириш.',
-          'Буларни «Созламалар → Макфийлик» бўлимида ёки security@edikit.uz орқали сўрашингиз мумкин. Сўров 30 кун ичида кўриб чиқилади.',
+          'Буларни «Созламалар → Макфийлик» бўлимида ёки security@deborah.uz орқали сўрашингиз мумкин. Сўров 30 кун ичида кўриб чиқилади.',
           'Қонуний мажбурият (масалан, суд қарори) бўлса, ўчириш вақтинча чекланиши мумкин.',
         ] },
         { id: 'law', heading: 'Қонунчилик', body: [
@@ -203,7 +203,7 @@ export const LEGAL_DOCS = {
           'Оператор маълумотларни қонун талаб қилган ҳоллардан ташқари учинчи шахсларга бермайди.',
         ] },
         { id: 'contact', heading: 'Боғланиш', body: [
-          'Макфийлик бўйича саволлар учун: security@edikit.uz (хавфсизлик масалалари) ёки support@edikit.uz (умумий саволлар).',
+          'Макфийлик бўйича саволлар учун: security@deborah.uz (хавфсизлик масалалари) ёки support@deborah.uz (умумий саволлар).',
           'Ушбу сиёсатга ўзгартириш киритилса, янги версия ва сана ушбу саҳифада кўрсатилади.',
         ] },
       ],
@@ -212,7 +212,7 @@ export const LEGAL_DOCS = {
       title: 'Фойдаланиш шартлари',
       sections: [
         { id: 'intro', heading: 'Кириш', body: [
-          'Ушбу шартлар Edikit Хизматидан фойдаланиш қоидаларини белгилайди. Рўйхатдан ўтиш орқали сиз ушбу шартларга розилик билдирасиз.',
+          'Ушбу шартлар Deborah Хизматидан фойдаланиш қоидаларини белгилайди. Рўйхатдан ўтиш орқали сиз ушбу шартларга розилик билдирасиз.',
         ] },
         { id: 'account', heading: 'Ҳисоб', body: [
           'Ҳар бир фойдаланувчи битта ҳисоб яратиши мумкин. Ҳисоб маълумотлари (фойдаланувчи номи, парол) фақат ўзингизга тегишли бўлиши шарт.',
@@ -234,7 +234,7 @@ export const LEGAL_DOCS = {
         ] },
         { id: 'blocking', heading: 'Ҳисобни блоклаш', body: [
           'Қуйидаги ҳолларда ҳисоб вақтинча ёки доимий блокланиши мумкин: паролни кўп марта нотўғри киритиш, бот/автоматлаштирилган ҳужумлар, суиистеъмол, қоидаларни бузиш.',
-          'Блокланган фойдаланувчи сабабни support@edikit.uz орқали сўраши мумкин.',
+          'Блокланган фойдаланувчи сабабни support@deborah.uz орқали сўраши мумкин.',
         ] },
         { id: 'abuse', heading: 'Суиистеъмол', body: [
           'Тақиқланади: бошқа фойдаланувчи ҳисобига киришга уриниш, Хизматни бузиш, спам, таълим жараёнини фирибгарлик билан бузиш, ноқонуний контент тарқатиш.',
@@ -279,7 +279,7 @@ export const LEGAL_DOCS = {
       title: 'Политика конфиденциальности',
       sections: [
         { id: 'intro', heading: 'Введение', body: [
-          'Edikit — образовательная платформа (далее «Сервис»). Настоящая Политика конфиденциальности объясняет, как собираются, используются, хранятся и защищаются ваши персональные данные при использовании Сервиса.',
+          'Deborah — образовательная платформа (далее «Сервис»). Настоящая Политика конфиденциальности объясняет, как собираются, используются, хранятся и защищаются ваши персональные данные при использовании Сервиса.',
           'Используя Сервис, вы соглашаетесь с условиями настоящей политики. Если вы не согласны, не используйте Сервис.',
         ] },
         { id: 'data', heading: 'Какие данные собираются', body: [
@@ -301,7 +301,7 @@ export const LEGAL_DOCS = {
         ] },
         { id: 'dsar', heading: 'Ваши права (DSAR)', body: [
           'В соответствии с законодательством Узбекистана вы имеете право: получить копию данных (экспорт), исправить неверные данные, ограничить обработку, удалить аккаунт.',
-          'Запросить можно в разделе «Настройки → Конфиденциальность» или через security@edikit.uz. Запрос рассматривается в течение 30 дней.',
+          'Запросить можно в разделе «Настройки → Конфиденциальность» или через security@deborah.uz. Запрос рассматривается в течение 30 дней.',
           'При наличии юридического обязательства (например, решения суда) удаление может быть временно ограничено.',
         ] },
         { id: 'law', heading: 'Законодательство', body: [
@@ -309,7 +309,7 @@ export const LEGAL_DOCS = {
           'Оператор не передаёт данные третьим лицам, кроме случаев, предусмотренных законом.',
         ] },
         { id: 'contact', heading: 'Контакты', body: [
-          'По вопросам конфиденциальности: security@edikit.uz (вопросы безопасности) или support@edikit.uz (общие вопросы).',
+          'По вопросам конфиденциальности: security@deborah.uz (вопросы безопасности) или support@deborah.uz (общие вопросы).',
           'При изменении политики новая версия и дата указываются на этой странице.',
         ] },
       ],
@@ -318,7 +318,7 @@ export const LEGAL_DOCS = {
       title: 'Условия использования',
       sections: [
         { id: 'intro', heading: 'Введение', body: [
-          'Настоящие условия определяют правила использования Сервиса Edikit. Регистрируясь, вы соглашаетесь с этими условиями.',
+          'Настоящие условия определяют правила использования Сервиса Deborah. Регистрируясь, вы соглашаетесь с этими условиями.',
         ] },
         { id: 'account', heading: 'Аккаунт', body: [
           'Каждый пользователь может создать один аккаунт. Данные аккаунта (имя пользователя, пароль) должны быть известны только вам.',
@@ -340,7 +340,7 @@ export const LEGAL_DOCS = {
         ] },
         { id: 'blocking', heading: 'Блокировка аккаунта', body: [
           'Аккаунт может быть временно или постоянно заблокирован в следующих случаях: многократный неверный ввод пароля, бот/автоматизированные атаки, злоупотребление, нарушение правил.',
-          'Заблокированный пользователь может узнать причину через support@edikit.uz.',
+          'Заблокированный пользователь может узнать причину через support@deborah.uz.',
         ] },
         { id: 'abuse', heading: 'Злоупотребления', body: [
           'Запрещено: попытки доступа к чужому аккаунту, нарушение работы Сервиса, спам, мошенничество в учебном процессе, распространение незаконного контента.',
@@ -385,7 +385,7 @@ export const LEGAL_DOCS = {
       title: 'Privacy Policy',
       sections: [
         { id: 'intro', heading: 'Introduction', body: [
-          'Edikit is an education platform (the «Service»). This Privacy Policy explains how your personal data is collected, used, stored and protected when you use the Service.',
+          'Deborah is an education platform (the «Service»). This Privacy Policy explains how your personal data is collected, used, stored and protected when you use the Service.',
           'By using the Service you agree to the terms of this policy. If you do not agree, do not use the Service.',
         ] },
         { id: 'data', heading: 'What data we collect', body: [
@@ -407,7 +407,7 @@ export const LEGAL_DOCS = {
         ] },
         { id: 'dsar', heading: 'Your rights (DSAR)', body: [
           'Under the legislation of Uzbekistan you have the right to: export a copy of your data, correct inaccurate data, restrict processing, and delete your account.',
-          'You can request these in Settings → Privacy or via security@edikit.uz. Requests are processed within 30 days.',
+          'You can request these in Settings → Privacy or via security@deborah.uz. Requests are processed within 30 days.',
           'If a legal obligation exists (e.g. a court order), deletion may be temporarily restricted.',
         ] },
         { id: 'law', heading: 'Legal framework', body: [
@@ -415,7 +415,7 @@ export const LEGAL_DOCS = {
           'The operator does not share data with third parties except as required by law.',
         ] },
         { id: 'contact', heading: 'Contact', body: [
-          'For privacy questions: security@edikit.uz (security matters) or support@edikit.uz (general questions).',
+          'For privacy questions: security@deborah.uz (security matters) or support@deborah.uz (general questions).',
           'If this policy is updated, the new version and date will be shown on this page.',
         ] },
       ],
@@ -424,7 +424,7 @@ export const LEGAL_DOCS = {
       title: 'Terms of Service',
       sections: [
         { id: 'intro', heading: 'Introduction', body: [
-          'These terms define the rules for using the Edikit Service. By registering you agree to these terms.',
+          'These terms define the rules for using the Deborah Service. By registering you agree to these terms.',
         ] },
         { id: 'account', heading: 'Account', body: [
           'Each user may create one account. Your account credentials (username, password) must remain private to you.',
@@ -446,7 +446,7 @@ export const LEGAL_DOCS = {
         ] },
         { id: 'blocking', heading: 'Account blocking', body: [
           'An account may be temporarily or permanently blocked in cases such as: repeated incorrect passwords, bot/automated attacks, abuse, or violation of these rules.',
-          'A blocked user may ask for the reason via support@edikit.uz.',
+          'A blocked user may ask for the reason via support@deborah.uz.',
         ] },
         { id: 'abuse', heading: 'Abuse', body: [
           'Prohibited: attempting to access another user\'s account, disrupting the Service, spamming, academic fraud, or distributing unlawful content.',

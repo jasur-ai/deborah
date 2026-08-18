@@ -1,5 +1,5 @@
 /**
- * Edikit — Phase B Checkpoint (Prompt 19)
+ * Deborah — Phase B Checkpoint (Prompt 19)
  *
  * Data va identity checkpoint — verifies isolation, migration, role journey,
  * and overall Phase B integrity before proceeding to Phase C.

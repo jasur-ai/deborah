@@ -1,5 +1,5 @@
 /**
- * Edikit — Visual Test Helper (STYLE STEP 03)
+ * Deborah — Visual Test Helper (STYLE STEP 03)
  * ---------------------------------------------
  * Playwright Test runner bilan ishlaydi. WebServer (playwright.config.js)
  * NODE_ENV=test modida ishga tushadi; bu yerda faqat context/page + login +
@@ -144,7 +144,7 @@ export async function openThemedContext(browser, theme, projectName, { explicit 
   if (explicit) {
     const state = THEME_TO_STATE[theme] || 'light';
     await context.addInitScript((st) => {
-      try { localStorage.setItem('edikit-theme-state', st); } catch (_) {}
+      try { localStorage.setItem('deborah-theme-state', st); } catch (_) {}
     }, state);
   }
   return context;

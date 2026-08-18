@@ -1,5 +1,5 @@
 /**
- * Edikit — WCAG 2.2 AA & Artifact Accessibility Barrel Export
+ * Deborah — WCAG 2.2 AA & Artifact Accessibility Barrel Export
  *
  * Prompt 64 — accessibility settings, ACR audits, known-gap backlog va
  * PDF/DOCX/PPTX artifact QA. Automated checker yetarli emas — inson

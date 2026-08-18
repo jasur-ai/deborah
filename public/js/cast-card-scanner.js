@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Paper-Card Scanner (C4-03)
+ * Deborah — Cast Paper-Card Scanner (C4-03)
  * ------------------------------------------
  * Client-local scanner. RAW FRAME HECh QACHON serverga yuborilmaydi va
  * storage'da qolmaydi (item 5/6, tugallanish sharti). Frame processing

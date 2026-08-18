@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Projections
+ * Deborah — Cast Projections
  * --------------------------
  * Answer key (correctOptionIds) hech qachon public projectionga kirmaydi.
  * - participantQuestion: savol ochiq paytidagi safe projection

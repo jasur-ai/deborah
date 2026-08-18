@@ -1,4 +1,4 @@
-# Edikit — Feature Modules
+# Deborah — Feature Modules
 
 Each feature module encapsulates a bounded context of the application.
 

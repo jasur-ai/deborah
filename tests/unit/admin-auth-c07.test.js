@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH C-07 Admin auth (alohida session + Strict) — Unit tests
+ * Deborah — AUTH C-07 Admin auth (alohida session + Strict) — Unit tests
  * -----------------------------------------------------------------------
  *  - requireAdmin: Strict cookie + qisqa Max-Age assert (har request'da)
  *  - admin session user session'dan ajratilgan (req.session.admin)

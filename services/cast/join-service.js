@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Join Service
+ * Deborah — Cast Join Service
  * ---------------------------
  * Join code normalize, nickname sanitize, reserved/confusable bloklash.
  */

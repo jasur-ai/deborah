@@ -1,5 +1,5 @@
 /**
- * Edikit — Program Quality & Accreditation Workspace (unit tests, Prompt 62)
+ * Deborah — Program Quality & Accreditation Workspace (unit tests, Prompt 62)
  *
  * Pure schema functions: curriculum gap analysis (unmapped / missing
  * introduction / missing assessment / over-assessed), minimum cell

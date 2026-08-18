@@ -1,5 +1,5 @@
 /**
- * Edikit — Institutional Handoff (integration, Prompt 72)
+ * Deborah — Institutional Handoff (integration, Prompt 72)
  *
  * Service-level tests:
  *   - Final backup hash → dry-run → reconciliation → cutover flow

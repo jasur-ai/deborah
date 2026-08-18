@@ -1,5 +1,5 @@
 /**
- * Edikit — Deck Export (PPTX/PDF/Handout) pure logic
+ * Deborah — Deck Export (PPTX/PDF/Handout) pure logic
  *
  * Prompt 59 — canonical deckdan final export: PPTX/PDF/handout
  * attribution va accessibility bilan (research.md §9.2 canonical document

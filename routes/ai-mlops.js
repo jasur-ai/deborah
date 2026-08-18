@@ -1,5 +1,5 @@
 /**
- * Edikit — AI Evaluation, MLOps & Rollback Routes
+ * Deborah — AI Evaluation, MLOps & Rollback Routes
  *
  * Prompt 52 REST API (admin — requireAdmin):
  *   - GET  /api/admin/ai-mlops/meta                 — constants for admin UI

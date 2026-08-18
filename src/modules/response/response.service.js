@@ -1,5 +1,5 @@
 /**
- * Edikit — Response API, ACK Sequence & Autosave Service
+ * Deborah — Response API, ACK Sequence & Autosave Service
  *
  * Prompt 31 — reliable autosave contract for MCQ, structured and essay
  * responses:

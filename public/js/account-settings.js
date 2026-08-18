@@ -1,5 +1,5 @@
 /**
- * Edikit — Account settings client (AUTH A-29)
+ * Deborah — Account settings client (AUTH A-29)
  * ---------------------------------------------------------------
  * - Password change: POST /api/password/change (reauth + NIST + revoke)
  * - Email change (double opt-in): request → kod yangi email'ga → verify
@@ -67,25 +67,25 @@
         .then(function (j) {
           var items = (j && j.events) || [];
           if (!items.length) {
-            eventsList.innerHTML = '<div style="font-size:.8rem;color:var(--edikit-semantic-color-text-muted)">' + esc(copy.eventsEmpty || "Hozircha hodisalar yo'q") + '</div>';
+            eventsList.innerHTML = '<div style="font-size:.8rem;color:var(--deborah-semantic-color-text-muted)">' + esc(copy.eventsEmpty || "Hozircha hodisalar yo'q") + '</div>';
             return;
           }
           var html = items.map(function (e) {
             var label = evCopy[e.type] || evCopy.unknown || e.type;
             var meta = [e.device, e.browser].filter(Boolean).join(' / ');
             if (e.city) meta = meta ? meta + ' \u00b7 ' + e.city : e.city;
-            return '<div style="display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--edikit-semantic-color-border-default)">' +
+            return '<div style="display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--deborah-semantic-color-border-default)">' +
               '<div style="min-width:0;flex:1">' +
-              '<div style="font-size:.85rem;font-weight:700;color:var(--edikit-semantic-color-text-primary)">' + esc(label) + '</div>' +
-              '<div style="font-size:.74rem;color:var(--edikit-semantic-color-text-muted)">' + esc(meta || '') + '</div>' +
+              '<div style="font-size:.85rem;font-weight:700;color:var(--deborah-semantic-color-text-primary)">' + esc(label) + '</div>' +
+              '<div style="font-size:.74rem;color:var(--deborah-semantic-color-text-muted)">' + esc(meta || '') + '</div>' +
               '</div>' +
-              '<div style="font-size:.72rem;color:var(--edikit-semantic-color-text-muted);white-space:nowrap">' + fmtTime(e.ts) + '</div>' +
+              '<div style="font-size:.72rem;color:var(--deborah-semantic-color-text-muted);white-space:nowrap">' + fmtTime(e.ts) + '</div>' +
               '</div>';
           }).join('');
           eventsList.innerHTML = html;
         })
         .catch(function () {
-          eventsList.innerHTML = '<div style="font-size:.8rem;color:var(--edikit-semantic-color-text-muted)">' + esc(copy.eventsEmpty || '') + '</div>';
+          eventsList.innerHTML = '<div style="font-size:.8rem;color:var(--deborah-semantic-color-text-muted)">' + esc(copy.eventsEmpty || '') + '</div>';
         });
     }
 

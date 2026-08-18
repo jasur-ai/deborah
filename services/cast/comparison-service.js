@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Comparison Service (C5-03)
+ * Deborah — Cast Comparison Service (C5-03)
  * -----------------------------------------
  * Ikki session'ni solishtirishdan oldin config compatibility tekshiriladi.
  * Incompatible bo'lsa — direct delta/rank BLOKLANADI (misleading ko'rsatish

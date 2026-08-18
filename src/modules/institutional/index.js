@@ -1,5 +1,5 @@
 /**
- * Edikit — Institutional Handoff Barrel Export
+ * Deborah — Institutional Handoff Barrel Export
  *
  * Prompt 72 — final migration (cutover), role training, controlled pilot va
  * procurement pack (HECVAT/ACR/security/DPA/SLA/exit). Har write path

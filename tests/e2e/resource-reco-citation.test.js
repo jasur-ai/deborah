@@ -1,5 +1,5 @@
 /**
- * Edikit — Resource Recommendation Connectors (e2e/security tests, Prompt 54)
+ * Deborah — Resource Recommendation Connectors (e2e/security tests, Prompt 54)
  *
  * Security & data guards (§15):
  *   - LLM bibliographic record yaratmaydi — assertLlmOnlyRanksRecords

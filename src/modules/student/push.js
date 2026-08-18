@@ -38,7 +38,7 @@ export function vapidPublicKey() {
 }
 
 export function vapidSubject() {
-  return process.env.VAPID_SUBJECT || 'mailto:no-reply@edikit.uz';
+  return process.env.VAPID_SUBJECT || 'mailto:no-reply@deborah.uz';
 }
 
 function quietHours() {

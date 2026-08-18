@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH A-27: Passkey/WebAuthn integration tests
+ * Deborah — AUTH A-27: Passkey/WebAuthn integration tests
  *
  * Real kripto (tests/helpers/webauthn-authenticator) bilan to'liq flow:
  *   register (options → create → verify) → login (options → get → verify) →

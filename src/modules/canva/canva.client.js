@@ -1,5 +1,5 @@
 /**
- * Edikit — Canva Connect Client (server-side)
+ * Deborah — Canva Connect Client (server-side)
  *
  * Prompt 59 — Canva Connect API (research §9.8): OAuth 2.0 Authorization
  * Code + PKCE, create presentation design, list/get design, import
@@ -128,7 +128,7 @@ export async function canvaCreateDesign({ accessToken = '', title = '', fetchImp
     },
     body: JSON.stringify({
       design_type: 'presentation',
-      title: title || 'Edikit deck',
+      title: title || 'Deborah deck',
     }),
   });
   const json = await res.json().catch(() => ({}));

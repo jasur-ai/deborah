@@ -59,7 +59,7 @@ curl -H "Authorization: Bearer $ADMIN" /admin/api/cast/telemetry
 curl -X POST /api/cast/sessions/$SID/support-bundle
 
 # Log trace — traceId bo'ylab REST → Socket → store
-grep "\"traceId\":\"$TRACE\"" /var/log/edikit.log
+grep "\"traceId\":\"$TRACE\"" /var/log/deborah.log
 ```
 
 ## Dashboard

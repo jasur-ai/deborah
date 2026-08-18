@@ -1,5 +1,5 @@
 /**
- * Edikit — Academic Grade Rules e2e/security tests (Prompt 45)
+ * Deborah — Academic Grade Rules e2e/security tests (Prompt 45)
  *
  * E2E walk (Prompt 45 §15, §18-20):
  *   - API walk (graceful degradation without PostgreSQL): admin page

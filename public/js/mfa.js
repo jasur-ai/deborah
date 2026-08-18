@@ -1,5 +1,5 @@
 /**
- * Edikit — MFA login step (D-08 §08)
+ * Deborah — MFA login step (D-08 §08)
  * ====================================
  * views/user/mfa.ejs uchun client UX:
  *   - 6 ta single-digit TOTP input (avto-fokus, o'ng/backspace navigatsiya,

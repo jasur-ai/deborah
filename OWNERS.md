@@ -1,4 +1,4 @@
-# Edikit OWNERS — Design Scope Lock Approvals (STEP 01 / S01.12)
+# Deborah OWNERS — Design Scope Lock Approvals (STEP 01 / S01.12)
 
 > Ushbu hujjat STYLE_IMPLEMENTATION_MASTER_PLAN STEP 01 talabiga binoan
 > redesign scope bo'yicha mas'ul shaxslar ro'yxatini belgilaydi.
@@ -36,6 +36,6 @@ backend logika alohida rejalar orqali o'zgaradi.
 
 ## Kontakt
 
-- Repo: `https://github.com/jasur-ai/edikit`
+- Repo: `https://github.com/jasur-ai/deborah`
 - Implementatsiya kundaligi: `implementation-status.md`
 - Dizayn manba: `style.md`

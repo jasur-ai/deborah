@@ -1,5 +1,5 @@
 /**
- * Edikit — Source Pack & Secure RAG Ingestion (DB service)
+ * Deborah — Source Pack & Secure RAG Ingestion (DB service)
  *
  * Prompt 50 — teacher-approved source'larni safe corpusga aylantirish.
  * Graceful degradation (PostgreSQL absent in CI): write path'lar

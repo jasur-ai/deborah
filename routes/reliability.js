@@ -1,5 +1,5 @@
 /**
- * Edikit — Reliability Guard Routes (Prompt 71)
+ * Deborah — Reliability Guard Routes (Prompt 71)
  *
  *   - GET  /admin/reliability             — DR/load/chaos/release readiness
  *     dashboard (requireAdmin)

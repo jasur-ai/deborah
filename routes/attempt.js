@@ -1,5 +1,5 @@
 /**
- * Edikit — Attempt Lease, Identity Step & Server Timer API Routes
+ * Deborah — Attempt Lease, Identity Step & Server Timer API Routes
  *
  * Prompt 30 (Phase D #1) REST API:
  *   - POST /api/student/assignments/:id/attempt    — start a single-writer,

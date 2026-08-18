@@ -1,5 +1,5 @@
 /**
- * Edikit — Integration Tests: SEB Config Verification Boundary (Prompt 36)
+ * Deborah — Integration Tests: SEB Config Verification Boundary (Prompt 36)
  *
  * Contract tests against the real HTTP server (createApp factory):
  *   - Admin policy API: unauthenticated → 401; authenticated admin path works

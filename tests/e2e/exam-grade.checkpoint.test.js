@@ -1,5 +1,5 @@
 /**
- * Edikit — Exam, Paper & Grade Checkpoint (Prompt 49)
+ * Deborah — Exam, Paper & Grade Checkpoint (Prompt 49)
  *
  * Final controlled mock cycle — exam operationsdan final result/appealgacha
  * FULL journey walk at the pure-logic layer (attempt-governance / teacher-core

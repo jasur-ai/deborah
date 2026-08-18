@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Design Tokens
+ * Deborah — Cast Design Tokens
  * ----------------------------
  * WCAG-compatible tokens, Focus Dark/Light + High Contrast variants.
  * Projector typography tokenlari (C2-09).
@@ -93,8 +93,8 @@
   font-family: var(--cast-font);
   font-weight: 600;
   border: none;
-  border-radius: var(--edikit-radius-md, 12px);
-  padding: var(--edikit-spacing-3, 12px) var(--edikit-spacing-4, 16px); /* S12 fix:  qoldig'i olib tashlandi */
+  border-radius: var(--deborah-radius-md, 12px);
+  padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-4, 16px); /* S12 fix:  qoldig'i olib tashlandi */
   font-size: 0.9rem;
   cursor: pointer;
   transition: transform 0.12s ease, background 0.2s ease, opacity 0.2s ease;
@@ -155,8 +155,8 @@
   background: var(--cast-surface-2);
   border: 1px solid var(--cast-border);
   color: var(--cast-text);
-  border-radius: var(--edikit-radius-md, 12px);
-  padding: var(--edikit-spacing-3, 12px) var(--edikit-spacing-3, 12px)
+  border-radius: var(--deborah-radius-md, 12px);
+  padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-3, 12px)
   font-size: 1rem;
   min-height: 44px;
 }
@@ -260,7 +260,7 @@ a.cast-link:focus-visible {
 @media (max-width: 340px) {
   .cast-btn { width: 100%; }
   .cast-option { width: 100%; }
-  .cast-surface { padding: var(--edikit-spacing-3, 12px) !important; }
+  .cast-surface { padding: var(--deborah-spacing-3, 12px) !important; }
   .part-timer,
   .proj-timer { font-size: 1rem !important; }
 }
@@ -274,7 +274,7 @@ a.cast-link:focus-visible {
   background: var(--cast-surface, #1e1e2e);
   border: 2px solid var(--cast-focus, #ffd60a);
   border-radius: 12px;
-  padding: var(--edikit-spacing-4, 16px);
+  padding: var(--deborah-spacing-4, 16px);
   max-width: 320px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
 }
@@ -288,7 +288,7 @@ a.cast-link:focus-visible {
 .cast-hints-close {
   min-width: 28px;
   min-height: 28px;
-  border-radius: var(--edikit-radius-sm, 8px);
+  border-radius: var(--deborah-radius-sm, 8px);
   border: none;
   background: rgba(255, 255, 255, 0.1);
   color: inherit;
@@ -320,7 +320,7 @@ a.cast-link:focus-visible {
 .cast-chart-table th,
 .cast-chart-table td {
   border: 1px solid var(--cast-border, rgba(255,255,255,0.2));
-  padding: var(--edikit-spacing-2, 8px) var(--edikit-spacing-2, 8px)
+  padding: var(--deborah-spacing-2, 8px) var(--deborah-spacing-2, 8px)
   text-align: left;
 }
 .cast-chart-table caption {

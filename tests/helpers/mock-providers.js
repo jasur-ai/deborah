@@ -1,5 +1,5 @@
 /**
- * Edikit — Mock Providers Helper (AUTH D-14 §07)
+ * Deborah — Mock Providers Helper (AUTH D-14 §07)
  * ---------------------------------------------------------------------------
  * Markaziy mock provider'lar — har testda qayta yozmaslik uchun.
  * Texnikalar mavjud unit testlardan ko'chirildi (o'sha testlarga tegilmadi):

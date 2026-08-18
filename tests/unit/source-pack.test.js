@@ -1,5 +1,5 @@
 /**
- * Edikit — Source Pack & Secure RAG Ingestion (unit tests, Prompt 50)
+ * Deborah — Source Pack & Secure RAG Ingestion (unit tests, Prompt 50)
  *
  * Pure schema tekshiruvi (hech qanday DB/I-O yo'q):
  *   - SSRF: literal private/link-local/metadata IP, localhost, xavfli

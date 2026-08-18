@@ -17,14 +17,14 @@
   'use strict';
 
   var CSS_VARS = {
-    s1: 'var(--edikit-data-viz-series-1, #2563EB)',
-    s2: 'var(--edikit-data-viz-series-2, #06B6D4)',
-    s3: 'var(--edikit-data-viz-series-3, #F59E0B)',
-    s4: 'var(--edikit-data-viz-series-4, #10B981)',
-    s5: 'var(--edikit-data-viz-series-5, #8B5CF6)',
-    correct: 'var(--edikit-data-viz-correct, #16A34A)',
-    incorrect: 'var(--edikit-data-viz-incorrect, #DC2626)',
-    neutral: 'var(--edikit-semantic-color-text-muted, #94A3B8)',
+    s1: 'var(--deborah-data-viz-series-1, #2563EB)',
+    s2: 'var(--deborah-data-viz-series-2, #06B6D4)',
+    s3: 'var(--deborah-data-viz-series-3, #F59E0B)',
+    s4: 'var(--deborah-data-viz-series-4, #10B981)',
+    s5: 'var(--deborah-data-viz-series-5, #8B5CF6)',
+    correct: 'var(--deborah-data-viz-correct, #16A34A)',
+    incorrect: 'var(--deborah-data-viz-incorrect, #DC2626)',
+    neutral: 'var(--deborah-semantic-color-text-muted, #94A3B8)',
   };
 
   // CVD-safe markers — grayscale'da ham farqlanadi (S19.05)

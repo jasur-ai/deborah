@@ -1,5 +1,5 @@
 /**
- * Edikit — Risk-based authentication service (AUTH A-28)
+ * Deborah — Risk-based authentication service (AUTH A-28)
  * -------------------------------------------------------------------
  * AUTH A-28 (guide §06-§17, §29-§30):
  *   - Device fingerprint (client'da hash, server'ga faqat hash — raw telemetry

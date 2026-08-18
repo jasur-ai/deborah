@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Setup Studio (STEP 28)
+ * Deborah — Cast Setup Studio (STEP 28)
  * -------------------------------------
  * Professional mode → lobby setup dialog.
  * - Native radio mode cards (no color-only state)

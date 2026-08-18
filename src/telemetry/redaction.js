@@ -1,5 +1,5 @@
 /**
- * Edikit — Telemetry Redaction (Prompt 69 §11, §15)
+ * Deborah — Telemetry Redaction (Prompt 69 §11, §15)
  *
  * Privacy-safe observability: telemetryga TUSHMAYDIGAN ma'lumotlar:
  *   - answer keys / q_correct / to'g'ri javob

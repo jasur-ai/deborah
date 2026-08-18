@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 009: Assessment Builder & Blueprint
+ * Deborah — Migration 009: Assessment Builder & Blueprint
  *
  * Adds the assessment draft builder core:
  *   - assessment_templates: reusable assessment templates (e.g. "Summative Final")
@@ -197,9 +197,9 @@ export async function up(db) {
     'assessment_items',
   ];
   for (const table of newTables) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
-    await sql`GRANT DELETE ON ${sql.table(table)} TO edikit_migration`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 
   console.log('Assessment structure created: 5 tables');

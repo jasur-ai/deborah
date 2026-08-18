@@ -1,5 +1,5 @@
 /**
- * Edikit — Official HEMIS & OneID Adapter Boundary (PURE logic)
+ * Deborah — Official HEMIS & OneID Adapter Boundary (PURE logic)
  *
  * Prompt 66 — rasmiy contract mavjud bo'lganda roster/grade va identity
  * integration'ni xavfsiz ulash (research.md §12 identity assurance, §19
@@ -9,7 +9,7 @@
  *   - Adapter interface contract: PresentationProvider-style contract
  *     (validateAdapterRequest, assertAdapterMode) — sandbox|live.
  *   - Source-of-truth field mapping: HEMIS_* field maps + validateFieldMap
- *     + mapHemistoEdikit / mapEdikitToHemis.
+ *     + mapHemistoDeborah / mapDeborahToHemis.
  *   - HEMIS pull→staging→diff: assertHemispullTransition (job FSM),
  *     buildIdempotencyKey, assertRetryAllowed, computeBackoff, dead-letter.
  *   - Ratified-only grade push (§15): assertRatifiedOnlyPush.
@@ -148,12 +148,12 @@ export function assertAdapterMode({ mode = ADAPTER_MODES.SANDBOX, allowLive = fa
 // ═══════════════════════════════════════════════════════════════════
 
 /**
- * Source-of-truth field map: HEMIS (external) ↔ Edikit (canonical).
- * "source of truth" — Edikit internal canonical fieldga aylantiriladi;
+ * Source-of-truth field map: HEMIS (external) ↔ Deborah (canonical).
+ * "source of truth" — Deborah internal canonical fieldga aylantiriladi;
  * push paytida canonictan HEMIS formatga qaytariladi (bir xil map).
  */
 export const HEMIS_FIELD_MAP = {
-  // HEMIS student → Edikit user
+  // HEMIS student → Deborah user
   studentId: { canonical: 'externalId', required: true },
   firstName: { canonical: 'firstName', required: true },
   lastName: { canonical: 'lastName', required: true },
@@ -163,7 +163,7 @@ export const HEMIS_FIELD_MAP = {
   courseCode: { canonical: 'courseCode', required: false },
 };
 
-// OneID identity claims → Edikit identity fields
+// OneID identity claims → Deborah identity fields
 export const ONEID_FIELD_MAP = {
   sub: { canonical: 'providerSubject', required: true },
   pinfl: { canonical: 'pinfl', required: true },
@@ -343,7 +343,7 @@ export function computeReconciliationDiff({ external = [], local = [], keyField 
 
 /**
  * OneID account link guard — account takeover'ning oldini oladi:
- * OneID subject (PINFL) bilan bog'lanayotgan Edikit identity mos kelishi
+ * OneID subject (PINFL) bilan bog'lanayotgan Deborah identity mos kelishi
  * shart; assurance darajasi I2+ talab qilinadi (research §30.1, §30.3).
  * @param {{ providerSubject?: string, localSubject?: string, assuranceLevel?: string, minAssurance?: string }} params
  */
@@ -400,7 +400,7 @@ export function assertIdentityStatusTransition({ from, to } = {}) {
  *      hech qachon DB'ga tushmaydi.
  * @param {{ plaintext?: string, masterKey?: string, aad?: string }} params
  */
-export function buildTokenEnvelope({ plaintext = '', masterKey = '', aad = 'edikit:token-vault' } = {}) {
+export function buildTokenEnvelope({ plaintext = '', masterKey = '', aad = 'deborah:token-vault' } = {}) {
   if (!plaintext) return { ok: false, reason: 'plaintext is required' };
   if (!masterKey || masterKey.length < 16) {
     return { ok: false, reason: 'masterKey must be at least 16 chars (envelope encryption)' };
@@ -437,7 +437,7 @@ export function buildTokenEnvelope({ plaintext = '', masterKey = '', aad = 'edik
  * Envelope decrypt — buildTokenEnvelope bilan teskari. Xato → fail-closed.
  * @param {{ ciphertext?: string, iv?: string, keyRef?: string, masterKey?: string, aad?: string }} params
  */
-export function decryptTokenEnvelope({ ciphertext = '', iv = '', keyRef = '', masterKey = '', aad = 'edikit:token-vault' } = {}) {
+export function decryptTokenEnvelope({ ciphertext = '', iv = '', keyRef = '', masterKey = '', aad = 'deborah:token-vault' } = {}) {
   try {
     const ref = JSON.parse(keyRef);
     if (ref.v !== 1) return { ok: false, reason: 'unsupported keyRef version' };

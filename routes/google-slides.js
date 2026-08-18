@@ -1,5 +1,5 @@
 /**
- * Edikit — Google Slides Adapter Routes
+ * Deborah — Google Slides Adapter Routes
  *
  * Prompt 59 REST API:
  *   - GET   /api/admin/google-slides/status     — config/scope status
@@ -81,7 +81,7 @@ router.post('/api/admin/google-slides/unlink', requireAdmin, async (req, res) =>
 /** POST /api/admin/google-slides/deck — create presentation from canonical deck. */
 router.post('/api/admin/google-slides/deck', requireAdmin, async (req, res) => {
   try {
-    const r = await createFromCanonical({ title: req.body?.title || 'Edikit deck', document: req.body?.document, actorId: actorId(req) });
+    const r = await createFromCanonical({ title: req.body?.title || 'Deborah deck', document: req.body?.document, actorId: actorId(req) });
     if (!r.ok) return res.status(400).json({ error: r.error });
     res.json({ ok: true, presentationId: r.presentationId, presentationUrl: r.presentationUrl, slides: r.slides });
   } catch (e) {

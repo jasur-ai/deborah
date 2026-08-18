@@ -1,5 +1,5 @@
 /**
- * Edikit — Account Linking Unit Tests
+ * Deborah — Account Linking Unit Tests
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 

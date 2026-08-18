@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 016: IndexedDB Offline Journal, Reconnect & Recovery
+ * Deborah — Migration 016: IndexedDB Offline Journal, Reconnect & Recovery
  *
  * Prompt 32 — low-bandwidth/crash resilience (research.md §29):
  *   - The browser keeps an encrypted local journal (IndexedDB) and appends
@@ -108,12 +108,12 @@ export async function up(db) {
     .execute();
 
   // ── Grants ──
-  await sql`GRANT SELECT, INSERT, UPDATE ON offline_journal_acks TO edikit_runtime`.execute(db);
-  await sql`GRANT USAGE ON offline_journal_acks_id_seq TO edikit_runtime`.execute(db);
-  await sql`GRANT SELECT, INSERT, UPDATE ON recovery_packages TO edikit_runtime`.execute(db);
-  await sql`GRANT USAGE ON recovery_packages_id_seq TO edikit_runtime`.execute(db);
-  await sql`GRANT DELETE ON offline_journal_acks TO edikit_migration`.execute(db);
-  await sql`GRANT DELETE ON recovery_packages TO edikit_migration`.execute(db);
+  await sql`GRANT SELECT, INSERT, UPDATE ON offline_journal_acks TO deborah_runtime`.execute(db);
+  await sql`GRANT USAGE ON offline_journal_acks_id_seq TO deborah_runtime`.execute(db);
+  await sql`GRANT SELECT, INSERT, UPDATE ON recovery_packages TO deborah_runtime`.execute(db);
+  await sql`GRANT USAGE ON recovery_packages_id_seq TO deborah_runtime`.execute(db);
+  await sql`GRANT DELETE ON offline_journal_acks TO deborah_migration`.execute(db);
+  await sql`GRANT DELETE ON recovery_packages TO deborah_migration`.execute(db);
 
   console.log('Offline journal/recovery structure created: offline_journal_acks, recovery_packages');
 }

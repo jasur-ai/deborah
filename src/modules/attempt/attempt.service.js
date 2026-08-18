@@ -1,5 +1,5 @@
 /**
- * Edikit — Attempt Lease, Identity Step & Server Timer Service
+ * Deborah — Attempt Lease, Identity Step & Server Timer Service
  *
  * Prompt 30 (Phase D #1) — secure attempt start for an authorized student:
  *   - startAttempt: single-writer, server-timed attempt start.

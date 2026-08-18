@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Reasoning Service (C3-07)
+ * Deborah — Cast Reasoning Service (C3-07)
  * -----------------------------------------
  * Selected items answerdan keyin qisqa justification oladi va
  * teacher-private moderation queue'ga yuboradi.

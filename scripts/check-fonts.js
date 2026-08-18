@@ -81,12 +81,12 @@ else pass(`font-display: swap barcha @font-face'da (${faceCount})`);
 
 // 6) Body 16px / metadata 14px+ (token tekshiruvi)
 const typo = JSON.parse(readFileSync(join(ROOT, 'public/design/tokens/typography.json'), 'utf8'));
-const fs = typo.edikit.typography['font-size'];
+const fs = typo.deborah.typography['font-size'];
 if (fs.base.$value !== '1rem') fail('Body base 1rem emas');
 else pass('Body base 16px (1rem)');
 if (fs.sm.$value !== '0.875rem') fail('Metadata sm 0.875rem emas');
 else pass('Metadata 14px+ (0.875rem)');
-if (typo.edikit.typography['line-height'].normal.$value < 1.55) fail('Body line-height < 1.55');
+if (typo.deborah.typography['line-height'].normal.$value < 1.55) fail('Body line-height < 1.55');
 else pass('Body line-height 1.55+');
 
 console.log(fails === 0 ? `\n✅ Font/typography validator: PASS` : `\n❌ Font/typography validator: ${fails} xato`);

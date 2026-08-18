@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Action Pack Service (C5-01)
+ * Deborah — Cast Action Pack Service (C5-01)
  * -----------------------------------------
  * Session tugaganda teacherga aggregate evidence + bir bosishli follow-up
  * actionlar, studentga esa faqat own response / approved explanation / next

@@ -1,5 +1,5 @@
 /**
- * Edikit — Submit Sealing va Signed Receipt Routes
+ * Deborah — Submit Sealing va Signed Receipt Routes
  *
  * Prompt 33 (Phase D #4) REST API:
  *   - GET  /api/student/attempts/:id/submit/preview — completeness summary

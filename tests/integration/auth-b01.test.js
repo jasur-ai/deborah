@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH B-01 Users final schema — Integration tests
+ * Deborah — AUTH B-01 Users final schema — Integration tests
  * ---------------------------------------------------------
  *  - Register → DB'da canonical record (role, role_version, email_status,
  *    updated_at, twofa_enabled...)

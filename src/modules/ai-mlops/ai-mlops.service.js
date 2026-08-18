@@ -1,5 +1,5 @@
 /**
- * Edikit — AI Evaluation, MLOps & Rollback (DB service)
+ * Deborah — AI Evaluation, MLOps & Rollback (DB service)
  *
  * Prompt 52 — golden set, deployment gate, drift va model rollbackni
  * production boshqaruviga aylantirish. Graceful degradation (PostgreSQL

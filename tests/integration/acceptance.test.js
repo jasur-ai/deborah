@@ -1,5 +1,5 @@
 /**
- * Edikit — Final System Acceptance (integration, Prompt 73)
+ * Deborah — Final System Acceptance (integration, Prompt 73)
  *
  * Service-level tests:
  *   - Submit → review → sign-off flow per domain

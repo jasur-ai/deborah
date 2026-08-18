@@ -1,5 +1,5 @@
 /**
- * Edikit — Portfolio UI strings (AUTH A-12 §16)
+ * Deborah — Portfolio UI strings (AUTH A-12 §16)
  * --------------------------------------------
  * Lightweight server-side catalog for the portfolio page.
  * Locales: uz-Latn (default), uz-Cyrl, ru, en.

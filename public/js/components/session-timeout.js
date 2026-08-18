@@ -11,10 +11,10 @@
  */
 (function () {
   'use strict';
-  if (typeof window === 'undefined' || window.__edikitSessionTimeout) return;
+  if (typeof window === 'undefined' || window.__deborahSessionTimeout) return;
   const cfg = window.__SESSION_TIMEOUT;
   if (!cfg || !cfg.idleMs) return;
-  window.__edikitSessionTimeout = true;
+  window.__deborahSessionTimeout = true;
 
   const idleMs = Number(cfg.idleMs) || 1800000;
   const warnMs = Number(cfg.warnMs) || 60000;

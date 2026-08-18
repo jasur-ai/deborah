@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Visual Matrix Coverage Report (STYLE STEP 03 / S03.12)
+ * Deborah — Visual Matrix Coverage Report (STYLE STEP 03 / S03.12)
  * -----------------------------------------------------------------
  * Har critical page barcha required theme/viewport/state kombinatsiyasiga
  * ega ekanini tekshiradi.

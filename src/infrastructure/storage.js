@@ -1,5 +1,5 @@
 /**
- * Edikit — Object Storage Abstraction
+ * Deborah — Object Storage Abstraction
  *
  * Provides S3-compatible file storage.
  * Supports:
@@ -113,7 +113,7 @@ async function s3Put(key, buffer, contentType) {
   const { PutObjectCommand } = await import('@aws-sdk/client-s3');
 
   await client.send(new PutObjectCommand({
-    Bucket: CONFIG.S3_BUCKET || 'edikit',
+    Bucket: CONFIG.S3_BUCKET || 'deborah',
     Key: key,
     Body: buffer,
     ContentType: contentType || 'application/octet-stream',
@@ -128,7 +128,7 @@ async function s3Get(key) {
 
   try {
     const response = await client.send(new GetObjectCommand({
-      Bucket: CONFIG.S3_BUCKET || 'edikit',
+      Bucket: CONFIG.S3_BUCKET || 'deborah',
       Key: key,
     }));
     const chunks = [];
@@ -151,7 +151,7 @@ async function s3Delete(key) {
   const { DeleteObjectCommand } = await import('@aws-sdk/client-s3');
 
   await client.send(new DeleteObjectCommand({
-    Bucket: CONFIG.S3_BUCKET || 'edikit',
+    Bucket: CONFIG.S3_BUCKET || 'deborah',
     Key: key,
   }));
   return true;
@@ -162,7 +162,7 @@ async function s3List(prefix) {
   const { ListObjectsV2Command } = await import('@aws-sdk/client-s3');
 
   const response = await client.send(new ListObjectsV2Command({
-    Bucket: CONFIG.S3_BUCKET || 'edikit',
+    Bucket: CONFIG.S3_BUCKET || 'deborah',
     Prefix: prefix || '',
   }));
 
@@ -233,7 +233,7 @@ const storage = {
       type: STORAGE_TYPE,
       localDir: STORAGE_TYPE === 'local' ? LOCAL_DIR : undefined,
       s3Endpoint: STORAGE_TYPE === 's3' ? CONFIG.S3_ENDPOINT : undefined,
-      s3Bucket: STORAGE_TYPE === 's3' ? (CONFIG.S3_BUCKET || 'edikit') : undefined,
+      s3Bucket: STORAGE_TYPE === 's3' ? (CONFIG.S3_BUCKET || 'deborah') : undefined,
     };
   },
 };

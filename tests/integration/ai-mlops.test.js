@@ -1,5 +1,5 @@
 /**
- * Edikit — AI Evaluation, MLOps & Rollback (integration/contract, Prompt 52)
+ * Deborah — AI Evaluation, MLOps & Rollback (integration/contract, Prompt 52)
  *
  * HTTP integration (real Express app + admin auth + CSRF):
  *   - /api/admin/ai-mlops/meta — constants exposed.

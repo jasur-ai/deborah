@@ -1,5 +1,5 @@
 /**
- * Edikit — Trace Context Propagation (Prompt 69)
+ * Deborah — Trace Context Propagation (Prompt 69)
  *
  * AsyncLocalStorage asosidagi trace context — HTTP so'rovidan boshlangan
  * trace ID barcha ichki async chaqiruvlarga (DB, outbox, provider) uzatiladi.

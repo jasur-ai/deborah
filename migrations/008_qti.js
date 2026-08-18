@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 008: QTI Import/Export Staging
+ * Deborah — Migration 008: QTI Import/Export Staging
  *
  * Adds IMS QTI (Question and Test Interoperability) package support:
  *   - qti_packages: uploaded QTI packages with security metadata
@@ -138,9 +138,9 @@ export async function up(db) {
   // ── Grant permissions ──
   const newTables = ['qti_packages', 'qti_staging_items', 'qti_resource_map'];
   for (const table of newTables) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
-    await sql`GRANT DELETE ON ${sql.table(table)} TO edikit_migration`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 
   console.log('QTI structure created: 3 tables');

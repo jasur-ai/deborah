@@ -18,7 +18,7 @@ describe('STEP 17 — Navigation components', () => {
       const block = navCss.match(/\.shell-nav-link\.active\s*\{([\s\S]*?)\}/)[1];
       expect(block).toMatch(/background:\s*var\(--accent-alpha/);
       expect(block).toMatch(/font-weight:\s*700/);
-      expect(block).toMatch(/box-shadow:\s*inset 3px 0 0 var\(--edikit-semantic-color-action-primary\)/);
+      expect(block).toMatch(/box-shadow:\s*inset 3px 0 0 var\(--deborah-semantic-color-action-primary\)/);
     });
     it('hover active dan farq qiladi (font-weight 600)', () => {
       const hover = navCss.match(/\.shell-nav-link:hover\s*\{([\s\S]*?)\}/)[1];
@@ -54,7 +54,7 @@ describe('STEP 17 — Navigation components', () => {
 
   describe('S17.08: Sticky header tokens', () => {
     it('scroll-margin-top tokenlashtirilgan', () => {
-      expect(navCss).toMatch(/scroll-margin-top:\s*calc\(var\(--edikit-shell-header-h/);
+      expect(navCss).toMatch(/scroll-margin-top:\s*calc\(var\(--deborah-shell-header-h/);
     });
     it('safe-area inset ishlatilgan', () => {
       expect(navCss).toMatch(/env\(safe-area-inset-bottom/);

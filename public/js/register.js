@@ -1,5 +1,5 @@
 /**
- * Edikit — Register sahifasi (AUTH B-03)
+ * Deborah — Register sahifasi (AUTH B-03)
  * ---------------------------------------
  * auth.js bilan birga yuklanadi (tablar, parol toggle, caps-lock, strength
  * meter, submit lock, lockout countdown — hammasi auth.js'da). Bu fayl
@@ -217,7 +217,7 @@
         pwBar.style.background = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#10b981'][score] || '#22c55e';
         var label = strengthLabels[score] || '';
         pwHint.textContent = label;
-        pwHint.style.color = score >= need ? 'var(--edikit-semantic-color-status-success, #22c55e)' : 'var(--edikit-semantic-color-text-muted, #94a3b8)';
+        pwHint.style.color = score >= need ? 'var(--deborah-semantic-color-status-success, #22c55e)' : 'var(--deborah-semantic-color-text-muted, #94a3b8)';
         // Live invalid: NIST min uzunlik (15) — server yagona manba
         var ok = v.length >= 15 && v.length <= 128;
         pwInput2.setCustomValidity(ok ? '' : ' ');

@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast REST API
+ * Deborah — Cast REST API
  * -----------------------
  * - POST /api/cast/preflight       — safe test metadata (hech qachon answer key yoʻq)
  * - POST /api/cast/sessions        — validated session creation (CSRF + auth)

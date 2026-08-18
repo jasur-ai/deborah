@@ -1,5 +1,5 @@
 /**
- * Edikit — Academic Grade Rules & Deterministic Calculation Module Barrel
+ * Deborah — Academic Grade Rules & Deterministic Calculation Module Barrel
  *
  * Prompt 45 — weighted, hurdle, late, exempt, resit va rounding qoidalarini
  * versionlangan DSL'da hisoblash (research.md §18 GradingService). Pure

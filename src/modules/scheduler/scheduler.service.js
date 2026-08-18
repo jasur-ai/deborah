@@ -1,5 +1,5 @@
 /**
- * Edikit — Exam Scheduling Solver Service
+ * Deborah — Exam Scheduling Solver Service
  *
  * DB layer for Prompt 39:
  *   - Room inventory CRUD (exam_rooms)

@@ -123,7 +123,7 @@ describe('AUTH A-23 — Email template`lar (4 til + spam-scan) (unit)', () => {
     const { renderVerify } = await import('../../src/modules/email/templates.js');
     for (const lang of ['uz', 'uz-cyrl', 'ru', 'en']) {
       const t = renderVerify({ code: '123456', lang });
-      expect(t.subject).toContain('123456' ? 'Edikit' : 'Edikit');
+      expect(t.subject).toContain('123456' ? 'Deborah' : 'Deborah');
       expect(t.html).toContain('123456');
       expect(t.html).toContain('</html>');
       expect(t.text).toContain('123456');
@@ -133,7 +133,7 @@ describe('AUTH A-23 — Email template`lar (4 til + spam-scan) (unit)', () => {
 
   it('reset template: havola mavjud, token hammada bir xil', async () => {
     const { renderReset } = await import('../../src/modules/email/templates.js');
-    const url = 'https://edikit.uz/user/reset?token=abc';
+    const url = 'https://deborah.uz/user/reset?token=abc';
     const t = renderReset({ resetUrl: url, lang: 'en' });
     expect(t.html).toContain(url);
     expect(t.text).toContain(url);

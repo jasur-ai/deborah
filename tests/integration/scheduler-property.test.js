@@ -1,5 +1,5 @@
 /**
- * Edikit — Integration Tests: Exam Scheduling Solver Property Tests (Prompt 39)
+ * Deborah — Integration Tests: Exam Scheduling Solver Property Tests (Prompt 39)
  *
  * Hard-constraint property testing (Prompt 39 §19):
  *   - For many SEEDED random instances (deterministic PRNG), the solver's

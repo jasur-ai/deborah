@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 020: Privacy-first Camera Evidence Pilot
+ * Deborah — Migration 020: Privacy-first Camera Evidence Pilot
  *
  * Prompt 37 — local inference, LIMITED evidence, human review (research.md
  * §27 — evidence portfolio, surveillance emas; §15 — biometric storage
@@ -123,15 +123,15 @@ export async function up(db) {
     .execute();
 
   // ── Grants ──
-  await sql`GRANT SELECT, INSERT, UPDATE ON camera_pilot_policy TO edikit_runtime`.execute(db);
-  await sql`GRANT USAGE ON camera_pilot_policy_id_seq TO edikit_runtime`.execute(db);
-  await sql`GRANT SELECT, INSERT, UPDATE, DELETE ON camera_consent TO edikit_runtime`.execute(db);
-  await sql`GRANT USAGE ON camera_consent_id_seq TO edikit_runtime`.execute(db);
-  await sql`GRANT SELECT, INSERT, UPDATE, DELETE ON camera_evidence TO edikit_runtime`.execute(db);
-  await sql`GRANT USAGE ON camera_evidence_id_seq TO edikit_runtime`.execute(db);
-  await sql`GRANT SELECT, INSERT ON camera_evidence_review TO edikit_runtime`.execute(db);
-  await sql`GRANT USAGE ON camera_evidence_review_id_seq TO edikit_runtime`.execute(db);
-  await sql`GRANT SELECT, DELETE ON camera_pilot_policy, camera_consent, camera_evidence, camera_evidence_review TO edikit_migration`.execute(db);
+  await sql`GRANT SELECT, INSERT, UPDATE ON camera_pilot_policy TO deborah_runtime`.execute(db);
+  await sql`GRANT USAGE ON camera_pilot_policy_id_seq TO deborah_runtime`.execute(db);
+  await sql`GRANT SELECT, INSERT, UPDATE, DELETE ON camera_consent TO deborah_runtime`.execute(db);
+  await sql`GRANT USAGE ON camera_consent_id_seq TO deborah_runtime`.execute(db);
+  await sql`GRANT SELECT, INSERT, UPDATE, DELETE ON camera_evidence TO deborah_runtime`.execute(db);
+  await sql`GRANT USAGE ON camera_evidence_id_seq TO deborah_runtime`.execute(db);
+  await sql`GRANT SELECT, INSERT ON camera_evidence_review TO deborah_runtime`.execute(db);
+  await sql`GRANT USAGE ON camera_evidence_review_id_seq TO deborah_runtime`.execute(db);
+  await sql`GRANT SELECT, DELETE ON camera_pilot_policy, camera_consent, camera_evidence, camera_evidence_review TO deborah_migration`.execute(db);
 
   console.log('Camera evidence pilot structure created: policy / consent / evidence / review (flags-only, raw frames never stored)');
 }

@@ -1,5 +1,5 @@
 /**
- * Edikit — Dev Preview Routes (STYLE STEP 12)
+ * Deborah — Dev Preview Routes (STYLE STEP 12)
  * ---------------------------------------------
  * Component library preview sahifalari — faqat NODE_ENV !== 'production'
  * da mavjud (ishlab chiqish/visual test uchun).
@@ -10,7 +10,7 @@ const router = Router();
 
 router.get('/components', (req, res) => {
   res.render('dev/components', {
-    title: 'Components — Edikit Design System',
+    title: 'Components — Deborah Design System',
     description: 'Base component library preview (button, icon-button, badge)',
   });
 });

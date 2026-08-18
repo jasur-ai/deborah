@@ -1,5 +1,5 @@
 /**
- * Edikit — User DSAR Routes (AUTH D-23)
+ * Deborah — User DSAR Routes (AUTH D-23)
  * ---------------------------------------------------------------------------
  * POST /api/privacy/dsar/export   — barcha PII eksport (JSON)
  * POST /api/privacy/dsar/correct  — profil tuzatish (reauth)

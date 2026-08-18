@@ -1,5 +1,5 @@
 /**
- * Edikit — Google Slides Adapter
+ * Deborah — Google Slides Adapter
  *
  * Prompt 59 — Google Slides minimum-scope (drive.file) integratsiyasi
  * (research.md §9.9). Full Drive scope olinmaydi; token boshqa

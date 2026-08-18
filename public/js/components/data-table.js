@@ -13,7 +13,7 @@
 (function (global) {
   'use strict';
 
-  var DENSITY_KEY = 'edikit-dt-density';
+  var DENSITY_KEY = 'deborah-dt-density';
 
   function DataTable(root, opts) {
     if (!root) return;

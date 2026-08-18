@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Self-Paced Race (C3-16) Tests
+ * Deborah — Cast Self-Paced Race (C3-16) Tests
  * ---------------------------------------------
  * coverage: isSelfPaced, buildPersonalOrder, initCursor (idempotent, late-join
  * position), projectCursor (privacy — order/rank boshqa foydalanuvchiga

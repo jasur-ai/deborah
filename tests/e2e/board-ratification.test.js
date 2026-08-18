@@ -1,5 +1,5 @@
 /**
- * Edikit — Board Ratification, Result Release & Grade Ledger e2e/security
+ * Deborah — Board Ratification, Result Release & Grade Ledger e2e/security
  * tests (Prompt 47)
  *
  * E2E walk (graceful degradation without PostgreSQL):
@@ -60,7 +60,7 @@ describe('board — admin page + meta', () => {
     const res = await agent.get('/admin/board');
     expect(res.status).toBe(200);
     expect(res.text).toContain('Board &amp; Ratification');
-    expect(res.text).toContain('Edikit Admin');
+    expect(res.text).toContain('Deborah Admin');
   });
 
   it('GET /api/admin/board/meta exposes constants', async () => {

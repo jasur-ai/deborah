@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Retention Job (C4-07)
+ * Deborah — Cast Retention Job (C4-07)
  * -------------------------------------
  * Scheduled worker (daily/hourly) — expired active DB recordlarni
  * delete/anonymize qiladi (item 5, 6):

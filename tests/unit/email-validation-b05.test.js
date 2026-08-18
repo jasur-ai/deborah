@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH B-05 Email validatsiya (typo + fast/full) — Unit tests
+ * Deborah — AUTH B-05 Email validatsiya (typo + fast/full) — Unit tests
  * ---------------------------------------------------------------------
  *  - suggestDomainFix: ma'lum typo xarita + Levenshtein 1 (faqat ishonchli)
  *  - validateFast: syntax/disposable/MX/suggestion

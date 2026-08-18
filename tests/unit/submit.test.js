@@ -1,5 +1,5 @@
 /**
- * Edikit — Submit Sealing va Signed Receipt Tests
+ * Deborah — Submit Sealing va Signed Receipt Tests
  *
  * Covers (Prompt 33, research.md §29.5):
  *   - Completeness summary (server-computed, answered/unanswered)

@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH B-03 Register forma — Integration tests
+ * Deborah — AUTH B-03 Register forma — Integration tests
  * ------------------------------------------------------
  *  - GET /user/register → alohida universitar sahifa (rol kartalari, invite)
  *  - POST /user/login (mode=reg) → name + invite_code DB'da saqlanadi
@@ -73,7 +73,7 @@ describe('AUTH B-03 — Register forma', () => {
       username,
       email: `${username}@test.uz`,
       name: 'Aziza Karimova',
-      invite: 'INV-2026-EDIKIT',
+      invite: 'INV-2026-DEBORAH',
     });
     expect([200, 302]).toContain(res.status);
 
@@ -81,7 +81,7 @@ describe('AUTH B-03 — Register forma', () => {
     expect(snap.exists()).toBe(true);
     const rec = snap.val();
     expect(rec.name).toBe('Aziza Karimova');
-    expect(rec.invite_code).toBe('INV-2026-EDIKIT');
+    expect(rec.invite_code).toBe('INV-2026-DEBORAH');
     // B-03 review fix: invite B-12 gacha ishonchsiz marker bilan saqlanadi
     expect(rec.invite_status).toBe('unverified');
     expect(rec.role).toBe('student');

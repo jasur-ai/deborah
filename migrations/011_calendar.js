@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 011: Program Calendar & Workload
+ * Deborah — Migration 011: Program Calendar & Workload
  *
  * Program-level scheduling to manage student deadline, effort, marker and
  * feedback collisions (Prompt 26):
@@ -173,9 +173,9 @@ export async function up(db) {
   // ── Grant permissions ──
   const newTables = ['program_events', 'program_event_cohorts', 'event_notifications'];
   for (const table of newTables) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
-    await sql`GRANT DELETE ON ${sql.table(table)} TO edikit_migration`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 
   console.log('Calendar/Workload structure created: 3 tables');

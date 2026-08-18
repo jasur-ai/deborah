@@ -1,5 +1,5 @@
 /**
- * Edikit — Source Pack & Secure RAG Ingestion Module Barrel
+ * Deborah — Source Pack & Secure RAG Ingestion Module Barrel
  *
  * Prompt 50 — teacher-approved source'lar (PDF/DOCX/PPTX/URL/text) ni
  * provenance/citation bilan safe corpusga aylantirish. Pure schema

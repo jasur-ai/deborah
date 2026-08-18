@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Components Validator (STYLE STEP 12)
+ * Deborah — Components Validator (STYLE STEP 12)
  * ----------------------------------------------
  * S12.01 — button variantlar: primary/secondary/quiet/danger/link
  * S12.02 — size'lar: 32/40/44/48px

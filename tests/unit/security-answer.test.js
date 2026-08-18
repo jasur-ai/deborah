@@ -1,5 +1,5 @@
 /**
- * Edikit — Security Tests: Public/Private Answer Key Separation
+ * Deborah — Security Tests: Public/Private Answer Key Separation
  *
  * Tests that:
  * 1. game:questionActive event does NOT contain qCorrect

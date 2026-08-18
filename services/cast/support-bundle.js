@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Support Bundle (C5-08)
+ * Deborah — Cast Support Bundle (C5-08)
  * ------------------------------------
  * Diagnostic bundle: incident debugging uchun PII-safe snapshot.
  *

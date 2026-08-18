@@ -1,5 +1,5 @@
 /**
- * Edikit — Resource Recommendation Connectors (integration tests, Prompt 54)
+ * Deborah — Resource Recommendation Connectors (integration tests, Prompt 54)
  *
  * Service qatlami: graceful degradation (PG'siz → 400/error), quota
  * logic, cache/idempotency, provider outage handling. PostgreSQL yo'q

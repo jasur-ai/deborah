@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Governance Service (C4-06)
+ * Deborah — Cast Governance Service (C4-06)
  * -----------------------------------------
  * Child-safe governance:
  *  - Minor-safe policy preset — server-side majburiy, overrides bilan

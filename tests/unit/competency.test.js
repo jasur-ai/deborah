@@ -1,5 +1,5 @@
 /**
- * Edikit — Competency Module Tests
+ * Deborah — Competency Module Tests
  *
  * Covers: framework CRUD, version lifecycle, competency CRUD,
  * relations, course mapping, impact/orphan/coverage queries,

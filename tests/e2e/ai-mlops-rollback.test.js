@@ -1,5 +1,5 @@
 /**
- * Edikit — AI Evaluation, MLOps & Rollback (e2e, Prompt 52)
+ * Deborah — AI Evaluation, MLOps & Rollback (e2e, Prompt 52)
  *
  * Full MLOps governance journey at pure-logic layer + HTTP:
  *   - Golden set (holdout) bilan model ro'yxatga olish → allowlist → pin.

@@ -5,8 +5,8 @@
  */
 (function () {
   'use strict';
-  if (typeof window === 'undefined' || window.__edikitOverlays) return;
-  window.__edikitOverlays = true;
+  if (typeof window === 'undefined' || window.__deborahOverlays) return;
+  window.__deborahOverlays = true;
 
   const SVG = {
     check: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>',
@@ -85,7 +85,7 @@
         '  <h3 class="dialog__title" id="dlg-c-title"></h3>' +
         '  <button type="button" class="dialog__close" data-close aria-label="Yopish">' + SVG.x + '</button>' +
         '</div>' +
-        '<div class="dialog__body"><p class="dlg-confirm-sub" style="margin:0;color:var(--edikit-semantic-color-text-secondary,#5b6472);font-size:.875rem;line-height:1.6"></p></div>' +
+        '<div class="dialog__body"><p class="dlg-confirm-sub" style="margin:0;color:var(--deborah-semantic-color-text-secondary,#5b6472);font-size:.875rem;line-height:1.6"></p></div>' +
         '<div class="dialog__footer">' +
         '  <button type="button" class="btn btn--quiet" data-no>Bekor</button>' +
         '  <button type="button" class="btn btn--danger" data-yes></button>' +
@@ -240,7 +240,7 @@
   window.showConfirm = showConfirm;
   window.openDialog = openDialog;
   window.closeDialog = closeDialog;
-  window.EdikitOverlays = { showToast, showConfirm, openDialog, closeDialog, initPopover, initTooltip };
+  window.DeborahOverlays = { showToast, showConfirm, openDialog, closeDialog, initPopover, initTooltip };
 
   // Avtomatik init: [data-popover] triggerlar va [data-tooltip] triggerlar
   function scan() {

@@ -5,26 +5,26 @@
   <link rel="stylesheet" href="/css/admin.css">
   <style>
     .obs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-top:18px;}
-    .obs-card{background:var(--edikit-semantic-color-surface-raised);border:1px solid var(--edikit-semantic-color-border-subtle);border-radius:14px;padding:16px;box-shadow:var(--shadow-sm);}
+    .obs-card{background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:14px;padding:16px;box-shadow:var(--shadow-sm);}
     .obs-card h3{margin:0 0 6px;font-size:.92rem;display:flex;align-items:center;gap:8px;}
-    .obs-card .desc{font-size:.72rem;color:var(--edikit-semantic-color-text-muted);font-weight:600;margin-bottom:10px;}
+    .obs-card .desc{font-size:.72rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-bottom:10px;}
     .obs-status{display:inline-flex;align-items:center;gap:6px;font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px;}
     .obs-status.ok{background:rgba(0,229,160,.12);color:var(--green);}
     .obs-status.warning{background:rgba(245,158,11,.14);color:var(--gold);}
     .obs-status.critical{background:rgba(239,68,68,.14);color:#ef4444;}
-    .obs-metric-row{display:flex;justify-content:space-between;font-size:.76rem;font-weight:700;color:var(--edikit-semantic-color-text-muted);padding:3px 0;border-bottom:1px dashed var(--edikit-semantic-color-border-subtle);}
-    .obs-metric-row b{color:var(--edikit-semantic-color-text-primary);}
+    .obs-metric-row{display:flex;justify-content:space-between;font-size:.76rem;font-weight:700;color:var(--deborah-semantic-color-text-muted);padding:3px 0;border-bottom:1px dashed var(--deborah-semantic-color-border-subtle);}
+    .obs-metric-row b{color:var(--deborah-semantic-color-text-primary);}
     .obs-alert{border-left:3px solid;border-radius:8px;padding:10px 12px;margin-bottom:10px;background:var(--bg-elevated);}
     .obs-alert.critical{border-color:#ef4444;}
     .obs-alert.warning{border-color:var(--gold);}
-    .obs-alert .a-title{font-weight:700;font-size:.8rem;color:var(--edikit-semantic-color-text-primary);}
-    .obs-alert .a-msg{font-size:.72rem;color:var(--edikit-semantic-color-text-muted);font-weight:600;margin:3px 0;}
+    .obs-alert .a-title{font-weight:700;font-size:.8rem;color:var(--deborah-semantic-color-text-primary);}
+    .obs-alert .a-msg{font-size:.72rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin:3px 0;}
     .obs-alert .a-rb{font-size:.68rem;font-weight:600;color:var(--blue);text-decoration:none;}
     .obs-runbook{font-size:.68rem;font-weight:600;color:var(--blue);text-decoration:none;}
     .obs-section-h{display:flex;align-items:center;justify-content:space-between;margin-top:22px;}
     .obs-section-h h2{font-size:1rem;margin:0;}
-    .obs-tag{font-size:.66rem;font-weight:600;padding:2px 8px;border-radius:10px;background:rgba(37,99,235,.12);color:var(--edikit-semantic-color-action-primary);}
-    .obs-empty{color:var(--edikit-semantic-color-text-muted);font-size:.76rem;font-weight:700;padding:14px;text-align:center;border:1px dashed var(--edikit-semantic-color-border-subtle);border-radius:10px;}
+    .obs-tag{font-size:.66rem;font-weight:600;padding:2px 8px;border-radius:10px;background:rgba(37,99,235,.12);color:var(--deborah-semantic-color-action-primary);}
+    .obs-empty{color:var(--deborah-semantic-color-text-muted);font-size:.76rem;font-weight:700;padding:14px;text-align:center;border:1px dashed var(--deborah-semantic-color-border-subtle);border-radius:10px;}
     .obs-burn{height:6px;background:var(--bg-elevated);border-radius:3px;overflow:hidden;margin-top:8px;}
     .obs-burn > span{display:block;height:100%;border-radius:3px;}
     .obs-burn.ok > span{background:var(--green);}
@@ -100,7 +100,7 @@
       <div class="obs-grid">
         <% data.metrics.counters.forEach((c) => { %>
           <div class="obs-card">
-            <h3><span class="obs-status ok" style="background:rgba(37,99,235,.12);color:var(--edikit-semantic-color-action-primary)">counter</span></h3>
+            <h3><span class="obs-status ok" style="background:rgba(37,99,235,.12);color:var(--deborah-semantic-color-action-primary)">counter</span></h3>
             <div class="desc" style="word-break:break-all"><%= c.name %></div>
             <div class="obs-metric-row"><span>Qiymat</span><b><%= c.value %></b></div>
             <% if (c.labels && Object.keys(c.labels).length) { %>

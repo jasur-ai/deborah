@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast C3-14 Session Choreography Composer + Orchestration Tests
+ * Deborah — Cast C3-14 Session Choreography Composer + Orchestration Tests
  * -----------------------------------------------------------------------
  * coverage: block add/reorder/duplicate/edit/delete + keyboard move up/down,
  *           dependency validation (revote-first-vote, reveal-scorable),

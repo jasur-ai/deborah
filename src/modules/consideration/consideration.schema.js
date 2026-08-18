@@ -1,5 +1,5 @@
 /**
- * Edikit — Special Consideration, Deferral, Resit, Appeal & Scoring
+ * Deborah — Special Consideration, Deferral, Resit, Appeal & Scoring
  * Incident Schema (Prompt 48)
  *
  * Pure schema (no I/O) — research.md §72 (case lifecycle, sensitive

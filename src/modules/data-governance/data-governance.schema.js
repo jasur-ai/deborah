@@ -1,5 +1,5 @@
 /**
- * Edikit — Data Classification, Privacy, Retention & Purge (pure logic)
+ * Deborah — Data Classification, Privacy, Retention & Purge (pure logic)
  *
  * Prompt 65 — D0–D6 classification, legal hold, DSAR va multi-store
  * deletion'ni operational qilish (research.md §27 — surveillance emas,

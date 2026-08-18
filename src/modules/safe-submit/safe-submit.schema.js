@@ -1,5 +1,5 @@
 /**
- * Edikit — Safe File, Code & Oral Submission (pure logic)
+ * Deborah — Safe File, Code & Oral Submission (pure logic)
  *
  * Prompt 44 — project/file/code/audio/video assessmentlar uchun SECURE
  * RESUMABLE submission (research.md §16.3 file antivirus/sandbox, §51

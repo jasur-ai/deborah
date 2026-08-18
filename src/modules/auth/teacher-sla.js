@@ -23,7 +23,7 @@ const REMIND_EVERY_MS = 24 * 60 * 60 * 1000;
 const WINDOW_MS = CONFIG.TEACHER_APPROVAL_WINDOW_MS || 72 * 60 * 60 * 1000;
 const ESCALATION_MS = CONFIG.TEACHER_ESCALATION_MS || 7 * 24 * 60 * 60 * 1000;
 // Ops xabarnomasi (env orqali; bo'sh bo'lsa audit+metric yetarli)
-const SLA_NOTIFY_EMAIL = process.env.TEACHER_SLA_NOTIFY_EMAIL || 'support@edikit.uz';
+const SLA_NOTIFY_EMAIL = process.env.TEACHER_SLA_NOTIFY_EMAIL || 'support@deborah.uz';
 const MAX_REMINDERS = 3; // 24s + 48s + 72s ("qayta ko'rib chiqish")
 
 /** B-16 §06: ariza yoshiga qarab SLA holati. */

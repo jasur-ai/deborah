@@ -11,7 +11,7 @@
      resolve qiladi va yagona attribute model'ni (data-theme + data-resolved-theme)
      o'rnatadi. JS/Node'da ham theme-core (S07.01) bilan bir xil mantiq. -->
 <script>
-(function(){var K='edikit-theme-state',L='edikit-theme',s=null;try{s=localStorage.getItem(K)}catch(_){}if(!s){try{var l=localStorage.getItem(L);if(l==='light'||l==='dark'){s=l;try{localStorage.setItem(K,s)}catch(_){}}}catch(_){}}
+(function(){var K='deborah-theme-state',L='deborah-theme',s=null;try{s=localStorage.getItem(K)}catch(_){}if(!s){try{var l=localStorage.getItem(L);if(l==='light'||l==='dark'){s=l;try{localStorage.setItem(K,s)}catch(_){}}}catch(_){}}
 var STATES=['system','light','dark','hc-light','hc-dark'];if(STATES.indexOf(s)<0)s='system';
 /* S07.10: projector/classroom (data-cast-theme) sahifalari — OS'dan mustaqil.
    Boot ham engine kabi skip qiladi (reviewer fix, konsistentlik). */
@@ -35,14 +35,14 @@ var mc=document.getElementById('meta-theme-color');if(mc)mc.setAttribute('conten
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="handheldfriendly" content="true">
-<title><%= typeof title !== 'undefined' ? title : 'Edikit' %></title>
-<meta name="description" content="<%= typeof description !== 'undefined' ? description : 'Edikit — Nazorat va imtihonlarni raqamli o\'tkazing. O\'qituvchi va talaba uchun test, amaliyot, tahlil, AI yordamchi.' %>">
+<title><%= typeof title !== 'undefined' ? title : 'Deborah' %></title>
+<meta name="description" content="<%= typeof description !== 'undefined' ? description : 'Deborah — Nazorat va imtihonlarni raqamli o\'tkazing. O\'qituvchi va talaba uchun test, amaliyot, tahlil, AI yordamchi.' %>">
 <% if (typeof path !== 'undefined') { %><link rel="canonical" href="<%= siteUrl + path %>"><% } %>
 
 <!-- Open Graph / Social Preview -->
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Edikit">
-<meta property="og:title" content="<%= typeof title !== 'undefined' ? title : 'Edikit — Interactive Platform' %>">
+<meta property="og:site_name" content="Deborah">
+<meta property="og:title" content="<%= typeof title !== 'undefined' ? title : 'Deborah — Interactive Platform' %>">
 <meta property="og:description" content="<%= typeof description !== 'undefined' ? description : 'Nazorat va imtihonlarni raqamli o\'tkazing. O\'qituvchi va talaba uchun test, amaliyot, tahlil, AI yordamchi.' %>">
 <meta property="og:image" content="<%= siteUrl + '/images/og-image.svg' %>">
 <meta property="og:image:width" content="1200">
@@ -51,7 +51,7 @@ var mc=document.getElementById('meta-theme-color');if(mc)mc.setAttribute('conten
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="<%= typeof title !== 'undefined' ? title : 'Edikit — Interactive Platform' %>">
+<meta name="twitter:title" content="<%= typeof title !== 'undefined' ? title : 'Deborah — Interactive Platform' %>">
 <meta name="twitter:description" content="<%= typeof description !== 'undefined' ? description : 'Jonli baholash va responsive teaching: test, amaliyot, tahlil, AI yordamchi.' %>">
 <meta name="twitter:image" content="<%= siteUrl + '/images/og-image.svg' %>">
 
@@ -133,12 +133,12 @@ function svgIcon(name, size) {
   <script src="/js/components/session-timeout.js" defer></script>
   <% } %>
   <style>
-    .update-banner{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:var(--z-toast, 9000);max-width:min(92vw, 520px);background:var(--edikit-semantic-color-surface-raised, #0F1630);border:1px solid var(--edikit-semantic-color-border-default, #2C3346);border-radius:12px;box-shadow:0 12px 34px rgba(0,0,0,.35);padding:10px 12px;}
+    .update-banner{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:var(--z-toast, 9000);max-width:min(92vw, 520px);background:var(--deborah-semantic-color-surface-raised, #0F1630);border:1px solid var(--deborah-semantic-color-border-default, #2C3346);border-radius:12px;box-shadow:0 12px 34px rgba(0,0,0,.35);padding:10px 12px;}
     .update-banner-body{display:flex;align-items:center;gap:10px;}
-    .update-banner-text{flex:1;font-size:.85rem;font-weight:600;color:var(--edikit-semantic-color-text-primary, #F2F4F8);}
+    .update-banner-text{flex:1;font-size:.85rem;font-weight:600;color:var(--deborah-semantic-color-text-primary, #F2F4F8);}
     .update-banner-action{min-height:34px !important;padding:0 14px !important;font-size:.8rem !important;}
     .update-banner-close{width:28px;height:28px;border:none;background:transparent;color:var(--text-tertiary, #6B7288);font-size:1.1rem;line-height:1;cursor:pointer;border-radius:6px;}
-    .update-banner-close:hover{background:var(--edikit-semantic-color-surface-nested, #131B3A);color:var(--edikit-semantic-color-text-primary);}
+    .update-banner-close:hover{background:var(--deborah-semantic-color-surface-nested, #131B3A);color:var(--deborah-semantic-color-text-primary);}
     @media (prefers-reduced-motion: reduce){.update-banner{animation:none !important;}}
   </style>
 

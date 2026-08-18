@@ -1,5 +1,5 @@
 /**
- * Edikit — Source Pack & Secure RAG Ingestion Routes
+ * Deborah — Source Pack & Secure RAG Ingestion Routes
  *
  * Prompt 50 REST API (admin — requireAdmin):
  *   - GET  /api/admin/sources/meta                — constants for admin UI

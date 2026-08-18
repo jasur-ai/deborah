@@ -1,5 +1,5 @@
 /**
- * Edikit — WCAG 2.2 AA & Artifact Accessibility (pure logic)
+ * Deborah — WCAG 2.2 AA & Artifact Accessibility (pure logic)
  *
  * Prompt 64 — teacher/student/admin/proctor critical journeys va generated
  * artifactlarni (PDF/DOCX/PPTX) accessible qilish (research.md §26.1

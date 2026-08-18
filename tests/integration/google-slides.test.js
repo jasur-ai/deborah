@@ -1,5 +1,5 @@
 /**
- * Edikit — Google Slides Adapter (integration tests, Prompt 59)
+ * Deborah — Google Slides Adapter (integration tests, Prompt 59)
  *
  * Service qatlami: PKCE link flow (drive.file scope only, full Drive
  * REJECT — §15), token vault encrypted, createFromCanonical (create →

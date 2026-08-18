@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH C-05 Impossible travel + velocity — Integration tests
+ * Deborah — AUTH C-05 Impossible travel + velocity — Integration tests
  * ---------------------------------------------------------------------
  *  - impossible travel: device record Toshkent → 10 daqiqada Samarqand IP → flag
  *  - audit: auth:risk:impossible_travel / auth:risk:velocity yoziladi

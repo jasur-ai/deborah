@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 002: RLS Policies
+ * Deborah — Migration 002: RLS Policies
  *
  * Enables Row-Level Security on tenant-scoped tables and
  * creates tenant isolation policies.

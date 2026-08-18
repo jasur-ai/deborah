@@ -1,5 +1,5 @@
 /**
- * Edikit — Arena Routes (Public)
+ * Deborah — Arena Routes (Public)
  * Split-screen test arena: host + phone + bot simulation
  */
 
@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
   const code = req.query.code || '';
   const auto = req.query.auto === '1';
   res.render('user/test-arena', {
-    title: 'Edikit — Test Arena',
+    title: 'Deborah — Test Arena',
     characters: CARTOON_CHARS,
     initialCode: code,
     autoLoad: auto,

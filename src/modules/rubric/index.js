@@ -1,5 +1,5 @@
 /**
- * Edikit — Rubric Builder Module Barrel Export
+ * Deborah — Rubric Builder Module Barrel Export
  *
  * Provides analytic rubrics for written work grading:
  *   - Versioned rubrics (DRAFT→PUBLISHED→DEPRECATED lifecycle)

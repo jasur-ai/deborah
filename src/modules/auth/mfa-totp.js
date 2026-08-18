@@ -1,5 +1,5 @@
 /**
- * Edikit — MFA/TOTP Service (AUTH A-26)
+ * Deborah — MFA/TOTP Service (AUTH A-26)
  *
  * Production-grade TOTP MFA:
  *   - ikki fazali enrollment: setup (secret yaratish) → enable (birinchi kod)
@@ -97,7 +97,7 @@ export async function hasActiveMfa(userId) {
  * Secret plaintext FAQAT shu javobda qaytadi.
  * @returns {Promise<{ok: boolean, secret: string, otpauth: string, error?: string}>}
  */
-export async function setupTotp(userId, { accountName, issuer = CONFIG.MFA_ISSUER || 'Edikit' } = {}) {
+export async function setupTotp(userId, { accountName, issuer = CONFIG.MFA_ISSUER || 'Deborah' } = {}) {
   const existing = await getMfaStatus(userId);
   if (existing.status === 'active') {
     return { ok: false, error: 'mfa_already_active' };

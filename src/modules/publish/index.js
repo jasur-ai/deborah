@@ -1,5 +1,5 @@
 /**
- * Edikit — Immutable Publish Transaction & Assignment Snapshot (barrel export)
+ * Deborah — Immutable Publish Transaction & Assignment Snapshot (barrel export)
  */
 
 export * from './publish.schema.js';

@@ -1,5 +1,5 @@
 /**
- * Edikit — Seat, Proctor, Hall Ticket & Check-in (pure logic)
+ * Deborah — Seat, Proctor, Hall Ticket & Check-in (pure logic)
  *
  * Prompt 40 — published schedule asosida seat/proctor assignment va
  * offline-tolerant check-in (research.md §15 relational schema, §53.3

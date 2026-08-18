@@ -1,7 +1,7 @@
 /**
- * Edikit — E-02: HEMIS push webhook (talabalar/ballar o'zgarishi)
+ * Deborah — E-02: HEMIS push webhook (talabalar/ballar o'zgarishi)
  * ---------------------------------------------------------------------------
- * HEMIS → Edikit push: HEMIS o'z bazasida talaba/ballar o'zgarganda Edikit'ga
+ * HEMIS → Deborah push: HEMIS o'z bazasida talaba/ballar o'zgarganda Deborah'ga
  * xabar yuboradi. Bu qadam pull (mavjud REST) → push (yangi) o'tishning bir
  * qismi.
  *

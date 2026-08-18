@@ -21,7 +21,7 @@ describe('STEP 40 — Legacy usage inventory', () => {
   });
 
   it('recordTrend: faylga yozadi, regression hisoblaydi', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'edikit-legacy-'));
+    const dir = mkdtempSync(join(tmpdir(), 'deborah-legacy-'));
     const trendPath = join(dir, 'legacy-usage.json');
     const prev = { current: { total: 1000 }, history: [{ date: '2026-01-01', total: 1000 }] };
     writeFileSync(trendPath, JSON.stringify(prev));
@@ -40,7 +40,7 @@ describe('STEP 40 — Legacy usage inventory', () => {
   });
 
   it('recordTrend: history 10 tadan oshmaydi', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'edikit-legacy2-'));
+    const dir = mkdtempSync(join(tmpdir(), 'deborah-legacy2-'));
     const trendPath = join(dir, 'legacy-usage.json');
     writeFileSync(trendPath, JSON.stringify({ current: { total: 1 }, history: [] }));
     let r;

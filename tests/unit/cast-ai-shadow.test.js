@@ -1,5 +1,5 @@
 /**
- * Edikit — AI Co-host Shadow Service/Adapter unit testlari (C5-11)
+ * Deborah — AI Co-host Shadow Service/Adapter unit testlari (C5-11)
  *
  * Reja item qamrovi:
  *   1. buildShadowBaseline — rule engine output → baseline

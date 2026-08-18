@@ -1,5 +1,5 @@
 /**
- * Edikit — Portfolio Routes (AUTH A-12)
+ * Deborah — Portfolio Routes (AUTH A-12)
  * -------------------------------------
  * Student evidence portfolio backed by the local DB (fb):
  *   - GET    /user/portfolio                   — portfolio UI (4-til)
@@ -42,7 +42,7 @@ import { catalogFor, resolveLocale } from '../src/modules/portfolio/index.js';
 
 const router = Router();
 
-const uploadDir = path.resolve(os.tmpdir(), 'edikit-portfolio-uploads');
+const uploadDir = path.resolve(os.tmpdir(), 'deborah-portfolio-uploads');
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
 const storage = multer.diskStorage({

@@ -1,6 +1,6 @@
 # Email Deliverability (AUTH A-23)
 
-Edikit **faqat transactional** email yuboradi (welcome, verify, reset, teacher_approved/rejected).
+Deborah **faqat transactional** email yuboradi (welcome, verify, reset, teacher_approved/rejected).
 Marketing email **alohida tizim** — bu sender domain'ning reputatsiyasini himoya qiladi
 (SPF/DKIM/DMARC samaradorligi uchun eng muhim qoida).
 
@@ -19,8 +19,8 @@ Marketing email **alohida tizim** — bu sender domain'ning reputatsiyasini himo
 # Provider: mock | smtp | postmark  (test'da har doim mock)
 EMAIL_PROVIDER=postmark
 POSTMARK_SERVER_TOKEN=xxxxx
-MAIL_FROM=Edikit <no-reply@edikit.uz>
-MAIL_SENDING_DOMAIN=mail.edikit.uz
+MAIL_FROM=Deborah <no-reply@deborah.uz>
+MAIL_SENDING_DOMAIN=mail.deborah.uz
 # Webhook token (Postmark: X-Postmark-Webhook-Token)
 EMAIL_WEBHOOK_TOKEN=xxxxx
 
@@ -36,26 +36,26 @@ EMAIL_WEBHOOK_TOKEN=xxxxx
 Kredensiallar **faqat server'da** (env). Frontend'ga hech qachon chiqmaydi.
 Production'da KMS/secret manager'da saqlanadi.
 
-## DNS record'lar (dedicated sending domain: `mail.edikit.uz`)
+## DNS record'lar (dedicated sending domain: `mail.deborah.uz`)
 
-> Bosh domain `edikit.uz`'ning SPF'iga faqat MX qo'yiladi; yuborish **`mail.edikit.uz`**
+> Bosh domain `deborah.uz`'ning SPF'iga faqat MX qo'yiladi; yuborish **`mail.deborah.uz`**
 > subdomain'idan — reputatsiya izolyatsiyasi.
 
 ### 1. SPF (TXT)
 ```
-mail.edikit.uz  TXT  "v=spf1 include:spf.postmarkapp.com ~all"
+mail.deborah.uz  TXT  "v=spf1 include:spf.postmarkapp.com ~all"
 ```
 > `~all` (softfail) — xatolarni ko'rish uchun. 2 haftadan keyin `-all` (hardfail).
 
 ### 2. DKIM (TXT)
 Postmark server sozlamalaridan DNS record'ni ko'chiring (har providerda boshqacha):
 ```
-pmmail._domainkey.mail.edikit.uz  TXT  "k=rsa; p=MIGfMA0GCSq...postmark provider beradi"
+pmmail._domainkey.mail.deborah.uz  TXT  "k=rsa; p=MIGfMA0GCSq...postmark provider beradi"
 ```
 
 ### 3. DMARC (TXT)
 ```
-_dmarc.mail.edikit.uz  TXT  "v=DMARC1; p=none; rua=mailto:dmarc@edikit.uz"
+_dmarc.mail.deborah.uz  TXT  "v=DMARC1; p=none; rua=mailto:dmarc@deborah.uz"
 ```
 Bosqichma-bosqich:
 1. `p=none` + monitoring (2-4 hafta) — DMARC report'lar bilan taxlil
@@ -63,7 +63,7 @@ Bosqichma-bosqich:
 3. `p=reject` — DMARC report monitoring davom etadi
 
 ### 4. Return-Path / MX
-Postmark o'z bounce domain'ini beradi (`pm-bounces.mail.edikit.uz`) — DNS'ga qo'shing.
+Postmark o'z bounce domain'ini beradi (`pm-bounces.mail.deborah.uz`) — DNS'ga qo'shing.
 
 ## Bounce/complaint webhook
 

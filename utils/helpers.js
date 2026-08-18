@@ -1,5 +1,5 @@
 /**
- * Edikit — Helper utilities
+ * Deborah — Helper utilities
  */
 
 import crypto from 'crypto';

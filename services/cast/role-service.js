@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast Role / Invite Service
+ * Deborah — Cast Role / Invite Service
  * ------------------------------------
  * Scoped invitation, one-time redeem, revoke.
  * Redeem'da authenticated accountga role record yaratiladi; nonce invalidate.

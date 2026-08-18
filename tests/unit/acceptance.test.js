@@ -1,5 +1,5 @@
 /**
- * Edikit — Final System Acceptance (unit, Prompt 73)
+ * Deborah — Final System Acceptance (unit, Prompt 73)
  *
  * Pure logic tests for src/modules/acceptance/schema:
  *   - Acceptance domains + evidence evaluation

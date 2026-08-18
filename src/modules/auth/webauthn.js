@@ -1,5 +1,5 @@
 /**
- * Edikit — WebAuthn (Passkey) Service (AUTH A-27)
+ * Deborah — WebAuthn (Passkey) Service (AUTH A-27)
  *
  * Production-grade passkey support built on @simplewebauthn/server v13:
  *   - full attestation/assertion signature verification (COSE/ECDSA/RSA/OKP)
@@ -46,7 +46,7 @@ const CREDENTIAL_INDEX_PATH = 'passkeys_index';
 // Production: set RP_ID (domain without protocol), RP_ORIGIN, RP_NAME env vars.
 // Defaults (localhost dev / tests) are derived per-request via rpFromRequest().
 const RP_CONFIG = {
-  name: process.env.RP_NAME || 'Edikit',
+  name: process.env.RP_NAME || 'Deborah',
   id: process.env.RP_ID || '',
   origin: process.env.RP_ORIGIN || '',
 };
@@ -76,7 +76,7 @@ export function rpFromRequest(req) {
  * @returns {Uint8Array}
  */
 function userHandleFor(userId) {
-  return new Uint8Array(crypto.createHash('sha256').update(`edikit:passkey:${userId}`).digest());
+  return new Uint8Array(crypto.createHash('sha256').update(`deborah:passkey:${userId}`).digest());
 }
 
 // ── Storage helpers ──

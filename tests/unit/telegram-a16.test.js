@@ -1,5 +1,5 @@
 /**
- * Edikit — AUTH A-16: Telegram OTP core unit testlari
+ * Deborah — AUTH A-16: Telegram OTP core unit testlari
  *
  * Covers (guide §22):
  *  1. Kod hash — plaintext hech qachon saqlanmaydi

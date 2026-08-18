@@ -1,5 +1,5 @@
 /**
- * Edikit — Visual: Critical Public Pages (STYLE STEP 03 / S03.04-05)
+ * Deborah — Visual: Critical Public Pages (STYLE STEP 03 / S03.04-05)
  * -------------------------------------------------------------------
  * Landing ( / ), Login ( /user/login ), Play ( /play ) — rest state.
  * Theme'lar: light, dark, reduced-motion (S03.04).

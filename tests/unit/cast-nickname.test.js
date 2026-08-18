@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast C4-06 Nickname / Identity Policy Tests
+ * Deborah — Cast C4-06 Nickname / Identity Policy Tests
  * -----------------------------------------------------
  * coverage: safe alias generation (locale catalog), reserved role
  *           impersonation block, invisible/bidi abuse detection,

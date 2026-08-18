@@ -29,7 +29,7 @@ describe('AUTH B-20 — Email templates security', () => {
   it('template‘larda parol/token hech qachon — faqat limitli havola yoki 6-kod', () => {
     for (const name of EMAIL_TEMPLATES) {
       const data = name === 'verify' ? { code: '123456', lang: 'en' }
-        : name === 'reset' ? { resetUrl: 'https://edikit.uz/user/reset?token=abc', lang: 'en' }
+        : name === 'reset' ? { resetUrl: 'https://deborah.uz/user/reset?token=abc', lang: 'en' }
         : { username: 'u', lang: 'en' };
       const t = renderTemplate(name, data);
       // Kod/limitli havola ruxsat — lekin to'liq parol yoki session cookie yo'q
@@ -73,8 +73,8 @@ describe('AUTH B-20 — Email templates security', () => {
 
   it('breach template: CTA to‘g‘ri va xavfsiz havola', () => {
     const t = renderBreach({ lang: 'en' });
-    expect(t.html).toContain('https://edikit.uz/user/panel#security');
+    expect(t.html).toContain('https://deborah.uz/user/panel#security');
     expect(t.html).not.toContain('javascript:');
-    expect(t.text).toContain('https://edikit.uz/user/panel#security');
+    expect(t.text).toContain('https://deborah.uz/user/panel#security');
   });
 });

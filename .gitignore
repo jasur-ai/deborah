@@ -6,8 +6,11 @@ hemis-test.env
 .DS_Store
 dist/
 build/
-# Local JSON database (auto-generated from seed)
-data/
+# Local JSON database (auto-generated from seed) — statik JS fayllar (landing/auth-i18n/term-registry) git'ga kiradi
+data/db.json
+data/*.json
+data/backups/
+data/uploads/
 # Firebase service account (maxfiy kalit — hech qachon commit qilinmaydi)
 *-firebase-adminsdk-*.json
 firebase-service-account.json

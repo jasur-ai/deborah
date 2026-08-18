@@ -32,9 +32,9 @@ const VIEWS_DIR = 'views';
 const JS_DIRS = ['public/js'];
 
 const ALLOW_INFINITE_ANIMS = new Set([
-  'btn-spin', 'edikit-spin', 'cast-spin', 'dir-spin', 'spin', // loading spinner
-  'edikit-skeleton-shimmer', // skeleton (loading)
-  'edikit-progress-glow', // aria-busy progress
+  'btn-spin', 'deborah-spin', 'cast-spin', 'dir-spin', 'spin', // loading spinner
+  'deborah-skeleton-shimmer', // skeleton (loading)
+  'deborah-progress-glow', // aria-busy progress
   'switch-pulse', // toggle affordance (approved)
   'tb-pulse', // save-state indicator (approved)
   'sr-pulse', 'rm-flicker', // brand live indicators (approved milestone)

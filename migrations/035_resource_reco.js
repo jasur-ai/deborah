@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 035: Resource Recommendation Connectors (Prompt 54)
+ * Deborah — Migration 035: Resource Recommendation Connectors (Prompt 54)
  *
  * Prompt 54 — maqola, paper, video, news va institutional materialni
  * verified metadata bilan tavsiya qilish (research.md §11 manba tavsiyasi,

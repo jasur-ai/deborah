@@ -1,4 +1,4 @@
-# Edikit — D+E faza Commit rejasi (F-01)
+# Deborah — D+E faza Commit rejasi (F-01)
 
 **Sana:** 2026-08-18 · **Hajm:** ~670 fayl (540 yangi + 128 o'zgartirilgan)
 **Precondition:** test:auth 487/487 (58 fayl) + tsc 0 + db tegsiz — yashil

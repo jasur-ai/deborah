@@ -1,8 +1,8 @@
-# Edikit
+# Deborah
 
 **Real-time multiplayer quiz platform → full exam management system (Node.js Edition)**
 
-Edikit — jonli viktorina (Kahoot/Quizizz uslubidagi) o'yinlaridan tortib, universitet darajasidagi to'liq imtihon boshqaruv tizimigacha o'sgan ta'lim texnologiyalari (EdTech) platformasi. O'zbek tilidagi bozor uchun mo'ljallangan.
+Deborah — jonli viktorina (Kahoot/Quizizz uslubidagi) o'yinlaridan tortib, universitet darajasidagi to'liq imtihon boshqaruv tizimigacha o'sgan ta'lim texnologiyalari (EdTech) platformasi. O'zbek tilidagi bozor uchun mo'ljallangan.
 
 ## ✨ Imkoniyatlar
 

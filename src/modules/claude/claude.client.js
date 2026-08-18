@@ -1,5 +1,5 @@
 /**
- * Edikit — Claude Native Adapter (server-side provider client)
+ * Deborah — Claude Native Adapter (server-side provider client)
  *
  * Prompt 57 — Claude Messages API client. SERVER-ONLY: API key env'dan
  * (ANTHROPIC_API_KEY) olinadi, hech qachon browserga/response'ga

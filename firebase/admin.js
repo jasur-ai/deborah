@@ -1,5 +1,5 @@
 /**
- * Edikit — Firebase Admin SDK
+ * Deborah — Firebase Admin SDK
  * 
  * 🔥 Real Firebase Realtime Database ga ulanadi (agar kredensial bo'lsa)
  * 💻 Agar kredensial bo'lmasa, local-db.js (data/db.json) ga tayanadi

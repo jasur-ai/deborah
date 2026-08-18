@@ -1,5 +1,5 @@
 /**
- * Edikit — Board service integration tests (Prompt 47)
+ * Deborah — Board service integration tests (Prompt 47)
  *
  * Service-layer coverage (graceful degradation without PostgreSQL):
  *   - Write paths validate input BEFORE requiring PG (fail fast with

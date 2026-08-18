@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Cast Cost Report (C5-10)
+ * Deborah — Cast Cost Report (C5-10)
  * ---------------------------------
  * Har certified tier uchun cost hisoblaydi va ops/capacity/cost-report.md
  * ga yozadi. Narxlar ops/capacity/cost-inputs.json dan o'qiladi (item 13).

@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 043: Program Quality & Accreditation Workspace
+ * Deborah — Migration 043: Program Quality & Accreditation Workspace
  *
  * Prompt 62 — curriculum map, aggregate evidence, finding va improvement
  * action workflow (research.md §56 Program Quality, Curriculum Mapping va

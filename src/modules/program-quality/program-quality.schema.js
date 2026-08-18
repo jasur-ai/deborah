@@ -1,5 +1,5 @@
 /**
- * Edikit — Program Quality & Accreditation Workspace (pure logic)
+ * Deborah — Program Quality & Accreditation Workspace (pure logic)
  *
  * Prompt 62 — curriculum map, aggregate evidence, finding va improvement
  * action workflow (research.md §56). This module is PURE (no I/O, no DB):

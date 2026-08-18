@@ -1,5 +1,5 @@
 /**
- * Edikit — Migration 033: AI Evaluation, MLOps & Rollback (Prompt 52)
+ * Deborah — Migration 033: AI Evaluation, MLOps & Rollback (Prompt 52)
  *
  * Prompt 52 — golden set, deployment gate, drift va model rollbackni
  * production boshqaruviga aylantirish (research.md §7.7 metrics,
@@ -312,9 +312,9 @@ export async function up(db) {
     'ai_rollback_events',
   ];
   for (const table of newTables) {
-    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO edikit_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO edikit_runtime`.execute(db);
-    await sql`GRANT DELETE ON ${sql.table(table)} TO edikit_migration`.execute(db);
+    await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
+    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 }
 

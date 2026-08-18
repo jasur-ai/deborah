@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Edikit — Auth Peak Load Test Harness (AUTH D-19)
+ * Deborah — Auth Peak Load Test Harness (AUTH D-19)
  *
  * Zero-dependency auth SLO evaluation for exam-start peaks:
  *   auth-login-storm  (5000 students login)
@@ -72,7 +72,7 @@ for (const profile of AUTH_LOAD_PROFILES) {
 if (jsonOut) {
   console.log(JSON.stringify({ results, pass: allPass }, null, 2));
 } else {
-  console.log('\n═══ Edikit Auth Peak Load Test ═══');
+  console.log('\n═══ Deborah Auth Peak Load Test ═══');
   for (const r of results) {
     console.log(`\n[${r.ok ? 'PASS' : 'FAIL'}] ${r.profile} — ${r.label}`);
     for (const c of r.checks || []) {

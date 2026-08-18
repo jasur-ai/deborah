@@ -1,5 +1,5 @@
 /**
- * Edikit — Submit Sealing va Signed Receipt (Prompt 33)
+ * Deborah — Submit Sealing va Signed Receipt (Prompt 33)
  *
  * Phase D #4: immutable submit — pending flush, completeness summary,
  * submission hash/snapshot, scoring outbox enqueue, signed receipt.

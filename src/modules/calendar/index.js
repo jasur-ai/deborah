@@ -1,5 +1,5 @@
 /**
- * Edikit — Program Calendar & Workload (barrel export)
+ * Deborah — Program Calendar & Workload (barrel export)
  */
 
 export * from './calendar.schema.js';

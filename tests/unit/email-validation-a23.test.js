@@ -32,7 +32,7 @@ describe('AUTH A-23 — Email validation (unit)', () => {
 
   it('MX tekshiruvi: checkMx mock orqali — ok bo`lsa o`tadi', async () => {
     const { validateEmail } = await import('../../src/modules/email/validation.js');
-    const r = await validateEmail('user@edikit.uz', { checkMx: async () => true });
+    const r = await validateEmail('user@deborah.uz', { checkMx: async () => true });
     expect(r.ok).toBe(true);
     expect(r.checked).toBe(true);
   });
@@ -49,7 +49,7 @@ describe('AUTH A-23 — Email validation (unit)', () => {
     const orig = process.env.NODE_ENV;
     process.env.NODE_ENV = 'test';
     try {
-      const ok = await checkMx('edikit.uz');
+      const ok = await checkMx('deborah.uz');
       expect(ok).toBe(true);
     } finally {
       process.env.NODE_ENV = orig;

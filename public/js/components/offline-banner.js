@@ -8,8 +8,8 @@
  */
 (function () {
   'use strict';
-  if (typeof window === 'undefined' || window.__edikitOfflineBanner) return;
-  window.__edikitOfflineBanner = true;
+  if (typeof window === 'undefined' || window.__deborahOfflineBanner) return;
+  window.__deborahOfflineBanner = true;
 
   const MESSAGES = {
     offline: 'Internet aloqasi uzildi',
@@ -110,7 +110,7 @@
       renderActions({
         retry: () => { api.retry(); },
       });
-      window.dispatchEvent(new CustomEvent('edikit:offline'));
+      window.dispatchEvent(new CustomEvent('deborah:offline'));
     },
 
     reconnect() {
@@ -140,23 +140,23 @@
       // qisqa online state → keyin yashirish (stale timer offline'ni yashira olmaydi)
       clearHideTimer();
       hideTimer = setTimeout(hide, 1800);
-      window.dispatchEvent(new CustomEvent('edikit:online'));
+      window.dispatchEvent(new CustomEvent('deborah:online'));
     },
 
     retry() {
-      window.dispatchEvent(new CustomEvent('edikit:retry'));
+      window.dispatchEvent(new CustomEvent('deborah:retry'));
       api.reconnect();
     },
 
     cancel() {
       hide();
-      window.dispatchEvent(new CustomEvent('edikit:cancel'));
+      window.dispatchEvent(new CustomEvent('deborah:cancel'));
     },
 
     get pendingOps() { return pendingOps; },
   };
 
-  window.EdikitOffline = api;
+  window.DeborahOffline = api;
 
   // Avtomatik: navigator.onLine + online/offline eventlari
   function handleOffline() {

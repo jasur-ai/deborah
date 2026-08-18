@@ -1,5 +1,5 @@
 /**
- * Edikit — Cast C3-13 Student Question Forge Tests
+ * Deborah — Cast C3-13 Student Question Forge Tests
  * -------------------------------------------------
  * coverage: invalid draft, duplicate submit (commandId idempotent + exact-hash
  *           duplicate), PII/profanity flags, teacher edit (original preserved),

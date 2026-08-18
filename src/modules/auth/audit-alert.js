@@ -22,7 +22,7 @@ const AUDIT_PREFIX = 'auth_audit';
 const ALERT_WINDOW_MS = Number(process.env.AUDIT_ALERT_WINDOW_MS || 60 * 60 * 1000); // 1 soat
 const FAIL_SPIKE_THRESHOLD = Number(process.env.AUDIT_FAIL_SPIKE_THRESHOLD || 10);  // 10 fail / soat
 const ALERT_COOLDOWN_MS = Number(process.env.AUDIT_ALERT_COOLDOWN_MS || 6 * 60 * 60 * 1000); // 6 soat
-const ALERT_NOTIFY_EMAIL = process.env.AUDIT_ALERT_NOTIFY_EMAIL || 'support@edikit.uz';
+const ALERT_NOTIFY_EMAIL = process.env.AUDIT_ALERT_NOTIFY_EMAIL || 'support@deborah.uz';
 
 /** Fail spike signal'lariga kiruvchi action'lar (suffix mosligi). */
 const SPIKE_ACTIONS = ['login.failed', 'lockout', 'abuse'];

@@ -1,5 +1,5 @@
 /**
- * Edikit — Assessment Builder Service
+ * Deborah — Assessment Builder Service
  *
  * Course/outcome/section/item/scoring based assessment draft builder.
  *   - Templates: reusable assessment templates

@@ -31,7 +31,7 @@ import { fb } from '../firebase/admin.js';
 const router = Router();
 
 // ── Multer: bulk fayl yuklash (xotiraga emas — diskka, 2MB cap) ──
-const uploadDir = fs.mkdtempSync(path.join(os.tmpdir(), 'edikit-bulk-'));
+const uploadDir = fs.mkdtempSync(path.join(os.tmpdir(), 'deborah-bulk-'));
 const upload = multer({
   storage: multer.diskStorage({ destination: uploadDir }),
   limits: { fileSize: 2 * 1024 * 1024 },
