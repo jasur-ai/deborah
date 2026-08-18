@@ -45,8 +45,10 @@ function callMiddleware(mw, session) {
 }
 
 describe('roles — definitions', () => {
-  it('defines all 6 roles with labels and icons', () => {
-    expect(ROLE_LIST).toEqual(['admin', 'teacher', 'student', 'proctor', 'marker', 'board']);
+  it('defines all 9 roles with labels and icons', () => {
+    // AUTH A-19: teacher_pending/teacher_rejected qo'shildi (approval state'lar)
+    // AUTH B-36: co_teacher qo'shildi (kurs-scoped hamkor rol)
+    expect(ROLE_LIST).toEqual(['admin', 'teacher', 'teacher_pending', 'teacher_rejected', 'student', 'proctor', 'marker', 'board', 'co_teacher']);
     for (const r of ROLE_LIST) {
       expect(ROLES[r].label).toBeTruthy();
       expect(ROLES[r].icon).toBeTruthy();

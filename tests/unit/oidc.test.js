@@ -183,12 +183,14 @@ describe('OIDC Routes', () => {
   let app;
 
   beforeAll(async () => {
+    // createApp() server startup A-01..A-04 modullari bilan ~14s davom etadi —
+    // default 15s hook timeout'ga juda yaqin (flake). 90s beramiz.
     const { createApp } = await import('../../server.js');
     const result = await createApp();
     app = result.app;
     const supertest = (await import('supertest')).default;
     request = supertest(app);
-  });
+  }, 90000);
 
   it('GET /auth/status should return OIDC status JSON', async () => {
     const res = await request.get('/auth/status');

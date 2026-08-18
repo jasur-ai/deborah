@@ -107,7 +107,7 @@ describe('Phase B Checkpoint — OIDC Flow', () => {
   it('should import WebAuthn service without errors', async () => {
     const webauthn = await import('../../src/modules/auth/webauthn.js');
     expect(webauthn.generateRegistrationChallenge).toBeDefined();
-    expect(webauthn.verifyRegistrationResponse).toBeDefined();
+    expect(webauthn.verifyRegistrationResponseFlow).toBeDefined();
     expect(webauthn.listPasskeys).toBeDefined();
   });
 

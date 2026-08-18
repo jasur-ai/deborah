@@ -20,6 +20,8 @@ function validEnv(overrides = {}) {
     ADMIN_PASS: 'testpass',
     LOG_LEVEL: 'info',
     LOG_PRETTY: undefined,
+    // AUTH B-08: production'da Turnstile bot-guard majburiy (fail-open emas)
+    TURNSTILE_SECRET_KEY: undefined,
     ...overrides,
   };
 }
@@ -82,6 +84,11 @@ describe('productionSchema — production safety checks', () => {
       ADMIN_USER: 'prodadmin',
       ADMIN_PASS: 'prodpass123!',
       SITE_URL: 'https://edikit.uz',
+      // AUTH B-08: production'da Turnstile majburiy
+      TURNSTILE_SECRET_KEY: '0x00-valid-test-secret',
+      // D-01: production cookie hardening + BASE_URL majburiy
+      COOKIE_SECURE: 'true',
+      BASE_URL: 'https://edikit.uz',
     }));
     expect(result.success).toBe(true);
   });
@@ -92,6 +99,7 @@ describe('productionSchema — production safety checks', () => {
       SESSION_SECRET: 'a-very-long-secret-key-that-is-safe-42',
       ADMIN_USER: 'admin', // default!
       ADMIN_PASS: 'admin', // default!
+      TURNSTILE_SECRET_KEY: '0x00-valid-test-secret',
     }));
     // superRefine adds issues → safeParse returns success: false
     expect(result.success).toBe(false);
@@ -122,6 +130,108 @@ describe('productionSchema — production safety checks', () => {
       ADMIN_PASS: 'admin',
     }));
     expect(result.success).toBe(true);
+  });
+
+  // ── D-01: yangi prod qoidalari ──
+
+  it('should reject production without COOKIE_SECURE=true', () => {
+    const result = productionSchema.safeParse(validEnv({
+      NODE_ENV: 'production',
+      SESSION_SECRET: 'a-very-long-secret-key-that-is-safe-42',
+      ADMIN_USER: 'prodadmin',
+      ADMIN_PASS: 'prodpass123!',
+      TURNSTILE_SECRET_KEY: '0x00-valid-test-secret',
+      BASE_URL: 'https://edikit.uz',
+      // COOKIE_SECURE yozilmagan → fail-fast
+    }));
+    expect(result.success).toBe(false);
+    const messages = result.error.issues.map(i => i.message).join(' ');
+    expect(messages).toContain('COOKIE_SECURE');
+  });
+
+  it('should reject production without BASE_URL', () => {
+    const result = productionSchema.safeParse(validEnv({
+      NODE_ENV: 'production',
+      SESSION_SECRET: 'a-very-long-secret-key-that-is-safe-42',
+      ADMIN_USER: 'prodadmin',
+      ADMIN_PASS: 'prodpass123!',
+      TURNSTILE_SECRET_KEY: '0x00-valid-test-secret',
+      COOKIE_SECURE: 'true',
+      // BASE_URL yozilmagan → fail-fast
+    }));
+    expect(result.success).toBe(false);
+    const messages = result.error.issues.map(i => i.message).join(' ');
+    expect(messages).toContain('BASE_URL');
+  });
+
+  it('should reject short SESSION_SECRET (<32) in production', () => {
+    const result = productionSchema.safeParse(validEnv({
+      NODE_ENV: 'production',
+      SESSION_SECRET: 'sixteen-char-secret', // 20 char < 32
+      ADMIN_USER: 'prodadmin',
+      ADMIN_PASS: 'prodpass123!',
+      TURNSTILE_SECRET_KEY: '0x00-valid-test-secret',
+      COOKIE_SECURE: 'true',
+      BASE_URL: 'https://edikit.uz',
+    }));
+    expect(result.success).toBe(false);
+    const messages = result.error.issues.map(i => i.message).join(' ');
+    expect(messages).toContain('SESSION_SECRET');
+  });
+
+  it('should reject postmark provider without token in production', () => {
+    const result = productionSchema.safeParse(validEnv({
+      NODE_ENV: 'production',
+      SESSION_SECRET: 'a-very-long-secret-key-that-is-safe-42',
+      ADMIN_USER: 'prodadmin',
+      ADMIN_PASS: 'prodpass123!',
+      TURNSTILE_SECRET_KEY: '0x00-valid-test-secret',
+      COOKIE_SECURE: 'true',
+      BASE_URL: 'https://edikit.uz',
+      EMAIL_PROVIDER: 'postmark', // token yo'q → fail-fast
+    }));
+    expect(result.success).toBe(false);
+    const messages = result.error.issues.map(i => i.message).join(' ');
+    expect(messages).toContain('POSTMARK_SERVER_TOKEN');
+  });
+
+  it('should reject smtp provider without host in production', () => {
+    const result = productionSchema.safeParse(validEnv({
+      NODE_ENV: 'production',
+      SESSION_SECRET: 'a-very-long-secret-key-that-is-safe-42',
+      ADMIN_USER: 'prodadmin',
+      ADMIN_PASS: 'prodpass123!',
+      TURNSTILE_SECRET_KEY: '0x00-valid-test-secret',
+      COOKIE_SECURE: 'true',
+      BASE_URL: 'https://edikit.uz',
+      EMAIL_PROVIDER: 'smtp', // SMTP_HOST yo'q → fail-fast
+    }));
+    expect(result.success).toBe(false);
+    const messages = result.error.issues.map(i => i.message).join(' ');
+    expect(messages).toContain('SMTP_HOST');
+  });
+});
+
+describe('D-01 — yangi env maydonlari', () => {
+  it('baseSchema: EMAIL_PROVIDER default mock', () => {
+    const result = baseSchema.safeParse(validEnv({}));
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.EMAIL_PROVIDER).toBe('mock');
+      expect(result.data.MFA_ISSUER).toBe('Edikit');
+      expect(result.data.COOKIE_SAMESITE).toBe('lax');
+      expect(result.data.HIBP_API_URL).toBe('https://api.pwnedpasswords.com/range/');
+    }
+  });
+
+  it('baseSchema: EMAIL_PROVIDER invalid qiymatni reject qiladi', () => {
+    const result = baseSchema.safeParse(validEnv({ EMAIL_PROVIDER: 'sendgrid' }));
+    expect(result.success).toBe(false);
+  });
+
+  it('baseSchema: COOKIE_SAMESITE faqat strict|lax|none', () => {
+    const result = baseSchema.safeParse(validEnv({ COOKIE_SAMESITE: 'nonsense' }));
+    expect(result.success).toBe(false);
   });
 });
 

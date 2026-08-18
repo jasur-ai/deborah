@@ -1,0 +1,92 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`D-33 snapshot (§08, D-30 response regression) > 10) loginResponse schema snapshot 1`] = `
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "backupCodesRemaining": {
+      "maximum": 9007199254740991,
+      "minimum": -9007199254740991,
+      "type": "integer",
+    },
+    "mfaRequired": {
+      "type": "boolean",
+    },
+    "ok": {
+      "const": true,
+      "type": "boolean",
+    },
+    "redirect": {
+      "type": "string",
+    },
+  },
+  "required": [
+    "ok",
+  ],
+  "type": "object",
+}
+`;
+
+exports[`D-33 snapshot (§08, D-30 response regression) > 11) registerResponse + errorEnvelope snapshot 1`] = `
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "emailSent": {
+      "type": "boolean",
+    },
+    "ok": {
+      "const": true,
+      "type": "boolean",
+    },
+    "redirect": {
+      "type": "string",
+    },
+  },
+  "required": [
+    "ok",
+  ],
+  "type": "object",
+}
+`;
+
+exports[`D-33 snapshot (§08, D-30 response regression) > 11) registerResponse + errorEnvelope snapshot 2`] = `
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "details": {
+      "additionalProperties": {
+        "type": "string",
+      },
+      "propertyNames": {
+        "type": "string",
+      },
+      "type": "object",
+    },
+    "error": {
+      "type": "string",
+    },
+    "ok": {
+      "const": false,
+      "type": "boolean",
+    },
+    "releaseAt": {
+      "maximum": 9007199254740991,
+      "minimum": -9007199254740991,
+      "type": "integer",
+    },
+    "retryAfter": {
+      "maximum": 9007199254740991,
+      "minimum": -9007199254740991,
+      "type": "integer",
+    },
+  },
+  "required": [
+    "ok",
+    "error",
+  ],
+  "type": "object",
+}
+`;

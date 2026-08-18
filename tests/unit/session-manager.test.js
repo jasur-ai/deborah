@@ -44,7 +44,12 @@ vi.mock('../../firebase/admin.js', () => {
 
 vi.mock('../../src/modules/auth/audit.js', () => ({
   audit: vi.fn(async () => true),
-  AUDIT_ACTIONS: { SESSION_REVOKE: 'session:revoke', RECOVERY_CODE_USED: 'recovery:code:used', RECOVERY_CODE_REVOKE: 'recovery:code:revoke' },
+  AUDIT_ACTIONS: {
+    SESSION_REVOKE: 'session:revoke',
+    SESSION_LIMIT_REACHED: 'session:limit-reached', // AUTH A-02
+    RECOVERY_CODE_USED: 'recovery:code:used',
+    RECOVERY_CODE_REVOKE: 'recovery:code:revoke',
+  },
 }));
 
 describe('Session Manager', () => {
@@ -110,11 +115,23 @@ describe('Session Manager', () => {
     });
   });
 
-  describe('Session Limit', () => {
-    it('should enforce max sessions per user', async () => {
-      for (let i = 0; i < 22; i++) await sm.recordSession({ userId: 'lu', sessionId: `s_${i}` });
+  describe('Session Limit (AUTH A-02)', () => {
+    it('parallel limit 5 — 6-chisi kelganda eng eski revoke', async () => {
+      for (let i = 0; i < 6; i++) await sm.recordSession({ userId: 'lu', sessionId: `s_${i}` });
       const sessions = await sm.getUserSessions('lu');
-      expect(Object.keys(sessions).length).toBeLessThanOrEqual(20);
+      const keys = Object.keys(sessions);
+      expect(keys.length).toBe(5); // limit = CONFIG.SESSION_MAX_PARALLEL (5)
+      expect(keys[0]).toBe('s_1'); // s_0 (eng eski) revoke bo'ldi
+      expect(keys).toContain('s_5');
+      expect(sessions.s_0).toBeUndefined();
+    });
+
+    it('evictionda session:limit-reached audit eventi yoziladi', async () => {
+      for (let i = 0; i < 6; i++) await sm.recordSession({ userId: 'lu2', sessionId: `e_${i}` });
+      const { audit } = await import('../../src/modules/auth/audit.js');
+      expect(audit).toHaveBeenCalledWith(
+        expect.objectContaining({ action: 'session:limit-reached', userId: 'lu2' })
+      );
     });
   });
 
@@ -159,6 +176,49 @@ describe('Session Manager', () => {
       await sm.generateRecoveryCodes('rru');
       await sm.revokeRecoveryCodes('rru');
       expect((await sm.getRecoveryCodeStatus('rru')).hasCodes).toBe(false);
+    });
+  });
+
+  describe('detectNewDevice (AUTH A-05)', () => {
+    it('session record yo\'q bo\'lsa — yangi emas (farq qilmaydi)', async () => {
+      const r = await sm.detectNewDevice({ userId: 'nd_nobody', ipAddress: '203.0.113.9', userAgent: 'UA' });
+      expect(r.isNew).toBe(false);
+    });
+
+    it('avvalgi session IP+UA bilan bir xil bo\'lsa — yangi emas', async () => {
+      const sid = 'nd-session-1';
+      await sm.recordSession({
+        userId: 'nd_u1', sessionId: sid, ipAddress: '203.0.113.10',
+        userAgent: 'Mozilla/5.0 (X11; Linux)', authMethod: 'password',
+      });
+      const r = await sm.detectNewDevice({ userId: 'nd_u1', ipAddress: '203.0.113.10', userAgent: 'Mozilla/5.0 (X11; Linux)' });
+      expect(r.isNew).toBe(false);
+      expect(r.knownCount).toBe(1);
+    });
+
+    it('IP ham UA ham noma\'lum bo\'lsa — yangi qurilma', async () => {
+      await sm.recordSession({
+        userId: 'nd_u2', sessionId: 'nd-session-2', ipAddress: '203.0.113.11',
+        userAgent: 'Mozilla/5.0 (X11; Linux)', authMethod: 'password',
+      });
+      const r = await sm.detectNewDevice({ userId: 'nd_u2', ipAddress: '198.51.100.5', userAgent: 'Mozilla/5.0 (iPhone)' });
+      expect(r.isNew).toBe(true);
+      expect(r.reason).toBe('unseen_ip_and_ua');
+    });
+
+    it('IP boshqa bo\'lsa ham UA ma\'lum bo\'lsa — yangi emas (NAT/mobil)', async () => {
+      await sm.recordSession({
+        userId: 'nd_u3', sessionId: 'nd-session-3', ipAddress: '203.0.113.12',
+        userAgent: 'Mozilla/5.0 (iPhone)', authMethod: 'password',
+      });
+      // IP o'zgardi, lekin UA bir xil (mobil NAT) → yangi device emas
+      const r = await sm.detectNewDevice({ userId: 'nd_u3', ipAddress: '198.51.100.99', userAgent: 'Mozilla/5.0 (iPhone)' });
+      expect(r.isNew).toBe(false);
+    });
+
+    it('userId yo\'q — fail-soft false', async () => {
+      const r = await sm.detectNewDevice({ ipAddress: '203.0.113.1' });
+      expect(r.isNew).toBe(false);
     });
   });
 });

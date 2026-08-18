@@ -17,7 +17,12 @@ import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..', '..');
 const DATA_DIR = resolve(ROOT, 'data');
-const DB_FILE = resolve(DATA_DIR, 'db.json');
+// LOCAL_DB_FILE — vitest config'da per-invocation temp faylga ishora qiladi
+// (local-db.js bilan bir xil mantiq): testlar real data/db.json ga tegmagan
+// holda izolyatsiya qilingan DB'da ishlaydi.
+const DB_FILE = process.env.LOCAL_DB_FILE
+  ? resolve(process.env.LOCAL_DB_FILE)
+  : resolve(DATA_DIR, 'db.json');
 
 // ── Shared app instance (lazy) ──
 let _app = null;

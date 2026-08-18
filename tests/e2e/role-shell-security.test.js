@@ -80,7 +80,13 @@ describe('a11y — keyboard navigation & landmarks', () => {
     const res = await agent.get('/teacher');
     expect(res.text).toContain('data-shell-open');
     expect(res.text).toContain('aria-expanded="false"');
-    expect(res.text).toContain("e.key==='Escape'");
+    // STEP 17: Escape close endi navigation.js componentida — sahifa haqiqatan
+    // script tag orqali yuklayotganini ham assert qilamiz (end-to-end emas, lekin bog'langan)
+    expect(res.text).toContain('/js/components/navigation.js');
+    const navJs = readFileSync(resolve(ROOT, 'public/js/components/navigation.js'), 'utf-8');
+    expect(navJs).toContain("e.key === 'Escape'");
+    // Inline fallback (eski sahifalar) ham qo'llab-quvvatlanadi
+    expect(res.text).toMatch(/e\.key\s*===?\s*'Escape'|data-shell-close/);
   });
 });
 
@@ -102,8 +108,9 @@ describe('mobile & motion — responsive shell', () => {
     expect(css).toContain('@media (max-width: 768px)');
     expect(css).toContain('@media (max-width: 480px)');
 
-    // Reduced motion (existing global rule preserved)
-    expect(css).toContain('prefers-reduced-motion');
+    // Reduced motion — STEP 17: navigation.css componentida (head.ejs orqali yuklanadi)
+    const navCss = readFileSync(resolve(ROOT, 'public/design/components/navigation.css'), 'utf-8');
+    expect(navCss).toContain('prefers-reduced-motion');
   });
 
   it('shell skip-link is off-screen until focused (keyboard only)', () => {
@@ -127,9 +134,10 @@ describe('security — stealth & regression guards', () => {
     // CSRF token user login sahifasida hidden input'da (<%= csrfToken %>)
     const m = page.text.match(/name="_csrf"\s+value="([^"]+)"/);
     const res = await s.post('/user/login').type('form').send({
-      mode: 'reg',
+      mode: 'reg', consent: 'on',
       username: 'st_' + String(Date.now()).slice(-8),
-      password: 'test1234',
+      email: 'st_' + String(Date.now()).slice(-8) + '@a18.test',
+      password: 'test1234-uzun-parol', // AUTH A-22: NIST min 15
       _csrf: m ? m[1] : '',
     });
     // Redirect after successful registration → login OK (student role)
