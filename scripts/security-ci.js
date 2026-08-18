@@ -28,6 +28,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import { spawnSync as _spawn } from 'child_process';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -62,6 +63,17 @@ const SAST_RULES = [
   { id: 'SAST-007', name: 'no-store cache on sensitive routes', severity: 'low', pattern: /res\.set\(['"]Cache-Control['"]\s*,\s*['"](?!no-store)/ },
 ];
 
+// F-d (2026-08-18): hujjatlashtirilgan false positive'lar — har biri tekshirilgan
+// va xavfsiz deb tasdiqlangan. Yangi (allowlist'da yo'q) topilmalar gate'ni qizil qiladi.
+const SAST_ALLOWLIST = [
+  { rule: 'SAST-002', file: 'src/modules/auth/redis-service.js', why: "Redis client.eval(LUA_CONST, args) — JS eval EMAS; Lua skripti doimiy, argumentlar String() bilan qoplanadi" },
+  { rule: 'SAST-004', file: 'src/modules/portfolio/i18n.js', why: 'Tarjima kalitlari (kindCredential: "Credential") — secret EMAS' },
+  { rule: 'SAST-002', file: 'src/modules/safe-submit/safe-submit.schema.js', why: "Xavfli-pattern BLOCKLIST'i (exec/eval taqiqlovchi qoida ro'yxati) — o'zi xavfsizlik checki" },
+  { rule: 'SAST-003', file: 'src/modules/qti/qti-security.js', why: 'unzip -l multer temp faylida (server-generated path, attacker nazorat qila olmaydi); output pipeline' },
+  { rule: 'SAST-003', file: 'routes/qti.js', why: 'unzip/7z multer temp faylida (server-generated path); extractDir os.tmpdir()+pkg.id (DB)' },
+  { rule: 'SAST-003', file: 'src/modules/roster/validator.js', why: "F-d fix: spawnSync args-array (shell YO'Q — injeksiya yuzasi yopilgan); SAST-003 spawnSync'ni ham flaglaydi" },
+];
+
 function runSast() {
   const files = walk(path.join(ROOT, 'src'), ['.js', '.ts'])
     .concat(walk(path.join(ROOT, 'routes'), ['.js']))
@@ -76,7 +88,7 @@ function runSast() {
       if (m) findings.push({ rule: rule.id, name: rule.name, severity: rule.severity, file: path.relative(ROOT, file), line: 1 + src.slice(0, m.index).split('\n').length });
     }
   }
-  // Deduplicate per (rule,file)
+  // Deduplicate per (rule,file,line)
   const seen = new Set();
   const unique = findings.filter((f) => {
     const k = `${f.rule}:${f.file}:${f.line}`;
@@ -84,8 +96,12 @@ function runSast() {
     seen.add(k);
     return true;
   });
-  const critical = unique.filter((f) => f.severity === 'critical');
-  return { findings: unique, pass: critical.length === 0, critical: critical.length };
+  // Allowlist'dagi hujjatlashtirilgan false positive'larni ajratamiz
+  // Windows (backslash) va Linux (slash) mosligi: path'ni '/' ga normalize qilamiz
+  const norm = (p) => String(p || '').split(path.sep).join('/');
+  const active = unique.filter((f) => !SAST_ALLOWLIST.some((a) => a.rule === f.rule && norm(a.file) === norm(f.file)));
+  const critical = active.filter((f) => f.severity === 'critical');
+  return { findings: active, pass: critical.length === 0, critical: critical.length, allowed: unique.length - active.length };
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -163,11 +179,24 @@ const SECRET_PATTERNS = [
   { id: 'SEC-008', name: 'Generic long token in env-example', pattern: /(SECRET|TOKEN|PASSWORD|API_KEY)\s*=\s*['"]?[A-Za-z0-9_\-]{24,}['"]?/ },
 ];
 
+// Gitignore'da bo'lgan fayllar repo'ga tusha olmaydi — secret scan ularni
+// o'tkazib yuboradi (local kredensiallar uchun false positive emas).
+function isGitIgnored(relPath) {
+  try {
+    const r = _spawn('git', ['check-ignore', '-q', relPath], { cwd: ROOT, encoding: 'utf-8' });
+    return r.status === 0;
+  } catch (_) {
+    return false;
+  }
+}
+
 function runSecrets() {
   const files = walk(ROOT, ['.js', '.ts', '.ejs', '.json', '.env.example', '.env.sample', '.md', '.sh']);
   const findings = [];
   for (const file of files) {
     if (file.includes('reports') || file.includes('node_modules') || file.includes('package-lock')) continue;
+    const rel = path.relative(ROOT, file);
+    if (isGitIgnored(rel)) continue; // gitignore'da — commit bo'lmaydi
     let src;
     try { src = fs.readFileSync(file, 'utf8'); } catch (_) { continue; }
     // SEC-008 (generic long token in env) only applies to real env files —
@@ -177,7 +206,7 @@ function runSecrets() {
     for (const rule of SECRET_PATTERNS) {
       if (rule.id === 'SEC-008' && !isEnvFile) continue;
       const m = rule.pattern.exec(src);
-      if (m) findings.push({ rule: rule.id, name: rule.name, file: path.relative(ROOT, file), line: 1 + src.slice(0, m.index).split('\n').length });
+      if (m) findings.push({ rule: rule.id, name: rule.name, file: rel, line: 1 + src.slice(0, m.index).split('\n').length });
     }
   }
   return { findings, pass: findings.length === 0, count: findings.length };

@@ -18,22 +18,32 @@
  * Exit code 0 = release gate green (or report-only); 1 = gate blocked.
  */
 
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import path from 'path';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 
+const jsonOut = process.argv.includes('--json');
+const rehearsal = process.argv.includes('--rehearsal');
+
 let acceptance;
 try {
-  acceptance = await import(path.join(ROOT, 'src/modules/acceptance/index.js'));
+  // Windows: pathToFileURL — ESM loader 'D:\...' ni qabul qilmaydi
+  if (jsonOut) {
+    // --json rejimida stdout toza JSON bo'lishi kerak: import zanjiri
+    // (server bootstrap) chiqaradigan banner/loglarni stderr'ga yo'naltiramiz.
+    const origLog = console.log;
+    console.log = (...args) => console.error(...args);
+    acceptance = await import(pathToFileURL(path.join(ROOT, 'src/modules/acceptance/index.js')).href);
+    console.log = origLog;
+  } else {
+    acceptance = await import(pathToFileURL(path.join(ROOT, 'src/modules/acceptance/index.js')).href);
+  }
 } catch (_) {
   console.error('Cannot load acceptance module');
   process.exit(2);
 }
-
-const jsonOut = process.argv.includes('--json');
-const rehearsal = process.argv.includes('--rehearsal');
 
 // ── Marketing claim guard evidence map (research §21/§63) ──
 const EVIDENCE_MAP = {
