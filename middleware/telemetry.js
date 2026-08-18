@@ -20,6 +20,7 @@ import {
   incrementCounter,
   observeHistogram,
 } from '../src/telemetry/index.js';
+import CONFIG from '../src/config/env.js'; // AUTH D-05 §28: tenant_id
 
 /**
  * Express middleware: trace context + HTTP span + http metrics.
@@ -41,6 +42,8 @@ export function telemetryMiddleware(req, res, next) {
       'http.url': (req.originalUrl || req.url || '').split('?')[0],
       'http.route': req.path,
       'http.request_id': req.id,
+      // AUTH D-05 §28: tenant scope debug uchun
+      'tenant_id': CONFIG.TENANT_ID || 'default',
     },
   });
 

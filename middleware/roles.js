@@ -20,11 +20,27 @@ import { icon } from '../utils/icons.js';
 export const ROLES = {
   admin: { label: 'Administrator', icon: 'shield', color: 'var(--accent)' },
   teacher: { label: "O'qituvchi", icon: 'bookOpen', color: 'var(--accent-glow)' },
+  // AUTH A-19: teacher approval state machine — hali tasdiqlanmagan/rejected.
+  // Bu rollar hech qanday workspace'ga kirmaydi (requireRole bloklaydi);
+  // faqat /user/teacher-approval status sahifasiga kirishi mumkin.
+  teacher_pending: { label: "O'qituvchi (ariza)", icon: 'clock', color: 'var(--amber)' },
+  teacher_rejected: { label: "O'qituvchi (rad etilgan)", icon: 'alertTriangle', color: 'var(--danger)' },
   student: { label: 'Talaba', icon: 'user', color: 'var(--green)' },
   proctor: { label: 'Proktor', icon: 'monitor', color: 'var(--cyan)' },
   marker: { label: 'Baholovchi', icon: 'clipboard', color: 'var(--purple)' },
   board: { label: "Hay'at", icon: 'award', color: 'var(--gold)' },
+  // AUTH B-36 §09: co-teacher — faqat o'z kursida amal qiladi (scope),
+  // admin emas; teacher workspace'iga kirmaydi (requireRole bloklaydi).
+  co_teacher: { label: 'Hamkor o\'qituvchi', icon: 'userPlus', color: 'var(--accent-glow)' },
 };
+
+// AUTH A-19: approval state'lari — faqat admin transition qila oladi.
+export const TEACHER_APPROVAL_STATES = ['teacher_pending', 'teacher', 'teacher_rejected'];
+
+/** Haqiqiy teacher (tasdiqlangan) — test yaratish/cast/student data uchun. */
+export function isApprovedTeacher(role) {
+  return role === 'teacher';
+}
 
 export const ROLE_LIST = Object.keys(ROLES);
 
@@ -85,6 +101,22 @@ export const ROLE_NAV = {
     { href: '/admin/board', icon: 'shield', label: 'Board' },
     { href: '/admin/grading', icon: 'trendUp', label: 'Grading' },
   ],
+  // AUTH A-19: pending/rejected teacher — faqat approval status sahifasi.
+  // Boshqa hech narsa ko'rinmaydi (test yaratish/cast/student data YO'Q).
+  teacher_pending: [
+    { section: "Ariza holati" },
+    { href: '/user/teacher-approval', icon: 'clock', label: "Ko'rib chiqilmoqda" },
+  ],
+  teacher_rejected: [
+    { section: "Ariza holati" },
+    { href: '/user/teacher-approval', icon: 'alertTriangle', label: 'Rad etilgan' },
+  ],
+  // AUTH B-36 §10: co-teacher — faqat o'z paneli; kursga kirish scope check.
+  co_teacher: [
+    { section: "Ish maydoni" },
+    { href: '/user/panel', icon: 'grid', label: 'Panelim' },
+    { href: '/user/create-test', icon: 'plus', label: 'Yangi test' },
+  ],
 };
 
 // ── Default nav (fallback) ──
@@ -105,12 +137,28 @@ export function resolveRole(req) {
 /**
  * requireRole(...roles) — middleware.
  * HTML: ruxsatsiz → 404 stealth. API: → 403 JSON. admin → always allowed.
+ * AUTH A-19: teacher_pending/teacher_rejected hech qachon workspace'ga kira
+ * olmaydi — test yaratish, cast, student data blok (stop condition §29).
  */
 export function requireRole(...allowed) {
   return (req, res, next) => {
     const role = resolveRole(req);
     if (role === 'admin') return next();
     if (role && allowed.includes(role)) return next();
+
+    // AUTH A-19 §14: tasdiqlanmagan teacher — hech qachon workspace'ga kirmaydi.
+    if (role === 'teacher_pending' || role === 'teacher_rejected') {
+      // API/HTML uchun bir xil stealth: 404 HTML / 403 JSON.
+      const isApi = req.originalUrl?.startsWith('/api/') || req.path?.startsWith('/api/');
+      if (isApi || req.xhr || req.accepts('json')) {
+        return res.status(403).json({ error: 'Ruxsat etilmagan rol' });
+      }
+      return res.status(404).render('error', {
+        title: '404 — Sahifa topilmadi',
+        message: "So'ralgan sahifa mavjud emas",
+        status: 404,
+      });
+    }
 
     const isApi = req.originalUrl?.startsWith('/api/') || req.path?.startsWith('/api/');
 

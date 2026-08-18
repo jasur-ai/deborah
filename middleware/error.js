@@ -29,10 +29,19 @@ export function errorHandler(err, req, res, next) {
   }
 
   // Page errors
+  // S34.03: opaque reference ID — support uchun, secret detail oshkor qilmaydi
+  const refId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  if (process.env.NODE_ENV !== 'production') {
+    console.error(`[Error ${refId}]`, err.message);
+  }
   res.status(status).render('error', {
     title: `${status} — Xatolik`,
     message,
     status,
+    refId,
+    // S16.08: raw stack faqat dev rejimida (render'da ishlatiladi)
+    stack: process.env.NODE_ENV === 'production' ? null : err.stack,
+    isDev: process.env.NODE_ENV !== 'production',
   });
 }
 
