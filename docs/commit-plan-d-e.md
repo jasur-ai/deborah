@@ -50,9 +50,28 @@ git status               # faqat db.json/data/ teksiz qoladi
 
 ## 4. Status
 
-- [ ] Operator ruxsati
-- [ ] C1..C15 commit'lar
-- [ ] Yakuniy tekshiruv + push (operator bilan)
+- [x] Operator ruxsati — wsl GO (2026-08-18)
+- [x] C1..C15 + qo'shimcha commit'lar (jami 11 commit, ~1100 fayl)
+- [x] Yakuniy tekshiruv: tsc 0 + security-ci ALL GATES PASS + test:auth 490/490 (commit'lardan oldin)
+- [ ] Push (operator bilan)
+
+**Bajarilgan commit'lar (wsl, 2026-08-18):**
+
+| Commit | Qamrov |
+|---|---|
+| `a2e91a0` feat(auth): D-faza auth yadro modullari | src/modules/auth/* (41 fayl) |
+| `756fe59` feat(auth): D-faza route'lar va middleware | routes/* + middleware/* (24 fayl) |
+| `eb09ba4` feat(auth): D-faza UI | views/user, admin, public/js, css, images (129 fayl) |
+| `c5aa9c7` test(auth): D+E faza testlari | tests/** (376 fayl) |
+| `0e24002` feat(privacy): DSAR + legal + consent + onboarding | src/modules/privacy|legal|onboarding (9 fayl) |
+| `7818bce` feat(ops): infra + telemetry + email/push | src/config|telemetry|email|student, server, firebase, CI (50 fayl) |
+| `2948a98` feat(hemis): HEMIS + roster | hemis/roster modullar + route'lar (10 fayl) |
+| `9caf642` chore(scripts) | scripts/** (69 fayl) |
+| `d7e8086` feat(app): cast + qolgan app modullari | cast/portfolio/teacher/opendata, views, public (392 fayl) |
+| `b93bb30` docs: acceptance + handover + roadmap | docs/** (19 fayl) |
+| `7115aa0` fix: o'zgargan route'lar va xizmat fayllari | qolgan 15 modified fayl |
+
+**Eslatma:** `data/db.json` untrack qilindi (`git rm --cached` — .gitignore'da `data/` bor). Temp fayllar commit qilinmadi: `tmp-handler.js`, `admin-debug.test.js`, `design-lint.allowlist.json.tmp`.
 
 ---
 *Reja `docs/roadmap-f-faza.md` F-01 vazifasi uchun. Bajarish operator ruxsatidan keyin.*
