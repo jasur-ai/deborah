@@ -37,6 +37,17 @@ export const HTTP_LIMITS = {
     skip: (req) => req.method !== 'POST',
   },
 
+  /** AUTH A-30 §08: Admin login — qattiqroq. QATTIQ himoya failure-based
+   *  lockout (3 xato → 15 daqiqa, admin-security.js) — bu yerda tarmoq
+   *  backstop (request-based 10/15; 3 request yetarli emas — legit admin
+   *  ham OTP xatosini takrorlashi mumkin). */
+  adminLogin: {
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    message: { error: "Ko'p urinish. Iltimos, 15 daqiqa kuting." },
+    skip: (req) => req.method !== 'POST',
+  },
+
   /** General API — all state-changing endpoints */
   general: {
     windowMs: 15 * 60 * 1000, // 15 minutes

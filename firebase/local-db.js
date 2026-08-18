@@ -11,10 +11,15 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+// AUTH B-01: users final schema — legacy user'larni normalize qilish (idempotent).
+import { normalizeUserRecord } from '../src/modules/auth/user-schema.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = resolve(__dirname, '..', 'data');
-const DB_FILE = resolve(DATA_DIR, 'db.json');
+// LOCAL_DB_FILE — visual/test server'lar uchun alohida DB (STEP 08):
+// Playwright webServer har run'da toza DB bilan ishlaydi (deterministik
+// dashboard raqamlari), real data/db.json esa buzilmaydi.
+const DB_FILE = process.env.LOCAL_DB_FILE ? resolve(process.env.LOCAL_DB_FILE) : resolve(DATA_DIR, 'db.json');
 
 // ── Ensure data directory exists ──
 if (!existsSync(DATA_DIR)) {
@@ -28,8 +33,7 @@ let writeLock = Promise.resolve();
 function readDB() {
   try {
     if (existsSync(DB_FILE)) {
-      const raw = readFileSync(DB_FILE, 'utf-8');
-      return JSON.parse(raw);
+      return JSON.parse(readFileSync(DB_FILE, 'utf-8'));
     }
   } catch (err) {
     console.error('⚠️ Local DB read error, resetting:', err.message);
@@ -93,6 +97,37 @@ function navigateWithParent(data, path) {
   };
 }
 
+// ── Navigate a path, creating missing intermediate objects (transaction-safe) ──
+function navigateCreating(data, path) {
+  const parts = path.split('/').filter(Boolean);
+  if (parts.length === 0) {
+    return { parent: null, key: null, value: data, exists: true };
+  }
+
+  let current = data;
+  for (let i = 0; i < parts.length - 1; i++) {
+    const part = parts[i];
+    if (current === null || current === undefined || typeof current !== 'object') {
+      // Yo'lda non-object qiymat — write'ni sokin tashlab yubormaymiz,
+      // xato ko'taramiz (caller javobni bilishi kerak)
+      throw new Error(`LocalDB transaction path broken at segment "${part}" (non-object parent)`);
+    }
+    if (!(part in current) || typeof current[part] !== 'object' || current[part] === null) {
+      current[part] = {};
+    }
+    current = current[part];
+  }
+
+  const lastKey = parts[parts.length - 1];
+  const exists = current !== null && typeof current === 'object' && lastKey in current;
+  return {
+    parent: current,
+    key: lastKey,
+    value: exists ? current[lastKey] : undefined,
+    exists,
+  };
+}
+
 // ── Deep clone (prevents mutation) ──
 function clone(val) {
   if (val === undefined || val === null) return val;
@@ -140,26 +175,41 @@ class LocalDB {
       console.log(`✅ Local DB seed qilindi: ${Object.keys(this._data).length} ta asosiy yo\'nalish`);
     } else {
       console.log(`📦 Local DB yuklandi: ${Object.keys(this._data).length} ta asosiy yo\'nalish`);
+      // ── Partial recovery: DB da ba'zi asosiy to'plamlar yo'q, lekin boshqa to'plamlar bor ──
+      // (masalan cast_* to'plamlari test'lar davomida yozilgan). Login/preflight ishlamay
+      // qolmasligi uchun seed'dan YETISHMAYOTGAN top-level to'plamlarni merge qilamiz —
+      // mavjud to'plamlarga tegmaymiz.
+      if (seedFn) {
+        const seedData = typeof seedFn === 'function' ? seedFn() : seedFn;
+        if (seedData && typeof seedData === 'object') {
+          const missing = Object.keys(seedData).filter((k) => !(k in this._data));
+          if (missing.length > 0) {
+            for (const k of missing) this._data[k] = seedData[k];
+            await writeDB(this._data);
+            console.log(`✅ Local DB: ${missing.length} ta yetishmayotgan to'plam seed'dan qo'shildi (${missing.join(', ')})`);
+          }
+        }
+      }
     }
 
-    // ── Auto-migration: Add isVip field to existing users ──
+    // ── Auto-migration (AUTH B-01): users final schema — legacy user'lar
+    // canonical field'lar bilan to'ldiriladi (idempotent; isVip ham shu yerda).
     const users = this._data.users;
     if (users && typeof users === 'object') {
       let migrated = 0;
       for (const userKey of Object.keys(users)) {
         const user = users[userKey];
-        if (user && typeof user === 'object' && user.isVip === undefined) {
-          user.isVip = false;
-          user.vipGrantedAt = null;
-          user.vipGrantedBy = null;
-          user.vipRevokedAt = null;
-          user.vipPlainPassword = null;
+        if (!user || typeof user !== 'object') continue;
+        const before = JSON.stringify(user);
+        const normalized = normalizeUserRecord(user);
+        if (JSON.stringify(normalized) !== before) {
+          users[userKey] = normalized;
           migrated++;
         }
       }
       if (migrated > 0) {
         await writeDB(this._data);
-        console.log(`   🔄 Migratsiya: ${migrated} ta foydalanuvchiga isVip maydoni qo'shildi`);
+        console.log(`   🔄 Migratsiya (B-01 users schema): ${migrated} ta foydalanuvchi normalize qilindi`);
       }
     }
 
@@ -238,6 +288,48 @@ class LocalDB {
       this._data = {};
     }
     await writeDB(this._data);
+  }
+
+  /**
+   * Atomic read-modify-write transaction (process-lock serialized).
+   * Real Firebase transaction API'siga mos keladi.
+   *
+   * @param {string} path
+   * @param {(current: any) => any} updater — pure updater; null qaytarsa abort
+   * @returns {Promise<{committed: boolean, value: any, previous: any}>}
+   */
+  async transaction(path, updater) {
+    // Process-lock: barcha transaction'lar navbatda bajariladi (race yo'q).
+    // writeDB() chain'iga ulanmasdan o'z lock'ini boshqaramiz — aks holda
+    // writeDB o'zi writeLock'ni chain qilgani uchun deadlock yuzaga keladi.
+    const prev = writeLock;
+    let resolveLock;
+    writeLock = new Promise((r) => { resolveLock = r; });
+    await prev;
+    try {
+      this._data = readDB();
+      // Chuqur path'da oraliq segmentlar yo'q bo'lsa ham ularni YARATIB boramiz
+      // (set() bilan bir xil logika) — aks holda javob xato darajaga yoziladi:
+      // answers/q_02/{pid}/1 o'rniga answers/q_02 ga to'g'ridan-to'g'ri.
+      const result = navigateCreating(this._data, path);
+      const previous = result.exists ? clone(result.value) : null;
+      const next = updater(previous);
+      if (next === null || next === undefined) {
+        return { committed: false, value: previous, previous };
+      }
+
+      if (result.parent !== null) {
+        result.parent[result.key] = clone(next);
+      } else if (result.key === null) {
+        // Root-level transaction: merge semantics emas, to'liq almashtirish
+        this._data = typeof next === 'object' && next !== null ? clone(next) : {};
+      }
+      // Transaction o'zi serialized — sync write xavfsiz
+      writeFileSync(DB_FILE, JSON.stringify(this._data, null, 2), 'utf-8');
+      return { committed: true, value: clone(next), previous };
+    } finally {
+      resolveLock();
+    }
   }
 }
 

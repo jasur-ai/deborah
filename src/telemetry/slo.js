@@ -77,6 +77,47 @@ export const SLOS = [
     runbook: '/docs/runbooks/answer-leak.md',
     description: 'Javoblar yo\'qolmasligi — 100% saqlanishi',
   },
+  // ── AUTH D-06 §07 — auth SLO'lar ──
+  {
+    id: 'auth_login_success_rate',
+    name: 'Login muvaffaqiyat darajasi',
+    type: 'availability',
+    target: 0.90, // >90% (2 hafta)
+    windowMs: 14 * 24 * 60 * 60 * 1000,
+    burnWindowHours: 6,
+    runbook: '/docs/runbooks/auth-login-spike.md',
+    description: 'Login urinishlarining >90% muvaffaqiyatli (2 hafta oyna)',
+  },
+  {
+    id: 'auth_login_latency_p95',
+    name: 'Login p95 < 2s',
+    type: 'latency_p95',
+    targetMs: 2000,
+    windowMs: 24 * 60 * 60 * 1000,
+    burnWindowHours: 6,
+    runbook: '/docs/runbooks/auth-login-latency.md',
+    description: 'Login p95 kechikishi 2 soniyadan oshmasligi kerak',
+  },
+  {
+    id: 'auth_email_deliverability',
+    name: 'Email yetkazish > 90%',
+    type: 'availability',
+    target: 0.90,
+    windowMs: 14 * 24 * 60 * 60 * 1000,
+    burnWindowHours: 6,
+    runbook: '/docs/runbooks/email-delivery.md',
+    description: 'Yuborilgan email\'larning >90% inbox\'ga yetkazilishi (bounce <10%)',
+  },
+  {
+    id: 'auth_availability',
+    name: 'Auth mavjudligi',
+    type: 'availability',
+    target: 0.999, // 99.9%
+    windowMs: 30 * 24 * 60 * 60 * 1000,
+    burnWindowHours: 6,
+    runbook: '/docs/runbooks/auth-outage.md',
+    description: 'Auth endpointlar 99.9% mavjud (5xx = xato)',
+  },
 ];
 
 /** SLO'ni id bo'yicha topish. */
@@ -185,10 +226,28 @@ export function evaluateSlo(snapshot, opts = {}) {
     .filter((c) => c.name === 'edikit_grading_jobs_ok_total')
     .reduce((a, c) => a + c.value, 0);
 
+  // ── AUTH D-06 §07: auth SLO ma'lumotlari (Prometheus nomli counter'lar) ──
+  // auth_login_total{method,outcome}, auth_register_total, auth_verify_total,
+  // auth_email_delivery_total{status}, auth_login_duration_histogram (histogram).
+  const sumByNameLabel = (name, labelPred) => (snapshot.counters || [])
+    .filter((c) => c.name === name && (!labelPred || labelPred(c.labels || {})))
+    .reduce((a, c) => a + c.value, 0);
+  const loginTotal = sumByNameLabel('auth_login_total', () => true);
+  const loginSuccess = sumByNameLabel('auth_login_total', (l) => l.outcome === 'success');
+  const loginFail = loginTotal - loginSuccess;
+  const registerTotal = sumByNameLabel('auth_register_total', () => true);
+  const verifyTotal = sumByNameLabel('auth_verify_total', () => true);
+  const emailSent = sumByNameLabel('auth_email_delivery_total', (l) => l.status === 'sent');
+  const emailFailed = sumByNameLabel('auth_email_delivery_total', (l) => l.status === 'bounce' || l.status === 'deadletter');
+  const emailTotal = emailSent + emailFailed;
+  const loginHist = (snapshot.histograms || []).find((h) => h.name === 'auth_login_duration_histogram');
+
   return SLOS.map((slo) => {
     const base = { id: slo.id, name: slo.name, runbook: slo.runbook, description: slo.description };
     if (slo.type === 'latency_p95') {
-      const r = computeLatencyP95({ p95: ackHist?.p95 || 0 }, slo);
+      // auth_login_latency_p95 → auth_login_duration_histogram; boshqa p95 SLO'lar ackHist
+      const hist = slo.id === 'auth_login_latency_p95' ? loginHist : ackHist;
+      const r = computeLatencyP95({ p95: hist?.p95 || 0 }, slo);
       return { ...base, type: slo.type, ...r };
     }
     // availability-type
@@ -201,6 +260,14 @@ export function evaluateSlo(snapshot, opts = {}) {
       // Data loss = answer_save_errors; total = answer attempts
       goodN = Math.max(0, total - answerErrors);
       totalN = total;
+    }
+    else if (slo.id === 'auth_login_success_rate') { goodN = loginSuccess; totalN = loginTotal; }
+    else if (slo.id === 'auth_email_deliverability') { goodN = emailSent; totalN = emailTotal; }
+    else if (slo.id === 'auth_availability') {
+      // Auth endpoint mavjudligi — login/register/verify umumiy xato ulushi.
+      // loginSuccess allaqachon fail'lar chiqarilgan — qayta ayirilmaydi.
+      goodN = loginSuccess + registerTotal + verifyTotal;
+      totalN = loginTotal + registerTotal + verifyTotal;
     }
     const r = computeAvailability({ good: goodN, total: totalN, sinceMs }, slo);
     return { ...base, type: slo.type, ...r };

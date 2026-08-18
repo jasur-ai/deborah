@@ -117,6 +117,50 @@ export function clearMetrics() {
   gauges.clear();
 }
 
+/** Escape Prometheus label value. */
+function escapeLabelValue(v) {
+  return String(v).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n');
+}
+
+function formatLabels(labels = {}) {
+  const entries = Object.entries(labels || {});
+  if (!entries.length) return '';
+  return '{' + entries.map(([k, v]) => `${k}="${escapeLabelValue(v)}"`).join(',') + '}';
+}
+
+/**
+ * AUTH D-06 §06: Prometheus text exposition format.
+ * PII yo'q: label qiymatlari allaqachon redactLabel orqali xavfsizlangan
+ * (metrics registry serializatsiya paytida) — bu yerda faqat formatlash.
+ * @param {{ counters?: object[], histograms?: object[], gauges?: object[] }} [snapshot]
+ * @returns {string} text/plain exposition
+ */
+export function prometheusText(snapshot) {
+  const snap = snapshot || snapshotMetrics();
+  const lines = [];
+  for (const c of snap.counters || []) {
+    if (c.help) lines.push(`# HELP ${c.name} ${c.help}`);
+    if (c.unit) lines.push(`# TYPE ${c.name} counter`);
+    else lines.push(`# TYPE ${c.name} counter`);
+    lines.push(`${c.name}${formatLabels(c.labels)} ${c.value}`);
+  }
+  for (const g of snap.gauges || []) {
+    lines.push(`# TYPE ${g.name} gauge`);
+    if (g.help) lines.push(`# HELP ${g.name} ${g.help}`);
+    lines.push(`${g.name}${formatLabels(g.labels)} ${g.value}`);
+  }
+  for (const h of snap.histograms || []) {
+    lines.push(`# TYPE ${h.name} histogram`);
+    if (h.help) lines.push(`# HELP ${h.name} ${h.help}`);
+    lines.push(`${h.name}_count ${h.count}`);
+    lines.push(`${h.name}_sum ${h.sum}`);
+    if (h.p50 !== undefined) lines.push(`${h.name}_p50 ${h.p50}`);
+    if (h.p95 !== undefined) lines.push(`${h.name}_p95 ${h.p95}`);
+    if (h.p99 !== undefined) lines.push(`${h.name}_p99 ${h.p99}`);
+  }
+  return lines.join('\n') + '\n';
+}
+
 /**
  * Convenience: record a domain metric from research §38.2.
  * @param {string} name - metric nomi
@@ -130,4 +174,4 @@ export function recordMetric(name, value = 1, opts = {}) {
   return incrementCounter(name, opts, { value, labels: opts.labels });
 }
 
-export default { incrementCounter, observeHistogram, setGauge, snapshotMetrics, clearMetrics, recordMetric };
+export default { incrementCounter, observeHistogram, setGauge, snapshotMetrics, clearMetrics, recordMetric, prometheusText };

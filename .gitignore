@@ -1,10 +1,28 @@
 node_modules/
 .env
 *.log
+# HEMIS live-test credential fayli — A-14 sinov akkaunti (hech qachon commit qilinmaydi)
+hemis-test.env
 .DS_Store
 dist/
 build/
-data/  # Local JSON database (auto-generated from seed)
+# Local JSON database (auto-generated from seed)
+data/
 # Firebase service account (maxfiy kalit — hech qachon commit qilinmaydi)
 *-firebase-adminsdk-*.json
 firebase-service-account.json
+
+# ── Design audit artifacts (STEP 01 / S01.10, STEP 03 / S03.09-11) ──
+# Baselinelar (design-audit/screenshots/*.png) git'da SAQLANADI — visual
+# diff gate CI'da baseline'siz ishlamaydi (S03.09-11). Test run'da hosil
+# bo'ladigan actual/diff artifactlari esa commit qilinmaydi.
+# DIQQAT: gitignore qator oxirida # comment bo'lmaydi — u pattern'ning
+# bir qismiga aylanadi va qoidani buzadi.
+design-audit/*.snap
+design-audit/screenshots/*.snap
+!design-audit/screenshots/*.png
+design-audit/test-before.txt
+design-audit/test-results/
+design-audit/visual-report.json
+*.png.snap
+!design-audit/fixtures.json

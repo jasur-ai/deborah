@@ -46,6 +46,28 @@ const FEATURE_REGISTRY = {
     description: 'Excel question import',
     envVar: 'FEATURE_EXCEL_IMPORT',
   },
+  // ── AUTH D-21 §10: gradual rollout flaglari (5% → 25% → 100%) ──
+  authMfaRequired: {
+    default: false,
+    description: 'AUTH: MFA majburiy (gradual rollout — D-21)',
+    envVar: 'FEATURE_AUTH_MFA_REQUIRED',
+  },
+  authPasskeyLogin: {
+    default: false,
+    description: 'AUTH: passkey login (gradual rollout — D-21)',
+    envVar: 'FEATURE_AUTH_PASSKEY_LOGIN',
+  },
+  authDeviceCheck: {
+    default: false,
+    description: 'AUTH: yangi qurilma tekshiruvi (gradual rollout — D-21)',
+    envVar: 'FEATURE_AUTH_DEVICE_CHECK',
+  },
+  // ── AUTH D-26 §11: MFA bypass report → vaqtincha emergency off (S1) ──
+  authMfaEmergencyOff: {
+    default: false,
+    description: 'AUTH: MFA emergency OFF (S1 bypass report — D-26 §11, faqat incident paytida)',
+    envVar: 'FEATURE_AUTH_MFA_EMERGENCY_OFF',
+  },
 };
 
 // ── In-memory overrides (hot-reloadable) ──

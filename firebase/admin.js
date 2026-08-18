@@ -145,6 +145,36 @@ class FirebaseWrapper {
     }
     return this._localDb.remove(path);
   }
+
+  /**
+   * Atomic read-modify-write transaction (Cast answer/state races uchun).
+   * Real Firebase: RTDB transaction.
+   * Local DB: serialized process-lock orqali read-update-write.
+   *
+   * @param {string} path — transaction ishlaydigan path
+   * @param {(current: any) => any} updater — pure updater; qaytgan qiymat yoziladi.
+   *   updater null qaytarsa write amalga oshmaydi (abort).
+   * @returns {Promise<{committed: boolean, value: any, previous: any}>}
+   */
+  async transaction(path, updater) {
+    if (this._useReal) {
+      const ref = this._realDb.ref(path);
+      return new Promise((resolve, reject) => {
+        ref.transaction((current) => {
+          // RTDB transaction abort uchun updater null/undefined qaytarishi kerak
+          return updater(current === null || current === undefined ? null : current);
+        }, (err, committed, snapshot) => {
+          if (err) return reject(err);
+          resolve({
+            committed: !!committed,
+            value: snapshot ? snapshot.val() : null,
+            previous: null,
+          });
+        });
+      });
+    }
+    return this._localDb.transaction(path, updater);
+  }
 }
 
 // ── Init + Seed check ──

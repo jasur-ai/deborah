@@ -1,0 +1,11 @@
+{
+  "_comment": "S38.12 — Budget exception'lari. HAR bir exception uchun owner + expires (ISO date) + justification + measured qiymat MAJBURIY. Exception'lar asoslanmagan bo'lsa budget gate fail bo'ladi. Bu fayl EXAMPLE — ishlatish uchun performance-budget.exceptions.json ga ko'chiring.",
+  "rules": {
+    "app-css": {
+      "owner": "design-team",
+      "expires": "2027-01-01",
+      "justification": "App shell barcha komponent kutubxonasini o'z ichiga oladi; landing critical CSS budgeti 35KB da qat'iy saqlanmoqda",
+      "measured": "56KB gzip (2026-08-09)"
+    }
+  }
+}

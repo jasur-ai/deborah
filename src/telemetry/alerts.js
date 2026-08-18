@@ -25,6 +25,12 @@ export const RUNBOOKS = {
   roster_bad_import: { label: 'Roster bad import', path: '/docs/runbooks/roster-bad-import.md' },
   ai_score_drift: { label: 'AI score drift', path: '/docs/runbooks/ai-score-drift.md' },
   incorrect_grade_release: { label: 'Incorrect grade release', path: '/docs/runbooks/incorrect-grade-release.md' },
+  // AUTH D-06 §08/§09 — auth runbooks
+  auth_fail_spike: { label: 'Auth fail spike', path: '/docs/runbooks/auth-fail-spike.md' },
+  auth_lockout_spike: { label: 'Auth lockout spike', path: '/docs/runbooks/auth-lockout-spike.md' },
+  auth_email_bounce: { label: 'Email bounce high', path: '/docs/runbooks/email-delivery.md' },
+  auth_risk_block: { label: 'Risk block spike', path: '/docs/runbooks/auth-risk-block.md' },
+  auth_rate_limit_abuse: { label: 'Rate-limit abuse', path: '/docs/runbooks/auth-rate-limit-abuse.md' },
 };
 
 /**
@@ -98,6 +104,88 @@ export function evaluateAlerts(snapshot, opts = {}) {
     });
   }
 
+  // ── 4. AUTH D-06 §08: auth abuse/spike alert'lari (burn-rate qoidalari) ──
+  const sumL = (name, pred) => (snapshot.counters || [])
+    .filter((c) => c.name === name && (!pred || pred(c.labels || {})))
+    .reduce((a, c) => a + c.value, 0);
+
+  // 4.1 Fail spike: auth_login_total{outcome:'failed'} ulushi ≥ 50% (≥20 login)
+  const authLoginTotal = sumL('auth_login_total', () => true);
+  const authLoginFailed = sumL('auth_login_total', (l) => l.outcome === 'failed');
+  if (authLoginTotal >= 20) {
+    const failRate = authLoginFailed / authLoginTotal;
+    if (failRate >= 0.5) {
+      alerts.push({
+        id: 'auth_fail_spike',
+        severity: 'critical',
+        title: 'Login fail spike',
+        message: `Fail rate ${(failRate * 100).toFixed(1)}% (≥50%)`,
+        runbook: RUNBOOKS.auth_fail_spike.path,
+      });
+    } else if (failRate >= 0.3) {
+      alerts.push({
+        id: 'auth_fail_spike_warn',
+        severity: 'warning',
+        title: 'Login fail rate yuqori',
+        message: `Fail rate ${(failRate * 100).toFixed(1)}% (≥30%)`,
+        runbook: RUNBOOKS.auth_fail_spike.path,
+      });
+    }
+  }
+
+  // 4.2 Lockout spike: auth_lockout_total ≥ 20
+  const lockouts = sumL('auth_lockout_total', () => true);
+  if (lockouts >= 20) {
+    alerts.push({
+      id: 'auth_lockout_spike',
+      severity: 'warning',
+      title: 'Lockout spike',
+      message: `${lockouts} ta lockout (≥20)`,
+      runbook: RUNBOOKS.auth_lockout_spike.path,
+    });
+  }
+
+  // 4.3 Email bounce >5%: auth_email_delivery_total{status:'bounce|deadletter'} / total
+  const emailSentN = sumL('auth_email_delivery_total', (l) => l.status === 'sent');
+  const emailBad = sumL('auth_email_delivery_total', (l) => l.status === 'bounce' || l.status === 'deadletter');
+  const emailTot = emailSentN + emailBad;
+  if (emailTot >= 20) {
+    const bounceRate = emailBad / emailTot;
+    if (bounceRate > 0.05) {
+      alerts.push({
+        id: 'auth_email_bounce',
+        severity: bounceRate > 0.1 ? 'critical' : 'warning',
+        title: 'Email bounce >5%',
+        message: `Bounce rate ${(bounceRate * 100).toFixed(1)}% (chegara 5%)`,
+        runbook: RUNBOOKS.auth_email_bounce.path,
+      });
+    }
+  }
+
+  // 4.4 Risk block spike: auth_risk_block_total ≥ 10
+  const riskBlocks = sumL('auth_risk_block_total', () => true);
+  if (riskBlocks >= 10) {
+    alerts.push({
+      id: 'auth_risk_block_spike',
+      severity: 'warning',
+      title: 'Risk block spike',
+      message: `${riskBlocks} ta risk blok (≥10)`,
+      runbook: RUNBOOKS.auth_risk_block.path,
+    });
+  }
+
+  // 4.5 Rate-limit abuse: auth_rate_limit_hit_total ≥ 100
+  const rateHits = sumL('auth_rate_limit_hit_total', () => true);
+  if (rateHits >= 100) {
+    alerts.push({
+      id: 'auth_rate_limit_abuse',
+      severity: 'warning',
+      title: 'Rate-limit abuse',
+      message: `${rateHits} ta rate-limit (≥100)`,
+      runbook: RUNBOOKS.auth_rate_limit_abuse.path,
+    });
+  }
+
   // Quota — gauge edikit_provider_quota_fraction (0..1)
   const quotaGauges = (snapshot.gauges || []).filter((g) => g.name === 'edikit_provider_quota_fraction');
   for (const g of quotaGauges) {
@@ -123,4 +211,36 @@ function sumCounter(snapshot, matchFn) {
     .reduce((a, c) => a + c.value, 0);
 }
 
-export default { RUNBOOKS, evaluateAlerts };
+// ── AUTH D-06 §11: fired alert dedupe (idempotent audit — takroriy log yo'q) ──
+// Alert id bo'yicha oxirgi fire vaqti; ALERT_AUDIT_COOLDOWN_MS ichida qayta
+// audit YOZILMAYDI. In-memory (worker restart → qayta log mumkin, ops ok).
+const firedAt = new Map();
+const ALERT_AUDIT_COOLDOWN_MS = 15 * 60 * 1000; // 15 daqiqa
+
+export const ALERT_AUDIT_COOLDOWN = ALERT_AUDIT_COOLDOWN_MS;
+
+/**
+ * Fired alert'lar uchun audit log'ga tayyor ro'yxat — cooldown'da bo'lganlar
+ * o'tkazib yuboriladi (idempotent). PURE: hech qanday I/O bajarilmaydi.
+ * @param {object[]} alerts - evaluateAlerts() natijasi
+ * @param {{ now?: number }} [opts]
+ * @returns {object[]} audit qilinishi kerak bo'lgan alert'lar
+ */
+export function dueAlertAudits(alerts, opts = {}) {
+  const now = opts.now || Date.now();
+  const due = [];
+  for (const alert of alerts || []) {
+    const last = firedAt.get(alert.id) || 0;
+    if (now - last < ALERT_AUDIT_COOLDOWN_MS) continue;
+    firedAt.set(alert.id, now);
+    due.push(alert);
+  }
+  return due;
+}
+
+/** Testlar uchun dedupe holatini tozalash. */
+export function _resetAlertAuditState() {
+  firedAt.clear();
+}
+
+export default { RUNBOOKS, evaluateAlerts, dueAlertAudits, ALERT_AUDIT_COOLDOWN, _resetAlertAuditState };

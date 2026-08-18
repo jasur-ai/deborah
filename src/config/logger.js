@@ -11,6 +11,9 @@
 
 import pino from 'pino';
 import crypto from 'crypto';
+// AUTH D-05 §12: request log'da trace_id — telemetry context (cycle yo'q:
+// context.js faqat AsyncLocalStorage, config/telemetry import qilmaydi).
+import { getTraceContext } from '../telemetry/context.js';
 
 // ── Redaction paths ──
 // These paths in the log object will be replaced with '[REDACTED]'
@@ -26,7 +29,7 @@ const REDACT_CONFIG = {
     // Session
     'req.session',
     'res.headers["set-cookie"]',
-    // Body secrets
+    // Body secrets (D-04: to'liq redact list — parol, OTP, token, answer, PII)
     'body.password',
     'body.token',
     'body.secret',
@@ -34,9 +37,50 @@ const REDACT_CONFIG = {
     'body.refreshToken',
     'body.creditCard',
     'body.credit_card',
+    'body.code',
+    'body.otp',
+    'body.otpCode',
+    'body.otpauth',
+    'body.answer',
+    'body.answerKey',
+    'body.q_correct',
+    'body.qCorrect',
+    'body.correct',
+    'body.correctAnswer',
+    'body.jshshir',
+    'body.jsShshir',
+    'body.passport',
+    'body.clientSecret',
+    'body.client_secret',
+    'body.clientSecretKey',
+    'body.refresh_token',
+    'body.accessToken',
+    'body.access_token',
+    'body.apiKey',
+    'body.api_key',
+    'body.authorizationCode',
+    'body.response.attestationObject',
+    'body.response.clientDataJSON',
+    'body.response.authenticatorData',
+    'body.response.signature',
+    'body.passwordConfirmation',
+    'body.newPassword',
+    'body.oldPassword',
+    'body.totpSecret',
+    'body.backupCode',
+    'body.phone',
+    'body.email',
+    'body.healthData',
+    'body.essay',
+    'body.submission',
   ],
   censor: '[REDACTED]',
 };
+
+// ── Redaction paths ──
+// Exported: D-04 integration test real config orqali redaction'ni tekshiradi
+// (hand-copied config emas — haqiqiy markaziy ro'yxat).
+export const REDACT_CONFIG_D04 = REDACT_CONFIG;
 
 // ── Generate a short request ID ──
 function generateReqId() {
@@ -118,8 +162,12 @@ export function requestLogMiddleware() {
     const start = Date.now();
     res.on('finish', () => {
       const duration = Date.now() - start;
+      // AUTH D-05 §12: trace_id log'da — support ticket korrelyatsiyasi
+      // (4xx/5xx da ham; trace context faol bo'lmasa null).
+      let traceId = null;
+      try { traceId = getTraceContext()?.traceId || null; } catch (_) { /* fail-soft */ }
       log.info(
-        { req: { id: req.id, method: req.method, url: req.originalUrl }, res: { statusCode: res.statusCode } },
+        { req: { id: req.id, method: req.method, url: req.originalUrl }, res: { statusCode: res.statusCode }, trace_id: traceId },
         `${req.method} ${req.originalUrl} ${res.statusCode} ${duration}ms`
       );
     });

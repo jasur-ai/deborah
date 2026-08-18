@@ -1,0 +1,29 @@
+# Edikit — Design System CODEOWNERS (STEP 41 / S41.11)
+# Format: pattern → owner'lar (gitHub usernames yoki teams)
+
+# ── Design System core ──
+/public/design/**            @design-system-owner @frontend-lead
+/style.md                    @design-system-owner @product-owner
+/docs/design-system/**       @design-system-owner
+/public/css/**               @design-system-owner @frontend-lead
+/utils/icons.js              @design-system-owner @frontend-lead
+
+# ── Views / content ──
+/views/**                    @frontend-lead @content-owner
+/data/**                     @content-owner @product-owner
+
+# ── Tokens / brand ──
+/public/design/tokens/**     @design-system-owner
+/public/design/generated/**  @design-system-owner
+/public/images/brand/**      @design-system-owner @product-owner
+
+# ── Gates / CI ──
+/scripts/design-*.js         @frontend-lead @design-system-owner
+/scripts/performance-budget.js @frontend-lead
+/scripts/legacy-usage.js     @frontend-lead @design-system-owner
+/tests/design/**             @design-system-owner @a11y-owner
+/tests/a11y/**               @a11y-owner
+/.github/workflows/design.yml @frontend-lead
+
+# ── Research ──
+/research/**                 @product-owner @design-system-owner

@@ -1,0 +1,192 @@
+# Edikit — AUTH CI/CD Pipeline (D-20)
+#
+# Auth alohida pipeline: typecheck → unit+integration → security → e2e → a11y → build.
+# Deploy stage (staging → prod blue-green) wsl qismi (D-20 Stage 7 / D-21 runbook).
+#
+# Secret'lar: GitHub secrets — CI'da faqat test qiymatlar (production secret hech qachon).
+# Gate: har stage fail → workflow fail; security critical → release blok (D-20 §09).
+
+name: Auth CI
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'routes/auth.js'
+      - 'routes/admin/**'
+      - 'src/modules/auth/**'
+      - 'src/modules/hemis/**'
+      - 'src/modules/email/**'
+      - 'src/modules/student/**'
+      - 'src/modules/portfolio/**'
+      - 'data/auth-i18n.js'
+      - 'tests/auth/**'
+      - 'tests/unit/auth-*.test.js'
+      - 'tests/integration/auth-*.test.js'
+      - 'public/js/auth.js'
+      - 'public/js/register.js'
+      - 'public/js/mfa.js'
+      - 'public/js/settings.js'
+      - 'public/js/passkey-settings.js'
+      - 'public/js/passkey-login.js'
+      - 'public/js/inapp-guard.js'
+      - 'public/js/pwa-install.js'
+      - 'public/js/admin/**'
+      - 'views/user/**'
+      - 'views/admin/**'
+      - 'routes/hemis-webhook.js'
+      - 'routes/email-webhook.js'
+      - 'routes/passkey.js'
+      - 'routes/push.js'
+      - '.github/workflows/auth.yml'
+      - 'scripts/openapi-generate.js'
+      - 'docs/openapi-auth.json'
+      - 'src/modules/auth/contracts.js'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'routes/auth.js'
+      - 'routes/admin/**'
+      - 'src/modules/auth/**'
+      - 'src/modules/hemis/**'
+      - 'src/modules/email/**'
+      - 'src/modules/student/**'
+      - 'src/modules/portfolio/**'
+      - 'data/auth-i18n.js'
+      - 'tests/auth/**'
+      - 'tests/unit/auth-*.test.js'
+      - 'tests/integration/auth-*.test.js'
+      - 'public/js/auth.js'
+      - 'public/js/register.js'
+      - 'public/js/mfa.js'
+      - 'public/js/settings.js'
+      - 'public/js/passkey-settings.js'
+      - 'public/js/passkey-login.js'
+      - 'public/js/inapp-guard.js'
+      - 'public/js/pwa-install.js'
+      - 'public/js/admin/**'
+      - 'views/user/**'
+      - 'views/admin/**'
+      - 'routes/hemis-webhook.js'
+      - 'routes/email-webhook.js'
+      - 'routes/passkey.js'
+      - 'routes/push.js'
+      - '.github/workflows/auth.yml'
+      - 'scripts/openapi-generate.js'
+      - 'docs/openapi-auth.json'
+      - 'src/modules/auth/contracts.js'
+
+env:
+  NODE_ENV: test
+  SESSION_SECRET: ci-secret-for-auth-stage
+  ADMIN_USER: testadmin
+  ADMIN_PASS: testpass
+  LOG_LEVEL: silent
+
+jobs:
+  # ── Stage 1-3, 5: typecheck + unit/integration + security + a11y ──
+  test-auth:
+    name: Stage 1-3/5 — typecheck · unit+integration · security · a11y
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Stage 1 — typecheck
+      - name: TypeScript typecheck
+        run: npm run typecheck
+
+      # Stage 1 — OpenAPI spec validatsiyasi (D-29/D-30: contracts.js → openapi-auth.json)
+      - name: OpenAPI spec validate (contracts → JSON)
+        run: node scripts/openapi-generate.js --validate
+
+      # Stage 2 — unit + integration (mock provider, test DB)
+      - name: Auth unit + integration (test:auth)
+        run: npm run test:auth
+        env:
+          LOCAL_DB_FILE: ${{ runner.temp }}/auth-ci-db.json
+
+      # Stage 3 — security suite (D-18: CSRF/cookies/XSS scan/secret scan)
+      - name: Auth security suite (test:security:auth)
+        run: npm run test:security:auth
+
+      # Stage 5 — a11y (axe scan — D-12)
+      - name: A11y axe scan (a11y-d12 + axe-scan-d12)
+        run: npx vitest run tests/integration/axe-scan-d12.test.js tests/integration/a11y-d12.test.js
+
+      # Stage 6 pre-check — auth load SLO harness (D-19)
+      - name: Auth load SLO harness
+        run: npm run test:load:auth
+
+  # ── Stage 4: E2E (playwright, headless) — fayllar D-18 wsl qismi ──
+  e2e-auth:
+    name: Stage 4 — E2E (playwright)
+    runs-on: ubuntu-latest
+    if: hashFiles('tests/e2e/auth/**') != ''
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers (chromium)
+        run: npx playwright install --with-deps chromium
+
+      - name: Auth E2E journey (test:e2e:auth)
+        run: npm run test:e2e:auth
+        env:
+          CI: 'true'
+
+  # ── Stage 6: build + bundle size check ──
+  build-auth:
+    name: Stage 6 — build + bundle check
+    runs-on: ubuntu-latest
+    needs: [test-auth]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (pwa/og/poster)
+        run: npm run build
+
+      - name: Auth bundle size check (< 50KB per auth JS)
+        run: |
+          node -e "
+            const fs = require('fs');
+            const files = ['public/js/auth.js','public/js/register.js','public/js/mfa.js','public/js/settings.js','public/js/inapp-guard.js','public/js/admin/users.js'];
+            let fail = false;
+            for (const f of files) {
+              const size = fs.statSync(f).size / 1024;
+              const ok = size < 50;
+              console.log((ok ? '✓' : '✗') + ' ' + f + ' ' + size.toFixed(1) + 'KB');
+              if (!ok) fail = true;
+            }
+            if (fail) process.exit(1);
+          "
+
+      # Stage 7 — deploy (staging → prod blue-green) — D-20 wsl qismi / D-21 runbook
+      # - name: Deploy staging
+      #   if: github.ref == 'refs/heads/main'
+      #   run: ... (wsl — deploy stage)

@@ -1,0 +1,55 @@
+# Edikit — Design Gate (STYLE STEP 37/38)
+#
+# S37.08/09/10 — PR'da design lint + visual regression matrix ishlaydi:
+#   - Raw component color / transition:all / infinite motion / tiny text / inline style = hard error
+#   - Visual baseline diff'lar CI'da bloklanadi (snapshot review orqali yangilanadi)
+#   - Light/dark/high-contrast/mobile/projector coverage playwright matrix'da
+#
+# S38.12 — perf budget regressioni ham CI'da fail bo'ladi (design:check ichida):
+#   - landing CSS ≤35KB gzip / app CSS ≤60KB gzip
+#   - socket.io faqat realtime view'lar, XLSX faqat import view'lar
+#   - exception faqat owner + expires + measured justification bilan
+#
+# On: pull_request (main) + push (main)
+name: Edikit Design Gate
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  design-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # S37.12 — bitta buyruq: tokens + contrast + lint + EJS compile + axe + visual
+      - name: Design check (full gate)
+        env:
+          NODE_ENV: test
+          SESSION_SECRET: ci-secret-for-design-gate
+        run: npm run design:check:full
+
+      # S37.11 — metric trend report artifact
+      - name: Save design metrics
+        run: |
+          node scripts/design-lint.js --json > design-audit/metrics.json
+          echo "saved design-audit/metrics.json"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: design-metrics
+          path: design-audit/metrics.json
+          if-no-files-found: ignore

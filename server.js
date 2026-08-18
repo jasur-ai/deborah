@@ -50,6 +50,30 @@ import userRoutes from './routes/user.js';
 import gameRoutes from './routes/game.js';
 import arenaRoutes from './routes/arena.js';
 import oidcRoutes from './routes/oidc.js';
+import hemisWebhookRoutes from './routes/hemis-webhook.js'; // E-02 HEMIS push webhook
+import emailWebhookRoutes from './routes/email-webhook.js'; // E-07/D-32 email budget webhook
+import passkeyRoutes from './routes/passkey.js'; // E-05 passkey (WebAuthn)
+import pushRoutes from './routes/push.js'; // E-03 push bildirishnomalar (FCM/VAPID)
+
+// ── D-faza auth API routes (D-18..D-32) ──
+import mfaRoutes from './routes/mfa.js';
+import sessionRoutes from './routes/session.js';
+import resetRoutes from './routes/reset.js';
+import emailVerifyRoutes from './routes/email-verify.js';
+import emailChangeRoutes from './routes/email-change.js';
+import legalRoutes from './routes/legal.js';
+import privacyRoutes from './routes/privacy.js';
+import consentRoutes from './routes/consent.js';
+import onboardingRoutes from './routes/onboarding.js';
+import teacherRoutes from './routes/teacher.js';
+import hemisRoutes from './routes/hemis.js';
+import portfolioRoutes from './routes/portfolio.js';
+import notificationsRoutes from './routes/notifications.js';
+import telegramAuthRoutes from './routes/telegram-auth.js';
+import telegramBotRoutes from './routes/telegram-bot.js';
+import opendataRoutes from './routes/opendata.js';
+import castRoutes from './routes/cast.js';
+import devRoutes from './routes/dev.js';
 import academicRoutes from './routes/academic.js';
 import rosterRoutes from './routes/roster.js';
 import accommodationRoutes from './routes/accommodation.js';
@@ -306,6 +330,32 @@ export async function createApp() {
   app.use('/', gameRoutes);
   app.use('/arena', arenaRoutes);
   app.use('/', oidcRoutes);
+
+  // ── E-faza API routes (E-02/E-03/E-05/E-07) ──
+  app.use('/', hemisWebhookRoutes);
+  app.use('/', emailWebhookRoutes);
+  app.use('/', passkeyRoutes);
+  app.use('/', pushRoutes);
+
+  // ── D-faza auth routes ──
+  app.use('/', mfaRoutes);
+  app.use('/', sessionRoutes);
+  app.use('/', resetRoutes);
+  app.use('/', emailVerifyRoutes);
+  app.use('/', emailChangeRoutes);
+  app.use('/', legalRoutes);
+  app.use('/api/privacy', privacyRoutes); // /api/privacy/dsar/* (D-23)
+  app.use('/api/consent', consentRoutes); // /api/consent/* (D-25)
+  app.use('/', onboardingRoutes);
+  app.use('/', teacherRoutes);
+  app.use('/', hemisRoutes);
+  app.use('/', portfolioRoutes);
+  app.use('/', notificationsRoutes);
+  app.use('/', telegramAuthRoutes);
+  app.use('/', telegramBotRoutes);
+  app.use('/', opendataRoutes);
+  app.use('/', castRoutes);
+  app.use('/', devRoutes);
 
   // ── Academic API routes ──
   app.use('/', academicRoutes);

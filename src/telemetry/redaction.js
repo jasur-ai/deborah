@@ -16,15 +16,16 @@
 
 // ── Sensitive key patterns (lowercase tekshiriladi) ──
 const SENSITIVE_KEY_PATTERNS = [
-  // Answer key / exam security
+  // Answer key / exam security — scalar javob variantlari redactForTelemetry'da
+  // alohida ishlanadi (answer: 'B' → redact; answer: {...} container saqlanadi)
   /^(q?_correct|correct_answer|answer_key|answerkey)$/,
   /correct.*(index|option|answer)|answer.*(key|correct)/,
   // Raw content that must never be exported
   /^(raw_response|raw_body|essay|submission_text|health_evidence|camera_frame|capture)$/,
   /(essay|response|evidence|submission)(_text|_body|_content)?$/,
   // Tokens / secrets
-  /^(password|pass|secret|token|access_token|refresh_token|api_key|apikey|authorization|cookie|session_id|jwt)$/,
-  /(token|secret|apikey|api_key|password|credential)/,
+  /^(password|pass|secret|token|access_token|refresh_token|api_key|apikey|authorization|cookie|session_id|jwt|otp)$/,
+  /(token|secret|apikey|api_key|password|credential|otp)/,
   // PII
   /^(email|phone|address|passport|full_name|first_name|last_name|birth_date|student_name)$/,
   /^(email|phone|address|passport|name)$/,
@@ -64,7 +65,17 @@ export function redactForTelemetry(obj) {
   if (typeof obj === 'object') {
     const out = {};
     for (const [k, v] of Object.entries(obj)) {
-      out[k] = isSensitiveKey(k) ? '[REDACTED]' : redactForTelemetry(v);
+      const key = String(k).toLowerCase();
+      // D-05: yolg'iz answer/correct — SCALAR bo'lsa redact (javob varianti),
+      // container (obyekt) bo'lsa ichkariga kiriladi (answerKey redact, qolgani saqlanadi).
+      if (isSensitiveKey(k)) {
+        out[k] = '[REDACTED]';
+      } else if ((key === 'answer' || key === 'correct' || key === 'q_correct')
+          && (v === null || typeof v !== 'object')) {
+        out[k] = '[REDACTED]';
+      } else {
+        out[k] = redactForTelemetry(v);
+      }
     }
     return out;
   }
@@ -82,7 +93,10 @@ export function redactText(text) {
   // 40+ uzunlikdagi hex/base64/JWT-like (token) fragment → [TOKEN]
   // JWT'da '.' separator ham bor — shuning uchun ._- ham kiritilgan.
   const longToken = /[A-Za-z0-9._-]{40,}/g;
-  return text.replace(longToken, '[TOKEN]');
+  let out = text.replace(longToken, '[TOKEN]');
+  // D-04: JSHSHIR — 14 xonali raqam (O'zbekiston shaxs identifikatori) → [JSHSHIR]
+  out = out.replace(/\b\d{14}\b/g, '[JSHSHIR]');
+  return out;
 }
 
 /**
