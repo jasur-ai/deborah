@@ -78,6 +78,7 @@ test('B-26 — Onboarding (auth) axe audit — keyboard journey', async ({ page 
   await page.fill('#reg-password', 'Str0ng!Pass2026!x'); // B-27: NIST min 15
   await page.fill('#reg-email', `${uname}@test.uz`);
   await page.fill('#reg-name', 'A11y User');
+  await page.check('#reg-consent'); // D-24: qonuniy rozilik majburiy — bo'lmasa forma submit bo'lmaydi
   await page.click('#form-reg button[type="submit"]');
   await page.waitForLoadState('networkidle');
   await page.goto('/onboarding?lang=uz');
