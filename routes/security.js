@@ -21,6 +21,7 @@
 
 import { Router } from 'express';
 import { requireAdmin, requireAuth } from '../middleware/auth.js';
+import { fb } from '../firebase/admin.js';
 import {
   getInstitutionSecurityPolicy,
   upsertInstitutionSecurityPolicy,
@@ -137,11 +138,61 @@ router.post('/api/student/assignments/:id/security/verify', async (req, res) => 
 });
 
 /** GET /user/security-profile — profile badge/instruction UI page. */
-router.get('/user/security-profile', (req, res) => {
+router.get('/user/security-profile', async (req, res) => {
   if (!req.session?.user) return res.redirect('/user/login');
+  const userKey = req.session.user.safeKey;
+  // AUTH A-29: email/breach holati + account copy (i18n)
+  let userEmail = null;
+  let emailVerified = false;
+  let breachFlagged = null;
+  try {
+    const { getBreachFlag } = await import('../src/modules/auth/account-events.js');
+    const { fb } = await import('../firebase/admin.js');
+    const eSnap = await fb.get(`users/${userKey}/email`);
+    if (eSnap.exists()) userEmail = eSnap.val();
+    const vSnap = await fb.get(`users/${userKey}/email_verified`);
+    emailVerified = vSnap.exists() && vSnap.val() === true;
+    breachFlagged = await getBreachFlag(userKey);
+  } catch (_) {}
+  // 4 til account copy (user settings'dagi lang)
+  let accountCopy = {};
+  try {
+    const { resolveAuthLang, AUTH_COPY } = await import('../data/auth-i18n.js');
+    let lang = 'uz';
+    const { fb } = await import('../firebase/admin.js');
+    const langSnap = await fb.get(`users/${userKey}/settings/lang`);
+    if (langSnap.exists() && langSnap.val()) lang = langSnap.val();
+    accountCopy = AUTH_COPY[resolveAuthLang(lang)] || {};
+  } catch (_) {}
+  // C-10: HEMIS bog'lanish holati (REST yoqilganmi / OAuth sozlanganmi / bog'langanmi)
+  let hemisStatus = { restEnabled: false, oauthConfigured: false, linked: false, profile: null };
+  try {
+    const { isRestEnabled, isOAuthConfigured } = await import('../src/modules/auth/providers/hemis.js');
+    hemisStatus.restEnabled = isRestEnabled();
+    hemisStatus.oauthConfigured = isOAuthConfigured();
+    const hSnap = await fb.get(`users/${userKey}/hemis`);
+    if (hSnap.exists()) {
+      const h = hSnap.val();
+      hemisStatus.linked = true;
+      hemisStatus.profile = {
+        fullName: h.fullName || '',
+        university: h.university || '',
+        group: h.group || '',
+        specialty: h.specialty || '',
+        linkedAt: h.linkedAt || 0,
+        source: h.source || 'rest',
+      };
+    }
+  } catch (_) {}
   res.render('user/security-profile', {
     title: 'Xavfsizlik profili',
     user: req.session.user,
+    userEmail,
+    emailVerified,
+    breachFlagged: breachFlagged ? Date.now() : null,
+    csrfToken: req.session.csrfToken,
+    accountCopy,
+    hemisStatus,
   });
 });
 

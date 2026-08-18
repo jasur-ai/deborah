@@ -128,6 +128,42 @@ router.get('/host', requireAuth, vipGateForMockPre, async (req, res) => {
 // ── Enter Game Page ──
 router.get('/play', async (req, res) => {
   const code = req.query.code || '';
+
+  // ── Cast participant boot: join code → session ID resolve ──
+  if (code) {
+    try {
+      const { resolveSessionByCode } = await import('../services/cast/session-store.js');
+      const sessionId = await resolveSessionByCode(code);
+      if (sessionId) {
+        const meta = await (await import('../services/cast/session-store.js')).getSessionMeta(sessionId);
+        if (meta) {
+          const fullConfig = await (await import('../services/cast/session-store.js')).getConfig(sessionId);
+          return res.render('cast/participant', {
+            title: 'Cast — Ishtirokchi',
+            boot: {
+              sessionId,
+              role: 'participant',
+              // C4-05: UI locale config'dan
+              locale: fullConfig?.localization?.locale || 'uz-Latn',
+              socketPath: '/socket.io',
+              initialRevision: 1,
+              title: meta.title || 'Cast',
+              code,
+              // C4-03: paper-card mode'ni client bilishi (card field ko'rsatish)
+              config: {
+                participation: fullConfig?.participation || {},
+              },
+            },
+            characters: [],
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Cast play resolve error:', err.message);
+    }
+  }
+
+  // Legacy non-Cast game enter
   res.render('game/enter', {
     title: 'Edikit — O\'yinga Kirish',
     characters: CARTOON_CHARS,

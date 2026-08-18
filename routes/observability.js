@@ -21,6 +21,11 @@ router.get('/observability', requireAdmin, (req, res) => {
     title: 'Observability — SLO & Alerts',
     // Sidebar highlight uchun to'liq path (renderRoleNav href bilan solishtiradi)
     active: '/admin/observability',
+    // S17.09: deep admin hierarchy — breadcrumb (landing/shallow'ga emas)
+    crumbs: [
+      { href: '/admin/dashboard', label: 'Admin' },
+      { href: '/admin/observability', label: 'Observability' },
+    ],
     data,
   });
 });

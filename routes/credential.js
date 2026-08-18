@@ -1,16 +1,9 @@
 /**
  * Edikit — Portfolio & Verifiable Credential Routes
  *
- * Prompt 61 REST API:
- *   - GET    /user/portfolio                — default-private portfolio UI
- *   - GET    /api/user/portfolio            — my portfolio items
- *   - POST   /api/user/portfolio/items      — add evidence item
- *   - PATCH  /api/user/portfolio/items/:id  — set visibility
+ * Prompt 61 REST API (credentials only — portfolio moved to routes/portfolio.js, AUTH A-12):
  *   - GET    /api/user/credentials          — my credentials
  *   - POST   /api/user/credentials/:id/appeal — appeal revocation
- *   - POST   /api/user/items/:id/share      — create share grant
- *   - POST   /api/user/share-grants/:id/revoke — revoke grant
- *   - GET    /share/:token                  — verifier view for grant
  *   - GET    /verify/:digest                — public credential verifier
  *   - GET    /admin/credentials             — admin UI
  *   - GET    /api/admin/credential-definitions — list definitions
@@ -28,11 +21,6 @@
 import { Router } from 'express';
 import { requireAuth, requireAdmin } from '../middleware/auth.js';
 import {
-  ensurePortfolio,
-  addPortfolioItem,
-  setItemVisibility,
-  listPortfolio,
-  getPublicPortfolio,
   createCredentialDefinition,
   publishCredentialDefinition,
   listCredentialDefinitions,
@@ -40,13 +28,9 @@ import {
   revokeCredential,
   renewCredential,
   appealCredential,
-  createShareGrant,
-  revokeShareGrant,
-  verifyShareGrant,
   verifyCredential,
   listCredentials,
 } from '../src/modules/credential/index.js';
-import { ITEM_VISIBILITY } from '../src/modules/credential/index.js';
 
 const router = Router();
 
@@ -55,71 +39,8 @@ function actorId(req) {
 }
 
 // ─────────────────────────────────────────────────────────────────────
-// STUDENT — portfolio UI + API
+// STUDENT — portfolio UI + API (AUTH A-12 → routes/portfolio.js)
 // ─────────────────────────────────────────────────────────────────────
-
-/** GET /user/portfolio — default-private portfolio page. */
-router.get('/user/portfolio', requireAuth, async (req, res) => {
-  const user = req.session.user;
-  const userId = user.id || 0;
-  const { portfolio, items } = await listPortfolio({ userId });
-  const { items: publicItems } = await getPublicPortfolio({ userId });
-  res.render('user/portfolio', {
-    title: 'Mening Portfolio',
-    user,
-    portfolio,
-    items,
-    publicItems,
-    csrfToken: req.csrfToken?.(),
-  });
-});
-
-/** GET /api/user/portfolio — my portfolio items. */
-router.get('/api/user/portfolio', requireAuth, async (req, res) => {
-  try {
-    const userId = req.session.user.id || 0;
-    const { portfolio, items } = await listPortfolio({ userId });
-    res.json({ portfolio, items });
-  } catch (e) {
-    res.status(500).json({ error: String(e?.message || e) });
-  }
-});
-
-/** POST /api/user/portfolio/items — add evidence item. */
-router.post('/api/user/portfolio/items', requireAuth, async (req, res) => {
-  try {
-    const userId = req.session.user.id || 0;
-    // Security: yangi item har doim default-private bo'ladi — visibility faqat
-    // PATCH /items/:id orqali owner tomonidan oshiriladi (opt-in model).
-    const r = await addPortfolioItem({
-      userId,
-      kind: req.body?.kind || 'draft',
-      title: req.body?.title || '',
-      contentMeta: req.body?.contentMeta || {},
-      evidenceRef: req.body?.evidenceRef || null,
-    });
-    if (!r.ok) return res.status(400).json({ error: r.error });
-    res.json({ ok: true, itemId: r.itemId });
-  } catch (e) {
-    res.status(500).json({ error: String(e?.message || e) });
-  }
-});
-
-/** PATCH /api/user/portfolio/items/:id — set visibility (owner-only). */
-router.patch('/api/user/portfolio/items/:id', requireAuth, async (req, res) => {
-  try {
-    const userId = req.session.user.id || 0;
-    const r = await setItemVisibility({
-      userId,
-      itemId: Number(req.params.id),
-      visibility: req.body?.visibility || ITEM_VISIBILITY.PRIVATE,
-    });
-    if (!r.ok) return res.status(400).json({ error: r.error });
-    res.json({ ok: true, itemId: r.itemId, visibility: r.visibility });
-  } catch (e) {
-    res.status(500).json({ error: String(e?.message || e) });
-  }
-});
 
 /** GET /api/user/credentials — my credentials. */
 router.get('/api/user/credentials', requireAuth, async (req, res) => {
@@ -147,45 +68,6 @@ router.post('/api/user/credentials/:id/appeal', requireAuth, async (req, res) =>
   } catch (e) {
     res.status(500).json({ error: String(e?.message || e) });
   }
-});
-
-/** POST /api/user/items/:id/share — create selective share grant. */
-router.post('/api/user/items/:id/share', requireAuth, async (req, res) => {
-  try {
-    const userId = req.session.user.id || 0;
-    const r = await createShareGrant({
-      userId,
-      itemId: Number(req.params.id),
-      viewerEmail: req.body?.viewerEmail || null,
-      expiresAt: req.body?.expiresAt || null,
-    });
-    if (!r.ok) return res.status(400).json({ error: r.error });
-    res.json({ ok: true, token: r.token, url: r.url });
-  } catch (e) {
-    res.status(500).json({ error: String(e?.message || e) });
-  }
-});
-
-/** POST /api/user/share-grants/:id/revoke — revoke grant. */
-router.post('/api/user/share-grants/:id/revoke', requireAuth, async (req, res) => {
-  try {
-    const userId = req.session.user.id || 0;
-    const r = await revokeShareGrant({ userId, grantId: Number(req.params.id), actorRole: 'user' });
-    if (!r.ok) return res.status(400).json({ error: r.error });
-    res.json({ ok: true, revoked: true });
-  } catch (e) {
-    res.status(500).json({ error: String(e?.message || e) });
-  }
-});
-
-/** GET /share/:token — verifier view for a share grant. */
-router.get('/share/:token', async (req, res) => {
-  const viewerEmail = req.query?.viewer || '';
-  const r = await verifyShareGrant({ token: req.params.token, viewerEmail });
-  if (!r.ok) {
-    return res.status(404).render('verify', { title: 'Share not available', result: { verifiable: false, error: r.error }, csrfToken: null });
-  }
-  res.render('verify', { title: 'Shared evidence', result: { verifiable: true, item: r.item }, csrfToken: null });
 });
 
 /** GET /verify/:digest — public credential verifier (valid/revoked/expired). */

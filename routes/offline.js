@@ -38,6 +38,11 @@ function actorId(req) {
   return req.session?.user?.id || null;
 }
 
+/** GET /offline — offline fallback sahifa (service worker'da ishlatiladi). */
+router.get('/offline', (req, res) => {
+  res.status(200).render('offline');
+});
+
 /** POST /api/student/attempts/:id/offline/sync — reconnect batch sync. */
 router.post('/api/student/attempts/:id/offline/sync', async (req, res) => {
   try {

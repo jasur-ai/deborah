@@ -9,7 +9,9 @@
  *   Google Fonts   -> Cache-First    (stylesheet + font files)
  */
 
-const CACHE_VERSION = 'v2.0.0';
+// S34.07: cache version — design asset hash bilan boshqariladi.
+// Tokens.css o'zgarganda version avtomatik yangilanadi (stale CSS/new HTML mismatch oldini oladi).
+const CACHE_VERSION = 'v2.1.0-ffb97b1d';
 const STATIC_CACHE  = 'edikit-static-' + CACHE_VERSION;
 const PAGE_CACHE    = 'edikit-pages-' + CACHE_VERSION;
 const FONT_CACHE    = 'edikit-fonts-' + CACHE_VERSION;
@@ -19,17 +21,26 @@ const CURRENT_CACHES = [STATIC_CACHE, PAGE_CACHE, FONT_CACHE];
 const PRECACHE_URLS = [
   '/',
   '/css/style.css',
+  '/css/landing.css',
   '/js/main.js',
+  '/js/theme-core.js',
   '/js/theme.js',
+  '/js/landing.js',
+  '/js/landing-demo.js',
+  '/design/generated/tokens.css',
   '/images/logo-icon.svg',
   '/images/logo-text.svg',
   '/images/og-image.svg',
+  '/images/product/poster.webp',
   '/images/pwa-icon-192.png',
   '/images/pwa-icon-512.png',
   '/manifest.json',
+  // S34.06: offline sahifa offline'da ham ochilishi uchun precache
+  '/offline',
+  '/images/brand/evidence-mark.svg',
 ];
 
-// Google Fonts origins
+// Google Fonts origins (legacy — STEP 08 dan buyon self-hosted, xavfsizlik uchun qolgan)
 const FONT_ORIGINS = [
   'fonts.googleapis.com',
   'fonts.gstatic.com',
@@ -49,6 +60,51 @@ const OFFLINE_HTML = '<!DOCTYPE html><html lang="uz"><head>' +
   '<p>Edikit ishlashi uchun internet kerak<br>Iltimos, tarmoqqa ulaning</p></div></body></html>';
 
 
+// S34.08: client "Yangilash" bosganida waiting SW'ni aktivlashtiradi (manual reload)
+self.addEventListener('message', function(event) {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════
+// AUTH B-23: Web Push (PWA)
+// Payload minimal: { title, body, url, tag } — preview sensitive YO'Q
+// ═══════════════════════════════════════════════════════════════
+
+self.addEventListener('push', function(event) {
+  var data = {};
+  try {
+    if (event.data) data = event.data.json() || {};
+  } catch (e) {
+    data = {};
+  }
+  var title = data.title || 'Edikit';
+  var options = {
+    body: data.body || '',
+    icon: '/images/pwa-icon-192.png',
+    badge: '/images/pwa-icon-192.png',
+    tag: data.tag || 'general',
+    renotify: true,
+    data: { url: data.url || '/' }
+  };
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener('notificationclick', function(event) {
+  event.notification.close();
+  var target = (event.notification.data && event.notification.data.url) || '/';
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clientList) {
+      for (var i = 0; i < clientList.length; i++) {
+        var client = clientList[i];
+        if ('focus' in client) return client.focus().then(function(focused) { return focused.navigate(target); });
+      }
+      if (clients.openWindow) return clients.openWindow(target);
+    })
+  );
+});
+
 // ═══════════════════════════════════════════════════════════════
 // INSTALL — Precache core assets
 // ═══════════════════════════════════════════════════════════════
@@ -63,6 +119,14 @@ self.addEventListener('install', function(event) {
       console.warn('[SW] Precache failed:', err.message);
     })
   );
+
+  // S34.08: yangi SW o'rnatildi — controllerchange bilan banner chiqarish uchun
+  // barcha client'larga xabar yuboramiz (nonblocking, forced reload YO'Q)
+  self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clients) {
+    clients.forEach(function(client) {
+      client.postMessage({ type: 'EDIKIT_UPDATE_AVAILABLE' });
+    });
+  });
 });
 
 // ═══════════════════════════════════════════════════════════════
@@ -184,10 +248,13 @@ function networkFirst(request) {
   }).catch(function() {
     return caches.match(request).then(function(cached) {
       if (cached) return cached;
-      // Offline fallback page
-      return new Response(OFFLINE_HTML, {
-        status: 503,
-        headers: { 'Content-Type': 'text/html;charset=UTF-8' }
+      // S34.06: offline fallback — cached /offline sahifasiga (birinchi navbatda), aks holda inline
+      return caches.match('/offline').then(function(offlinePage) {
+        if (offlinePage) return offlinePage;
+        return new Response(OFFLINE_HTML, {
+          status: 503,
+          headers: { 'Content-Type': 'text/html;charset=UTF-8' }
+        });
       });
     });
   });

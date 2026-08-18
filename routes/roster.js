@@ -21,15 +21,31 @@ import fs from 'fs';
 import os from 'os';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { requireAuth } from '../middleware/auth.js';
-import { validateRosterFile } from '../src/modules/roster/validator.js';
+import { requireAuth, requireMfaStepUp } from '../middleware/auth.js';
+import { audit, AUDIT_ACTIONS } from '../src/modules/auth/audit.js';
+// AUTH B-12: invite sahifasi i18n (4 til)
+import { AUTH_COPY, AUTH_LANGS, resolveAuthLang } from '../data/auth-i18n.js';
+import { validateRosterFile, ROSTER_CONFIG } from '../src/modules/roster/validator.js';
 import { parseRosterFile } from '../src/modules/roster/parser.js';
 import {
   createStagingSession, getStagingSession, listStagingSessions,
   addParsedRows, generateParseReport, getParsedRows,
   commitStagingSession, deleteStagingSession,
   rollbackStagingSession, exportRowErrors, setSessionApproval,
+  purgeExpiredStagingSessions,
+  buildRowStatusReport, reconcileSession,
 } from '../src/modules/roster/staging.js';
+import {
+  createInvitesForSession,
+  acceptInvite,
+  revokeInvite,
+  listInvites,
+  getPendingInviteSummary,
+  sendInviteEmails,
+  expireOverdueInvites,
+  checkInviteSendLimit,
+  getInviteByHash,
+} from '../src/modules/roster/invites.js';
 import {
   detectColumnMapping, saveColumnMapping,
   loadColumnMapping, validateMappingCompleteness,
@@ -40,6 +56,34 @@ import {
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const router = Router();
+
+// ── C-11: Roster auth — student (requireAuth) YOKI admin sessiyasi ──
+// Admin UI (/admin/roster) roster API'larini chaqiradi; admin sessiyasida
+// req.session.user yo'q (faqat req.session.admin) — shuning uchun admin
+// ham o'tkaziladi (privileged session ⊃ student scope). Global requireAuth
+// O'ZGARTIRILMAYDI — bu faqat roster route'lariga xos.
+function requireRosterAuth(req, res, next) {
+  if (req.session && req.session.admin) return next();
+  return requireAuth(req, res, next);
+}
+
+// Commit uchun MFA step-up — admin sessiyasi o'z MFA'ni /admin darajasida
+// o'tkazgan (requireAdmin + admin MFA), bu yerda student MFA talab qilinmaydi.
+function requireRosterMfaStepUp(req, res, next) {
+  if (req.session && req.session.admin) return next();
+  return requireMfaStepUp(req, res, next);
+}
+
+// ── Teacher/Admin rol tekshiruvi (AUTH A-11 review fix: invite PII IDOR) ──
+// Invite route'lari email/identity kabi PII qaytaradi — har qanday student
+// emas, faqat teacher/admin/board ko'ra olishi kerak.
+function requireRosterManager(req, res, next) {
+  const role = req.session?.user?.role;
+  if (req.session?.admin?.username || ['teacher', 'admin', 'board'].includes(role)) {
+    return next();
+  }
+  return res.status(403).json({ error: 'Forbidden: teacher/admin required' });
+}
 
 // ── Multer: temporary upload directory ──
 const uploadDir = path.resolve(os.tmpdir(), 'edikit-roster-uploads');
@@ -55,7 +99,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024, files: 1 }, // 10MB max, 1 file
+  limits: { fileSize: ROSTER_CONFIG.maxFileSize, files: 1 }, // config: 10MB max, 1 file
   fileFilter: (req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
     if (['.xlsx', '.csv'].includes(ext)) return cb(null, true);
@@ -68,7 +112,115 @@ const upload = multer({
 //    router.use('/api', requireAuth) would also intercept /api/admin/*
 //    routes from other routers and 401 them even with a valid admin
 //    session (requireAuth only accepts student sessions). ──
-router.use('/api/roster', requireAuth);
+
+// AUTH B-12 §07/§08: invite link — GET /invite/:token (PUBLIC, no-referrer).
+// Token validatsiya: mavjud, 7 kun ichida, ishlatilmagan, revoke emas →
+// invite.ejs render; aks holda aniq xato UX (muddati o'tgan → yangi so'rash).
+// Brute-force qarshi per-IP rate limit (B-12 §15/§27).
+const INVITE_VIEW_MAX = 30; // 30/15 daqiqa per IP
+const INVITE_VIEW_WINDOW_MS = 15 * 60 * 1000;
+const inviteViewAttempts = new Map(); // ip -> [timestamps]
+function checkInviteViewLimit(ip) {
+  const now = Date.now();
+  const key = String(ip || 'unknown');
+  const arr = (inviteViewAttempts.get(key) || []).filter((t) => now - t < INVITE_VIEW_WINDOW_MS);
+  if (arr.length >= INVITE_VIEW_MAX) return { allowed: false };
+  arr.push(now);
+  inviteViewAttempts.set(key, arr);
+  if (inviteViewAttempts.size > 5000) {
+    const oldest = inviteViewAttempts.keys().next().value;
+    inviteViewAttempts.delete(oldest);
+  }
+  return { allowed: true };
+}
+
+router.get('/invite/:token', async (req, res) => {
+  // §10: Referrer-Policy no-referrer + token URL'da log'ga tushmasligi uchun
+  res.setHeader('Referrer-Policy', 'no-referrer');
+
+  // AUTH B-12 §15: per-IP brute-force rate limit
+  const viewLimit = checkInviteViewLimit(req.ip);
+  if (!viewLimit.allowed) {
+    return res.status(429).render('error', {
+      title: '429',
+      message: "Ko'p urinish — 15 daqiqadan keyin qayta urinib ko'ring",
+      status: 429,
+    });
+  }
+
+  const lang = resolveAuthLang(req.query.lang || req.cookies?.lang);
+  const copy = AUTH_COPY[lang];
+
+  try {
+    const result = await getInviteByHash(req.params.token);
+
+    // AUTH B-12 §17: invite_view audit (har ko'rish emas — valid/invalid
+    // faqat bitta record; audit spam bo'lmasligi uchun invalid'da ham bir marta)
+    await audit({
+      action: AUDIT_ACTIONS.INVITE_VIEW,
+      outcome: result.ok ? 'success' : 'blocked',
+      resourceType: 'roster_invite',
+      resourceId: req.params.token,
+      details: { ok: result.ok, reason: result.ok ? null : result.error },
+      ipAddress: req.ip,
+      userAgent: req.headers['user-agent'],
+    }).catch(() => {});
+
+    if (!result.ok) {
+      // B-12 §08: aniq xato UX — muddati o'tgan va ishlatilgan alohida
+      const expired = String(result.error || '').includes('muddati');
+      const used = String(result.error || '').includes('ishlatilgan');
+      return res.status(404).render('error', {
+        title: '404',
+        message: used
+          ? copy.invite.errors.used
+          : (expired ? copy.invite.errors.expired : copy.invite.errors.invalid),
+        status: 404,
+        linkText: copy.invite.requestNew,
+      });
+    }
+
+    // B-12 §06: to'liq aktivatsiya sahifasi
+    return res.render('user/invite', {
+      title: copy.invite.title,
+      description: copy.invite.sub,
+      lang,
+      AUTH_LANGS,
+      copy,
+      csrfToken: res.locals.csrfToken || '',
+      oidcEnabled: true, // B-10: oidc router mount qilingan; link /auth/google
+      tokenHash: req.params.token,
+      inviteInfo: result.invite,
+    });
+  } catch (err) {
+    res.status(500).render('error', { title: '500', message: err.message, status: 500 });
+  }
+});
+
+// AUTH A-11 §13 — Invite aktivatsiyasi (PUBLIC — student session talab qilmaydi).
+// requireAuth'dan OLDIN mount qilinadi; CSRF exemption server.js'da.
+router.post('/api/roster/invites/accept', async (req, res) => {
+  try {
+    const result = await acceptInvite({
+      token: req.body?.token,
+      username: req.body?.username,
+      password: req.body?.password,
+      email: req.body?.email,
+      // AUTH D-24 §10: qonuniy rozilik (forma checkbox) — majburiy
+      consent: req.body?.consent,
+    });
+    if (!result.ok) {
+      // AUTH B-13 §10: takroriy ishlatilgan invite → 409 Conflict
+      const conflict = String(result.error || '').includes('ishlatilgan');
+      return res.status(conflict ? 409 : 400).json(result);
+    }
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.use('/api/roster', requireRosterAuth);
 
 // ═══════════════════════════════════════════════════════════════════
 // POST /api/roster/upload — Upload + parse + stage
@@ -77,7 +229,7 @@ router.use('/api/roster', requireAuth);
 router.post('/api/roster/upload', (req, res) => {
   upload.single('file')(req, res, async (err) => {
     if (err) {
-      if (err.code === 'LIMIT_FILE_SIZE') return res.status(413).json({ error: 'Fayl hajmi 10 MB dan oshmasligi kerak' });
+      if (err.code === 'LIMIT_FILE_SIZE') return res.status(413).json({ error: `Fayl hajmi ${ROSTER_CONFIG.maxFileSize / 1024 / 1024} MB dan oshmasligi kerak` });
       return res.status(400).json({ error: err.message });
     }
 
@@ -87,6 +239,10 @@ router.post('/api/roster/upload', (req, res) => {
       const filePath = req.file.path;
       const originalName = req.file.originalname;
       const mimeType = req.file.mimetype;
+      const userId = req.session?.user?.username || 'anonymous';
+
+      // A-10 §26: 24 soat retention — muddati o'tgan staging sessiyalarni tozalash (fail-soft)
+      purgeExpiredStagingSessions().catch(() => {});
 
       // 1. Validate file (security checks)
       const validation = await validateRosterFile(filePath, originalName, mimeType);
@@ -108,10 +264,36 @@ router.post('/api/roster/upload', (req, res) => {
         filename: originalName,
         extension: validation.extension,
         fileSize: validation.size,
-        uploadedBy: req.session?.user?.username || 'anonymous',
+        uploadedBy: userId,
         totalRows: parseResult.totalRows,
         totalSheets: parseResult.totalSheets,
         warnings: [...(validation.warnings || []), ...(parseResult.warnings || [])],
+      });
+
+      // A-10 §16: privileged action audit (roster_uploaded + roster_parse)
+      await audit({
+        action: AUDIT_ACTIONS.ROSTER_UPLOADED,
+        userId,
+        resourceType: 'roster_staging',
+        resourceId: sessionId,
+        details: {
+          filename: originalName,
+          extension: validation.extension,
+          size: validation.size,
+          totalRows: parseResult.totalRows,
+        },
+      });
+      await audit({
+        action: AUDIT_ACTIONS.ROSTER_PARSE,
+        userId,
+        resourceType: 'roster_staging',
+        resourceId: sessionId,
+        details: {
+          sheets: parseResult.totalSheets,
+          rows: parseResult.totalRows,
+          errors: parseResult.errors.length,
+          warnings: (parseResult.warnings || []).length,
+        },
       });
 
       // 4. Store parsed rows in staging
@@ -199,10 +381,16 @@ router.get('/api/roster/sessions/:id/rows', async (req, res) => {
 // POST /api/roster/sessions/:id/commit — Commit staging to DB
 // ═══════════════════════════════════════════════════════════════════
 
-router.post('/api/roster/sessions/:id/commit', async (req, res) => {
+// AUTH A-30 §09: roster commit — fresh MFA shart (teacher viaMfa / admin
+// step-up). MFA yoqilmagan sessiya (viaMfa yo'q) o'tadi — regression yo'q.
+router.post('/api/roster/sessions/:id/commit', requireRosterMfaStepUp, async (req, res) => {
   try {
     const userId = req.session?.user?.username || 'admin';
-    const result = await commitStagingSession(req.params.id, userId);
+    // AUTH A-11 §10: idempotency hash — /preview dan olinadi; qayta commit
+    // (bir xil hash) reject qilinadi.
+    const result = await commitStagingSession(req.params.id, userId, {
+      hash: req.body?.hash || null,
+    });
     if (!result.ok) return res.status(400).json(result);
     res.json(result);
   } catch (err) {
@@ -362,6 +550,114 @@ router.get('/api/roster/sessions/:id/errors/download', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Content-Disposition', `attachment; filename="roster-errors-${req.params.id}.json"`);
     res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// AUTH A-11 §11/§29 — Row status + reconciliation
+// ═══════════════════════════════════════════════════════════════════
+
+router.get('/api/roster/sessions/:id/rows/status', async (req, res) => {
+  try {
+    const report = await buildRowStatusReport(req.params.id);
+    if (report.error) return res.status(404).json(report);
+    res.json(report);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/api/roster/sessions/:id/reconcile', async (req, res) => {
+  try {
+    const result = await reconcileSession(req.params.id);
+    if (result.error) return res.status(404).json(result);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// AUTH A-11 §13-15 — Invite boshqaruvi (auth talab qiladi)
+// ═══════════════════════════════════════════════════════════════════
+
+// Invite boshqaruvi — teacher/admin rol talab qiladi (PII: email/identity)
+// AUTH B-11 §13: invite yaratish rate limit — 50/soat per teacher.
+router.post('/api/roster/sessions/:id/invites', requireRosterManager, (req, res, next) => {
+  const limit = checkInviteSendLimit(req.session?.user?.safeKey || req.session?.user?.username || 'roster-manager');
+  if (!limit.allowed) {
+    return res.status(429).json({ error: 'Invite limit: 50/soat', retryAfterSeconds: limit.retryAfterSeconds });
+  }
+  next();
+}, async (req, res) => {
+  try {
+    const result = await createInvitesForSession(req.params.id, {
+      channel: req.body?.channel || 'email',
+    });
+    if (!result.ok) return res.status(400).json(result);
+    res.status(201).json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// AUTH B-11 §09: invite email'larini yuborish (batch, idempotent).
+// Auto-send: createInvitesForSession emas, alohida route — teacher nazorat
+// qiladi; abuse qarshi bir xil 50/soat limit.
+router.post('/api/roster/invites/send', requireRosterManager, (req, res, next) => {
+  const limit = checkInviteSendLimit(req.session?.user?.safeKey || req.session?.user?.username || 'roster-manager');
+  if (!limit.allowed) {
+    return res.status(429).json({ error: 'Invite limit: 50/soat', retryAfterSeconds: limit.retryAfterSeconds });
+  }
+  next();
+}, async (req, res) => {
+  try {
+    const result = await sendInviteEmails({
+      inviteIds: Array.isArray(req.body?.inviteIds) ? req.body.inviteIds : null,
+      lang: req.body?.lang || 'uz',
+    });
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// AUTH B-11 §12: expiry job trigger (server boot'da ham ishlaydi; admin
+// qo'lda chaqirishi uchun route ham bor).
+router.post('/api/roster/invites/expire-overdue', requireRosterManager, async (req, res) => {
+  try {
+    const result = await expireOverdueInvites();
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/api/roster/sessions/:id/invites', requireRosterManager, async (req, res) => {
+  try {
+    const result = await listInvites(req.params.id);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/api/roster/invites/:tokenHash/revoke', requireRosterManager, async (req, res) => {
+  try {
+    const result = await revokeInvite(req.params.tokenHash);
+    if (!result.ok) return res.status(400).json(result);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Teacher (P1): "N talaba aktivatsiya qilmadi" summary
+router.get('/api/roster/invites/pending-summary', requireRosterManager, async (req, res) => {
+  try {
+    res.json(await getPendingInviteSummary());
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

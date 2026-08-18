@@ -25,6 +25,8 @@ import {
   submitAttempt,
   getSubmissionState,
 } from '../src/modules/submit/index.js';
+// AUTH B-07 §10: summative (nazorat topshirish) — email verify shart
+import { requireAuth, requireEmailVerified } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -46,12 +48,24 @@ router.get('/api/student/attempts/:id/submit/preview', async (req, res) => {
 });
 
 /** POST /api/student/attempts/:id/submit — seal (idempotent) or preview. */
-router.post('/api/student/attempts/:id/submit', async (req, res) => {
+// B-07 §10: summative seal — email verify'siz 403 EMAIL_VERIFY_REQUIRED.
+// Preview (confirmed=false) read-only — ochiq qoladi (o'qish/practice ruxsat,
+// spec §10); faqat CONFIRMED seal (nazorat topshirish) verify shart.
+router.post('/api/student/attempts/:id/submit', requireAuth, async (req, res) => {
   try {
+    const { confirmed = false, entries = [] } = req.body || {};
+
+    // B-07 §10: summative amal — confirmed=true (seal) verify shart.
+    // actorId'den OLDIN tekshiriladi — session'da .id bo'lmasa ham
+    // gate to'g'ri javob beradi (safeKey yetarli).
+    if (confirmed === true) {
+      await requireEmailVerified(req, res, () => {});
+      if (res.headersSent) return;
+    }
+
     const userId = actorId(req);
     if (!userId) return res.status(401).json({ error: 'Authentication required' });
 
-    const { confirmed = false, entries = [] } = req.body || {};
     const result = await submitAttempt({
       attemptId: parseInt(req.params.id, 10),
       userId,

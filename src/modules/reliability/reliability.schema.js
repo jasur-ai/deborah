@@ -378,3 +378,88 @@ export function validateRehearsalDataset({
     guard: ok ? null : `rehearsal dataset must be isolated+synthetic: violations=${violations.join(', ') || 'not-isolated'}`,
   };
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// 2. AUTH LOAD PROFILES & SLO (AUTH D-19)
+// ═══════════════════════════════════════════════════════════════════
+
+/** Auth peak load profiles (exam start: login storm). */
+export const AUTH_LOAD_PROFILES = [
+  {
+    id: 'auth-login-storm',
+    label: 'Login storm (exam start)',
+    description: '5000 students log in simultaneously at exam T0 (AUTH D-19 §06)',
+    windowMs: 10 * 60000,
+    expected: { concurrentLogins: 5000, loginsPerSec: 500, mfaRatio: 0.3 },
+    slo: { loginP95Ms: 2000, errorRate: 0.001, falseLockouts: 0 },
+  },
+  {
+    id: 'auth-teacher-login',
+    label: 'Teacher login (1000)',
+    description: '1000 teachers authenticate — proctoring dashboards (D-19 §06)',
+    windowMs: 5 * 60000,
+    expected: { concurrentLogins: 1000, loginsPerSec: 100, mfaRatio: 0.5 },
+    slo: { loginP95Ms: 2000, errorRate: 0.001, falseLockouts: 0 },
+  },
+  {
+    id: 'auth-mfa-storm',
+    label: 'MFA storm',
+    description: 'TOTP/backup verify burst after login wave (A-26)',
+    windowMs: 5 * 60000,
+    expected: { concurrentLogins: 1500, loginsPerSec: 150, mfaRatio: 1.0 },
+    slo: { loginP95Ms: 2000, errorRate: 0.001, falseLockouts: 0 },
+  },
+  {
+    id: 'auth-forgot-storm',
+    label: 'Forgot storm (low)',
+    description: 'Password reset requests — enumeration-safe, rate-limited (A-06)',
+    windowMs: 15 * 60000,
+    expected: { concurrentLogins: 200, loginsPerSec: 20, mfaRatio: 0 },
+    slo: { loginP95Ms: 2000, errorRate: 0.001, falseLockouts: 0 },
+  },
+];
+
+export const AUTH_LOAD_SLO_KEYS = ['loginP95Ms', 'errorRate', 'falseLockouts'];
+
+/**
+ * Auth load SLO evaluation (D-19 §08).
+ *  - loginP95Ms: p95 login latency must be < SLO (exam start 2s).
+ *  - errorRate: 5xx/network errors must stay under 0.1%.
+ *  - falseLockouts: campus NAT (one ASN, many IPs) must NOT false-lockout (C-01).
+ *
+ * @param {Object} params
+ * @param {string} params.profileId - one of AUTH_LOAD_PROFILES[].id
+ * @param {Object} params.observed - { loginP95Ms, errorRate, falseLockouts }
+ * @returns {{ ok: boolean, profile: string, checks: Array<{ name, ok, observed, target }>,
+ *             securityGuard?: string }}
+ */
+export function evaluateAuthLoadSlo({ profileId = 'auth-login-storm', observed = {} } = {}) {
+  const profile = AUTH_LOAD_PROFILES.find((p) => p.id === profileId);
+  if (!profile) {
+    return { ok: false, error: `Unknown auth load profile: ${profileId}` };
+  }
+  const checks = [];
+  checks.push({
+    name: 'loginP95Ms',
+    ok: (observed.loginP95Ms ?? Infinity) <= profile.slo.loginP95Ms,
+    observed: observed.loginP95Ms,
+    target: profile.slo.loginP95Ms,
+  });
+  checks.push({
+    name: 'errorRate',
+    ok: (observed.errorRate ?? 1) <= profile.slo.errorRate,
+    observed: observed.errorRate,
+    target: profile.slo.errorRate,
+  });
+  checks.push({
+    name: 'falseLockouts',
+    ok: (observed.falseLockouts ?? 0) === profile.slo.falseLockouts,
+    observed: observed.falseLockouts,
+    target: profile.slo.falseLockouts,
+  });
+  const ok = checks.every((c) => c.ok);
+  const securityGuard = !ok && checks.some((c) => c.name === 'falseLockouts' && !c.ok)
+    ? 'kampus NAT false-lockout — rate-limit per-ASN tekshirilsin (C-01)'
+    : null;
+  return { ok, profile: profile.id, checks, securityGuard };
+}

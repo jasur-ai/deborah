@@ -9,12 +9,127 @@ import { requireAuth } from '../middleware/auth.js';
 import { requireVip, isCurrentUserVip } from '../middleware/vip.js';
 import { DB_PATHS, GAME_SETTINGS, CARTOON_CHARS } from '../utils/constants.js';
 import { normalizeQuestion } from '../utils/helpers.js';
+// AUTH B-01: users final schema — /api/me DTO (public/private, PII minimal).
+import { toPrivateUser, normalizeUserRecord } from '../src/modules/auth/user-schema.js';
 import { getStudentAssignments } from '../src/modules/preflight/index.js';
+// AUTH B-16 §12: rejected teacher cooldown — qayta ariza oynasi
+import { TEACHER_COOLDOWN_MS } from '../src/modules/auth/teacher-approval.js';
 
 const router = Router();
 
 // → All routes require auth
 router.use(requireAuth);
+
+// ── AUTH B-01: /api/me — o'z profilini private DTO orqali qaytaradi.
+// password/google_sub/telegram_id/ip-hash/mfa secret HECH QACHON chiqmaydi
+// (user-schema.js SECRET_KEYS — guide §12, §28).
+router.get('/api/me', async (req, res) => {
+  const userKey = req.session.user?.safeKey;
+  if (!userKey) {
+    return res.status(401).json({ ok: false, error: 'unauthorized' });
+  }
+  const snap = await fb.get(`users/${userKey}`);
+  if (!snap.exists()) {
+    return res.status(404).json({ ok: false, error: 'not_found' });
+  }
+  const record = normalizeUserRecord(snap.val());
+  return res.json({ ok: true, user: toPrivateUser(record, { key: userKey }) });
+});
+
+// ── AUTH A-19: Teacher approval status sahifasi ──
+// Faqat teacher_pending/teacher_rejected rollariga ko'rinadi; boshqa rollar
+// stealth 404 (sahifa "yo'q" ko'rinadi). Approval holati DB'dan o'qiladi —
+// sessiya eskirgan bo'lsa ham to'g'ri holat ko'rsatiladi.
+router.get('/teacher-approval', async (req, res) => {
+  const user = req.session.user;
+  const role = user?.role;
+  if (role !== 'teacher_pending' && role !== 'teacher_rejected') {
+    return res.status(404).render('error', {
+      title: '404 — Sahifa topilmadi',
+      message: "So'ralgan sahifa mavjud emas",
+      status: 404,
+    });
+  }
+  try {
+    const [roleSnap, versionSnap, reasonSnap, notifSnap, cooldownSnap, decidedSnap] = await Promise.all([
+      fb.get(`users/${user.safeKey}/role`),
+      fb.get(`users/${user.safeKey}/role_version`),
+      fb.get(`users/${user.safeKey}/teacher_rejection_reason`),
+      fb.get(`users/${user.safeKey}/notification_last`),
+      fb.get(`users/${user.safeKey}/teacher_cooldown_until`),
+      fb.get(`users/${user.safeKey}/teacher_decision_at`),
+    ]);
+    const currentRole = roleSnap.exists() ? roleSnap.val() : role;
+    // Admin tasdiqlagan bo'lsa — sessiya eskisini saqlasa ham teacher bo'lib
+    // kirishi mumkin. DB'dagi haqiqiy role_version o'qiladi (AUTH A-02
+    // invalidateIfStale bilan mos kelishi uchun — ixtiyoriy Date.now() EMAS).
+    if (currentRole === 'teacher') {
+      const dbVersion = versionSnap.exists() ? versionSnap.val() : Date.now();
+      user.role = 'teacher';
+      user.roleVersion = dbVersion;
+      return res.redirect('/teacher');
+    }
+    const rejectionReason = reasonSnap.exists() ? reasonSnap.val() : '';
+    const notification = notifSnap.exists() ? notifSnap.val() : null;
+    // AUTH B-16 §12: cooldown holati — qayta ariza faqat cooldown o'tgach
+    const cooldownUntil = cooldownSnap.exists() ? cooldownSnap.val() : 0;
+    const decidedAt = decidedSnap.exists() ? decidedSnap.val() : 0;
+    let cooldown = { active: false, remainingMs: 0, until: 0 };
+    if (cooldownUntil || decidedAt) {
+      const until = cooldownUntil || decidedAt + TEACHER_COOLDOWN_MS;
+      const remainingMs = until - Date.now();
+      cooldown = {
+        active: remainingMs > 0,
+        remainingMs: Math.max(0, remainingMs),
+        until,
+        days: Math.max(1, Math.ceil(Math.max(0, remainingMs) / 86400000)),
+      };
+    }
+    // AUTH A-19 §19: 4 til — user settings'dagi lang (default uz)
+    const { resolveAuthLang, AUTH_COPY } = await import('../data/auth-i18n.js');
+    let lang = 'uz';
+    try {
+      const settingsSnap = await fb.get(`users/${user.safeKey}/settings/lang`);
+      if (settingsSnap.exists() && settingsSnap.val()) lang = settingsSnap.val();
+    } catch (_) {}
+    const l = resolveAuthLang(lang);
+    const copy = AUTH_COPY[l];
+    res.render('user/teacher-approval', {
+      title: currentRole === 'teacher_rejected' ? copy.teacherApproval.rejectedTitle : copy.teacherApproval.pendingTitle,
+      status: currentRole, // 'teacher_pending' | 'teacher_rejected'
+      rejectionReason,
+      notification,
+      username: user.username || user.safeKey,
+      lang: l,
+      copy: copy.teacherApproval,
+      cooldown,
+      // AUTH B-36 §12: apellyatsiya yuborilgach tasdiq banneri
+      appealSent: req.query.appeal === '1',
+      csrfToken: req.session?.csrfToken || '',
+    });
+  } catch (err) {
+    console.error('Teacher approval page error:', err);
+    res.status(500).render('error', { title: '500', message: 'Server xatosi', status: 500 });
+  }
+});
+
+// ── AUTH A-19 §14: pending/rejected teacher — test yaratish, panel,
+// student data blok. Faqat /teacher-approval status sahifasi ochiq.
+router.use((req, res, next) => {
+  const role = req.session?.user?.role;
+  if (role === 'teacher_pending' || role === 'teacher_rejected') {
+    const isApi = req.originalUrl?.startsWith('/api/') || req.path?.startsWith('/api/');
+    if (isApi || req.xhr || req.accepts('json')) {
+      return res.status(403).json({ error: 'Ruxsat etilmagan rol' });
+    }
+    return res.status(404).render('error', {
+      title: '404 — Sahifa topilmadi',
+      message: "So'ralgan sahifa mavjud emas",
+      status: 404,
+    });
+  }
+  next();
+});
 
 // ── User Panel ──
 router.get('/panel', async (req, res) => {
@@ -35,8 +150,44 @@ router.get('/panel', async (req, res) => {
     const fans = isVip ? (fansSnap?.val() || {}) : {};
     const preGroups = isVip ? (preSnap?.val() || {}) : {};
 
+    // AUTH A-28: risk banner copy — user settings'dagi lang (default uz)
+    const { resolveAuthLang, AUTH_COPY } = await import('../data/auth-i18n.js');
+    let plang = 'uz';
+    try {
+      const langSnap = await fb.get(`users/${user.safeKey}/settings/lang`);
+      if (langSnap.exists() && langSnap.val()) plang = langSnap.val();
+    } catch (_) {}
+    const riskCopy = AUTH_COPY[resolveAuthLang(plang)]?.risk || {};
+    const accountCopy = AUTH_COPY[resolveAuthLang(plang)]?.account || {};
+    // AUTH B-06: verify modal/banner copy (4 til)
+    const verifyCopy = AUTH_COPY[resolveAuthLang(plang)]?.verify || {};
+
+    // AUTH A-29: breach flag — panel banneri "Parolingiz breach'da"
+    let breachFlagged = null;
+    try {
+      const { getBreachFlag } = await import('../src/modules/auth/account-events.js');
+      breachFlagged = await getBreachFlag(user.safeKey);
+    } catch (_) {}
+
+    // AUTH D-25 §12: re-consent banner — privacy policy yangilansa/berilmagan bo'lsa
+    let consentStale = false;
+    try {
+      const { hasCurrentConsent } = await import('../src/modules/legal/consent.js');
+      consentStale = !(await hasCurrentConsent(user.safeKey));
+    } catch (_) { /* fail-soft — banner ko'rsatilmaydi */ }
+
     res.render('user/panel', {
       title: 'Mening Panelim',
+      active: 'panel',
+      // AUTH A-18: limited mode banner — email verify'siz summative blok
+      emailVerified: user.emailVerified === true,
+      userEmail: user.email || null,
+      csrfToken: req.session.csrfToken,
+      riskCopy,
+      accountCopy,
+      verifyCopy,
+      breachFlagged,
+      consentStale,
       tests: Object.entries(tests)
         .sort((a, b) => (b[1].created_at || b[1].created || 0) - (a[1].created_at || a[1].created || 0))
         .map(([key, t]) => ({
@@ -44,7 +195,12 @@ router.get('/panel', async (req, res) => {
           name: t.name || t.title || 'Testsiz',
           count: t.questions?.length || t.count || 0,
           createdAt: t.created_at || t.created || 0,
+          updatedAt: t.updated_at || t.created_at || t.created || 0,
           isPublic: !!t.isPublic,
+          archived: !!t.archived,
+          subject: t.subject || t.tag || null,
+          type: t.type || (Array.isArray(t.questions) && t.questions.length && t.questions.every(q => Array.isArray(q.options)) ? 'variant' : null),
+          lastUse: t.lastUsedAt || t.last_used_at || 0,
         })),
       fans: Object.entries(fans)
         .sort((a, b) => (a[1].name || '').localeCompare(b[1].name || ''))
@@ -63,7 +219,7 @@ router.get('/panel', async (req, res) => {
           count: g.count || 0,
           total: g.total || 0,
         })),
-      characters: CARTOON_CHARS,
+      characters: [], // S25.05: characters panel olib tashlandi
       username: user.username,
       isVip,
     });
@@ -73,11 +229,13 @@ router.get('/panel', async (req, res) => {
     console.error('User panel error:', err);
     res.render('user/panel', {
       title: 'Mening Panelim',
+      active: 'panel',
       tests: [], fans: [], preGroups: [],
-      characters: CARTOON_CHARS,
+      characters: [],
       username: user.username,
       isVip: false,
       error: err.message,
+      riskCopy: {},
     });
   }
 });
@@ -132,13 +290,15 @@ router.post('/api/tests/save', async (req, res) => {
 
     const testKey = editKey || Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
-    // Preserve isPublic when editing
+    // Preserve isPublic + created_at when editing (bitta get, ikkita maydon)
     let isPublic = false;
+    let createdAt = Date.now();
     if (editKey) {
       try {
         const existing = await fb.get(`users/${user.safeKey}/tests/${editKey}`);
         if (existing.exists()) {
           isPublic = !!existing.val().isPublic;
+          createdAt = existing.val().created_at || createdAt;
         }
       } catch (_) {}
     }
@@ -149,9 +309,14 @@ router.post('/api/tests/save', async (req, res) => {
         text: q.text || '',
         options: (q.options || []).map(o => String(o || '')),
         correct: typeof q.correct === 'number' ? q.correct : 0,
+        // S27: Test Builder draft maydonlari
+        type: ['single_choice', 'true_false', 'multiple_select', 'short_answer', 'exit_ticket'].includes(q.type) ? q.type : 'single_choice',
+        explanation: typeof q.explanation === 'string' ? q.explanation : '',
+        tags: Array.isArray(q.tags) ? q.tags.map(t => String(t)).filter(Boolean) : [],
+        timing: Math.max(0, Math.min(600, parseInt(q.timing, 10) || 0)),
       })),
       count: questions.length,
-      created_at: Date.now(),
+      created_at: createdAt,
       isPublic, // Preserved from existing test, default false
     };
 
@@ -185,6 +350,69 @@ router.post('/api/tests/delete', async (req, res) => {
     
     await fb.remove(`users/${userKey}/tests/${testKey}`);
     res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Duplicate Test (S26.03 overflow) ──
+router.post('/api/tests/duplicate', async (req, res) => {
+  try {
+    const userKey = req.session.user.safeKey;
+    const { key } = req.body;
+    if (!key) return res.status(400).json({ error: 'Key required' });
+
+    const snap = await fb.get(`users/${userKey}/tests/${key}`);
+    if (!snap.exists()) return res.status(404).json({ error: 'Test topilmadi' });
+
+    const src = snap.val();
+    // Kolliziya ehtimolini kamaytirish: timestamp + random suffix
+    const newKey = `t_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    await fb.set(`users/${userKey}/tests/${newKey}`, {
+      ...src,
+      name: `${src.name || 'Test'} (nusxa)`,
+      created_at: Date.now(),
+      updated_at: Date.now(),
+      isPublic: false,
+      archived: false,
+      copiedFrom: key,
+    });
+    res.json({ success: true, key: newKey });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Archive / Restore Test (S26.03 overflow) ──
+router.post('/api/tests/archive', async (req, res) => {
+  try {
+    const { key, archived } = req.body;
+    if (!key) return res.status(400).json({ error: 'Key required' });
+
+    const snap = await fb.get(`users/${req.session.user.safeKey}/tests/${key}`);
+    if (!snap.exists()) return res.status(404).json({ error: 'Test topilmadi' });
+
+    await fb.update(`users/${req.session.user.safeKey}/tests/${key}`, {
+      archived: !!archived,
+      updated_at: Date.now(),
+    });
+    res.json({ success: true, archived: !!archived });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Export Test as JSON (S26.03 overflow) ──
+router.get('/api/tests/export', async (req, res) => {
+  try {
+    const { key } = req.query;
+    if (!key) return res.status(400).json({ error: 'Key required' });
+    const snap = await fb.get(`users/${req.session.user.safeKey}/tests/${key}`);
+    if (!snap.exists()) return res.status(404).json({ error: 'Test topilmadi' });
+    const name = (snap.val().name || 'test').replace(/[^\w\-]+/g, '_').slice(0, 40);
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename="edikit-test-${name}.json"`);
+    res.send(JSON.stringify({ exportedAt: Date.now(), test: snap.val() }, null, 2));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -256,7 +484,10 @@ router.get('/test-arena', (req, res) => {
 // + current user's own tests
 router.get('/api/tests/search', async (req, res) => {
   try {
-    const query = (req.query.q || '').toLowerCase().trim();
+    // S35.05: Uzbek apostrophe variantlari (o' / o‘ / oʼ / o` ) canonical U+02BB ga
+    // keltiriladi — qidiruv matnida ham, test nomida ham. Display asl saqlanadi.
+    const canon = (s) => String(s || '').replace(/[\u02BB\u02BC\u2018\u2019\u2032`']/g, '\u02BB').toLowerCase().trim();
+    const query = canon(req.query.q);
     if (!query) return res.json({ results: [] });
 
     const currentUser = req.session?.user?.safeKey || '';
@@ -269,7 +500,7 @@ router.get('/api/tests/search', async (req, res) => {
       if (pubSnap.exists()) {
         const pubTests = pubSnap.val();
         for (const [globalKey, pub] of Object.entries(pubTests)) {
-          const testName = (pub.name || '').toLowerCase();
+          const testName = canon(pub.name);
           if (!testName.includes(query)) continue;
           
           results.push({
@@ -290,7 +521,7 @@ router.get('/api/tests/search', async (req, res) => {
         if (mySnap.exists()) {
           const myTests = mySnap.val();
           for (const [testKey, test] of Object.entries(myTests)) {
-            const testName = (test.name || '').toLowerCase();
+            const testName = canon(test.name);
             if (!testName.includes(query)) continue;
             
             const globalKey = `${currentUser}__${testKey}`;
@@ -327,5 +558,130 @@ function normalizeMockQuestions(questions) {
     };
   }).filter(Boolean);
 }
+
+// ── AUTH D-09 §07: Settings sahifasi (Profil / Xavfsizlik / Maxfiylik / Bildirishnomalar) ──
+// 4 til copy: AUTH_COPY[lang].settings (ps D-09 qismi — data/auth-i18n.js).
+// Server-authoritative: hamma ma'lumot req.session.user dan; client body userKey qabul qilmaydi (IDOR yo'q).
+router.get('/settings', async (req, res) => {
+  const user = req.session.user;
+  try {
+    const { resolveAuthLang, AUTH_COPY } = await import('../data/auth-i18n.js');
+    let lang = 'uz';
+    const langSnap = await fb.get(`users/${user.safeKey}/settings/lang`);
+    if (langSnap.exists() && langSnap.val()) lang = langSnap.val();
+    const resolvedLang = resolveAuthLang(lang);
+
+    // Profil uchun joriy qiymatlar (PII minimal — faqat o'z profili)
+    const [nameSnap, themeSnap] = await Promise.all([
+      fb.get(`users/${user.safeKey}/name`),
+      fb.get(`users/${user.safeKey}/settings/theme`),
+    ]);
+
+    // AUTH D-25 §10: consent listesi (settings UI) + joriy versiya roziligi
+    let consents = null;
+    let consentCurrent = false;
+    try {
+      const { listConsents, hasCurrentConsent, CONSENT_VERSION } = await import('../src/modules/legal/consent.js');
+      [consents, consentCurrent] = await Promise.all([
+        listConsents(user.safeKey),
+        hasCurrentConsent(user.safeKey),
+      ]);
+      res.locals.consentVersion = CONSENT_VERSION;
+    } catch (_) { /* fail-soft — UI konsent holda render bo'ladi */ }
+
+    res.render('user/settings', {
+      title: 'Sozlamalar',
+      active: 'settings',
+      user: req.session.user,
+      csrfToken: req.session.csrfToken,
+      profile: {
+        name: nameSnap.exists() ? nameSnap.val() : (user.name || ''),
+        lang: resolvedLang,
+        theme: themeSnap.exists() ? themeSnap.val() : 'light',
+        email: user.email || null,
+        emailVerified: user.emailVerified === true,
+      },
+      // D-09: ps i18n bloki (`settings` kaliti) — hali yo'q bo'lsa fallback {} (render buzilmaydi)
+      settingsCopy: AUTH_COPY[resolvedLang]?.settings || {},
+      accountCopy: AUTH_COPY[resolvedLang]?.account || {},
+      // AUTH D-25: consent holati (settings UI) — {purpose: {granted,version,grantedAt,revokedAt}}
+      consents: consents || {},
+      consentCurrent,
+      consentVersion: res.locals.consentVersion || '1.0.0',
+    });
+  } catch (err) {
+    res.status(500).render('user/settings', {
+      title: 'Sozlamalar',
+      active: 'settings',
+      user: req.session.user,
+      csrfToken: req.session.csrfToken,
+      profile: { name: user.name || '', lang: 'uz', theme: 'light', email: user.email || null, emailVerified: user.emailVerified === true },
+      settingsCopy: {},
+      accountCopy: {},
+    });
+  }
+});
+
+// ── AUTH D-09 §07: Profil o'zgartirish (Zod, low-risk — reauth talab qilinmaydi) ──
+// name 2-60, lang enum [uz,ru,en,kk], theme enum [light,dark]. Idempotent: takroriy PATCH → 200.
+router.patch('/api/settings/profile', async (req, res) => {
+  const user = req.session.user;
+  const body = req.body || {};
+  try {
+    const { z } = await import('zod');
+    const profileSchema = z.object({
+      name: z.string().trim().min(2).max(60).optional(),
+      lang: z.enum(['uz', 'ru', 'en', 'kk']).optional(),
+      theme: z.enum(['light', 'dark']).optional(),
+    }).strict();
+    const parsed = profileSchema.safeParse(body);
+    if (!parsed.success) {
+      return res.status(400).json({
+        ok: false,
+        error: 'invalid_profile',
+        fields: Object.fromEntries(parsed.error.issues.map((i) => [i.path[0], i.code])),
+      });
+    }
+    const data = parsed.data;
+    if (Object.keys(data).length === 0) {
+      return res.status(400).json({ ok: false, error: 'empty_body' });
+    }
+
+    const updates = {};
+    if (data.name !== undefined) updates.name = data.name;
+    if (data.lang !== undefined || data.theme !== undefined) {
+      // local-db update value key'larini '/' bo'yicha split qilmaydi —
+      // settings ob'ektini o'qib, nested merge qilamiz (literal kalit xatosi oldi).
+      const settingsSnap = await fb.get(`users/${user.safeKey}/settings`);
+      const settings = settingsSnap.exists() ? settingsSnap.val() : {};
+      if (data.lang !== undefined) settings.lang = data.lang;
+      if (data.theme !== undefined) settings.theme = data.theme;
+      updates.settings = settings;
+    }
+
+    await fb.update(`users/${user.safeKey}`, updates);
+
+    // Session'dagi name'ni yangilash (keyingi renderlarda ko'rinishi uchun)
+    if (data.name !== undefined) req.session.user.name = data.name;
+
+    // Audit: settings_saved (PII yo'q — faqat o'zgargan kalitlar)
+    try {
+      const { logAuthEvent, AUDIT_ACTIONS } = await import('../src/modules/auth/audit.js');
+      await logAuthEvent({
+        action: AUDIT_ACTIONS.SETTINGS_SAVED,
+        outcome: 'success',
+        method: 'patch',
+        actorId: user.safeKey,
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent'],
+        details: { changed: Object.keys(updates) },
+      });
+    } catch (_) { /* audit xatosi so'rovni buzmaydi */ }
+
+    res.json({ ok: true, saved: Object.keys(data) });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: 'settings_save_failed' });
+  }
+});
 
 export default router;
