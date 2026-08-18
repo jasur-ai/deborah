@@ -1,20 +1,17 @@
 /**
- * Edikit — WebAuthn (Passkey) Authentication Service
+ * Edikit — WebAuthn (Passkey) Service (AUTH A-27)
  *
- * Implements server-side WebAuthn for passwordless authentication.
- * Uses the Firebase-compatible local DB for credential storage.
+ * Production-grade passkey support built on @simplewebauthn/server v13:
+ *   - full attestation/assertion signature verification (COSE/ECDSA/RSA/OKP)
+ *   - origin + RP ID validation on every response
+ *   - single-use, 5-minute challenges (stored in session)
+ *   - server-authoritative monotonic counter (regression/replay → reject)
+ *   - resident-key (discoverable) credentials → Conditional UI + userless login
+ *   - raw biometric data never reaches the server (WebAuthn spec)
  *
- * Flow:
- *   1. Register: server generates creationOptions → browser creates credential →
- *      server verifies attestation → stores credential (credentialId, publicKey, counter)
- *   2. Authenticate: server generates requestOptions → browser signs →
- *      server verifies assertion → increments counter → grants access
- *
- * Security:
- *   - challenge is single-use (stored in session)
- *   - credential counter is server-authoritative (monotonic)
- *   - origin and RP ID are validated on every assertion
- *   - raw biometric data never arrives at the server
+ * Storage (Firebase-compatible local DB):
+ *   passkeys/<safeKey(credentialId)>   → credential record
+ *   passkeys_index/<userId>            → [{ id, createdAt }]
  *
  * @module webauthn
  */
@@ -24,497 +21,470 @@ import { fb } from '../../../firebase/admin.js';
 import { safeKey } from '../../../utils/helpers.js';
 import { audit, AUDIT_ACTIONS } from './audit.js';
 
+// @simplewebauthn/server import'i ~15s (katta graflar) — LAZY yuklanadi,
+// faqat passkey ishlatilganda. Boot va passkey ishlatmaydigan testlar tez.
+let swaPromise = null;
+function swa() {
+  if (!swaPromise) {
+    // Transient import xatosi kelajakdagi barcha passkey ops'larini buzmasligi
+    // uchun promise reset qilinadi (review topilmasi).
+    swaPromise = import('@simplewebauthn/server').catch((err) => {
+      swaPromise = null;
+      throw err;
+    });
+  }
+  return swaPromise;
+}
+
 // ── Constants ──
 const CHALLENGE_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
 const MAX_CREDENTIALS_PER_USER = 25;
 const CREDENTIAL_BASE_PATH = 'passkeys';
+const CREDENTIAL_INDEX_PATH = 'passkeys_index';
 
-// ── RP (Relying Party) Configuration ──
-// In production, set RP_NAME and RP_ORIGIN via environment variables
-// RP_ID should be the domain without protocol (e.g., "edikit.uz")
+// ── Relying Party configuration ──
+// Production: set RP_ID (domain without protocol), RP_ORIGIN, RP_NAME env vars.
+// Defaults (localhost dev / tests) are derived per-request via rpFromRequest().
 const RP_CONFIG = {
   name: process.env.RP_NAME || 'Edikit',
-  id: process.env.RP_ID || 'localhost',
-  origin: process.env.RP_ORIGIN || 'http://localhost:3000',
+  id: process.env.RP_ID || '',
+  origin: process.env.RP_ORIGIN || '',
 };
 
 /**
- * Generate a WebAuthn registration challenge.
- * Stores the challenge in session for verification.
+ * Derive the RP { id, origin } for a given request.
+ * In production RP_ID/RP_ORIGIN env vars win; otherwise derived from the
+ * incoming Host header so tests and multi-origin deployments stay consistent.
+ *
+ * @param {import('express').Request} req
+ * @returns {{ id: string, origin: string }}
+ */
+export function rpFromRequest(req) {
+  const host = (req.get && req.get('host')) || 'localhost';
+  const hostname = host.split(':')[0].toLowerCase();
+  // RP_ID/RP_ORIGIN env o'rnatilgan bo'lsa — barqaror (production override,
+  // test'lar uchun ham: supertest har so'rovda yangi port ochadi).
+  // Aks holda Host header'dan olinadi (browser flow — bitta origin).
+  const id = process.env.RP_ID || hostname;
+  const origin = process.env.RP_ORIGIN || `${req.protocol}://${host}`;
+  return { id, origin };
+}
+
+/**
+ * Deterministic user handle (WebAuthn `user.id`) — stable across enrollments.
+ * @param {string} userId
+ * @returns {Uint8Array}
+ */
+function userHandleFor(userId) {
+  return new Uint8Array(crypto.createHash('sha256').update(`edikit:passkey:${userId}`).digest());
+}
+
+// ── Storage helpers ──
+
+// Credential ID base64url (case-sensitive, path-safe [A-Za-z0-9_-]) —
+// safeKey() ishlatilmaydi: u lowercase + 60 belgiga qirqadi (collision xavfi).
+async function getCredential(credentialId) {
+  const snap = await fb.get(`${CREDENTIAL_BASE_PATH}/${credentialId}`);
+  return snap.exists() ? snap.val() : null;
+}
+
+async function getIndex(userId) {
+  const snap = await fb.get(`${CREDENTIAL_INDEX_PATH}/${safeKey(userId)}`);
+  return snap.exists() && Array.isArray(snap.val()) ? snap.val() : [];
+}
+
+async function setIndex(userId, list) {
+  if (list.length === 0) await fb.remove(`${CREDENTIAL_INDEX_PATH}/${safeKey(userId)}`);
+  else await fb.set(`${CREDENTIAL_INDEX_PATH}/${safeKey(userId)}`, list);
+}
+
+/** Public (safe) view of a stored credential. */
+function publicCredential(rec) {
+  return {
+    id: rec.id,
+    deviceName: rec.deviceName || 'Unknown',
+    deviceType: rec.deviceType || 'singleDevice',
+    backedUp: !!rec.backedUp,
+    createdAt: rec.createdAt,
+    lastUsedAt: rec.lastUsedAt,
+    counter: rec.counter,
+  };
+}
+
+// ── Registration ──
+
+/**
+ * Generate WebAuthn registration options (JSON-serializable).
+ * Stores the single-use challenge in the session.
  *
  * @param {Object} session - Express session
- * @param {Object} [options]
- * @param {string} [options.userId] - User ID (defaults from session)
- * @param {string} [options.userName] - Display name (defaults from session)
- * @returns {Promise<Object|null>} PublicKeyCredentialCreationOptions or null
+ * @param {{ userId: string, userName: string }} identity
+ * @param {{ id: string, origin: string }} [rp]
+ * @returns {Promise<Object|null>} PublicKeyCredentialCreationOptionsJSON
  */
-export async function generateRegistrationChallenge(session, options = {}) {
-  const userId = options.userId || session?.user?.safeKey || session?.admin?.username;
-  const userName = options.userName || session?.user?.displayName || session?.user?.username || userId;
-
+export async function generateRegistrationChallenge(session, { userId, userName }, rp) {
   if (!userId) return null;
+  const rpId = (rp && rp.id) || RP_CONFIG.id || 'localhost';
+  const existing = await getIndex(userId);
+  const { generateRegistrationOptions } = await swa();
 
-  // Generate a random challenge (32 bytes → base64url)
-  const challenge = crypto.randomBytes(32)
-    .toString('base64')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=/g, '');
+  const options = await generateRegistrationOptions({
+    rpName: RP_CONFIG.name,
+    rpID: rpId,
+    userName,
+    userID: userHandleFor(userId),
+    userDisplayName: userName,
+    attestationType: 'none',
+    // residentKey: 'required' → discoverable passkeys → Conditional UI + userless login
+    // userVerification: 'required' → NIST AAL2+ (passkey = MFA) — UV'ga majbur
+    authenticatorSelection: {
+      residentKey: 'required',
+      userVerification: 'required',
+    },
+    // ES256 / RS256 / EdDSA allowlist (stop condition: alg allowlist)
+    supportedAlgorithmIDs: [-7, -257, -8],
+    excludeCredentials: existing.map((c) => ({ id: c.id, transports: c.transports })),
+  });
 
-  // Generate a user handle (must be deterministic for this user)
-  const userHandle = crypto.createHash('sha256')
-    .update(`edikit:passkey:${userId}`)
-    .digest('base64')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=/g, '');
-
-  // Store challenge in session with timeout
   session.webauthnChallenge = {
-    challenge,
+    challenge: options.challenge,
     type: 'registration',
     userId,
     createdAt: Date.now(),
   };
-
-  // Return the creation options (as per WebAuthn spec)
-  return {
-    publicKey: {
-      rp: {
-        name: RP_CONFIG.name,
-        id: RP_CONFIG.id,
-      },
-      user: {
-        id: userHandle,
-        name: userName,
-        displayName: userName,
-      },
-      challenge: base64ToArrayBuffer(challenge),
-      pubKeyCredParams: [
-        { type: 'public-key', alg: -7 },   // ES256
-        { type: 'public-key', alg: -257 },  // RS256
-      ],
-      timeout: 60000,
-      excludeCredentials: [], // Don't exclude existing — let user decide
-      authenticatorSelection: {
-        authenticatorAttachment: 'platform',
-        residentKey: 'preferred',
-        userVerification: 'preferred',
-      },
-      attestation: 'none', // Skip attestation verification for simplicity
-    },
-  };
+  return options;
 }
 
 /**
- * Verify a WebAuthn registration response.
+ * Verify a WebAuthn registration response and persist the credential.
  *
- * @param {Object} session - Express session
- * @param {Object} credential - The credential object from browser
- * @returns {Promise<Object>} { ok, error, credentialRecord }
+ * @param {Object} session
+ * @param {Object} response - RegistrationResponseJSON from @simplewebauthn/browser
+ * @param {{ id: string, origin: string }} [rp]
+ * @returns {Promise<{ ok: boolean, error?: string, credential?: Object }>}
  */
-export async function verifyRegistrationResponse(session, credential) {
-  // 1. Validate challenge from session
-  if (!session.webauthnChallenge || session.webauthnChallenge.type !== 'registration') {
-    return { ok: false, error: 'No active registration challenge. Start registration first.' };
+export async function verifyRegistrationResponseFlow(session, response, rp) {
+  const stored = session.webauthnChallenge;
+  if (!stored || stored.type !== 'registration') {
+    return { ok: false, error: 'no_challenge', message: 'Avval passkey ro\'yxatdan o\'tkazishni boshlang.' };
   }
-
-  // 2. Check timeout
-  const elapsed = Date.now() - (session.webauthnChallenge.createdAt || 0);
-  if (elapsed > CHALLENGE_TIMEOUT_MS) {
+  if (Date.now() - (stored.createdAt || 0) > CHALLENGE_TIMEOUT_MS) {
     delete session.webauthnChallenge;
-    return { ok: false, error: 'Challenge expired. Please try again.' };
+    return { ok: false, error: 'challenge_expired', message: 'Chaqiruv muddati tugadi. Qayta urinib ko\'ring.' };
   }
 
-  // 3. Validate required credential fields
-  if (!credential || !credential.id || !credential.rawId || !credential.response) {
-    return { ok: false, error: 'Invalid credential format.' };
+  let verification;
+  try {
+    const { verifyRegistrationResponse } = await swa();
+    verification = await verifyRegistrationResponse({
+      response,
+      expectedChallenge: stored.challenge,
+      expectedOrigin: (rp && rp.origin) || RP_CONFIG.origin,
+      expectedRPID: (rp && rp.id) || RP_CONFIG.id || 'localhost',
+      requireUserVerification: true, // AAL2+ — UV majbur (review topilmasi)
+    });
+  } catch (err) {
+    return { ok: false, error: 'verification_failed', message: err.message };
   }
 
-  // 4. Validate origin and RP ID
-  // clientDataJSON from browser is ArrayBuffer; in tests/API it may be base64 string
-  const clientDataRaw = credential.response.clientDataJSON;
-  if (clientDataRaw) {
-    try {
-      let jsonStr;
-      if (typeof clientDataRaw === 'string') {
-        // Try parsing directly as JSON first (test mock), then as base64
-        if (clientDataRaw.startsWith('{') || clientDataRaw.startsWith('[')) {
-          jsonStr = clientDataRaw;
-        } else {
-          jsonStr = Buffer.from(clientDataRaw, 'base64').toString('utf-8');
-        }
-      } else {
-        // ArrayBuffer / Buffer
-        jsonStr = Buffer.from(clientDataRaw).toString('utf-8');
-      }
-
-      const clientData = JSON.parse(jsonStr);
-
-      // Verify origin
-      if (clientData.origin && clientData.origin !== RP_CONFIG.origin) {
-        return { ok: false, error: `Invalid origin: ${clientData.origin}` };
-      }
-    } catch (_) {
-      // If we can't parse clientDataJSON, skip origin check for fallback
-    }
+  if (!verification.verified || !verification.registrationInfo) {
+    return { ok: false, error: 'verification_failed', message: 'Registratsiyani tekshirib bo\'lmadi.' };
   }
 
-  // 5. Extract credential data from the attestation object
-  const credentialId = credential.id;
-  const userId = session.webauthnChallenge.userId;
+  const info = verification.registrationInfo;
+  const { credential, credentialDeviceType, credentialBackedUp, aaguid } = info;
+  const counter = credential.counter;
 
-  // 6. Extract the public key from the attestation response
-  // For 'none' attestation, the public key is in response.getPublicKey()
-  // or we derive from the COSE key
-  let publicKey;
-  if (credential.response.publicKey) {
-    publicKey = typeof credential.response.publicKey === 'string'
-      ? credential.response.publicKey
-      : Buffer.from(credential.response.publicKey).toString('base64');
-  } else if (credential.response.publicKeyCose) {
-    // For simplicity, store the COSE key as base64
-    publicKey = typeof credential.response.publicKeyCose === 'string'
-      ? credential.response.publicKeyCose
-      : Buffer.from(credential.response.publicKeyCose).toString('base64');
-  } else {
-    // Fallback: store the rawId as credential reference
-    publicKey = credential.rawId || credentialId;
+  // Guard: counter must start at 0 for a fresh credential
+  if (counter !== 0) {
+    return { ok: false, error: 'counter_anomaly', message: 'Noto\'g\'ri dastlabki counter qiymati.' };
   }
 
-  // 7. Create credential record
-  const credentialRecord = {
-    credentialId,
-    publicKey,
-    counter: 1, // Initial counter value
+  const userId = stored.userId;
+
+  // Max-credential guard + duplicate check (before writing)
+  const index = await getIndex(userId);
+  if (index.length >= MAX_CREDENTIALS_PER_USER) {
+    return { ok: false, error: 'limit_reached', message: `Ko\'pi bilan ${MAX_CREDENTIALS_PER_USER} ta passkey saqlash mumkin.` };
+  }
+  if (index.some((c) => c.id === credential.id)) {
+    return { ok: false, error: 'duplicate', message: 'Bu passkey allaqachon ro\'yxatdan o\'tgan.' };
+  }
+
+  const record = {
+    id: credential.id,
+    publicKey: Buffer.from(credential.publicKey).toString('base64url'),
+    counter,
+    deviceType: credentialDeviceType,
+    backedUp: credentialBackedUp,
+    aaguid,
+    transports: (response && response.response && response.response.transports) || [],
     userId,
+    deviceName: 'Qurilma',
     createdAt: Date.now(),
     lastUsedAt: Date.now(),
-    deviceName: credential.response.deviceName || credential.response.authenticatorAttachment || 'Unknown',
-    transports: credential.response.transports || [],
-    aaguid: credential.response.aaguid || null,
   };
 
-  // 8. Store credential
-  const credKey = `${CREDENTIAL_BASE_PATH}/${safeKey(credentialId)}`;
-  await fb.set(credKey, credentialRecord);
+  await fb.set(`${CREDENTIAL_BASE_PATH}/${credential.id}`, record);
+  index.push({ id: credential.id, createdAt: record.createdAt, transports: record.transports });
+  await setIndex(userId, index);
 
-  // 9. Add to user's credential list
-  const userCredPath = `${CREDENTIAL_BASE_PATH}_index/${userId}`;
-  const userCredsSnap = await fb.get(userCredPath);
-  const userCreds = userCredsSnap.exists() ? userCredsSnap.val() : [];
-
-  if (userCreds.length >= MAX_CREDENTIALS_PER_USER) {
-    return { ok: false, error: `Maximum ${MAX_CREDENTIALS_PER_USER} passkeys allowed.` };
-  }
-
-  // Check for duplicate
-  const existing = userCreds.find(c => c.credentialId === credentialId);
-  if (!existing) {
-    userCreds.push({ credentialId, createdAt: Date.now() });
-    await fb.set(userCredPath, userCreds);
-  }
-
-  // 10. Clear challenge
+  // Single-use challenge
   delete session.webauthnChallenge;
 
-  // 11. Audit
   await audit({
     action: AUDIT_ACTIONS.PASSKEY_REGISTER,
     userId,
-    details: { credentialId: credentialId.substring(0, 16) + '...', deviceName: credentialRecord.deviceName },
+    resourceType: 'passkey',
+    details: { credentialId: `${credential.id.slice(0, 12)}…`, deviceType: credentialDeviceType },
+  }).catch(() => {});
+
+  return { ok: true, credential: publicCredential(record) };
+}
+
+// ── Authentication ──
+
+/**
+ * Generate WebAuthn authentication options (JSON-serializable).
+ * `userId` is optional: when provided, allowCredentials is scoped to that
+ * user's passkeys; when omitted the request is userless/discoverable
+ * (required for Conditional UI).
+ *
+ * @param {Object} session
+ * @param {{ userId?: string }} [opts]
+ * @param {{ id: string, origin: string }} [rp]
+ * @returns {Promise<Object|null>} PublicKeyCredentialRequestOptionsJSON
+ */
+export async function generateAuthenticationChallenge(session, { userId } = {}, rp) {
+  const rpId = (rp && rp.id) || RP_CONFIG.id || 'localhost';
+  let allowCredentials;
+  if (userId) {
+    const creds = await getIndex(userId);
+    allowCredentials = creds.map((c) => ({ id: c.id, transports: c.transports || [] }));
+  }
+  const { generateAuthenticationOptions } = await swa();
+
+  const options = await generateAuthenticationOptions({
+    rpID: rpId,
+    allowCredentials, // undefined → discovery
+    userVerification: 'required', // AAL2+ — UV majbur (review topilmasi)
   });
 
-  return { ok: true, credentialRecord };
-}
-
-/**
- * Generate a WebAuthn authentication challenge.
- *
- * @param {Object} session - Express session
- * @param {string} userId - User ID to authenticate
- * @returns {Promise<Object|null>} PublicKeyCredentialRequestOptions or null
- */
-export async function generateAuthenticationChallenge(session, userId) {
-  if (!userId) return null;
-
-  // Get user's credentials
-  const userCredPath = `${CREDENTIAL_BASE_PATH}_index/${userId}`;
-  const userCredsSnap = await fb.get(userCredPath);
-
-  if (!userCredsSnap.exists()) {
-    return null; // No passkeys registered
-  }
-
-  const userCreds = userCredsSnap.val();
-  if (!userCreds.length) return null;
-
-  // Generate challenge
-  const challenge = crypto.randomBytes(32)
-    .toString('base64')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=/g, '');
-
-  // Store challenge
   session.webauthnChallenge = {
-    challenge,
+    challenge: options.challenge,
     type: 'authentication',
-    userId,
+    userId: userId || null,
     createdAt: Date.now(),
   };
-
-  // Build allowCredentials from stored credentials
-  const allowCredentials = userCreds.map(c => ({
-    type: 'public-key',
-    id: c.credentialId,
-    transports: ['internal', 'hybrid', 'nfc', 'usb'],
-  }));
-
-  return {
-    publicKey: {
-      challenge: base64ToArrayBuffer(challenge),
-      timeout: 60000,
-      rpId: RP_CONFIG.id,
-      allowCredentials,
-      userVerification: 'preferred',
-    },
-  };
+  return options;
 }
 
 /**
- * Verify a WebAuthn authentication (assertion) response.
+ * Verify a WebAuthn assertion, enforce the monotonic counter policy and
+ * refresh the credential record.
  *
- * @param {Object} session - Express session
- * @param {Object} assertion - The assertion from browser
- * @returns {Promise<Object>} { ok, error, credentialRecord, userId }
+ * @param {Object} session
+ * @param {Object} response - AuthenticationResponseJSON from @simplewebauthn/browser
+ * @param {{ id: string, origin: string }} [rp]
+ * @returns {Promise<{ ok: boolean, error?: string, userId?: string, credential?: Object }>}
  */
-export async function verifyAuthenticationResponse(session, assertion) {
-  // 1. Validate challenge
-  if (!session.webauthnChallenge || session.webauthnChallenge.type !== 'authentication') {
-    return { ok: false, error: 'No active authentication challenge.' };
+export async function verifyAuthenticationResponseFlow(session, response, rp) {
+  const stored = session.webauthnChallenge;
+  if (!stored || stored.type !== 'authentication') {
+    return { ok: false, error: 'no_challenge', message: 'Avval kirishni boshlang.' };
   }
-
-  // 2. Check timeout
-  const elapsed = Date.now() - (session.webauthnChallenge.createdAt || 0);
-  if (elapsed > CHALLENGE_TIMEOUT_MS) {
+  if (Date.now() - (stored.createdAt || 0) > CHALLENGE_TIMEOUT_MS) {
     delete session.webauthnChallenge;
-    return { ok: false, error: 'Challenge expired.' };
+    return { ok: false, error: 'challenge_expired', message: 'Chaqiruv muddati tugadi. Qayta urinib ko\'ring.' };
   }
 
-  // 3. Validate assertion
-  if (!assertion || !assertion.id || !assertion.rawId || !assertion.response) {
-    return { ok: false, error: 'Invalid assertion format.' };
+  if (!response || !response.id || !response.response) {
+    return { ok: false, error: 'invalid_assertion' };
   }
 
-  // 4. Look up credential
-  const credKey = `${CREDENTIAL_BASE_PATH}/${safeKey(assertion.id)}`;
-  const credSnap = await fb.get(credKey);
-
-  if (!credSnap.exists()) {
-    return { ok: false, error: 'Unknown credential.' };
+  const record = await getCredential(response.id);
+  if (!record) {
+    return { ok: false, error: 'unknown_credential', message: 'Bu passkey tizimda topilmadi.' };
   }
 
-  const credentialRecord = credSnap.val();
+  const prevCounter = record.counter || 0;
 
-  // 5. Validate origin
-  // clientDataJSON from browser is ArrayBuffer; in tests/API it may be base64 string
-  const clientDataRaw = assertion.response.clientDataJSON;
-  if (clientDataRaw) {
-    try {
-      let jsonStr;
-      if (typeof clientDataRaw === 'string') {
-        // Try parsing directly as JSON first (test mock), then as base64
-        if (clientDataRaw.startsWith('{') || clientDataRaw.startsWith('[')) {
-          jsonStr = clientDataRaw;
-        } else {
-          jsonStr = Buffer.from(clientDataRaw, 'base64').toString('utf-8');
-        }
-      } else {
-        // ArrayBuffer / Buffer
-        jsonStr = Buffer.from(clientDataRaw).toString('utf-8');
-      }
-
-      const clientData = JSON.parse(jsonStr);
-
-      if (clientData.origin && clientData.origin !== RP_CONFIG.origin) {
-        return { ok: false, error: `Invalid origin: ${clientData.origin}` };
-      }
-    } catch (_) { /* skip strict check */ }
+  // ── Counter monotonic PRE-check (aniq error kodlari) ──
+  // authenticatorData 33-36-baytlarida counter bor; simplewebauthn v13 ham
+  // o'zi rad qiladi, lekin bu yerda counter_regression / counter_replay
+  // aniq ajratiladi (defense-in-depth).
+  let preCounter = 0;
+  try {
+    const authBuf = Buffer.from(response.response.authenticatorData, 'base64url');
+    if (authBuf.length >= 37) preCounter = authBuf.readUInt32BE(33);
+  } catch (_) { /* bad base64url → verify quyida rad qiladi */ }
+  if (preCounter < prevCounter || (preCounter === prevCounter && prevCounter > 0)) {
+    const reason = preCounter < prevCounter ? 'counter_regression' : 'counter_replay';
+    await audit({
+      action: AUDIT_ACTIONS.PASSKEY_FAIL,
+      userId: record.userId,
+      resourceType: 'passkey',
+      details: { credentialId: `${record.id.slice(0, 12)}…`, reason, prevCounter, newCounter: preCounter },
+    }).catch(() => {});
+    return { ok: false, error: reason };
   }
 
-  // 6. Verify signature (simplified — in production use @simplewebauthn/server)
-  // For 'none' attestation, we verify the authenticator data contains expected RP ID hash
-  if (assertion.response.authenticatorData) {
-    const authData = typeof assertion.response.authenticatorData === 'string'
-      ? Buffer.from(assertion.response.authenticatorData, 'base64')
-      : Buffer.from(assertion.response.authenticatorData);
-
-    // RP ID hash (first 32 bytes of authenticator data)
-    const rpIdHash = authData.slice(0, 32);
-    const expectedRpIdHash = crypto.createHash('sha256')
-      .update(RP_CONFIG.id)
-      .digest();
-
-    if (!rpIdHash.equals(expectedRpIdHash)) {
-      return { ok: false, error: 'Invalid RP ID hash.' };
+  let verification;
+  try {
+    const { verifyAuthenticationResponse } = await swa();
+    verification = await verifyAuthenticationResponse({
+      response,
+      expectedChallenge: stored.challenge,
+      expectedOrigin: (rp && rp.origin) || RP_CONFIG.origin,
+      expectedRPID: (rp && rp.id) || RP_CONFIG.id || 'localhost',
+      credential: {
+        id: record.id,
+        publicKey: Buffer.from(record.publicKey, 'base64url'),
+        counter: prevCounter,
+        transports: record.transports || [],
+      },
+      requireUserVerification: true, // AAL2+ — UV majbur (review topilmasi)
+    });
+  } catch (err) {
+    // simplewebauthn v13 counter errori ham shu yerdan keladi
+    if (err.message && /counter/i.test(err.message)) {
+      return { ok: false, error: 'counter_anomaly', message: err.message };
     }
-
-    // Extract counter from authenticator data (bytes 33-36)
-    const newCounter = authData.readUInt32BE(33);
-
-    // Verify counter is monotonically increasing
-    if (newCounter <= credentialRecord.counter) {
-      // Counter didn't increase — possible cloned authenticator
-      // Still allow but flag for review
-      console.warn(`[WebAuthn] Counter did not increase for ${assertion.id}: ${credentialRecord.counter} → ${newCounter}`);
-    }
-
-    // Update counter
-    if (newCounter > 0) {
-      credentialRecord.counter = newCounter;
-      credentialRecord.lastUsedAt = Date.now();
-      await fb.set(credKey, credentialRecord);
-    }
+    return { ok: false, error: 'verification_failed', message: err.message };
   }
 
-  // 7. Clear challenge
+  if (!verification.verified) {
+    await audit({
+      action: AUDIT_ACTIONS.PASSKEY_FAIL,
+      userId: record.userId,
+      resourceType: 'passkey',
+      details: { credentialId: `${record.id.slice(0, 12)}…`, reason: 'assertion_invalid' },
+    }).catch(() => {});
+    return { ok: false, error: 'assertion_invalid' };
+  }
+
+  const newCounter = verification.authenticationInfo.newCounter;
+
+  record.counter = newCounter;
+  record.deviceType = verification.authenticationInfo.credentialDeviceType;
+  record.backedUp = verification.authenticationInfo.credentialBackedUp;
+  record.lastUsedAt = Date.now();
+  await fb.set(`${CREDENTIAL_BASE_PATH}/${record.id}`, record);
+
+  // Single-use challenge
   delete session.webauthnChallenge;
 
-  return {
-    ok: true,
-    credentialRecord,
-    userId: credentialRecord.userId,
-  };
+  return { ok: true, userId: record.userId, credential: publicCredential(record) };
 }
 
+// ── Management ──
+
 /**
- * List all passkeys for a user.
- *
+ * List a user's passkeys (public view).
  * @param {string} userId
- * @returns {Promise<Array>} Array of { credentialId, createdAt, lastUsedAt, deviceName }
+ * @returns {Promise<Array>}
  */
 export async function listPasskeys(userId) {
-  const userCredPath = `${CREDENTIAL_BASE_PATH}_index/${userId}`;
-  const snap = await fb.get(userCredPath);
-
-  if (!snap.exists()) return [];
-
-  const credList = snap.val();
-  const result = [];
-
-  for (const entry of credList) {
-    const credSnap = await fb.get(`${CREDENTIAL_BASE_PATH}/${safeKey(entry.credentialId)}`);
-    if (credSnap.exists()) {
-      const cred = credSnap.val();
-      result.push({
-        credentialId: cred.credentialId,
-        deviceName: cred.deviceName || 'Unknown',
-        createdAt: cred.createdAt,
-        lastUsedAt: cred.lastUsedAt,
-        counter: cred.counter,
-      });
-    } else {
-      result.push(entry);
-    }
+  const index = await getIndex(userId);
+  const out = [];
+  for (const entry of index) {
+    const rec = await getCredential(entry.id);
+    if (rec) out.push(publicCredential(rec));
   }
-
-  return result;
+  return out;
 }
 
 /**
- * Remove a passkey by credential ID.
- * Only the owner or admin can remove passkeys.
+ * Rename a passkey's device label (owner-only, multi-device management E-05).
+ *
+ * Validation: trim, 1..50 chars, no control characters — XSS server-side ham
+ * tekshiriladi (view'lar auto-escape qiladi, lekin API'ga yomon nom kirmasligi
+ * uchun qo'shimcha himoya).
  *
  * @param {string} credentialId
- * @param {string} userId - Owner of the credential
- * @returns {Promise<Object>} { ok, error }
+ * @param {string} userId
+ * @param {string} newName
+ * @returns {Promise<{ ok: boolean, error?: string }>}
+ */
+export async function renamePasskey(credentialId, userId, newName) {
+  const name = typeof newName === 'string' ? newName.trim() : '';
+  if (!name || name.length > 50) return { ok: false, error: 'invalid_name' };
+  // eslint-disable-next-line no-control-regex
+  if (/[\u0000-\u001f\u007f]/.test(name)) return { ok: false, error: 'invalid_name' };
+
+  const rec = await getCredential(credentialId);
+  if (!rec) return { ok: false, error: 'not_found' };
+  // IDOR: boshqa user'ga tegishli bo'lsa ham 'not_found' qaytadi (remove bilan bir xil siyosat).
+  if (rec.userId !== userId) return { ok: false, error: 'not_found' };
+
+  const prevName = rec.deviceName || 'Qurilma';
+  rec.deviceName = name;
+  rec.updatedAt = Date.now();
+  await fb.set(`${CREDENTIAL_BASE_PATH}/${credentialId}`, rec);
+
+  await audit({
+    action: AUDIT_ACTIONS.PASSKEY_RENAME,
+    userId,
+    resourceType: 'passkey',
+    details: { credentialId: `${credentialId.slice(0, 12)}…`, prevName },
+  }).catch(() => {});
+
+  return { ok: true, credential: publicCredential(rec) };
+}
+
+/**
+ * Remove a passkey (owner-only).
+ * @param {string} credentialId
+ * @param {string} userId
+ * @returns {Promise<{ ok: boolean, error?: string }>}
  */
 export async function removePasskey(credentialId, userId) {
-  // Check credential exists and belongs to user
-  const credKey = `${CREDENTIAL_BASE_PATH}/${safeKey(credentialId)}`;
-  const credSnap = await fb.get(credKey);
+  const rec = await getCredential(credentialId);
+  if (!rec) return { ok: false, error: 'not_found' };
+  // IDOR: boshqa user'ga tegishli bo'lsa ham 'not_found' qaytadi — credential
+  // mavjudligi oshkor bo'lmaydi (review topilmasi).
+  if (rec.userId !== userId) return { ok: false, error: 'not_found' };
 
-  if (!credSnap.exists()) {
-    return { ok: false, error: 'Credential not found.' };
-  }
+  await fb.remove(`${CREDENTIAL_BASE_PATH}/${credentialId}`);
+  const index = (await getIndex(userId)).filter((c) => c.id !== credentialId);
+  await setIndex(userId, index);
 
-  const cred = credSnap.val();
-  if (cred.userId !== userId) {
-    return { ok: false, error: 'Credential does not belong to this user.' };
-  }
-
-  // Remove credential
-  await fb.remove(credKey);
-
-  // Remove from user's credential list
-  const userCredPath = `${CREDENTIAL_BASE_PATH}_index/${userId}`;
-  const userCredsSnap = await fb.get(userCredPath);
-  if (userCredsSnap.exists()) {
-    const userCreds = userCredsSnap.val();
-    const filtered = userCreds.filter(c => c.credentialId !== credentialId);
-    if (filtered.length === 0) {
-      await fb.remove(userCredPath);
-    } else {
-      await fb.set(userCredPath, filtered);
-    }
-  }
-
-  // Audit
   await audit({
     action: AUDIT_ACTIONS.PASSKEY_REMOVE,
     userId,
-    details: { credentialId: credentialId.substring(0, 16) + '...' },
-  });
+    resourceType: 'passkey',
+    details: { credentialId: `${credentialId.slice(0, 12)}…` },
+  }).catch(() => {});
 
   return { ok: true };
 }
 
 /**
- * Check if a user has any passkeys registered.
- *
  * @param {string} userId
  * @returns {Promise<boolean>}
  */
 export async function hasPasskeys(userId) {
-  const userCredPath = `${CREDENTIAL_BASE_PATH}_index/${userId}`;
-  const snap = await fb.get(userCredPath);
-  return snap.exists() && snap.val().length > 0;
+  return (await getIndex(userId)).length > 0;
 }
 
 /**
- * Update the RP configuration (for tests or dynamic config).
- *
- * @param {Object} config - { name?, id?, origin? }
+ * @param {string} userId
+ * @returns {Promise<number>}
  */
+export async function countPasskeys(userId) {
+  return (await getIndex(userId)).length;
+}
+
+// ── Config (tests / dynamic) ──
+
 export function setRpConfig(config) {
   if (config.name) RP_CONFIG.name = config.name;
   if (config.id) RP_CONFIG.id = config.id;
   if (config.origin) RP_CONFIG.origin = config.origin;
 }
 
-/**
- * Get current RP configuration.
- *
- * @returns {Object} { name, id, origin }
- */
 export function getRpConfig() {
   return { ...RP_CONFIG };
 }
 
-// ── Helpers ──
-
-/**
- * Convert a base64url string to an ArrayBuffer-like object.
- * This is used to match the WebAuthn spec's expected format.
- *
- * @param {string} base64url
- * @returns {string} Base64 string (non-url-safe)
- */
-function base64ToArrayBuffer(base64url) {
-  // For the options object, the challenge needs to be base64
-  // (non-url-safe) as per WebAuthn spec
-  return base64url
-    .replace(/-/g, '+')
-    .replace(/_/g, '/');
-}
+export { CHALLENGE_TIMEOUT_MS, MAX_CREDENTIALS_PER_USER };

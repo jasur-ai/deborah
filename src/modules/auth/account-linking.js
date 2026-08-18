@@ -32,6 +32,7 @@ import crypto from 'crypto';
 import { fb } from '../../../firebase/admin.js';
 import { safeKey } from '../../../utils/helpers.js';
 import { audit, AUDIT_ACTIONS } from './audit.js';
+import { syncLinkedOneIds } from './identity.js';
 
 // ── Constants ──
 const LINK_PATH = 'account_links';
@@ -174,6 +175,19 @@ export async function approveLinkRequest({ requestId, approvedBy, skipVerificati
       skipVerification: !!skipVerification,
     },
   });
+
+  // E-01a: linked account'lar bitta canonical OneID oladi (fail-soft — link
+  // oqimi OneID xatosida buzilmaydi, audit'da qayd etiladi).
+  const oneIdResult = await syncLinkedOneIds(request.sourceUserId, request.targetUserId);
+  if (!oneIdResult.ok) {
+    await audit({
+      action: AUDIT_ACTIONS.ONEID_SYNC_FAILED,
+      userId: request.sourceUserId,
+      resourceType: 'account_link',
+      resourceId: requestId,
+      details: { error: oneIdResult.error, targetUser: request.targetUserId },
+    });
+  }
 
   return { ok: true };
 }
