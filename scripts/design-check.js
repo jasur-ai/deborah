@@ -47,6 +47,14 @@ function run(name, cmd, args, opts = {}) {
   steps.push({ name, ok });
   const tail = (res.stdout || '').trim().split('\n').slice(-2).join(' | ');
   console.log(`${ok ? '✓' : '✗'} ${name}${tail ? ' — ' + tail : ''}`);
+  if (!ok) {
+    // Playwright list reporter'idagi fail test nomlarini ko'rsatish (CI debug)
+    const failLines = (res.stdout || '')
+      .split('\n')
+      .filter((l) => /failed|✘|Error:|toHaveScreenshot|expected|actual/.test(l))
+      .slice(-14);
+    if (failLines.length) console.log(`   └─ ${failLines.join('\n   └─ ')}`);
+  }
   if (!ok && !opts.warn) process.exitCode = 1;
   return res;
 }

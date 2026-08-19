@@ -57,3 +57,10 @@ jobs:
           name: design-metrics
           path: design-audit/metrics.json
           if-no-files-found: ignore
+
+      # Visual fail tahlili uchun — design:check:full to'liq json report (agar mavjud)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: visual-report
+          path: design-audit/visual-report.json
+          if-no-files-found: ignore
