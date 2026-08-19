@@ -35,8 +35,9 @@ jobs:
 
       # E2E cast testlari (vitest ichida) playwright brauzerini ishga tushiradi —
       # CI runner'ida Chromium yo'qligi "Executable doesn't exist" xatosi beradi.
+      # `--with-deps` emas — ubuntu-latest'da deps preinstalled, apt esa sekin.
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install chromium
 
       - name: TypeScript typecheck
         run: npm run typecheck

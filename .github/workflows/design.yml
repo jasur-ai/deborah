@@ -35,9 +35,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Playwright brauzerlari — axe/visual testlar uchun (CI'da system dep'lar bilan)
+      # Playwright brauzerlari — axe/visual testlar uchun.
+      # `--with-deps` ISHLATILMAYDI: ubuntu-latest'da system dep'lar preinstalled,
+      # apt-get esa CI'da 30 daqiqaga osilib workflow timeout'ini tugatadi.
+      # (Font determinizmi playwright.config.js flag'lari bilan ta'minlanadi.)
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install chromium
 
       # S37.12 — bitta buyruq: tokens + contrast + lint + EJS compile + axe + visual
       - name: Design check (full gate)
