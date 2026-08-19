@@ -98,6 +98,16 @@ export default defineConfig({
     // PW_CHANNEL='chrome' — Windows'da o'rnatilgan Chrome ishlatiladi
     // (playwright chromium headless build mos kelmasa); default chromium (wsl/CI).
     channel: process.env.PW_CHANNEL || undefined,
+    // S03.09 determinizm: font rasterizatsiyasi (hinting/LCD/subpixel) OS
+    // fontconfig'ga qarab o'zgarmasligi uchun — CI va lokal bir xil render.
+    // Aynan shu 1px shift + AA farqi visual baseline'larni buzardi (S11/S12).
+    launchOptions: {
+      args: [
+        '--font-render-hinting=none',
+        '--disable-lcd-text',
+        '--disable-font-subpixel-positioning',
+      ],
+    },
   },
   // S03.08: screenshotlar design-audit/screenshots/ ga yoziladi —
   // {page}--{state}--{theme}--{viewport}.png nomi shotName() orqali.
