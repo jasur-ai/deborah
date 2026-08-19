@@ -274,7 +274,8 @@ async function main() {
 
     await test('VIP berish: sardor (parol o\'zgarmaydi)', async () => {
       const r = await request('POST', '/admin/api/vip/grant', { username: 'sardor' });
-      return r.json && r.json.success === true && r.json.plainPassword;
+      // S33.03: plainPassword client'ga qaytmaydi (security) — faqat success
+      return r.json && r.json.success === true;
     });
 
     console.log('└─');
