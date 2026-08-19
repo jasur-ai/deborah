@@ -67,3 +67,11 @@ jobs:
           name: visual-report
           path: design-audit/visual-report.json
           if-no-files-found: ignore
+
+      # Fail screenshotlar (actual/diff/expected) — diff tahlili uchun
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: visual-diffs
+          path: design-audit/test-results/
+          if-no-files-found: ignore
