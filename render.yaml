@@ -1,0 +1,46 @@
+# Render Blueprint — Deborah (jasur-ai/deborah)
+# ---------------------------------------------------------------
+# Bu fayl orqali Render'da "New +" → "Blueprint" → repo tanlash bilan
+# `deborah-ncj` nomli web service avtomatik yaratiladi.
+#
+# MUHIM: yaratilgandan keyin Render Dashboard → Service → Environment
+# bo'limida quyidagilarni TO'LDIRING (secret'lar kodga yozilmaydi):
+#
+#   ADMIN_USER                # 'admin' bo'lmasin
+#   ADMIN_PASS                # kuchli parol
+#   TURNSTILE_SECRET_KEY      # Cloudflare Turnstile (dash.cloudflare.com)
+#   TURNSTILE_SITE_KEY        # Cloudflare Turnstile
+#   FIREBASE_SERVICE_ACCOUNT  # (ixtiyoriy) service account JSON string —
+#                             #   real Firebase user'lar uchun; bo'lmasa
+#                             #   demo data/db.json ishlaydi
+#   FIREBASE_DATABASE_URL     # https://sessiya-11767-default-rtdb.firebaseio.com
+#
+# Qo'shimcha (ixtiyoriy): GOOGLE_CLIENT_ID/SECRET, POSTMARK_SERVER_TOKEN,
+# SMTP_HOST/USER/PASS, REDIS_URL, VAPID_PUBLIC/PRIVATE_KEY.
+# ---------------------------------------------------------------
+
+services:
+  - type: web
+    # Service nomi — Render URL: https://deborah-ncj.onrender.com
+    name: deborah-ncj
+    runtime: node
+    plan: starter
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # HTTPS session cookie (production'da majburiy — fail-fast)
+      - key: COOKIE_SECURE
+        value: "true"
+      # Domain allowlist / OIDC redirect / origin check (production majburiy)
+      - key: BASE_URL
+        value: https://deborah-ncj.onrender.com
+      # OG image va canonical URL (tavsiya)
+      - key: SITE_URL
+        value: https://deborah-ncj.onrender.com
+      # Random 32+ byte session secret — Render avtomatik generatsiya qiladi
+      - key: SESSION_SECRET
+        generateValue: true
