@@ -34,7 +34,7 @@ import features from './src/config/features.js';
 
 // ── Middleware ──
 import { notFound, errorHandler, validateCsrf } from './middleware/error.js';
-import { setLocals } from './middleware/auth.js';
+import { setLocals, rememberMeAuth } from './middleware/auth.js';
 import { originCheck } from './middleware/origin-check.js';
 
 // ── Telemetry (Prompt 69 — OTel-style observability) ──
@@ -141,6 +141,7 @@ import { createSocketRateLimiter } from './middleware/socket-rate-limiter.js';
 
 // ── Socket handlers ──
 import { setupSocketHandlers } from './socket/game-handler.js';
+import { setupCastHandlers } from './socket/cast-handler.js';
 
 // ── Brief/Policy recipe seeding ──
 import { seedRecipeLibrary } from './src/modules/brief/policy.service.js';
@@ -212,10 +213,14 @@ export async function createApp() {
     }
   }
 
-  app.use(session({
+  // AUTH D-03: session middleware — HTTP + Socket.IO handshake'da ishlatiladi.
+  const sessionMiddleware = session({
     store: sessionStore,
     secret: CONFIG.SESSION_SECRET,
     resave: false,
+    // AUTH A-01 spec: session ID — 64-hex (crypto random). Default uid-safe
+    // base64 emas — testlar /^[0-9a-f]{64}$/ talab qiladi.
+    genid: () => crypto.randomBytes(32).toString('hex'),
     // saveUninitialized: true — CSRF token sessiyada saqlanishi uchun.
     // false bo'lsa express-session yangi sessiyani saqlamaydi va cookie
     // yozmaydi → brauzerda session yo'q → POST'da CSRF token tekshiruvi
@@ -225,9 +230,19 @@ export async function createApp() {
       secure: CONFIG.NODE_ENV === 'production',
       httpOnly: true,
       maxAge: CONFIG.SESSION_MAX_AGE,
-      sameSite: 'strict',
+      // AUTH A-02 spec: SameSite=Lax — sessiya cookie'si standart qoidalari.
+      // (Admin sessiyalari uchun strict alohida — routes/auth.js)
+      sameSite: 'lax',
     },
-  }));
+  });
+  app.use(sessionMiddleware);
+  // Socket.IO handshake'da ham session — cast:directorJoin/shadowRun kabi
+  // socket command'lar `socket.request.session.user` orqali actor aniqlaydi.
+  io.engine.use(sessionMiddleware);
+
+  // ── AUTH A-25: remember-me restore (deborah_remember cookie → sessiya) ──
+  // Session'dan keyin, route'lardan oldin — faqat session.user bo'lmasa ishlaydi.
+  app.use(rememberMeAuth);
 
   // ── Redis service (AUTH D-03) — session + cache + rate limit + risk ──
   const redisService = await createRedisService({ url: CONFIG.REDIS_URL, logger: log });
@@ -268,7 +283,8 @@ export async function createApp() {
     // (Prompt 58 §11 — Manus signed webhook)
     if (req.path.startsWith('/api/webhooks/')) return next();
     // Telegram bot callback — HMAC signature bilan himoyalangan, CSRF shart emas
-    if (req.path.startsWith('/webhooks/telegram-bot')) return next();
+    // (telegram-auth `/webhooks/telegram` + telegram-bot `/webhooks/telegram-bot`)
+    if (req.path.startsWith('/webhooks/telegram')) return next();
     // Roster invite accept — bir martalik token bilan himoyalangan (B-12)
     if (req.path.startsWith('/api/roster/invites/accept')) return next();
     // API endpoints are now CSRF-protected — clients must send X-CSRF-Token header
@@ -360,10 +376,12 @@ app.get('/health', (req, res) => {
   // aks holda /user/reset va /user/mfa requireAuth'ga tushib 401 qaytaradi.
   app.use('/', mfaRoutes);
   app.use('/', resetRoutes);
+  // OIDC google-setup — userRoutes (requireAuth) dan OLDI: /user/google-setup
+  // pendingGoogle sessiyasi bilan ishlaydi, login talab qilmaydi (B-10).
+  app.use('/', oidcRoutes);
   app.use('/user', userRoutes);
   app.use('/', gameRoutes);
   app.use('/arena', arenaRoutes);
-  app.use('/', oidcRoutes);
 
   // ── E-faza API routes (E-02/E-03/E-05/E-07) ──
   app.use('/', hemisWebhookRoutes);
@@ -507,6 +525,8 @@ app.get('/health', (req, res) => {
 
     // Pass rate limiter + identity to game handlers
     setupSocketHandlers(io, socket, socketRateLimiter, socketIdentity);
+    // Cast (C-faza) socket handler'lar — cast:command dispatcher (T-02 item 5)
+    setupCastHandlers(io, socket);
 
     socket.on('disconnect', (reason) => {
       socketRateLimiter.onDisconnect(socket);

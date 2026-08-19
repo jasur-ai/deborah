@@ -225,7 +225,8 @@ router.post('/admin/api/teachers/bulk-invite', requireAdmin, upload.single('file
     console.error('[teacher:bulk-invite]', err?.message || err);
     return res.status(500).json({ ok: false, error: 'server' });
   } finally {
-    if (filePath) fs.unlink(filePath).catch(() => {});
+    // fs default import callback-style — promise uchun fs.promises kerak
+    if (filePath) fs.promises.unlink(filePath).catch(() => {});
   }
 });
 

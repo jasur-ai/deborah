@@ -9,7 +9,7 @@
  *  - Invite life-cycle (§13-15): yaratish → accept (guruh prefilled) →
  *    1-marta (replay reject) → revoke → expiry → pending summary
  */
-import { describe, it, expect, afterEach } from 'vitest';
+import { describe, it, expect, afterEach, beforeEach } from 'vitest';
 import { fb } from '../../firebase/admin.js';
 import {
   createStagingSession,
@@ -65,6 +65,16 @@ describe('A-11 — commit HAQIQATAN yozadi (A-10 bug fix)', () => {
 
   afterEach(async () => {
     if (sid) await cleanup(sid);
+    await fb.remove('users/stu001');
+    await fb.remove('users/stu002');
+    await fb.remove('enrollments/stu001_MATH101');
+    await fb.remove('enrollments/stu002_MATH101');
+    await fb.remove('groups/a');
+  });
+
+  // CI'da oldingi test fayllar DB'ga iz qoldirishi mumkin — commit'ni
+  // deterministik qilish uchun har testdan oldin ham tozalaymiz.
+  beforeEach(async () => {
     await fb.remove('users/stu001');
     await fb.remove('users/stu002');
     await fb.remove('enrollments/stu001_MATH101');

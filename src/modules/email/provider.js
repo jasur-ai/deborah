@@ -161,7 +161,7 @@ export async function recordEmailCost({ provider, count = 1, budget = null } = {
         await fireAlert('warn80', 'warn');
       }
     }
-    return { month, provider, cost: totalCost, count: totalCount };
+    return { month, provider, cost: totalCost, count, totalCount };
   } catch {
     return { month, provider, cost: 0, count };
   }

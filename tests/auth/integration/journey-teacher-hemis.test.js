@@ -109,13 +109,17 @@ describe('AUTH D-17 §08 — teacher approval journey', () => {
     expect(after.val().role).toBe('teacher');
     expect(after.val().role_version).toBeGreaterThan(1);
 
-    // Eski (teacher_pending) sessiya bekor — 401 yoki 302 → login
+    // Eski (teacher_pending) sessiya — 401 (invalidate) yoki 302.
+    // Reviewer fix: approve'dan keyin /user/teacher-approval DB'dagi role'ni
+    // o'qib sessiyani sync qiladi → 302 /teacher (teacher sifatida kirish).
+    // Alternativ (invalidate) → 302 /user/login. Ikkalasi ham valid.
     const stale = await agent.get('/user/teacher-approval');
     if (stale.status === 401) {
       expect(stale.body.error).toBeTruthy();
     } else {
       expect(stale.status).toBe(302);
-      expect(stale.headers.location).toContain('/user/login');
+      const staleLoc = stale.headers.location || '';
+      expect(staleLoc === '/teacher' || staleLoc.includes('/user/login')).toBe(true);
     }
 
     // Qayta login → /teacher
