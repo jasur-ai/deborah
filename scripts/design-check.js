@@ -48,12 +48,17 @@ function run(name, cmd, args, opts = {}) {
   const tail = (res.stdout || '').trim().split('\n').slice(-2).join(' | ');
   console.log(`${ok ? '✓' : '✗'} ${name}${tail ? ' — ' + tail : ''}`);
   if (!ok) {
-    // Playwright list reporter'idagi fail test nomlarini ko'rsatish (CI debug)
-    const failLines = (res.stdout || '')
-      .split('\n')
-      .filter((l) => /failed|✘|Error:|toHaveScreenshot|expected|actual/.test(l))
-      .slice(-14);
-    if (failLines.length) console.log(`   └─ ${failLines.join('\n   └─ ')}`);
+    // Playwright list reporter'idagi fail test nomlarini ko'rsatish (CI debug):
+    // "N failed" summary blokidan keyingi test qatorlari to'liq chiqariladi.
+    const lines = (res.stdout || '').split('\n');
+    let out = [];
+    let idx = -1;
+    for (let i = 0; i < lines.length; i++) {
+      if (/^\s*\d+ failed\s*$/.test(lines[i])) idx = i;
+    }
+    if (idx >= 0) out = lines.slice(idx, idx + 40);
+    else out = lines.filter((l) => /✘|Error:|failed/.test(l)).slice(-14);
+    if (out.length) console.log(`   └─ ${out.join('\n   └─ ')}`);
   }
   if (!ok && !opts.warn) process.exitCode = 1;
   return res;

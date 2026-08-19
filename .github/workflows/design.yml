@@ -46,20 +46,23 @@ jobs:
           SESSION_SECRET: ci-secret-for-design-gate
         run: npm run design:check:full
 
-      # S37.11 — metric trend report artifact
+      # S37.11 — metric trend report artifact (gate fail bo'lsa ham yuklanadi)
       - name: Save design metrics
+        if: always()
         run: |
           node scripts/design-lint.js --json > design-audit/metrics.json
           echo "saved design-audit/metrics.json"
 
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: design-metrics
           path: design-audit/metrics.json
           if-no-files-found: ignore
 
-      # Visual fail tahlili uchun — design:check:full to'liq json report (agar mavjud)
+      # Visual fail tahlili uchun — design:check:full to'liq json report
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: visual-report
           path: design-audit/visual-report.json
