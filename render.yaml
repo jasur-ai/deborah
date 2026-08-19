@@ -44,3 +44,14 @@ services:
       # Random 32+ byte session secret — Render avtomatik generatsiya qiladi
       - key: SESSION_SECRET
         generateValue: true
+
+  # ── Firebase (ixtiyoriy, lekin real user'lar uchun zarur) ──
+  # FIREBASE_SERVICE_ACCOUNT — qiymati Render dashboard'da to'ldiriladi
+  # (JSON string; secret repo'ga yozilmaydi). Bo'lmasa demo data/db.json.
+  # Render Dashboard → Service → Environment → Add:
+  #   Key: FIREBASE_SERVICE_ACCOUNT
+  #   Value: (sessiya-11767-firebase-adminsdk-*.json fayl ichidagi hammasi)
+  - key: FIREBASE_SERVICE_ACCOUNT
+    sync: false
+  - key: FIREBASE_DATABASE_URL
+    value: https://sessiya-11767-default-rtdb.firebaseio.com

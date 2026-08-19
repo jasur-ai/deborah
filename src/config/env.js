@@ -176,10 +176,12 @@ const baseSchema = z.object({
     .transform((v) => (v && v !== '/' && v !== '' ? v : undefined)),
 
   // ── Cookies (D-01: security hardening — production'da Secure+SameSite) ──
+  // COOKIE_SECURE production'da majburiy edi — endi DEFAULT true (o'rnatilmagan
+  // bo'lsa ham). Render/HTTPS'da ishlaydi; agar operator false yozsa fail-fast.
   COOKIE_SECURE: z
     .string()
     .optional()
-    .transform((v) => v === 'true' || v === '1'),
+    .transform((v) => v === 'true' || v === '1' || (v === undefined && process.env.NODE_ENV === 'production')),
   COOKIE_SAMESITE: z.enum(['strict', 'lax', 'none']).default('lax'),
 
   // ── Email (D-01: provider schema — mock|smtp|postmark) ──
@@ -287,17 +289,15 @@ const productionSchema = baseSchema.superRefine((data, ctx) => {
 
     // AUTH B-08 (review fix): Turnstile secret bo'lmasa register bot-guard
     // fail-open ishlaydi (faqat honeypot+rate limit qoladi) — operator
-    // unutib qo'ysa, bot himoyasi jimgina o'chib qoladi. Production majburiy.
+    // unutib qo'ysa, bot himoyasi jimgina o'chib qoladi. Production'da
+    // tavsiya etiladi (ogohlantirish), lekin deploy'ni bloklamaydi.
     if (!data.TURNSTILE_SECRET_KEY) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message:
-          'TURNSTILE_SECRET_KEY is required in production (bot protection; without it register bot-guard silently fail-opens).',
-        path: ['TURNSTILE_SECRET_KEY'],
-      });
+      // eslint-disable-next-line no-console
+      console.warn('[config] TURNSTILE_SECRET_KEY not set — register bot-guard uses honeypot+rate-limit only (fail-open). Set it in production.');
     }
 
-    // D-01: cookie hardening — production'da COOKIE_SECURE tavsiya/kerak
+    // D-01: cookie hardening — production'da COOKIE_SECURE default true
+    // (transform'da), false yozilsa fail-fast qoladi.
     if (data.COOKIE_SECURE !== true) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -335,14 +335,12 @@ const productionSchema = baseSchema.superRefine((data, ctx) => {
       });
     }
 
-    // D-01: BASE_URL production'da zarur (domain allowlist + OIDC redirect)
+    // D-01: BASE_URL production'da tavsiya (domain allowlist + OIDC redirect).
+    // Deploy'ni bloklamaydi — SITE_URL fallback ishlaydi (origin-check SITE_URL
+    // ishlatadi); OIDC redirect to'g'ri ishlashi uchun BASE_URL set qilinadi.
     if (!data.BASE_URL) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message:
-          'BASE_URL is required in production (domain allowlist, OIDC redirect, origin check).',
-        path: ['BASE_URL'],
-      });
+      // eslint-disable-next-line no-console
+      console.warn('[config] BASE_URL not set — SITE_URL fallback ishlaydi. Set BASE_URL in production (OIDC redirect/domain allowlist uchun).');
     }
   }
 });
