@@ -45,22 +45,28 @@ describe('AUTH D-01 — production fail-fast', () => {
     expect(stderr).toContain('SESSION_SECRET');
   });
 
-  it('COOKIE_SECURE yo\'q → start fail', () => {
-    const { status, stderr } = runProdEnv({ COOKIE_SECURE: undefined });
+  // 6dee705: production config fail-soft — Render env'siz ham boot qiladi.
+  // COOKIE_SECURE o'rnatilmagan bo'lsa DEFAULT true (transform); BASE_URL va
+  // TURNSTILE_SECRET_KEY esa faqat ogohlantirish (deploy bloklanmaydi).
+  it('COOKIE_SECURE yo\'q → start davom etadi (default true, fail-soft)', () => {
+    const { status } = runProdEnv({ COOKIE_SECURE: undefined });
+    expect(status).toBe(0);
+  });
+
+  it('COOKIE_SECURE=false → start fail (explicit false still fail-fast)', () => {
+    const { status, stderr } = runProdEnv({ COOKIE_SECURE: 'false' });
     expect(status).toBe(1);
     expect(stderr).toContain('COOKIE_SECURE');
   });
 
-  it('BASE_URL yo\'q → start fail', () => {
-    const { status, stderr } = runProdEnv({ BASE_URL: undefined });
-    expect(status).toBe(1);
-    expect(stderr).toContain('BASE_URL');
+  it('BASE_URL yo\'q → start davom etadi (SITE_URL fallback)', () => {
+    const { status } = runProdEnv({ BASE_URL: undefined });
+    expect(status).toBe(0);
   });
 
-  it('TURNSTILE_SECRET_KEY yo\'q → start fail (B-08)', () => {
-    const { status, stderr } = runProdEnv({ TURNSTILE_SECRET_KEY: undefined });
-    expect(status).toBe(1);
-    expect(stderr).toContain('TURNSTILE_SECRET_KEY');
+  it('TURNSTILE_SECRET_KEY yo\'q → start davom etadi (fail-open honeypot+rate)', () => {
+    const { status } = runProdEnv({ TURNSTILE_SECRET_KEY: undefined });
+    expect(status).toBe(0);
   });
 
   it('default admin credential (admin/admin) → start fail', () => {
