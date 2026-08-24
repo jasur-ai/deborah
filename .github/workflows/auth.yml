@@ -127,10 +127,11 @@ jobs:
         run: npm run test:load:auth
 
   # ── Stage 4: E2E (playwright, headless) — fayllar D-18 wsl qismi ──
+  # hashFiles() job-level if'da ishlamaydi (Invalid workflow file) — e2e auth
+  # testlari repo'da doim mavjud, shuning uchun job doim ishlaydi.
   e2e-auth:
     name: Stage 4 — E2E (playwright)
     runs-on: ubuntu-latest
-    if: hashFiles('tests/e2e/auth/**') != ''
     steps:
       - uses: actions/checkout@v4
 
