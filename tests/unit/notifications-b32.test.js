@@ -129,8 +129,9 @@ describe('AUTH B-32 — notification detail (unit)', () => {
 
   it("§10 cap: marketing cap'da to'xtaydi; security cap'ga kirmaydi", async () => {
     const now = new Date('2026-08-14T12:00:00').getTime();
-    // Consistent segment (last_active bugun) → cap 3/kun
-    await fb.set(`users/${safeKey(userId)}/last_active`, now - 1000);
+    // Consistent segment (last_active bugun — Date.now() bilan, aks holda test
+    // real vaqt o'tishi bilan sporadic bo'lib cap 2 ga tushadi)
+    await fb.set(`users/${safeKey(userId)}/last_active`, Date.now() - 1000);
     // telegram cap 3/kun — 3 marta yuboramiz (dedupe'ni chetlab o'tish uchun
     // har xil type ishlatamiz)
     for (const tp of ['result', 'practice', 'feedback']) {

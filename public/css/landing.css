@@ -106,7 +106,32 @@
   min-height: 64px;
   gap: 16px;
 }
-.ld-logo-img { display: block; height: 32px; width: auto; }
+/* ── Brand lockup: vintage emblem + "deborah" wordmark (S05.11) ── */
+.ld-logo {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-decoration: none;
+  line-height: 1;
+}
+.ld-logo-img {
+  display: block;
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+}
+.ld-logo-word {
+  font-family: 'Cinzel', 'Manrope', serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.42em;
+  text-indent: 0.42em; /* letter-spacing o'ng tomonda ham bo'shliq qoldiradi — markazlash uchun */
+  text-transform: lowercase;
+  color: #C9A24B; /* vintage oltin */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+  white-space: nowrap;
+}
 .ld-header-right { display: flex; align-items: center; gap: 14px; }
 
 .ld-lang-switcher {

@@ -86,9 +86,9 @@
         <strong>Tezroq kirish uchun passkey qo&#39;shing</strong>
         <span>Barmoq izi yoki Face ID bilan bir bosishda kiring — phishing&#39;ga chidamli va paroldan tezroq.</span>
       </div>
-      <div class="evb-actions" style="display:flex;gap:8px;align-items:center">
+      <div class="evb-actions">
         <a class="btn btn-primary evb-btn" href="/user/security-profile" style="text-decoration:none"><%- icon('shieldCheck', 14) %> Qo&#39;shish</a>
-        <button type="button" class="btn evb-btn" id="passkey-nudge-close" style="background:transparent;border:1px solid var(--deborah-semantic-color-border-default)" aria-label="Yopish"><%- icon('x', 14) %></button>
+        <button type="button" class="btn evb-btn evb-ghost" id="passkey-nudge-close" aria-label="Yopish"><%- icon('x', 14) %></button>
       </div>
     </div>
 
@@ -99,18 +99,18 @@
         <strong id="risk-banner-title"></strong>
         <span id="risk-banner-msg"></span>
       </div>
-      <div class="evb-actions" style="display:flex;gap:8px;align-items:center">
+      <div class="evb-actions">
         <button type="button" class="btn btn-primary evb-btn" id="risk-banner-trust" style="display:none"><%- icon('check', 14) %> <span id="risk-banner-trust-label"></span></button>
         <button type="button" class="btn evb-btn" id="risk-banner-reauth" style="display:none"><span id="risk-banner-reauth-label"></span></button>
-        <button type="button" class="btn evb-btn" id="risk-banner-logout" style="display:none;background:transparent;border:1px solid var(--deborah-semantic-color-border-default)"><span id="risk-banner-logout-label"></span></button>
-        <button type="button" class="btn evb-btn" id="risk-banner-close" style="background:transparent;border:1px solid var(--deborah-semantic-color-border-default)" aria-label="Yopish"><%- icon('x', 14) %></button>
+        <button type="button" class="btn evb-btn evb-ghost" id="risk-banner-logout" style="display:none"><span id="risk-banner-logout-label"></span></button>
+        <button type="button" class="btn evb-btn evb-ghost" id="risk-banner-close" aria-label="Yopish"><%- icon('x', 14) %></button>
       </div>
     </div>
 
     <!-- AUTH A-29: breach banner — parol ma'lum breach'da topilgan (HIBP P1) -->
     <% if (typeof breachFlagged !== 'undefined' && breachFlagged) { %>
-    <div class="email-verify-banner" role="region" aria-live="polite" data-testid="breach-banner" style="border-color:rgba(220,38,38,.35);background:rgba(220,38,38,.08)">
-      <div class="evb-icon" style="background:rgba(220,38,38,.14);color:#dc2626"><%- icon('alertTriangle', 16) %></div>
+    <div class="email-verify-banner banner-danger" role="region" aria-live="polite" data-testid="breach-banner">
+      <div class="evb-icon"><%- icon('alertTriangle', 16) %></div>
       <div class="evb-text">
         <strong><%= accountCopy.breachTitle || 'Parolingiz xavfsiz emas' %></strong>
         <span><%= accountCopy.breachMsg || 'Parolingiz ma\'lum ma\'lumot sizdirilishlarida topilgan — xavfsizlik uchun uni o\'zgartiring.' %></span>
@@ -121,15 +121,15 @@
 
     <!-- AUTH D-25 §12: re-consent banner — privacy policy yangilangan/berilmagan -->
     <% if (typeof consentStale !== 'undefined' && consentStale) { %>
-    <div class="email-verify-banner" role="region" aria-live="polite" data-testid="consent-banner" style="border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.08)">
-      <div class="evb-icon" style="background:rgba(245,158,11,.14);color:#d97706"><%- icon('shieldCheck', 16) %></div>
+    <div class="email-verify-banner banner-warning" role="region" aria-live="polite" data-testid="consent-banner">
+      <div class="evb-icon"><%- icon('shieldCheck', 16) %></div>
       <div class="evb-text">
         <strong>Maxfiylik siyosati yangilandi</strong>
         <span>Davom etish uchun yangilangan <a href="/privacy" style="color:inherit">Maxfiylik siyosati</a> va <a href="/terms" style="color:inherit">Foydalanish shartlari</a>ga qayta rozilik bering.</span>
       </div>
-      <div class="evb-actions" style="display:flex;gap:8px;align-items:center">
+      <div class="evb-actions">
         <button type="button" class="btn btn-primary evb-btn" id="btn-consent-grant" data-analytics="consent_regrant"><%- icon('check', 14) %> Rozilik berish</button>
-        <button type="button" class="btn evb-btn" id="btn-consent-dismiss" style="background:transparent;border:1px solid var(--deborah-semantic-color-border-default)" aria-label="Yopish"><%- icon('x', 14) %></button>
+        <button type="button" class="btn evb-btn evb-ghost" id="btn-consent-dismiss" aria-label="Yopish"><%- icon('x', 14) %></button>
       </div>
     </div>
     <% } %>

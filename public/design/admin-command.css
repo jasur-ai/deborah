@@ -1,0 +1,506 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   Deborah — ADMIN COMMAND CENTER (S33 admin distinc theme)
+   ───────────────────────────────────────────────────────────────────────
+   Foydalanuvchi sahifalari jigarrang-vintage bo'lib qoladi; ADMIN alohida:
+   qora × kohrang(cyan) × toq-binafsha professional "command center" uslub.
+   Bu fayl FAQAT views/admin/* sahifalarida yuklanadi (admin view'larning
+   </head> qismiga qo'shilgan link orqali) — semantic token QIYMATLARINI
+   almashtiradi (nomlarini emas), shuning uchun admin funksiyalari buzilmaydi.
+
+   Qizil faqat xato/danger, yashil faqat yaxshi natija uchun (user talabi).
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── DARK — Command Center palitrasi (qora × cyan × toq binafsha) ── */
+:root,
+[data-theme="dark"] {
+  --deborah-semantic-color-surface-default: #070b16;
+  --deborah-semantic-color-surface-raised: #0d1426;
+  --deborah-semantic-color-surface-nested: #131c33;
+  --deborah-semantic-color-surface-alternate: #0d1426;
+  --deborah-semantic-color-surface-input: #0a1120;
+  --deborah-semantic-color-surface-sunken: #04070f;
+  --deborah-semantic-color-surface-overlay: rgba(3, 6, 12, 0.82);
+  --deborah-semantic-color-surface-scrim: #070b16;
+  --deborah-semantic-color-border-default: rgba(56, 189, 248, 0.2);
+  --deborah-semantic-color-border-strong: rgba(34, 211, 238, 0.45);
+  --deborah-semantic-color-border-subtle: rgba(148, 163, 184, 0.1);
+  --deborah-semantic-color-divider: rgba(226, 232, 240, 0.12);
+  --deborah-semantic-color-text-primary: #eaf0fb;
+  --deborah-semantic-color-text-secondary: #b6c2d9;
+  --deborah-semantic-color-text-muted: #94a3c9;
+  --deborah-semantic-color-text-disabled: #64748b;
+  --deborah-semantic-color-text-inverse: #041018;
+  --deborah-semantic-color-action-primary: #22d3ee;
+  --deborah-semantic-color-action-primary-hover: #67e8f9;
+  --deborah-semantic-color-action-primary-active: #06b6d4;
+  --deborah-semantic-color-action-primary-border: rgba(34, 211, 238, 0.55);
+  --deborah-semantic-color-action-primary-soft: rgba(34, 211, 238, 0.12);
+  --deborah-semantic-color-action-on-action: #041018;
+  --deborah-semantic-color-action-signal: #a78bfa;
+  --deborah-semantic-color-action-insight: #a78bfa;
+  --deborah-semantic-color-brand-cobalt: #7dd3fc;
+  --deborah-semantic-color-brand-insight: #c4b5fd;
+  --deborah-semantic-color-brand-signal: #34d399;
+  --deborah-semantic-color-focus: #38bdf8;
+  --deborah-semantic-color-selection: rgba(56, 189, 248, 0.35);
+  --deborah-semantic-color-status-success: #34d399;
+  --deborah-semantic-color-status-success-soft: rgba(52, 211, 153, 0.12);
+  --deborah-semantic-color-status-warning: #fbbf24;
+  --deborah-semantic-color-status-warning-soft: rgba(251, 191, 36, 0.12);
+  --deborah-semantic-color-status-danger: #f87171;
+  --deborah-semantic-color-status-danger-soft: rgba(248, 113, 113, 0.12);
+
+  /* Legacy alias'lar qayta ta'riflanmaydi (S40.03 legacy usage gate).
+     style.css'dagi --accent-glow/--accent-purple/--gold defaultlari ishlaydi;
+     faqat semantic token'lar + component-level override'lardan foydalanamiz. */
+  --gradient-accent: linear-gradient(135deg, #22d3ee, #7c3aed);
+  --gradient-glass: linear-gradient(135deg, rgba(103, 232, 249, 0.06), rgba(167, 139, 250, 0.03));
+  --bg-elevated: #131c33;
+  --bg-overlay: rgba(3, 6, 12, 0.8);
+  --warn: #fbbf24;
+}
+
+/* ── LIGHT — Command Center (cool slate, cyan/violet aksentlar) ── */
+[data-theme="light"],
+body.theme-light {
+  --deborah-semantic-color-surface-default: #eef2f9;
+  --deborah-semantic-color-surface-raised: #f8fafd;
+  --deborah-semantic-color-surface-nested: #e2e8f2;
+  --deborah-semantic-color-surface-alternate: #e2e8f2;
+  --deborah-semantic-color-surface-input: #ffffff;
+  --deborah-semantic-color-surface-sunken: #dbe3ef;
+  --deborah-semantic-color-surface-overlay: rgba(238, 242, 249, 0.85);
+  --deborah-semantic-color-surface-scrim: #eef2f9;
+  --deborah-semantic-color-border-default: rgba(51, 85, 140, 0.18);
+  --deborah-semantic-color-border-strong: rgba(11, 111, 181, 0.42);
+  --deborah-semantic-color-border-subtle: rgba(51, 85, 140, 0.1);
+  --deborah-semantic-color-divider: rgba(30, 41, 59, 0.12);
+  --deborah-semantic-color-text-primary: #101828;
+  --deborah-semantic-color-text-secondary: #3d4a63;
+  --deborah-semantic-color-text-muted: #4e5f82;
+  --deborah-semantic-color-text-disabled: #8a97b3;
+  --deborah-semantic-color-text-inverse: #f4f8ff;
+  --deborah-semantic-color-action-primary: #0b6fb5;
+  --deborah-semantic-color-action-primary-hover: #095e9e;
+  --deborah-semantic-color-action-primary-active: #0a7ab8;
+  --deborah-semantic-color-action-primary-border: rgba(11, 111, 181, 0.5);
+  --deborah-semantic-color-action-primary-soft: rgba(11, 111, 181, 0.1);
+  --deborah-semantic-color-action-on-action: #ffffff;
+  --deborah-semantic-color-action-signal: #7c3aed;
+  --deborah-semantic-color-action-insight: #6d28d9;
+  --deborah-semantic-color-brand-cobalt: #0b6fb5;
+  --deborah-semantic-color-brand-insight: #6d28d9;
+  --deborah-semantic-color-brand-signal: #1a7f4e;
+  --deborah-semantic-color-focus: #0b6fb5;
+  --deborah-semantic-color-selection: rgba(11, 111, 181, 0.22);
+  --deborah-semantic-color-status-success: #1a7f4e;
+  --deborah-semantic-color-status-success-soft: rgba(26, 127, 78, 0.1);
+  --deborah-semantic-color-status-warning: #b45309;
+  --deborah-semantic-color-status-warning-soft: rgba(180, 83, 9, 0.1);
+  --deborah-semantic-color-status-danger: #b42318;
+  --deborah-semantic-color-status-danger-soft: rgba(180, 35, 24, 0.1);
+
+  --gradient-accent: linear-gradient(135deg, #0b6fb5, #7c3aed);
+  --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(124, 58, 237, 0.05));
+  --bg-elevated: #e2e8f2;
+  --bg-overlay: rgba(8, 12, 26, 0.3);
+  --warn: #b45309;
+}
+
+/* ── Asosiy fon: qora + cyan/binafsha nur (ambient glow) ── */
+body {
+  background:
+    radial-gradient(1200px 520px at 12% -6%, rgba(34, 211, 238, 0.07), transparent 62%),
+    radial-gradient(980px 460px at 94% 6%, rgba(124, 58, 237, 0.09), transparent 62%),
+    var(--deborah-semantic-color-surface-default);
+  background-attachment: fixed;
+}
+
+[data-theme="light"] body,
+body.theme-light {
+  background:
+    radial-gradient(1200px 520px at 12% -6%, rgba(11, 111, 181, 0.05), transparent 62%),
+    radial-gradient(980px 460px at 94% 6%, rgba(124, 58, 237, 0.05), transparent 62%),
+    var(--deborah-semantic-color-surface-default);
+  background-attachment: fixed;
+}
+
+/* ═══════════════════ ADMIN SHELL (admin.css) ═══════════════════ */
+/* Navbar — qora → chuqur to'q-ko'k gradient + cyan nafislik */
+.admin-navbar {
+  background: linear-gradient(180deg, #0d1526 0%, #070b17 100%);
+  border-bottom: 1px solid rgba(34, 211, 238, 0.28);
+  box-shadow: 0 8px 26px rgba(2, 6, 12, 0.35);
+}
+
+[data-theme="light"] .admin-navbar,
+body.theme-light .admin-navbar {
+  background: linear-gradient(180deg, #f8fafd 0%, #eef2f9 100%);
+  border-bottom-color: rgba(11, 111, 181, 0.22);
+  box-shadow: 0 8px 26px rgba(16, 24, 40, 0.08);
+}
+
+.admin-nav-badge {
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.18), rgba(167, 139, 250, 0.2));
+  border-color: rgba(34, 211, 238, 0.42);
+  color: #7dd3fc;
+}
+
+[data-theme="light"] .admin-nav-badge,
+body.theme-light .admin-nav-badge {
+  background: linear-gradient(135deg, rgba(11, 111, 181, 0.12), rgba(124, 58, 237, 0.12));
+  border-color: rgba(11, 111, 181, 0.3);
+  color: #0b6fb5;
+}
+
+.admin-nav-btn {
+  border-color: rgba(148, 163, 184, 0.18);
+  background: linear-gradient(135deg, rgba(103, 232, 249, 0.06), rgba(167, 139, 250, 0.03));
+}
+
+.admin-nav-btn:hover {
+  border-color: rgba(34, 211, 238, 0.45);
+  background: rgba(34, 211, 238, 0.08);
+  color: var(--deborah-semantic-color-text-primary);
+}
+
+[data-theme="light"] .admin-nav-btn:hover,
+body.theme-light .admin-nav-btn:hover {
+  border-color: rgba(11, 111, 181, 0.35);
+  background: rgba(11, 111, 181, 0.07);
+}
+
+/* Sidebar */
+.admin-sidebar {
+  border-color: rgba(56, 189, 248, 0.16);
+  box-shadow: 0 14px 40px rgba(2, 6, 12, 0.25);
+}
+
+[data-theme="light"] .admin-sidebar,
+body.theme-light .admin-sidebar {
+  box-shadow: 0 14px 40px rgba(16, 24, 40, 0.08);
+}
+
+.admin-side-btn {
+  --c: #67e8f9;
+  --cbg: rgba(34, 211, 238, 0.12);
+}
+
+[data-theme="light"] .admin-side-btn,
+body.theme-light .admin-side-btn {
+  --c: #0b6fb5;
+  --cbg: rgba(11, 111, 181, 0.1);
+}
+
+.admin-side-btn:hover {
+  background: rgba(34, 211, 238, 0.06);
+  color: var(--deborah-semantic-color-text-primary);
+}
+
+.admin-side-btn.active {
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.16), rgba(167, 139, 250, 0.12));
+  color: #7dd3fc;
+  border-color: rgba(34, 211, 238, 0.45);
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.12), 0 6px 18px rgba(2, 6, 12, 0.3);
+}
+
+[data-theme="light"] .admin-side-btn.active,
+body.theme-light .admin-side-btn.active {
+  background: linear-gradient(135deg, rgba(11, 111, 181, 0.12), rgba(124, 58, 237, 0.1));
+  color: #0b6fb5;
+  border-color: rgba(11, 111, 181, 0.35);
+  box-shadow: 0 0 0 1px rgba(11, 111, 181, 0.1);
+}
+
+.admin-side-ico {
+  background: rgba(34, 211, 238, 0.08);
+}
+
+.admin-side-btn:hover .admin-side-ico {
+  background: rgba(34, 211, 238, 0.18);
+}
+
+[data-theme="light"] .admin-side-ico,
+body.theme-light .admin-side-ico {
+  background: rgba(11, 111, 181, 0.08);
+}
+
+/* Stat kartalar + hover cyan glow */
+.stat-card {
+  --c: #67e8f9;
+  --cbg: rgba(34, 211, 238, 0.1);
+}
+
+[data-theme="light"] .stat-card,
+body.theme-light .stat-card {
+  --c: #0b6fb5;
+  --cbg: rgba(11, 111, 181, 0.08);
+}
+
+.stat-card:hover,
+.stat-card:focus-visible {
+  border-color: rgba(34, 211, 238, 0.5);
+  box-shadow: 0 10px 26px rgba(34, 211, 238, 0.12);
+}
+
+[data-theme="light"] .stat-card:hover,
+[data-theme="light"] .stat-card:focus-visible,
+body.theme-light .stat-card:hover,
+body.theme-light .stat-card:focus-visible {
+  border-color: rgba(11, 111, 181, 0.4);
+  box-shadow: 0 10px 26px rgba(11, 111, 181, 0.1);
+}
+
+/* Natija kartalari */
+.admin-res-card:hover {
+  border-color: rgba(34, 211, 238, 0.4);
+}
+
+.admin-fan-item:hover,
+.admin-pre-item:hover {
+  border-color: rgba(34, 211, 238, 0.35);
+  background: rgba(34, 211, 238, 0.05);
+}
+
+[data-theme="light"] .admin-res-card:hover,
+body.theme-light .admin-res-card:hover {
+  border-color: rgba(11, 111, 181, 0.35);
+}
+
+/* Top chips — cyan (birinchi) */
+.admin-top-chip:nth-child(1) {
+  border-color: rgba(103, 232, 249, 0.38);
+  color: #67e8f9;
+}
+
+[data-theme="light"] .admin-top-chip:nth-child(1),
+body.theme-light .admin-top-chip:nth-child(1) {
+  border-color: rgba(11, 111, 181, 0.35);
+  color: #0b6fb5;
+}
+
+/* Delete (cyan) / Edit (binafsha) */
+.admin-del-btn {
+  background: rgba(34, 211, 238, 0.1);
+  border-color: rgba(34, 211, 238, 0.28);
+  color: #67e8f9;
+}
+
+.admin-del-btn:hover {
+  background: rgba(34, 211, 238, 0.2);
+  border-color: rgba(34, 211, 238, 0.45);
+}
+
+.admin-edit-btn {
+  background: rgba(167, 139, 250, 0.1);
+  border-color: rgba(167, 139, 250, 0.28);
+  color: #c4b5fd;
+}
+
+.admin-edit-btn:hover {
+  background: rgba(167, 139, 250, 0.2);
+  border-color: rgba(167, 139, 250, 0.45);
+}
+
+[data-theme="light"] .admin-del-btn,
+body.theme-light .admin-del-btn {
+  background: rgba(11, 111, 181, 0.08);
+  border-color: rgba(11, 111, 181, 0.25);
+  color: #0b6fb5;
+}
+
+[data-theme="light"] .admin-edit-btn,
+body.theme-light .admin-edit-btn {
+  background: rgba(124, 58, 237, 0.08);
+  border-color: rgba(124, 58, 237, 0.25);
+  color: #7c3aed;
+}
+
+/* Alert/msg xabarlar — danger qizil, ok yashil, info cyan */
+.admin-msg.err {
+  background: rgba(34, 211, 238, 0.08);
+  border-color: rgba(34, 211, 238, 0.3);
+  color: #67e8f9;
+}
+
+.admin-msg.ok {
+  background: var(--deborah-semantic-color-status-success-soft);
+  border-color: var(--deborah-semantic-color-status-success);
+  color: var(--deborah-semantic-color-status-success);
+}
+
+/* VIP warning tugmasi — light'da ham o'qiladi */
+.btn-warning {
+  background: var(--warn);
+  color: #000;
+}
+
+[data-theme="light"] .btn-warning,
+body.theme-light .btn-warning {
+  color: #fff;
+}
+
+/* Primary tugma hover — cyan nur */
+.btn-primary:hover:not(:disabled) {
+  box-shadow: 0 8px 32px rgba(34, 211, 238, 0.28);
+}
+
+[data-theme="light"] .btn-primary:hover:not(:disabled),
+body.theme-light .btn-primary:hover:not(:disabled) {
+  box-shadow: 0 8px 32px rgba(11, 111, 181, 0.22);
+}
+
+/* Input/label focus — cyan ring */
+.inp:focus,
+.sel:focus,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  border-color: var(--deborah-semantic-color-action-primary);
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.16);
+}
+
+[data-theme="light"] .inp:focus,
+[data-theme="light"] .sel:focus,
+body.theme-light .inp:focus,
+body.theme-light .sel:focus {
+  box-shadow: 0 0 0 3px rgba(11, 111, 181, 0.14);
+}
+
+/* ── Hamburger / drawer — mobil ── */
+.admin-nav-hamburger {
+  border-color: rgba(148, 163, 184, 0.2);
+  background: linear-gradient(135deg, rgba(103, 232, 249, 0.06), rgba(167, 139, 250, 0.03));
+}
+
+body.admin-nav-open .admin-drawer-overlay {
+  background: rgba(3, 5, 12, 0.6);
+}
+
+/* ═══════════════════ CUSTOM ADMIN SAHIFALARI (inline style) ═══════════════════
+   Scheduler / Command Center / Seating / Scan / Grading ... — ular ham
+   bir xil command center oilasi: qora navbar + cyan nur. */
+
+/* Navbar (custom sahifalar) */
+.navbar {
+  background: linear-gradient(180deg, #0d1526 0%, #070b17 100%);
+  border-bottom: 1px solid rgba(34, 211, 238, 0.28);
+  box-shadow: 0 8px 26px rgba(2, 6, 12, 0.35);
+}
+
+[data-theme="light"] .navbar,
+body.theme-light .navbar {
+  background: linear-gradient(180deg, #f8fafd 0%, #eef2f9 100%);
+  border-bottom-color: rgba(11, 111, 181, 0.22);
+  box-shadow: 0 8px 26px rgba(16, 24, 40, 0.08);
+}
+
+.nav-btn {
+  border-color: rgba(148, 163, 184, 0.18);
+  background: rgba(10, 17, 32, 0.6);
+}
+
+.nav-btn:hover {
+  border-color: rgba(34, 211, 238, 0.45);
+  background: rgba(34, 211, 238, 0.08);
+  color: var(--deborah-semantic-color-text-primary);
+}
+
+[data-theme="light"] .nav-btn,
+body.theme-light .nav-btn {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+[data-theme="light"] .nav-btn:hover,
+body.theme-light .nav-btn:hover {
+  border-color: rgba(11, 111, 181, 0.35);
+  background: rgba(11, 111, 181, 0.07);
+}
+
+/* Logo — cyan → binafsha gradient (jigarrang emas) */
+.nav-logo {
+  background: linear-gradient(135deg, #22d3ee, #a78bfa);
+}
+
+[data-theme="light"] .nav-logo,
+body.theme-light .nav-logo {
+  background: linear-gradient(135deg, #0b6fb5, #7c3aed);
+}
+
+/* Kartalar hover — cyan nafislik */
+.card {
+  border-color: var(--deborah-semantic-color-border-default);
+}
+
+.card:hover {
+  border-color: rgba(34, 211, 238, 0.35);
+}
+
+[data-theme="light"] .card:hover,
+body.theme-light .card:hover {
+  border-color: rgba(11, 111, 181, 0.3);
+}
+
+/* Stat raqamlar — cyan (OK) / binafsha (warn) / qizil (crit) emas:
+   ok → yashil, warn → amber, crit → qizil (semantik ranglar token'dan) */
+.stat.ok b { color: var(--deborah-semantic-color-status-success); }
+.stat.warn b { color: var(--deborah-semantic-color-status-warning); }
+.stat.crit b { color: var(--deborah-semantic-color-status-danger); }
+
+/* ── Table header (custom sahifalar) ── */
+th {
+  color: var(--deborah-semantic-color-text-muted);
+  border-bottom-color: var(--deborah-semantic-color-border-strong);
+}
+
+/* ═══════════════════ ADMIN LOGIN (auth.css) ═══════════════════ */
+.admin-topbar {
+  background: linear-gradient(180deg, #0d1526 0%, #070b17 100%);
+  border-bottom-color: rgba(34, 211, 238, 0.25);
+  box-shadow: 0 8px 26px rgba(2, 6, 12, 0.35);
+}
+
+[data-theme="light"] .admin-topbar,
+body.theme-light .admin-topbar {
+  background: linear-gradient(180deg, #f8fafd 0%, #eef2f9 100%);
+  border-bottom-color: rgba(11, 111, 181, 0.22);
+  box-shadow: 0 8px 26px rgba(16, 24, 40, 0.08);
+}
+
+/* "Admin" flag — cyan → binafsha gradient */
+.auth-admin-flag {
+  background: linear-gradient(135deg, #22d3ee, #7c3aed);
+  color: #041018;
+  border: 1px solid rgba(34, 211, 238, 0.35);
+}
+
+[data-theme="light"] .auth-admin-flag,
+body.theme-light .auth-admin-flag {
+  background: linear-gradient(135deg, #0b6fb5, #6d28d9);
+  color: #ffffff;
+}
+
+/* ── Motion / reduced-transparency — low-power fallback (S38.06) ── */
+@media (prefers-reduced-motion: reduce) {
+  body {
+    background-image: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .admin-navbar,
+  .navbar,
+  .admin-topbar {
+    background-image: none;
+    background: #070b17;
+  }
+
+  [data-theme="light"] .admin-navbar,
+  [data-theme="light"] .navbar,
+  [data-theme="light"] .admin-topbar,
+  body.theme-light .admin-navbar,
+  body.theme-light .navbar,
+  body.theme-light .admin-topbar {
+    background: #f8fafd;
+  }
+}

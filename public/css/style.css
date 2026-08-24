@@ -778,8 +778,9 @@ tbody tr:hover td { background: rgba(59,130,246,.03); }
   transition: transform .3s ease, background .3s, border-color .3s;
 }
 .shell-side-head { display: flex; align-items: center; justify-content: space-between; padding: var(--deborah-spacing-4, 16px) var(--deborah-spacing-4, 16px) }
-.shell-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; }
-.shell-brand-name { font-family: 'Manrope', cursive; font-size: 1.1rem; background: linear-gradient(135deg, var(--deborah-semantic-color-action-primary), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.shell-brand { display: inline-flex; flex-direction: column; align-items: center; gap: 1px; text-decoration: none; line-height: 1; }
+.shell-brand-logo { object-fit: contain; }
+.shell-brand-name { font-family: 'Cinzel', 'Manrope', serif; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.35em; text-indent: 0.35em; text-transform: lowercase; color: #C9A24B; }
 .shell-close { display: none; background: none; border: none; color: var(--deborah-semantic-color-text-muted); cursor: pointer; padding: 4px; }
 
 .shell-role-chip {

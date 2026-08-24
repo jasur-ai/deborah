@@ -5,7 +5,7 @@
  * and default value fallbacks.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { baseSchema, productionSchema } from '../../src/config/env.js';
 
 // Helper: create a minimal valid env object
@@ -149,7 +149,9 @@ describe('productionSchema — production safety checks', () => {
     expect(messages).toContain('COOKIE_SECURE');
   });
 
-  it('should reject production without BASE_URL', () => {
+  it('should allow production without BASE_URL (SITE_URL fallback — fail-soft)', () => {
+    // 6dee705: Render env'siz ham boot qiladi — BASE_URL endi fail-fast emas;
+    // origin-check/OIDC SITE_URL fallback ishlaydi, BASE_URL esa ogohlantirish.
     const result = productionSchema.safeParse(validEnv({
       NODE_ENV: 'production',
       SESSION_SECRET: 'a-very-long-secret-key-that-is-safe-42',
@@ -157,11 +159,26 @@ describe('productionSchema — production safety checks', () => {
       ADMIN_PASS: 'prodpass123!',
       TURNSTILE_SECRET_KEY: '0x00-valid-test-secret',
       COOKIE_SECURE: 'true',
-      // BASE_URL yozilmagan → fail-fast
+      SITE_URL: 'https://deborah.uz',
+      // BASE_URL yozilmagan → deploy bloklanmaydi (SITE_URL fallback)
     }));
-    expect(result.success).toBe(false);
-    const messages = result.error.issues.map(i => i.message).join(' ');
-    expect(messages).toContain('BASE_URL');
+    expect(result.success).toBe(true);
+  });
+
+  it('should warn (not fail) when production lacks both BASE_URL and SITE_URL', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const result = productionSchema.safeParse(validEnv({
+      NODE_ENV: 'production',
+      SESSION_SECRET: 'a-very-long-secret-key-that-is-safe-42',
+      ADMIN_USER: 'prodadmin',
+      ADMIN_PASS: 'prodpass123!',
+      TURNSTILE_SECRET_KEY: '0x00-valid-test-secret',
+      COOKIE_SECURE: 'true',
+    }));
+    const warnings = warnSpy.mock.calls.map(c => c.join(' ')).join(' ');
+    warnSpy.mockRestore();
+    expect(result.success).toBe(true);
+    expect(warnings).toContain('BASE_URL');
   });
 
   it('should reject short SESSION_SECRET (<32) in production', () => {
