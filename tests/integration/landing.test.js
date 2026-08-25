@@ -121,7 +121,7 @@ describe('Landing — HTTP routing (DEMO 1:1 — tasdiqlangan demo versiyasi)', 
 
   it('DEMO — footer: Sahifalar/Hujjatlar/Aloqa/Til + /cast havolasi', async () => {
     const html = await (await fetch(`${serverUrl}/`)).text();
-    expect(html).toContain('href="/cast"');
+    expect(html).toContain('href="/play"');
     expect(html).toContain('Maxfiylik siyosati');
     expect(html).toContain('hello@deborah.uz');
   });
