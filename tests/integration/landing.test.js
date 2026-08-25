@@ -79,39 +79,51 @@ describe('Landing — copy bank (data/landing.js)', () => {
   });
 });
 
-describe('Landing — HTTP routing', () => {
-  it('GET / (uz) — yangi promise-led H1 va bitta main CTA', async () => {
+describe('Landing — HTTP routing (DEMO 1:1 — tasdiqlangan demo versiyasi)', () => {
+  it('GET / (uz) — demo H1, hero 2 CTA, bitta H1', async () => {
     const res = await fetch(`${serverUrl}/`);
     expect(res.status).toBe(200);
     const html = await res.text();
-    expect(html).toContain('Sinf nimani tushunganini');
-    expect(html).toContain('ld-hero-h1');
-    expect(html).toContain('data-demo-open');
-    // Bitta H1 (S21.11)
+    expect(html).toContain("O'qituvchi ishi — <em>yengil</em>");
+    expect(html).toContain('Bepul boshlash');
+    expect(html).toContain('Imkoniyatlar');
+    // Bitta H1
     const h1s = html.match(/<h1[\s>]/g) || [];
     expect(h1s).toHaveLength(1);
-    // Ikkala rol kartasi
-    expect(html).toContain('O&#39;qituvchi sifatida boshlash');
-    expect(html).toContain('Talaba sifatida boshlash');
+    // Demo belgilari: ghost fon + live screen
+    expect(html).toContain('class="ghost"');
+    expect(html).toContain('EDK-4821');
   });
 
-  it('STEP 21 S21.04 — participant shortcut /play va trust slot mavjud', async () => {
+  it('DEMO — ortiqcha "reklama" bo\u2018limlari YO\u2018Q (roles/demo/trust/stats/how)', async () => {
     const html = await (await fetch(`${serverUrl}/`)).text();
-    expect(html).toContain('href="/play"');
-    expect(html).toContain('ld-trust-item');
-    expect(html).toContain('ld-hero-participant');
-    // S21.07: eski soxta claim lar HTML da yo'q
+    expect(html).not.toContain('ld-roles');
+    expect(html).not.toContain('ld-demo');
+    expect(html).not.toContain('ld-trust');
+    expect(html).not.toContain('ld-how');
+    expect(html).not.toContain('data-demo-open');
+    // Demo tartibi: feat → qadam → signal → auth → cred → cta
+    const feat = html.indexOf('id="feat"');
+    const qadam = html.indexOf('id="qadam"');
+    const signal = html.indexOf('id="signal"');
+    const auth = html.indexOf('id="auth"');
+    expect(feat).toBeGreaterThan(-1);
+    expect(qadam).toBeGreaterThan(feat);
+    expect(signal).toBeGreaterThan(qadam);
+    expect(auth).toBeGreaterThan(signal);
+    // Cred strip (demo'dagi kabi)
+    expect(html).toContain('HEMIS / OneID');
+    expect(html).toContain('WCAG 2.2 AA');
+    // Soxta claim yo'q
     expect(html).not.toContain('24/7');
     expect(html).not.toContain('Rasmiy platforma');
-    // AUTH A-13: ld-stats endi SOXTA emas — haqiqiy ochiq ma'lumotlar
-    // (manba + litsenziya bilan). Yolg'on raqam yo'q: musbat son ko'rsatilishi kerak.
-    expect(html).toMatch(/data-stat="universities">\d+</);
-    expect(html).toContain('data.gov.uz');
   });
 
-  it('STEP 21 S21.06 — admin link footer utility\'da', async () => {
+  it('DEMO — footer: Sahifalar/Hujjatlar/Aloqa/Til + /cast havolasi', async () => {
     const html = await (await fetch(`${serverUrl}/`)).text();
-    expect(html).toContain('href="/admin/login"');
+    expect(html).toContain('href="/cast"');
+    expect(html).toContain('Maxfiylik siyosati');
+    expect(html).toContain('hello@deborah.uz');
   });
 
   it('STEP 21 S21.08/09 — doc sahifalar 200 qaytaradi', async () => {
@@ -131,30 +143,36 @@ describe('Landing — HTTP routing', () => {
     expect(html).toContain('legal-box');
   });
 
-  it('GET /ru, /en, /uz-cyrl — tegishli tilda yangi H1', async () => {
-    const en = await (await fetch(`${serverUrl}/en`)).text();
-    expect(en).toContain('See what your class understands');
-    const ru = await (await fetch(`${serverUrl}/ru`)).text();
-    expect(ru).toContain('Узнайте, что понял класс');
-    const cyrl = await (await fetch(`${serverUrl}/uz-cyrl`)).text();
-    expect(cyrl).toContain('Синф нимани тушунганини шу заҳоти');
-  });
-
-  it('lang switcher hreflang mavjud', async () => {
-    const html = await (await fetch(`${serverUrl}/`)).text();
-    for (const lang of ['uz', 'ru', 'en', 'uz-cyrl']) {
-      expect(html).toContain(`hreflang="${lang === 'uz-cyrl' ? 'uz-Cyrl' : lang}"`);
+  it('GET /ru, /en, /uz-cyrl — demo strukturasi bilan 200 (client-side i18n)', async () => {
+    for (const p of ['/ru', '/en', '/uz-cyrl']) {
+      const res = await fetch(`${serverUrl}${p}`);
+      expect(res.status, `${p} 200 bo'lishi kerak`).toBe(200);
+      const html = await res.text();
+      expect(html).toContain('id="feat"');
+      expect(html).toContain('id="auth"');
     }
   });
 
-  it("rol CTA'lar login sahifasiga yo'naltiradi (Kirish → /user/login, refresh yo'q)", async () => {
+  it('DEMO — lang guruh (UZ/RU/EN) headerda mavjud', async () => {
     const html = await (await fetch(`${serverUrl}/`)).text();
-    // S34: ?role=student/teacher eski CTA landing'ni qayta yuklab (refresh) berardi —
-    // endi Kirish real login sahifasiga boradi (o'qituvchi → mode=reg register oqimi).
-    expect(html).not.toContain('?role=student');
-    expect(html).not.toContain('?role=teacher');
-    expect(html).toContain('/user/login');
-    expect(html).toContain('/user/login?mode=reg');
+    expect(html).toMatch(/class="lang"/);
+    expect(html).toContain('data-lang="uz"');
+    expect(html).toContain('data-lang="ru"');
+    expect(html).toContain('data-lang="en"');
+  });
+
+  it("DEMO — auth bloki landingda: REAL formalar /user/login'ga POST qiladi", async () => {
+    const html = await (await fetch(`${serverUrl}/`)).text();
+    // Kirish formasi — real POST
+    expect(html).toMatch(/<form id="fLogin" method="POST" action="\/user\/login"/);
+    expect(html).toContain('name="_csrf"');
+    // Register (o'qituvchi arizasi) — mode=reg
+    expect(html).toContain('name="mode" value="reg"');
+    expect(html).toContain('name="role" value="teacher"');
+    expect(html).toContain('name="consent"');
+    // Demo hint olib tashlangan
+    expect(html).not.toContain('user1@gmail.com');
+    expect(html).not.toContain('parol 1234');
   });
 
   it('open-redirect yo\'q — CTA linklari internal', async () => {
@@ -194,22 +212,18 @@ describe('Landing — HTTP routing', () => {
     const html = await (await fetch(`${serverUrl}/user/login`)).text();
     expect(html).not.toContain('content="undefined"');
   });
-  it('STEP 23 S23.04/05 — landing head: socket.io/xlsx/main.js YO\'Q, self-hosted font preload', async () => {
+  it('DEMO head — socket.io/xlsx/main.js YO\'Q, faqat landing.css (fontlar ichida)', async () => {
     const html = await (await fetch(`${serverUrl}/`)).text();
     expect(html).not.toContain('socket.io/socket.io.js');
     expect(html).not.toContain('/xlsx');
     expect(html).not.toContain('/js/main.js');
-    expect(html).toMatch(/rel="preload" href="\/fonts\//);
-    expect(html).toMatch(/\/fonts\/source-sans-3/);
+    expect(html).toContain('href="/css/landing.css"');
   });
 
-  it('STEP 23 S23.06 — canonical + OG poster + JSON-LD mavjud', async () => {
+  it('DEMO head — canonical + OG mavjud', async () => {
     const html = await (await fetch(`${serverUrl}/`)).text();
     expect(html).toMatch(/rel="canonical" href="[^"]+"/);
-    expect(html).toMatch(/property="og:image" content="[^"]+poster\.webp"/);
-    expect(html).toContain('application/ld+json');
-    expect(html).toContain('WebApplication');
-    expect(html).toContain('EducationalApplication');
+    expect(html).toMatch(/property="og:title"/);
   });
 
   it('STEP 23 S23.08 — service worker v2.x mavjud va serv qilinadi', async () => {
@@ -219,17 +233,23 @@ describe('Landing — HTTP routing', () => {
     expect(body).toMatch(/CACHE_VERSION\s*=\s*'v2\./);
   });
 
-  it('STEP 23 S23.10 — light theme token va no-JS statik stage', async () => {
+  it('DEMO — tema tugmasi (light/dark) va statik live-screen (no-JS)', async () => {
     const html = await (await fetch(`${serverUrl}/`)).text();
-    expect(html).toContain('ld-stage');
+    expect(html).toContain('id="themeBtn"');
+    expect(html).toContain('class="screen reveal"');
+    // Live screen statik kontenti server HTML'da (JS'siz ko'rinadi)
+    expect(html).toContain('SELECT DISTINCT');
     const css = await (await fetch(`${serverUrl}/css/landing.css`)).text();
-    expect(css).toContain("[data-theme='light']");
-    expect(css).toMatch(/\[data-theme='light'\]/);
+    expect(css).toContain('[data-theme');
   });
 
-  it('STEP 23 S23.11 — landing.js first-click analytics (privacy-safe)', async () => {
+  it('DEMO — landing.js: i18n (uz/ru/en) + tema + real formalar mantiqi', async () => {
     const js = await (await fetch(`${serverUrl}/js/landing.js`)).text();
-    expect(js).toContain('data-analytics');
-    expect(js).toContain('firstClick');
+    expect(js).toContain('I18N');
+    expect(js).toContain('applyLang');
+    expect(js).toContain('applyTheme');
+    expect(js).toContain('deriveUsername');
+    expect(js).toContain("fLogin");
+    expect(js).toContain("fReg");
   });
 });

@@ -179,6 +179,7 @@ router.get('/panel', async (req, res) => {
     res.render('user/panel', {
       title: 'Mening Panelim',
       active: 'panel',
+      panelLang: plang,
       // AUTH A-18: limited mode banner — email verify'siz summative blok
       emailVerified: user.emailVerified === true,
       userEmail: user.email || null,
@@ -230,6 +231,7 @@ router.get('/panel', async (req, res) => {
     res.render('user/panel', {
       title: 'Mening Panelim',
       active: 'panel',
+      panelLang: 'uz',
       tests: [], fans: [], preGroups: [],
       characters: [],
       username: user.username,

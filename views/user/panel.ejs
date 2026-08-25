@@ -29,6 +29,21 @@
 
     /* ── Modals (saqlangan — start + cast studio) ── */
     .modal-overlay{position:fixed;inset:0;z-index:500;display:none;align-items:center;justify-content:center;padding:20px;background:var(--deborah-semantic-color-surface-scrim, rgba(2,6,16,.6));backdrop-filter:blur(8px);}
+
+    /* ── Demo 1:1: topbar til + tema boshqaruvi ── */
+    .ws-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .tb-lang{display:flex;gap:2px;background:var(--deborah-semantic-color-surface-nested,rgba(127,137,161,.12));border:1px solid var(--deborah-semantic-color-border-subtle,rgba(127,137,161,.22));border-radius:9px;padding:2px;}
+    .tb-lang button{background:transparent;border:none;border-radius:7px;color:var(--deborah-semantic-color-text-secondary,#9aa3b8);font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.62rem;letter-spacing:.08em;padding:6px 9px;cursor:pointer;transition:all .15s;min-height:0;}
+    .tb-lang button:hover{color:var(--deborah-semantic-color-text-primary,#e8ebf5);}
+    .tb-lang button.on{background:var(--deborah-semantic-color-action-primary,#c9a45c);color:#14181f;font-weight:700;}
+    .tb-theme-btn{width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;border-radius:9px;border:1px solid var(--deborah-semantic-color-border-subtle,rgba(127,137,161,.22));background:var(--deborah-semantic-color-surface-nested,rgba(127,137,161,.12));color:var(--deborah-semantic-color-text-secondary,#9aa3b8);cursor:pointer;transition:all .15s;}
+    .tb-theme-btn:hover{color:var(--deborah-semantic-color-text-primary,#e8ebf5);border-color:var(--deborah-semantic-color-border-default,rgba(127,137,161,.4));}
+    .tb-theme-btn svg{width:16px;height:16px;}
+    html[data-resolved-theme="light"] .tb-theme-btn .ico-moon{display:none;}
+    html:not([data-resolved-theme="light"]) .tb-theme-btn .ico-sun{display:none;}
+    html[data-resolved-theme="light"] .tb-theme-btn .ico-sun{display:block;}
+    html:not([data-resolved-theme="light"]) .tb-theme-btn .ico-moon{display:block;}
+
     .modal-overlay.open{display:flex;}
     .modal-box{background:var(--deborah-semantic-color-surface-raised);border-radius:var(--deborah-radius-lg,20px);padding:24px;width:100%;max-width:480px;border:1px solid var(--deborah-semantic-color-border-subtle);box-shadow:var(--shadow-xl);max-height:90vh;overflow-y:auto;}
     .modal-title{font-family:var(--deborah-typography-font-display,var(--font-display));font-size:1.2rem;margin-bottom:4px;display:flex;align-items:center;gap:8px;color:var(--deborah-semantic-color-text-primary);}
@@ -152,6 +167,16 @@
         <div class="ws-header-sub">Salom, <%= username %> — testlaringizni yarating, Cast qiling va natijalarni kuzating.</div>
       </div>
       <div class="ws-actions">
+        <% /* Demo 1:1: topbar'da til (UZ/RU/EN) + tema tugmasi */ %>
+        <div class="tb-lang" role="group" aria-label="Til" id="panelLangGroup">
+          <button type="button" data-plang="uz" class="<%= (typeof panelLang !== 'undefined' && panelLang === 'uz') || typeof panelLang === 'undefined' ? 'on' : '' %>">UZ</button>
+          <button type="button" data-plang="ru" class="<%= typeof panelLang !== 'undefined' && panelLang === 'ru' ? 'on' : '' %>">RU</button>
+          <button type="button" data-plang="en" class="<%= typeof panelLang !== 'undefined' && panelLang === 'en' ? 'on' : '' %>">EN</button>
+        </div>
+        <button class="tb-theme-btn" id="panelThemeBtn" type="button" aria-label="Tema (light/dark)">
+          <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+          <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5 5l1.6 1.6M17.4 17.4 19 19M19 5l-1.6 1.6M6.6 17.4 5 19"/></svg>
+        </button>
         <a href="/user/create-test" class="btn btn-primary" data-analytics="ws_new_test"><%- icon('plus', 15) %> Yangi test</a>
         <a href="/user/create-test?quick=1" class="btn btn-quiet" data-analytics="ws_quick_prompt"><%- icon('sparkles', 15) %> Quick Prompt</a>
       </div>
@@ -449,6 +474,32 @@
   <script src="/js/workspace.js" defer></script>
   <script src="/js/workspace-library.js" defer></script>
   <script src="/js/push.js" defer></script>
+  <script defer>
+  /* ── Demo 1:1: topbar til + tema (real API bilan) ── */
+  (function(){
+    var group=document.getElementById('panelLangGroup');
+    if(group){
+      group.querySelectorAll('button').forEach(function(b){
+        b.addEventListener('click',function(){
+          var l=b.getAttribute('data-plang');
+          if(b.classList.contains('on'))return;
+          fetch('/user/api/settings/profile',{method:'PATCH',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({lang:l})})
+            .then(function(r){if(r.ok){location.reload();}else{console.warn('lang save failed');}})
+            .catch(function(){});
+        });
+      });
+    }
+    var tbtn=document.getElementById('panelThemeBtn');
+    if(tbtn){
+      tbtn.addEventListener('click',function(){
+        var T=window.DeborahTheme;
+        var next=(T&&T.isLight&&T.isLight())?'dark':'light';
+        if(T&&T.setState){T.setState(next);}else if(T&&T.apply){T.apply(next);}
+        fetch('/user/api/settings/profile',{method:'PATCH',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({theme:next})}).catch(function(){});
+      });
+    }
+  })();
+  </script>
   <script>
     // AUTH A-28: risk banner — device trust (step-up) + mid-session mismatch
     (function () {

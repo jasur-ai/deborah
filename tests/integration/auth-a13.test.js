@@ -50,14 +50,13 @@ describe('AUTH A-13 — stats API', () => {
     expect([401, 403, 302]).toContain(res.status);
   });
 
-  it('landing "/" — ld-stats bloki haqiqiy (musbat) raqam bilan render qilinadi', async () => {
+  it('landing "/" — DEMO 1:1: ld-stats YO\u2018Q (API esa yashaydi)', async () => {
     const res = await fetch(`${serverUrl}/`);
     expect(res.status).toBe(200);
     const html = await res.text();
-    expect(html).toContain('ld-stats');
-    // Aniq qiymatga bog'lanmaymiz — musbat son render bo'lganini tekshiramiz
-    expect(html).toMatch(/data-stat="universities">\d+</);
-    expect(html).toMatch(/data-stat="students">[\d\s.,]+</);
-    expect(html).toContain('data.gov.uz'); // manba havolasi (§30)
+    // Demo (tasdiqlangan) landingda opendata stats bo'limi yo'q — olib tashlangan.
+    expect(html).not.toContain('ld-stats');
+    expect(html).not.toContain('data-stat="universities"');
+    // Stats API o'zi esa ishlaydi (yuqoridagi test) — landing'da ko'rsatilmaydi.
   });
 });
