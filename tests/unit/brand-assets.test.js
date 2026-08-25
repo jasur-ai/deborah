@@ -93,7 +93,7 @@ describe('STYLE STEP 05 — Brand assets', () => {
 
     it('barcha logo img alt="Deborah" (hech qanday alt="E")', () => {
       const host = readFileSync(join(ROOT, 'views', 'game', 'host.ejs'), 'utf8');
-      expect(host).toMatch(/logo-icon\.svg" alt="Deborah"/);
+      expect(host).toMatch(/logo-vintage\.png" alt="Deborah"/);
       expect(host).not.toMatch(/alt="E"/);
     });
   });

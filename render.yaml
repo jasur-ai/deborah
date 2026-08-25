@@ -1,7 +1,7 @@
 # Render Blueprint — Deborah (jasur-ai/deborah)
 # ---------------------------------------------------------------
 # Bu fayl orqali Render'da "New +" → "Blueprint" → repo tanlash bilan
-# `deborah-ncj` nomli web service avtomatik yaratiladi.
+# `deborah` nomli web service avtomatik yaratiladi (URL: https://deborah.onrender.com).
 #
 # MUHIM: yaratilgandan keyin Render Dashboard → Service → Environment
 # bo'limida quyidagilarni TO'LDIRING (secret'lar kodga yozilmaydi):
@@ -21,8 +21,8 @@
 
 services:
   - type: web
-    # Service nomi — Render URL: https://deborah-ncj.onrender.com
-    name: deborah-ncj
+    # Service nomi — Render URL: https://deborah.onrender.com
+    name: deborah
     runtime: node
     plan: starter
     buildCommand: npm install
@@ -37,10 +37,10 @@ services:
         value: "true"
       # Domain allowlist / OIDC redirect / origin check (production majburiy)
       - key: BASE_URL
-        value: https://deborah-ncj.onrender.com
+        value: https://deborah.onrender.com
       # OG image va canonical URL (tavsiya)
       - key: SITE_URL
-        value: https://deborah-ncj.onrender.com
+        value: https://deborah.onrender.com
       # Random 32+ byte session secret — Render avtomatik generatsiya qiladi
       - key: SESSION_SECRET
         generateValue: true

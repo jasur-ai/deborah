@@ -15,7 +15,7 @@
     .lob-head{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(6,6,15,.8);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);z-index:100;transition:background .3s;}
     body.light .lob-head{background:rgba(240,240,248,.85);}
     .lob-head .logo{font-family:''Manrope'',cursive;font-size:1.15rem;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:6px;}
-    .lob-head .logo img{height:24px;width:auto;}
+    .lob-head .logo img{height:30px;width:auto;}
     .hd-right{display:flex;align-items:center;gap:8px;}
     .mode-btn{background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:9px;padding:7px 13px;font-family:'Source Sans 3',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;color:var(--muted);transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s;text-decoration:none;display:flex;align-items:center;gap:5px;}
     .mode-btn:hover{background:rgba(255,255,255,.12);color:var(--text);}
@@ -126,7 +126,7 @@
 
 <div class="screen" id="s-lobby">
   <div class="lob-head">
-    <div class="logo"><img src="/images/logo-icon.svg" alt="Deborah"></div>
+    <div class="logo"><img src="/images/logo-vintage.png" alt="Deborah"></div>
     <div class="hd-right">
       <span style="font-size:.72rem;font-weight:700;color:var(--muted)" id="lob-test-name">Test</span>
       <button type="button" class="mode-btn" id="dark-toggle" onclick="toggleDark()"><%- icon('sun', 14) %></button>
