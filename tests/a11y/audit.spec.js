@@ -143,6 +143,6 @@ test('S36.06 — 200% zoom reflow: content to\'liq', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => { document.body.style.zoom = '2'; });
   // Hero + CTA hali ham ko'rinadi (function loss yo'q)
-  const cta = page.locator('a.ld-btn').first();
+  const cta = page.locator('.btns a.btn-gold').first();
   await expect(cta).toBeVisible();
 });

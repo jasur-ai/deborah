@@ -1,8 +1,8 @@
 {
   "current": {
-    "date": "2026-08-18",
-    "total": 332,
-    "cssSum": 60,
+    "date": "2026-08-25",
+    "total": 340,
+    "cssSum": 68,
     "viewInline": 272
   },
   "history": [
@@ -34,6 +34,24 @@
       "date": "2026-08-18",
       "total": 332,
       "cssSum": 60,
+      "viewInline": 272
+    },
+    {
+      "date": "2026-08-25",
+      "total": 373,
+      "cssSum": 98,
+      "viewInline": 275
+    },
+    {
+      "date": "2026-08-25",
+      "total": 373,
+      "cssSum": 98,
+      "viewInline": 275
+    },
+    {
+      "date": "2026-08-25",
+      "total": 340,
+      "cssSum": 68,
       "viewInline": 272
     }
   ]

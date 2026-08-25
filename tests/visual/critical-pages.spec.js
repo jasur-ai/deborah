@@ -30,6 +30,14 @@ for (const { name, path } of PAGES) {
       const project = testInfo.project.name;
       testInfo.annotations.push({ type: 'page', description: name });
       const context = await openThemedContext(browser, theme, project);
+      // Landing'dagi random/interval li dinamika (shuffle, aylanish) — deterministik freeze (S03.01)
+      if (name === 'landing') {
+        await context.addInitScript(() => {
+          const s = Math.random; Math.random = () => 0.42;
+          window.setInterval = () => 0;
+          window.__PW_FREEZE__ = 1;
+        });
+      }
       const page = await context.newPage();
       await page.goto(path, { waitUntil: 'domcontentloaded' });
       await stabilize(page);
@@ -50,6 +58,7 @@ for (const theme of ['light', 'dark', 'reduced-motion']) {
     test.skip(testInfo.project.name.startsWith('projector'), 'public pages app matrix');
     const project = testInfo.project.name;
     const context = await openThemedContext(browser, theme, project);
+    await context.addInitScript(() => { Math.random = () => 0.42; window.__PW_FREEZE__ = 1; window.setInterval = () => 0; });
     const page = await context.newPage();
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await stabilize(page);
@@ -57,7 +66,7 @@ for (const theme of ['light', 'dark', 'reduced-motion']) {
     // Landing'da `ld-demo-backdrop` overlay CTA'ni intercept qiladi —
     // force:true hover'ni ko'rinish tekshiruvlarisiz majburan bajaradi,
     // :hover CSS holati real trigger bo'ladi (S03.05 state).
-    const cta = page.locator('a.ld-btn-primary, a[class*="btn-primary"], a.ld-btn').first();
+    const cta = page.locator('.btns a.btn-gold').first();
     await cta.hover({ force: true });
     await page.waitForTimeout(200);
     await expect(page).toHaveScreenshot(

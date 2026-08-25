@@ -7,14 +7,15 @@
   (POST /user/login · CSRF · mode=login/reg · role=teacher)
   ═══════════════════════════════════════════════════════════
 -->
-<html lang="uz" dir="ltr">
+<html lang="<%= lang === 'ru' ? 'ru' : lang === 'en' ? 'en' : 'uz' %>" dir="ltr">
 <head>
   <%- include('partials/landing-head', { title: 'Deborah — o\'qituvchilar uchun AI yordamchi', description: copy.meta.description, siteUrl: (typeof siteUrl !== 'undefined' ? siteUrl : ''), path: path, lang: lang }) %>
 </head>
 <body>
+<a class="ld-skip-link" href="#ld-main">Skip to content</a>
 <div class="modefx" id="modeFx" aria-hidden="true"></div>
 <div class="ghost" aria-hidden="true">Deborah</div>
-<div class="site"><!-- HEADER -->
+<div class="site" id="ld-main"><!-- HEADER -->
 <header class="hdr">
   <a class="logo" href="#top">
     <img class="logo-mark" src="data:image/png;base64,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" alt="Deborah">
@@ -32,10 +33,7 @@
       <button data-lang="ru" type="button">RU</button>
       <button data-lang="en" type="button">EN</button>
     </div>
-    <button class="tbtn" id="themeBtn" type="button" aria-label="Tema">
-      <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
-      <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5 5l1.6 1.6M17.4 17.4 19 19M19 5l-1.6 1.6M6.6 17.4 5 19"/></svg>
-    </button>
+    <%- include('partials/theme-control') %>
     <a class="btn btn-gold btn-sm" href="#auth" data-i18n="hdr.kirish">Kirish</a>
   </div>
 </header>
@@ -117,13 +115,13 @@
     </div>
     <svg class="route-svg reveal" viewBox="0 0 1000 300" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path id="route" d="M60 250 C220 250, 260 80, 470 90 C680 100, 640 240, 850 230 C950 226, 970 120, 950 90" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="1 7" stroke-linecap="round"/>
-      <path id="routeGold" d="M60 250 C220 250, 260 80, 470 90 C680 100, 640 240, 850 230 C950 226, 970 120, 950 90" stroke="var(--gold)" stroke-width="2.5" stroke-linecap="round" style="stroke-dasharray:2000;stroke-dashoffset:2000"/>
+      <path id="routeGold" d="M60 250 C220 250, 260 80, 470 90 C680 100, 640 240, 850 230 C950 226, 970 120, 950 90" stroke="var(--ld-gold)" stroke-width="2.5" stroke-linecap="round" style="stroke-dasharray:2000;stroke-dashoffset:2000"/>
       <g><circle class="j-check" cx="60" cy="250" r="9"/><text class="j-label" x="60" y="285" text-anchor="middle" data-i18n="qadam.l1">01 · YARAT</text></g>
       <g><circle class="j-check" cx="470" cy="90" r="9"/><text class="j-label" x="470" y="66" text-anchor="middle" data-i18n="qadam.l2">02 · UZAT</text></g>
       <g><circle class="j-check" cx="950" cy="90" r="9"/><text class="j-label" x="950" y="66" text-anchor="middle" data-i18n="qadam.l3">03 · TAHLIL</text></g>
       <g id="runner" style="opacity:0">
         <circle r="17" fill="url(#auraGrad)" opacity=".85"/>
-        <circle r="5" fill="var(--gold)" stroke="var(--bg)" stroke-width="1.5"/>
+        <circle r="5" fill="var(--ld-gold)" stroke="var(--ld-bg)" stroke-width="1.5"/>
       </g>
     </svg>
     <div class="j-cards">
@@ -221,7 +219,7 @@
           <div class="fld"><label for="rEmail" data-i18n="auth.email">Email</label><input id="rEmail" name="email" type="email" autocomplete="email" required></div>
           <div class="fld"><label for="rPass" data-i18n="auth.pass">Parol</label><input id="rPass" name="password" type="password" autocomplete="new-password" minlength="8" required></div>
           <input type="hidden" name="username" id="rUsername" value="">
-          <label class="consent" style="display:flex;gap:8px;align-items:flex-start;margin:10px 0 0;font-size:.72rem;line-height:1.5;color:var(--mut);cursor:pointer">
+          <label class="consent">
             <input type="checkbox" name="consent" value="on" checked required style="margin-top:2px">
             <span data-i18n="auth.consent">Maxfiylik siyosati va foydalanish shartlariga roziman</span>
           </label>

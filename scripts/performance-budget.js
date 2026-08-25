@@ -33,7 +33,10 @@ const ROUTES = {
   landing: {
     label: 'Landing (public)',
     entry: 'views/partials/landing-head.ejs',
-    cssKb: 35,
+    // 35 → 55KB: demo-tasdiqlangan landing endi design-system poydevorini
+    // (tokens/reset/base/focus/utilities/theme — S07/S11 gate'lari talabi) va
+    // demo shriftlarini (base64 Cinzel/mono) ham yuklaydi. 48KB gzip real.
+    cssKb: 55,
     jsKb: 150,
   },
   app: {

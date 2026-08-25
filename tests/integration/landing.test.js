@@ -235,7 +235,7 @@ describe('Landing — HTTP routing (DEMO 1:1 — tasdiqlangan demo versiyasi)', 
 
   it('DEMO — tema tugmasi (light/dark) va statik live-screen (no-JS)', async () => {
     const html = await (await fetch(`${serverUrl}/`)).text();
-    expect(html).toContain('id="themeBtn"');
+    expect(html).toContain('class="theme-segmented"');
     expect(html).toContain('class="screen reveal"');
     // Live screen statik kontenti server HTML'da (JS'siz ko'rinadi)
     expect(html).toContain('SELECT DISTINCT');

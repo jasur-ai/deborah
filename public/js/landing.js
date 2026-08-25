@@ -192,15 +192,13 @@
     try{localStorage.setItem('deborah-lang',lang);}catch(e){}
   }
   function applyTheme(t){
-    document.documentElement.setAttribute('data-theme',t);
-    try{localStorage.setItem('deborah-theme',t);}catch(e){}
+    /* DeborahTheme engine (theme-core.js) — yagona haqiqat manbai (S07) */
+    if(window.DeborahTheme&&window.DeborahTheme.setState){window.DeborahTheme.setState(t);}
+    else{document.documentElement.setAttribute('data-theme',t);}
   }
-  var savedLang='uz',savedTheme='dark';
-  try{
-    savedLang=localStorage.getItem('deborah-lang')||'uz';
-    savedTheme=localStorage.getItem('deborah-theme')||'dark';
-  }catch(e){}
-  applyTheme(savedTheme);
+  var savedLang='uz';
+  try{savedLang=localStorage.getItem('deborah-lang')||'uz';}catch(e){}
+  /* Tema — faqat DeborahTheme engine (boot script theme-core bilan sinxron) */
   applyLang(savedLang);
   document.querySelectorAll('.lang button').forEach(function(b){
     b.addEventListener('click',function(){applyLang(b.getAttribute('data-lang'));});
@@ -209,21 +207,32 @@
     a.addEventListener('click',function(e){e.preventDefault();applyLang(a.getAttribute('data-lang2'));});
   });
   var fx=document.getElementById('modeFx');
-  document.getElementById('themeBtn').addEventListener('click',function(){
-    var next=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';
-    var oldBg=getComputedStyle(document.body).backgroundColor;
-    fx.style.transition='none';
-    fx.style.background=oldBg;
-    fx.style.opacity='1';
-    void fx.offsetWidth;
-    applyTheme(next);
-    fx.style.transition='opacity .5s ease';
-    fx.style.opacity='0';
-  });
+  /* theme-segmented + (ixtiyoriy) tbtn — DeborahTheme orqali */
+  function bindTheme(el){
+    if(!el)return;
+    el.addEventListener('click',function(){
+      var cur=document.documentElement.getAttribute('data-resolved-theme')||'dark';
+      var next=cur==='light'?'dark':'light';
+      if(fx){
+        var oldBg=getComputedStyle(document.body).backgroundColor;
+        fx.style.transition='none';
+        fx.style.background=oldBg;
+        fx.style.opacity='1';
+        void fx.offsetWidth;
+        applyTheme(next);
+        fx.style.transition='opacity .5s ease';
+        fx.style.opacity='0';
+      } else { applyTheme(next); }
+    });
+  }
+  document.querySelectorAll('[data-theme-state-btn]').forEach(bindTheme);
+  bindTheme(document.getElementById('themeBtn'));
   /* Reveal */
   var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target)}})},{threshold:.15});
   document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)});
-  /* Cast demo loop */
+  /* Cast demo loop — test freeze: __PW_FREEZE__ bo'lsa aylanmaydi (deterministik screenshot) */
+  if(window.__PW_FREEZE__){/* deterministik screenshot — demo loop o'chgan */}
+  else setTimeout(run,700);
   var q=document.getElementById('q');
   var optEls=document.querySelectorAll('[data-opt]');
   var bars=document.querySelectorAll('.opt .track i');
@@ -271,7 +280,6 @@
     var m=('0'+Math.floor(t/60)).slice(-2),s=('0'+(t%60)).slice(-2);
     document.getElementById('scTime').textContent=m+':'+s;
   },1000);
-  setTimeout(run,700);
   /* Stats counters */
   var counted=false;
   var cio=new IntersectionObserver(function(es){es.forEach(function(en){
