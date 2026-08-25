@@ -30,7 +30,7 @@
         <button class="ld-demo-opt" type="button" data-answer="0">Xiva</button>
       </div>
       <p class="ld-demo-result" id="ld-demo-result" hidden></p>
-      <a class="ld-btn ld-btn-primary ld-demo-cta" href="<%= path + '?role=student' %>" data-analytics="demo_complete" hidden>
+      <a class="ld-btn ld-btn-primary ld-demo-cta" href="<%= (path === '/' ? '' : path) + '/user/login' %>" data-analytics="demo_complete" hidden>
         <%= copy.cta.button %>
       </a>
     </div>

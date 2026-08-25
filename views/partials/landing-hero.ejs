@@ -7,7 +7,7 @@
         <h1 class="ld-hero-h1" id="ld-h1"><%= copy.hero.h1 %></h1>
         <p class="ld-hero-sub"><%= copy.hero.sub %></p>
         <div class="ld-hero-actions">
-          <a class="ld-btn ld-btn-primary" href="<%= path + '?role=student' %>" data-analytics="hero_cta_click" data-cta="primary">
+          <a class="ld-btn ld-btn-primary" href="<%= (path === '/' ? '' : path) + '/user/login' %>" data-analytics="hero_cta_click" data-cta="primary">
             <%= copy.hero.ctaPrimary %>
           </a>
           <a class="ld-btn ld-btn-ghost" href="#demo" data-analytics="hero_cta_click" data-cta="demo">

@@ -12,7 +12,7 @@
             <li><span class="ld-check" aria-hidden="true">✓</span> <%= p %></li>
           <% }) %>
         </ul>
-        <a class="ld-btn ld-btn-primary" href="<%= path + '?role=teacher' %>"><%= copy.roles.teacherCta %></a>
+        <a class="ld-btn ld-btn-primary" href="<%= (path === '/' ? '' : path) + '/user/login?mode=reg' %>"><%= copy.roles.teacherCta %></a>
       </div>
       <div class="ld-role-card" data-analytics="role_select" data-role="student">
         <div class="ld-role-icon" aria-hidden="true">🎓</div>
@@ -23,7 +23,7 @@
             <li><span class="ld-check" aria-hidden="true">✓</span> <%= p %></li>
           <% }) %>
         </ul>
-        <a class="ld-btn ld-btn-primary" href="<%= path + '?role=student' %>"><%= copy.roles.studentCta %></a>
+        <a class="ld-btn ld-btn-primary" href="<%= (path === '/' ? '' : path) + '/user/login' %>"><%= copy.roles.studentCta %></a>
       </div>
     </div>
   </div>

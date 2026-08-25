@@ -19,7 +19,7 @@
           <% }) %>
         </div>
         <%- include('partials/theme-control') %>
-        <a class="ld-btn ld-btn-primary ld-btn-sm" href="<%= path + '?role=student' %>" data-analytics="hero_cta_click" data-cta="header">
+        <a class="ld-btn ld-btn-primary ld-btn-sm" href="<%= (path === '/' ? '' : path) + '/user/login' %>" data-analytics="hero_cta_click" data-cta="header">
           <%= copy.header.cta %>
         </a>
       </div>

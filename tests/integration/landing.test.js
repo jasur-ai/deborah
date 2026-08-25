@@ -147,10 +147,14 @@ describe('Landing — HTTP routing', () => {
     }
   });
 
-  it('rol CTA\'lar register roliga yo\'naltiradi (?role=)', async () => {
+  it("rol CTA'lar login sahifasiga yo'naltiradi (Kirish → /user/login, refresh yo'q)", async () => {
     const html = await (await fetch(`${serverUrl}/`)).text();
-    expect(html).toContain('?role=teacher');
-    expect(html).toContain('?role=student');
+    // S34: ?role=student/teacher eski CTA landing'ni qayta yuklab (refresh) berardi —
+    // endi Kirish real login sahifasiga boradi (o'qituvchi → mode=reg register oqimi).
+    expect(html).not.toContain('?role=student');
+    expect(html).not.toContain('?role=teacher');
+    expect(html).toContain('/user/login');
+    expect(html).toContain('/user/login?mode=reg');
   });
 
   it('open-redirect yo\'q — CTA linklari internal', async () => {
