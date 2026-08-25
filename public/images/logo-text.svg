@@ -1,84 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 128" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 120" fill="none" role="img" aria-label="Deborah">
+  <!-- Deborah vintage wordmark — 'DEBORAH' oltin, davomi (tagline) yo'q.
+       Eski "Edikit — INTERACTIVE PLATFORM" (cobalt) o'rniga premium vintage. -->
   <defs>
-    <linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#3B82F6"/>
-      <stop offset="100%" stop-color="#38BDF8"/>
-    </linearGradient>
-    <linearGradient id="lg2" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#38BDF8"/>
-      <stop offset="100%" stop-color="#2563EB"/>
-    </linearGradient>
-    <linearGradient id="lg3" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#60A5FA"/>
-      <stop offset="100%" stop-color="#3B82F6"/>
-    </linearGradient>
-    <linearGradient id="textGrad" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#E8EDF7"/>
-      <stop offset="50%" stop-color="#D0D8E8"/>
-      <stop offset="100%" stop-color="#B0B9CE"/>
-    </linearGradient>
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="2.5" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-    <filter id="softGlow">
-      <feGaussianBlur stdDeviation="5" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-  </defs>
-
-  <!-- Icon: Nuqta+E minimalist mark -->
-  <g transform="translate(16, 16)">
-    <!-- Background circle -->
-    <circle cx="48" cy="48" r="44" fill="#0A0F1F" stroke="rgba(59,130,246,.12)" stroke-width="1"/>
-    <circle cx="48" cy="48" r="38" fill="#0E1428" stroke="rgba(59,130,246,.06)" stroke-width=".5"/>
-
-    <!-- Central dot (the soul of the mark) -->
-    <circle cx="48" cy="48" r="10" fill="url(#lg2)" filter="url(#glow)" opacity=".95"/>
-    <circle cx="48" cy="48" r="4" fill="#fff" opacity=".85"/>
-
-    <!-- E curve -->
-    <path d="M26 28c10-6 24-6 34 0s12 16 12 26-2 18-12 24-24 6-34 0"
-          stroke="url(#lg1)" stroke-width="2" stroke-linecap="round" fill="none"
-          opacity=".65" filter="url(#softGlow)"/>
-
-    <!-- Inner detail -->
-    <path d="M32 34c6-4 16-4 22 0s8 12 8 20-1 14-8 18-16 4-22 0"
-          stroke="url(#lg3)" stroke-width="1" stroke-linecap="round" fill="none"
-          opacity=".45"/>
-
-    <!-- Decorative dots -->
-    <circle cx="26" cy="28" r="1.2" fill="#38BDF8" opacity=".5"/>
-    <circle cx="72" cy="70" r="1.5" fill="#3B82F6" opacity=".4"/>
-  </g>
-
-  <!-- Text: Deborah -->
-  <defs>
-    <linearGradient id="eGrad" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#3B82F6"/>
-      <stop offset="100%" stop-color="#38BDF8"/>
+    <linearGradient id="goldText" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#C9A065"/>
+      <stop offset="55%" stop-color="#E3C98F"/>
+      <stop offset="100%" stop-color="#B98E4F"/>
     </linearGradient>
   </defs>
 
-  <!-- "Edi" — regular gradient -->
-  <text x="128" y="74" font-family="'Righteous', 'Segoe UI', system-ui, sans-serif" font-size="54" font-weight="700" letter-spacing="-.5" fill="url(#textGrad)">
-    Edi<tspan fill="url(#eGrad)" filter="url(#glow)">k</tspan>it
-  </text>
+  <!-- Soya (depth) -->
+  <text x="80" y="76" font-family="Georgia, 'Times New Roman', serif" font-size="48" font-weight="600" letter-spacing="13" fill="rgba(0,0,0,.35)">DEBORAH</text>
 
-  <!-- Subtitle -->
-  <text x="128" y="102" font-family="'Nunito', system-ui, sans-serif" font-size="13" font-weight="500" fill="#64748B" letter-spacing="5">
-    INTERACTIVE PLATFORM
-  </text>
+  <!-- Asosiy matn -->
+  <text x="78" y="74" font-family="Georgia, 'Times New Roman', serif" font-size="48" font-weight="600" letter-spacing="13" fill="url(#goldText)">DEBORAH</text>
 
-  <!-- Decorative elements -->
-  <circle cx="464" cy="22" r="2" fill="#38BDF8" opacity=".55"/>
-  <circle cx="468" cy="30" r="1.2" fill="#3B82F6" opacity=".35"/>
-  <line x1="128" y1="112" x2="340" y2="112" stroke="rgba(59,130,246,.08)" stroke-width=".5"/>
+  <!-- Pastki oltin chiziq -->
+  <line x1="112" y1="94" x2="368" y2="94" stroke="rgba(201,160,101,.55)" stroke-width="1.5" stroke-linecap="round"/>
+  <circle cx="112" cy="94" r="2.2" fill="#C9A065" opacity=".8"/>
+  <circle cx="368" cy="94" r="2.2" fill="#C9A065" opacity=".8"/>
 </svg>
