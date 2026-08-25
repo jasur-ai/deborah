@@ -1,6 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 120" fill="none" role="img" aria-label="Deborah">
-  <!-- Deborah vintage wordmark — 'DEBORAH' oltin, davomi (tagline) yo'q.
-       Eski "Edikit — INTERACTIVE PLATFORM" (cobalt) o'rniga premium vintage. -->
+  <!-- Deborah vintage wordmark — oltin 'DEBORAH', davomi (tagline) yo'q. -->
   <defs>
     <linearGradient id="goldText" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#C9A065"/>
