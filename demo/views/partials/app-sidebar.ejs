@@ -1,0 +1,38 @@
+<!-- SIDEBAR — logo tepada, DEBORAH pastda (katta harflar) -->
+<aside class="sidebar">
+  <a class="sb-brand" href="/dashboard">
+    <img class="sb-logo" src="/logo.png" alt="Deborah">
+    <span class="sb-word" aria-hidden="true">DEBORAH</span>
+  </a>
+  <nav class="sb-nav">
+    <a class="sb-item<%= (typeof active !== 'undefined' && active === 'dashboard') ? ' on' : '' %>" href="/dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <span data-i18n="nav.dash">Kabinet</span>
+    </a>
+    <a class="sb-item<%= (typeof active !== 'undefined' && active === 'tests') ? ' on' : '' %>" href="/tests">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span data-i18n="nav.tests">Testlar</span>
+    </a>
+    <a class="sb-item<%= (typeof active !== 'undefined' && active === 'results') ? ' on' : '' %>" href="/results">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
+      <span data-i18n="nav.results">Natijalar</span>
+    </a>
+    <a class="sb-item<%= (typeof active !== 'undefined' && active === 'profile') ? ' on' : '' %>" href="/profile">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span data-i18n="nav.profile">Profil</span>
+    </a>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-user">
+      <span class="sb-ava"><%= (user ? user.name : 'User1').slice(0,2).toUpperCase() %></span>
+      <div>
+        <div class="sb-uname"><%= user ? user.name : 'user1' %></div>
+        <div class="sb-urole" data-i18n="pr.role">Talaba</div>
+      </div>
+    </div>
+    <a class="sb-logout" href="/user/logout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      <span data-i18n="um.logout">Chiqish</span>
+    </a>
+  </div>
+</aside>

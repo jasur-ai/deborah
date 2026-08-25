@@ -1,0 +1,109 @@
+<%- include('partials/app-head', { title: 'Deborah — Natijalar', curtain: curtain }) %>
+<style>
+/* ── Natijalar sahifasi ── */
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:0 22px;margin:26px 0 30px;border-top:1px solid var(--line2);border-bottom:1px solid var(--line);padding:22px 0}
+@media(max-width:700px){.summary{grid-template-columns:1fr;gap:16px}}
+.sum-item{text-align:center;position:relative}
+.sum-item+.sum-item::before{content:'';position:absolute;left:-11px;top:12%;bottom:12%;width:1px;background:var(--line)}
+.sum-label{font-size:.74rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
+.sum-num{font-family:var(--serif);font-size:2.3rem;font-weight:500;line-height:1}
+.sum-num.good{color:var(--good2)}
+.sum-num.warn{color:var(--warn2)}
+.sum-num.info{color:var(--info2)}
+.sum-num small{font-size:.85rem;color:var(--text2);font-family:var(--sans)}
+
+table{width:100%;border-collapse:collapse}
+thead th{font-size:.74rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);text-align:left;padding:10px 8px;border-bottom:1px solid var(--line2)}
+tbody td{padding:13px 8px;border-bottom:1px solid var(--line);font-size:.88rem;color:var(--text2)}
+tbody tr{transition:background .13s}
+tbody tr:hover{background:var(--panel)}
+td.name{color:var(--text);font-weight:600}
+td.score{font-family:var(--serif);font-size:1.15rem;font-weight:600}
+td.score.good{color:var(--good2)}
+td.score.mid{color:var(--warn2)}
+td.score.low{color:var(--bad2)}
+.status{display:inline-flex;align-items:center;gap:7px;font-size:.74rem;font-weight:600;letter-spacing:.04em}
+.status::before{content:'';width:7px;height:7px;border-radius:50%}
+.status.good{color:var(--good2)}.status.good::before{background:var(--good)}
+.status.mid{color:var(--warn2)}.status.mid::before{background:var(--warn)}
+.status.low{color:var(--bad2)}.status.low::before{background:var(--bad)}
+</style>
+
+<%- include('partials/app-sidebar', { active: 'results', user: user }) %>
+<%- include('partials/app-topbar', { active: 'results', tbTitle: 'Natijalar' }) %>
+
+  <div class="content page-enter">
+
+    <div class="page-kicker" data-i18n="res.kicker">Yutuqlar tahlili</div>
+    <h1 class="page-title" data-i18n="res.title">Natijalar</h1>
+    <p class="page-sub" data-i18n="res.sub">Har bir test bo'yicha ko'rsatkichlar — tarix va o'sish.</p>
+
+    <!-- Umumiy ko'rsatkichlar -->
+    <div class="summary">
+      <div class="sum-item">
+        <div class="sum-label" data-i18n="res.avg">O'rtacha</div>
+        <div class="sum-num good">74<small>%</small></div>
+      </div>
+      <div class="sum-item">
+        <div class="sum-label" data-i18n="res.best">Eng yaxshi</div>
+        <div class="sum-num info">92<small>%</small></div>
+      </div>
+      <div class="sum-item">
+        <div class="sum-label" data-i18n="res.trend">Oxirgi 30 kun</div>
+        <div class="sum-num warn">+6<small>%</small></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" data-i18n="res.history">Test tarixi</div>
+      <table>
+        <thead>
+          <tr>
+            <th data-i18n="res.col1">Test</th>
+            <th data-i18n="res.col2">Sana</th>
+            <th data-i18n="res.col3">Natija</th>
+            <th data-i18n="res.col4">Holat</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="name">Matematika · Kvadrat tenglamalar</td>
+            <td>18.08.2026</td>
+            <td class="score good">82%</td>
+            <td><span class="status good" data-i18n="res.good">Yaxshi</span></td>
+          </tr>
+          <tr>
+            <td class="name">O'zbekiston tarixi · 1-bosqich</td>
+            <td>15.08.2026</td>
+            <td class="score mid">65%</td>
+            <td><span class="status mid" data-i18n="res.mid">O'rtacha</span></td>
+          </tr>
+          <tr>
+            <td class="name">Fizika · Kinematika</td>
+            <td>11.08.2026</td>
+            <td class="score good">75%</td>
+            <td><span class="status good" data-i18n="res.good">Yaxshi</span></td>
+          </tr>
+          <tr>
+            <td class="name">Ingliz tili · Reading B2</td>
+            <td>02.08.2026</td>
+            <td class="score low">37%</td>
+            <td><span class="status low" data-i18n="res.low">Qayta</span></td>
+          </tr>
+          <tr>
+            <td class="name">Dasturlash asoslari · Python</td>
+            <td>27.07.2026</td>
+            <td class="score good">88%</td>
+            <td><span class="status good" data-i18n="res.good">Yaxshi</span></td>
+          </tr>
+          <tr>
+            <td class="name">Kimyo · Organik birikmalar</td>
+            <td>20.07.2026</td>
+            <td class="score mid">58%</td>
+            <td><span class="status mid" data-i18n="res.mid">O'rtacha</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+<%- include('partials/app-footer') %>

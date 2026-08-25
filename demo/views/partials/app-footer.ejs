@@ -1,0 +1,76 @@
+    <!-- FOOTER -->
+    <footer class="ftr">
+      <span>© 2026 Deborah</span>
+      <span style="display:flex;gap:20px">
+        <a href="/" data-i18n="ftr.home">Bosh sahifa</a>
+        <a href="/cast" data-i18n="ftr.cast">Cast</a>
+      </span>
+    </footer>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+</div><!-- /app -->
+
+<script>
+(function(){
+  var curtain=document.querySelector('.curtain');
+  if(curtain){
+    if(document.body.getAttribute('data-curtain')!=='1'){curtain.style.display='none';}
+    else{setTimeout(function(){curtain.style.display='none';},1350);}
+  }
+
+  var I18N={
+    uz:{
+      'nav.dash':'Kabinet','nav.tests':'Testlar','nav.results':'Natijalar','nav.profile':'Profil','nav.cast':'Cast',
+      'tb.dashboard':'Kabinet','tb.tests':'Testlar','tb.results':'Natijalar','tb.profile':'Profil',
+      'pr.role':'Talaba','um.logout':'Chiqish','ftr.home':'Bosh sahifa','ftr.cast':'Cast'
+    },
+    ru:{
+      'nav.dash':'Кабинет','nav.tests':'Тесты','nav.results':'Результаты','nav.profile':'Профиль','nav.cast':'Cast',
+      'tb.dashboard':'Кабинет','tb.tests':'Тесты','tb.results':'Результаты','tb.profile':'Профиль',
+      'pr.role':'Студент','um.logout':'Выйти','ftr.home':'Главная','ftr.cast':'Cast'
+    },
+    en:{
+      'nav.dash':'Dashboard','nav.tests':'Tests','nav.results':'Results','nav.profile':'Profile','nav.cast':'Cast',
+      'tb.dashboard':'Dashboard','tb.tests':'Tests','tb.results':'Results','tb.profile':'Profile',
+      'pr.role':'Student','um.logout':'Sign out','ftr.home':'Home','ftr.cast':'Cast'
+    }
+  };
+
+  function applyLang(lang){
+    var d=I18N[lang]||I18N.uz;
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var k=el.getAttribute('data-i18n');
+      if(d[k]!==undefined){ el.innerHTML=d[k]; }
+    });
+    document.documentElement.setAttribute('lang',lang);
+    document.querySelectorAll('.lang button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-lang')===lang);});
+    try{localStorage.setItem('deborah-lang',lang);}catch(e){}
+  }
+  function applyTheme(t){
+    document.documentElement.setAttribute('data-theme',t);
+    try{localStorage.setItem('deborah-theme',t);}catch(e){}
+  }
+  var savedLang='uz',savedTheme='dark';
+  try{savedLang=localStorage.getItem('deborah-lang')||'uz';savedTheme=localStorage.getItem('deborah-theme')||'dark';}catch(e){}
+  applyTheme(savedTheme);
+  applyLang(savedLang);
+
+  document.querySelectorAll('.lang button').forEach(function(b){
+    b.addEventListener('click',function(){applyLang(b.getAttribute('data-lang'));});
+  });
+
+  var fx=document.getElementById('modeFx');
+  var themeBtn=document.getElementById('themeBtn');
+  if(themeBtn)themeBtn.addEventListener('click',function(){
+    var next=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';
+    var oldBg=getComputedStyle(document.body).backgroundColor;
+    fx.style.transition='none';fx.style.background=oldBg;fx.style.opacity='1';void fx.offsetWidth;
+    applyTheme(next);
+    fx.style.transition='opacity .5s ease';fx.style.opacity='0';
+  });
+})();
+</script>
+</body>
+</html>

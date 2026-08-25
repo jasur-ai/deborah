@@ -1,0 +1,106 @@
+<%- include('partials/app-head', { title: 'Deborah — Testlar', curtain: curtain }) %>
+<style>
+/* ── Testlar sahifasi ── */
+.toolbar{display:flex;align-items:center;gap:12px;margin:26px 0 20px;flex-wrap:wrap}
+.search{flex:1;min-width:200px;background:var(--bg2);border:1px solid var(--line2);padding:11px 14px;color:var(--text);font-size:.9rem;outline:none;transition:border-color .15s}
+.search::placeholder{color:var(--text3);font-style:italic}
+.search:focus{border-color:var(--gold)}
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.f-btn{font-size:.76rem;font-weight:600;letter-spacing:.04em;padding:8px 14px;border:1px solid var(--line2);color:var(--text3);cursor:pointer;transition:all .15s}
+.f-btn:hover{border-color:var(--gold);color:var(--gold2)}
+.f-btn.on{background:var(--gold);border-color:var(--gold);color:var(--on-gold)}
+
+.test{display:flex;align-items:center;gap:18px;padding:18px 8px;transition:background .15s}
+.test+.test{border-top:1px solid var(--line)}
+.test:hover{background:var(--panel)}
+.test-badge{width:36px;height:36px;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-style:italic;font-size:1.15rem;font-weight:500;color:var(--gold);flex-shrink:0}
+.test-info{flex:1;min-width:0}
+.test-name{font-family:var(--serif);font-size:1.2rem;font-weight:600;color:var(--text)}
+.test-meta{display:flex;gap:14px;margin-top:4px;font-size:.78rem;color:var(--text3);align-items:center;flex-wrap:wrap}
+.tag{display:inline-flex;align-items:center;gap:7px;font-size:.72rem;font-weight:600;letter-spacing:.04em}
+.tag::before{content:'';width:6px;height:6px;border-radius:50%}
+.tag.gold{color:var(--gold2)}.tag.gold::before{background:var(--gold)}
+.tag.good{color:var(--good2)}.tag.good::before{background:var(--good)}
+.tag.warn{color:var(--warn2)}.tag.warn::before{background:var(--warn)}
+.tag.muted{color:var(--muted)}.tag.muted::before{background:var(--muted)}
+.test-start{font-size:.8rem;font-weight:600;letter-spacing:.06em;border:1px solid var(--line2);color:var(--text2);padding:9px 18px;white-space:nowrap;cursor:pointer;transition:all .15s;min-height:38px}
+.test-start:hover{border-color:var(--gold);color:var(--gold2);background:none}
+.test-start:disabled{opacity:.4;cursor:not-allowed}
+</style>
+
+<%- include('partials/app-sidebar', { active: 'tests', user: user }) %>
+<%- include('partials/app-topbar', { active: 'tests', tbTitle: 'Testlar' }) %>
+
+  <div class="content page-enter">
+
+    <div class="page-kicker" data-i18n="tests.kicker">O'quv materiallari</div>
+    <h1 class="page-title" data-i18n="tests.title">Mavjud testlar</h1>
+    <p class="page-sub" data-i18n="tests.sub">Tayyor testlar — o'qituvchingiz tomonidan joylangan.</p>
+
+    <!-- Qidiruv + filter -->
+    <div class="toolbar">
+      <input class="search" type="text" placeholder="Test qidirish…" data-i18n-ph="tests.searchPh">
+      <div class="filters">
+        <button class="f-btn on" type="button" data-i18n="tests.all">Barchasi</button>
+        <button class="f-btn" type="button" data-i18n="tests.open">Ochiq</button>
+        <button class="f-btn" type="button" data-i18n="tests.done">Bajarilgan</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="test">
+        <span class="test-badge">I</span>
+        <div class="test-info">
+          <div class="test-name" data-i18n="t1.name">O'zbekiston tarixi · 1-bosqich</div>
+          <div class="test-meta"><span data-i18n="t.questions">20 savol</span><span data-i18n="t.duration">30 daqiqa</span><span data-i18n="t.attempts">3 urinish</span><span class="tag gold" data-i18n="st.avail">Mavjud</span></div>
+        </div>
+        <button class="test-start" type="button" data-i18n="tests.start">Boshlash</button>
+      </div>
+
+      <div class="test">
+        <span class="test-badge">II</span>
+        <div class="test-info">
+          <div class="test-name" data-i18n="t2.name">Matematika · Kvadrat tenglamalar</div>
+          <div class="test-meta"><span data-i18n="t.questions">15 savol</span><span data-i18n="t.duration">25 daqiqa</span><span data-i18n="t.attempts">2 urinish</span><span class="tag good" data-i18n="st.prog">Jarayonda</span></div>
+        </div>
+        <button class="test-start" type="button" data-i18n="tests.cont">Davom etish</button>
+      </div>
+
+      <div class="test">
+        <span class="test-badge">III</span>
+        <div class="test-info">
+          <div class="test-name" data-i18n="t3.name">Ingliz tili · Reading C1</div>
+          <div class="test-meta"><span data-i18n="t.questions">30 savol</span><span data-i18n="t.duration">40 daqiqa</span><span data-i18n="t.attempts">1 urinish</span><span class="tag warn" data-i18n="st.once">1 urinish</span></div>
+        </div>
+        <button class="test-start" type="button" disabled data-i18n="tests.done">Bajarilgan</button>
+      </div>
+
+      <div class="test">
+        <span class="test-badge">IV</span>
+        <div class="test-info">
+          <div class="test-name" data-i18n="t4.name">Fizika · Kinematika asoslari</div>
+          <div class="test-meta"><span data-i18n="t.questions">12 savol</span><span data-i18n="t.duration">20 daqiqa</span><span data-i18n="t.unlimited">cheksiz</span><span class="tag muted" data-i18n="st.closed">Yopilgan</span></div>
+        </div>
+        <button class="test-start" type="button" data-i18n="tests.start">Boshlash</button>
+      </div>
+
+      <div class="test">
+        <span class="test-badge">V</span>
+        <div class="test-info">
+          <div class="test-name" data-i18n="t5.name">Dasturlash asoslari · Python</div>
+          <div class="test-meta"><span data-i18n="t.questions">25 savol</span><span data-i18n="t.duration">35 daqiqa</span><span data-i18n="t.attempts">3 urinish</span><span class="tag gold" data-i18n="st.avail">Mavjud</span></div>
+        </div>
+        <button class="test-start" type="button" data-i18n="tests.start">Boshlash</button>
+      </div>
+
+      <div class="test">
+        <span class="test-badge">VI</span>
+        <div class="test-info">
+          <div class="test-name" data-i18n="t6.name">Kimyo · Organik birikmalar</div>
+          <div class="test-meta"><span data-i18n="t.questions">18 savol</span><span data-i18n="t.duration">25 daqiqa</span><span data-i18n="t.attempts">2 urinish</span><span class="tag good" data-i18n="st.prog">Jarayonda</span></div>
+        </div>
+        <button class="test-start" type="button" data-i18n="tests.cont">Davom etish</button>
+      </div>
+    </div>
+
+<%- include('partials/app-footer') %>

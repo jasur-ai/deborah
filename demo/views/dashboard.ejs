@@ -1,0 +1,109 @@
+<%- include('partials/app-head', { title: 'Deborah — Kabinet', curtain: curtain }) %>
+<style>
+/* ── Kabinet sahifasi ── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0 24px;margin:36px 0 40px;border-top:1px solid var(--line2);border-bottom:1px solid var(--line);padding:24px 0}
+@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr);gap:22px 16px}}
+.stat{position:relative;padding:0 4px}
+.stat+.stat::before{content:'';position:absolute;left:-12px;top:10%;bottom:10%;width:1px;background:var(--line)}
+.stat-label{font-size:.74rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:10px}
+.stat-num{font-family:var(--serif);font-weight:500;font-size:2.7rem;line-height:1;color:var(--text);font-variant-numeric:oldstyle-nums}
+.stat-num small{font-size:.9rem;color:var(--text2);font-family:var(--sans);font-weight:500}
+.stat-num.gold{color:var(--gold2)}
+.stat-num.good{color:var(--good2)}
+.stat-num.info{color:var(--info2)}
+.stat-num.warn{color:var(--warn2)}
+.stat-sub{font-size:.78rem;color:var(--text2);margin-top:9px;font-style:italic}
+
+.continue{display:flex;align-items:center;gap:22px;background:var(--panel);border:1px solid var(--line2);padding:24px 26px;margin-bottom:36px;transition:border-color .15s}
+.continue:hover{border-color:var(--gold)}
+.cont-icon{width:52px;height:52px;border:1px solid var(--gold);background:var(--bg2);display:flex;align-items:center;justify-content:center;color:var(--gold);flex-shrink:0}
+.cont-icon svg{width:24px;height:24px;stroke-width:1.5}
+.cont-info{flex:1;min-width:0}
+.cont-label{font-size:.72rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.cont-name{font-family:var(--serif);font-weight:600;font-size:1.4rem;color:var(--text)}
+.cont-meta{font-size:.82rem;color:var(--text2);margin-top:3px;font-style:italic}
+.cont-bar{height:2px;background:var(--line);margin-top:16px;position:relative}
+.cont-bar i{display:block;height:100%;width:62%;background:var(--gold)}
+.cont-btn{font-size:.82rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;background:var(--gold);color:var(--on-gold);padding:12px 26px;white-space:nowrap;cursor:pointer;transition:background .15s;min-height:42px;border:none}
+.cont-btn:hover{background:var(--gold2)}
+
+.recent{display:flex;align-items:center;gap:18px;padding:14px 8px;border-bottom:1px solid var(--line)}
+.recent:last-of-type{border-bottom:none}
+.recent:hover{background:var(--panel)}
+.recent-name{flex:1;min-width:0;font-size:.9rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recent-date{font-size:.76rem;color:var(--text3);font-style:italic}
+.recent-score{font-family:var(--serif);font-size:1.15rem;font-weight:600}
+.recent-score.good{color:var(--good2)}
+.recent-score.mid{color:var(--warn2)}
+.recent-score.low{color:var(--bad2)}
+</style>
+
+<%- include('partials/app-sidebar', { active: 'dashboard', user: user }) %>
+<%- include('partials/app-topbar', { active: 'dashboard', tbTitle: 'Kabinet' }) %>
+
+  <div class="content page-enter">
+
+    <!-- WELCOME -->
+    <div class="page-kicker" data-i18n="dash.kicker">Talaba kabineti</div>
+    <h1 class="page-title"><span data-i18n="dash.h1">Salom, </span><em><%= user ? user.name : "User1" %></em></h1>
+
+
+    <!-- STATS -->
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label" data-i18n="st.tests">Bajarilgan testlar</div>
+        <div class="stat-num gold">12</div>
+        <div class="stat-sub" data-i18n="st.testsSub">oxirgi 30 kun: 3</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label" data-i18n="st.avg">O'rtacha natija</div>
+        <div class="stat-num good">74<small>%</small></div>
+        <div class="stat-sub" data-i18n="st.avgSub">eng yaxshi: 92%</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label" data-i18n="st.time">Amaliyot vaqti</div>
+        <div class="stat-num info">6<small>s 40m</small></div>
+        <div class="stat-sub" data-i18n="st.timeSub">bu oy: 2s 15m</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label" data-i18n="st.streak">Kunlik zanjir</div>
+        <div class="stat-num warn">4<small> kun</small></div>
+        <div class="stat-sub" data-i18n="st.streakSub">eng uzun: 12 kun</div>
+      </div>
+    </div>
+
+    <!-- DAVOM ETISH -->
+    <div class="continue">
+      <div class="cont-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </div>
+      <div class="cont-info">
+        <div class="cont-label" data-i18n="cont.label">Davom etish</div>
+        <div class="cont-name" data-i18n="t2.name">Matematika · Kvadrat tenglamalar</div>
+        <div class="cont-meta" data-i18n="cont.meta">6/15 savol bajarildi</div>
+        <div class="cont-bar"><i></i></div>
+      </div>
+      <button class="cont-btn" type="button" data-i18n="cont.btn">Davom etish</button>
+    </div>
+
+    <!-- So'nggi natijalar (qisqa) -->
+    <div class="card">
+      <div class="card-title" data-i18n="dash.recent">So'nggi natijalar</div>
+      <div class="recent">
+        <span class="recent-name">Matematika · Kvadrat tenglamalar</span>
+        <span class="recent-date">18.08</span>
+        <span class="recent-score good">82%</span>
+      </div>
+      <div class="recent">
+        <span class="recent-name">O'zbekiston tarixi · 1-bosqich</span>
+        <span class="recent-date">15.08</span>
+        <span class="recent-score mid">65%</span>
+      </div>
+      <div class="recent">
+        <span class="recent-name">Ingliz tili · Reading B2</span>
+        <span class="recent-date">02.08</span>
+        <span class="recent-score low">37%</span>
+      </div>
+    </div>
+
+<%- include('partials/app-footer') %>

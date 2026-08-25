@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= title %></title>
+<style>
+/* ═══════════════════════════════════════════════════════════
+   DEBORAH — APP SHELL (umumiy dizayn tizimi)
+   -----------------------------------------------------------
+   Jigarrang vintage asos + ochroq ranglar (hammasi jigarrang EMAS):
+   • Fond: qora-jigarrang zulmat
+   • Oltin: antik oltin — asosiy action/hierarchy
+   • Zumrad: muvaffaqiyat · Safir: ma'lumot · Kohrang: ogohlantirish
+   • Qizil: FAQAT xato/salbiy
+   • Cormorant serif — sarlavhalar, raqamlar
+   • Bo'limlar ALOHIDA sahifalarda (real katta loyiha)
+   ═══════════════════════════════════════════════════════════ */
+:root{
+  --bg:#1c1813;            /* qora-jigarrang */
+  --bg2:#241f18;
+  --panel:#241f18;
+  --panel2:#2c251d;
+  --line:rgba(242,237,227,.14);
+  --line2:rgba(201,164,92,.4);
+
+  --text:#f2ede3;          /* fil suyagi */
+  --text2:#c0b7a4;         /* ochroq mut */
+  --text3:#9a9178;         /* ochroq dim */
+
+  --gold:#c9a565;          /* ochroq oltin */
+  --gold2:#ddc08c;
+  --on-gold:#1a1305;
+
+  --good:#7fa878;          /* yumshoq zumrad */
+  --good2:#92b98a;
+  --info:#5f93b8;          /* safir */
+  --info2:#74a6ca;
+  --warn:#c9a14e;          /* kohrang */
+  --warn2:#d9b465;
+  --bad:#b25a44;           /* to'q qizil — xato */
+  --bad2:#c86a52;
+  --muted:#8b8271;         /* neytral */
+
+  --serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
+  --sans:'Source Sans 3',-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+}
+[data-theme="light"]{
+  --bg:#ece3d0;
+  --bg2:#e3d9c3;
+  --panel:#f4eee0;
+  --panel2:#ece3d0;
+  --line:rgba(60,48,22,.15);
+  --line2:rgba(130,100,40,.4);
+
+  --text:#2a2316;
+  --text2:#5c5340;
+  --text3:#8a8168;
+
+  --gold:#8a6a2e;
+  --gold2:#755a20;
+  --on-gold:#faf5e8;
+
+  --good:#55724e;
+  --good2:#6a8a62;
+  --info:#3f6d92;
+  --info2:#5487ac;
+  --warn:#8f6a1f;
+  --warn2:#a37c2a;
+  --bad:#93402f;
+  --bad2:#a64e3a;
+  --muted:#6f6757;
+}
+.modefx{position:fixed;inset:0;z-index:9999;pointer-events:none;background:#1c1813;opacity:0}
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:300 700;font-display:swap;src:url('/fonts/cormorant-latin-400.woff2') format('woff2')}
+@font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:300 700;font-display:swap;src:url('/fonts/cormorant-latin-400i.woff2') format('woff2')}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);font-size:14px;line-height:1.6;color:var(--text);-webkit-font-smoothing:antialiased;background:var(--bg);transition:background .3s,color .3s}
+::selection{background:var(--gold);color:var(--on-gold)}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+input{font:inherit}
+
+/* Focus (WCAG) */
+a:focus-visible,button:focus-visible,input:focus-visible{outline:1px solid var(--gold2);outline-offset:2px}
+
+/* Parda — faqat kirishdan keyin */
+.curtain{position:fixed;inset:0;z-index:9995;background:var(--bg);pointer-events:none;display:none}
+body[data-curtain="1"] .curtain{display:block;animation:curtainLift 1.2s cubic-bezier(.65,.05,.2,.99) .05s forwards}
+@keyframes curtainLift{0%{transform:translateY(0)}100%{transform:translateY(-101%)}}
+@media (prefers-reduced-motion: reduce){body[data-curtain="1"] .curtain{animation:none;display:none}}
+
+/* ── App shell ── */
+.app{display:grid;grid-template-columns:236px 1fr;min-height:100vh}
+@media(max-width:880px){.app{grid-template-columns:1fr}.sidebar{display:none}}
+
+/* ── Sidebar — logo TEPADA, DEBORAH PASTDA (katta harflar) ── */
+.sidebar{background:var(--bg2);border-right:1px solid var(--line2);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;padding:28px 22px}
+.sb-brand{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding-bottom:26px;border-bottom:1px solid var(--line2);margin-bottom:24px}
+.sb-logo{height:38px;width:auto;display:block}
+.sb-word{font-family:var(--serif);font-size:.94rem;font-weight:600;letter-spacing:.42em;text-indent:.42em;text-transform:uppercase;color:var(--gold2);white-space:nowrap}
+.sb-nav{display:flex;flex-direction:column;gap:2px;flex:1}
+.sb-item{display:flex;align-items:center;gap:12px;padding:10px 12px;font-size:.9rem;font-weight:600;color:var(--text2);cursor:pointer;transition:color .15s,background .15s}
+.sb-item svg{width:17px;height:17px;opacity:.8;flex-shrink:0;stroke-width:1.5}
+.sb-item:hover{color:var(--text);background:var(--panel)}
+.sb-item.on{color:var(--gold2);background:rgba(201,165,101,.08);border-left:2px solid var(--gold);padding-left:10px}
+.sb-item.on svg{color:var(--gold);opacity:1}
+.sb-foot{margin-top:auto;padding-top:18px;border-top:1px solid var(--line)}
+.sb-user{display:flex;align-items:center;gap:11px;padding:9px 12px;cursor:pointer;transition:background .15s}
+.sb-user:hover{background:var(--panel)}
+.sb-ava{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#8a6a2e);color:var(--on-gold);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:.8rem;font-weight:600;flex-shrink:0}
+.sb-uname{font-size:.86rem;font-weight:600;line-height:1.25}
+.sb-urole{font-size:.74rem;color:var(--text3);font-style:italic}
+.sb-logout{display:flex;align-items:center;gap:10px;padding:9px 12px;margin-top:4px;font-size:.84rem;color:var(--text3);cursor:pointer;transition:color .15s,background .15s}
+.sb-logout:hover{color:var(--bad);background:rgba(178,90,68,.07)}
+.sb-logout svg{width:15px;height:15px}
+
+/* ── Topbar ── */
+.main{display:flex;flex-direction:column;min-width:0}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 36px;border-bottom:1px solid var(--line2);background:var(--bg2)}
+.tb-title{font-family:var(--serif);font-size:1.12rem;font-weight:600;letter-spacing:.03em}
+.tb-right{display:flex;align-items:center;gap:14px;flex-shrink:0}
+.lang{display:flex;border:1px solid var(--line2);overflow:hidden}
+.lang button{padding:5px 11px;font-size:.74rem;font-weight:600;letter-spacing:.04em;color:var(--text3);cursor:pointer;transition:background .15s,color .15s}
+.lang button+button{border-left:1px solid var(--line2)}
+.lang button:hover{color:var(--text)}
+.lang button.on{background:var(--gold);color:var(--on-gold)}
+.tbtn{width:31px;height:31px;border:1px solid var(--line2);color:var(--text3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .15s,color .15s}
+.tbtn:hover{border-color:var(--gold);color:var(--gold2)}
+.tbtn svg{width:15px;height:15px;display:block}
+.tbtn .ico-sun{display:none}
+[data-theme="light"] .tbtn .ico-sun{display:block}
+[data-theme="light"] .tbtn .ico-moon{display:none}
+
+/* ── Content ── */
+.content{padding:40px 40px 60px;max-width:1080px;width:100%}
+
+/* ── Umumiy elementlar ── */
+.page-kicker{font-size:.76rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.page-title{font-family:var(--serif);font-weight:500;font-size:clamp(2rem,3.8vw,2.8rem);line-height:1.12;margin-bottom:8px}
+.page-title em{font-style:italic;color:var(--gold2)}
+.page-sub{color:var(--text2);font-size:.94rem;font-style:italic}
+.card{background:var(--panel);border:1px solid var(--line2);padding:24px 24px 20px;margin-bottom:22px}
+.card-title{font-family:var(--serif);font-size:1.25rem;font-weight:600;color:var(--text);display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.card-title::before{content:'';width:22px;height:1px;background:var(--gold)}
+.btn{font-size:.82rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;background:var(--gold);color:var(--on-gold);padding:11px 24px;white-space:nowrap;cursor:pointer;transition:background .15s;min-height:40px;border:none}
+.btn:hover{background:var(--gold2)}
+.btn-outline{background:none;border:1px solid var(--line2);color:var(--text2)}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold2);background:none}
+.small-note{font-size:.76rem;color:var(--text3);font-style:italic}
+
+/* Footer */
+.ftr{margin-top:40px;padding-top:18px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:.76rem;color:var(--text3);border-top:1px solid var(--line)}
+.ftr a:hover{color:var(--text)}
+
+/* Animatsiya */
+.page-enter{animation:pageEnter .3s ease-out backwards}
+@keyframes pageEnter{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body<%= (typeof curtain !== 'undefined' && curtain === '1') ? ' data-curtain="1"' : '' %>>
+<div class="modefx" id="modeFx" aria-hidden="true"></div>
+<div class="curtain" aria-hidden="true"></div>
+
+<div class="app">

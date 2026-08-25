@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deborah — savolni sinf ekraniga uzatish</title>
+<style>
+/* ═══════════════════════════════════════════════════════
+   DEBORAH — MINIMAL · FAQAT CAST
+   Oddiy kichik web; yagona mavzu — savolni sinf ekraniga
+   uzatish. Light/dark (yumshoq o'tish) · UZ/RU/EN ·
+   avtomatik o'ynaydigan cast demo.
+   ═══════════════════════════════════════════════════════ */
+:root{
+  --bg:#1c1813; --bg2:#241f18;
+  --hdr-bg:rgba(28,24,19,.88);
+  --line:rgba(242,237,227,.15); --line2:rgba(201,164,92,.42);
+  --ivory:#f2ede3; --mut:#b3aa98; --dim:#857d6c;
+  --gold:#c2a06a; --gold2:#d6bd8c; --on-gold:#141006;
+  --crimson:#a8794f; --green:#7d9670;
+  --card-bg:rgba(36,31,25,.5);
+  --panel-a:rgba(36,31,25,.6); --panel-b:rgba(28,24,19,.2);
+  --track-bg:rgba(255,255,255,.04);
+  --bar-grey:rgba(242,237,227,.24);
+  --cell-base:rgba(255,255,255,.06);
+  --sel-bg:#c9a45c; --sel-text:#141006;
+  --shadow:0 30px 80px rgba(0,0,0,.45);
+}
+[data-theme="light"]{
+  --bg:#aaa596; --bg2:#9d9889;
+  --hdr-bg:rgba(170,165,150,.95);
+  --line:rgba(30,25,18,.45); --line2:rgba(74,54,20,.9);
+  --ivory:#15120c; --mut:#221d13; --dim:#2a2316;
+  --gold:#7a5a1e; --gold2:#543807; --on-gold:#efe9da;
+  --crimson:#8a6442; --green:#5b7448;
+  --card-bg:rgba(157,152,137,.55);
+  --panel-a:rgba(157,152,137,.85); --panel-b:rgba(170,165,150,.5);
+  --track-bg:rgba(35,30,24,.08);
+  --bar-grey:rgba(35,30,24,.24);
+  --cell-base:rgba(35,30,24,.11);
+  --sel-bg:#7f6a3a; --sel-text:#efe9da;
+  --shadow:0 24px 60px rgba(55,44,22,.26);
+}
+/* kulrang aristokratik muhit: engil vignette */
+[data-theme="light"] body::after{content:'';position:fixed;inset:0;z-index:9996;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 18%,transparent 50%,rgba(50,42,25,.15) 100%)}
+/* tema almashish — yumshoq o'tish */
+.modefx{position:fixed;inset:0;z-index:9999;pointer-events:none;background:#0d0b08;opacity:0}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--ivory);line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .35s,color .35s}
+::selection{background:var(--sel-bg);color:var(--sel-text)}
+a{color:inherit;text-decoration:none}
+body::before{content:'';position:fixed;inset:0;z-index:9997;pointer-events:none;opacity:.045;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+/* ── Header ── */
+.hdr{position:fixed;top:0;left:0;right:0;z-index:900;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:13px 30px;background:var(--hdr-bg);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);transition:background .35s,border-color .35s}
+@font-face{font-family:'Cinzel';font-style:normal;font-weight:400 900;font-display:swap;src:url('/fonts/cinzel-latin-400.woff2') format('woff2')}
+.logo{display:inline-flex;flex-direction:column;align-items:center;gap:2px;line-height:1;text-decoration:none}
+.logo-mark{height:34px;width:auto;display:block;flex-shrink:0;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
+.logo-word{font-family:'Cinzel',serif;font-weight:700;font-size:.72rem;letter-spacing:.34em;text-indent:.34em;text-transform:lowercase;color:var(--gold2);white-space:nowrap;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+[data-theme="light"] .logo-word{text-shadow:none}
+.logo-mark{height:34px;width:auto;display:block;flex-shrink:0}
+.nav{display:flex;gap:20px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.64rem;letter-spacing:.13em;text-transform:uppercase;color:var(--mut)}
+.nav a{position:relative;padding:3px 0;transition:color .2s}
+.nav a::after{content:'';position:absolute;left:0;bottom:0;width:0;height:1px;background:var(--gold);transition:width .25s}
+.nav a:hover{color:var(--ivory)}
+.nav a:hover::after{width:100%}
+@media(max-width:720px){.nav{display:none}}
+.ctrls{display:flex;align-items:center;gap:9px;flex-shrink:0}
+.lang{display:flex;border:1px solid var(--line);overflow:hidden}
+.lang button{background:transparent;border:none;color:var(--mut);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.58rem;letter-spacing:.08em;padding:6px 8px;cursor:pointer;transition:all .15s}
+.lang button+button{border-left:1px solid var(--line)}
+.lang button:hover{color:var(--ivory)}
+.lang button.on{background:var(--gold);color:var(--on-gold)}
+.hbtn{width:34px;height:34px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color .2s,color .2s}
+.hbtn:hover{border-color:var(--gold);color:var(--gold2)}
+.hbtn svg{width:17px;height:17px;display:block}
+/* ── Admin (faqat login — ro'yxatdan o'tish yo'q) ── */
+.abtn{display:inline-flex;align-items:center;gap:7px;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  padding:8px 14px;border:1px solid var(--line2);background:transparent;color:var(--gold2);cursor:pointer;transition:all .2s;white-space:nowrap}
+.abtn:hover{border-color:var(--gold);color:var(--ivory);transform:translateY(-2px);box-shadow:0 0 18px rgba(201,164,92,.18)}
+.abtn svg{width:13px;height:13px;display:block}
+@media(max-width:520px){.abtn span{display:none}.abtn{padding:8px 10px}}
+.admin-overlay{position:fixed;inset:0;z-index:985;display:flex;align-items:center;justify-content:center;padding:20px;
+  background:rgba(10,8,5,.62);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .28s}
+.admin-overlay.open{opacity:1;pointer-events:auto}
+.admin-card{position:relative;width:100%;max-width:400px;border:1px solid var(--line2);background:linear-gradient(180deg,var(--panel-a),var(--panel-b));
+  box-shadow:var(--shadow);padding:34px 32px 28px;transform:translateY(16px);transition:transform .3s}
+.admin-overlay.open .admin-card{transform:none}
+.admin-card .close{position:absolute;top:14px;right:16px;width:30px;height:30px;border:1px solid var(--line);background:transparent;color:var(--mut);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.admin-card .close:hover{border-color:var(--gold);color:var(--gold2)}
+.admin-card .close svg{width:13px;height:13px}
+.admin-head{text-align:center;margin-bottom:22px}
+.admin-head .k{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+.admin-head h3{font-family:'Georgia','Times New Roman',serif;font-weight:400;font-size:1.3rem}
+.admin-head h3 em{font-style:italic;color:var(--gold2)}
+.admin-head p{color:var(--mut);font-size:.84rem;margin-top:8px}
+.afld{margin-bottom:14px}
+.afld label{display:block;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:6px}
+.afld input{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--ivory);padding:11px 13px;font-size:.9rem;transition:border-color .2s}
+.afld input:focus{outline:none;border-color:var(--gold)}
+.admin-err{display:none;font-size:.8rem;color:var(--crimson);text-align:center;margin:4px 0 12px}
+.admin-err.show{display:block}
+.admin-card .btn-gold{width:100%}
+.hmenu{position:fixed;top:62px;right:18px;z-index:950;min-width:200px;border:1px solid var(--line);background:var(--panel-a);backdrop-filter:blur(10px);box-shadow:var(--shadow);padding:8px;opacity:0;transform:translateY(-6px);pointer-events:none;transition:all .22s}
+.hmenu.open{opacity:1;transform:none;pointer-events:auto}
+.hmenu a{display:block;padding:11px 14px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--mut);transition:all .15s}
+.hmenu a:hover{color:var(--ivory);background:var(--card-bg)}
+.tbtn{width:30px;height:30px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color .2s,color .2s}
+.tbtn:hover{border-color:var(--gold);color:var(--gold2)}
+.tbtn svg{width:14px;height:14px;display:block}
+.tbtn .ico-sun{display:none}
+[data-theme="light"] .tbtn .ico-sun{display:block}
+[data-theme="light"] .tbtn .ico-moon{display:none}
+.btn{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.66rem;letter-spacing:.11em;text-transform:uppercase;font-weight:700;
+  padding:9px 16px;border:1px solid var(--line);color:var(--ivory);cursor:pointer;transition:all .2s;background:transparent;display:inline-block;white-space:nowrap}
+.btn:hover{border-color:var(--gold);color:var(--gold2);transform:translateY(-2px)}
+.btn-gold{background:var(--gold);border-color:var(--gold);color:var(--on-gold)}
+.btn-gold:hover{background:var(--gold2);border-color:var(--gold2);color:var(--on-gold);box-shadow:0 0 26px rgba(201,164,92,.3)}
+.btn-sm{padding:7px 13px;font-size:.6rem}
+/* ── Sahifa ── */
+.page{max-width:760px;margin:0 auto;padding:118px 26px 70px;display:flex;flex-direction:column;gap:34px}
+.head{text-align:center}
+.kicker{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.62rem;letter-spacing:.26em;text-transform:uppercase;color:var(--dim);margin-bottom:16px}
+h1{font-family:'Georgia','Times New Roman',serif;font-weight:400;font-size:clamp(1.7rem,4vw,2.7rem);line-height:1.16;letter-spacing:-.01em;margin-bottom:14px}
+h1 em{font-style:italic;color:var(--gold2)}
+.head p{color:var(--mut);font-size:.98rem;max-width:32em;margin:0 auto}
+/* ── Cast demo ── */
+.screen{position:relative;border:1px solid var(--line);background:linear-gradient(180deg,var(--panel-a),var(--panel-b));box-shadow:var(--shadow);overflow:hidden;max-width:620px;margin:0 auto}
+.corner{position:absolute;width:12px;height:12px;border:1px solid var(--line2)}
+.corner.tl{top:-1px;left:-1px;border-right:none;border-bottom:none}
+.corner.tr{top:-1px;right:-1px;border-left:none;border-bottom:none}
+.corner.bl{bottom:-1px;left:-1px;border-right:none;border-top:none}
+.corner.br{bottom:-1px;right:-1px;border-left:none;border-top:none}
+.sc-top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid var(--line);
+  font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dim)}
+.sc-code{color:var(--gold2)}
+.sc-live{display:flex;align-items:center;gap:7px;color:var(--green)}
+.sc-live i{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.3s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.sc-body{padding:20px 22px 18px;min-height:260px;position:relative}
+.beam{position:absolute;left:18px;right:18px;top:30px;height:26px;opacity:0;transition:opacity .4s}
+.beam .ln{position:absolute;left:0;right:0;top:12px;height:1.5px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.beam .dot{position:absolute;top:5px;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,var(--gold));
+  box-shadow:0 0 14px var(--gold);left:0;animation:fly 1.6s ease-in-out infinite}
+@keyframes fly{0%{left:0;opacity:0}15%{opacity:1}85%{opacity:1}100%{left:calc(100% - 14px);opacity:0}}
+.beam .tx{position:absolute;right:0;top:-16px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold2)}
+.step{opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease}
+.step.in{opacity:1;transform:none}
+.q{font-family:'Georgia','Times New Roman',serif;font-size:1rem;line-height:1.45;margin:2px 0 12px}
+.opts{margin-bottom:14px}
+.opt{display:flex;gap:11px;align-items:center;border:1px solid var(--line);background:var(--card-bg);padding:8px 12px;margin-bottom:6px;font-size:.88rem;position:relative;overflow:hidden}
+.opt .k{width:24px;height:24px;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.64rem;flex-shrink:0}
+.opt.dom{border-color:var(--line2)}
+.opt.dom .k{border-color:var(--gold);color:var(--gold2)}
+.opt .pct{margin-left:auto;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.66rem;color:var(--dim)}
+.opt.dom .pct{color:var(--gold2)}
+.opt .track{position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--track-bg)}
+.opt .track i{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width 1.3s cubic-bezier(.22,.61,.36,1)}
+.opt.dom .track i{background:linear-gradient(90deg,#7a5a3a,var(--crimson))}
+.cap{margin-top:14px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.56rem;letter-spacing:.17em;text-transform:uppercase;color:var(--dim)}
+.mini{display:grid;grid-template-columns:repeat(14,1fr);gap:3px;margin-top:9px}
+.cell{aspect-ratio:1;background:var(--cell-base);transition:background .5s}
+.cell.cr{background:rgba(168,121,79,.9)}
+.cell.gd{background:rgba(194,160,106,.9)}
+.cell.gr{background:rgba(127,154,107,.9)}
+.cell.bl{background:rgba(110,122,142,.85)}
+.devnote{margin-top:12px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);opacity:0;transition:opacity .5s}
+.devnote b{color:var(--green)}
+.sc-foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:12px 18px;border-top:1px solid var(--line);
+  font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.56rem;letter-spacing:.13em;text-transform:uppercase;color:var(--dim)}
+.under{text-align:center;font-size:.9rem;color:var(--mut)}
+.under b{color:var(--ivory);font-weight:400}
+/* ── Kirish / Ro'yxatdan o'tish ── */
+.auth{margin-top:10px}
+.auth-card{position:relative;border:1px solid var(--line);background:linear-gradient(180deg,var(--panel-a),var(--panel-b));padding:32px 32px 26px;box-shadow:var(--shadow)}
+.auth-head{text-align:center;margin-bottom:22px}
+.auth-head .k{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+.auth-head h2{font-family:'Georgia','Times New Roman',serif;font-weight:400;font-size:1.35rem}
+.auth-head h2 em{font-style:italic;color:var(--gold2)}
+/* ── Footer ── */
+.ftr{border-top:1px solid var(--line);margin-top:64px;padding:44px 30px 30px}
+.ftr-in{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:26px}
+@media(max-width:640px){.ftr-in{grid-template-columns:1fr 1fr}}
+.ftr h4{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-bottom:12px}
+.ftr a{display:block;color:var(--mut);font-size:.84rem;margin-bottom:7px;padding-left:0;transition:color .2s,padding-left .2s}
+.ftr a:hover{color:var(--gold2);padding-left:6px}
+.ftr-copy{max-width:760px;margin:28px auto 0;border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+@media(prefers-reduced-motion:reduce){.beam .dot,.sc-live i{animation:none}}
+.tabs{display:flex;border:1px solid var(--line);margin-bottom:20px}
+.provider{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px 14px;border-radius:6px;font-family:inherit;font-size:.92rem;font-weight:600;cursor:pointer;transition:all .18s;background:transparent;border:1px solid var(--line);color:var(--ivory)}
+.sep{display:flex;align-items:center;gap:12px;color:var(--dim);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;margin:2px 0 16px}
+.fld{margin-bottom:13px}
+.auth-msg{display:none;margin-top:14px;border:1px solid var(--green);color:var(--green);padding:11px 14px;font-size:.85rem;text-align:center}
+.tabs button{flex:1;background:transparent;border:none;color:var(--mut);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;padding:11px;cursor:pointer;transition:all .15s}
+.tabs button+button{border-left:1px solid var(--line)}
+.tabs button:hover{color:var(--ivory)}
+.tabs button.on{background:var(--gold);color:var(--on-gold)}
+.providers{display:grid;gap:10px;margin-bottom:16px}
+.provider:hover{border-color:var(--line2);transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.provider svg{width:18px;height:18px;flex-shrink:0}
+.provider-g:hover{color:var(--gold2)}
+.provider-o:hover{color:#9db4e8}
+.sep::before,.sep::after{content:'';flex:1;border-top:1px solid var(--line)}
+.fld label{display:block;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+.fld input{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--ivory);font-family:inherit;font-size:.92rem;padding:10px 13px;transition:border-color .2s}
+.fld input:focus{outline:none;border-color:var(--gold)}
+.auth-submit{width:100%;padding:12px}
+.auth-msg.show{display:block}
+/* ── O'yinga kirish (kod) ── */
+.join-overlay{position:fixed;inset:0;z-index:980;display:flex;align-items:center;justify-content:center;padding:20px;
+  background:rgba(10,8,5,.62);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .28s}
+.join-overlay.open{opacity:1;pointer-events:auto}
+.join-card{position:relative;width:100%;max-width:420px;border:1px solid var(--line);background:linear-gradient(180deg,var(--panel-a),var(--panel-b));
+  box-shadow:var(--shadow);padding:34px 32px 28px;transform:translateY(16px);transition:transform .3s}
+.join-overlay.open .join-card{transform:none}
+.join-card .close{position:absolute;top:14px;right:16px;width:30px;height:30px;border:1px solid var(--line);background:transparent;color:var(--mut);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.join-card .close:hover{border-color:var(--gold);color:var(--gold2)}
+.join-card .close svg{width:13px;height:13px}
+.join-head{text-align:center;margin-bottom:24px}
+.join-head .k{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+.join-head h3{font-family:'Georgia','Times New Roman',serif;font-weight:400;font-size:1.35rem}
+.join-head h3 em{font-style:italic;color:var(--gold2)}
+.join-head p{color:var(--mut);font-size:.86rem;margin-top:8px}
+.jcode-wrap{display:flex;justify-content:center;margin-bottom:18px}
+.jcode{width:100%;max-width:240px;background:var(--bg);border:1px solid var(--line);color:var(--ivory);font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  font-size:2.1rem;letter-spacing:.42em;text-align:center;padding:14px 10px 14px 20px;transition:border-color .2s}
+.jcode:focus{outline:none;border-color:var(--gold)}
+.join-err{display:none;font-size:.8rem;color:var(--crimson);text-align:center;margin-bottom:14px}
+.join-err.show{display:block}
+.join-msg{display:none;text-align:center;margin-top:14px}
+.join-msg.show{display:block}
+.join-msg .ok{border:1px solid var(--green);color:var(--green);padding:11px 14px;font-size:.85rem}
+.join-msg .load{color:var(--mut);font-size:.82rem;display:flex;align-items:center;justify-content:center;gap:10px}
+.join-msg .load i{width:14px;height:14px;border-radius:50%;border:2px solid var(--line2);border-top-color:var(--gold);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="modefx" id="modeFx" aria-hidden="true"></div>
+<!-- HEADER -->
+<header class="hdr">
+  <a class="logo" href="#top">
+    <img class="logo-mark" src="/logo.png" alt="Deborah">
+    <span class="logo-word" aria-hidden="true">deborah</span>
+  </a>
+  <nav class="nav">
+    <a href="#cast" data-i18n="nav.cast">Cast</a>
+    <a href="#auth" data-i18n="nav.kirish">Kirish</a>
+  </nav>
+  <div class="ctrls">
+    <div class="lang" role="group" aria-label="Til">
+      <button data-lang="uz" class="on" type="button">UZ</button>
+      <button data-lang="ru" type="button">RU</button>
+      <button data-lang="en" type="button">EN</button>
+    </div>
+    <button class="tbtn" id="themeBtn" type="button" aria-label="Tema">
+      <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+      <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5 5l1.6 1.6M17.4 17.4 19 19M19 5l-1.6 1.6M6.6 17.4 5 19"/></svg>
+    </button>
+    <button class="abtn" id="adminBtn" type="button" aria-haspopup="dialog">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15" r="1.6"/></svg>
+      <span data-i18n="admin.btn">Admin</span>
+    </button>
+    <button class="hbtn" id="hbtn" type="button" aria-label="Menyu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</header>
+<!-- ADMIN LOGIN (faqat login — ro'yxatdan o'tish yo'q) -->
+<div class="admin-overlay" id="adminOverlay" role="dialog" aria-modal="true" aria-label="Admin tizimga kirish">
+  <div class="admin-card">
+    <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+    <button class="close" id="adminClose" type="button" aria-label="Yopish">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div class="admin-head">
+      <div class="k" data-i18n="admin.k">Admin panel</div>
+      <h3 data-i18n="admin.h3">Administrator <em>kirishi</em></h3>
+      <p data-i18n="admin.p">Faqat administratorlar uchun.</p>
+    </div>
+    <form id="adminForm" novalidate>
+      <div class="afld"><label for="aLogin" data-i18n="admin.loginL">Login</label><input id="aLogin" type="text" autocomplete="username" autocapitalize="off"></div>
+      <div class="afld"><label for="aPass" data-i18n="admin.passL">Parol</label><input id="aPass" type="password" autocomplete="current-password"></div>
+      <div class="admin-err" id="adminErr" data-i18n="admin.err">Login yoki parol xato.</div>
+      <button class="btn btn-gold auth-submit" type="submit" data-i18n="admin.go">Kirish</button>
+    </form>
+  </div>
+</div>
+<!-- O'YINGA KIRISH -->
+<div class="join-overlay" id="joinOverlay" role="dialog" aria-modal="true" aria-label="Castga kirish">
+  <div class="join-card">
+    <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+    <button class="close" id="joinClose" type="button" aria-label="Yopish">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div class="join-head">
+      <div class="k" data-i18n="join.k">Tayyor cast</div>
+      <h3 data-i18n="join.h3">O'yinga <em>kirish</em></h3>
+      <p data-i18n="join.p">Kodni kiriting.</p>
+    </div>
+    <div class="jcode-wrap"><input class="jcode" id="jcode" inputmode="numeric" autocomplete="off" maxlength="7" placeholder="00000"></div>
+    <div class="join-err" id="joinErr" data-i18n="join.err">Kod 5–7 xonadan iborat raqam bo'lishi kerak.</div>
+    <button class="btn btn-gold auth-submit" id="joinGo" type="button" data-i18n="join.go">Kirish</button>
+    <div class="join-msg" id="joinMsg">
+      <div class="load" data-i18n="join.load">Ulanmoqda… <i></i></div>
+      <div class="ok" data-i18n="join.ok">Siz castga ulandingiz. Savol kutilmoqda.</div>
+    </div>
+  </div>
+</div>
+<!-- HAMBURGER MENU -->
+<div class="hmenu" id="hmenu">
+  <a href="index.html" data-i18n="hm.kirish">Kirish</a>
+  <a href="#cast" data-i18n="hm.cast">Cast</a>
+  <a href="#kontakt" data-i18n="hm.documents">Hujjatlar</a>
+</div>
+<!-- SAHIFA -->
+<main class="page" id="top">
+  <div class="head">
+    <div class="kicker" data-i18n="head.kicker">Savolni sinf ekraniga uzatish</div>
+    <h1 data-i18n="head.h1">Savol — <em>ekranda</em>. Javob — telefonda.</h1>
+    <p data-i18n="head.p">Bir tugma bilan savol sinf ekraniga uzatiladi. Javoblar real vaqtda yig'iladi.</p>
+  </div>
+  <!-- CAST DEMO -->
+  <div class="screen" id="cast">
+    <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+    <div class="sc-top">
+      <span class="sc-code">EDK-4821</span>
+      <span class="sc-live"><i></i><span data-i18n="live.live">jonli</span></span>
+      <span id="scTime">01:24</span>
+    </div>
+    <div class="sc-body">
+      <div class="beam" id="beam">
+        <span class="tx" data-i18n="beam.tx">uzatilmoqda…</span>
+        <span class="ln"></span><span class="dot"></span>
+      </div>
+      <div class="step q" id="q" data-i18n="live.q">SQL'da jadvaldan takroriy yozuvlarni olib tashlab, faqat unikallarini qaytaruvchi operator qaysi?</div>
+      <div class="opts">
+        <div class="opt step" data-opt><span class="k">A</span><span>SELECT DISTINCT</span><span class="pct">20%</span><span class="track"><i data-w="20"></i></span></div>
+        <div class="opt step dom" data-opt><span class="k">B</span><span>SELECT UNIQUE ALL</span><span class="pct">43%</span><span class="track"><i data-w="43"></i></span></div>
+        <div class="opt step" data-opt><span class="k">C</span><span>SELECT FILTER</span><span class="pct">27%</span><span class="track"><i data-w="27"></i></span></div>
+        <div class="opt step" data-opt><span class="k">D</span><span>SELECT REMOVE</span><span class="pct">10%</span><span class="track"><i data-w="10"></i></span></div>
+      </div>
+      <div class="cap step" data-i18n="live.cap">Response mosaic · 42 javob</div>
+      <div class="mini" id="mini"></div>
+      <div class="devnote" id="devnote"><b data-i18n="live.dev">Dominant xato: B · 43%</b></div>
+    </div>
+    <div class="sc-foot">
+      <span data-i18n="live.f1">Savol cast qilindi</span>
+      <span data-i18n="live.f2">javoblar yig'ilmoqda</span>
+    </div>
+  </div>
+  <p class="under" data-i18n="under">Bu — <b>cast</b>: savol ekranda, javoblar telefonda. Har bir savol shu tarzda uzatiladi.</p>
+  <!-- AUTH -->
+  <section class="auth" id="auth">
+    <div class="auth-card">
+      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <div class="auth-head">
+        <div class="k" data-i18n="auth.k">Kirish va ro'yxatdan o'tish</div>
+        <h2 data-i18n="auth.h2">Tizimga kirish</h2>
+      </div>
+      <div class="tabs">
+        <button type="button" class="on" data-tab="login" data-i18n="auth.t1">Kirish</button>
+        <button type="button" data-tab="reg" data-i18n="auth.t2">Ro'yxatdan o'tish</button>
+      </div>
+      <form id="fLogin">
+        <div class="providers">
+          <button class="provider provider-g" type="button" data-prov="google">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1Z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23Z"/><path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84Z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15A11 11 0 0 0 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52Z"/></svg>
+            <span data-i18n="auth.google">Google bilan kirish</span>
+          </button>
+          <button class="provider provider-o" type="button" data-prov="oneid">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="8.2" r="3.6"/><path d="M4.6 19.6c1.1-3.2 3.9-4.8 7.4-4.8s6.3 1.6 7.4 4.8"/><path d="M17.4 3.2l.8 1.7 1.8.3-1.3 1.3.3 1.8-1.6-.8-1.6.8.3-1.8-1.3-1.3 1.8-.3z" fill="currentColor" stroke="none"/></svg>
+            <span data-i18n="auth.oneid">OneID bilan kirish</span>
+          </button>
+        </div>
+        <div class="sep"><span data-i18n="auth.or">yoki email bilan</span></div>
+        <div class="fld"><label for="lEmail" data-i18n="auth.email">Email</label><input id="lEmail" type="email" autocomplete="email"></div>
+        <div class="fld"><label for="lPass" data-i18n="auth.pass">Parol</label><input id="lPass" type="password" autocomplete="current-password"></div>
+        <button class="btn btn-gold auth-submit" type="submit" data-i18n="auth.login">Kirish</button>
+        <div class="auth-msg" data-i18n="auth.doneLogin">Kirish ruxsat tasdiqlangach ochiladi.</div>
+      </form>
+      <form id="fReg" style="display:none">
+        <div class="providers">
+          <button class="provider provider-g" type="button" data-prov="google">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1Z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23Z"/><path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84Z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15A11 11 0 0 0 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52Z"/></svg>
+            <span data-i18n="auth.google">Google bilan kirish</span>
+          </button>
+          <button class="provider provider-o" type="button" data-prov="oneid">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="8.2" r="3.6"/><path d="M4.6 19.6c1.1-3.2 3.9-4.8 7.4-4.8s6.3 1.6 7.4 4.8"/><path d="M17.4 3.2l.8 1.7 1.8.3-1.3 1.3.3 1.8-1.6-.8-1.6.8.3-1.8-1.3-1.3 1.8-.3z" fill="currentColor" stroke="none"/></svg>
+            <span data-i18n="auth.oneid">OneID bilan kirish</span>
+          </button>
+        </div>
+        <div class="sep"><span data-i18n="auth.or">yoki email bilan</span></div>
+        <div class="fld"><label for="rName" data-i18n="auth.name">Ism va familiya</label><input id="rName" type="text" autocomplete="name"></div>
+        <div class="fld"><label for="rEmail" data-i18n="auth.email">Email</label><input id="rEmail" type="email" autocomplete="email"></div>
+        <div class="fld"><label for="rPass" data-i18n="auth.pass">Parol</label><input id="rPass" type="password" autocomplete="new-password"></div>
+        <button class="btn btn-gold auth-submit" type="submit" data-i18n="auth.register">Ro'yxatdan o'tish</button>
+        <div class="auth-msg" id="doneReg"></div>
+      </form>
+    </div>
+  </section>
+</main>
+<!-- FOOTER -->
+<footer class="ftr">
+  <div class="ftr-in">
+    <div>
+      <h4 data-i18n="ftr.col1t">Sahifalar</h4>
+      <a href="#top" data-i18n="ftr.l1">Bosh sahifa</a>
+      <a href="#cast" data-i18n="ftr.l2">Cast</a>
+      <a href="#auth" data-i18n="ftr.l3">Kirish</a>
+      <a href="#auth" data-i18n="ftr.l4">Ro'yxatdan o'tish</a>
+      <a href="index.html" data-i18n="ftr.teachers">O'qituvchilar</a>
+    </div>
+    <div>
+      <h4 data-i18n="ftr.col2t">Hujjatlar</h4>
+      <a href="#" data-i18n="ftr.l5">Maxfiylik siyosati</a>
+      <a href="#" data-i18n="ftr.l6">Foydalanish shartlari</a>
+      <a href="#" data-i18n="ftr.l7">Xavfsizlik</a>
+      <a href="#" data-i18n="ftr.l8">Qonuniy ma'lumot</a>
+    </div>
+    <div id="kontakt">
+      <h4 data-i18n="ftr.col3t">Aloqa</h4>
+      <a href="#">hello@deborah.uz</a>
+      <a href="#" data-i18n="ftr.l9">Status</a>
+    </div>
+    <div>
+      <h4 data-i18n="ftr.col4t">Til</h4>
+      <a href="#" data-lang2="uz">O'zbekcha</a>
+      <a href="#" data-lang2="ru">Русский</a>
+      <a href="#" data-lang2="en">English</a>
+    </div>
+  </div>
+  <div class="ftr-copy">
+    <span data-i18n="ftr.legal">© 2026 Deborah · Savolni sinf ekraniga uzatish tizimi</span>
+    <span>UZ / RU / EN</span>
+  </div>
+</footer>
+<script>
+(function(){
+  'use strict';
+  /* ═══ I18N ═══ */
+  var I18N={
+  uz:{
+    'hdr.kirish':'Kirish',
+    'hm.kirish':'Kirish','hm.cast':'Cast','hm.documents':'Hujjatlar',
+    'join.k':"Tayyor cast",
+    'join.h3':"Castga <em>kirish</em>",
+    'join.p':'Kodni kiriting.',
+    'join.err':'Kod 5–7 xonadan iborat raqam bo\'lishi kerak.',
+    'join.go':'Kirish',
+    'join.load':'Ulanmoqda… <i></i>',
+    'join.ok':"Siz castga ulandingiz. Savol kutilmoqda.",
+    'nav.cast':'Cast','nav.kirish':'Kirish',
+    'head.kicker':'Savolni sinf ekraniga uzatish',
+    'head.h1':'Savol — <em>ekranda</em>. Javob — telefonda.',
+    'head.p':"Bir tugma bilan savol sinf ekraniga uzatiladi. Javoblar real vaqtda yig'iladi.",
+    'beam.tx':'uzatilmoqda…',
+    'live.live':'jonli',
+    'live.q':"SQL'da jadvaldan takroriy yozuvlarni olib tashlab, faqat unikallarini qaytaruvchi operator qaysi?",
+    'live.cap':'Response mosaic · 42 javob',
+    'live.dev':'Dominant xato: B · 43%',
+    'live.f1':'Savol cast qilindi','live.f2':"javoblar yig'ilmoqda",
+    'under':'Bu — <b>cast</b>: savol ekranda, javoblar telefonda. Har bir savol shu tarzda uzatiladi.',
+    'auth.k':"Kirish va ro'yxatdan o'tish",'auth.h2':'Tizimga kirish','auth.t1':'Kirish','auth.t2':"Ro'yxatdan o'tish",'auth.login':'Kirish','auth.register':"Ro'yxatdan o'tish",'auth.doneReg':"Ro'yxatdan o'tdingiz. Endi tizimga kira olasiz.",
+    'auth.google':'Google bilan kirish','auth.oneid':'OneID bilan kirish','auth.or':'yoki email bilan',
+    'auth.name':'Ism va familiya','auth.email':'Email','auth.pass':'Parol',
+    'auth.doneLogin':'Kirish ruxsat tasdiqlangach ochiladi.',
+    'admin.btn':'Admin','admin.k':'Admin panel','admin.h3':'Administrator <em>kirishi</em>','admin.p':'Faqat administratorlar uchun.',
+    'admin.loginL':'Login','admin.passL':'Parol','admin.go':'Kirish','admin.err':'Login yoki parol xato.','admin.ok':'Kirish muvaffaqiyatli',
+    'ftr.col1t':'Sahifalar','ftr.l1':'Bosh sahifa','ftr.l2':'Cast','ftr.l3':'Kirish','ftr.l4':"Ro'yxatdan o'tish",
+'ftr.teachers':"O'qituvchilar",
+    'ftr.col2t':'Hujjatlar','ftr.l5':'Maxfiylik siyosati','ftr.l6':'Foydalanish shartlari','ftr.l7':'Xavfsizlik','ftr.l8':'Qonuniy ma\'lumot',
+    'ftr.col3t':'Aloqa','ftr.l9':'Status',
+    'ftr.col4t':'Til',
+    'ftr.legal':'© 2026 Deborah · Savolni sinf ekraniga uzatish tizimi'
+  },
+  ru:{
+    'hdr.kirish':'Вход',
+    'hm.kirish':'Вход','hm.cast':'Cast','hm.documents':'Документы',
+    'join.k':'Готовый cast',
+    'join.h3':'Вход в <em>cast</em>',
+    'join.p':'Введите код.',
+    'join.err':'Код должен состоять из 5–7 цифр.',
+    'join.go':'Войти',
+    'join.load':'Подключение… <i></i>',
+    'join.ok':'Вы вошли в cast. Ожидайте вопрос.',
+    'nav.cast':'Cast','nav.kirish':'Вход',
+    'head.kicker':'Трансляция вопроса на экран аудитории',
+    'head.h1':'Вопрос — <em>на экране</em>. Ответ — в телефоне.',
+    'head.p':'Одним действием вопрос выводится на экран аудитории. Ответы собираются в реальном времени.',
+    'beam.tx':'передаётся…',
+    'live.live':'в эфире',
+    'live.q':'Какой оператор SQL удаляет повторяющиеся записи и возвращает только уникальные?',
+    'live.cap':'Response mosaic · 42 ответа',
+    'live.dev':'Доминирующая ошибка: B · 43%',
+    'live.f1':'Вопрос транслирован','live.f2':'ответы собираются',
+    'under':'Это — <b>cast</b>: вопрос на экране, ответы в телефоне. Так передаётся каждый вопрос.',
+    'auth.k':'Вход и регистрация','auth.h2':'Вход в систему','auth.t1':'Вход','auth.t2':'Регистрация','auth.login':'Вход','auth.register':'Регистрация','auth.doneReg':'Вы зарегистрированы. Теперь можете войти.',
+    'auth.google':'Войти через Google','auth.oneid':'Войти через OneID','auth.or':'или по email',
+    'auth.name':'Имя и фамилия','auth.email':'Email','auth.pass':'Пароль',
+    'auth.login':'Вход','auth.register':'Отправить запрос администратору',
+    'auth.doneLogin':'Вход откроется после подтверждения доступа.',
+    'admin.btn':'Admin','admin.k':'Панель админа','admin.h3':'Вход <em>администратора</em>','admin.p':'Только для администраторов.',
+    'admin.loginL':'Логин','admin.passL':'Пароль','admin.go':'Войти','admin.err':'Неверный логин или пароль.','admin.ok':'Вход успешен',
+    'ftr.col1t':'Страницы','ftr.l1':'Главная','ftr.l2':'Cast','ftr.l3':'Вход','ftr.l4':'Регистрация',
+'ftr.teachers':'Преподавателям',
+    'ftr.col2t':'Документы','ftr.l5':'Политика конфиденциальности','ftr.l6':'Условия использования','ftr.l7':'Безопасность','ftr.l8':'Правовая информация',
+    'ftr.col3t':'Контакты','ftr.l9':'Статус',
+    'ftr.col4t':'Язык',
+    'ftr.legal':'© 2026 Deborah · Система трансляции вопроса на экран'
+  },
+  en:{
+    'hdr.kirish':'Sign in',
+    'hm.kirish':'Sign in','hm.cast':'Cast','hm.documents':'Documents',
+    'join.k':'Ready cast',
+    'join.h3':'Join the <em>cast</em>',
+    'join.p':'Enter the code.',
+    'join.err':'The code must be a 5–7 digit number.',
+    'join.go':'Join',
+    'join.load':'Connecting… <i></i>',
+    'join.ok':'You joined the cast. Waiting for the question.',
+    'nav.cast':'Cast','nav.kirish':'Sign in',
+    'head.kicker':'Cast a question to the class screen',
+    'head.h1':'Question — <em>on screen</em>. Answer — on phone.',
+    'head.p':'With one action the question appears on the class screen. Answers are collected in real time.',
+    'beam.tx':'casting…',
+    'live.live':'live',
+    'live.q':'Which SQL operator removes duplicate rows and returns only unique ones?',
+    'live.cap':'Response mosaic · 42 answers',
+    'live.dev':'Dominant error: B · 43%',
+    'live.f1':'Question cast','live.f2':'collecting answers',
+    'under':'This is <b>cast</b>: question on screen, answers on phones. Every question is delivered this way.',
+    'auth.k':'Sign in & register','auth.h2':'Sign in','auth.t1':'Sign in','auth.t2':'Register','auth.login':'Sign in','auth.register':'Register','auth.doneReg':'You are registered. You can now sign in.',
+    'auth.google':'Sign in with Google','auth.oneid':'Sign in with OneID','auth.or':'or with email',
+    'auth.name':'Full name','auth.email':'Email','auth.pass':'Password',
+    'auth.login':'Sign in','auth.register':'Send request to admin',
+    'auth.doneLogin':'Sign-in opens after access approval.',
+    'admin.btn':'Admin','admin.k':'Admin panel','admin.h3':'Administrator <em>sign-in</em>','admin.p':'Administrators only.',
+    'admin.loginL':'Login','admin.passL':'Password','admin.go':'Sign in','admin.err':'Wrong login or password.','admin.ok':'Sign-in successful',
+    'ftr.col1t':'Pages','ftr.l1':'Home','ftr.l2':'Cast','ftr.l3':'Sign in','ftr.l4':'Register',
+'ftr.teachers':'For instructors',
+    'ftr.col2t':'Documents','ftr.l5':'Privacy policy','ftr.l6':'Terms of use','ftr.l7':'Security','ftr.l8':'Legal notice',
+    'ftr.col3t':'Contact','ftr.l9':'Status',
+    'ftr.col4t':'Language',
+    'ftr.legal':'© 2026 Deborah · Cast questions to the class screen'
+  }};
+  var TITLES={uz:'Deborah — savolni sinf ekraniga uzatish',ru:'Deborah — трансляция вопроса на экран',en:'Deborah — cast questions to the class screen'};
+  function applyLang(lang){
+    var d=I18N[lang]||I18N.uz;
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var k=el.getAttribute('data-i18n');
+      if(d[k]!==undefined)el.innerHTML=d[k];
+    });
+    document.documentElement.setAttribute('lang',lang);
+    document.title=TITLES[lang]||d.title;
+    document.querySelectorAll('.lang button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-lang')===lang);});
+    try{localStorage.setItem('deborah-lang',lang);}catch(e){}
+  }
+  function applyTheme(t){
+    document.documentElement.setAttribute('data-theme',t);
+    try{localStorage.setItem('deborah-theme',t);}catch(e){}
+  }
+  var savedLang='uz',savedTheme='dark';
+  try{
+    savedLang=localStorage.getItem('deborah-lang')||'uz';
+    savedTheme=localStorage.getItem('deborah-theme')||'dark';
+  }catch(e){}
+  applyTheme(savedTheme);
+  applyLang(savedLang);
+  document.querySelectorAll('.lang button').forEach(function(b){
+    b.addEventListener('click',function(){applyLang(b.getAttribute('data-lang'));});
+  });
+  document.querySelectorAll('[data-lang2]').forEach(function(a){
+    a.addEventListener('click',function(e){e.preventDefault();applyLang(a.getAttribute('data-lang2'));});
+  });
+  /* O'yinga kirish (kod) */
+  var joinOv=document.getElementById('joinOverlay');
+  var joinCode=document.getElementById('jcode');
+  var joinErr=document.getElementById('joinErr');
+  var joinGo=document.getElementById('joinGo');
+  var joinMsg=document.getElementById('joinMsg');
+  function openJoin(){joinOv.classList.add('open');joinCode.value='';joinErr.classList.remove('show');joinMsg.classList.remove('show');joinGo.style.display='inline-block';setTimeout(function(){joinCode.focus();},80);}
+  function closeJoin(){joinOv.classList.remove('open');}
+  document.getElementById('joinClose').addEventListener('click',closeJoin);
+  joinOv.addEventListener('click',function(e){if(e.target===joinOv)closeJoin();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&joinOv.classList.contains('open'))closeJoin();});
+  joinCode.addEventListener('input',function(){
+    joinCode.value=joinCode.value.replace(/\D/g,'').slice(0,7);
+    joinErr.classList.remove('show');
+  });
+  joinGo.addEventListener('click',function(){
+    var v=joinCode.value.trim();
+    if(v.length<5||v.length>7){joinErr.classList.add('show');joinCode.focus();return;}
+    joinGo.style.display='none';joinErr.classList.remove('show');
+    joinMsg.classList.remove('show');joinMsg.classList.add('show');
+    joinMsg.querySelector('.ok').style.display='none';
+    joinMsg.querySelector('.load').style.display='flex';
+    setTimeout(function(){
+      joinMsg.querySelector('.load').style.display='none';
+      joinMsg.querySelector('.ok').style.display='block';
+    },1300);
+  });
+  /* Cast -> join oynasi */
+  document.querySelectorAll('.nav a[href="#cast"], #hmenu a[href="#cast"]').forEach(function(a){
+    a.addEventListener('click',function(e){e.preventDefault();openJoin();});
+  });
+  /* Hamburger menyu */
+  var hbtn=document.getElementById('hbtn'),hmenu=document.getElementById('hmenu');
+  hbtn.addEventListener('click',function(e){
+    e.stopPropagation();
+    hmenu.classList.toggle('open');
+  });
+  document.addEventListener('click',function(e){
+    if(!hmenu.contains(e.target)&&e.target!==hbtn)hmenu.classList.remove('open');
+  });
+  hmenu.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click',function(){hmenu.classList.remove('open');});
+  });
+  /* Admin login — FAQAT login (ro'yxatdan o'tish yo'q) */
+  var adminOverlay=document.getElementById('adminOverlay');
+  var adminForm=document.getElementById('adminForm');
+  var adminErr=document.getElementById('adminErr');
+  function openAdmin(){adminOverlay.classList.add('open');adminErr.classList.remove('show');adminForm.reset();setTimeout(function(){var f=document.getElementById('aLogin');if(f)f.focus();},120);}
+  function closeAdmin(){adminOverlay.classList.remove('open');}
+  document.getElementById('adminBtn').addEventListener('click',function(e){e.stopPropagation();openAdmin();});
+  document.getElementById('adminClose').addEventListener('click',closeAdmin);
+  adminOverlay.addEventListener('click',function(e){if(e.target===adminOverlay)closeAdmin();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&adminOverlay.classList.contains('open'))closeAdmin();});
+  adminForm.addEventListener('submit',function(e){
+    e.preventDefault();
+    var login=document.getElementById('aLogin').value.trim();
+    var pass=document.getElementById('aPass').value;
+    // Demo: admin/admin — faqat namoyish uchun
+    if(login==='admin'&&pass==='admin'){
+      adminErr.classList.remove('show');
+      var d=I18N[document.documentElement.getAttribute('lang')]||I18N.uz;
+      adminErr.style.color='var(--green)';
+      adminErr.textContent=d['admin.ok']||'Kirish muvaffaqiyatli';
+      adminErr.classList.add('show');
+      setTimeout(function(){
+        closeAdmin();
+        adminErr.classList.remove('show');
+        adminErr.style.color='';
+        adminErr.textContent=d['admin.err']||'Login yoki parol xato.';
+      },1400);
+    }else{
+      adminErr.style.color='';
+      adminErr.textContent=I18N[document.documentElement.getAttribute('lang')]||I18N.uz;
+      adminErr.textContent=(I18N[document.documentElement.getAttribute('lang')]||I18N.uz)['admin.err'];
+      adminErr.classList.add('show');
+    }
+  });
+  /* Kirish / Ro'yxatdan o'tish */
+  var tabs=document.querySelectorAll('.tabs button');
+  var fLogin=document.getElementById('fLogin'),fReg=document.getElementById('fReg');
+  tabs.forEach(function(b){
+    b.addEventListener('click',function(){
+      var t=b.getAttribute('data-tab');
+      tabs.forEach(function(x){x.classList.toggle('on',x===b);});
+      fLogin.style.display=(t==='login')?'block':'none';
+      fReg.style.display=(t==='reg')?'block':'none';
+    });
+  });
+  document.querySelectorAll('.provider').forEach(function(b){
+    b.addEventListener('click',function(){
+      var msg=b.closest('form').querySelector('.auth-msg');
+      msg.classList.add('show');
+      setTimeout(function(){msg.classList.remove('show');},4200);
+    });
+  });
+  var doneReg=document.getElementById('doneReg');
+  document.getElementById('fReg').addEventListener('submit',function(e){
+    e.preventDefault();
+    var d=I18N[document.documentElement.getAttribute('lang')]||I18N.uz;
+    doneReg.textContent=d['auth.doneReg'];
+    doneReg.classList.add('show');
+    setTimeout(function(){doneReg.classList.remove('show');},5000);
+  });
+  /* Tema almashish — yumshoq o'tish */
+  var fx=document.getElementById('modeFx');
+  document.getElementById('themeBtn').addEventListener('click',function(){
+    var next=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';
+    var oldBg=getComputedStyle(document.body).backgroundColor;
+    fx.style.transition='none';
+    fx.style.background=oldBg;
+    fx.style.opacity='1';
+    void fx.offsetWidth;
+    applyTheme(next);
+    fx.style.transition='opacity .5s ease';
+    fx.style.opacity='0';
+  });
+  /* ── Mosaic (mini) ── */
+  var mini=document.getElementById('mini');
+  var cells=[];
+  (function(){
+    var dist=[20,43,27,10],n=42,arr=[];
+    dist.forEach(function(d,i){var c=Math.round(d*n/100);for(var k=0;k<c;k++)arr.push(i);});
+    while(arr.length<n)arr.push(-1);
+    for(var i=arr.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=arr[i];arr[i]=arr[j];arr[j]=t;}
+    var cls=['cr','gd','gr','bl'];
+    arr.forEach(function(v){
+      var d=document.createElement('div');
+      d.className='cell'+(v<0?'':' '+cls[v]);
+      d.style.opacity=0;
+      mini.appendChild(d);cells.push(d);
+    });
+  })();
+  /* ── Cast demo: avtomatik aylanish ── */
+  var q=document.getElementById('q');
+  var optEls=document.querySelectorAll('[data-opt]');
+  var bars=document.querySelectorAll('.opt .track i');
+  var cap=document.querySelector('.cap');
+  var devnote=document.getElementById('devnote');
+  var beam=document.getElementById('beam');
+  var T={q:1300,opts:2100,bars:3000,mosaic:3200,note:4300,total:9000};
+  var timers=[];
+  function clearT(){timers.forEach(clearTimeout);timers=[];}
+  function reset(){
+    clearT();
+    beam.style.opacity=0;
+    q.classList.remove('in');
+    optEls.forEach(function(o){o.classList.remove('in');});
+    cap.classList.remove('in');
+    devnote.style.opacity=0;
+    bars.forEach(function(b){b.style.width='0';});
+    cells.forEach(function(c){c.style.opacity=0;c.style.transitionDelay='0s';});
+  }
+  var cycles=0,MAX_CYCLES=2;
+  function run(){
+    reset();
+    cycles++;
+    timers.push(setTimeout(function(){beam.style.opacity=1;},120));
+    timers.push(setTimeout(function(){beam.style.opacity=0;q.classList.add('in');},T.q));
+    optEls.forEach(function(o,ix){
+      timers.push(setTimeout(function(){o.classList.add('in');},T.opts+ix*140));
+    });
+    timers.push(setTimeout(function(){
+      cap.classList.add('in');
+      bars.forEach(function(b){b.style.width=b.getAttribute('data-w')+'%';});
+    },T.bars));
+    cells.forEach(function(c,ix){
+      timers.push(setTimeout(function(){c.style.transitionDelay=(ix%10)*90+'ms';c.style.opacity=1;},T.mosaic));
+    });
+    timers.push(setTimeout(function(){devnote.style.opacity=1;},T.note));
+    if(cycles<MAX_CYCLES){timers.push(setTimeout(run,T.total));}
+  }
+  var t=84;
+  setInterval(function(){
+    t--;if(t<0)t=0;
+    var m=('0'+Math.floor(t/60)).slice(-2),s=('0'+(t%60)).slice(-2);
+    document.getElementById('scTime').textContent=m+':'+s;
+  },1000);
+  setTimeout(run,700);
+})();
+</script>
+</body>
+</html>
