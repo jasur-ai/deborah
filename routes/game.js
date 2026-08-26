@@ -84,10 +84,18 @@ async function loadGameQuestions(source, key, chunk) {
   return { questions, testName };
 }
 
-// ── VIP gate: only allow VIP users for mock/pre sources ──
+// ── VIP gate: mock/pre manbalarini HOST qilish — faqat TEACHER/ADMIN + VIP ──
+// Foydalanuvchi qarori 2026-08-26: user-VIP va teacher-VIP BIR XIL EMAS.
+// Talaba VIP = panel'da mock/pre kutubxonasi (routes/user.js /panel).
+// Teacher VIP = mock/pre manbasidan o'yin HOST qilish (bu yer). VIP talaba
+// /host'ga ursa — 404 (yashirin, vip.js paradigmasi).
 function vipGateForMockPre(req, res, next) {
   const { source } = req.query;
   if (source === 'mock' || source === 'pre') {
+    const role = req.session?.user?.role;
+    if (role !== 'teacher' && role !== 'admin') {
+      return res.status(404).render('error', { title: '404', message: 'Sahifa topilmadi', status: 404 });
+    }
     return requireVip(req, res, next);
   }
   next();

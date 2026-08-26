@@ -242,8 +242,12 @@
       redirect:'follow',
       credentials:'same-origin'
     }).then(function(r){
-      if(r.redirected&&/admin\/(dashboard|$)/.test(r.url)&&!/login/.test(r.url)){
-        window.location.href='/admin/dashboard';
+      /* MFA oqimi (/admin/mfa/enroll yoki /admin/mfa) = parol TO'G'RI belgisi —
+         yakuniy URL admin zonasida va /admin/login emas = muvaffaqiyat. */
+      var path='';
+      try{path=new URL(r.url).pathname;}catch(_){path=r.url||'';}
+      if(r.ok&&path.indexOf('/admin')===0&&path!=='/admin/login'){
+        window.location.href=r.url;
       }else{
         adminErr.style.color='';
         adminErr.textContent=d['admin.err'];
