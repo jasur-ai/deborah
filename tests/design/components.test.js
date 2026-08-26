@@ -77,9 +77,9 @@ describe('STEP 12 — Base component library (F2)', () => {
       expect(m[0]).not.toContain('linear-gradient');
     });
 
-    it('landing.css .ld-btn-primary solid', () => {
+    it('landing.css primary tugma (btn-gold) solid', () => {
       const css = rd('public/css/landing.css');
-      const m = css.match(/\.ld-btn-primary\s*\{[^}]*\}/);
+      const m = css.match(/\.btn-gold\s*\{[^}]*\}/) || css.match(/\.ld-btn-primary\s*\{[^}]*\}/);
       expect(m).toBeTruthy();
       expect(m[0]).not.toContain('linear-gradient');
     });

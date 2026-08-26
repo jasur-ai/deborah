@@ -81,8 +81,9 @@ function installHemisMock() {
 }
 
 // ── Auth helpers (A-01 pattern) ──
-async function getCsrf(cookie) {
+async function getCsrf(cookie, xff) {
   const headers = cookie ? { cookie } : {};
+  if (xff) headers['x-forwarded-for'] = xff;
   const res = await fetch(`${serverUrl}/user/login`, { headers });
   const html = await res.text();
   const m = html.match(/name="_csrf" value="([^"]+)"/);
@@ -92,10 +93,10 @@ async function getCsrf(cookie) {
   return { csrf, cookie: c };
 }
 
-async function postForm(path, cookie, body) {
+async function postForm(path, cookie, body, xff) {
   return fetch(`${serverUrl}${path}`, {
     method: 'POST',
-    headers: { 'content-type': 'application/x-www-form-urlencoded', cookie },
+    headers: { 'content-type': 'application/x-www-form-urlencoded', cookie, ...(xff ? { 'x-forwarded-for': xff } : {}) },
     redirect: 'manual',
     body: new URLSearchParams(body).toString(),
   });
@@ -120,10 +121,10 @@ async function registerAndLogin() {
   return { uname, userKey: key, cookie: cookieL, csrf: g.csrf };
 }
 
-async function apiPost(cookie, csrf, path, body) {
+async function apiPost(cookie, csrf, path, body, xff) {
   return fetch(`${serverUrl}${path}`, {
     method: 'POST',
-    headers: { 'content-type': 'application/json', cookie, 'x-csrf-token': csrf || '' },
+    headers: { 'content-type': 'application/json', cookie, 'x-csrf-token': csrf || '', ...(xff ? { 'x-forwarded-for': xff } : {}) },
     redirect: 'manual',
     body: JSON.stringify(body || {}),
   });
@@ -148,7 +149,7 @@ describe('AUTH C-10 — HEMIS REST link flow', () => {
     installHemisMock();
     hemisFailLogin = false;
     hemisId = `3241${String(Date.now()).slice(-8)}`;
-    const { userKey, cookie, csrf } = await registerAndLogin();
+    const { userKey, cookie, csrf, ip } = await registerAndLogin();
 
     // status — hali bog'lanmagan
     let st = await fetch(`${serverUrl}/api/auth/hemis/status`, { headers: { cookie } });
@@ -204,7 +205,7 @@ describe('AUTH C-10 — HEMIS REST link flow', () => {
     installHemisMock();
     hemisFailLogin = true;
     hemisId = `4101${String(Date.now()).slice(-8)}`;
-    const { cookie, csrf } = await registerAndLogin();
+    const { cookie, csrf, ip } = await registerAndLogin();
     const res = await apiPost(cookie, csrf, '/api/auth/hemis/link', {
       login: hemisId, password: 'noto-ri',
     });
@@ -220,10 +221,10 @@ describe('AUTH C-10 — HEMIS REST link flow', () => {
     const a = await registerAndLogin();
     const b = await registerAndLogin();
     // A birinchi bog'laydi
-    let res = await apiPost(a.cookie, a.csrf, '/api/auth/hemis/link', { login: hemisId, password: 'x' });
+    let res = await apiPost(a.cookie, a.csrf, '/api/auth/hemis/link', { login: hemisId, password: 'x' }, a.ip);
     expect(res.status).toBe(200);
     // B bog'lashga urinadi → 409
-    res = await apiPost(b.cookie, b.csrf, '/api/auth/hemis/link', { login: hemisId, password: 'x' });
+    res = await apiPost(b.cookie, b.csrf, '/api/auth/hemis/link', { login: hemisId, password: 'x' }, b.ip);
     expect(res.status).toBe(409);
     const body = await res.json();
     expect(body.error).toBe('hemis_already_linked');
@@ -238,13 +239,13 @@ describe('AUTH C-10 — HEMIS REST link flow', () => {
     // aks holda 1-urinish sessiyani aylantirib qolganlarini CSRF 403'ga tashlar edi.
     hemisFailLogin = true;
     hemisId = `6033${String(Date.now()).slice(-8)}`;
-    const { cookie, csrf } = await registerAndLogin();
+    const { cookie, csrf, ip } = await registerAndLogin();
     let lastStatus = 0;
     // checkLinkLimit per-user 10/15 daqiqa — 11-urinish 429
     for (let i = 0; i < 11; i++) {
       const res = await apiPost(cookie, csrf, '/api/auth/hemis/link', {
         login: hemisId, password: 'x',
-      });
+      }, ip);
       lastStatus = res.status;
     }
     expect(lastStatus).toBe(429);
@@ -254,14 +255,14 @@ describe('AUTH C-10 — HEMIS REST link flow', () => {
     installHemisMock();
     hemisFailLogin = false;
     hemisId = `7044${String(Date.now()).slice(-8)}`;
-    const { userKey, cookie, csrf } = await registerAndLogin();
-    const linkRes = await apiPost(cookie, csrf, '/api/auth/hemis/link', { login: hemisId, password: 'x' });
+    const { userKey, cookie, csrf, ip } = await registerAndLogin();
+    const linkRes = await apiPost(cookie, csrf, '/api/auth/hemis/link', { login: hemisId, password: 'x' }, ip);
     expect(linkRes.status).toBe(200);
     // Rotation'dan keyingi sessiya + csrf
     const newCookie = nextSession(linkRes);
     const g = await getCsrf(newCookie);
 
-    const res = await apiPost(newCookie, g.csrf, '/api/auth/hemis/unlink', {});
+    const res = await apiPost(newCookie, g.csrf, '/api/auth/hemis/unlink', {}, ip);
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.success).toBe(true);
@@ -281,8 +282,8 @@ describe('AUTH C-10 — HEMIS REST link flow', () => {
     installHemisMock();
     hemisFailLogin = false;
     hemisId = `8055${String(Date.now()).slice(-8)}`;
-    const { cookie, csrf } = await registerAndLogin();
-    const linkRes = await apiPost(cookie, csrf, '/api/auth/hemis/link', { login: hemisId, password: 'x' });
+    const { cookie, csrf, ip } = await registerAndLogin();
+    const linkRes = await apiPost(cookie, csrf, '/api/auth/hemis/link', { login: hemisId, password: 'x' }, ip);
     expect(linkRes.status).toBe(200);
     const newCookie = nextSession(linkRes);
 
