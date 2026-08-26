@@ -168,9 +168,10 @@ describe('AUTH C-09 — audit dashboard', () => {
       }
       const now = Date.now();
       const sent = [];
-      const opts = { now, threshold: 3, windowMs: 60000, cooldownMs: 3600000, send: (msg) => { sent.push(msg); return Promise.resolve({ ok: true }); } };
+      const opts = { now, threshold: 3, windowMs: 60000, cooldownMs: 3600000, windowKey: 'c09-idempotent-test', send: (msg) => { sent.push(msg); return Promise.resolve({ ok: true }); } };
       await runFailSpikeAlert(opts);
-      // 30 soniya keyin yana — cooldown (1 soat) hali aktiv
+      // 30 soniya keyin yana — cooldown (1 soat) hali aktiv. windowKey aniq
+      // beriladi: now+30s soatlik bucket chegarasidan o'tsa flaky bo'lardi.
       await runFailSpikeAlert({ ...opts, now: now + 30000 });
       expect(sent.length).toBe(1); // faqat birinchi marta
     });

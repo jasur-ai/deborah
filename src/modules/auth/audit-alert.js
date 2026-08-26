@@ -46,9 +46,13 @@ export async function runFailSpikeAlert({
   windowMs = ALERT_WINDOW_MS,
   cooldownMs = ALERT_COOLDOWN_MS,
   send = null,
+  windowKey: windowKeyOpt = null,
 } = {}) {
   const from = now - windowMs;
-  const windowKey = new Date(now).toISOString().slice(0, 13); // soatlik window
+  // Soatlik window (UTC). Test'lar aniq kalit uzatishi mumkin — aks holda
+  // soat chegarasiga yaqin run'da now+Δ keyingi soatga o'tib, idempotent
+  // cooldown testi flaky bo'ladi (C-09 §10).
+  const windowKey = windowKeyOpt || new Date(now).toISOString().slice(0, 13);
 
   // 1) So'nggi window ichidagi fail/lockout/abuse hodisalarini sanaymiz
   let failCount = 0;
