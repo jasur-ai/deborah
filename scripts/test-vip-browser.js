@@ -159,7 +159,7 @@ async function loginAs(username, password, admin = false) {
       const regPage = await request('GET', loginPage);
       csrfToken = extractCsrf(regPage.body);
       if (!csrfToken) return false;
-      const reg = await request('POST', loginPage, { username, password, mode: 'reg' });
+      const reg = await request('POST', loginPage, { username, password, mode: 'reg', consent: 'on', email: `${username}_${Date.now()}@test.uz` });
       if (reg.status === 302) {
         // Register sessiyani regenerate qildi — yangi token kerak
         const dest = admin ? '/admin/dashboard' : '/user/panel';
@@ -255,7 +255,7 @@ async function main() {
     // sardor user'ini yaratamiz (agar mavjud bo'lmasa) — test DB holatidan
     // mustaqil bo'lishi uchun (CI'da toza DB, lokalda eski DB bo'lishi mumkin)
     await test('sardor user yaratish (register)', async () => {
-      const r = await request('POST', '/user/login', { username: 'sardor', password: '1234', mode: 'reg' });
+      const r = await request('POST', '/user/login', { username: 'sardor', password: '1234', mode: 'reg', consent: 'on', email: `sardor_${Date.now()}@test.uz` });
       // 302 = yaratildi/login bo'ldi; 200 = nom band (allaqachon bor) — ikkalasi ham OK
       const ok = r.status === 302 || r.status === 200;
       // Register sessiyani regenerate qiladi — yangi CSRF tokenni saqlaymiz

@@ -41,6 +41,17 @@ export function generateSeedData() {
     created_at: ago(60),
   };
 
+  // ── Test fixture user (test:vip — scripts/test-vip-browser.js sardor/1234
+  //    bilan login qiladi; parol siyosati 4-belgili registratsiyaga yo'l
+  //    qo'ymaydi, shuning uchun seed'dan beriladi. VIP emas — admin grant
+  //    qiladi (S33.03: parol o'zgarmaydi). ──
+  data.users['sardor'] = {
+    username: 'sardor',
+    password: hashPass('sardor', '1234'), // sardor / 1234
+    name: 'Sardor',
+    created_at: ago(18),
+  };
+
   // ── Test fixture user (e2e visual: user-panel screenshots) ──
   data.users['user'] = {
     username: 'user',

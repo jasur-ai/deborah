@@ -89,7 +89,7 @@ async function getCsrf(cookie, xff) {
   const m = html.match(/name="_csrf" value="([^"]+)"/);
   const m2 = html.match(/window\.__CSRF_TOKEN = '([^']+)'/);
   const csrf = m ? m[1] : m2 ? m2[1] : null;
-  const c = cookie || (res.headers.get('set-cookie') || '').split(';')[0];
+  const c = cookie || sidFrom(res);
   return { csrf, cookie: c };
 }
 
@@ -102,23 +102,44 @@ async function postForm(path, cookie, body, xff) {
   });
 }
 
+/** To'g'ri connect.sid olish — undici .get() ko'p set-cookie'ni vergul bilan
+ *  birlashtirib cookie header'ni buzadi (CSRF 403 cascade manbai). */
+function sidFrom(res) {
+  const list = res.headers.getSetCookie ? res.headers.getSetCookie() : [res.headers.get('set-cookie') || ''];
+  const flat = [].concat(list).flat();
+  const sid = flat.map((c) => String(c).split(';')[0]).find((c) => c.startsWith('connect.sid='));
+  return sid || (flat[0] ? String(flat[0]).split(';')[0] : '');
+}
+
+// AUTH C-01 izolyatsiyasi: har registerAndLogin noyob IP dan (XFF — auth.test.js
+// patterni; register burst 5/s per-IP backstop) + register/login javoblari
+// TEKSHIRILADI va transient xatoda 1 marta qayta uriniladi.
+let ipSeq = 0;
 async function registerAndLogin() {
-  const uname = `hemis_${Date.now() % 1000000}_${Math.floor(Math.random() * 1000)}`;
-  const { csrf: csrfR, cookie: cookieR } = await getCsrf();
-  await postForm('/user/login', cookieR, {
-    _csrf: csrfR, lang: 'uz', mode: 'reg', consent: 'on', username: uname, password: 'sirli-parol-2026',
-    email: `hemis_c10_${Date.now()}_${Math.floor(Math.random() * 1000000)}@test.uz`,
-  });
-  const { csrf, cookie } = await getCsrf();
-  // Login javobidagi set-cookie — session regenerate'dan keyingi YANGI sessiya
-  const loginRes = await postForm('/user/login', cookie, {
-    _csrf: csrf, lang: 'uz', mode: 'login', username: uname, password: 'sirli-parol-2026',
-  });
-  const cookieL = (loginRes.headers.get('set-cookie') || '').split(';')[0];
-  // Login'dan keyingi sessiya CSRF token'i
-  const g = await getCsrf(cookieL);
-  const key = safeKey(uname.toLowerCase());
-  return { uname, userKey: key, cookie: cookieL, csrf: g.csrf };
+  let lastErr = '';
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const ip = `198.51.100.${(ipSeq++ % 150) + 3}`;
+    const uname = `hemis_${Date.now() % 1000000}_${Math.floor(Math.random() * 1000)}_${attempt}`;
+    const { csrf: csrfR, cookie: cookieR } = await getCsrf(null, ip);
+    const reg = await postForm('/user/login', cookieR, {
+      _csrf: csrfR, lang: 'uz', mode: 'reg', consent: 'on', username: uname, password: 'sirli-parol-2026',
+      email: `hemis_c10_${Date.now()}_${Math.floor(Math.random() * 1000000)}@test.uz`,
+    }, ip);
+    if (reg.status !== 302) { lastErr = `register ${reg.status}`; continue; }
+    const { csrf, cookie } = await getCsrf(null, ip);
+    // Login javobidagi set-cookie — session regenerate'dan keyingi YANGI sessiya
+    const loginRes = await postForm('/user/login', cookie, {
+      _csrf: csrf, lang: 'uz', mode: 'login', username: uname, password: 'sirli-parol-2026',
+    }, ip);
+    const cookieL = sidFrom(loginRes);
+    if (!cookieL || loginRes.status !== 302) { lastErr = `login ${loginRes.status}`; continue; }
+    // Login'dan keyin sessiya CSRF token'i
+    const g = await getCsrf(cookieL, ip);
+    if (!g.csrf) { lastErr = 'csrf yoq'; continue; }
+    const key = safeKey(uname.toLowerCase());
+    return { uname, userKey: key, cookie: cookieL, csrf: g.csrf, ip };
+  }
+  throw new Error(`registerAndLogin failed: ${lastErr}`);
 }
 
 async function apiPost(cookie, csrf, path, body, xff) {
@@ -132,9 +153,8 @@ async function apiPost(cookie, csrf, path, body, xff) {
 
 /** Link'dan keyin sessiya aylanadi — yangi cookie + csrf'ni qaytaradi. */
 function nextSession(res) {
-  const sc = res.headers.get('set-cookie') || '';
-  const m = sc.match(/connect\.sid=[^;]+/);
-  return m ? m[0] : null;
+  const sid = sidFrom(res);
+  return sid.startsWith('connect.sid=') ? sid : null;
 }
 
 describe('AUTH C-10 — HEMIS REST link flow', () => {
@@ -159,7 +179,7 @@ describe('AUTH C-10 — HEMIS REST link flow', () => {
 
     const res = await apiPost(cookie, csrf, '/api/auth/hemis/link', {
       login: hemisId, password: 'top-secret',
-    });
+    }, ip);
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.success).toBe(true);
@@ -208,7 +228,7 @@ describe('AUTH C-10 — HEMIS REST link flow', () => {
     const { cookie, csrf, ip } = await registerAndLogin();
     const res = await apiPost(cookie, csrf, '/api/auth/hemis/link', {
       login: hemisId, password: 'noto-ri',
-    });
+    }, ip);
     expect(res.status).toBe(401);
     const body = await res.json();
     expect(body.error).toBe('invalid_credentials');
