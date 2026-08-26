@@ -235,7 +235,10 @@ describe('Landing — HTTP routing (DEMO 1:1 — tasdiqlangan demo versiyasi)', 
 
   it('DEMO — tema tugmasi (light/dark) va statik live-screen (no-JS)', async () => {
     const html = await (await fetch(`${serverUrl}/`)).text();
-    expect(html).toContain('class="theme-segmented"');
+    // Demo 1:1: header'dagi klassik oy/quyosh tugmasi (theme-segmented EMAS —
+    // demo'da unday narsa yo'q, faqat .tbtn #themeBtn)
+    expect(html).toContain('class="tbtn" id="themeBtn"');
+    expect(html).not.toContain('data-theme-state-btn');
     expect(html).toContain('class="screen reveal"');
     // Live screen statik kontenti server HTML'da (JS'siz ko'rinadi)
     expect(html).toContain('SELECT DISTINCT');
