@@ -25,7 +25,16 @@
     'live.f1':'Savol cast qilindi','live.f2':"javoblar yig'ilmoqda",
     'under':'Bu — <b>cast</b>: savol ekranda, javoblar telefonda. Har bir savol shu tarzda uzatiladi.',
     'auth.k':"Kirish va ro'yxatdan o'tish",'auth.h2':'Tizimga kirish','auth.t1':'Kirish','auth.t2':"Ro'yxatdan o'tish",'auth.login':'Kirish','auth.register':"Ro'yxatdan o'tish",'auth.doneReg':"Ro'yxatdan o'tdingiz. Endi tizimga kira olasiz.",
-    'auth.google':'Google bilan kirish','auth.oneid':'OneID bilan kirish','auth.or':'yoki email bilan',
+    'auth.google':'Google bilan kirish',
+    'auth.loginId':'Email yoki username',
+    'auth.username':'Username',
+    'auth.userFree':'✓ Bo\'sh — mos username',
+    'auth.userTaken':'Bu username band — boshqasini tanlang',
+    'auth.userReserved':'Bu nom tizim uchun ajratilgan',
+    'auth.userInvalid':'2–50 belgi: lotin harflari, raqam, . _ -',
+    'auth.passHint':'Kamida 8 belgi — harf va raqam',
+    'err.net':'Tarmoq xatosi — qayta urinib ko\'ring',
+    'err.wait':'Bir necha soniya kuting...','auth.oneid':'OneID bilan kirish','auth.or':'yoki email bilan',
     'auth.name':'Ism va familiya','auth.email':'Email','auth.pass':'Parol',
     'auth.doneLogin':'Kirish ruxsat tasdiqlangach ochiladi.',
     'admin.btn':'Admin','admin.k':'Admin panel','admin.h3':'Administrator <em>kirishi</em>','admin.p':'Faqat administratorlar uchun.',
@@ -61,7 +70,16 @@
     'live.f1':'Вопрос транслирован','live.f2':'ответы собираются',
     'under':'Это — <b>cast</b>: вопрос на экране, ответы в телефоне. Так передаётся каждый вопрос.',
     'auth.k':'Вход и регистрация','auth.h2':'Вход в систему','auth.t1':'Вход','auth.t2':'Регистрация','auth.login':'Вход','auth.register':'Регистрация','auth.doneReg':'Вы зарегистрированы. Теперь можете войти.',
-    'auth.google':'Войти через Google','auth.oneid':'Войти через OneID','auth.or':'или по email',
+    'auth.google':'Войти через Google',
+    'auth.loginId':'Email или имя пользователя',
+    'auth.username':'Имя пользователя',
+    'auth.userFree':'✓ Свободно — подходит',
+    'auth.userTaken':'Это имя занято — выберите другое',
+    'auth.userReserved':'Это имя зарезервировано системой',
+    'auth.userInvalid':'2–50 символов: латиница, цифры, . _ -',
+    'auth.passHint':'Минимум 8 символов — буквы и цифры',
+    'err.net':'Ошибка сети — попробуйте ещё раз',
+    'err.wait':'Подождите несколько секунд...','auth.oneid':'Войти через OneID','auth.or':'или по email',
     'auth.name':'Имя и фамилия','auth.email':'Email','auth.pass':'Пароль',
     'auth.login':'Вход','auth.register':'Отправить запрос администратору',
     'auth.doneLogin':'Вход откроется после подтверждения доступа.',
@@ -98,7 +116,16 @@
     'live.f1':'Question cast','live.f2':'collecting answers',
     'under':'This is <b>cast</b>: question on screen, answers on phones. Every question is delivered this way.',
     'auth.k':'Sign in & register','auth.h2':'Sign in','auth.t1':'Sign in','auth.t2':'Register','auth.login':'Sign in','auth.register':'Register','auth.doneReg':'You are registered. You can now sign in.',
-    'auth.google':'Sign in with Google','auth.oneid':'Sign in with OneID','auth.or':'or with email',
+    'auth.google':'Sign in with Google',
+    'auth.loginId':'Email or username',
+    'auth.username':'Username',
+    'auth.userFree':'✓ Available — good pick',
+    'auth.userTaken':'This username is taken — try another',
+    'auth.userReserved':'This name is reserved by the system',
+    'auth.userInvalid':'2–50 chars: letters, digits, . _ -',
+    'auth.passHint':'At least 8 characters — letters and digits',
+    'err.net':'Network error — please retry',
+    'err.wait':'Please wait a few seconds...','auth.oneid':'Sign in with OneID','auth.or':'or with email',
     'auth.name':'Full name','auth.email':'Email','auth.pass':'Password',
     'auth.login':'Sign in','auth.register':'Send request to admin',
     'auth.doneLogin':'Sign-in opens after access approval.',
@@ -192,6 +219,10 @@
   function openAdmin(){adminOverlay.classList.add('open');adminErr.classList.remove('show');adminForm.reset();setTimeout(function(){var f=document.getElementById('aLogin');if(f)f.focus();},120);}
   function closeAdmin(){adminOverlay.classList.remove('open');}
   document.getElementById('adminBtn').addEventListener('click',function(e){e.stopPropagation();openAdmin();});
+  /* Foydalanuvchi talabi: admin 3-chiziq (hamburger) menyu ichida ham */
+  document.querySelectorAll('#hmenu a[href="#admin"]').forEach(function(a){
+    a.addEventListener('click',function(e){e.preventDefault();openAdmin();});
+  });
   document.getElementById('adminClose').addEventListener('click',closeAdmin);
   adminOverlay.addEventListener('click',function(e){if(e.target===adminOverlay)closeAdmin();});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&adminOverlay.classList.contains('open'))closeAdmin();});
@@ -254,14 +285,67 @@
     });
   });
 
-  /* ═══ REAL: fReg — username=email sinxron, keyin native submit ═══ */
+  /* ═══ REAL: fReg — username LIVE tekshiruv (band/mavjud) ═══ */
   var doneReg=document.getElementById('doneReg');
-  fReg.addEventListener('submit',function(){
-    var rUser=document.getElementById('rUser');
-    var rEmail=document.getElementById('rEmail');
-    if(rUser&&rEmail){rUser.value=rEmail.value.trim().toLowerCase();}
+  var rUser=document.getElementById('rUser');
+  var rUserHint=document.getElementById('rUserHint');
+  var userState={ok:false,checked:''};
+  var userTimer=null;
+  function L(){return I18N[document.documentElement.getAttribute('lang')]||I18N.uz;}
+  rUser.addEventListener('input',function(){
+    var v=rUser.value.trim();
+    rUser.classList.remove('ok','err');rUserHint.className='fld-hint';rUserHint.textContent='';
+    userState={ok:false,checked:v};
+    clearTimeout(userTimer);
+    if(!v){return;}
+    if(v.length<2||v.length>50){rUser.classList.add('err');rUserHint.classList.add('err');rUserHint.textContent=L()['auth.userInvalid'];return;}
+    userTimer=setTimeout(function(){
+      fetch('/user/login/username-check?username='+encodeURIComponent(v),{credentials:'same-origin'})
+        .then(function(r){return r.json();})
+        .then(function(j){
+          if(userState.checked!==v||j.reason==='rate'){return;}
+          if(j.ok){rUser.classList.add('ok');rUserHint.classList.add('ok');rUserHint.textContent=L()['auth.userFree'];userState={ok:true,checked:v};}
+          else{rUser.classList.add('err');rUserHint.classList.add('err');rUserHint.textContent=L()[j.reason==='taken'?'auth.userTaken':j.reason==='reserved'?'auth.userReserved':'auth.userInvalid'];userState={ok:false,checked:v};}
+        }).catch(function(){});
+    },450);
   });
-  /* fLogin — native POST (action=/user/login). Lang input applyLang'da sinxron. */
+
+  /* ═══ REAL: fetch submit (X-Landing JSON rejimi) — xato JOYIDA, 2-panel YO'Q ═══ */
+  function submitAuth(formId,msgId,preCb){
+    var form=document.getElementById(formId);
+    var msg=document.getElementById(msgId);
+    var btn=form.querySelector('.auth-submit');
+    form.addEventListener('submit',function(e){
+      e.preventDefault();
+      var d=L();
+      if(preCb&&preCb(d)===false){return;}
+      btn.disabled=true;var old=btn.innerHTML;btn.textContent=d['err.wait']||'...';
+      msg.classList.remove('show');
+      fetch(form.getAttribute('action'),{
+        method:'POST',
+        headers:{'content-type':'application/x-www-form-urlencoded','X-Landing':'1'},
+        body:new URLSearchParams(new FormData(form)).toString(),
+        credentials:'same-origin'
+      }).then(function(r){return r.json().then(function(j){return {s:r.status,j:j};});})
+        .then(function(r){
+          if(r.j&&r.j.ok&&r.j.redirect){window.location.href=r.j.redirect;return;}
+          msg.textContent=(r.j&&r.j.error)||d['err.net'];
+          msg.classList.add('show');
+        })
+        .catch(function(){msg.textContent=d['err.net'];msg.classList.add('show');})
+        .then(function(){btn.disabled=false;btn.innerHTML=old;});
+    });
+  }
+  submitAuth('fLogin','doneLogin');
+  submitAuth('fReg','doneReg',function(d){
+    var v=rUser.value.trim();
+    if(v&&rUser.classList.contains('err')){
+      doneReg.textContent=rUserHint.textContent||d['auth.userInvalid'];
+      doneReg.classList.add('show');
+      return false;
+    }
+    return true;
+  });
 
   /* ═══ Tema — yumshoq o'tish (DeborahTheme engine) ═══ */
   var fx=document.getElementById('modeFx');

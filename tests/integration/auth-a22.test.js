@@ -61,42 +61,55 @@ describe('AUTH A-22 — NIST parol siyosati + HIBP + password change', () => {
     await new Promise((r) => httpServer.close(r));
   });
 
-  it('register zaif parol (12 belgi) → passwordMin xato (NIST min 15)', async () => {
+  it('register qisqa parol (7 belgi) → passwordMin xato (min 8, 2026-08-26)', async () => {
     const agent = supertest.agent(app);
     const uname = `a22w_${Date.now() % 1000000}`;
     const res = await registerUser(agent, {
       username: uname,
-      password: 'parol-2026-x', // 12 belgi
+      password: 'par2olx', // 7 belgi
       email: `${uname}@test.uz`,
     });
     const html = res.text;
-    expect(html).toContain('Parol kamida 15 ta belgi');
+    expect(html).toContain("Parol kamida 8 ta belgi");
     expect(html).toContain('data-field="password"');
     // User yaratilmagan
     const snap = await fb.get(`users/${uname}`);
     expect(snap.exists()).toBe(false);
   });
 
-  it('register faqat harfli uzun parol → QABUL (NIST complexity yo\'q)', async () => {
+  it('register faqat harfli uzun parol → RAD (harf+raqam shart, 2026-08-26)', async () => {
     const agent = supertest.agent(app);
     const uname = `a22l_${Date.now() % 1000000}`;
     const res = await registerUser(agent, {
       username: uname,
-      password: 'faqatharflardaniboratparol', // 27 harf, raqam/belgi yo'q
+      password: 'faqatharflardaniboratparol', // 27 harf, raqam yo'q
       email: `${uname}@test.uz`,
     });
-    // Muvaffaqiyat → panelga redirect (302)
+    const html = res.text;
+    expect(html).toContain('bitta harf va bitta raqam');
+    const snap = await fb.get(`users/${uname}`);
+    expect(snap.exists()).toBe(false);
+  });
+
+  it('register maxsus belgili parol → QABUL (belgi cheklovi YO\'Q)', async () => {
+    const agent = supertest.agent(app);
+    const uname = `a22s_${Date.now() % 1000000}`;
+    const res = await registerUser(agent, {
+      username: uname,
+      password: 'Parol!@#2026', // harf+raqam+istalgan belgilar
+      email: `${uname}@test.uz`,
+    });
     expect(res.status).toBe(302);
     const snap = await fb.get(`users/${uname}`);
     expect(snap.exists()).toBe(true);
   });
 
-  it('register Unicode (15 emoji) parol → QABUL (har code point 1 belgi)', async () => {
+  it('register Unicode parol (emoji+harf+raqam) → QABUL (code point hisobi)', async () => {
     const agent = supertest.agent(app);
     const uname = `a22u_${Date.now() % 1000000}`;
     const res = await registerUser(agent, {
       username: uname,
-      password: '😀'.repeat(15), // 15 code point
+      password: '😀😀😀😀parol2026', // emoji + harf + raqam
       email: `${uname}@test.uz`,
     });
     expect(res.status).toBe(302);
@@ -109,14 +122,14 @@ describe('AUTH A-22 — NIST parol siyosati + HIBP + password change', () => {
     const uname = `a22t_${Date.now() % 1000000}`;
     const res = await registerUser(agent, {
       username: uname,
-      password: 'aaaaaaaaaaaaaaaa', // uzun, lekin zxcvbn 0
+      password: 'aaaaaaaaaaaaaaaa1', // uzun + raqam, lekin zxcvbn juda past
       email: `${uname}@test.uz`,
       role: 'teacher',
       university: 'Toshkent Davlat Universiteti', // B-29: teacher maydonlari majburiy
       subject: 'Matematika',
     });
     const html = res.text;
-    expect(html).toContain('Parol juda zaif');
+    expect(html).toContain('bitta harf va bitta raqam');
     const snap = await fb.get(`users/${uname}`);
     expect(snap.exists()).toBe(false);
   });

@@ -145,7 +145,7 @@ describe('Auth — login/register flow (CSRF)', () => {
     expect(res.status).toBe(403);
   });
 
-  it('Register — qisqa parol rad etiladi (min 15, NIST)', async () => {
+  it('Register — qisqa parol rad etiladi (min 8, foydalanuvchi qarori 2026-08-26)', async () => {
     const { csrf, cookie } = await getCsrf();
     const res = await postForm('/user/login', cookie, {
       _csrf: csrf, lang: 'uz', mode: 'reg', consent: 'on',
@@ -153,7 +153,18 @@ describe('Auth — login/register flow (CSRF)', () => {
       username: `rs_${Date.now() % 100000}`, password: 'abc1',
     });
     const html = await res.text();
-    expect(html).toContain('Parol kamida 15 ta belgi');
+    expect(html).toContain("Parol kamida 8 ta belgi");
+  });
+
+  it('Register — harfsiz/raqamsiz parol rad etiladi (harf+raqam shart)', async () => {
+    const { csrf, cookie } = await getCsrf();
+    const res = await postForm('/user/login', cookie, {
+      _csrf: csrf, lang: 'uz', mode: 'reg', consent: 'on',
+      email: `r14_${Date.now()}_${Math.floor(Math.random() * 1000000)}_a18@test.uz`,
+      username: `rh_${Date.now() % 100000}`, password: 'faqatharflarqoldi',
+    });
+    const html = await res.text();
+    expect(html).toContain('bitta harf va bitta raqam');
   });
 
   it('Register — to\'liq login (harf+raqam, 8+)', async () => {

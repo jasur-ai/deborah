@@ -113,7 +113,7 @@ export const LEGAL_DOCS = {
           'Hisobingizdan foydalanish uchun siz javobgarsiz. Parolingizni hech kimga bermang.',
         ] },
         { id: 'password', heading: 'Parol siyosati', body: [
-          'Parol kamida 15 ta belgidan iborat boʼlishi tavsiya etiladi (muhim hisoblar uchun kamida 8 ta). Maksimal uzunlik — 128 belgi.',
+          'Parol kamida 8 ta belgidan iborat boʼlishi va harf hamda raqamni oʼz ichiga olishi kerak. Maksimal uzunlik — 128 belgi.',
           'Murakkablik talablari (maxsus belgi/raqam majburiyati) qoʼllanilmaydi — uzoq parol xavfsizroq. Kiritilgan parol maʼlum boʼlgan parol buzilishlari (breach) roʼyxatiga solishtiriladi.',
           'Parol faqat xesh koʼrinishida saqlanadi (argon2id); hech kim, jumladan operator ham, uni koʼra olmaydi.',
         ] },

@@ -2,9 +2,10 @@
  * AUTH A-22 — NIST SP 800-63B-4 parol siyosati
  *
  * Qoidalar:
- *  - Dynamic min uzunlik: MFA (twofa_enabled) yoqilgan → 8 belgi, aks holda 15 belgi (NIST).
+ *  - Min uzunlik: 8 belgi (foydalanuvchi qarori 2026-08-26 — 15 juda uzun deb bekor).
+ *  - Kamida bitta harf + bitta raqam (foydalanuvchi talabi). Belgilarga boshqa
+ *    cheklov YO'Q — maxsus belgi xohlagancha (NIST "shall not" bilan mos).
  *  - Max 128 belgi (OWASP ASVS) — silently truncate YO'Q, reject qilamiz.
- *  - Complexity talablari YO'Q (NIST SHALL NOT: "1 katta harf + 1 raqam + belgi").
  *  - Unicode: har Unicode code point 1 belgi (NIST) — [...s].length emas s.length.
  *  - zxcvbn (Dropbox) kuch indikatori 0-4; teacher/admin (requireStrong) uchun score >= 4.
  *  - Hints / security questions — yo'q.
@@ -12,7 +13,7 @@
 
 import zxcvbn from 'zxcvbn';
 
-export const POLICY_MIN_LENGTH = 15; // NIST: MFA'siz
+export const POLICY_MIN_LENGTH = 8; // Foydalanuvchi qarori (2026-08-26): min 8, harf+raqam
 export const POLICY_MIN_LENGTH_MFA = 8; // NIST: MFA bilan
 export const POLICY_MAX_LENGTH = 128; // OWASP ASVS
 
@@ -52,6 +53,12 @@ export function evaluatePassword(password, opts = {}) {
   const { mfa = false, requireStrong = false } = opts;
   const len = codePointLength(password || '');
   const min = mfa ? POLICY_MIN_LENGTH_MFA : POLICY_MIN_LENGTH;
+
+  // Foydalanuvchi talabi (2026-08-26): kamida bitta harf + bitta raqam.
+  // Belgilarga boshqa cheklov yo'q. zxcvbn'dan OLDIN — arzon tekshiruv.
+  if (len >= min && (!/\p{L}/u.test(password) || !/\p{Nd}/u.test(password))) {
+    return { ok: false, reason: 'passwordWeak', score: 0, min };
+  }
 
   // D-33 (perf): uzunlik chegaralarini zxcvbn'dan OLDIN tekshiramiz — 128+
   // belgili parolda zxcvbn juda sekin (DoS xavfi); register/parse chegarasi

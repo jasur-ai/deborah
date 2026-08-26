@@ -28,22 +28,22 @@ function mulberry32(seed) {
 }
 
 describe('D-33 property tests (seeded, §07/§25)', () => {
-  it('1) evaluatePassword invariant: qabul qilingan parol → len >= min (mfa=false: 15)', () => {
+  it('1) evaluatePassword invariant: qabul qilingan parol → len >= min (harf+raqam bilan)', () => {
     const rnd = mulberry32(42);
     for (let i = 0; i < 200; i++) {
       const len = 16 + Math.floor(rnd() * 40);
-      const pw = 'a'.repeat(len);
+      const pw = 'a'.repeat(len) + '9'; // harf+raqam — length'dan boshqa reject sababi yo'q
       const r = evaluatePassword(pw, { mfa: false });
       if (r.ok) expect(r.min).toBe(POLICY_MIN_LENGTH);
-      else if (r.reason === 'passwordMin') expect(len).toBeLessThan(POLICY_MIN_LENGTH);
+      else if (r.reason === 'passwordMin') expect(len + 1).toBeLessThan(POLICY_MIN_LENGTH);
     }
   });
 
-  it('2) evaluatePassword invariant: mfa=true → min 8', () => {
-    const r = evaluatePassword('short123', { mfa: true }); // 8 belgi
+  it('2) evaluatePassword invariant: min 8 — MFA holatidan qat\'i nazar', () => {
+    const r = evaluatePassword('short123', { mfa: true }); // 8 belgi, harf+raqam
     expect(r.ok).toBe(true);
     expect(r.min).toBe(POLICY_MIN_LENGTH_MFA);
-    const r2 = evaluatePassword('short123', { mfa: false }); // mfa'siz min 15
+    const r2 = evaluatePassword('short12', { mfa: false }); // 7 belgi — rad
     expect(r2.ok).toBe(false);
     expect(r2.reason).toBe('passwordMin');
   });

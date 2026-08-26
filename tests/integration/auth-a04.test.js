@@ -170,8 +170,8 @@ describe('AUTH A-04 — login sahifasi (OIDC yoqilgan server)', () => {
       username: `a04r_${Date.now() % 100000}`, password: 'abc1',
     });
     const html = await res.text();
-    // AUTH A-22 (NIST): min 8 → 15
-    expect(html).toContain('Parol kamida 15 ta belgi');
+    // Foydalanuvchi qarori (2026-08-26): min 8 (MFA'siz ham)
+    expect(html).toContain("Parol kamida 8 ta belgi");
     expect(html).toContain('data-field="password"');
     expect(html).toContain('err-reg-password');
   });

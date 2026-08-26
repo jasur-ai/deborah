@@ -94,9 +94,10 @@
 </div>
 <!-- HAMBURGER MENU -->
 <div class="hmenu" id="hmenu">
-  <a href="/user/login" data-i18n="hm.kirish">Kirish</a>
+  <a href="#auth" data-i18n="hm.kirish">Kirish</a>
   <a href="#cast" data-i18n="hm.cast">Cast</a>
   <a href="#kontakt" data-i18n="hm.documents">Hujjatlar</a>
+  <a href="#admin" data-i18n="admin.btn">Admin</a>
 </div>
 <!-- SAHIFA -->
 <main class="page" id="main">
@@ -162,17 +163,16 @@
           </button>
         </div>
         <div class="sep"><span data-i18n="auth.or">yoki email bilan</span></div>
-        <div class="fld"><label for="lEmail" data-i18n="auth.email">Email</label><input id="lEmail" name="username" type="email" autocomplete="email" required></div>
+        <div class="fld"><label for="lEmail" data-i18n="auth.loginId">Email yoki username</label><input id="lEmail" name="username" type="text" autocomplete="username" required></div>
         <div class="fld"><label for="lPass" data-i18n="auth.pass">Parol</label><input id="lPass" name="password" type="password" autocomplete="current-password" required></div>
         <button class="btn btn-gold auth-submit" type="submit" data-i18n="auth.login">Kirish</button>
-        <div class="auth-msg" data-i18n="auth.doneLogin"></div>
+        <div class="auth-msg" id="doneLogin"></div>
       </form>
       <form id="fReg" action="/user/login" method="POST" style="display:none">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <input type="hidden" name="mode" value="reg">
             <input type="hidden" name="consent" value="on">
             <input type="hidden" name="lang" value="<%= lang %>" id="regLang">
-            <input type="hidden" name="username" id="rUser">
         <div class="providers">
           <button class="provider provider-g" type="button" data-prov="google">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1Z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23Z"/><path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84Z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15A11 11 0 0 0 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52Z"/></svg>
@@ -186,7 +186,8 @@
         <div class="sep"><span data-i18n="auth.or">yoki email bilan</span></div>
         <div class="fld"><label for="rName" data-i18n="auth.name">Ism va familiya</label><input id="rName" name="name" type="text" autocomplete="name" required></div>
         <div class="fld"><label for="rEmail" data-i18n="auth.email">Email</label><input id="rEmail" name="email" type="email" autocomplete="email" required></div>
-        <div class="fld"><label for="rPass" data-i18n="auth.pass">Parol</label><input id="rPass" name="password" type="password" autocomplete="new-password" required></div>
+        <div class="fld"><label for="rUser" data-i18n="auth.username">Username</label><input id="rUser" name="username" type="text" autocomplete="username" spellcheck="false" minlength="2" maxlength="50" required><div class="fld-hint" id="rUserHint" aria-live="polite"></div></div>
+        <div class="fld"><label for="rPass" data-i18n="auth.pass">Parol</label><input id="rPass" name="password" type="password" autocomplete="new-password" minlength="8" required><div class="fld-hint dim" data-i18n="auth.passHint">Kamida 8 belgi — harf va raqam</div></div>
         <button class="btn btn-gold auth-submit" type="submit" data-i18n="auth.register">Ro'yxatdan o'tish</button>
         <div class="auth-msg" id="doneReg"></div>
       </form>
@@ -194,7 +195,7 @@
   </section>
 </main>
 <!-- FOOTER -->
-<footer class="ftr">
+<footer class="ftr" id="kontakt">
   <div class="ftr-in">
     <div>
       <h4 data-i18n="ftr.col1t">Sahifalar</h4>

@@ -242,3 +242,10 @@ h1 em{font-style:italic;color:var(--ld-gold2)}
    balandligini o'zgartiradi — demo 'normal' (UA) line-height'da chizilgan.
    Faqat landing elementlariga scope (boshqa sahifalarga ta'sir yo'q). ── */
 #auth input,#auth button,.tabs button,#joinOverlay input,#joinOverlay button,#adminOverlay input,#adminOverlay button{line-height:normal}
+
+/* ── Reg: username live hint (professional inline feedback) ── */
+.fld-hint{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.6rem;letter-spacing:.06em;margin-top:5px;min-height:0;color:var(--mut);text-transform:none}
+.fld-hint.ok{color:#7ca86b}
+.fld-hint.err{color:#c98a5c}
+input#rUser.ok{border-color:#7ca86b}
+input#rUser.err{border-color:#c98a5c}

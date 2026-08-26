@@ -254,6 +254,58 @@ describe('Landing — HTTP routing (CAST demo 1:1 — tasdiqlangan cast.html por
     expect(css).toContain('[data-theme');
   });
 
+  it('LANDING AUTH — username-check: mavjud/reserved/invalid/bo‘sh (real-time)', async () => {
+    const free = await (await fetch(`${serverUrl}/user/login/username-check?username=yangiuser${Date.now() % 100000}`)).json();
+    expect(free.ok).toBe(true);
+    expect(free.reason).toBeNull();
+    const resv = await (await fetch(`${serverUrl}/user/login/username-check?username=root`)).json();
+    expect(resv.ok).toBe(false);
+    expect(resv.reason).toBe('reserved');
+    const bad = await (await fetch(`${serverUrl}/user/login/username-check?username=a%40b`)).json();
+    expect(bad.ok).toBe(false);
+    expect(bad.reason).toBe('invalid');
+  });
+
+  it('LANDING AUTH — X-Landing JSON rejimi: xato inline (2-panelga tashlamaydi)', async () => {
+    const page = await fetch(`${serverUrl}/`);
+    const html = await page.text();
+    const csrf = (html.match(/name="_csrf" value="([a-f0-9]+)"/) || [])[1];
+    const cookie = page.headers.get('set-cookie')?.split(';')[0] || '';
+    const res = await fetch(`${serverUrl}/user/login`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded', 'X-Landing': '1', cookie },
+      body: new URLSearchParams({
+        _csrf: csrf, mode: 'reg', consent: 'on', lang: 'uz',
+        username: `json${Date.now() % 100000}`, email: `json${Date.now() % 100000}@test.uz`,
+        name: 'Json User', password: 'faqatharflar',
+      }).toString(),
+    });
+    expect(res.status).toBe(401);
+    const j = await res.json();
+    expect(j.ok).toBe(false);
+    expect(String(j.error)).toContain('harf va bitta raqam');
+    expect(j.form).toBe('register');
+  });
+
+  it('LANDING AUTH — reg formada KO\'RINADIGAN username maydoni + hint + loginId', async () => {
+    const html = await (await fetch(`${serverUrl}/`)).text();
+    // username endi visible input (hidden emas) — live tekshiruv bilan
+    expect(html).toMatch(/<input id="rUser" name="username" type="text"/);
+    expect(html).toContain('id="rUserHint"');
+    expect(html).toContain('data-i18n="auth.passHint"');
+    // login email YOKI username
+    expect(html).toContain('data-i18n="auth.loginId"');
+  });
+
+  it('LANDING HMENU — Admin 3-chiziq menyu ichida (foydalanuvchi qarori)', async () => {
+    const html = await (await fetch(`${serverUrl}/`)).text();
+    const m = html.match(/<div class="hmenu" id="hmenu">[\s\S]*?<\/div>/) || [''];
+    expect(m[0]).toContain('href="#admin"');
+    expect(m[0]).toContain('href="#auth"');
+    // footer kontakt anchor (demo #kontakt)
+    expect(html).toContain('<footer class="ftr" id="kontakt">');
+  });
+
   it('CAST — landing.js: i18n (uz/ru/en) + tema + real provider/join/admin mantiqi', async () => {
     const js = await (await fetch(`${serverUrl}/js/landing.js`)).text();
     expect(js).toContain('I18N');

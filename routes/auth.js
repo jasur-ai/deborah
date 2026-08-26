@@ -126,7 +126,8 @@ import { recordConsent, CONSENT_PURPOSES } from '../src/modules/legal/consent.js
 // AUTH D-05: auth span middleware — auth.login/register/mfa/reset trace'lar
 import { authSpanMiddleware } from '../src/telemetry/spans.js';
 // AUTH B-04: username normalizatsiya — login/register ikkalasida (case-insensitive)
-import { normalizeUsername } from '../src/modules/auth/username.js';
+import { normalizeUsername, isReserved, isConfusableReserved } from '../src/modules/auth/username.js';
+
 // AUTH B-14: teacher approval state machine — canonical ariza record
 import { submitTeacherApplication } from '../src/modules/auth/teacher-approval.js';
 // AUTH A-23: email provider + welcome template
@@ -838,6 +839,51 @@ router.get('/user/login', redirectIfAuth, (req, res) => {
   renderUserLogin(res, { mode, error, lang, prevUsername: account });
 });
 
+// ── LANDING: username real-time band/mavjudligi tekshiruvi (B-05 email-validate pattern) ──
+// Ro'yxatdan o'tish formasida username yozilayotganda AJAX bilan tekshiradi.
+// Enumeration: faqat REGISTER oqimida ishlatiladi (oddiy foydalanuvchi nomi
+// bandligini bilishi registratsiyaning o'z-o'zini tabiiy qismi — login'da
+// A-03 timing himoyasi alohida). Per-IP rate limit: 30/daqiqa.
+const USERNAME_CHECK_MAX = 30;
+const USERNAME_CHECK_WINDOW_MS = 60 * 1000;
+const usernameCheckHits = new Map();
+function usernameCheckLimited(ip) {
+  const now = Date.now();
+  const entry = usernameCheckHits.get(ip);
+  if (!entry || now >= entry.resetAt) {
+    usernameCheckHits.set(ip, { count: 1, resetAt: now + USERNAME_CHECK_WINDOW_MS });
+    if (usernameCheckHits.size > 5000) {
+      for (const [k, v] of usernameCheckHits) if (now >= v.resetAt) usernameCheckHits.delete(k);
+    }
+    return false;
+  }
+  entry.count += 1;
+  return entry.count > USERNAME_CHECK_MAX;
+}
+router.get('/user/login/username-check', async (req, res) => {
+  if (usernameCheckLimited(req.ip)) {
+    return res.status(429).json({ ok: false, reason: 'rate' });
+  }
+  const raw = String(req.query.username || '').trim();
+  if (raw.length < 2 || raw.length > 50) {
+    return res.json({ ok: false, reason: 'invalid' });
+  }
+  const n = normalizeUsername(raw);
+  if (!/^[a-zA-Z0-9_.-]{2,50}$/.test(n) || n !== raw) {
+    return res.json({ ok: false, reason: 'invalid' });
+  }
+  if (isReserved(n) || isConfusableReserved(n)) {
+    return res.json({ ok: false, reason: 'reserved' });
+  }
+  try {
+    const snap = await fb.get(`users/${safeKey(n)}`);
+    return res.json({ ok: !snap.exists(), reason: snap.exists() ? 'taken' : null, username: n });
+  } catch (_) {
+    // Store xatosi — foydalanuvchini bloklamaymiz, server-side yana tekshiriladi
+    return res.json({ ok: true, reason: null, username: n });
+  }
+});
+
 // ── User Login Action (rate-limited, CSRF-protected, plan_login §3.1) ──
 router.post('/user/login',
   // AUTH C-01: auth rate limiter (login/register burst + per-account/ASN)
@@ -851,7 +897,29 @@ router.post('/user/login',
   authSpanMiddleware((req) => (req.body && req.body.mode === 'reg' ? 'auth.register' : 'auth.login'),
     (req) => ({ 'auth.mode': req.body && req.body.mode === 'reg' ? 'register' : 'login' })),
   redirectIfAuth, async (req, res) => {
+  // ── LANDING JSON rejimi: X-Landing: 1 bilan kelgan so'rov HTML sahifa o'rniga
+  // JSON oladi — landing formasi xatoni JOYIDA (auth-msg) ko'rsatadi va
+  // foydalanuvchi /user/register'ning ikkinchi paneliga tashlanmay qoladi.
+  // Barcha renderUserLogin/renderUserRegister/redirect chiqishlari shu yerda
+  // ushlanadi — qolgan mantiq o'zgarmaydi.
   const mode = req.body.mode === 'reg' ? 'reg' : 'login';
+  if (req.get('x-landing') === '1') {
+    const form = mode === 'reg' ? 'register' : 'login';
+    res.render = (view, opts = {}) => {
+      const error = opts.error || null;
+      res.status(error ? 401 : 200).json({
+        ok: !error,
+        error: error || undefined,
+        lockout: !!opts.lockout,
+        duplicate: !!opts.duplicate,
+        form,
+      });
+    };
+    res.redirect = (url) => {
+      res.status(200).json({ ok: true, redirect: url });
+    };
+  }
+
   // LANDING (cast-demo): landing reg formasi alohida username maydoniga ega emas —
   // email local part'dan [a-zA-Z0-9_.-] username standartlash (B-09 §06 email-tolerant
   // login'ga mos). To'liq register sahifasi o'zgarmaydi (u hech qachon @ yubormaydi).

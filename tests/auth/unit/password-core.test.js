@@ -26,12 +26,12 @@ import { isPasswordBreached, _hibpCacheResetForTests } from '../../../src/module
 const DUMMY_ARGON2_HASH = '$argon2id$v=19$m=65536,p=4,t=3$u1kus5wly9Ue/tfOGXv22w$cKyecI4i1mfK4fQOKglk6jroNJBXOs+bGMM5LHd1FFw';
 
 describe('AUTH D-15 §06 — NIST dynamic min uzunlik', () => {
-  it('MFA\'siz 15 belgi talab — 14 belgi reject (NIST SP 800-63B-4 §5.1.1)', () => {
-    expect(POLICY_MIN_LENGTH).toBe(15);
-    const r = evaluatePassword('correct horse battery stapler!'.slice(0, 14));
+  it('min 8 — 7 belgi reject (foydalanuvchi qarori 2026-08-26)', () => {
+    expect(POLICY_MIN_LENGTH).toBe(8);
+    const r = evaluatePassword('correct horse battery stapler!'.slice(0, 7));
     expect(r.ok).toBe(false);
     expect(r.reason).toBe('passwordMin');
-    expect(r.min).toBe(15);
+    expect(r.min).toBe(8);
   });
 
   it('MFA bilan 8 belgi yetarli (NIST — MFA compensating control)', () => {
@@ -41,7 +41,7 @@ describe('AUTH D-15 §06 — NIST dynamic min uzunlik', () => {
     expect(r.min).toBe(8);
   });
 
-  it('15 belgi MFA\'siz qabul (uzunlik yetarli)', () => {
+  it('8 belgi harf+raqam qabul (uzunlik yetarli)', () => {
     const r = evaluatePassword('this-is-a-long-pass-42');
     expect(r.ok).toBe(true);
     expect(r.reason).toBeNull();
@@ -49,7 +49,7 @@ describe('AUTH D-15 §06 — NIST dynamic min uzunlik', () => {
 
   it('max 128 — 129 belgi reject (OWASP ASVS V2.1)', () => {
     expect(POLICY_MAX_LENGTH).toBe(128);
-    const r = evaluatePassword('a'.repeat(129));
+    const r = evaluatePassword('a'.repeat(128) + '1');
     expect(r.ok).toBe(false);
     expect(r.reason).toBe('passwordMax');
   });
@@ -60,9 +60,12 @@ describe('AUTH D-15 §06 — NIST dynamic min uzunlik', () => {
     expect(codePointLength('🔒x')).toBe(2);
   });
 
-  it('Complexity talabi yo\'q — uzun kichik harf parol qabul (NIST SHALL NOT)', () => {
+  it('harf+raqam SHART — faqat harfli parol rad (foydalanuvchi talabi 2026-08-26)', () => {
     const r = evaluatePassword('abcdefghijklmnopqrstuvwxyz');
-    expect(r.ok).toBe(true);
+    expect(r.ok).toBe(false);
+    expect(r.reason).toBe('passwordWeak');
+    // maxsus belgi talabi YO'Q — qo'shsa ham qabul
+    expect(evaluatePassword('abc!@#123').ok).toBe(true);
   });
 });
 
