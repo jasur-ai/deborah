@@ -851,8 +851,16 @@ router.post('/user/login',
   authSpanMiddleware((req) => (req.body && req.body.mode === 'reg' ? 'auth.register' : 'auth.login'),
     (req) => ({ 'auth.mode': req.body && req.body.mode === 'reg' ? 'register' : 'login' })),
   redirectIfAuth, async (req, res) => {
-  const { username, password } = req.body;
   const mode = req.body.mode === 'reg' ? 'reg' : 'login';
+  // LANDING (cast-demo): landing reg formasi alohida username maydoniga ega emas —
+  // email local part'dan [a-zA-Z0-9_.-] username standartlash (B-09 §06 email-tolerant
+  // login'ga mos). To'liq register sahifasi o'zgarmaydi (u hech qachon @ yubormaydi).
+  if (mode === 'reg' && typeof req.body.username === 'string' && req.body.username.includes('@')) {
+    const local = String(req.body.email || req.body.username).split('@')[0].toLowerCase()
+      .replace(/[^a-z0-9_.-]/g, '').slice(0, 50);
+    if (local.length >= 2) req.body.username = local;
+  }
+  const { username, password } = req.body;
   // AUTH A-19 §07: register'da teacher tanlovi — ariza teacher_pending sifatida.
   const wantsTeacher = mode === 'reg' && req.body.role === 'teacher';
   const lang = resolveAuthLang(req.body.lang || req.query.lang || req.cookies?.lang);

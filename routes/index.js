@@ -6,6 +6,8 @@
 import { Router } from 'express';
 import { LANDING_COPY, STATS_COPY, resolveLandingLang } from '../data/landing.js';
 import { getStats } from '../src/modules/opendata/index.js';
+import { isOidcEnabled } from '../src/modules/auth/oidc.js';
+import { isOAuthConfigured as isHemisOAuthConfigured } from '../src/modules/auth/providers/hemis.js';
 
 const router = Router();
 
@@ -26,6 +28,10 @@ async function renderLanding(req, res, langKey) {
     lang,
     path,
     opendata,
+    csrfToken: req.session?.csrfToken || '',
+    // REAL provider holati: tugmalar jimgina emas — sozlanmagan bo'lsa aniq xabar
+    oidcEnabled: isOidcEnabled(),
+    hemisEnabled: isHemisOAuthConfigured(),
   });
 }
 

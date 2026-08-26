@@ -79,51 +79,50 @@ describe('Landing — copy bank (data/landing.js)', () => {
   });
 });
 
-describe('Landing — HTTP routing (DEMO 1:1 — tasdiqlangan demo versiyasi)', () => {
-  it('GET / (uz) — demo H1, hero 2 CTA, bitta H1', async () => {
+describe('Landing — HTTP routing (CAST demo 1:1 — tasdiqlangan cast.html port)', () => {
+  it('GET / (uz) — cast H1 (bitta), hero kicker/p, EDK-4821', async () => {
     const res = await fetch(`${serverUrl}/`);
     expect(res.status).toBe(200);
     const html = await res.text();
-    expect(html).toContain("O'qituvchi ishi — <em>yengil</em>");
-    expect(html).toContain('Bepul boshlash');
-    expect(html).toContain('Imkoniyatlar');
+    expect(html).toContain('Savol — <em>ekranda</em>. Javob — telefonda.');
+    expect(html).toContain('Savolni sinf ekraniga uzatish');
+    expect(html).toContain('Bir tugma bilan savol sinf ekraniga uzatiladi');
     // Bitta H1
     const h1s = html.match(/<h1[\s>]/g) || [];
     expect(h1s).toHaveLength(1);
-    // Demo belgilari: ghost fon + live screen
-    expect(html).toContain('class="ghost"');
+    // Cast demo belgilari
     expect(html).toContain('EDK-4821');
+    expect(html).toContain('Response mosaic · 42 javob');
+    expect(html).toContain('SELECT DISTINCT');
   });
 
-  it('DEMO — ortiqcha "reklama" bo\u2018limlari YO\u2018Q (roles/demo/trust/stats/how)', async () => {
+  it('CAST — tartib: hero → cast screen → auth; join overlay mavjud', async () => {
     const html = await (await fetch(`${serverUrl}/`)).text();
-    expect(html).not.toContain('ld-roles');
-    expect(html).not.toContain('ld-demo');
-    expect(html).not.toContain('ld-trust');
-    expect(html).not.toContain('ld-how');
-    expect(html).not.toContain('data-demo-open');
-    // Demo tartibi: feat → qadam → signal → auth → cred → cta
-    const feat = html.indexOf('id="feat"');
-    const qadam = html.indexOf('id="qadam"');
-    const signal = html.indexOf('id="signal"');
+    const hero = html.indexOf('class="kicker"');
+    const cast = html.indexOf('id="cast"');
     const auth = html.indexOf('id="auth"');
-    expect(feat).toBeGreaterThan(-1);
-    expect(qadam).toBeGreaterThan(feat);
-    expect(signal).toBeGreaterThan(qadam);
-    expect(auth).toBeGreaterThan(signal);
-    // Cred strip (demo'dagi kabi)
-    expect(html).toContain('HEMIS / OneID');
-    expect(html).toContain('WCAG 2.2 AA');
-    // Soxta claim yo'q
-    expect(html).not.toContain('24/7');
-    expect(html).not.toContain('Rasmiy platforma');
+    expect(hero).toBeGreaterThan(-1);
+    expect(cast).toBeGreaterThan(hero);
+    expect(auth).toBeGreaterThan(cast);
+    // Join overlay: 5–7 xonali kod (maxlength 7)
+    expect(html).toContain('id="joinOverlay"');
+    expect(html).toMatch(/id="jcode"[^>]*maxlength="7"/);
+    // Eski demo bo'limlari YO'Q
+    for (const gone of ['ld-roles', 'ld-demo', 'ld-trust', 'ld-how', 'id="feat"', 'id="qadam"', 'id="signal"', 'data-theme-state-btn']) {
+      expect(html).not.toContain(gone);
+    }
+    // "O'qituvchilar uchun" matni YO'Q (foydalanuvchi talabi)
+    expect(html.toLowerCase()).not.toContain("o'qituvchilar uchun");
+    expect(html).not.toContain('O\'qituvchilar uchun');
   });
 
-  it('DEMO — footer: Sahifalar/Hujjatlar/Aloqa/Til + /cast havolasi', async () => {
+  it('CAST — footer: Sahifalar/Hujjatlar/Aloqa + deborah.uz + ©2026', async () => {
     const html = await (await fetch(`${serverUrl}/`)).text();
-    expect(html).toContain('href="/play"');
-    expect(html).toContain('Maxfiylik siyosati');
-    expect(html).toContain('hello@deborah.uz');
+    expect(html).toContain('Sahifalar');
+    expect(html).toContain('Hujjatlar');
+    expect(html).toContain('Aloqa');
+    expect(html).toContain('deborah.uz');
+    expect(html).toContain('© 2026');
   });
 
   it('STEP 21 S21.08/09 — doc sahifalar 200 qaytaradi', async () => {
@@ -143,17 +142,17 @@ describe('Landing — HTTP routing (DEMO 1:1 — tasdiqlangan demo versiyasi)', 
     expect(html).toContain('legal-box');
   });
 
-  it('GET /ru, /en, /uz-cyrl — demo strukturasi bilan 200 (client-side i18n)', async () => {
+  it('CAST — /ru, /en, /uz-cyrl 200 (client-side i18n, bir xil struktura)', async () => {
     for (const p of ['/ru', '/en', '/uz-cyrl']) {
       const res = await fetch(`${serverUrl}${p}`);
       expect(res.status, `${p} 200 bo'lishi kerak`).toBe(200);
       const html = await res.text();
-      expect(html).toContain('id="feat"');
+      expect(html).toContain('id="cast"');
       expect(html).toContain('id="auth"');
     }
   });
 
-  it('DEMO — lang guruh (UZ/RU/EN) headerda mavjud', async () => {
+  it('CAST — lang guruhi (UZ/RU/EN) headerda', async () => {
     const html = await (await fetch(`${serverUrl}/`)).text();
     expect(html).toMatch(/class="lang"/);
     expect(html).toContain('data-lang="uz"');
@@ -161,15 +160,20 @@ describe('Landing — HTTP routing (DEMO 1:1 — tasdiqlangan demo versiyasi)', 
     expect(html).toContain('data-lang="en"');
   });
 
-  it("DEMO — auth bloki landingda: REAL formalar /user/login'ga POST qiladi", async () => {
+  it("CAST — auth bloki: REAL formalar /user/login'ga POST (login + reg)", async () => {
     const html = await (await fetch(`${serverUrl}/`)).text();
-    // Kirish formasi — real POST
-    expect(html).toMatch(/<form id="fLogin" method="POST" action="\/user\/login"/);
+    // Kirish formasi — real POST, email username sifatida
+    expect(html).toMatch(/<form id="fLogin" action="\/user\/login" method="POST"/);
     expect(html).toContain('name="_csrf"');
-    // Register (o'qituvchi arizasi) — mode=reg
+    // Register — mode=reg, consent, username email'dan (server normalize qiladi)
+    expect(html).toMatch(/<form id="fReg" action="\/user\/login"[^>]*>/);
     expect(html).toContain('name="mode" value="reg"');
-    expect(html).toContain('name="role" value="teacher"');
-    expect(html).toContain('name="consent"');
+    expect(html).toContain('name="consent" value="on"');
+    expect(html).toContain('id="rUser"');
+    // Providerlar — REAL endpointlar (JS __AUTH_PROVIDERS bilan guard)
+    expect(html).toContain('data-prov="google"');
+    expect(html).toContain('data-prov="oneid"');
+    expect(html).toMatch(/__AUTH_PROVIDERS\s*=\s*\{/);
     // Demo hint olib tashlangan
     expect(html).not.toContain('user1@gmail.com');
     expect(html).not.toContain('parol 1234');
@@ -179,28 +183,28 @@ describe('Landing — HTTP routing (DEMO 1:1 — tasdiqlangan demo versiyasi)', 
     const html = await (await fetch(`${serverUrl}/`)).text();
     const hrefs = [...html.matchAll(/<a[^>]*href="([^"]+)"/g)].map((m) => m[1]);
     const ctaHrefs = hrefs.filter((h) => h.startsWith('http') || h.startsWith('//'));
-    // Faqat ruxsat etilgan tashqi manzillar: Telegram + Google Fonts (CDN) +
-    // AUTH A-13 ochiq ma'lumotlar manbasi (data.gov.uz — rasmiy, allowlist'da)
     const allowed = ['https://t.me/', 'https://fonts.googleapis.com', 'https://fonts.gstatic.com', 'https://data.gov.uz'];
     for (const h of ctaHrefs) {
       expect(allowed.some((a) => h.startsWith(a))).toBe(true);
     }
   });
 
-  it('landing.css va landing.js assetlar mavjud (200)', async () => {
+  it('landing.css / landing.js / font assetlar mavjud (200)', async () => {
     const css = await fetch(`${serverUrl}/css/landing.css`);
     expect(css.status).toBe(200);
     const js = await fetch(`${serverUrl}/js/landing.js`);
     expect(js.status).toBe(200);
+    const font = await fetch(`${serverUrl}/fonts/landing-demo-1.woff2`);
+    expect(font.status).toBe(200);
   });
 
-  it('404 bilmagan til yo\'li uchun — boshqa route emas', async () => {
+  it("404 bilmayan til yo'li uchun — boshqa route emas", async () => {
     const res = await fetch(`${serverUrl}/ru/imkoniyatlar`);
     const html = await res.text();
     expect(html).not.toContain('ld-hero-h1');
   });
 
-  it('app route lar buzilmagan — /login hali login sahifasi', async () => {
+  it('app route lar buzilmagan — /user/login hali login sahifasi', async () => {
     const res = await fetch(`${serverUrl}/user/login`, { redirect: 'manual' });
     expect(res.status).toBeLessThan(400);
     const html = await res.text();
@@ -212,15 +216,19 @@ describe('Landing — HTTP routing (DEMO 1:1 — tasdiqlangan demo versiyasi)', 
     const html = await (await fetch(`${serverUrl}/user/login`)).text();
     expect(html).not.toContain('content="undefined"');
   });
-  it('DEMO head — socket.io/xlsx/main.js YO\'Q, faqat landing.css (fontlar ichida)', async () => {
+
+  it('CAST head — socket.io/xlsx/main.js YO\'Q, faqat landing.css', async () => {
     const html = await (await fetch(`${serverUrl}/`)).text();
     expect(html).not.toContain('socket.io/socket.io.js');
     expect(html).not.toContain('/xlsx');
     expect(html).not.toContain('/js/main.js');
     expect(html).toContain('href="/css/landing.css"');
+    // Font landing.css @font-face'ida (HTML'da emas)
+    const css = await (await fetch(`${serverUrl}/css/landing.css`)).text();
+    expect(css).toContain('/fonts/landing-demo-1.woff2');
   });
 
-  it('DEMO head — canonical + OG mavjud', async () => {
+  it('CAST head — canonical + OG mavjud', async () => {
     const html = await (await fetch(`${serverUrl}/`)).text();
     expect(html).toMatch(/rel="canonical" href="[^"]+"/);
     expect(html).toMatch(/property="og:title"/);
@@ -233,26 +241,32 @@ describe('Landing — HTTP routing (DEMO 1:1 — tasdiqlangan demo versiyasi)', 
     expect(body).toMatch(/CACHE_VERSION\s*=\s*'v2\./);
   });
 
-  it('DEMO — tema tugmasi (light/dark) va statik live-screen (no-JS)', async () => {
+  it('CAST — tema tugmasi (#themeBtn toggle) + statik cast screen (no-JS)', async () => {
     const html = await (await fetch(`${serverUrl}/`)).text();
-    // Demo 1:1: header'dagi klassik oy/quyosh tugmasi (theme-segmented EMAS —
-    // demo'da unday narsa yo'q, faqat .tbtn #themeBtn)
+    // Demo 1:1: header'dagi klassik oy/quyosh tugmasi (segmented EMAS)
     expect(html).toContain('class="tbtn" id="themeBtn"');
     expect(html).not.toContain('data-theme-state-btn');
-    expect(html).toContain('class="screen reveal"');
-    // Live screen statik kontenti server HTML'da (JS'siz ko'rinadi)
+    expect(html).toContain('class="screen"');
+    // Cast screen statik kontenti server HTML'da (JS'siz ko'rinadi)
     expect(html).toContain('SELECT DISTINCT');
+    expect(html).toContain('data-opt');
     const css = await (await fetch(`${serverUrl}/css/landing.css`)).text();
     expect(css).toContain('[data-theme');
   });
 
-  it('DEMO — landing.js: i18n (uz/ru/en) + tema + real formalar mantiqi', async () => {
+  it('CAST — landing.js: i18n (uz/ru/en) + tema + real provider/join/admin mantiqi', async () => {
     const js = await (await fetch(`${serverUrl}/js/landing.js`)).text();
     expect(js).toContain('I18N');
     expect(js).toContain('applyLang');
     expect(js).toContain('applyTheme');
-    expect(js).toContain('deriveUsername');
-    expect(js).toContain("fLogin");
-    expect(js).toContain("fReg");
+    // Real ulanishlar
+    expect(js).toContain("'/play?code='");
+    expect(js).toContain("'/auth/google'");
+    expect(js).toContain("'/auth/hemis'");
+    expect(js).toContain('/admin/login');
+    expect(js).toContain('__AUTH_PROVIDERS');
+    // Provider-off xabarlari (3 til)
+    expect(js).toContain('prov.g.off');
+    expect(js).toContain('prov.o.off');
   });
 });

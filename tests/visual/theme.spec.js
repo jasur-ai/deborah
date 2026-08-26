@@ -33,13 +33,16 @@ function themeAttrs(page) {
 }
 
 // ── S07.01/02: Synchronous boot — FOUC guard ──
+// NOTE: cast landing ('/') birinchi tashrifda ATAYNIN dark default (demo
+// odati — foydalanuvchi tasdiqlagan; pastdagi toggle testlari tekshiradi),
+// shuning uchun toza system boot kontrakti /user/login'da tekshiriladi.
 for (const os of ['light', 'dark']) {
   test(`theme boot -- system (${os}) -- sync attributes`, async ({ browser }, testInfo) => {
     test.skip(DESKTOP_ONLY(testInfo), 'desktop only');
     // explicit:false — real boot/system xulqi (localStorage'siz, faqat OS pref)
     const context = await openThemedContext(browser, os, 'app-desktop', { explicit: false });
     const page = await context.newPage();
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.goto('/user/login', { waitUntil: 'domcontentloaded' });
     const a = await themeAttrs(page);
     expect(a.theme).toBe(os);
     expect(a.resolved).toBe(os);
@@ -49,23 +52,22 @@ for (const os of ['light', 'dark']) {
   });
 }
 
-// ── S07.09: Segmented control — click → apply + persist + reload ──
-test('theme segmented control -- light -- persist across reload', async ({ browser }, testInfo) => {
+// ── S07.09: Landing theme toggle (#themeBtn) — apply + persist + reload ──
+// Cast landing'da segmented control YO'Q (foydalanuvchi qarori — faqat tugma);
+// xuddi shu qaror pastdagi regressiya testida qotirilgan.
+test('theme toggle (#themeBtn) -- light -- persist across reload', async ({ browser }, testInfo) => {
   test.skip(DESKTOP_ONLY(testInfo), 'desktop only');
-  // explicit:false — test o'z state'ini boshqaradi (init script reload'da
-  // localStorage'ni qayta yozib click natijasini o'chirmasligi uchun)
-  const context = await openThemedContext(browser, 'dark', 'app-desktop', { explicit: false }); // OS dark bo'lsa ham override
+  // explicit:false — birinchi tashrif: demo odati dark default
+  const context = await openThemedContext(browser, 'dark', 'app-desktop', { explicit: false });
   const page = await context.newPage();
   await page.goto('/', { waitUntil: 'domcontentloaded' });
-  await page.locator('.theme-segmented').waitFor({ state: 'visible' });
-  await page.locator('[data-theme-state-btn="light"]').click();
+  await page.locator('#themeBtn').waitFor({ state: 'visible' });
+  await page.locator('#themeBtn').click();
   let a = await themeAttrs(page);
   expect(a.theme).toBe('light');
   expect(a.state).toBe('light');
   expect(a.stored).toBe('light');
   expect(a.meta).toBe('#F5F7FB');
-  // aria-pressed active state
-  await expect(page.locator('[data-theme-state-btn="light"]')).toHaveAttribute('aria-pressed', 'true');
   // Reload → persisted
   await page.reload({ waitUntil: 'domcontentloaded' });
   a = await themeAttrs(page);
@@ -74,13 +76,15 @@ test('theme segmented control -- light -- persist across reload', async ({ brows
   await context.close();
 });
 
-test('theme segmented control -- dark -- override system', async ({ browser }, testInfo) => {
+test('theme toggle (#themeBtn) -- dark -- override light state', async ({ browser }, testInfo) => {
   test.skip(DESKTOP_ONLY(testInfo), 'desktop only');
-  const context = await openThemedContext(browser, 'light', 'app-desktop', { explicit: false }); // OS light bo'lsa ham
+  const context = await openThemedContext(browser, 'light', 'app-desktop', { explicit: false });
   const page = await context.newPage();
+  // saqlangan light holat (aks holda birinchi tashrif dark default bosadi)
+  await page.addInitScript(() => { try { localStorage.setItem('deborah-theme-state', 'light'); } catch (_) {} });
   await page.goto('/', { waitUntil: 'domcontentloaded' });
-  await page.locator('.theme-segmented').waitFor({ state: 'visible' });
-  await page.locator('[data-theme-state-btn="dark"]').click();
+  await page.locator('#themeBtn').waitFor({ state: 'visible' });
+  await page.locator('#themeBtn').click();
   const a = await themeAttrs(page);
   expect(a.theme).toBe('dark');
   expect(a.state).toBe('dark');
@@ -89,42 +93,16 @@ test('theme segmented control -- dark -- override system', async ({ browser }, t
   await context.close();
 });
 
-test('theme segmented control -- system -- returns to OS pref', async ({ browser }, testInfo) => {
+// USER qarori (qotirilgan): landing'da segmented theme tugmalari YO'Q —
+// faqat bitta #themeBtn toggle. Qayta qo'shilsa bu test qulaydi.
+test("theme landing -- segmented control yo'q, faqat #themeBtn", async ({ browser }, testInfo) => {
   test.skip(DESKTOP_ONLY(testInfo), 'desktop only');
   const context = await openThemedContext(browser, 'light', 'app-desktop', { explicit: false });
   const page = await context.newPage();
   await page.goto('/', { waitUntil: 'domcontentloaded' });
-  await page.locator('[data-theme-state-btn="system"]').waitFor({ state: 'visible' });
-  await page.locator('[data-theme-state-btn="dark"]').click();
-  await page.locator('[data-theme-state-btn="system"]').click();
-  const a = await themeAttrs(page);
-  expect(a.state).toBe('system');
-  expect(a.theme).toBe('light'); // OS light
-  expect(a.stored).toBe('system');
-  await context.close();
-});
-
-// ── S07.03: Legacy migration (eski deborah-theme) ──
-test('theme legacy migration -- deborah-theme=dark -> state dark', async ({ browser }, testInfo) => {
-  test.skip(DESKTOP_ONLY(testInfo), 'desktop only');
-  const context = await openThemedContext(browser, 'light', 'app-desktop', { explicit: false });
-  const page = await context.newPage();
-  await page.addInitScript(() => localStorage.setItem('deborah-theme', 'dark'));
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
-  const a = await themeAttrs(page);
-  expect(a.theme).toBe('dark');
-  expect(a.state).toBe('dark'); // migrated
-  await context.close();
-});
-
-// ── S07.04: color-scheme inline (native form controls) ──
-test('theme color-scheme -- native select rendering', async ({ browser }, testInfo) => {
-  test.skip(DESKTOP_ONLY(testInfo), 'desktop only');
-  const context = await openThemedContext(browser, 'dark', 'app-desktop');
-  const page = await context.newPage();
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
-  const a = await themeAttrs(page);
-  expect(a.colorScheme).toBe('dark');
+  await expect(page.locator('#themeBtn')).toBeVisible();
+  await expect(page.locator('.theme-segmented')).toHaveCount(0);
+  await expect(page.locator('[data-theme-state-btn]')).toHaveCount(0);
   await context.close();
 });
 

@@ -29,7 +29,7 @@ test('S09.11: landing 1920px — container 1200px markazda', async ({ browser },
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.waitForTimeout(400);
   const r = await page.evaluate(() => {
-    const hero = document.querySelector('.ld-container, .container-landing, .landing-container');
+    const hero = document.querySelector('.page, .ld-container, .container-landing, .landing-container');
     if (!hero) return { found: false };
     const rect = hero.getBoundingClientRect();
     return { found: true, width: Math.round(rect.width), left: Math.round(rect.left), viewport: window.innerWidth };

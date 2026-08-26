@@ -62,11 +62,10 @@ for (const theme of ['light', 'dark', 'reduced-motion']) {
     const page = await context.newPage();
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await stabilize(page);
-    // Birinchi CTA/hover element: landing'ning primary tugmasi.
-    // Landing'da `ld-demo-backdrop` overlay CTA'ni intercept qiladi —
-    // force:true hover'ni ko'rinish tekshiruvlarisiz majburan bajaradi,
-    // :hover CSS holati real trigger bo'ladi (S03.05 state).
-    const cta = page.locator('.btns a.btn-gold').first();
+    // Birinchi CTA/hover element: cast landing'ning primary gold tugmasi
+    // (fLogin submit — demo cast.html port'i, .btns yo'q). force:true
+    // overlay intercept'larini chetlab o'tadi (S03.05 state).
+    const cta = page.locator('#fLogin button.btn-gold').first();
     await cta.hover({ force: true });
     await page.waitForTimeout(200);
     await expect(page).toHaveScreenshot(

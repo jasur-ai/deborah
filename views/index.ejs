@@ -1,30 +1,32 @@
 <!DOCTYPE html>
 <!--
   ═══════════════════════════════════════════════════════════
-  DEBORAH LANDING — tasdiqlangan demo versiyasi 1:1
-  Manba: workprocess demo/preview/index.html (birga bir port)
-  Farq: faqat auth formalar REAL serverga ulangan
-  (POST /user/login · CSRF · mode=login/reg · role=teacher)
+  DEBORAH LANDING — tasdiqlangan demo versiyasi 1:1 (cast.html)
+  Manba: workprocess demo/preview/cast.html (birga bir port)
+  Farq: faqat auth/admin/join REAL serverga ulangan
+  (POST /user/login · POST /admin/login · /auth/google · /auth/hemis · /play?code=)
   ═══════════════════════════════════════════════════════════
 -->
-<html lang="<%= lang === 'ru' ? 'ru' : lang === 'en' ? 'en' : 'uz' %>" dir="ltr">
+<html lang="<%= lang === 'ru' ? 'ru' : lang === 'en' ? 'en' : 'uz' %>" data-theme="dark" dir="ltr">
 <head>
-  <%- include('partials/landing-head', { title: 'Deborah — o\'qituvchilar uchun AI yordamchi', description: copy.meta.description, siteUrl: (typeof siteUrl !== 'undefined' ? siteUrl : ''), path: path, lang: lang }) %>
+  <%- include('partials/landing-head', { title: 'Deborah — savolni sinf ekraniga uzatish', description: copy.meta.description, siteUrl: (typeof siteUrl !== 'undefined' ? siteUrl : ''), path: path, lang: lang }) %>
 </head>
 <body>
-<a class="ld-skip-link" href="#ld-main">Skip to content</a>
+<script>
+  window.__CSRF_TOKEN = '<%= csrfToken %>';
+  window.__AUTH_PROVIDERS = { google: <%- oidcEnabled ? 'true' : 'false' %>, oneid: <%- hemisEnabled ? 'true' : 'false' %> };
+</script>
+
+<a class="skip-link" href="#main" data-i18n-skip>Asosiy kontentga o‘tish</a>
 <div class="modefx" id="modeFx" aria-hidden="true"></div>
-<div class="ghost" aria-hidden="true">Deborah</div>
-<div class="site" id="ld-main"><!-- HEADER -->
+<!-- HEADER -->
 <header class="hdr">
-  <a class="logo" href="#top">
-    <img class="logo-mark" src="data:image/png;base64,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" alt="Deborah">
+  <a class="logo" href="#main">
+    <img class="logo-mark" src="data:image/png;base64,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" alt="Deborah">
     <span class="logo-word" aria-hidden="true">deborah</span>
   </a>
   <nav class="nav">
-    <a href="#feat" data-i18n="nav.feat">Imkoniyatlar</a>
-    <a href="#qadam" data-i18n="nav.qadam">Qadamlar</a>
-    <a href="#signal" data-i18n="nav.signal">Signal</a>
+    <a href="#cast" data-i18n="nav.cast">Cast</a>
     <a href="#auth" data-i18n="nav.kirish">Kirish</a>
   </nav>
   <div class="ctrls">
@@ -37,229 +39,170 @@
       <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
       <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5 5l1.6 1.6M17.4 17.4 19 19M19 5l-1.6 1.6M6.6 17.4 5 19"/></svg>
     </button>
-    <a class="btn btn-gold btn-sm" href="#auth" data-i18n="hdr.kirish">Kirish</a>
+    <button class="abtn" id="adminBtn" type="button" aria-haspopup="dialog">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15" r="1.6"/></svg>
+      <span data-i18n="admin.btn">Admin</span>
+    </button>
+    <button class="hbtn" id="hbtn" type="button" aria-label="Menyu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
   </div>
 </header>
-<!-- HERO -->
-<section class="hero" id="top">
-  <div class="hero-in">
-    <div>
-      <div class="kicker reveal" data-i18n="hero.kicker">O'qituvchilar uchun · AI yordamchi bilan</div>
-      <h1 class="reveal" style="transition-delay:.05s" data-i18n="hero.h1">O'qituvchi ishi — <em>yengil</em>.<br>Dars — samarali.</h1>
-      <p class="lede reveal" style="transition-delay:.1s" data-i18n="hero.lede">Savol tuzish, slaydlar, baholash, qog'oz tekshirish — AI yordamchi bularni soniyalarda bajaradi. Siz darsga va talabalarga vaqt ajratasiz.</p>
-      <div class="hero-cta reveal" style="transition-delay:.15s">
-        <a class="btn btn-gold btn-lg" href="#auth" data-i18n="hero.cta1">Bepul boshlash</a>
-        <a class="btn btn-lg" href="#feat" data-i18n="hero.cta2">Imkoniyatlar</a>
-      </div>
+<!-- ADMIN LOGIN (faqat login — ro'yxatdan o'tish yo'q) -->
+<div class="admin-overlay" id="adminOverlay" role="dialog" aria-modal="true" aria-label="Admin tizimga kirish">
+  <div class="admin-card">
+    <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+    <button class="close" id="adminClose" type="button" aria-label="Yopish">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div class="admin-head">
+      <div class="k" data-i18n="admin.k">Admin panel</div>
+      <h3 data-i18n="admin.h3">Administrator <em>kirishi</em></h3>
+      <p data-i18n="admin.p">Faqat administratorlar uchun.</p>
     </div>
-    <div class="screen reveal" style="transition-delay:.2s">
-      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
-      <div class="sc-top">
-        <span class="sc-code">EDK-4821</span>
-        <span class="sc-live"><i></i><span data-i18n="live.live">jonli</span></span>
-        <span id="scTime">01:24</span>
-      </div>
-      <div class="sc-body">
-        <div class="beam" id="beam"><span class="tx" data-i18n="beam.tx">uzatilmoqda…</span><span class="ln"></span><span class="dot"></span></div>
-        <div class="step q" id="q" data-i18n="live.q">SQL'da jadvaldan takroriy yozuvlarni olib tashlab, faqat unikallarini qaytaruvchi operator qaysi?</div>
-        <div class="opts">
-          <div class="opt step" data-opt><span class="k">A</span><span>SELECT DISTINCT</span><span class="pct">20%</span><span class="track"><i data-w="20"></i></span></div>
-          <div class="opt step dom" data-opt><span class="k">B</span><span>SELECT UNIQUE ALL</span><span class="pct">43%</span><span class="track"><i data-w="43"></i></span></div>
-          <div class="opt step" data-opt><span class="k">C</span><span>SELECT FILTER</span><span class="pct">27%</span><span class="track"><i data-w="27"></i></span></div>
-          <div class="opt step" data-opt><span class="k">D</span><span>SELECT REMOVE</span><span class="pct">10%</span><span class="track"><i data-w="10"></i></span></div>
-        </div>
-        <div class="cap step" data-i18n="live.cap">Response mosaic · 42 javob</div>
-        <div class="mini" id="mini"></div>
-        <div class="devnote" id="devnote"><b data-i18n="live.dev">Dominant xato: B · 43%</b></div>
-      </div>
-      <div class="sc-foot"><span data-i18n="live.f1">Savol cast qilindi</span><span data-i18n="live.f2">javoblar yig'ilmoqda</span></div>
-    </div>
-  </div>
-  <div class="scroll-hint" data-i18n="hero.scroll">Scroll · imkoniyatlar</div>
-</section>
-<!-- STATS -->
-<div class="stats">
-  <div class="stats-in">
-    <div class="stat reveal"><div class="num" id="st1">0 s</div><div class="lbl" data-i18n="stats.s1">Savol tayyorlash — AI bilan</div></div>
-    <div class="stat reveal" style="transition-delay:.08s"><div class="num" id="st2">0+</div><div class="lbl" data-i18n="stats.s2">AI yordamchi funksiyalar</div></div>
-    <div class="stat reveal" style="transition-delay:.16s"><div class="num" id="st3">0% → 0%</div><div class="lbl" data-i18n="stats.s3">Tushunish o'sishi</div></div>
+    <form id="adminForm" action="/admin/login" method="POST" novalidate>
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="hidden" name="username" id="aLoginH">
+            <input type="hidden" name="password" id="aPassH">
+      <div class="afld"><label for="aLogin" data-i18n="admin.loginL">Login</label><input id="aLogin" type="text" autocomplete="username" autocapitalize="off"></div>
+      <div class="afld"><label for="aPass" data-i18n="admin.passL">Parol</label><input id="aPass" type="password" autocomplete="current-password"></div>
+      <div class="admin-err" id="adminErr" data-i18n="admin.err">Login yoki parol xato.</div>
+      <button class="btn btn-gold auth-submit" type="submit" data-i18n="admin.go">Kirish</button>
+    </form>
   </div>
 </div>
-<!-- FEATURES -->
-<section class="sec" id="feat">
-  <div class="sec-in">
-    <div class="sec-h">
-      <div class="k reveal" data-i18n="feat.k">Imkoniyatlar</div>
-      <h2 class="reveal" data-i18n="feat.h2">O'qituvchi ishini <em>yengillashtiradigan</em> imkoniyatlar.</h2>
-      <p class="reveal" data-i18n="feat.p">AI yordamchi rutin ishlarni o'z zimmasiga oladi — siz o'qitishga e'tibor berasiz.</p>
-      <div class="cite reveal" data-i18n="feat.hint">Imkoniyatni tanlang — tafsilot ochiladi</div>
+<!-- O'YINGA KIRISH -->
+<div class="join-overlay" id="joinOverlay" role="dialog" aria-modal="true" aria-label="Castga kirish">
+  <div class="join-card">
+    <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+    <button class="close" id="joinClose" type="button" aria-label="Yopish">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div class="join-head">
+      <div class="k" data-i18n="join.k">Tayyor cast</div>
+      <h3 data-i18n="join.h3">O'yinga <em>kirish</em></h3>
+      <p data-i18n="join.p">Kodni kiriting.</p>
     </div>
-    <div class="grid3">
-      <div class="f-card reveal"><div class="n">01</div><div class="ln"></div><h3 data-i18n="feat.c1t">AI savol generatsiyasi</h3><p class="sub" data-i18n="feat.c1s">Mavzudan test savollari soniyalarda.</p><div class="more" data-i18n="feat.c1m">50/30/20 taqsimot va validatorlar bilan; tayyor bankdan ham tanlash mumkin.</div></div>
-      <div class="f-card reveal"><div class="n">02</div><div class="ln"></div><h3 data-i18n="feat.c2t">AI slaydlar</h3><p class="sub" data-i18n="feat.c2s">Dars taqdimoti avtomatik tayyorlanadi.</p><div class="more" data-i18n="feat.c2m">Canva, Google Slides va Gamma'ga bir tugma bilan eksport qilinadi.</div></div>
-      <div class="f-card reveal"><div class="n">03</div><div class="ln"></div><h3 data-i18n="feat.c3t">AI baholash</h3><p class="sub" data-i18n="feat.c3s">Erkin javoblar avtomatik baholanadi.</p><div class="more" data-i18n="feat.c3m">Rubric va mezonlar asosida; natija serverda tasdiqlanadi.</div></div>
-      <div class="f-card reveal"><div class="n">04</div><div class="ln"></div><h3 data-i18n="feat.c4t">Maqola tavsiyalari</h3><p class="sub" data-i18n="feat.c4s">Har bir mavzu uchun o'qish materiallari.</p><div class="more" data-i18n="feat.c4m">Maqolalar va manbalar avtomatik tavsiya etiladi.</div></div>
-      <div class="f-card reveal"><div class="n">05</div><div class="ln"></div><h3 data-i18n="feat.c5t">Qog'oz + OCR</h3><p class="sub" data-i18n="feat.c5s">Qog'oz javob varaqlari skanerlanadi.</p><div class="more" data-i18n="feat.c5m">OMR belgilash, qo'lyozma va matn OCR — barchasi bitta joyda.</div></div>
-      <div class="f-card reveal"><div class="n">06</div><div class="ln"></div><h3 data-i18n="feat.c6t">Savollar banki</h3><p class="sub" data-i18n="feat.c6s">QTI import/eksport va rubric.</p><div class="more" data-i18n="feat.c6m">Savollar, rubric va competency — bitta bankda.</div></div>
-      <div class="f-card reveal"><div class="n">07</div><div class="ln"></div><h3 data-i18n="feat.c7t">Jonli viktorina</h3><p class="sub" data-i18n="feat.c7s">Savol sinf ekraniga uzatiladi.</p><div class="more" data-i18n="feat.c7m">Javoblar jonli yig'iladi; signal va mosaic ko'rsatiladi.</div></div>
-      <div class="f-card reveal"><div class="n">08</div><div class="ln"></div><h3 data-i18n="feat.c8t">Hisobot</h3><p class="sub" data-i18n="feat.c8s">Dars yakunida avtomatik hisobot.</p><div class="more" data-i18n="feat.c8m">Sinf darajasidagi tahlil va natijalar.</div></div>
-      <div class="f-card reveal"><div class="n">09</div><div class="ln"></div><h3 data-i18n="feat.c9t">Imtihon nazorati</h3><p class="sub" data-i18n="feat.c9s">Kamera evidence bilan nazorat.</p><div class="more" data-i18n="feat.c9m">Xavfsizlik profillari va proctor hodisalari.</div></div>
+    <div class="jcode-wrap"><input class="jcode" id="jcode" inputmode="numeric" autocomplete="off" maxlength="7" placeholder="00000"></div>
+    <div class="join-err" id="joinErr" data-i18n="join.err">Kod 5–7 xonadan iborat raqam bo'lishi kerak.</div>
+    <button class="btn btn-gold auth-submit" id="joinGo" type="button" data-i18n="join.go">Kirish</button>
+    <div class="join-msg" id="joinMsg">
+      <div class="load" data-i18n="join.load">Ulanmoqda… <i></i></div>
+      <div class="ok" data-i18n="join.ok">Siz castga ulandingiz. Savol kutilmoqda.</div>
     </div>
-  </div>
-</section>
-<!-- QADAMLAR -->
-<section class="sec cycle" id="qadam">
-  <div class="sec-in">
-    <div class="sec-h">
-      <div class="k reveal" data-i18n="qadam.k">Qanday ishlaydi</div>
-      <h2 class="reveal" data-i18n="qadam.h2">Uch oddiy <em>qadam</em>.</h2>
-      <p class="reveal" data-i18n="qadam.p">Tayyorlang, uzating, tahlil qiling — qolganini tizim bajaradi.</p>
-      <div class="cite reveal" data-i18n="qadam.cite">Yarat → Uzat → Tahlil</div>
-    </div>
-    <svg class="route-svg reveal" viewBox="0 0 1000 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path id="route" d="M60 250 C220 250, 260 80, 470 90 C680 100, 640 240, 850 230 C950 226, 970 120, 950 90" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="1 7" stroke-linecap="round"/>
-      <path id="routeGold" d="M60 250 C220 250, 260 80, 470 90 C680 100, 640 240, 850 230 C950 226, 970 120, 950 90" stroke="var(--ld-gold)" stroke-width="2.5" stroke-linecap="round" style="stroke-dasharray:2000;stroke-dashoffset:2000"/>
-      <g><circle class="j-check" cx="60" cy="250" r="9"/><text class="j-label" x="60" y="285" text-anchor="middle" data-i18n="qadam.l1">01 · YARAT</text></g>
-      <g><circle class="j-check" cx="470" cy="90" r="9"/><text class="j-label" x="470" y="66" text-anchor="middle" data-i18n="qadam.l2">02 · UZAT</text></g>
-      <g><circle class="j-check" cx="950" cy="90" r="9"/><text class="j-label" x="950" y="66" text-anchor="middle" data-i18n="qadam.l3">03 · TAHLIL</text></g>
-      <g id="runner" style="opacity:0">
-        <circle r="17" fill="url(#auraGrad)" opacity=".85"/>
-        <circle r="5" fill="var(--ld-gold)" stroke="var(--ld-bg)" stroke-width="1.5"/>
-      </g>
-    </svg>
-    <div class="j-cards">
-      <div class="j-card reveal"><div class="n">01</div><div class="ln"></div><h3 data-i18n="qadam.c1t">Yarat</h3><p data-i18n="qadam.c1p">Savol AI yordamida yoki bankdan tanlanadi — bir necha soniya.</p></div>
-      <div class="j-card reveal" style="transition-delay:.1s"><div class="n">02</div><div class="ln"></div><h3 data-i18n="qadam.c2t">Uzat</h3><p data-i18n="qadam.c2p">Savol sinf ekraniga uzatiladi; javoblar telefonda ochiladi.</p></div>
-      <div class="j-card reveal" style="transition-delay:.2s"><div class="n">03</div><div class="ln"></div><h3 data-i18n="qadam.c3t">Tahlil</h3><p data-i18n="qadam.c3p">Signal va hisobot: sinf holati bir qarashda.</p></div>
-    </div>
-  </div>
-</section>
-<!-- SIGNAL -->
-<section class="sec" id="signal">
-  <div class="sec-in">
-    <div class="sec-h">
-      <div class="k reveal" data-i18n="signal.k">Sinf signali</div>
-      <h2 class="reveal" data-i18n="signal.h2">Tushunish — <em>dalil bilan</em> o'lchanadi.</h2>
-      <p class="reveal" data-i18n="signal.p">Bitta savol, bitta muhokama: tushunish 43% dan 82% ga — o'lchangan va tasdiqlangan.</p>
-    </div>
-    <div class="panel reveal">
-      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
-      <div class="p-grid">
-        <div class="p-col">
-          <h3><span data-i18n="signal.col1">Birinchi o'lchov</span> <b id="n1">43%</b></h3>
-          <div class="bar"><div class="lab"><span>A · 20%</span><span>B · 43%</span></div><div class="track"><i class="crimson" style="width:0%"></i><i class="grey" style="width:20%"></i></div></div>
-          <div class="bar"><div class="lab"><span>C · 27%</span><span>D · 10%</span></div><div class="track"><i class="gold" style="width:27%"></i><i class="grey" style="width:10%"></i></div></div>
-          <div class="mosaic"><div class="cap" data-i18n="signal.mos1">Response mosaic · 42 javob</div><div class="m-grid" id="mgrid1"></div></div>
-        </div>
-        <div class="p-col">
-          <h3><span data-i18n="signal.col2">Muhokamadan keyin</span> <b class="rise" id="n2">82%</b></h3>
-          <div class="bar"><div class="lab"><span>A · 82%</span><span>B · 10%</span></div><div class="track"><i class="green" style="width:0%"></i><i class="grey" style="width:10%"></i></div></div>
-          <div class="bar"><div class="lab"><span>C · 5%</span><span>D · 3%</span></div><div class="track"><i class="gold" style="width:5%"></i><i class="grey" style="width:3%"></i></div></div>
-          <div class="mosaic"><div class="cap" data-i18n="signal.mos2">Muhokamadan keyin</div><div class="m-grid" id="mgrid2"></div></div>
-        </div>
-      </div>
-      <div class="signal-foot">
-        <div class="big" data-i18n="signal.foot">Bitta savol · tushunish <b>43% → 82%</b></div>
-        <div class="note" data-i18n="signal.note">Server-confirmed · shaxsiy reyting maxfiy</div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- AUTH -->
-<section class="sec" id="auth">
-  <div class="sec-in">
-    <div class="auth">
-      <div class="auth-card reveal">
-        <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
-        <div class="auth-head">
-          <div class="k" data-i18n="auth.k">O'qituvchi hisobi</div>
-          <h2 data-i18n="auth.h2">O'qituvchi sifatida kirish</h2>
-        </div>
-        <div class="tabs">
-          <button type="button" class="on" data-tab="login" data-i18n="auth.t1">Kirish</button>
-          <button type="button" data-tab="reg" id="regTab" data-i18n="auth.regTeacher">Adminga so'rov yuborish</button>
-        </div>
-        <!-- REAL LOGIN: POST /user/login -->
-        <form id="fLogin" method="POST" action="/user/login">
-          <input type="hidden" name="mode" value="login">
-          <input type="hidden" name="lang" value="uz" id="loginLang">
-          <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
-          <div class="providers">
-            <button class="provider provider-g" type="button" data-prov="google">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1Z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23Z"/><path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84Z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15A11 11 0 0 0 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52Z"/></svg>
-              <span data-i18n="auth.google">Google bilan kirish</span>
-            </button>
-            <button class="provider provider-o" type="button" data-prov="oneid">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="8.2" r="3.6"/><path d="M4.6 19.6c1.1-3.2 3.9-4.8 7.4-4.8s6.3 1.6 7.4 4.8"/><path d="M17.4 3.2l.8 1.7 1.8.3-1.3 1.3.3 1.8-1.6-.8-1.6.8.3-1.8-1.3-1.3 1.8-.3z" fill="currentColor" stroke="none"/></svg>
-              <span data-i18n="auth.oneid">OneID bilan kirish</span>
-            </button>
-          </div>
-          <div class="sep"><span data-i18n="auth.or">yoki email bilan</span></div>
-          <div class="fld"><label for="lEmail" data-i18n="auth.email">Email</label><input id="lEmail" name="username" type="text" autocomplete="username" autocapitalize="off" spellcheck="false" required></div>
-          <div class="fld"><label for="lPass" data-i18n="auth.pass">Parol</label><input id="lPass" name="password" type="password" autocomplete="current-password" required></div>
-          <button class="btn btn-gold auth-submit" type="submit" data-i18n="auth.login">Kirish</button>
-          <div class="auth-msg" id="loginMsg" data-err="Login yoki parol xato."></div>
-        </form>
-        <!-- REAL REGISTER (teacher arizasi): POST /user/login mode=reg -->
-        <form id="fReg" method="POST" action="/user/login" style="display:none">
-          <input type="hidden" name="mode" value="reg">
-          <input type="hidden" name="lang" value="uz" id="regLang">
-          <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
-          <input type="hidden" name="role" value="teacher">
-          <input type="text" name="website" id="regWebsite" tabindex="-1" autocomplete="off" value="" aria-hidden="true" style="position:absolute;left:-9999px">
-          <div class="providers">
-            <button class="provider provider-g" type="button" data-prov="google">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1Z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23Z"/><path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84Z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15A11 11 0 0 0 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52Z"/></svg>
-              <span data-i18n="auth.google">Google bilan kirish</span>
-            </button>
-            <button class="provider provider-o" type="button" data-prov="oneid">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="8.2" r="3.6"/><path d="M4.6 19.6c1.1-3.2 3.9-4.8 7.4-4.8s6.3 1.6 7.4 4.8"/><path d="M17.4 3.2l.8 1.7 1.8.3-1.3 1.3.3 1.8-1.6-.8-1.6.8.3-1.8-1.3-1.3 1.8-.3z" fill="currentColor" stroke="none"/></svg>
-              <span data-i18n="auth.oneid">OneID bilan kirish</span>
-            </button>
-          </div>
-          <div class="sep"><span data-i18n="auth.or">yoki email bilan</span></div>
-          <div class="fld"><label for="rName" data-i18n="auth.name">Ism va familiya</label><input id="rName" name="name" type="text" autocomplete="name" required></div>
-          <div class="fld"><label for="rEmail" data-i18n="auth.email">Email</label><input id="rEmail" name="email" type="email" autocomplete="email" required></div>
-          <div class="fld"><label for="rPass" data-i18n="auth.pass">Parol</label><input id="rPass" name="password" type="password" autocomplete="new-password" minlength="8" required></div>
-          <input type="hidden" name="username" id="rUsername" value="">
-          <label class="consent">
-            <input type="checkbox" name="consent" value="on" checked required style="margin-top:2px">
-            <span data-i18n="auth.consent">Maxfiylik siyosati va foydalanish shartlariga roziman</span>
-          </label>
-          <button class="btn btn-gold auth-submit" type="submit" id="regSubmit" data-i18n="auth.regTeacher">Adminga so'rov yuborish</button>
-          <div class="auth-msg" id="doneReg"></div>
-        </form>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- CRED -->
-<div class="cred">
-  <div class="cred-in">
-    <span data-i18n="cred.c1">HEMIS / OneID</span>
-    <span data-i18n="cred.c2">Server-confirmed</span>
-    <span data-i18n="cred.c3">WCAG 2.2 AA</span>
-    <span data-i18n="cred.c4">QTI import</span>
   </div>
 </div>
-<!-- CTA -->
-<section class="cta">
-  <h2 class="reveal" data-i18n="cta.h2">Ishni <em>osonlashtiring</em>.</h2>
-  <div class="cta-stamp reveal" data-i18n="cta.stamp">AI · CAST · SIGNAL · HISOBOT</div>
-  <p class="reveal" data-i18n="cta.p">Ruxsat OTM ma'muriyati tomonidan beriladi. Tasdiqlash kutilayotganda ham imkoniyatlarni ko'rib chiqing.</p>
-  <div class="btns reveal">
-    <a class="btn btn-gold btn-lg" href="#auth" data-i18n="cta.b1">Kirish</a>
-    <a class="btn btn-lg" href="#feat" data-i18n="cta.b2">Imkoniyatlar</a>
+<!-- HAMBURGER MENU -->
+<div class="hmenu" id="hmenu">
+  <a href="/user/login" data-i18n="hm.kirish">Kirish</a>
+  <a href="#cast" data-i18n="hm.cast">Cast</a>
+  <a href="#kontakt" data-i18n="hm.documents">Hujjatlar</a>
+</div>
+<!-- SAHIFA -->
+<main class="page" id="main">
+  <div class="head">
+    <div class="kicker" data-i18n="head.kicker">Savolni sinf ekraniga uzatish</div>
+    <h1 data-i18n="head.h1">Savol — <em>ekranda</em>. Javob — telefonda.</h1>
+    <p data-i18n="head.p">Bir tugma bilan savol sinf ekraniga uzatiladi. Javoblar real vaqtda yig'iladi.</p>
   </div>
-</section>
+  <!-- CAST DEMO -->
+  <div class="screen" id="cast">
+    <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+    <div class="sc-top">
+      <span class="sc-code">EDK-4821</span>
+      <span class="sc-live"><i></i><span data-i18n="live.live">jonli</span></span>
+      <span id="scTime">01:24</span>
+    </div>
+    <div class="sc-body">
+      <div class="beam" id="beam">
+        <span class="tx" data-i18n="beam.tx">uzatilmoqda…</span>
+        <span class="ln"></span><span class="dot"></span>
+      </div>
+      <div class="step q" id="q" data-i18n="live.q">SQL'da jadvaldan takroriy yozuvlarni olib tashlab, faqat unikallarini qaytaruvchi operator qaysi?</div>
+      <div class="opts">
+        <div class="opt step" data-opt><span class="k">A</span><span>SELECT DISTINCT</span><span class="pct">20%</span><span class="track"><i data-w="20"></i></span></div>
+        <div class="opt step dom" data-opt><span class="k">B</span><span>SELECT UNIQUE ALL</span><span class="pct">43%</span><span class="track"><i data-w="43"></i></span></div>
+        <div class="opt step" data-opt><span class="k">C</span><span>SELECT FILTER</span><span class="pct">27%</span><span class="track"><i data-w="27"></i></span></div>
+        <div class="opt step" data-opt><span class="k">D</span><span>SELECT REMOVE</span><span class="pct">10%</span><span class="track"><i data-w="10"></i></span></div>
+      </div>
+      <div class="cap step" data-i18n="live.cap">Response mosaic · 42 javob</div>
+      <div class="mini" id="mini"></div>
+      <div class="devnote" id="devnote"><b data-i18n="live.dev">Dominant xato: B · 43%</b></div>
+    </div>
+    <div class="sc-foot">
+      <span data-i18n="live.f1">Savol cast qilindi</span>
+      <span data-i18n="live.f2">javoblar yig'ilmoqda</span>
+    </div>
+  </div>
+  <p class="under" data-i18n="under">Bu — <b>cast</b>: savol ekranda, javoblar telefonda. Har bir savol shu tarzda uzatiladi.</p>
+  <!-- AUTH -->
+  <section class="auth" id="auth">
+    <div class="auth-card">
+      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <div class="auth-head">
+        <div class="k" data-i18n="auth.k">Kirish va ro'yxatdan o'tish</div>
+        <h2 data-i18n="auth.h2">Tizimga kirish</h2>
+      </div>
+      <div class="tabs">
+        <button type="button" class="on" data-tab="login" data-i18n="auth.t1">Kirish</button>
+        <button type="button" data-tab="reg" data-i18n="auth.t2">Ro'yxatdan o'tish</button>
+      </div>
+      <form id="fLogin" action="/user/login" method="POST">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="hidden" name="mode" value="login">
+            <input type="hidden" name="lang" value="<%= lang %>" id="loginLang">
+        <div class="providers">
+          <button class="provider provider-g" type="button" data-prov="google">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1Z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23Z"/><path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84Z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15A11 11 0 0 0 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52Z"/></svg>
+            <span data-i18n="auth.google">Google bilan kirish</span>
+          </button>
+          <button class="provider provider-o" type="button" data-prov="oneid">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="8.2" r="3.6"/><path d="M4.6 19.6c1.1-3.2 3.9-4.8 7.4-4.8s6.3 1.6 7.4 4.8"/><path d="M17.4 3.2l.8 1.7 1.8.3-1.3 1.3.3 1.8-1.6-.8-1.6.8.3-1.8-1.3-1.3 1.8-.3z" fill="currentColor" stroke="none"/></svg>
+            <span data-i18n="auth.oneid">OneID bilan kirish</span>
+          </button>
+        </div>
+        <div class="sep"><span data-i18n="auth.or">yoki email bilan</span></div>
+        <div class="fld"><label for="lEmail" data-i18n="auth.email">Email</label><input id="lEmail" name="username" type="email" autocomplete="email" required></div>
+        <div class="fld"><label for="lPass" data-i18n="auth.pass">Parol</label><input id="lPass" name="password" type="password" autocomplete="current-password" required></div>
+        <button class="btn btn-gold auth-submit" type="submit" data-i18n="auth.login">Kirish</button>
+        <div class="auth-msg" data-i18n="auth.doneLogin"></div>
+      </form>
+      <form id="fReg" action="/user/login" method="POST" style="display:none">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="hidden" name="mode" value="reg">
+            <input type="hidden" name="consent" value="on">
+            <input type="hidden" name="lang" value="<%= lang %>" id="regLang">
+            <input type="hidden" name="username" id="rUser">
+        <div class="providers">
+          <button class="provider provider-g" type="button" data-prov="google">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1Z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23Z"/><path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84Z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15A11 11 0 0 0 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52Z"/></svg>
+            <span data-i18n="auth.google">Google bilan kirish</span>
+          </button>
+          <button class="provider provider-o" type="button" data-prov="oneid">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="8.2" r="3.6"/><path d="M4.6 19.6c1.1-3.2 3.9-4.8 7.4-4.8s6.3 1.6 7.4 4.8"/><path d="M17.4 3.2l.8 1.7 1.8.3-1.3 1.3.3 1.8-1.6-.8-1.6.8.3-1.8-1.3-1.3 1.8-.3z" fill="currentColor" stroke="none"/></svg>
+            <span data-i18n="auth.oneid">OneID bilan kirish</span>
+          </button>
+        </div>
+        <div class="sep"><span data-i18n="auth.or">yoki email bilan</span></div>
+        <div class="fld"><label for="rName" data-i18n="auth.name">Ism va familiya</label><input id="rName" name="name" type="text" autocomplete="name" required></div>
+        <div class="fld"><label for="rEmail" data-i18n="auth.email">Email</label><input id="rEmail" name="email" type="email" autocomplete="email" required></div>
+        <div class="fld"><label for="rPass" data-i18n="auth.pass">Parol</label><input id="rPass" name="password" type="password" autocomplete="new-password" required></div>
+        <button class="btn btn-gold auth-submit" type="submit" data-i18n="auth.register">Ro'yxatdan o'tish</button>
+        <div class="auth-msg" id="doneReg"></div>
+      </form>
+    </div>
+  </section>
+</main>
 <!-- FOOTER -->
-<footer class="ftr" id="kontakt">
+<footer class="ftr">
   <div class="ftr-in">
     <div>
       <h4 data-i18n="ftr.col1t">Sahifalar</h4>
-      <a href="/play" data-i18n="ftr.l1">Cast</a>
-      <a href="#feat" data-i18n="ftr.l2">Imkoniyatlar</a>
+      <a href="#main" data-i18n="ftr.l1">Bosh sahifa</a>
+      <a href="#cast" data-i18n="ftr.l2">Cast</a>
       <a href="#auth" data-i18n="ftr.l3">Kirish</a>
+      <a href="#auth" data-i18n="ftr.l4">Ro'yxatdan o'tish</a>
+      <a href="/user/login" data-i18n="ftr.teachers">O'qituvchilar</a>
     </div>
     <div>
       <h4 data-i18n="ftr.col2t">Hujjatlar</h4>
@@ -268,7 +211,7 @@
       <a href="#" data-i18n="ftr.l7">Xavfsizlik</a>
       <a href="#" data-i18n="ftr.l8">Qonuniy ma'lumot</a>
     </div>
-    <div>
+    <div id="kontakt">
       <h4 data-i18n="ftr.col3t">Aloqa</h4>
       <a href="#">hello@deborah.uz</a>
       <a href="#" data-i18n="ftr.l9">Status</a>
@@ -281,20 +224,11 @@
     </div>
   </div>
   <div class="ftr-copy">
-    <span data-i18n="ftr.legal">© 2026 Deborah · O'qituvchilar uchun AI yordamchi</span>
+    <span data-i18n="ftr.legal">© 2026 Deborah · Savolni sinf ekraniga uzatish tizimi</span>
     <span>UZ / RU / EN</span>
   </div>
 </footer>
-</div><!-- /.site -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <defs>
-    <radialGradient id="auraGrad" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#e8c87e" stop-opacity=".5"/>
-      <stop offset="45%" stop-color="#c9a45c" stop-opacity=".14"/>
-      <stop offset="100%" stop-color="#c9a45c" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
-</svg>
+
 <script src="/js/landing.js" defer></script>
 </body>
 </html>
