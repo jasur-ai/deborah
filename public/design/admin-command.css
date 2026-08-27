@@ -306,7 +306,7 @@ body.theme-light .admin-top-chip:nth-child(1) {
 body.theme-light .admin-del-btn {
   background: rgba(11, 111, 181, 0.08);
   border-color: rgba(11, 111, 181, 0.25);
-  color: #0b6fb5;
+  color: #095e9e;
 }
 
 [data-theme="light"] .admin-edit-btn,
@@ -433,6 +433,9 @@ body.theme-light .nav-btn:hover {
 [data-theme="light"] .nav-logo,
 body.theme-light .nav-logo {
   background: linear-gradient(135deg, #0b6fb5, #7c3aed);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* Kartalar hover — cyan nafislik */
@@ -477,7 +480,9 @@ body.theme-light .admin-topbar {
 
 /* "Admin" flag — cyan → binafsha gradient */
 .auth-admin-flag {
-  background: linear-gradient(135deg, #22d3ee, #7c3aed);
+  /* BUG-054: eski gradientning binafsha uchi (#7c3aed) dark-matnga nisbatan
+     3.27:1 edi (kichik bold matn uchun <4.5). Ikkala stop endi >=5:1. */
+  background: linear-gradient(135deg, #22d3ee, #0891b2);
   color: #041018;
   border: 1px solid rgba(34, 211, 238, 0.35);
 }

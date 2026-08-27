@@ -137,7 +137,7 @@ const _isActive = (href) => {
     <% // BUG-037: doim ko'rinadigan Chiqish — POST + CSRF (BUG-032), dropdown ochilmasdan ham ├── %>
     <form method="post" action="/user/logout" style="margin:0;display:block;width:100%">
       <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
-      <button type="submit" class="shell-nav-link" style="width:100%;display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;text-align:left;font:inherit;color:inherit">
+      <button type="submit" class="shell-nav-link shell-nav-btn">
         <span class="shell-nav-ico"><%- icon('logOut', 16) %></span><span>Chiqish</span>
       </button>
     </form>

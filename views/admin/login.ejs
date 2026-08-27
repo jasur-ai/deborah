@@ -5,7 +5,7 @@
   <link rel="stylesheet" href="/design/contexts/auth.css">
   <style>
     /* S24.12 — admin: same family, no neon, distinct cobalt flag */
-    .auth-admin-flag{background:var(--deborah-semantic-color-brand-cobalt);}
+    .auth-admin-flag{background:var(--deborah-semantic-color-brand-cobalt,#7dd3fc);color:#041018;} /* BUG-057: token yuklanmasa badge dark'da ko'rinmasdi (1.05:1) */
     .auth-box{max-width:440px;margin:0 auto;}
     .admin-topbar{
       display:flex;align-items:center;justify-content:space-between;

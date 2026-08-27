@@ -215,7 +215,7 @@
   --accent: var(--deborah-semantic-color-action-primary, #2563EB);
   --accent-dark: var(--deborah-semantic-color-action-primary-hover, #1D4ED8);
   --accent-deep: var(--deborah-semantic-color-action-primary-active, #1E40AF);
-  --accent-glow:  #3B82F6;
+  --accent-glow:  #1D4ED8;
   --accent-bright:#60A5FA;
   --accent-purple:#7C3AED;
   --accent-amber: #D97706;
@@ -867,7 +867,7 @@ body.shell-open .shell-sidebar { transform: translateX(0); }
   transition: color, background-color, border-color, box-shadow, transform, opacity, filter .25s ease; display: flex; align-items: center; gap: 6px;
 }
 .role-tab:hover { border-color: var(--deborah-semantic-color-action-primary); color: var(--deborah-semantic-color-text-primary); }
-.role-tab.active { background: var(--deborah-semantic-color-action-primary); border-color: var(--deborah-semantic-color-action-primary); color: #fff; box-shadow: 0 4px 14px rgba(37,99,235,.35); }
+.role-tab.active { background: var(--deborah-semantic-color-action-primary); border-color: var(--deborah-semantic-color-action-primary); color: var(--deborah-semantic-color-action-on-action, #041018); box-shadow: 0 4px 14px rgba(37,99,235,.35); } /* BUG-056: #fff cyan ustida 1.76:1 edi — on-action token */
 
 /* ── UI states (loading/error/empty/offline/job) ── */
 .ui-state { text-align: center; padding: 34px 18px; color: var(--deborah-semantic-color-text-muted); border-radius: var(--deborah-radius-lg, 16px); border: 1px dashed var(--deborah-semantic-color-border-default); background: var(--deborah-semantic-color-surface-raised); }

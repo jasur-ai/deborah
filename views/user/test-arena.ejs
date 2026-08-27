@@ -16,16 +16,28 @@
       flex-shrink:0;overflow-x:auto;white-space:nowrap;
     }
     .logo{font-family:''Manrope'',cursive;font-size:.95rem;
-      background:linear-gradient(135deg,var(--deborah-semantic-color-action-primary),var(--gold));
+      background:linear-gradient(135deg,#e7c078,#fbbf24);
       -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
       flex-shrink:0;margin-right:2px;}
     #topbar input{
       background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:7px;
-      padding:5px 8px;color:var(--deborah-semantic-color-text-primary);font-family:'Source Sans 3',sans-serif;font-size:.76rem;font-weight:700;
+      padding:5px 8px;color:var(--deborah-semantic-color-text-primary,#f2ede3);font-family:'Source Sans 3',sans-serif;font-size:.76rem;font-weight:700;
       outline:none;transition:border-color .2s;
     }
     #topbar input:focus{border-color:var(--deborah-semantic-color-action-primary);}
-    #topbar input::placeholder{color:var(--deborah-semantic-color-text-muted);}
+
+    /* Arena — qat'iy qorong'u "orol": light temada ham chrome qorong'u, tokenlar dark qiymatida qoladi */
+    [data-theme="light"]{
+      --deborah-semantic-color-text-primary:#f2ede3;
+      --deborah-semantic-color-text-secondary:#c0b7a4;
+      --deborah-semantic-color-text-muted:#9a9178;
+      --deborah-semantic-color-border-default:rgba(201,165,101,.16);
+      --gold:#fbbf24; --green:#7fa878; --blue:#22d3ee; --purple:#a78bfa;
+      --deborah-semantic-color-surface-raised:#241f18;
+      --deborah-semantic-color-surface-input:#241f18;
+    }
+
+    #topbar input::placeholder{color:var(--deborah-semantic-color-text-muted,#9a9178);}
     #code-inp{width:82px;font-family:''Manrope'',cursive;letter-spacing:3px;text-align:center;}
     #bot-count,#correct-rate,#answer-rate{width:46px;text-align:center;}
     .tb-lbl{color:var(--deborah-semantic-color-text-muted);font-weight:600;font-size:.65rem;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;}
@@ -36,9 +48,9 @@
     }
     .tb-btn:disabled{opacity:.35;cursor:not-allowed;}
     .btn-load{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;}
-    .btn-bots{background:linear-gradient(135deg,#00e5a0,#059669);color:#fff;}
+    .btn-bots{background:linear-gradient(135deg,#00e5a0,#059669);color:#04120c;}
     .btn-bots:hover{transform:translateY(-1px);}
-    .btn-clean{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#f87171;}
+    .btn-clean{background:rgba(120,30,30,.55);border:1px solid rgba(248,113,113,.45);color:#f87171;}
     .btn-clean:hover{background:rgba(239,68,68,.2);}
     .tb-sep{width:1px;height:18px;background:rgba(255,255,255,.08);flex-shrink:0;}
     #status-pill{

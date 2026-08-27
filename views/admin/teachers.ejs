@@ -7,7 +7,7 @@
     /* AUTH B-15 — filter tabs, pagination, accessible modal */
     .t-filter{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
     .t-filter a{padding:8px 14px;border-radius:var(--deborah-radius-sm,8px);border:1px solid var(--deborah-semantic-color-border-subtle);background:var(--gradient-glass);color:var(--deborah-semantic-color-text-secondary);font-size:.85rem;text-decoration:none;display:inline-flex;align-items:center;gap:6px;min-height:40px}
-    .t-filter a.on{background:var(--deborah-semantic-color-action-primary);border-color:var(--deborah-semantic-color-action-primary);color:#fff;font-weight:600}
+    .t-filter a.on{background:var(--deborah-semantic-color-action-primary);border-color:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#041018);font-weight:600} /* BUG-025: #fff cyan ustida 1.7:1 */
     .t-search{display:flex;gap:8px;margin:10px 0 2px;flex-wrap:wrap}
     .t-search input{flex:1;min-width:180px;padding:10px 12px;border-radius:var(--deborah-radius-sm,8px);border:1px solid var(--deborah-semantic-color-border-subtle);background:var(--deborah-semantic-color-surface-raised,#fff);color:var(--deborah-semantic-color-text-primary);min-height:40px}
     .t-search button{min-height:40px;padding:0 16px}
@@ -27,7 +27,7 @@
     .t-charcount{font-size:.75rem;color:var(--deborah-semantic-color-text-muted);text-align:right;margin-top:4px}
     .t-reason{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:.8rem}
     /* design-lint S37.05: inline visual style → klasslar */
-    .t-badge-primary{background:var(--deborah-semantic-color-action-primary)}
+    .t-badge-primary{background:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#041018)} /* BUG-025: oq matn cyan ustida 1.7:1 edi */
     .t-empty{color:var(--deborah-semantic-color-text-secondary);font-size:.85rem;padding:22px 0;text-align:center}
     .t-muted{font-size:.75rem;color:var(--deborah-semantic-color-text-muted)}
     .t-badge-amber{background:rgba(245,158,11,.15);color:var(--amber)}

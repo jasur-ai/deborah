@@ -3,6 +3,7 @@
 <head>
   <%- include('../partials/head') %>
   <style>
+    .go-gold{color:var(--deborah-semantic-color-status-warning,var(--gold));}
     body{background:var(--deborah-semantic-color-surface-default);min-height:100vh;}
     .quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;}
     .next-up{background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-default);border-radius:14px;padding:16px;margin-bottom:18px;display:flex;align-items:center;gap:14px;transition:color .25s,background-color .25s,border-color .25s,box-shadow .25s,transform .25s,opacity .25s;}
@@ -46,7 +47,7 @@
         <div class="rc-ico" style="background:rgba(245,158,11,.14);color:var(--gold)"><%- icon('award', 20) %></div>
         <div class="rc-title">Portfolio</div>
         <div class="rc-sub">Evidence portfolio va yutuqlar</div>
-        <a href="/user/portfolio" style="display:inline-block;margin-top:12px;text-decoration:none;color:var(--gold);font-weight:700;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
+        <a href="/user/portfolio" class="go-gold" style="display:inline-block;margin-top:12px;text-decoration:none;font-weight:700;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
       </div>
       <div class="role-card">
         <div class="rc-ico" style="background:rgba(0,229,160,.12);color:var(--green)"><%- icon('shieldCheck', 20) %></div>

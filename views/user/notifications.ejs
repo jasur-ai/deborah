@@ -24,12 +24,12 @@
     .switch input{opacity:0;width:0;height:0;}
     .slider{position:absolute;cursor:pointer;inset:0;background:var(--deborah-semantic-color-surface-input);border:1px solid var(--deborah-semantic-color-border-default);border-radius:26px;transition:background .25s,border-color .25s;}
     .slider::before{content:'';position:absolute;height:18px;width:18px;left:3px;top:3px;background:var(--deborah-semantic-color-text-muted);border-radius:50%;transition:transform .25s,background .25s;}
-    .switch input:checked + .slider{background:linear-gradient(135deg,var(--deborah-semantic-color-action-primary),#1d4ed8);border-color:transparent;}
+    .switch input:checked + .slider{background:var(--deborah-semantic-color-action-primary);border-color:transparent;}
     .switch input:checked + .slider::before{transform:translateX(20px);background:#fff;}
     .switch input:focus-visible + .slider{outline:2px solid var(--deborah-semantic-color-action-primary);outline-offset:2px;}
     .switch input:disabled + .slider{cursor:not-allowed;opacity:.55;}
     .save-bar{position:sticky;bottom:0;background:var(--bg-overlay);backdrop-filter:blur(18px);border-top:1px solid var(--deborah-semantic-color-border-default);padding:12px 0;display:flex;align-items:center;justify-content:space-between;gap:10px;}
-    .save-btn{border-radius:10px;border:none;padding:12px 22px;cursor:pointer;font-family:'Source Sans 3',sans-serif;font-weight:700;font-size:.82rem;background:linear-gradient(135deg,var(--deborah-semantic-color-action-primary),#1d4ed8);color:#fff;display:flex;align-items:center;gap:7px;}
+    .save-btn{border-radius:10px;border:none;padding:12px 22px;cursor:pointer;font-family:'Source Sans 3',sans-serif;font-weight:700;font-size:.82rem;background:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#041018);display:flex;align-items:center;gap:7px;}
     .save-btn:disabled{opacity:.55;cursor:not-allowed;}
     .status-msg{font-size:.78rem;font-weight:700;}
     .status-msg.ok{color:var(--green);}

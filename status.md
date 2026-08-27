@@ -156,12 +156,37 @@ first-win 86/86.
 holat, landing kichik-harf→uppercase→navigatsiya, forma dual-path, director 200 + meta 200 +
 **pageerror=0**. vitest cast paketi 25/25.
 
-## STEP 7 — 🟠 Dark mode kontrast (WCAG) — ⏳
-**Buglar:** BUG-023, BUG-024, BUG-025
-**Qanday:** `.btn.green` dark'da 1.04:1 (marking/grading/board), arena inputlari 1.17:1,
-/admin/teachers badge 1.58:1. Fix: dark tema tokenlari (≥4.5:1) — design-audit contrast checker
- bilan isbot.
-**Verify:** `design:check:full` kontrast oqimi (9 ✓ saqlanadi).
+## STEP 7 — 🟠 Dark mode kontrast (WCAG) — ✅
+**Buglar:** BUG-023, BUG-024, BUG-025 + YANGI BUG-054…BUG-062 (jami 12 ta)
+**Qanday (qaysi+qanday):**
+- **BUG-023** `.btn.green` (1.04:1) — **o'lchov artefakti ekanligi ISBOTLANDI**: QA skaneri gradient
+  stoplarini o'qimagan (chrome computed style'da hex→rgb bo'ladi), bg qorong'u ota-tagga tushgan.
+  Ground-truth: fg #04120c, bg `linear-gradient(#00e5a0→#00b37e)` RENDER BO'LADI, worst-stop 6.9:1 ✓.
+  Kod o'zgartirilmadi — hisobotda noto'g'ri o'lchov deb hujjatlandi.
+- **BUG-024** arena raqamli inputlari (1.17:1) — hozirgi buildda tokenlar yuklanadi, o'lchandi 12:1 ✓;
+  himoyalancha `color:var(--text-primary,#f2ede3)` + placeholder fallback qo'shildi (test-arena.ejs).
+- **BUG-025** teachers badge + "Kutilmoqda" `a.on` (#fff cyan ustida 1.7–1.8) → `var(--action-on-action,#041018)`.
+- **BUG-054** `.auth-admin-flag` gradient uchi #7c3aed (3.27) → #0891b2 (ikkala stop ≥5:1).
+- **BUG-055** test-builder dark `.tb-err-summary-title` (3.58) → #fca5a5.
+- **BUG-056** `.role-tab.active` #fff (1.76) → on-action token.
+- **BUG-057** admin login sahifasida brand-cobalt token yuklanmaydi — badge 1.05 (ko'rinmas!) →
+  `var(--…,#7dd3fc)` fallback + #041018 matn.
+- **BUG-058** (o'zim topdim) 23 ta viewda takrorlangan inline `.btn/.tab.active/.verify-btn/.mfa-icon`
+  `gradient(var(--action-primary),#1d4ed8)+#fff` — oq matn cyan stopda 1.7:1 → qat'iy
+  `var(--action-primary)` + `var(--action-on-action,#041018)` (38 qoida, 23 fayl).
+- **BUG-059** arena `.btn-bots` oq matn yashil gradientda 1.65 → #04120c.
+- **BUG-060** LIGHT: sidebar hard-kodlangan #241f18 + light token matni = 1.05:1 → sidebar to'liq
+  tokenlashtirildi (premium-theme.css: surface/border/action tokenlar).
+- **BUG-061** LIGHT: gradient-matn (background-clip:text) worst-stop 2.4:1 → light'da qat'iy
+  action-primary override; arena `.logo` qat'iy oltin stoplar (topbar doim qorong'u).
+- **BUG-062** LIGHT aksentlar: amber linklar/badgelar → status tokenlar (light warning #7f5a18
+  qoraytirildi), admin `.admin-del-btn` light #095e9e, `--accent-glow` light #1D4ED8, panel `.on`
+  → on-action, `.ws-search-btn/.ws-state-action/shell-role-user` ranglari.
+- Bonus: design-lint S37.05 (sidebar.ejs inline style — STEP4 dan qolgan) → `.shell-nav-btn` klassi.
+**Tool:** `scripts/repro-step7.mjs` — Playwright WCAG-2.2 kompozit kontrast skaner: dark+light,
+gradient worst-stop, background-clip:text, to'liq alfa kompozit (shaffof qatlamlar zanjiri),
+barcha inputlar. 18 sahifa (6 user + 12 admin): **0 ta buzilish**.
+**Verify:** skaner 0/0 (dark+light); vitest design+unit **4896/4896** ✓; design-lint PASS ✓.
 
 ## STEP 8 — 🟡 UI/i18n mayda buglar — ⏳
 **Buglar:** BUG-004, BUG-033, BUG-034, BUG-046, BUG-003, BUG-028, BUG-042
@@ -203,6 +228,7 @@ holat, landing kichik-harf→uppercase→navigatsiya, forma dual-path, director 
 - **STEP 4** (2026-08-27): BUG-008/032/037/014 — POST-only logout + tasdiq sahifasi + ko'rinadigan tugma + input bounds; brauzer 8/8, logout-csrf 2/2, regression 116/116.
 - **STEP 5** (2026-08-27): BUG-035/036/040/039 — landing rol+consent+teacher havola, SMTP timeout+5s cap; brauzer 12/12, email 28/28, auth/a11y 86/86. [PUSH nuqtasi]
 - **STEP 6** (2026-08-27): BUG-020/021/002 + YANGI 049/050/051/052/053 (186 jQuery-uzilish!) — repro 17/17, cast testlari 25/25.
+- **STEP 7** (2026-08-27): BUG-023 (artefakt—isbot)+024+025 + YANGI 054–062 — kontrast skaner 0 buzilish (dark+light, 18 sahifa), vitest 4896/4896, design-lint PASS.
 
 ## 📋 MANBA HAVOLALAR
 - BUG hisobotlari: `workspace` branch → `qa/BUG_REPORTS.md`

@@ -388,6 +388,9 @@
   color: var(--deborah-semantic-color-status-danger);
   display: flex; align-items: center; gap: 6px;
 }
+/* BUG-055: dark rejimda status-danger (#f87171) xira fon ustida 3.58:1 — yorqinroq */
+[data-theme="dark"] .tb-err-summary-title,
+[data-resolved-theme="dark"] .tb-err-summary-title { color: #fca5a5; }
 .tb-err-summary-list { list-style: none; padding: 0; margin: 0; }
 .tb-err-summary-list li {
   font-size: 0.875rem; font-weight: 600;

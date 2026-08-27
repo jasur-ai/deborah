@@ -3,6 +3,7 @@
 <head>
   <%- include('../partials/head') %>
   <style>
+    .go-gold{color:var(--deborah-semantic-color-status-warning,var(--gold));}
     body{background:var(--deborah-semantic-color-surface-default);min-height:100vh;}
     .ov-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;}
     .ov-stat{background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-default);border-radius:14px;padding:14px 16px;transition:color .25s,background-color .25s,border-color .25s,box-shadow .25s,transform .25s,opacity .25s;}
@@ -61,7 +62,7 @@
           <div class="rc-ico" style="background:rgba(245,158,11,.14);color:var(--gold)"><%- icon('users', 20) %></div>
           <div class="rc-title">Kurslar &amp; guruhlar</div>
           <div class="rc-sub">Groups / Cohorts / Students</div>
-          <a href="/teacher?tab=courses" style="display:inline-block;margin-top:12px;text-decoration:none;color:var(--gold);font-weight:700;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
+          <a href="/teacher?tab=courses" class="go-gold" style="display:inline-block;margin-top:12px;text-decoration:none;font-weight:700;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
         </div>
       </div>
     <% } else if (tab === 'courses') { %>

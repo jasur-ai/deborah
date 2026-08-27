@@ -90,7 +90,7 @@
         show(manageEl);
         remainingEl.textContent = t('remaining', 'Qolgan backup kodlar: __n__ / 10').replace('__n__', String(data.backupCodesRemaining ?? 0));
       } else if (data.status === 'pending') {
-        statusEl.innerHTML = '<div class="verdict" style="color:var(--gold);border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.07)">' + esc(t('setupPending', 'Setup boshlangan — kodni tasdiqlab tugating.')) + '</div>';
+        statusEl.innerHTML = '<div class="verdict" style="color:var(--deborah-semantic-color-status-warning,var(--gold));border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.07)">' + esc(t('setupPending', 'Setup boshlangan — kodni tasdiqlab tugating.')) + '</div>';
         // Pending bo'lsa setup UI ko'rsatilmaydi; qayta setup boshlanadi
         show(setupEl);
         startSetup();
