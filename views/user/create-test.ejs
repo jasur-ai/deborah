@@ -116,13 +116,13 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script>
     // STEP 27 — server-side initial state (test-builder.js o'qiydi)
-    // XSS: JSON'dagi `<` `\u003c` ga aylantiriladi — `</script>` breakout'ning oldi olinadi
-    window.__CSRF_TOKEN = <%= JSON.stringify(csrfToken || '') %>;
+    // XSS: JSON'dagi `<` `\u003c` ga aylantiriladi — `<\/script>` breakout'ning oldi olinadi
+    window.__CSRF_TOKEN = <%- JSON.stringify(csrfToken || '') %>;
     window.__TB_INIT = {
       isEdit: <%= isEdit ? 'true' : 'false' %>,
-      editKey: <%= JSON.stringify((editKey || '').replace(/</g, '\\u003c')) %>,
-      name: <%= JSON.stringify((testData ? (testData.name || '') : '').replace(/</g, '\\u003c')) %>,
-      questions: <%= JSON.stringify(testData && Array.isArray(testData.questions)
+      editKey: <%- JSON.stringify((editKey || '').replace(/</g, '\\u003c')) %>,
+      name: <%- JSON.stringify((testData ? (testData.name || '') : '').replace(/</g, '\\u003c')) %>,
+      questions: <%- JSON.stringify(testData && Array.isArray(testData.questions)
         ? testData.questions.map(q => ({
             type: ['single_choice', 'true_false', 'multiple_select', 'short_answer', 'exit_ticket'].includes(q.type) ? q.type : 'single_choice',
             text: q.text || '',

@@ -190,25 +190,25 @@
   <script>
     (function () {
       var CSRF = <%- JSON.stringify(csrfToken || '') %>;
-      var LANG = <%= JSON.stringify(lang) %>;
+      var LANG = <%- JSON.stringify(lang) %>;
       var COPY = {
-        demoTitle: <%= JSON.stringify(copy.demoTitle) %>,
-        answerBtn: <%= JSON.stringify(copy.answerBtn) %>,
-        retryBtn: <%= JSON.stringify(copy.retryBtn) %>,
-        correctMsg: <%= JSON.stringify(copy.correctMsg) %>,
-        wrongMsg: <%= JSON.stringify(copy.wrongMsg) %>,
-        continueBtn: <%= JSON.stringify(copy.continueBtn) %>,
-        skipBtn: <%= JSON.stringify(copy.skipBtn) %>,
-        fwQCounter: <%= JSON.stringify(copy.firstWin.fwQCounter) %>,
-        fwNext: <%= JSON.stringify(copy.firstWin.fwNext) %>,
-        fwFinish: <%= JSON.stringify(copy.firstWin.fwFinish) %>,
-        fwCorrect: <%= JSON.stringify(copy.firstWin.fwCorrect) %>,
-        fwWrong: <%= JSON.stringify(copy.firstWin.fwWrong) %>,
-        fwScoreSub: <%= JSON.stringify(copy.firstWin.fwScoreSub) %>,
-        clProgress: <%= JSON.stringify(copy.checklist.clProgress) %>
+        demoTitle: <%- JSON.stringify(copy.demoTitle) %>,
+        answerBtn: <%- JSON.stringify(copy.answerBtn) %>,
+        retryBtn: <%- JSON.stringify(copy.retryBtn) %>,
+        correctMsg: <%- JSON.stringify(copy.correctMsg) %>,
+        wrongMsg: <%- JSON.stringify(copy.wrongMsg) %>,
+        continueBtn: <%- JSON.stringify(copy.continueBtn) %>,
+        skipBtn: <%- JSON.stringify(copy.skipBtn) %>,
+        fwQCounter: <%- JSON.stringify(copy.firstWin.fwQCounter) %>,
+        fwNext: <%- JSON.stringify(copy.firstWin.fwNext) %>,
+        fwFinish: <%- JSON.stringify(copy.firstWin.fwFinish) %>,
+        fwCorrect: <%- JSON.stringify(copy.firstWin.fwCorrect) %>,
+        fwWrong: <%- JSON.stringify(copy.firstWin.fwWrong) %>,
+        fwScoreSub: <%- JSON.stringify(copy.firstWin.fwScoreSub) %>,
+        clProgress: <%- JSON.stringify(copy.checklist.clProgress) %>
       };
-      var subjects = <%= JSON.stringify(subjects) %>;
-      var STEP = <%= JSON.stringify(step) %>;
+      var subjects = <%- JSON.stringify(subjects) %>;
+      var STEP = <%- JSON.stringify(step) %>;
       var FW = {
         questions: [],
         index: 0,

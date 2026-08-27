@@ -576,7 +576,7 @@
   </script>
   <script>
     // S26: API POST'lar uchun CSRF token (X-CSRF-Token header)
-    window.__CSRF_TOKEN = <%= JSON.stringify(csrfToken || '') %>;
+    window.__CSRF_TOKEN = <%- JSON.stringify(csrfToken || '') %>;
     // AUTH A-28: risk banner copy (i18n)
     window.__RISK_COPY__ = <%- JSON.stringify(riskCopy || {}) %>;
     // AUTH A-29: account copy (i18n)

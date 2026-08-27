@@ -73,7 +73,7 @@
   </div>
 
   <script>
-    window.__CSRF_TOKEN = <%= JSON.stringify(typeof csrfToken !== 'undefined' ? csrfToken : '') %>;
+    window.__CSRF_TOKEN = <%- JSON.stringify(typeof csrfToken !== 'undefined' ? csrfToken : '') %>;
   </script>
   <%- include('../partials/auth-footer') %>
   <script src="/js/mfa.js" defer></script>

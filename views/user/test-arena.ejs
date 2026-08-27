@@ -177,7 +177,7 @@
 
 <script>
 // ── DOM refs ──
-const $ = id => document.getElementById(id);
+const $id = id => document.getElementById(id);
 const CHAR_PATH = '/characters';
 const BOT_PREFIX = 'Bot';
 
@@ -191,14 +191,14 @@ const socket = io();
 
 // ── Status ──
 function setStatus(txt, live) {
-  const el = $('status-pill');
+  const el = $id('status-pill');
   el.className = live ? 'live' : '';
   el.textContent = txt;
 }
 
 // ── Phone iframe scale ──
 function updatePhoneScale() {
-  const content = $('phone-content');
+  const content = $id('phone-content');
   if (!content) return;
   const availW = content.clientWidth || 294;
   const availH = content.clientHeight || 580;
@@ -220,23 +220,23 @@ window.addEventListener('resize', updatePhoneScale);
 
 // ── Load Arena ──
 window.loadArena = function() {
-  const code = $('code-inp').value.trim();
+  const code = $id('code-inp').value.trim();
   if (!/^\d{5}$/.test(code)) { showToast('5 xonali kod kiriting', 'err'); return; }
   curCode = code;
 
   // Host iframe
-  $('left-frame-wrap').innerHTML = '<iframe src="/host?code=' + code + '&auto=0" allow="clipboard-write"></iframe>';
+  $id('left-frame-wrap').innerHTML = '<iframe src="/host?code=' + code + '&auto=0" allow="clipboard-write"></iframe>';
 
   // Phone iframe
-  const pc = $('phone-content');
+  const pc = $id('phone-content');
   pc.innerHTML = '<iframe src="/play?code=' + code + '" id="phone-iframe"></iframe>';
   const pif = pc.querySelector('iframe');
   if (pif) pif.addEventListener('load', updatePhoneScale);
   setTimeout(updatePhoneScale, 80);
   setTimeout(updatePhoneScale, 400);
 
-  $('add-bots-btn').disabled = false;
-  $('clean-btn').disabled = false;
+  $id('add-bots-btn').disabled = false;
+  $id('clean-btn').disabled = false;
   setStatus('Yuklandi: ' + code, true);
   watchGame(code);
 };
@@ -244,9 +244,9 @@ window.loadArena = function() {
 // ── Bot qo'shish ──
 window.addBots = async function() {
   if (!curCode) return;
-  const count = Math.max(1, Math.min(50, parseInt($('bot-count').value || '15', 10)));
+  const count = Math.max(1, Math.min(50, parseInt($id('bot-count').value || '15', 10)));
   curBotCount = count;
-  const btn = $('add-bots-btn');
+  const btn = $id('add-bots-btn');
   btn.disabled = true;
   btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:3px"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Qo\'shilmoqda...';
   try {
@@ -276,7 +276,7 @@ window.addBots = async function() {
 window.cleanupBots = async function() {
   if (!curCode) return;
   if (!(await showConfirm('Tozalash', 'Barcha botlarni o\'chirasizmi?', 'Tozala'))) return;
-  const btn = $('clean-btn');
+  const btn = $id('clean-btn');
   btn.disabled = true;
   try {
     const res = await fetch('/arena/api/cleanup-bots', {
@@ -319,8 +319,8 @@ function scheduleAnswers(code, st) {
   botTimeouts.forEach(function(t) { clearTimeout(t); });
   botTimeouts = [];
 
-  const correctRate = Math.max(0, Math.min(1, (parseFloat($('correct-rate').value) || 70) / 100));
-  const answerRate = Math.max(0, Math.min(1, (parseFloat($('answer-rate').value) || 90) / 100));
+  const correctRate = Math.max(0, Math.min(1, (parseFloat($id('correct-rate').value) || 70) / 100));
+  const answerRate = Math.max(0, Math.min(1, (parseFloat($id('answer-rate').value) || 90) / 100));
   const maxDelay = Math.max(400, qTimeMs - 600);
 
   for (let i = 1; i <= curBotCount; i++) {
@@ -346,7 +346,7 @@ function scheduleAnswers(code, st) {
 }
 
 // ── Code input Enter key ──
-$('code-inp').addEventListener('keydown', function(e) {
+$id('code-inp').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') window.loadArena();
 });
 
@@ -355,7 +355,7 @@ $('code-inp').addEventListener('keydown', function(e) {
   var p = new URLSearchParams(location.search);
   var c = p.get('code');
   if (c && /^\d{4,6}$/.test(c)) {
-    $('code-inp').value = c;
+    $id('code-inp').value = c;
     if (p.get('auto') === '1') setTimeout(function() { window.loadArena(); }, 200);
   }
 })();

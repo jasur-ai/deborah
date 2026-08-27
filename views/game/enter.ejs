@@ -331,7 +331,7 @@
 
     // Set back button
     const endBtn = document.getElementById('end-back-btn');
-    if (endBtn) endBtn.href = isAdmin ? '/' : '/';
+    if (endBtn) endBtn.href = '/'; // isAdmin hech qachon ta'riflanmagan edi (ReferenceError) — ikkala yo'l '/' bo'lgan
 
     // Rejoin: check session storage
     try {

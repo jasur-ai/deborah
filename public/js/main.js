@@ -3,9 +3,12 @@
  */
 
 // ── DOM shortcuts ──
-const $ = (id) => document.getElementById(id);
-const qs = (sel) => document.querySelector(sel);
-const qsa = (sel) => document.querySelectorAll(sel);
+// MUHIM (BUG-012/044): window property sifatida eksport qilamiz — global `const $`
+// bo'lsa, sahifalardagi inline `const $` bilan "already declared" SyntaxError
+// berib butun script blokini o'ldirardi (22 ta view ta'sirlangan edi).
+window.$ = (id) => document.getElementById(id);
+window.qs = (sel) => document.querySelector(sel);
+window.qsa = (sel) => document.querySelectorAll(sel);
 
 // ── Debounce ──
 function debounce(fn, delay = 300) {
