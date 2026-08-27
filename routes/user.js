@@ -289,6 +289,15 @@ router.post('/api/tests/save', async (req, res) => {
     if (!name || !questions?.length) {
       return res.status(400).json({ error: 'Invalid data' });
     }
+    // BUG-014: server-side input bounds (role emas — o'z testini yaratish barcha
+    // rollar uchun mo'ljallangan; cheklovsiz payload — resurs xavfsizligi muammosi)
+    if (String(name).trim().length > 300 || questions.length > 300) {
+      return res.status(400).json({ error: 'Test juda katta (nom ≤300 belgi, ≤300 savol)' });
+    }
+    for (const q of questions) {
+      if (String(q?.text || '').length > 2000) return res.status(400).json({ error: 'Savol matni ≤2000 belgi' });
+      if (Array.isArray(q?.options) && q.options.length > 12) return res.status(400).json({ error: 'Har savolda ≤12 variant' });
+    }
 
     const testKey = editKey || Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 

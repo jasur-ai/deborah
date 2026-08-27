@@ -174,8 +174,11 @@ describe('D-08 — MFA frontend (integration)', () => {
     // (sessiya roleni login paytida oladi; keyin qo'ysak sessiya student qoladi)
     await fb.set(`users/${safeKey(uname)}/role`, 'teacher');
     // Logout — register sessiyasida role=student qolgan; yangi login DB'dagi
-    // teacher rolini sessiyaga oladi (MFA kartasi privileged rolga render)
-    await agent.get('/user/logout').redirects(0).catch(() => {});
+    // teacher rolini sessiyaga oladi (MFA kartasi privileged rolga render).
+    // BUG-032: logout endi POST + CSRF — GET faqat tasdiq sahifasi (sessiya o'lmaydi)
+    const loPage = await agent.get('/user/logout');
+    const loCsrf = (loPage.text.match(/name="_csrf" value="([^"]+)"/) || [])[1];
+    await agent.post('/user/logout').type('form').send({ _csrf: loCsrf }).redirects(0).catch(() => {});
     // 2-chi login (auth-a26 konventsiyasi)
     const lp = await agent.get('/user/login?lang=uz');
     const lc = (lp.text.match(/name="_csrf" value="([^"]+)"/) || [])[1];

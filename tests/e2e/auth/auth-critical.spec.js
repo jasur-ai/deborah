@@ -28,6 +28,7 @@ test.describe('AUTH D-14 — critical journey', () => {
     // Agar panelga tushgan bo'lsak, logout qilamiz (login oqimini ham tekshiramiz)
     if (page.url().includes('/panel')) {
       await page.goto('/user/logout'); // logout → bosh sahifa (sessiya tozalanadi)
+      await page.locator('#logout-confirm-btn').click().catch(() => {}); // BUG-032: POST tasdiq
     }
 
     // Login

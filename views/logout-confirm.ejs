@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title || 'Chiqishni tasdiqlash' %></title>
+  <style>
+    :root { color-scheme: light dark; }
+    * { box-sizing: border-box; }
+    body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+      font-family:'Source Sans 3',system-ui,-apple-system,sans-serif;
+      background:#f6f7f9; color:#1f2937; padding:20px; }
+    @media (prefers-color-scheme: dark) { body { background:#0f172a; color:#e5e7eb; } .card { background:#1e293b; border-color:#334155; } }
+    .card { background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:28px; max-width:400px; width:100%;
+      box-shadow:0 8px 24px rgba(0,0,0,.08); text-align:center; }
+    h1 { font-size:1.15rem; margin:0 0 8px; }
+    p { font-size:.9rem; opacity:.75; margin:0 0 20px; line-height:1.5; }
+    form { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+    button { font:inherit; font-weight:700; border:none; border-radius:10px; padding:11px 20px; cursor:pointer; }
+    .yes { background:#dc2626; color:#fff; }
+    .no { background:transparent; color:inherit; border:1px solid currentColor; opacity:.8; text-decoration:none;
+      display:inline-flex; align-items:center; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <!-- BUG-008/032: logout endi POST + CSRF bilan — GET faqat tasdiq sahifasi -->
+    <h1>Chiqishni tasdiqlash</h1>
+    <p>Sessiyangizni yakunlashni xohlaysizmi?</p>
+    <form method="post" action="<%= action %>">
+      <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+      <button type="submit" class="yes" id="logout-confirm-btn">Ha, chiqish</button>
+      <a class="no" href="<%= back || '/' %>">Bekor qilish</a>
+    </form>
+  </main>
+</body>
+</html>

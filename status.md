@@ -79,16 +79,30 @@ tugma tirik; guest teacher-approval → 302 login (brauzer Accept) / 401 JSON (A
 sahifa 200 (camera-review oldin 500), dashboard+sidebar HTML'da yangi hreflar/eskilar yo'q,
 student camera-pilot 200. vitest camera/admin/e2e 27/27 ✓.
 
-## STEP 4 — 🟡 Logout-CSRF + role gate (xavfsizlik) — ⏳
+## STEP 4 — 🟡 Logout-CSRF + role gate (xavfsizlik) — ✅ YAKUNLANDI
 **Buglar:** BUG-008, BUG-032, BUG-014, BUG-037
-**Qanday:**
-- **BUG-008/032** — `/admin/logout` va `/user/logout` GET + CSRF'siz (logout-CSRF). Fix: POST+CSRF
-  (GET back-compat yo'lda qoldiriladi yoki 302→POST formaga) + barcha view havolalarini yangilash.
-- **BUG-037** — logout havolasi desktop'da ko'rinmas (fold'da). Fix: sidebar'da doim ko'rinadigan
-  joyga chiqarish.
-- **BUG-014** — `/api/tests/save` role/VIP gate yo'q (faqat name/questions tekshiradi). Fix:
-  biznes-qoidaga mos requireVip/teacher gate (mavjud middleware).
-**Verify:** integration test (GET logout CSRF'siz ishlamaydi, POST ishlaydi) + UI brauzer.
+**Qilingan (aniq):**
+- **BUG-008/032 — POST-only logout**: `GET /user/logout` va `/admin/logout` endi TASDIQ sahifasi
+  (`views/logout-confirm.ejs`, _csrf bilan POST form) — sessiyani o'ldirmaydi; real chiqish
+  `POST` (global validateCsrf avtomatik). POST /user/logout'da remember-token + push revoke
+  mantiqi saqlandi (revoke_token endi body'dan). session-timeout.js `data-st-logout` endi
+  dinamik POST form yuboradi. 40 ta eski GET havoli viewlarda o'zgartirilmadi — ular tasdiq
+  sahifasiga tushadi (1 klik qo'shadi, ishlaydi).
+- **BUG-037 — ko'rinadigan Chiqish**: sidebar "Akkaunt" bo'limiga doim ko'rinadigan Chiqish
+  tugmasi (POST + _csrf) qo'shildi — dropdown ochmasdan ham chiqish mumkin (Playwright
+  offsetParent bilan isbot).
+- **BUG-014 — POLSIYA ANIQLANDI + hardening**: test yaratish barcha rollar uchun DIZAYN BO'YICHA
+  (panel'da studentga "Birinchi testingizni yaratin" empty state; arena source=user o'z testlari;
+  game.js'dagi teacher/VIP gate faqat mock/pre imtihonlarga). Role gate qo'shilmadi (feature
+  sinishi bo'lardi). Buning o'rniga server-side input bounds: nom ≤300, ≤300 savol, savol matni
+  ≤2000, ≤12 variant (chelebsiz payload — resurs xavfsizligi).
+- **Testlar**: yangi `tests/integration/logout-csrf.test.js` (GET=200 tasdiq/sessiya tirik,
+  POST CSRF'siz=403, POST _csrf=302+sessiya o'lgan; admin xuddi shunday) 2/2; mfa-frontend-d08
+  GET-logout hiylasi POST+yangi-csrf'ga o'tkazildi (9/9); e2e auth spec'lariga tasdiq click.
+
+**Verify (isbot):** Playwright brauzer **8/8 PASS** (`scripts/repro-step4.mjs`): tugma ko'rinadi,
+GET→tasdiq (sessiya tirik), sidebar tugma (POST+CSRF)→bosh sahifa, panel login'ga redirect.
+vitest: logout-csrf 2/2 + a20/a26/mfa-d08/auth/profile 116/116.
 
 ## STEP 5 — 🔴/🟠 Registratsiya oqimi (teacher yo'qolgan) + SMTP timeout — ⏳
 **Buglar:** BUG-035, BUG-036, BUG-040, BUG-039
@@ -157,6 +171,7 @@ student camera-pilot 200. vitest camera/admin/e2e 27/27 ✓.
 - **STEP 1** (2026-08-27): BUG-009/010/012/044 + 2 yangi topilma — 6 fayl; brauzer 13/13 PASS, vitest 45/45.
 - **STEP 2** (2026-08-27): BUG-011/016/041 — 5 fayl + 3 test sinxron; brauzer 10/10 PASS, auth 491/491, integration 104/104.
 - **STEP 3** (2026-08-27): BUG-006/007 — 4 fayl; server repro 15/15 PASS, vitest 27/27.
+- **STEP 4** (2026-08-27): BUG-008/032/037/014 — POST-only logout + tasdiq sahifasi + ko'rinadigan tugma + input bounds; brauzer 8/8, logout-csrf 2/2, regression 116/116.
 
 ## 📋 MANBA HAVOLALAR
 - BUG hisobotlari: `workspace` branch → `qa/BUG_REPORTS.md`

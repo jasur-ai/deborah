@@ -137,7 +137,15 @@
     keepBtn.focus(); // focus modal'ga — keyboard foydalanuvchi darhol ko'radi
 
     backdrop.querySelector('[data-st-logout]').addEventListener('click', () => {
-      window.location.href = '/user/logout';
+      // BUG-032: logout endi POST + CSRF (GET faqat tasdiq sahifasi)
+      var f = document.createElement('form');
+      f.method = 'post'; f.action = '/user/logout';
+      var i = document.createElement('input');
+      i.type = 'hidden'; i.name = '_csrf';
+      i.value = window.__CSRF_TOKEN || '';
+      f.appendChild(i);
+      document.body.appendChild(f);
+      f.submit();
     });
     keepBtn.addEventListener('click', () => keepAlive());
     backdrop.addEventListener('click', (e) => {

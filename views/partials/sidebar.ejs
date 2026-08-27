@@ -134,6 +134,13 @@ const _isActive = (href) => {
     <% } %>
     <div class="shell-nav-sec">Akkaunt</div>
     <a href="/user/profile" class="shell-nav-link<%= _isActive('/user/profile') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('user', 16) %></span><span>Profilim</span></a>
+    <% // BUG-037: doim ko'rinadigan Chiqish — POST + CSRF (BUG-032), dropdown ochilmasdan ham ├── %>
+    <form method="post" action="/user/logout" style="margin:0;display:block;width:100%">
+      <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+      <button type="submit" class="shell-nav-link" style="width:100%;display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;text-align:left;font:inherit;color:inherit">
+        <span class="shell-nav-ico"><%- icon('logOut', 16) %></span><span>Chiqish</span>
+      </button>
+    </form>
   </nav>
 
   <!-- S17.11: Account menu — theme + home + logout grouped (logout primary emas) -->

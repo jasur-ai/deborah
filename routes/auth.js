@@ -690,7 +690,18 @@ router.post('/api/admin/mfa/reset/execute', requireAdmin, requireRecentAdminAuth
 });
 
 // ── Admin Logout (session destroy + regenerate) ──
+// BUG-008: logout-CSRF — GET faqat tasdiq sahifasi, real chiqish POST + CSRF bilan
 router.get('/admin/logout', (req, res) => {
+  if (!req.session?.admin) return res.redirect('/admin/login');
+  res.render('logout-confirm', {
+    title: 'Admin — Chiqishni tasdiqlash',
+    action: '/admin/logout',
+    back: '/admin/dashboard',
+    csrfToken: req.csrfToken ? req.csrfToken() : (req.session?.csrfToken || ''),
+  });
+});
+
+router.post('/admin/logout', (req, res) => {
   req.session.destroy(() => {
     res.clearCookie(sessionCookieName());
     res.redirect('/admin/login');
@@ -2329,7 +2340,18 @@ router.post('/user/forgot', redirectIfAuth, async (req, res) => {
 });
 
 // ── User Logout (session destroy + remember token revoke + cookie clear) ──
-router.get('/user/logout', async (req, res) => {
+// BUG-032: logout-CSRF — GET faqat tasdiq sahifasi, real chiqish POST + CSRF bilan
+router.get('/user/logout', (req, res) => {
+  if (!req.session?.user) return res.redirect('/');
+  res.render('logout-confirm', {
+    title: 'Chiqishni tasdiqlash',
+    action: '/user/logout',
+    back: '/user/panel',
+    csrfToken: req.csrfToken ? req.csrfToken() : (req.session?.csrfToken || ''),
+  });
+});
+
+router.post('/user/logout', async (req, res) => {
   // AUTH A-25 §07: remember token revoke (DB) + cookie tozalash
   try {
     const cookieVal = parseCookies(req.headers.cookie)[rememberCookieName()];
@@ -2342,7 +2364,7 @@ router.get('/user/logout', async (req, res) => {
   // ?revoke_token= orqali yuboradi — faqat o'z user'iga tegishli token o'chadi.
   try {
     const userKey = req.session?.user?.safeKey;
-    const revokeToken = typeof req.query.revoke_token === 'string' ? req.query.revoke_token.slice(0, 500) : '';
+    const revokeToken = typeof req.body?.revoke_token === 'string' ? req.body.revoke_token.slice(0, 500) : '';
     if (userKey && revokeToken) {
       const { removeFcmToken } = await import('../src/modules/student/fcm.js');
       await removeFcmToken({ userId: userKey, token: revokeToken }).catch(() => {});

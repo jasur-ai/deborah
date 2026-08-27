@@ -54,6 +54,7 @@ test.describe('MFA — student uchun yo\u2018q (yangi spec)', () => {
 
     // 4) Logout → parol bilan kirish MFA challengesiz panelga
     await page.goto('/user/logout');
+      await page.locator('#logout-confirm-btn').click().catch(() => {}); // BUG-032: POST tasdiq
     await page.goto('/user/login');
     await page.fill('#login-username', username);
     await page.fill('#login-password', password);
