@@ -2043,7 +2043,12 @@ router.post('/user/login',
       // AUTH A-18 §11: verify kod emailga yuboriladi (A-23: provider orqali).
       // Kod hech qachon log'ga chiqmaydi; audit'da faqat event.
       // B-06 §09: template 4 til — register'dagi lang (cookie/query/settings).
-      await sendVerifyCode({ userKey, email, lang });
+      // BUG-039: javobni SMTP bloklamasin — maks 5s kutamiz, yuborish orqada
+      // davom etadi (mock/tez provider'da race zudlik bilan fulfilled bo'ladi).
+      await Promise.race([
+        sendVerifyCode({ userKey, email, lang }).catch(() => {}),
+        new Promise((resolve) => setTimeout(resolve, 5000)),
+      ]);
 
       // B-06 §20: metric — birinchi send ham sanaladi (resend bilan yig'indi)
       try {

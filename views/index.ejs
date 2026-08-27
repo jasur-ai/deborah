@@ -180,7 +180,23 @@
         <div class="fld"><label for="rEmail" data-i18n="auth.email">Email</label><input id="rEmail" name="email" type="email" autocomplete="email" required></div>
         <div class="fld"><label for="rUser" data-i18n="auth.username">Username</label><input id="rUser" name="username" type="text" autocomplete="username" spellcheck="false" minlength="2" maxlength="50" required><div class="fld-hint" id="rUserHint" aria-live="polite"></div></div>
         <div class="fld"><label for="rPass" data-i18n="auth.pass">Parol</label><input id="rPass" name="password" type="password" autocomplete="new-password" minlength="8" required><div class="fld-hint dim" data-i18n="auth.passHint">Kamida 8 belgi — harf va raqam</div></div>
+        <% // BUG-035: rol tanlash (server role=teacher'ni qabul qiladi; university/subject
+           // bo'lmasa to'liq /user/register formaga prefilled o'tadi — mavjud mantiq %>
+        <div class="fld">
+          <label data-i18n="auth.role">Rolingiz</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <label style="flex:1;display:flex;align-items:center;gap:8px;border:1px solid rgba(0,0,0,.18);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:.85rem;font-weight:600"><input type="radio" name="role" value="" checked><span data-i18n="auth.roleStudent">Talaba</span></label>
+            <label style="flex:1;display:flex;align-items:center;gap:8px;border:1px solid rgba(0,0,0,.18);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:.85rem;font-weight:600"><input type="radio" name="role" value="teacher"><span data-i18n="auth.roleTeacher">O'qituvchi</span></label>
+          </div>
+        </div>
+        <% // BUG-036: faol rozilik (avval hidden value="on" — avtomatik rozilik edi) %>
+        <div class="fld" style="display:flex;gap:8px;align-items:flex-start">
+          <input type="checkbox" name="consent" id="rConsent" required style="margin-top:3px;width:16px;height:16px;accent-color:#b8860b">
+          <label for="rConsent" style="font-size:.78rem;font-weight:400;line-height:1.45">Men <a href="/privacy" target="_blank" rel="noopener">maxfiylik siyosati</a> va <a href="/terms" target="_blank" rel="noopener">foydalanish shartlariga</a> roziman</label>
+        </div>
         <button class="btn btn-gold auth-submit" type="submit" data-i18n="auth.register">Ro'yxatdan o'tish</button>
+        <% // BUG-040: to'liq teacher arizasiga yo'l (landing'dan topilmagan) %>
+        <div style="text-align:center;margin-top:10px;font-size:.8rem"><a href="/user/register" data-i18n="auth.teacherLink">O'qituvchi uchun to'liq ariza →</a></div>
         <div class="auth-msg" id="doneReg"></div>
       </form>
     </div>

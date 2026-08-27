@@ -104,17 +104,29 @@ student camera-pilot 200. vitest camera/admin/e2e 27/27 ✓.
 GET→tasdiq (sessiya tirik), sidebar tugma (POST+CSRF)→bosh sahifa, panel login'ga redirect.
 vitest: logout-csrf 2/2 + a20/a26/mfa-d08/auth/profile 116/116.
 
-## STEP 5 — 🔴/🟠 Registratsiya oqimi (teacher yo'qolgan) + SMTP timeout — ⏳
+## STEP 5 — 🔴/🟠 Registratsiya oqimi (teacher yo'qolgan) + SMTP timeout — ✅ YAKUNLANDI
 **Buglar:** BUG-035, BUG-036, BUG-040, BUG-039
-**Qanday:**
-- **BUG-035/036** — landing fReg: rol tanlash YO'Q, consent `hidden value="on"` (avtomatik rozilik).
-  Fix: landing formaga rol tanlash (Talaba/O'qituvchi) + faol consent checkbox qo'shish.
-- **BUG-040** — `/user/register` (to'liq teacher ariza formasi) landing'dan hech qayerda havolalanmagan.
-  Fix: landing'da "O'qituvchi bo'lib ro'yxatdan o'tish" havolasi.
-- **BUG-039** — reg POST 90–180s: SMTP transportda timeout yo'q + sinxron await. Fix:
-  nodemailer `connectionTimeout/socketTimeout/greetingTimeout` (5–10s) + email yuborishni
-  javobsiz (queue/async) qilish.
-**Verify:** brauzer reg oqimi + SMTP unit test (timeout konfig).
+**Qilingan (aniq):**
+- **BUG-035** — landing fReg'ga rol tanlash (Talaba/O'qituvchi radio kartalar) qo'shildi.
+  Server `role=teacher`'ni allaqachon qabul qilardi (wantsTeacher, L944) — forma yetib
+  bermasdi. Teacher tanlansa landing.js NATIV POST qiladi → server to'liq `/user/register`
+  ariza sahifasini PREFILLED render qiladi (university/subject majburiy — mavhunga mos;
+  AJAX bu HTML'ni o'qiy olmasdi, shuning uchun nativ submit).
+- **BUG-036** — `hidden consent=on` (avtomatik rozilik) → FAOL `required` checkbox
+  (/privacy + /terms havolalari bilan). Server-side consent talabi (D-24) allaqachon bor edi.
+- **BUG-040** — fReg ostida "O'qituvchi uchun to'liq ariza →" havolasi (/user/register).
+- **BUG-039 — 2 qatlam**: (1) provider.js createTransport'ga `connectionTimeout:10s,
+  greetingTimeout:10s, socketTimeout:15s` (avval cheksiz — sekin SMTP so'rovni 90-180s
+  bloqlardi); (2) reg oqimidagi `await sendVerifyCode` → `Promise.race` 5s cap — javob
+  SMTP'ga bog'lanmay qoldi, email orqada davom etadi (mock/tez provider zudlik bilan
+  resolve — testlar ta'sirlanmaydi).
+- i18n: landing.js lug'atiga auth.role/roleStudent/roleTeacher/teacherLink (uz/ru/en).
+
+**Verify (isbot):** Playwright brauzer **12/12 PASS** (`scripts/repro-step5.mjs`): rol
+radiolari + consent required/unchecked + teacher havolasi; ru tilida ruscha matn; consent'siz
+submit bloklanadi; teacher → to'liq forma (university maydoni + username prefilled + roller
+saqlangan); student + consent → registratsiya o'tdi. vitest: email paketi 28/28 + auth/a11y/
+first-win 86/86.
 
 ## STEP 6 — 🟠 Cast: flaky join + o'lik API chaqiruv — ⏳
 **Buglar:** BUG-020, BUG-021, BUG-002
@@ -172,6 +184,7 @@ vitest: logout-csrf 2/2 + a20/a26/mfa-d08/auth/profile 116/116.
 - **STEP 2** (2026-08-27): BUG-011/016/041 — 5 fayl + 3 test sinxron; brauzer 10/10 PASS, auth 491/491, integration 104/104.
 - **STEP 3** (2026-08-27): BUG-006/007 — 4 fayl; server repro 15/15 PASS, vitest 27/27.
 - **STEP 4** (2026-08-27): BUG-008/032/037/014 — POST-only logout + tasdiq sahifasi + ko'rinadigan tugma + input bounds; brauzer 8/8, logout-csrf 2/2, regression 116/116.
+- **STEP 5** (2026-08-27): BUG-035/036/040/039 — landing rol+consent+teacher havola, SMTP timeout+5s cap; brauzer 12/12, email 28/28, auth/a11y 86/86. [PUSH nuqtasi]
 
 ## 📋 MANBA HAVOLALAR
 - BUG hisobotlari: `workspace` branch → `qa/BUG_REPORTS.md`

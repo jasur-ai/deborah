@@ -33,6 +33,7 @@
     'auth.userReserved':'Bu nom tizim uchun ajratilgan',
     'auth.userInvalid':'2–50 belgi: lotin harflari, raqam, . _ -',
     'auth.passHint':'Kamida 8 belgi — harf va raqam',
+    'auth.role':'Rolingiz','auth.roleStudent':'Talaba','auth.roleTeacher':"O'qituvchi",'auth.teacherLink':"O'qituvchi uchun to'liq ariza →",
     'err.net':'Tarmoq xatosi — qayta urinib ko\'ring',
     'err.wait':'Bir necha soniya kuting...','auth.or':'yoki email bilan',
     'auth.name':'Ism va familiya','auth.email':'Email','auth.pass':'Parol',
@@ -78,6 +79,7 @@
     'auth.userReserved':'Это имя зарезервировано системой',
     'auth.userInvalid':'2–50 символов: латиница, цифры, . _ -',
     'auth.passHint':'Минимум 8 символов — буквы и цифры',
+    'auth.role':'Ваша роль','auth.roleStudent':'Студент','auth.roleTeacher':'Преподаватель','auth.teacherLink':'Полная заявка преподавателя →',
     'err.net':'Ошибка сети — попробуйте ещё раз',
     'err.wait':'Подождите несколько секунд...','auth.or':'или по email',
     'auth.name':'Имя и фамилия','auth.email':'Email','auth.pass':'Пароль',
@@ -124,6 +126,7 @@
     'auth.userReserved':'This name is reserved by the system',
     'auth.userInvalid':'2–50 chars: letters, digits, . _ -',
     'auth.passHint':'At least 8 characters — letters and digits',
+    'auth.role':'Your role','auth.roleStudent':'Student','auth.roleTeacher':'Teacher','auth.teacherLink':'Full teacher application →',
     'err.net':'Network error — please retry',
     'err.wait':'Please wait a few seconds...','auth.or':'or with email',
     'auth.name':'Full name','auth.email':'Email','auth.pass':'Password',
@@ -348,6 +351,11 @@
       doneReg.classList.add('show');
       return false;
     }
+    /* BUG-035: O'qituvchi roli tanlanganda NATIV POST — server to'liq
+       /user/register ariza sahifasini prefilled render qiladi (university/
+       subject maydonlari u yerda). AJAX bu holatda HTML'ni o'qiy olmaydi. */
+    var roleSel=document.querySelector('#fReg input[name="role"]:checked');
+    if(roleSel&&roleSel.value==='teacher'){document.getElementById('fReg').submit();return false;}
     return true;
   });
 

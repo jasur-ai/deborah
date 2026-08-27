@@ -355,6 +355,11 @@ async function sendViaSmtp(msg) {
     host,
     port: Number(process.env.SMTP_PORT || 587),
     secure: process.env.SMTP_SECURE === 'true',
+    // BUG-039: timeout'siz transport sekin SMTP'da so'rovni minutlar bloklar
+    // edi (reg POST 90-180s timeout). 10-15s chegaralar.
+    connectionTimeout: 10_000,
+    greetingTimeout: 10_000,
+    socketTimeout: 15_000,
     auth: process.env.SMTP_USER
       ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
       : undefined,
