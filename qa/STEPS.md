@@ -65,3 +65,4 @@
 - ✅ STEP 14 — yakunlandi (2026-08-27): DEPLOY O'ZGARDI — BUG-090 🟠 (MemoryStore sessiyalar o'chdi, B-03 confirm) + re-verify (BUG-006/007 hali bor, BUG-009/010 TUZATILGAN) + BUG-093 🟠 (admin tema regressiya: faqat System) + BUG-094…099
 - ✅ STEP 15 — yakunlandi (2026-08-27): BUG-100 🟠 (hc rejim UI toggle yo'q — yarim funksiya, funksional tasdiq) + BUG-101…103 (3 ta) + BUG-104 ijobiy (hc-dark sifatli, OS dark avto, legal ru/en)
 - ✅ STEP 16 — yakunlandi (2026-08-27): BUG-105 🟠 (play mobil overflow re-confirm, join tugma yetib bormaydi) + BUG-106…110 (5 ta mobil UX) + BUG-111/112 ijobiy (mobil asosiy oqimlar toza) + BUG-113 (BUG-052+053 birgalikda Cast mobil join to'sadi)
+- ✅ STEP 17 — yakunlandi (2026-08-27): BUG-114 🔴 (admin modal focus trap yo'q) + BUG-115 🟠 (200% zoom overflow) + BUG-116 🟡 (teacher/admin RU/EN yo'q) + BUG-117/118

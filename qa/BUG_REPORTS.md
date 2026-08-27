@@ -695,6 +695,28 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-113: 🟡 BUG-052 holati yangi deployda: join tugma umuman yetib bormaydi — 'promise' crash'iga yetib bormasdan funksiya o'lik; ikkala bug birgalikda Cast mobil join'ni to'liq to'sadi (dev uchun: overflow fix + socket race fix ikkalasi kerak)
 
+### BUG-114: 🔴 ADMIN MODAL FOCUS TRAP YO'Q — klaviatura fon sahifaga qochadi
+- **Dalil (live):** admin overlay ochiq holatda 12x Tab -> fokus **overlay tashqarisidagi BUTTON'ga chiqdi**; focus trap yo'q
+- **WCAG 2.4.3:** modal dialog fokusni ichida ushlab turishi shart
+
+### BUG-115: 🟠 200% FONT ZOOM — LANDING overflow (WCAG 1.4.4)
+- **Dalil:** font 32px emulyatsiyada landing scrollWidth 822 > 720; keng element: Til tanlov bloki (140px fixed)
+
+### BUG-116: 🟡 Teacher/Admin interfeyslarda RU/EN tarjima YO'Q (faqat uz)
+- **Dalil:** /teacher va /admin/users lang=ru cookie bilan — kirill matn 0; i18n faqat auth/landing qatlamida
+
+### BUG-117: 🟡 CapsLock hint live holati — interaktiv repl keyingi stepda
+- Element bor (hidden), koddа keydown handler bor; past xavf
+
+### BUG-118: ✅ IJOBIY — Klaviatura a11y asosi yaxshi
+| Tekshiruv | Natija |
+|-----------|--------|
+| focus-visible CSS | deklaratsiyalangan |
+| Tab fokus ko'rinishi | 2px solid outline |
+| Admin modal Esc | yopiladi |
+| Reg label association | 0 xato |
+| admin login focus | ko'rinchan |
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
