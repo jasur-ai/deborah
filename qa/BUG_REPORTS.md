@@ -389,6 +389,29 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 | Cast Studio wizard | 4 preset (Responsive Accuracy/Tavsiya, Classic Live, Team Challenge, Formative Check) + sozlamalar → "Lobbi ochish" → preflight+sessions 200 → /cast/:id/director ("Cast — STEP5 UI Testi") |
 | Dalillar | 28, 29, 31, 32, 33, 34 PNG (qa/evidence) |
 
+### BUG-052: 🔴 Cast participant JOIN buzilgan — "Qayta ulanmoqda…" + `undefined (setting 'promise')` crash
+- **Live dalil (student, mobil 480px):** join kod+ism kiritilib "Qo'shilish" bosildi → sahifada **"Cannot set properties of undefined (setting 'promise')"** xom matn + **"Qayta ulanmoqda…"**; director'da ishtirokchi soni **0** (QA Talaba ko'rinmadi — 2 urinishda ham)
+- **Root cause (kod):** `public/js/cast-socket-client.js:75` — double-submit guard `this.pendingAcks.get(commandId).promise`ni o'qiydi, lekin `.set(commandId, {promise...})` faqat 105-qatorda bo'ladi; retry/tez chaqiruv race'ida `.get()` undefined → crash
+- **Simptom:** status doim "Ulanish…/Qayta ulanmoqda…" — join ACK ololmayapti
+- **Ta'sir:** **talaba jonli darsga qo'shilolmaydi** — asosiy user-oqimi (BUG-049 + BUG-020 bilan Cast deyarli ishlamay holatda)
+
+### BUG-053: 🟠 Participant sahifasi MOBILDA 1168px gorizontal OVERFLOW (480px viewport)
+- **Dalil:** `scrollWidth 1168 vs clientWidth 480`; "👀 Kuzatuv" karta va "✅ Ko'rdim" tugma **viewport tashqarisida** (Playwright 30s click qilolmadi — "element is outside of the viewport")
+- **Ta'sir:** talaba telefonida join/kuzatuv bilan ishlash imkonsiz; desktop'da toza
+
+### BUG-054: 🟡 Join formada karta raqami maydoni rejim tanlanmasdan ham ko'rinadi
+- **Dalil:** forma: Join kod (avto ✅), Ism, "Karta raqami (CARD-001)" hozirroq ko'rinadi, Sinfda/Uzoqdan tanlov
+- **Ta'sir:** chalkashlik — qaysi maydon qachon majburiyi nomaqlum
+
+### BUG-055: ✅ IJOBIY — Participant sahifa arxitekturasi (statik) professional
+| Element | Holat |
+|---------|-------|
+| Join formasi | kod avto-to'ldiriladi, ism/karta/in-room-remote |
+| PoE bloklari | Kuzatuv, Tushuntirish, confidence tugmalar, "Juda tez/Texnik muammo" feedback |
+| Wall/Forge | savol devori + AI manba kiritish UI |
+| Step indikator | 1 Kod → 2 Ism → 3 Lobbi |
+| Socket klient | command envelope, ACK, dedupe, retry arxitekturasi tayyor |
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 | Talab | Holat |
 |-------|-------|

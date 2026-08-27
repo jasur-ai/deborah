@@ -54,3 +54,4 @@
 - ✅ STEP 3 — yakunlandi (2026-08-27): BUG-039…BUG-042 (4 ta) + BUG-043 ijobiy (reg validatsiya, hamburger, admin modal/page, teacher ariza oqimi)
 - ✅ STEP 4 — yakunlandi (2026-08-27): BUG-044…BUG-047 (4 ta) + BUG-048 ijobiy (student panel: assignments/natijalar/notifications/arena/portfolio/sessions; Arena o'lik tugma isboti BUG-044)
 - ✅ STEP 5 — yakunlandi (2026-08-27): BUG-049…BUG-050 (2 ta, BUG-049 🔴 DIRECTOR o'lik JS — 160 o'lik chaqiruv) + BUG-051 ijobiy (create-test E2E + Excel + Cast wizard live o'tdi)
+- ✅ STEP 6 — yakunlandi (2026-08-27): BUG-052…BUG-054 (3 ta, BUG-052 🔴 participant JOIN crash) + BUG-055 ijobiy (student bilan real join urinishasi)
