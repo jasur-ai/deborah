@@ -145,7 +145,7 @@
         </div>
       </div>
 
-      <!-- RIGHT: meetings, ledger, outbox -->
+      <!-- RIGHT: meetings, ledger -->
       <div>
         <div class="card">
           <div class="card-h">Meetings <small><span class="badge blue" id="meetingCount">0</span></small></div>
@@ -157,10 +157,6 @@
           <div id="ledgerList"><div class="empty">Hozircha amendment yo'q</div></div>
         </div>
 
-        <div class="card">
-          <div class="card-h">SIS/HEMIS outbox <small><span class="badge violet" id="outboxCount">0</span></small></div>
-          <div id="outboxList"><div class="empty">Hozircha outbox yo'q</div></div>
-        </div>
       </div>
     </div>
   </div>
@@ -230,7 +226,6 @@
         showMsg('Ratified #' + r.decision.id + ' — snapshot ' + (r.snapshotHash || '').slice(0, 12) + '…');
         loadMeetings();
         loadLedger();
-        loadOutbox();
       }
     } catch (e) { showMsg(e.message, true); }
   }
@@ -240,8 +235,7 @@
       const r = await api('/api/admin/board/release', 'POST', {
         runId: Number(document.getElementById('rRunId2').value),
       });
-      showMsg('Outbox #' + r.outbox.id + ' (' + r.outbox.status + ') — ' + r.payload.finalGrade);
-      loadOutbox();
+      showMsg('Yakuniy baho chiqarildi — navbat #' + r.outbox.id + ' (' + r.outbox.status + ')');
     } catch (e) { showMsg(e.message, true); }
   }
 
@@ -280,30 +274,9 @@
     } catch (e) { document.getElementById('ledgerList').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; }
   }
 
-  async function loadOutbox() {
-    try {
-      const r = await api('/api/admin/board/outbox');
-      document.getElementById('outboxCount').textContent = r.rows.length;
-      const el = document.getElementById('outboxList');
-      if (!r.rows.length) { el.innerHTML = '<div class="empty">Hozircha outbox yo\'q</div>'; return; }
-      el.innerHTML = '<table><tr><th>ID</th><th>Key</th><th>Status</th><th>Attempts</th><th></th></tr>' +
-        r.rows.map(o => '<tr><td>' + o.id + '</td><td class="mono">' + esc(o.external_key) + '</td><td><span class="badge ' + (o.status === 'reconciled' ? 'green' : o.status === 'failed' ? 'red' : o.status === 'sent' ? 'blue' : 'amber') + '">' + esc(o.status) + '</span></td><td>' + o.attempts + '</td><td>' +
-          (o.status !== 'reconciled' ? '<button class="row-btn" onclick="reconcile(' + o.id + ')">Sent</button>' : '') +
-        '</td></tr>').join('') + '</table>';
-    } catch (e) { document.getElementById('outboxList').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; }
-  }
-
-  async function reconcile(id) {
-    try {
-      const r = await api('/api/admin/board/outbox/' + id + '/reconcile', 'POST', { status: 'sent' });
-      showMsg('Outbox #' + id + ' → ' + r.outbox.status);
-      loadOutbox();
-    } catch (e) { showMsg(e.message, true); }
-  }
 
   loadMeetings();
   loadLedger();
-  loadOutbox();
 </script>
 </body>
 </html>

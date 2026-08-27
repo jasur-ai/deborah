@@ -172,7 +172,7 @@ describe('Landing — HTTP routing (CAST demo 1:1 — tasdiqlangan cast.html por
     expect(html).toContain('id="rUser"');
     // Providerlar — REAL endpointlar (JS __AUTH_PROVIDERS bilan guard)
     expect(html).toContain('data-prov="google"');
-    expect(html).toContain('data-prov="oneid"');
+    expect(html).not.toContain('data-prov="oneid"'); // OneID 2026-08-27'da butunlay olib tashlandi
     expect(html).toMatch(/__AUTH_PROVIDERS\s*=\s*\{/);
     // Demo hint olib tashlangan
     expect(html).not.toContain('user1@gmail.com');
@@ -314,11 +314,11 @@ describe('Landing — HTTP routing (CAST demo 1:1 — tasdiqlangan cast.html por
     // Real ulanishlar
     expect(js).toContain("'/play?code='");
     expect(js).toContain("'/auth/google'");
-    expect(js).toContain("'/auth/hemis'");
+    expect(js).not.toContain("'/auth/hemis'"); // HEMIS 2026-08-27'da butunlay olib tashlandi
     expect(js).toContain('/admin/login');
     expect(js).toContain('__AUTH_PROVIDERS');
     // Provider-off xabarlari (3 til)
     expect(js).toContain('prov.g.off');
-    expect(js).toContain('prov.o.off');
+    expect(js).not.toContain('prov.o.off'); // OneID xabarlari olib tashlandi
   });
 });

@@ -298,7 +298,7 @@ describe('AUTH C-10 — HEMIS REST link flow', () => {
     expect(stj.linked).toBe(false);
   });
 
-  it('security-profile sahifasi hemisStatus ma\u2018lumotini ko\u2018rsatadi', async () => {
+  it('security-profile sahifasida HEMIS UI YO‘Q (2026-08-27: butunlay olib tashlandi)', async () => {
     installHemisMock();
     hemisFailLogin = false;
     hemisId = `8055${String(Date.now()).slice(-8)}`;
@@ -310,10 +310,9 @@ describe('AUTH C-10 — HEMIS REST link flow', () => {
     const res = await fetch(`${serverUrl}/user/security-profile`, { headers: { cookie: newCookie } });
     expect(res.status).toBe(200);
     const html = await res.text();
-    expect(html).toContain('hemis-card');
-    // EJS &#39; apostrof entity'si bilan render qiladi
-    expect(html).toContain('Bog&#39;langan');
-    expect(html).toContain('URISHBOYEV');
-    expect(html).toContain('/js/hemis-link.js');
+    // Link API orqali bog'langan bo'lsa ham sahifada HEMIS bloki KO'RINMASLIGI kerak
+    expect(html).not.toContain('hemis-card');
+    expect(html).not.toContain('/js/hemis-link.js');
+    expect(html).not.toContain('HEMIS');
   });
 });

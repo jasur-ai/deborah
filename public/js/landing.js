@@ -34,7 +34,7 @@
     'auth.userInvalid':'2–50 belgi: lotin harflari, raqam, . _ -',
     'auth.passHint':'Kamida 8 belgi — harf va raqam',
     'err.net':'Tarmoq xatosi — qayta urinib ko\'ring',
-    'err.wait':'Bir necha soniya kuting...','auth.oneid':'OneID bilan kirish','auth.or':'yoki email bilan',
+    'err.wait':'Bir necha soniya kuting...','auth.or':'yoki email bilan',
     'auth.name':'Ism va familiya','auth.email':'Email','auth.pass':'Parol',
     'auth.doneLogin':'Kirish ruxsat tasdiqlangach ochiladi.',
     'admin.btn':'Admin','admin.k':'Admin panel','admin.h3':'Administrator <em>kirishi</em>','admin.p':'Faqat administratorlar uchun.',
@@ -45,7 +45,7 @@
     'ftr.col3t':'Aloqa','ftr.l9':'Status',
     'ftr.col4t':'Til',
     'prov.g.off':'Google kirish serverda sozlanmagan (GOOGLE_CLIENT_ID). Administratorga murojaat qiling — hozir email bilan kiring.',
-    'prov.o.off':'OneID (HEMIS) serverda sozlanmagan. Administratorga murojaat qiling — hozir email bilan kiring.',
+    
     'ftr.legal':'© 2026 Deborah · Savolni sinf ekraniga uzatish tizimi'
   },
   ru:{
@@ -79,7 +79,7 @@
     'auth.userInvalid':'2–50 символов: латиница, цифры, . _ -',
     'auth.passHint':'Минимум 8 символов — буквы и цифры',
     'err.net':'Ошибка сети — попробуйте ещё раз',
-    'err.wait':'Подождите несколько секунд...','auth.oneid':'Войти через OneID','auth.or':'или по email',
+    'err.wait':'Подождите несколько секунд...','auth.or':'или по email',
     'auth.name':'Имя и фамилия','auth.email':'Email','auth.pass':'Пароль',
     'auth.login':'Вход','auth.register':'Отправить запрос администратору',
     'auth.doneLogin':'Вход откроется после подтверждения доступа.',
@@ -91,7 +91,7 @@
     'ftr.col3t':'Контакты','ftr.l9':'Статус',
     'ftr.col4t':'Язык',
     'prov.g.off':'Вход через Google не настроен на сервере (GOOGLE_CLIENT_ID). Обратитесь к администратору — пока входите по email.',
-    'prov.o.off':'OneID (HEMIS) не настроен на сервере. Обратитесь к администратору — пока входите по email.',
+    
     'ftr.legal':'© 2026 Deborah · Система трансляции вопроса на экран'
   },
   en:{
@@ -125,7 +125,7 @@
     'auth.userInvalid':'2–50 chars: letters, digits, . _ -',
     'auth.passHint':'At least 8 characters — letters and digits',
     'err.net':'Network error — please retry',
-    'err.wait':'Please wait a few seconds...','auth.oneid':'Sign in with OneID','auth.or':'or with email',
+    'err.wait':'Please wait a few seconds...','auth.or':'or with email',
     'auth.name':'Full name','auth.email':'Email','auth.pass':'Password',
     'auth.login':'Sign in','auth.register':'Send request to admin',
     'auth.doneLogin':'Sign-in opens after access approval.',
@@ -137,7 +137,7 @@
     'ftr.col3t':'Contact','ftr.l9':'Status',
     'ftr.col4t':'Language',
     'prov.g.off':'Google sign-in is not configured on the server (GOOGLE_CLIENT_ID). Contact the administrator — use email for now.',
-    'prov.o.off':'OneID (HEMIS) is not configured on the server. Contact the administrator — use email for now.',
+    
     'ftr.legal':'© 2026 Deborah · Cast questions to the class screen'
   }};
   var TITLES={uz:'Deborah — savolni sinf ekraniga uzatish',ru:'Deborah — трансляция вопроса на экран',en:'Deborah — cast questions to the class screen'};
@@ -271,18 +271,18 @@
     });
   });
 
-  /* ═══ REAL: Providerlar (Google / OneID) ═══ */
+  /* ═══ REAL: Providerlar (Google) ═══ */
   var PROV=(window.__AUTH_PROVIDERS||{});
   document.querySelectorAll('.provider').forEach(function(b){
     b.addEventListener('click',function(){
       var d=I18N[document.documentElement.getAttribute('lang')]||I18N.uz;
       var prov=b.getAttribute('data-prov');
-      var url=(prov==='google')?'/auth/google':'/auth/hemis';
-      var on=(prov==='google')?PROV.google:PROV.oneid;
+      var url='/auth/google';
+      var on=PROV.google;
       if(on){window.location.href=url;return;}
       var msg=b.closest('form').querySelector('.auth-msg');
       if(msg){
-        msg.textContent=d[prov==='google'?'prov.g.off':'prov.o.off'];
+        msg.textContent=d['prov.g.off'];
         msg.classList.add('show');
         setTimeout(function(){msg.classList.remove('show');},5200);
       }

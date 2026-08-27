@@ -50,8 +50,6 @@
     /* AUTH B-24: email change havolasi + izoh (inline visual style o'rniga klasslar) */
     .ec-change-link{display:flex;align-items:center;justify-content:center;text-decoration:none;}
     .ec-change-note{font-size:.72rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-top:6px;}
-    /* AUTH C-10: HEMIS bog'langan profil bloki (inline visual style o'rniga klass) */
-    .hemis-profile{font-size:.78rem;color:var(--deborah-semantic-color-text-muted);line-height:1.6;}
     .loading{text-align:center;padding:30px;color:var(--deborah-semantic-color-text-muted);font-weight:600;font-size:.84rem;}
     .empty{text-align:center;padding:26px;color:var(--deborah-semantic-color-text-muted);font-weight:700;font-size:.8rem;background:var(--deborah-semantic-color-surface-input);border-radius:14px;border:1px dashed var(--deborah-semantic-color-border-default);}
     @media(max-width:600px){.badge-card{flex-direction:column;}.verify-row{flex-direction:column;}.verify-btn{width:100%;justify-content:center;}}
@@ -151,38 +149,6 @@
     </div>
     <div style="font-size:.72rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-top:6px"><%= pk.recoveryNote || "Passkey yo'qolsa — parol + email orqali tiklash (MFA backup kodlari ham ishlaydi)." %></div>
 
-    <!-- C-10: HEMIS akkaunti bilan bog'lash (REST — talaba.hemis.uz/OTM endpoint) -->
-    <div class="sec-title" style="margin-top:18px"><%- icon('link', 16) %> HEMIS akkaunti bilan bog&#39;lash</div>
-    <div class="mfa-card" id="hemis-card" style="background:var(--deborah-semantic-color-surface-raised);border-radius:16px;padding:18px;border:1px solid var(--deborah-semantic-color-border-default);">
-      <% if (!hemisStatus || (!hemisStatus.restEnabled && !hemisStatus.oauthConfigured)) { %>
-        <div style="font-size:.78rem;color:var(--deborah-semantic-color-text-muted)">HEMIS integratsiyasi hozircha o&#39;chirilgan.</div>
-      <% } else { %>
-        <% if (hemisStatus.linked) { %>
-          <div style="font-size:.82rem;font-weight:700;margin-bottom:8px"><%- icon('check', 14) %> Bog&#39;langan</div>
-          <div class="hemis-profile">
-            <div><strong><%= hemisStatus.profile.fullName || '—' %></strong></div>
-            <div><%= hemisStatus.profile.university %><%= hemisStatus.profile.group ? ' · ' + hemisStatus.profile.group : '' %></div>
-            <div><%= hemisStatus.profile.specialty || '' %></div>
-          </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
-            <button class="verify-btn" id="hemis-unlink-btn" type="button" style="background:linear-gradient(135deg,#dc2626,#991b1b)"><%- icon('x', 14) %> Bog&#39;lanishni bekor qilish</button>
-          </div>
-        <% } else { %>
-          <div style="font-size:.74rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-bottom:10px">HEMIS login (talaba ID) va parolingiz bilan bog&#39;lang — universitet profilingiz avtomatik ulangan bo&#39;ladi.</div>
-          <div class="verify-row">
-            <input class="verify-inp" id="hemis-login" type="text" placeholder="HEMIS login" autocomplete="username" style="min-width:180px">
-            <input class="verify-inp" id="hemis-password" type="password" placeholder="HEMIS parol" autocomplete="current-password" style="min-width:180px">
-            <button class="verify-btn" id="hemis-link-btn" type="button"><%- icon('link', 14) %> Bog&#39;lash</button>
-          </div>
-          <% if (hemisStatus.oauthConfigured) { %>
-            <div style="margin-top:10px"><a class="verify-btn ec-change-link" href="/auth/hemis"><%- icon('logIn', 14) %> HEMIS orqali kirish</a></div>
-          <% } %>
-        <% } %>
-        <div id="hemis-err" class="verdict fail" style="display:none"></div>
-        <div id="hemis-ok" class="verdict ok" style="display:none"></div>
-      <% } %>
-    </div>
-    <div style="font-size:.72rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-top:6px">Parol hech qachon saqlanmaydi — faqat HEMIS orqali tekshiriladi.</div>
 
     <!-- AUTH A-29: password change -->
     <div class="sec-title" style="margin-top:18px"><%- icon('key', 16) %> <%= accountCopy.passwordChangeTitle || 'Parolni o\'zgartirish' %></div>
@@ -225,7 +191,6 @@
   <script src="/js/mfa-settings.js"></script>
   <script src="/js/passkey-settings.js"></script>
   <script src="/js/account-settings.js" defer></script>
-  <script src="/js/hemis-link.js" defer></script>
   <script>
     // AUTH A-29: account copy (i18n) — account-settings.js ishlatadi
     window.__ACCOUNT_COPY__ = <%- JSON.stringify(accountCopy?.account || {}) %>;

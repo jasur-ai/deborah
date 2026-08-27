@@ -50,8 +50,11 @@ import userRoutes from './routes/user.js';
 import gameRoutes from './routes/game.js';
 import arenaRoutes from './routes/arena.js';
 import oidcRoutes from './routes/oidc.js';
+// HEMIS/OneID — UI butunlay olib tashlandiq (2026-08-27); montlar faqat eski testlar uchun
+import hemisWebhookRoutes from './routes/hemis-webhook.js';
+import hemisRoutes from './routes/hemis.js';
+import externalIntegrationRoutes from './routes/external-integration.js';
 import aiGenerateRoutes from './routes/ai-generate.js'; // REAL AI (Gemini)
-import hemisWebhookRoutes from './routes/hemis-webhook.js'; // E-02 HEMIS push webhook
 import emailWebhookRoutes from './routes/email-webhook.js'; // E-07/D-32 email budget webhook
 import passkeyRoutes from './routes/passkey.js'; // E-05 passkey (WebAuthn)
 import pushRoutes from './routes/push.js'; // E-03 push bildirishnomalar (FCM/VAPID)
@@ -67,7 +70,6 @@ import privacyRoutes from './routes/privacy.js';
 import consentRoutes from './routes/consent.js';
 import onboardingRoutes from './routes/onboarding.js';
 import teacherRoutes from './routes/teacher.js';
-import hemisRoutes from './routes/hemis.js';
 import portfolioRoutes from './routes/portfolio.js';
 import notificationsRoutes from './routes/notifications.js';
 import telegramAuthRoutes from './routes/telegram-auth.js';
@@ -118,7 +120,6 @@ import programQualityRoutes from './routes/program-quality.js';
 import multilingualRoutes from './routes/multilingual.js';
 import accessibilityRoutes from './routes/accessibility.js';
 import dataGovernanceRoutes from './routes/data-governance.js';
-import externalIntegrationRoutes from './routes/external-integration.js';
 import apiContractsRoutes from './routes/api-contracts.js';
 import publishRoutes from './routes/publish.js';
 import preflightRoutes from './routes/preflight.js';
@@ -380,13 +381,15 @@ app.get('/health', (req, res) => {
   // OIDC google-setup — userRoutes (requireAuth) dan OLDI: /user/google-setup
   // pendingGoogle sessiyasi bilan ishlaydi, login talab qilmaydi (B-10).
   app.use('/', oidcRoutes);
+  app.use('/', hemisWebhookRoutes);
+  app.use('/', hemisRoutes);
+  app.use('/', externalIntegrationRoutes);
   app.use('/', aiGenerateRoutes);
   app.use('/user', userRoutes);
   app.use('/', gameRoutes);
   app.use('/arena', arenaRoutes);
 
   // ── E-faza API routes (E-02/E-03/E-05/E-07) ──
-  app.use('/', hemisWebhookRoutes);
   app.use('/', emailWebhookRoutes);
   app.use('/', passkeyRoutes);
   app.use('/', pushRoutes);
@@ -400,7 +403,6 @@ app.get('/health', (req, res) => {
   app.use('/api/consent', consentRoutes); // /api/consent/* (D-25)
   app.use('/', onboardingRoutes);
   app.use('/', teacherRoutes);
-  app.use('/', hemisRoutes);
   app.use('/', portfolioRoutes);
   app.use('/', notificationsRoutes);
   app.use('/', telegramAuthRoutes);
@@ -469,7 +471,6 @@ app.get('/health', (req, res) => {
   app.use('/', multilingualRoutes);
   app.use('/', accessibilityRoutes);
   app.use('/', dataGovernanceRoutes);
-  app.use('/', externalIntegrationRoutes);
   app.use('/', apiContractsRoutes);
   app.use('/', preflightRoutes);
   app.use('/', attemptRoutes);

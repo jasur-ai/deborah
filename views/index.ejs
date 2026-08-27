@@ -4,7 +4,7 @@
   DEBORAH LANDING — tasdiqlangan demo versiyasi 1:1 (cast.html)
   Manba: workprocess demo/preview/cast.html (birga bir port)
   Farq: faqat auth/admin/join REAL serverga ulangan
-  (POST /user/login · POST /admin/login · /auth/google · /auth/hemis · /play?code=)
+  (POST /user/login · POST /admin/login · /auth/google · /play?code=)
   ═══════════════════════════════════════════════════════════
 -->
 <html lang="<%= lang === 'ru' ? 'ru' : lang === 'en' ? 'en' : 'uz' %>" data-theme="dark" dir="ltr">
@@ -14,7 +14,7 @@
 <body>
 <script>
   window.__CSRF_TOKEN = '<%= csrfToken %>';
-  window.__AUTH_PROVIDERS = { google: <%- oidcEnabled ? 'true' : 'false' %>, oneid: <%- hemisEnabled ? 'true' : 'false' %> };
+  window.__AUTH_PROVIDERS = { google: <%- oidcEnabled ? 'true' : 'false' %> };
 </script>
 
 <a class="skip-link" href="#main" data-i18n-skip>Asosiy kontentga o‘tish</a>
@@ -157,10 +157,6 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1Z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23Z"/><path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84Z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15A11 11 0 0 0 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52Z"/></svg>
             <span data-i18n="auth.google">Google bilan kirish</span>
           </button>
-          <button class="provider provider-o" type="button" data-prov="oneid">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="8.2" r="3.6"/><path d="M4.6 19.6c1.1-3.2 3.9-4.8 7.4-4.8s6.3 1.6 7.4 4.8"/><path d="M17.4 3.2l.8 1.7 1.8.3-1.3 1.3.3 1.8-1.6-.8-1.6.8.3-1.8-1.3-1.3 1.8-.3z" fill="currentColor" stroke="none"/></svg>
-            <span data-i18n="auth.oneid">OneID bilan kirish</span>
-          </button>
         </div>
         <div class="sep"><span data-i18n="auth.or">yoki email bilan</span></div>
         <div class="fld"><label for="lEmail" data-i18n="auth.loginId">Email yoki username</label><input id="lEmail" name="username" type="text" autocomplete="username" required></div>
@@ -177,10 +173,6 @@
           <button class="provider provider-g" type="button" data-prov="google">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1Z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23Z"/><path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84Z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15A11 11 0 0 0 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52Z"/></svg>
             <span data-i18n="auth.google">Google bilan kirish</span>
-          </button>
-          <button class="provider provider-o" type="button" data-prov="oneid">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="8.2" r="3.6"/><path d="M4.6 19.6c1.1-3.2 3.9-4.8 7.4-4.8s6.3 1.6 7.4 4.8"/><path d="M17.4 3.2l.8 1.7 1.8.3-1.3 1.3.3 1.8-1.6-.8-1.6.8.3-1.8-1.3-1.3 1.8-.3z" fill="currentColor" stroke="none"/></svg>
-            <span data-i18n="auth.oneid">OneID bilan kirish</span>
           </button>
         </div>
         <div class="sep"><span data-i18n="auth.or">yoki email bilan</span></div>
