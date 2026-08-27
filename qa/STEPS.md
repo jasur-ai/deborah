@@ -18,7 +18,7 @@
 1.10 Talab / Teacher-tekshiruvchi bo'limlari (admin nazorat+statistika; teacher/VIP'da ko'rinishi)
 
 ## FAZA A — Auth & Dashboard tuzilishi (STEP 2–11)
-2. Landing login/reg tablari mayda e2e · 3. Hamburger menyu tuzilishi · 4. Admin login modal vs page · 5. Teacher→admin "so'rov yuborish" oqimi · 6. Oddiy kirish anchor/scroll oqimi · 7. Student panel bloklari · 8. VIP panel farqlari (VIP-only) · 9. Teacher workspace 4 tab chuqur · 10. Admin sidebar guruhlar dinamikasi · 11. Session TTL/idle/logout oqimlari
+2. Landing login/reg tablari mayda e2e ✅ · 3. Hamburger menyu tuzilishi ✅ · 4. Admin login modal vs page ✅ · 5. Teacher→admin "so'rov yuborish" oqimi ✅ (BUG-035) · 6. Oddiy kirish anchor/scroll ✅ · 7. Student panel bloklari ✅ · 8. VIP panel farqlari ✅ (BUG-033) · 9. Teacher workspace 4 tab ✅ (BUG-034) · 10. Admin sidebar guruhlar dinamikasi (STEP 10'ga) · 11. Session TTL/idle/logout ✅ (BUG-032/037)
 
 ## FAZA B — Mavzu/Kontrast/UI qatlamlari (STEP 12–21)
 12. Dark: landing · 13. Dark: user panel · 14. Dark: teacher workspace · 15. Dark: admin (har 30 sahifa!) · 16. Dark: cast/auth sahifalari · 17. hc rejim yarim-qolganlik · 18. Mobil har sahifa overflow/touch · 19. i18n uz/ru/en har qatlamda · 20. FOUC/tema persist cross-page · 21. Focus/hover/disabled holatlar
@@ -50,3 +50,4 @@
 ---
 ## BAJARILGANLAR
 - ✅ STEP 1 — yakunlandi (2026-08-27): BUG-020…BUG-031 (12 ta) — BUG_REPORTS.md
+- ✅ STEP 2 — yakunlandi (2026-08-27): BUG-032…BUG-037 (6 ta) + BUG-038 ijobiy jadval

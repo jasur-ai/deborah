@@ -270,6 +270,49 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 - **UI:** create-test save `test-builder.js` orqali (tashqi, tirik); inline blok BUG-010 dan o'lik — AI tugmalari shu blokda bo'lsa ishlamaydi; Director ⚡ Quick Prompt — STEP 52-53'da
 - **Xulosa:** "AI ishlamayapti" ehtimol UI simlanishi yoki Director oqimida — backend sog'lom
 
+### BUG-032: 🟡 User logout ham GET + CSRF'siz (admin'dagi bilan bir xil zaiflik)
+- **Joy:** `routes/auth.js:2330` — `router.get('/user/logout')`
+- **Ta'sir:** logout-CSRF: tashqi sahifadan `<img src=".../user/logout">` bilan foydalanuvchini majburiy chiqarish mumkin (SameSite=Lax top-level GET'da cookie yuboradi)
+- **Ijobiy:** remember-token revoke + push token revoke mantiqi bor — lekin himoya POST+CSRF bo'lishi kerak edi
+
+### BUG-033: 🟠 VIP holat UI'da UMUMAN ko'rsatilmaydi
+- **Live dalil:** jasur (VIP) panel: badge **"Talaba @jasur"** — VIP/Premium belgisi yo'q
+- **Kod:** `routes/user.js:139` `isVip` faqat kontent yuklash uchun (fans/preGroups); **UI badge/render yo'q** (`roleLabel` student default)
+- **Foydalanuvchi talabi:** "VIP userlar shu yerdan kiradi" — VIP farqi ko'rinishi kerak edi
+
+### BUG-034: 🟡 Teacher tab nomlari hardcoded EN — uz i18n aralash
+- **Joy:** `views/role/teacher.ejs:26,29` — "Overview", "Grading queue" (tarjimasiz), qolgan tablar uz
+- **Ta'sir:** bir menyuda ikki til aralash
+
+### BUG-035: 🟠 IKKI XIL registratsiya formasi — teacher o'zini landing'dan topolmaydi
+- **Dalil (live DOM):** Landing `#fReg`: faqat name/email/username/password — **rol tanlash YO'Q**, consent `hidden value="on"`, device_fp yo'q. `/user/login` `#form-reg`: + role tanlash (teacher ariza, shartli experience/subject), consent YUBORILMAYDI, device_fp bor
+- **Ta'sir:** landing'dan ro'yxatdan o'tgan hamma **student** bo'ladi; teacher istaganda rol tanlashni umuman ko'rmaydi — "teacher register qilolmaydi" shikoyatining asosiy manbalaridan biri; forma konfiglari sinxron emas
+
+### BUG-036: 🟡 Consent mexanizmi nomuvofiq — landing'da AVTOMATIK rozilik
+- **Joy:** `views/index.ejs` fReg: `input type=hidden name=consent value=on`
+- **Ta'sir:** rozilik checkboxi ko'rsatilmaydi — forma consent'ni o'zi yuboradi (privacy me'yorida consent faol harakat bo'lishi kerak); /user/login formada esa umuman yuborilmaydi — bir oqim, ikki xil legal holat
+
+### BUG-037: 🟡 Logout havolasi desktop'da ko'rinmas holatda
+- **Live dalil (1440x900):** `/user/logout` havolasi `offsetParent: null` (drawer/fold'da), `elementFromPoint` → sidebar head bloklaydi
+- **Ta'sir:** foydalanuvchi "Chiqish"ni topa olmaydi; topa qolsa ham GET (BUG-032)
+
+### BUG-038: IJOBIY — Auth mayda elementlari professional darajada (xato topilmadi)
+| Element | Holat |
+|---------|-------|
+| Landing tablar (login/reg) | ishlaydi |
+| Reg bo'sh submit validatsiya | 4 maydon invalid, xato bloklari bor |
+| Parol eye toggle / kuchi indikatori / CapsLock | bor |
+| Honeypot, remember-me, autocomplete | to'g'ri |
+| Forgot link | /user/forgot?lang=uz |
+| aria-live xato bloklari | 8 ta |
+| #auth anchor scroll | ishlaydi (861px) |
+| Hamburger mobile | ochiladi |
+| i18n uz/ru/en tugmalari | bor |
+| User logout oqimi | ishlaydi (panel qayta login talab qiladi) |
+| Teacher workspace 4 tab | hammasi ochiladi |
+| Student panel empty states | ko'rsatiladi |
+| Session idle TTL | 30 daqiqa default (env.js:37) |
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 | Talab | Holat |
 |-------|-------|
