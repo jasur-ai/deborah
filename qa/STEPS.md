@@ -58,3 +58,4 @@
 - ✅ STEP 7 — yakunlandi (2026-08-27): BUG-056…BUG-057 (2 ta, BUG-056 🔴 ai-question-gen PostgreSQL'siz o'lik) + BUG-058 ijobiy (AI generate LIVE, rate limit OK, 5 admin AI sahifa)
 - ✅ STEP 8 — yakunlandi (2026-08-27): BUG-059 🔴 EPIDEMIYA (6 imtihon moduli JS o'lik: global \$ konflikt + scan.ejs apostrof) + BUG-060 + BUG-061 ijobiy (marking/board/consideration toza)
 - ✅ STEP 9 — yakunlandi (2026-08-27): BUG-062…BUG-063 (2 ta) + BUG-064 ijobiy (IDOR/XSS/open-redirect/role-escalation/cookie — xavfsizlik asosi mustahkam)
+- ✅ STEP 10 — yakunlandi (2026-08-27): BUG-065 (fans abadiy 'Yuklanmoqda...') + BUG-066 ijobiy (VIP grant negativ testlar bilan: 404/403/origin-block — himoya qattiq)

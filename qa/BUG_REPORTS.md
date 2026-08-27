@@ -473,6 +473,24 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 | Login rate limit | max 15/account (C-01 test bilan hujjatlashtirilgan) |
 | XSS: `<script>` nom saqlash → panel | escape qilingan; export JSON+attachment (xavfsiz) |
 
+### BUG-065: 🟡 Admin dashboard "Namuna fanlar" — sahifa ochilganda "Yuklanmoqda..." abadiy qotadi
+- **Live dalil:** /admin/dashboard ochilganda #fans-list = "Yuklanmoqda..." (2.5s+), hech qanday API chaqiruv yo'q; "Yangilash" tugma bosilsa loadFans() ishlaydi
+- **Root cause:** routes/admin.js:84 activeTab: req.query.tab || 'danger' — default tab 'danger', lekin refreshActiveTab() FAQAT fans/pre/results/stats/vip tablarini yuklaydi; sahifa ochilganda chaqirilmaydi
+- **Ta'sir:** admin fanlarni ko'rish uchun har safar "Yangilash" bosishi kerak; natijalar bloki ham xuddi shu pattern'da
+- **Ijobiy tomoni:** qo'lda "Yangilash" ishlaydi (116 foydalanuvchi, 145 test real; qidiruv "jasur" filtrlaydi)
+
+### BUG-066: ✅ IJOBIY — VIP grant/revoke oqimi to'liq ishlaydi (negativ testlar bilan)
+| Test | Natija |
+|------|--------|
+| VIP berish (real user) | 200 "VIP huquqi berildi" (parol ko'rsatilmaydi — S33.03) |
+| Yo'q user'ga grant | 404 "Bunday foydalanuvchi topilmadi" |
+| CSRF: token'siz / boshqa sahifa tokeni | 403 blok (per-page token scope — qattiq) |
+| Evil origin POST | 403 ORIGIN_BLOCKED |
+| Statistika real | 116 foydalanuvchi / 0 o'yin / 145 test |
+| Users qidiruv "jasur" | filtri ishlaydi |
+| Natijalar bloki | real userlar bilan |
+| pageerror | 0 |
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 | Talab | Holat |
 |-------|-------|
