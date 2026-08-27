@@ -209,6 +209,67 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 | 45+ admin sahifa | ⚠️ 30 OK; 5 nav buzilgan (BUG-006/007) |
 | Mobil 375px | ✅ overflow yo'q (landing+panel) |
 
+### BUG-020: 🟠 Cast qo'shilish FLAKY — birinchi urinish ishlamaydi ("cast ishlamayapti" ✅ TASDIQ)
+- **Live dalil (A/B, 2026-08-27):** teacher API orqali sessiya yaratildi (`cast_HdxBU0Wz0sZo`, joinCode `FWRYEA`) → **birinchi** `GET /play?code=FWRYEA` oddiy o'yin-kod sahifasiga tushdi (participant render YO'Q, xato xabari HAM yo'q); bir necha daqiqadan keyin **xuddi shu manzil** "Cast — Ishtirokchi"ni ochdi
+- **Sabab (kod):** `services/cast/session-store.js:142` `resolveSessionByCode` → FB `cast_codes/{code}` yozuvi; yozuv pishmasligi/kechikish bo'lsa `null` qaytadi va route **jim** o'yin-join sahifasiga qulaydi (game.js:141-149) — foydalanuvchiga "kod ishlamadi" ko'rinadi
+- **Severity:** 🟠 Major (jonli darsning kirish eshigi nozik)
+- **Tavsiya:** resolve fail bo'lsa "Sessiya hozir tayyorlanmoqda" xatosi yoki retry
+
+### BUG-021: 🟡 Director lobbi meta API 404 — o'lik chaqiruv
+- **Joy:** `public/js/cast-director.js:183` → `GET /api/cast/sessions/:id/meta`
+- **Dalil:** live'da 404; `routes/cast.js`'da bunday GET route yo'q; JS'da `try/catch` bilan **jim yutiladi**
+- **Ta'sir:** director lobbi ma'lumoti hech qachon yangilanmaydi
+
+### BUG-022: 🟠 Canva — status "configured" deydi, link "not configured" (qarama-qarshi)
+- **Dalil (live, admin):** `GET /api/admin/canva/status` → `{"configured":true,...}`; lekin `POST /api/admin/canva/link` → `400 {"error":"Canva not configured"}`
+- **README zidi:** README "kod tayyor — konsol URI kutilmoqda" deydi
+- **Foydalanuvchi talabi:** ishlamaydigan integratsiya "sozlanmagan" holatida ko'rsatilishi yoki yashirilishi kerak — hozir tugma bosilsa xato
+- **Slides:** ✅ OAuth link 200 — ishlayapti; Gamma butunlay yo'q (README to'g'ri)
+
+### BUG-023: 🟠 DARK MODE: admin yashil tugmalar deyarli KO'RINMAYDI (kontrast 1.04)
+- **Usul:** Playwright + WCAG kontrast, `data-theme-state=dark`, barcha admin sahifalar skan
+- **Aniq elementlar:** `/admin/marking` "Taqsimlash", `/admin/grading` "Hisoblash", `/admin/board` "Blocker'larni tekshirish" / "Release to SIS" — `.btn.green` **1.04**
+- **Dalil:** `qa/evidence/22_dark_admin.png`
+- **Bu "dark mode'da umuman ko'rinmayapti" shikoyatining aniq manbalaridan biri**
+
+### BUG-024: 🟠 DARK MODE: Test Arena javob inputlari o'qilmaydi (kontrast 1.17)
+- **Joy:** `/user/test-arena` raqamli inputlar
+- **Ta'sir:** talaba dark'da o'z javobini ko'rmaydi — imtihon vaziyatida kritik
+
+### BUG-025: 🟡 DARK MODE: /admin/teachers badge va link qiyin (1.58 / 1.81)
+- **Elementlar:** "0 kutilmoqda" badge, "Kutilmoqda" havolasi
+
+### BUG-026: 🟡 "Maqola tavsiya" funksiyasi end-user'da UMUMAN YO'Q
+- **Kod:** resource-reco moduli bor (`src/modules/resource-reco/`) — lekin FAQAT admin: `/admin/resource-reco` + API (requireAdmin)
+- **Live dalil:** teacher/student panellari DOM'ida "maqola"/"tavsiya" 0 marta
+- **Foydalanuvchi talabi:** talaba/teacher/VIP ko'rishi kerak — hozir admin qutvida yotibdi
+
+### BUG-027: 🟡 "Talab / Teacher-tekshiruvchi" nazorati faqat admin'da + statistika chuqur emas
+- **Holat:** teacher arizalari `/admin/teachers` (approve/reject + pending badge) va signup-reviews — **requireAdmin qulfda** (teacher sessiyasiga 401)
+- **Foydalanuvchi talabi:** (a) bu bo'limlar teacher/VIP interfeyslarida ham ko'rishi kerak; (b) admin bosganda ULAR USTIDAN nazorat va STATISTIKA chiqishi kerak (hozir faqat ro'yxat + pendingCount; trend yo'q)
+
+### BUG-028: 🟡 Admin kirish arxitekturasi foydalanuvchi talabiga mos emas
+| Talab | Live holat |
+|-------|-----------|
+| Admin login ALOHIDA PAGE (modal emas) | Landing "Admin" tugmasi **modal** ochadi; `/admin/login` bor lekin landing yo'li modalga |
+| 3-chiziq ICHIDA yana 3-chiziq → admin login | Hamburger FAQAT 1 daraja; `#adminBtn` to'g'ridan-to'g'ri modal (landing.js:221-224) |
+| Teacher "adminka so'rovi" 3-chiziq ichida alohida | Yo'q — oddiy registratsiya formasi ichida (experience/subject) |
+| Oddiy kirish → pastga scroll | ✅ `#auth` anchor ishlaydi |
+
+### BUG-029: 🟡 Admin sidebar — kichik ekranda "7-8 ko'rinadi" to'g'ri
+- **Dalil:** 1440×900'da 47 tugma ko'rinadi; **1366×768'da 20+ tugma fold ostida**; mobilda drawer ortida
+- **Foydalanuvchi talabi:** "kirganda hamma funksiya bir ko'rinishda" — hozir guruh+skrol
+
+### BUG-030: ℹ️ "O'chirishda ikki marta tasdiq" — kodi darajasida TOPILMADI (open item)
+- **Kod:** admin `deleteUser/deleteFan/deletePreGroup` — **birmartalik** `showConfirm`; teacher test delete — `workspace-library.js:253` birmartalik
+- **Live test:** teacher testi 1 klik+1 tasdiqda o'chdi (sahifa reload — "ikki marta bosdim" hissi shundan bo'lishi mumkin)
+- **Ehtimol:** dialog birinchi klikni yutishi (fokus/z-index) — interaktiv replar keyingi stepda
+
+### BUG-031: ✅ AI va Slides backend LIVE — "AI ishlamayapti" UI qatlamida
+- **Dalil:** `POST /api/ai/generate-questions` (teacher, prompt) → **200 real savollar** (uz, 4 variant); `slides/link` → 200 OAuth URL
+- **UI:** create-test save `test-builder.js` orqali (tashqi, tirik); inline blok BUG-010 dan o'lik — AI tugmalari shu blokda bo'lsa ishlamaydi; Director ⚡ Quick Prompt — STEP 52-53'da
+- **Xulosa:** "AI ishlamayapti" ehtimol UI simlanishi yoki Director oqimida — backend sog'lom
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 | Talab | Holat |
 |-------|-------|
