@@ -452,6 +452,27 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 - /admin/marking, /admin/board, /admin/consideration: 0 pageerror, to'liq tugma to'plamlari (Assignment/Taqsimlash/Kalibratsiya, Meeting/Ratify/Release to SIS, Case/Incident)
 - Dalillar: 41–49 PNG
 
+### BUG-062: 🟡 Delete muvaffaqiyatsiz (boshqa user'ning / mavjud emas key) ham `{"success":true}` qaytaradi
+- **Live dalil:** student `POST /user/api/tests/delete {key: teacher_testi}` → `200 {"success":true}` (aslida hech narsa o'chmadi); mavjud emas key ham `success:true`
+- **Kod:** `routes/user.js:342` — route owner-scoped (`req.session.user.safeKey`), lekin `fb.remove()` natijasi tekshirilmaydi
+- **Ta'sir:** foydalanuvchi boshqa user testini o'chira olmaganini bilmaydi — "o'chirildi" deb ishonadi
+- **Ijobiy (tasdiqlandi):** owner-scoped dizayn **IDOR'ni to'liq to'sadi** (definitiv test: student teacher yangi testini o'chira olmadi — panelida qoldi; export: student→teacher 404, teacher o'zi 200)
+
+### BUG-063: 🟡 Content-Security-Policy header YO'Q
+- **Dalil:** `curl -I` — CSP 0 moslik; HSTS/nosniff/X-Frame-Options/referrer-policy bor (helmet qisman)
+- **Ta'sir:** deep-defence yo'q (inline script'lar ko'p — CSP qiyin, lekin report-only'dan boshlash mumkin)
+
+### BUG-064: ✅ IJOBIY — Xavfsizlik asosi mustahkam (live tekshirildi)
+| Tekshiruv | Natija |
+|-----------|--------|
+| IDOR: student → teacher test delete/export | bloklangan (owner-scoped safeKey) |
+| testKey guessability | 10-belgi base36 crypto random, guess'lar 404 |
+| Open redirect (returnUrl=evil, //evil) | himoyalangan (302→panel / 403) |
+| Role escalation endpointlari (student) | 404 |
+| Cookie flags (student+admin) | HttpOnly + Secure + SameSite=Lax |
+| Login rate limit | max 15/account (C-01 test bilan hujjatlashtirilgan) |
+| XSS: `<script>` nom saqlash → panel | escape qilingan; export JSON+attachment (xavfsiz) |
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 | Talab | Holat |
 |-------|-------|
