@@ -515,21 +515,52 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 | Remember-me | ✅ deborah_remember cookie (selector:verifier, Max-Age 30 kun, Expires set) |
 | SessionTimeout client | ✅ obj mavjud (lekin BUG-067 keepalive 403) |
 
-### BUG-070: 🟡 Landing tema tugmasi aria-pressed YO'Q — screen reader holatni bilmaydi
-- **Dalil (live DOM):** `#themeBtn` — `aria-label="Tema"` bor, lekin **`aria-pressed`/`title` yo'q**; tugma dark/light holatini faqat vizual ikonka bilan beradi
-- **WCAG:** toggle tugmalar uchun holat programmatically exposed bo'lishi kerak (4.1.2 Name, Role, Value)
-- **Ta'sir:** ko'rish imkoniyati cheklangan foydalanuvchi temaning joriy holatini va bosgandan keyingi o'zgarishni eshitib bilmaydi
+### BUG-070: 🟡 Landing tema tugmasi aria-pressed YO'Q
+- `#themeBtn` aria-label bor, aria-pressed/title yo'q (WCAG 4.1.2) — screen reader holatni bilmaydi
 
-### BUG-071: ✅ IJOBIY — Dark landing to'liq sog'lom (FAZA B boshlanishi bazasi yaxshi)
+### BUG-071: 🟠 Footer LEGAL linklari "#" — sahifalar MAVJUD turibdi!
+- **Dalil (live DOM):** footer'da "Maxfiylik siyosati", "Foydalanish shartlari", "Xavfsizlik", "Qonuniy ma'lumotlar" — HAMMASI `href="#"`; "hello@deborah.uz" ham `href="#"` (mailto emas)
+- **Zid:** `/privacy`, `/terms`, `/cookies` sahifalari LIVE (200, BUG-001 tekshiruvida) — lekin footer ulanmagan!
+- **Ta'sir:** foydalanuvchi qonuniy hujjatlarni saytdan topa olmaydi (hushtaq emas — privacy qonuni talab qiladi ko'rinishini); email bosilmaydi
+
+### BUG-072: 🟡 Landing `GET /` — `lang` cookie'siga qaramaydi (server-side i18n nomuvofiq)
+- **Dalil:** `Cookie: lang=ru` bilan `GET /` → `<html lang="uz">`, matnlar uz; `GET /user/login` → ruscha ✅
+- **Ta'sir:** foydalanuvchi tilni tanlagan (client JS doc lang o'zgartiradi) — lekin server render har doim uz; RU foydalanuvchi refresh'da miltillab uz ko'radi va SEO ikki tilli aralash
+
+### BUG-073: 🟡 Til tanlovu saqlanmaydi (localStorage/cookie yo'q)
+- **Dalil:** RU bosilgach: `localStorage.getItem('lang')` = null, cookie'da lang yo'q; faqat `document.documentElement.lang='ru'` (client memory)
+- **Ta'sir:** yangi tab/refreshdan keyin tanlov yo'qolishi mumkin (reload'da client JS hozircha qayta qo'yadi — lekin boshqa tabda yo'q)
+
+### BUG-074: 🟡 Reg forma xabar bloki (`#doneReg`) role/aria-live YO'Q
+- **Dalil:** `role=null`, `aria-live=null` — JS orqali qo'shiladigan "muvaffaqiyat/xato" xabar screen reader'ga yetmaydi (WCAG 4.1.3 Status Messages)
+
+### BUG-075: 🟡 Mobil hamburger menyu — body scroll-lock YO'Q
+- **Dalil (375px):** menyu ochiq holatda `body.overflow = hidden auto` (scroll mumkin), `position: static` — fonda sahifa aylanadi (modal UX konventsiyasiga zid; menyu tashqarisiga tegsa yopiladi lekin scroll chiqib ketadi)
+
+### BUG-076: 🟡 `#admin` anchor mavjud emas — nav/menyu `href="#admin"` bo'sh hash
+- **Dalil:** `#main/#cast/#kontakt/#auth` mavjud; `#admin` YO'Q (JS interceptor bilan modal ochiladi)
+- **Ta'sir:** JS o'lsa (devlar) link hech qayerga olib bormaydi; a11y'da "link" e'lon qilingan amal tugma bo'lishi kerak edi
+
+### BUG-077: ⚪ `nav.cast` uch tilda tarjimasiz ("Cast")
+- **Dalil:** uz/ru/en — hammasida "Cast" (brend so'z bo'lishi mumkin, lekin `cast` funksiya nomi bilan aralashadi; ru'da "Трансляция" kutish mumkin)
+
+### BUG-078: ⚪ Footer "O'qituvchilar" havolasi `/user/login` ga olib boradi
+- **Dalil:** `href="/user/login"` — teacher registratsiyasi `/user/register`da (BUG-040); nomuvofiq joynatish
+
+### BUG-079: ✅ IJOBIY — Landing SEO/a11y asosi yaxshi (STEP 12 ijobiy qismi)
 | Tekshiruv | Natija |
 |-----------|--------|
-| FOUC (tema paint oldidan) | yo'q — `data-theme` DOM'da early, theme-core.js sinxron |
-| Kontrast skan (1440px dark) | 0 ta qiyin element |
-| Admin modal dark | 0 ta muammo |
-| Persist (landing → /user/login) | ✅ dark saqlanadi |
-| Mobile 375px dark | overflow yo'q |
-| Toggle sikl | dark↔light (landing'da by-design; yagona boshqaruv muammosi BUG/3-UI tashxisida) |
-| Dalil | 51, 52, 53 PNG |
+| og:title/desc/image, canonical, favicon | ✅ hammasi bor |
+| skip-link | ✅ `#main` ishlaydi (target mavjud) |
+| reg autocomplete | ✅ email / new-password (to'g'ri) |
+| Dark landing kontrast | ✅ 0 muammo (51-53 PNG) |
+| Dark persist login sahifasida | ✅ |
+| FOUC | ✅ yo'q |
+| til RU matnlar sifati | ✅ "Вход администратора", "или по email" — tarjima sifatli |
+| mobil menyu | ✅ ochiladi, 4 item |
+| pageerror | ✅ 0 |
+
+### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 | Talab | Holat |
