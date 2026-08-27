@@ -984,6 +984,21 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 | uzun nom UI kesish | ✅ clip |
 | 320/375px mobil | ✅ (oldingi step) |
 
+### BUG-205a: ✅ (TAXRIR) 404 sahifa to'liq funksional — BUG yo'q (avvalgi 404 topilmalari qayta tekshirildi)
+- Bosh sahifa/Kirish/Orqaga havolalari, uz lang ✅; tema tugmasi YO'Q (404 sahifa soddalashtirilgan — qabul qilinadigan)
+
+### BUG-206: 🟡 500 sahifada "Orqaga" havolasi YO'Q (faqat Bosh sahifa) — foydalanuvchi kontekstni yo'qotadi
+- **Dalil:** camera-review 500 sahifa: faqat `href=/` (bosh sahifa); 404 sahifada esa "Orqaga" (history.back) bor — ikki xato sahifasi har xil
+- **Ijobiy:** Xato identifikatori (mtbxjn4d-upt4yl) ko'rsatiladi — support uchun yaxshi
+
+### BUG-207: ✅ Update banner dismiss SAQLANADI (reload'dan keyin qaytmaydi)
+- **Dalil:** "Yangi versiya mavjud — Yangilash" X bilan yopildi → reload'dan keyin qaytmadi ✅ (eski BUG-009 kuzatuvi faqat yangi deploy chiqqanda ko'rinadi)
+
+### BUG-208: ✅ Offline sahifa va PWA tayyor (200, SW oldin ro'yxatdan o'tgan)
+
+### BUG-209: ℹ️ Admin dashboard navigation ba'zan ERR_ABORTED — update-banner reload bilan raqobat
+- **Dalil:** goto dashboard 1 marta `net::ERR_ABORTED` (update-banner auto-reload bilan bir vaqtda); qayta urinishda o'tdi — flaky navigatsiya
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI

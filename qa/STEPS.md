@@ -76,3 +76,4 @@
 - ✅ STEP 25 — yakunlandi (2026-08-27): BUG-180 ✅ (replay protection OK) + BUG-181 🟠 (manfiy timer yana) + BUG-182 🟠 (export traversal 500) + BUG-183…189 (XSS export OK, rate OK, flakiness)
 - ✅ STEP 26 — yakunlandi (2026-08-27): BUG-190/191 ✅ (remember revoke, sid regenerate) + BUG-192 🟡 (Origin:null bypass — past risk) + BUG-193 ✅ + BUG-194…196 ✅ (6/6 reg validatsiya) + BUG-197 🟡 (generic xabar) + BUG-198/199
 - ✅ STEP 27 — yakunlandi (2026-08-27): BUG-200 🟡 (users qidiruv debounce/param nomuvofiq) + BUG-201/203 ⚪ (limit param e'tiborsiz, RANDOM 25 badge eski) + BUG-202/204/205 ijobiy (audit pagination, uzun nom clip, ro'yxat asosi toza)
+- ✅ STEP 28 — yakunlandi (2026-08-27): BUG-206 🟡 (500 sahifada Orqaga yo'q) + BUG-207/208 ✅ (banner dismiss saqlanadi, offline OK) + BUG-209 ℹ️ (nav ERR_ABORTED flaky) — 404 sahifa toza
