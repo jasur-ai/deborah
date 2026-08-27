@@ -106,24 +106,94 @@
 
 ---
 
+### BUG-009: 🔴 CSRF token JS regressiyasi — panel.ejs (LIVE TASDIQLANDI)
+- **Joy:** `views/user/panel.ejs:578` (xuddi shu pattern `mfa.ejs:76`, `create-test.ejs:120` — repo'da)
+- **Severity:** 🔴 Critical (i18n copy yo'qoladi; keyingi deployda MFA sahifasi ham singadi)
+- **Root cause:** `window.__CSRF_TOKEN = <%= JSON.stringify(csrfToken || '') %>;` — `<%= %>` HTML-escape qiladi → `&#34;816a...&#34;` → **SyntaxError** → butun script blok o'ladi
+- **O'lgan global'lar (live brauzerda tasdiqlandi):** `__RISK_COPY__` (undefined), `__ACCOUNT_COPY__` (undefined) — risk banner va akkaunt i18n matnlari ishlamaydi
+- **Qutqarilgan:** `head.ejs:109` dagi toza token ishlayveradi (shuning uchun POST'lar hozircha OK — live test: session ping 204 ✅)
+- **⚠️ Deploy xavfi:** live `mfa.ejs` hali eski (to'g'ri) versiya — repo'dagi main'ni deploy qilsalar MFA sahifasi ham singadi → "to'g'ri kod kiritdim-403 dedim" muammosi takrorlanadi
+- **To'g'ri pattern (loyihadagi boshqa viewlar):** `window.__CSRF_TOKEN = '<%= csrfToken %>';`
+
+### BUG-010: 🔴 create-test.ejs:119 — komentariyada literal `</script>` (LIVE TASDIQLANDI)
+- **Joy:** `views/user/create-test.ejs:119` — izoh matni: "`</script>` breakout'ning oldi olinadi"
+- **Severity:** 🔴 Critical (sahifa JS qismi o'lgan + manba kodi foydalanuvchiga ko'rinadi)
+- **Mexanism:** HTML parser izoh ichidagi `</script>` ni haqiqiy yopuvchi tag deb o'qiydi → script blok ERTA tugaydi → qolgan JS **sahifa matni sifatida render bo'ladi** (live'da ko'rinadi: "` breakout'ning oldi olina...") va **umuman ishga tushmaydi**
+- **Yon effektlar:** shu blokda `window.__CSRF_TOKEN` tayinlash ham bor — o'lik; console toza ko'rinadi (JS sifatida parse qilinmaydi) — yashirin bug
+- **Tavsiya (hisobot uchun):** izohdagi `</script>` ni `<\/script>` qilib yozish yoki izohni o'zgartirish
+
+### BUG-011: 🟠 mfa-settings.js:119 — MFA o'chirilgan foydalanuvchida crash (LIVE STACK)
+- **Joy:** `/js/mfa-settings.js:119` — `enableBtn.addEventListener(...)` da `enableBtn = null`
+- **Reproduksiya:** MFA'siz hisob (jasurjonai) → /user/security-profile → `TypeError: Cannot read properties of null (reading 'addEventListener')`
+- **Ta'sir:** security-profile'dagi 2FA sozlash va undan keyingi funksiyalar ishlamasligi mumkin (IIFE 119-qatordan crash)
+- **Sabab:** view holatga qarab elementni render qilmayapti, lekin JS uni doim mavjud deb hisoblaydi
+
+### BUG-012: 🟠 Test Arena — `const $` qayta deklaratsiya konflikti (LIVE: 6 pageerror)
+- **Joy:** `/js/main.js` (global `const $`) ↔ `/user/test-arena` inline script (`const $`)
+- **Simptom:** `Identifier '$' has already been declared` ×6; arena global funksiyalari undefined
+- **O'lgan kod (inline blok, 9.7KB):** `setStatus`, `updatePhoneScale`, `watchGame`, `scheduleAnswers` + `/arena/api/check-session`, `/arena/api/add-bots`, `/arena/api/cleanup-bots` chaqiruvlari
+- **Ta'sir:** Test Arena jonli kuzatish/bot funksiyalari buzilgan
+
+### BUG-013: 🟡 security-profile — teacher uchun student API 401
+- **Joy:** `/api/student/assignments` (route: `routes/preflight.js:46`) teacher sessiyasida 401 (console noise ×4)
+- **Sabab:** sahifa roldan qat'i nazar student endpointini chaqiryapti; endpointning student-only guard'i to'g'ri, sahifa role-aware bo'lishi kerak
+
+### BUG-014: 🟡 /api/tests/save — role/VIP gate yo'q (biznes-qoida tekshiruvi kerak)
+- **Joy:** `routes/user.js:285` — faqat `name` va `questions` tekshiriladi; `requireVip` middleware mavjud, lekin bu endpoint'da qo'llanilmagan
+- **Kuzatish:** oddiy user (jasurjonai) create-test sahifasiga to'liq kiradi. Agar test yaratish teacher/VIP imtiyazi bo'lsa — server-side gate kerak
+
+### BUG-015: ℹ️ "Kod to'g'ri bo'lsa ham 403" — tashxis yakuni
+- **Live fakt:** `/api/mfa/verify` ISHLAYAPTI (to'g'ri kod → 200 `{"ok":true,"role":"teacher"}` — 3x tasdiqlandi)
+- **Eng ehtimoliy sabablar (foydalanuvchi tomonida):**
+  1. Authenticator'dagi **eski/stale TOTP yozuv** (secret rotate bo'lgan, eski yozuv qolgan) → server `invalid_code` 403
+  2. Challenge TTL **5 daqiqa** (`CHALLENGE_TTL_MS`, mfa-totp.js) — kiritish kechiksa challenge o'ladi (`no_pending_challenge`)
+  3. 5 xato urinish → **15 daqiqa hisob-level lock** (403 `locked`)
+- **Qo'shimcha:** BUG-009 deploy bo'lsa MFA sahifasidagi CSRF ham singaydi → 403 aniq takrorlanadi
+
+### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
+| Talab | Holat |
+|-------|-------|
+| "Profilim"ga kirishda parol so'ralmasligi kerak | ✅ BAJARILGAN — /user/profile parolsiz ochiladi, password input yo'q |
+| Parol/kod almashtirishda parol so'ralishi kerak | ⏳ oqim alohida tekshiriladi (security-profile MFA-off crash sababli BUG-011 to'sqin) |
+| User hisoblarda MFA'siz kirish (o'chirilgach) | ✅ ISHLAYDI — jasur va jasurjonai to'g'ridan-to'g'ri /user/panel (302) |
+
+---
+
 ## ⏳ BLOKLANGAN / KEYINGI BOSQICH
 
 | # | Blok sababi | Kerakli resurs |
 |---|-------------|----------------|
-| B-01 | Teacher, VIP va oddiy user dashboardlari to'liq QA | Har hisob uchun **1 ta backup kod** (10 hex belgi) yoki TOTP secret (base32, enroll sahifasidan) |
-| B-02 | `/user/camera-pilot` 500 tekshiruvi (BUG-007 qurboni) | User sessiyasi |
-| B-03 | Session Render sleep'dan keyin omon qolishi (Redis yoki MemoryStore?) | Dashboard sessiyasi — keyingi turnarda tabiiy tekshiriladi |
-| B-04 | Muvaffaqiyatli login'dan KEYINGI to'liq oqim (BUG-001 TOTP bosqichi) | TOTP secret yoki backup kod |
+| B-01 | ~~Teacher/VIP/user dashboardlari~~ ✅ YAKUNLANDI (2026-08-27) — teacher backup kod bilan, jasur/jasurjonai MFA'siz | — |
+| B-02 | ~~`/user/camera-pilot` 500~~ ✅ TASDIQLANDI — teacher sessiyasida ham 500 (BUG-007) | — |
+| B-03 | Session Render sleep'dan keyin omon qolishi (Redis yoki MemoryStore) | Keyingi sessiyada tabiiy tekshiruv |
+| B-04 | Parol o'zgartirish oqimida current password talabi | BUG-011 crash tugatilgach |
+| B-05 | Tuzatishlar verify: BUG-009/010 fix'dan keyin regressed testlar | Dev javobi keyin |
 
 ---
 
-## TESTDAN O'TGAN CREDENTIALS (faqat parol bosqichi)
+## ✅ USER PANELLARIDA ISHLAYOTGAN QISMLAR (live tekshirildi)
 
-| Login | Parol | Rol | Login natijasi |
+| # | Tekshiruv | Natija |
+|---|-----------|--------|
+| U-01 | /user/panel, /user/profile, /user/security-profile, /user/settings, /user/notifications, /user/portfolio | 200 OK (3 rolda ham) |
+| U-02 | /teacher 4 tab (workspace, assessments, courses, grading) | 200 OK, console toza |
+| U-03 | /user/create-test | 200 (lekin BUG-010 JS va BUG-014 gate) |
+| U-04 | MFA o'chirilgan user kirishi (jasur, jasurjonai) | ✅ to'g'ridan-to'g'ri panel |
+| U-05 | Role guard: oddiy user/VIP → /teacher | 403 ✅ (ruxsat himoyasi ishlaydi) |
+| U-06 | Profil parolsiz ochilishi (talab) | ✅ |
+| U-07 | MFA'siz foydalanuvchi /user/mfa/setup | 302 → panel ✅ |
+| U-08 | Teacher backup kod bilan MFA oqimi | ✅ 200 `{"ok":true,"role":"teacher"}` |
+
+---
+
+## TESTDAN O'TGAN CREDENTIALS
+
+| Login | Parol | Rol | Yakuniy holat |
 |-------|-------|-----|----------------|
-| teacher | Teacher2026 | Ustoz | 302 → /user/mfa ✅ |
-| jasur | jasur | VIP user | 302 → /user/mfa ✅ |
-| jasurjonai | jasur0408 | Oddiy user | 302 → /user/mfa ✅ |
-| edikit_admin | admin0408 | Admin | 302 → /admin/mfa ✅ |
+| teacher | Teacher2026 | Ustoz | ✅ To'liq kirildi (backup kod) |
+| jasur | jasur | VIP user | ✅ To'liq kirildi (MFA o'chirilgan) |
+| jasurjonai | jasur0408 | Oddiy user | ✅ To'liq kirildi (MFA o'chirilgan) |
+| edikit_admin | admin0408 | Admin | ✅ To'liq kirildi (2x backup kod, 8 qoldi) |
 
-> ⚠️ **Eslatma:** Parol/tokenlar chat'da qoldi — sessiya tugagach rotate qilish tavsiya etiladi.
+> ⚠️ **Backup kodlar:** teacher — 1/12 ishlatildi (9883e203c6). Sistemada rotatsiya 10 ta kod generatsiya qiladi — siz bergan 12 dan oxirgi 2 tasi (c745de5358, 507655b928) eski rotatsiyadan bo'lishi mumkin.
+> ⚠️ **Xavfsizlik:** parollar chat'da qoldi — sessiya tugagach rotate qiling. Test tugach user hisoblariga MFA'ni qayta yoqing.

@@ -4,7 +4,7 @@
 > **Repo:** github.com/jasur-ai/deborah (main) — hali clone qilinmagan (sayt testidan keyin)
 > **Stack:** Node.js + Express + EJS + express-session | Cloudflare + Render
 > **Sana:** 2026-08-27
-> **Status:** 🟡 Jarayonda — 1-bosqich (Smoke) ✅, auth parol-bosqichi ✅, dashboardlar ⏳ MFA'da bloklangan
+> **Status:** 🟢 Asosiy QA yakunlandi — Smoke ✅, Auth ✅, Admin panel ✅, Teacher ✅, VIP ✅, User ✅ (2026-08-27)
 
 ---
 
