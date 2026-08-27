@@ -601,6 +601,43 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 | 401 noise tashqarisida boshqa console error | yo'q |
 | Dalillar | 54, 56, 57 PNG |
 
+### BUG-090: 🟠 LIVE DEPLOY test davomida O'ZGARDI — MemoryStore sessiyalar o'chdi (B-03 TASDIQLANDI)
+- **Dalil:** admin sessiya 35-sahifa skan o'rtasida 401 bo'ldi (dashboard/marking oldin 200 edi); teacher sessiyasi ham o'ldi; `server.js:214` Redis bo'lmasa `MemoryStore` — Render har deploy/restart'da sessiyalar yo'q
+- **Ta'sir:** har deployda barcha foydalanuvchilar majburiy chiqadi (production uchun kritik); QA'da esa natijalar deploy versiyasiga bog'liq — re-verify talab
+- **Keyingi bosqichlarda:** har step boshida sessiya jonliligi tekshiriladi
+
+### BUG-091: ✅ RE-VERIFY (yangi deploy): BUG-006 (4x nav 404) va BUG-007 (camera-review 500) HAM MAVJUD
+- question-gen/contracts/presentation/intervention → 404; camera-review → 500 (title "500 — Xatolik")
+- Dev: `footer-scripts.ejs` partial + 3 route hali qo'shilmagan
+
+### BUG-092: ✅ RE-VERIFY — YAXSHI YANGILIK: BUG-009 va BUG-010 yangi deployda TUZATILGAN
+- /user/create-test: "breakout" leak YO'Q, `__CSRF_TOKEN = &#34;` YO'Q, 0 pageerror
+- /user/panel: escaped pattern YO'Q (escape fix deploy bo'lgan)
+- Lekin: `__RISK_COPY__` hali undefined (BUG-095)
+
+### BUG-093: 🟠 REGRESSIYA: Admin tema boshqaruvi endi FAQAT 'System' — Light/Dark tugmalari YO'QOLGAN
+- **Dalil:** dashboard themeBtns = ['System'] (oldin System/Light/Dark segment edi); marking'da 'Dark' tugma topilmaydi
+- **Ta'sir:** light-OS foydalanuvchi admin'da dark'ni umuman yoqa olmaydi (dark talab qiluvchi foydalanuvchi uchun imkoniyat yo'q); hc rejim ham yo'q (BUG 3-UI tashxisi bilan birga)
+
+### BUG-094: 🔴 RE-CONFIRM (BUG-080 yangi deployda HAM): Panel oilasida theme-core YO'Q
+- /user/panel (yangi deploy, tirik sessiya): tc=False, attrs=[] — dark panel oilada hali ham ishlamaydi
+
+### BUG-095: 🟡 `__RISK_COPY__` hali undefined (BUG-009 QISMAN fix)
+- Escape tuzatilgan, lekin risk banner copy globali hali yuklanmaydi — risk banner i18n ishlamaydi
+
+### BUG-096: 🟡 Dark skan (35 admin sahifa): 0 muammo — metodik izoh
+- Barcha sahifalar 'System' rejimda light render bo'ldi; natija FAQAT theme-core faol sahifalar uchun amal qiladi. Light-OS foydalanuvchi dark'ni yoqa olmaydi (BUG-093) — shuning uchun dark kontrast testi endi mazmunsiz
+
+### BUG-097: 🟡 Arena sahifasi o'zgargan — `.btn-load` topilmaydi (BUG-044 status: QAYTA TEKSHIRUV)
+- Yangi deployda arena layout boshqacha; "Yuklash" tugma nomi/selektori o'zgargan — BUG-044 (loadArena o'likligi) yangi versiyada qayta tekshirilishi kerak
+
+### BUG-098: 🟡 MFA backup kodlar buxgalteriyasi (muhim ogohlantirish)
+- Admin: **2 ta qoldi** (daffd2e925, e36030562f) — ehtiyot ishlating
+- Teacher: **5 ta kandidat** (3fc3a80ee7, fe36c1242c, 80adf33dca, c745de5358, 507655b928); ishlamaganlar: 5b329539bd, daffd2e925 (eski rotatsiya taxmini tasdiqlandi)
+- Har xato urinish lockout'ga yig'iladi (5 → 15 daq) — kodlarni ketma-ket sinamasdan tekshirib yuborish tavsiya etiladi
+
+### BUG-099: ✅ IJOBIY — Yangi deployda create-test 0 pageerror (leak/escape yo'q) — teacher asosiy oqimi toza boshlandi; BUG-092 bilan birga dev fix'lari ishlayapti
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
