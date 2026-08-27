@@ -47,7 +47,9 @@
     },
   });
 
-  const $ = (id) => document.getElementById(id);
+  // BUG-053: faylda 186 ta jQuery-uzilish $('#id') bor — helper bare id kutardi va
+  // null qaytarardi (qp/transfer/goal/POE bloklari butunlay o'lik edi). Tolerant:
+  const $ = (sel) => document.getElementById(String(sel).replace(/^#/, ''));
 
   function announce(msg, assertive) {
     const el = assertive ? $('alert-live') : $('status-live');
@@ -180,8 +182,17 @@
   // ── Lobby ──
   async function loadLobbyInfo() {
     try {
+      /* BUG-021/052: endpoint endi mavjud — javobni ishlatamiz (avval 404, lobbi
+         ma'lumoti hech qachon yangilanmasdi) */
       const res = await fetch(`/api/cast/sessions/${BOOT.sessionId}/meta`, { headers: { 'X-CSRF-Token': window.__CSRF_TOKEN } });
-      // Meta endpoint fallback: use initial boot if unavailable
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data && data.ok) {
+        const titleEl = document.getElementById('dir-title');
+        if (titleEl && data.title) titleEl.textContent = data.title;
+        const codeEl = document.getElementById('dir-code-big');
+        if (codeEl && data.joinCode) codeEl.textContent = data.joinCode;
+      }
     } catch (_) {}
   }
 

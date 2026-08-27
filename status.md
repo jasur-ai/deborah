@@ -2,8 +2,9 @@
 
 > **Manba:** `workspace` branchidagi QA hisobotlari (qa/BUG_REPORTS.md, BUG-001…BUG-048, 2026-08-27)
 > **Branch:** `debugging` (asos: `main` @ 6612193)
-> **Qoida:** har STEP = bitta izolyatsiyalangan tuzatish to'plami → test + brauzer verify → commit
-> → **FOYDALANUVCHI TASDIQI** → keyingi STEP.
+> **Qoida (2026-08-27 yangilandi):** STEP 6–30 oldindan tasdiqlandi — BIRMA-BIR, sifat bilan.
+> Har STEP ≥7 bug (hisorotdagi + o'zim topgan verifikatsiyali topilmalar), verify (test/brauzer)
+> → commit → keyingi STEP. PUSH har 5 STEPda (10/15/20/25/30 oxirida). main faqat yakunda.
 > Har STEP yakunda session memory ko'rib chiqiladi (≤100 qator).
 
 ---
@@ -128,16 +129,32 @@ submit bloklanadi; teacher → to'liq forma (university maydoni + username prefi
 saqlangan); student + consent → registratsiya o'tdi. vitest: email paketi 28/28 + auth/a11y/
 first-win 86/86.
 
-## STEP 6 — 🟠 Cast: flaky join + o'lik API chaqiruv — ⏳
-**Buglar:** BUG-020, BUG-021, BUG-002
-**Qanday:**
-- **BUG-020** — birinchi `/play?code=` urinish jim o'yin sahifasiga qulaydi (resolve pishmagan bo'sa
-  null → jim fallback). Fix: resolve fail → aniq xato/retry xabari.
-- **BUG-021** — `cast-director.js:183` `/api/cast/sessions/:id/meta` GET route yo'q (404, jim
-  yutiladi). Fix: route qo'shish yoki chaqiruvni olib tashlash.
-- **BUG-002** — join kodi matn "5 xonali" vs kod 5–7 qabul qiladi (agar main'da qolsa). Fix: matn ↔
-  validatsiya sinxron.
-**Verify:** cast integration test + brauzer A/B join.
+## STEP 6 — 🔴 Cast kirish oqimi + director bloklari — ✅ YAKUNLANDI (8 bug)
+**Buglar:** BUG-020, BUG-021, BUG-002 + 5 ta YANGI (049–053)
+**Qilingan (aniq — 8 bug):**
+- **BUG-049 (YANGI, KRITIK)** — cast join-kodlari `ABCDEFGHJKMNPQRSTUVWXYZ23456789` (6 harf+raqam),
+  lekin landing join-dialog faqat RAQAM qoldirardi (`\D` strip) → haqiqiy cast kodini kiritib
+  BO'LMASDI ("cast ishlamayapti" ildizi). Fix: A-Z0-9 uppercase filter + `/^[A-Z0-9]{5,6}$/`.
+- **BUG-002** — "5 xonali raqam" matnlari haqiqatga moslandi (uz/ru/en + placeholder AB12CD +
+  join.p matni: cast 6 belgi / o'yin 5 raqam).
+- **BUG-050 (YANGI)** — /play formasi `maxlength=5` + `\d{5}` + numeric klaviatura → cast kodi
+  kiritilmaydi. Fix: maxlength 6, autocapitalize, dual-path: 6 harfli kod → `/play?code=`
+  redirect; 5 raqam → eski quiz socket oqimi (saqlangan).
+- **BUG-051 (YANGI)** — URL autofill `\d{5}` → cast kodlari uchun ham qabul.
+- **BUG-020** — resolve fail jim fallback → endi `castMiss` xabari: "Kod topilmadi yoki sessiya
+  hozir tayyorlanmoqda — qayta urinib ko'ring" (game.js cast-format aniqlashi bilan).
+- **BUG-021** — `GET /api/cast/sessions/:id/meta` route QO'SHILDI (requireAuth; title/joinCode/
+  phase/revision; yo'q sessiya → 404 not_found).
+- **BUG-052 (YANGI)** — loadLobbyInfo javobni umuman o'qimasdi → endi #dir-title/#dir-code-big
+  yangilanadi.
+- **BUG-053 (YANGI, YIRIK)** — cast-director.js'da **186 ta jQuery-uzilish** `$('#id')` — helper
+  bare id kutardi → `getElementById('#id')`=null → Tezkor savol/Transfer/Maqsad/POE/Orb butun
+  bloklari o'lik (live TypeError). Fix: tolerant helper `String(sel).replace(/^#/,'')` — 186
+  binding bir zumda tirildi (forenzika: getElementById instrumentatsiyasi bilan isbot).
+
+**Verify (isbot):** repro **17/17 PASS** (`scripts/repro-step6.mjs`): meta API 4 holat, /play 3
+holat, landing kichik-harf→uppercase→navigatsiya, forma dual-path, director 200 + meta 200 +
+**pageerror=0**. vitest cast paketi 25/25.
 
 ## STEP 7 — 🟠 Dark mode kontrast (WCAG) — ⏳
 **Buglar:** BUG-023, BUG-024, BUG-025
@@ -185,6 +202,7 @@ first-win 86/86.
 - **STEP 3** (2026-08-27): BUG-006/007 — 4 fayl; server repro 15/15 PASS, vitest 27/27.
 - **STEP 4** (2026-08-27): BUG-008/032/037/014 — POST-only logout + tasdiq sahifasi + ko'rinadigan tugma + input bounds; brauzer 8/8, logout-csrf 2/2, regression 116/116.
 - **STEP 5** (2026-08-27): BUG-035/036/040/039 — landing rol+consent+teacher havola, SMTP timeout+5s cap; brauzer 12/12, email 28/28, auth/a11y 86/86. [PUSH nuqtasi]
+- **STEP 6** (2026-08-27): BUG-020/021/002 + YANGI 049/050/051/052/053 (186 jQuery-uzilish!) — repro 17/17, cast testlari 25/25.
 
 ## 📋 MANBA HAVOLALAR
 - BUG hisobotlari: `workspace` branch → `qa/BUG_REPORTS.md`

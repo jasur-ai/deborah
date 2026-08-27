@@ -9,7 +9,7 @@
     'join.k':"Tayyor cast",
     'join.h3':"Castga <em>kirish</em>",
     'join.p':'Kodni kiriting.',
-    'join.err':'Kod 5–7 xonadan iborat raqam bo\'lishi kerak.',
+    'join.err':'Kod 5–6 belgidan iborat bo\'lishi kerak (cast: 6 harf/raqam).',
     'join.go':'Kirish',
     'join.load':'Ulanmoqda… <i></i>',
     'join.ok':"Siz castga ulandingiz. Savol kutilmoqda.",
@@ -55,7 +55,7 @@
     'join.k':'Готовый cast',
     'join.h3':'Вход в <em>cast</em>',
     'join.p':'Введите код.',
-    'join.err':'Код должен состоять из 5–7 цифр.',
+    'join.err':'Код должен быть из 5–6 символов (cast: 6 букв/цифр).',
     'join.go':'Войти',
     'join.load':'Подключение… <i></i>',
     'join.ok':'Вы вошли в cast. Ожидайте вопрос.',
@@ -102,7 +102,7 @@
     'join.k':'Ready cast',
     'join.h3':'Join the <em>cast</em>',
     'join.p':'Enter the code.',
-    'join.err':'The code must be a 5–7 digit number.',
+    'join.err':'The code must be 5–6 characters (cast: 6 letters/digits).',
     'join.go':'Join',
     'join.load':'Connecting… <i></i>',
     'join.ok':'You joined the cast. Waiting for the question.',
@@ -191,12 +191,13 @@
   joinOv.addEventListener('click',function(e){if(e.target===joinOv)closeJoin();});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&joinOv.classList.contains('open'))closeJoin();});
   joinCode.addEventListener('input',function(){
-    joinCode.value=joinCode.value.replace(/\D/g,'').slice(0,7);
+    /* BUG-049: cast kodlari A-Z2-9 (6 belgi) — faqat raqam emas */
+    joinCode.value=joinCode.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,7);
     joinErr.classList.remove('show');
   });
   joinGo.addEventListener('click',function(){
-    var v=joinCode.value.trim();
-    if(v.length<5||v.length>7){joinErr.classList.add('show');joinCode.focus();return;}
+    var v=joinCode.value.trim().toUpperCase();
+    if(!/^[A-Z0-9]{5,6}$/.test(v)){joinErr.classList.add('show');joinCode.focus();return;}
     joinErr.classList.remove('show');
     joinMsg.classList.add('show');
     joinMsg.querySelector('.ok').style.display='none';

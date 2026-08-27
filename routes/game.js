@@ -142,6 +142,15 @@ router.get('/play', async (req, res) => {
     try {
       const { resolveSessionByCode } = await import('../services/cast/session-store.js');
       const sessionId = await resolveSessionByCode(code);
+      if (!sessionId && /^[A-Z0-9]{6}$/i.test(String(code))) {
+        // BUG-020: cast-format kodi (6 belgi A-Z0-9) topilmadi — jim fallback
+        // o'rniga enter sahifasi castMiss=1 bilan (aniq xabar ko'rsatiladi)
+        return res.render('game/enter', {
+          title: 'Deborah — O\'yinga Kirish',
+          characters: CARTOON_CHARS,
+          initialCode: code,
+        });
+      }
       if (sessionId) {
         const meta = await (await import('../services/cast/session-store.js')).getSessionMeta(sessionId);
         if (meta) {

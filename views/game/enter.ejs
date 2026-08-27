@@ -139,7 +139,9 @@
     <div class="box-title">O'yin kodini kiriting</div>
     <p class="box-sub">Host tomonidan berilgan 5 xonali kodni kiriting</p>
     <div class="msg" id="code-msg"></div>
-    <input class="code-input" id="code-inp" type="tel" inputmode="numeric" maxlength="5" placeholder="·····" autocomplete="off">
+    <% /* BUG-050: cast join-kodlari 6 belgi A-Z2-9 — input faqat 5 raqamni qabul
+         qilardi; endi ikkala tizim: 5 raqam (o'yin) | 6 harf/raqam (cast) */ %>
+    <input class="code-input" id="code-inp" type="text" autocapitalize="characters" spellcheck="false" maxlength="6" placeholder="·····" autocomplete="off" style="text-transform:uppercase">
     <button type="button" class="btn btn-red" id="code-btn" onclick="checkCode()">Davom etish →</button>
   </div>
 </div>
@@ -322,11 +324,17 @@
       grid.appendChild(b);
     });
 
-    // Auto-fill code from URL
+    // Auto-fill code from URL (BUG-051: cast kodlari ham — 6 belgi A-Z0-9)
     const urlCode = new URLSearchParams(location.search).get('code');
-    if (urlCode && /^\d{5}$/.test(urlCode)) {
-      $('code-inp').value = urlCode;
+    if (urlCode && /^(\d{5}|[A-Z0-9]{6})$/i.test(urlCode)) {
+      $('code-inp').value = urlCode.toUpperCase();
       setTimeout(() => checkCode(), 300);
+    }
+    // BUG-020: cast kodi yuborilgan lekin sessiya topilmadi — jim o'yin formasi
+    // o'rniga aniq xabar (avval foydalanuvchi hech narsa tushunmasdi)
+    const castMiss = new URLSearchParams(location.search).get('castMiss');
+    if (castMiss) {
+      showMsg('code-msg', 'Cast kodi topilmadi yoki sessiya hozir tayyorlanmoqda — kodni tekshirib, bir necha soniyadan keyin qayta urinib ko\'ring.');
     }
 
     // Set back button
@@ -347,8 +355,14 @@
 
   // ── STEP 1: Check Code ──
   window.checkCode = function() {
-    const v = $('code-inp').value.trim();
-    if (!/^\d{5}$/.test(v)) { showMsg('code-msg', '5 xonali raqam kiriting'); return; }
+    const v = $('code-inp').value.trim().toUpperCase();
+    $('code-inp').value = v;
+    if (/^[A-Z0-9]{6}$/.test(v) && !/^\d{6}$/.test(v)) {
+      /* Cast kodi (6 belgi, harf bor) — /play?code= orqali server resolve */
+      window.location.href = '/play?code=' + encodeURIComponent(v);
+      return;
+    }
+    if (!/^\d{5}$/.test(v)) { showMsg('code-msg', '5 xonali o\'yin kodi yoki 6 belgili cast kodi kiriting'); return; }
     const btn = $('code-btn'); btn.disabled = true; btn.textContent = 'Tekshirilmoqda...';
     socket.emit('player:checkCode', { code: v });
     socket.once('code:checked', (data) => {
@@ -362,6 +376,7 @@
       btn.disabled = false; btn.textContent = 'Davom etish →';
     });
   };
+  $("code-inp").addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); });
   $('code-inp').addEventListener('keydown', e => { if (e.key === 'Enter') checkCode(); });
 
   // ── STEP 2: Check Name ──

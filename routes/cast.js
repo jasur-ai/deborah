@@ -719,6 +719,28 @@ router.get('/cast/:sessionId/quality-lab', requireAuth, async (req, res) => {
 });
 
 // ── Director view: GET /cast/:sessionId/director ──
+/** GET /api/cast/sessions/:id/meta — director lobbi meta (BUG-021: 404 edi, o'lik chaqiruv) */
+router.get('/api/cast/sessions/:id/meta', requireAuth, async (req, res) => {
+  try {
+    const sessionId = req.params.id;
+    const { getSessionMeta, getState } = await import('../services/cast/session-store.js');
+    const meta = await getSessionMeta(sessionId);
+    if (!meta) return res.status(404).json({ ok: false, error: 'not_found' });
+    const state = await getState(sessionId);
+    return res.json({
+      ok: true,
+      sessionId,
+      title: meta.title || '',
+      joinCode: meta.joinCode || '',
+      createdAt: meta.created_at || null,
+      phase: state?.phase || 'lobby',
+      revision: state?.revision || 1,
+    });
+  } catch (err) {
+    return res.status(500).json({ ok: false, error: 'server_error' });
+  }
+});
+
 router.get('/cast/:sessionId/director', requireAuth, async (req, res) => {
   try {
     const { sessionId } = req.params;

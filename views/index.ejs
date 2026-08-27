@@ -81,10 +81,12 @@
     <div class="join-head">
       <div class="k" data-i18n="join.k">Tayyor cast</div>
       <h3 data-i18n="join.h3">O'yinga <em>kirish</em></h3>
-      <p data-i18n="join.p">Kodni kiriting.</p>
+      <p data-i18n="join.p">Host tomonidan berilgan kodni kiriting (cast: 6 belgi, o'yin: 5 raqam).</p>
     </div>
-    <div class="jcode-wrap"><input class="jcode" id="jcode" inputmode="numeric" autocomplete="off" maxlength="7" placeholder="00000"></div>
-    <div class="join-err" id="joinErr" data-i18n="join.err">Kod 5–7 xonadan iborat raqam bo'lishi kerak.</div>
+    <% // BUG-049: cast join-kodlari 6 belgi HARF+raqam (A-Z, 2-9) — faqat-raqam
+       // input bu kodlarni butunlay bloklab qo'ygan edi (harflar o'chib ketardi) %>
+    <div class="jcode-wrap"><input class="jcode" id="jcode" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="7" placeholder="AB12CD" style="text-transform:uppercase"></div>
+    <div class="join-err" id="joinErr" data-i18n="join.err">Kod 5–6 belgidan iborat bo'lishi kerak (cast kodi: 6 belgi harf/raqam).</div>
     <button class="btn btn-gold auth-submit" id="joinGo" type="button" data-i18n="join.go">Kirish</button>
     <div class="join-msg" id="joinMsg">
       <div class="load" data-i18n="join.load">Ulanmoqda… <i></i></div>
