@@ -70,3 +70,4 @@
 - ✅ STEP 19 — yakunlandi (2026-08-27): BUG-129 🔴 (Excel import -> save questions:[] — end-to-end buzilgan) + BUG-130…132 (3 ta) + BUG-133 (BUG-050 re-confirm) + BUG-134 ijobiy
 - ✅ STEP 20 — yakunlandi (2026-08-27): BUG-139 (BUG-044 re-confirm: arena o'lik) + BUG-140 🟠 (add-bots teacher'ga 401 — rol nomuvofiq) + BUG-141…147 + BUG-148 (attempt API keyingi stepda)
 - ✅ STEP 21 — yakunlandi (2026-08-27): BUG-149 (BUG-049 re-confirm) + BUG-150 🟠 (results/replay -> panel render) + BUG-151…157 (mock key admin'da, quality-lab 403, join intermittent OK)
+- ✅ STEP 22 — yakunlandi (2026-08-27): BUG-155 🟠 (difficulty=hard 502) + BUG-156 🟠 (true_false correct None) + BUG-157 🟡 (lang=ru uz javob) + BUG-158…164 (validatsiya OK, admin AI placeholder, quota hisobi)

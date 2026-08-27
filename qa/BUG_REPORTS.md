@@ -840,6 +840,35 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-158: ✅ IJOBIY — Dalil: 64_director_new.png (yangi deploy, kod APDD3G holati bilan)
 
+### BUG-155: 🟠 `difficulty=hard` → 502 — AI hard rejim ISHLAMAYDI
+- **Dalil:** `{"prompt":"kvant mexanika","difficulty":"hard"}` → **502** (easy/medium/mixed ishlaydi)
+- **Ta'sir:** o'qituvchi qiyinlik darajasini hard tanlasa — xato; UI'da param bor, backend/iqlimdagi Gemini so'rovi yiqiladi
+
+### BUG-156: 🟠 true_false savolida `correct` MAYDONI YO'Q (None)
+- **Dalil:** `type=true_false` generate → 2 options ✅ lekin `correct: None`
+- **Ta'sir:** AI'dan kelgan to'g'ri/noto'g'ri savol baholanolmaydi (normalizatsiya true_false uchun uzilmagan) — panel/cast'ga qo'shilsa noto'g'ri ishlaydi
+
+### BUG-157: 🟡 `lang=ru` so'rovi O'ZBEKCHA javob qaytaradi
+- **Dalil:** fotosintez savoli lang=ru bilan — kirill matn yo'q; lang param Gemini promptga to'liq yetmaydi yoki javob tili kafolatlanmaydi
+- **Ta'sir:** ru/en foydalanuvchi ruscha/inglizcha savol ololmaydi (API qabul qiladi, natija boshqa tilda)
+
+### BUG-158: ✅ GENERATE VALIDATSIYA to'g'ri (live)
+- count=0 → clamp 1; count=100 → clamp 10 (200); prompt 700 → 400; authsiz → 403; lang=de → default uz (jim)
+
+### BUG-159: 🟡 Admin ai-grading/ai-mlops sahifalari PLACEHOLDER darajada
+- **Dalil:** job/eval/candidate raqamlari ko'rsatilmaydi (nums None), faqat sidebar "BOSHQARUV" matni — modullar sahifasi bor, funksiya/ma'lumot bo'sh
+
+### BUG-160: ℹ️ AI kunlik limit (300/kun) hisobi
+- QA testlari davomida ~30 so'rov birlik sarflandi (count=100 clamp bilan 10 ta bir so'rovda!); real foydalanuvchilar uchun limit katta, lekin har bir generate qimmat — UI'da qolgan limit ko'rsatilmasligi mumkin (tekshiruv)
+
+### BUG-161: ✅ Rate limit 12/daq to'g'ri (rapid so'rovlarda 429 yo'q — chegara ichida)
+
+### BUG-162: ✅ AI sifati: real Gemini (gemini-3.6-flash), uz tilida sifatli savollar (variantlar bilan)
+
+### BUG-163: ⚪ Director Quick Prompt overlay UI BUG-049'dan hali o'lik (re-confirmed: orb-overlay click to'sadi)
+
+### BUG-164: ⚪ 300/kun limitga yetish testi OCHIQ (quota tejash uchun sinov qilinmadi)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
