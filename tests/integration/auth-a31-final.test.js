@@ -135,6 +135,8 @@ describe('AUTH A-31 — Massive Final Checkpoint', () => {
     const uname = `mfareplay${Date.now() % 100000}`;
     const userKey = safeKey(uname);
     await registerUser(supertest.agent(app), uname, 'parol-2026-x-uzun', null, nextIp());
+    // 2026-08-27: MFA challenge faqat admin/o'qituvchi — userni teacher'ga ko'taramiz
+    await fb.set(`users/${userKey}/role`, 'teacher');
     // MFA'ni to'g'ridan-to'g'ri yoqamiz (setup+enable)
     const { setupTotp, enableTotp } = await import('../../src/modules/auth/mfa-totp.js');
     const setup = await setupTotp(userKey, { accountName: uname });

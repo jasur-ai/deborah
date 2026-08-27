@@ -80,20 +80,20 @@ describe('AUTH A-26 — MFA/TOTP module', () => {
     expect(enable.error).toBe('invalid_code');
   });
 
-  it('enableTotp: birinchi kod verify → active + 10 backup code (hash)', async () => {
+  it('enableTotp: birinchi kod verify → active + 12 backup code (hash)', async () => {
     await setupTotp('mfa_enable_user', { accountName: 'e' });
     const rec = await fb.get(`mfa_totp/mfa_enable_user`);
     const secret = decryptSecret(rec.val().secretEnc);
     const token = await generate({ secret });
     const r = await enableTotp('mfa_enable_user', token);
     expect(r.ok).toBe(true);
-    expect(r.backupCodes).toHaveLength(10);
+    expect(r.backupCodes).toHaveLength(12);
     r.backupCodes.forEach((c) => expect(c).toMatch(/^[0-9a-f]{10}$/));
     // Backup hash'lar DB'da, plaintext yo'q
     const bc = await fb.get(`mfa_backup_codes/mfa_enable_user`);
     expect(bc.exists()).toBe(true);
     const codes = bc.val().codes;
-    expect(codes).toHaveLength(10);
+    expect(codes).toHaveLength(12);
     r.backupCodes.forEach((c, i) => {
       expect(codes[i].h).toBe(hashBackupCode(c));
       expect(codes[i].usedAt).toBe(0);
@@ -147,13 +147,13 @@ describe('AUTH A-26 — MFA/TOTP module', () => {
   it('rotateBackupCodes: yangi kodlar, eskilari invalid', async () => {
     const r = await rotateBackupCodes('mfa_enable_user');
     expect(r.ok).toBe(true);
-    expect(r.backupCodes).toHaveLength(10);
+    expect(r.backupCodes).toHaveLength(12);
     const bc = await fb.get(`mfa_backup_codes/mfa_enable_user`);
     const codes = bc.val().codes;
-    expect(codes).toHaveLength(10);
+    expect(codes).toHaveLength(12);
     // Yangi hash'lar eski kodlarga mos kelmaydi
     expect(codes[0].h).not.toBe(hashBackupCode('oldcode0000'));
-    expect(await backupCodesRemaining('mfa_enable_user')).toBe(10);
+    expect(await backupCodesRemaining('mfa_enable_user')).toBe(12);
   });
 
   it('disableMfa: mfa_totp + backup codes tozalanadi', async () => {

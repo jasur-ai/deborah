@@ -91,6 +91,8 @@ describe('D-08 — MFA frontend (integration)', () => {
       username: uname, email: `${uname}@test.uz`,
       password: 'parol-2026-x-uzun', role: '',
     });
+    // 2026-08-27: MFA faqat admin/o'qituvchi — teacher'ga ko'taramiz
+    await fb.set(`users/${safeKey(uname)}/role`, 'teacher');
     // panel → setup → enable (panel window.__CSRF_TOKEN ishlatadi — auth-a26 usuli)
     const panel = await agent.get('/user/panel');
     const pm = panel.text.match(/window\.__CSRF_TOKEN\s*=\s*("([^"]+)"|'([^']+)')/);
@@ -168,6 +170,12 @@ describe('D-08 — MFA frontend (integration)', () => {
       username: uname, email: `${uname}@test.uz`,
       password: 'parol-2026-x-uzun', role: '',
     });
+    // 2026-08-27: MFA kartasi faqat privileged rollda — LOGINNIG OLDIN teacher
+    // (sessiya roleni login paytida oladi; keyin qo'ysak sessiya student qoladi)
+    await fb.set(`users/${safeKey(uname)}/role`, 'teacher');
+    // Logout — register sessiyasida role=student qolgan; yangi login DB'dagi
+    // teacher rolini sessiyaga oladi (MFA kartasi privileged rolga render)
+    await agent.get('/user/logout').redirects(0).catch(() => {});
     // 2-chi login (auth-a26 konventsiyasi)
     const lp = await agent.get('/user/login?lang=uz');
     const lc = (lp.text.match(/name="_csrf" value="([^"]+)"/) || [])[1];

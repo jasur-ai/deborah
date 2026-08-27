@@ -107,7 +107,7 @@ describe('AUTH A-30 — Admin/Teacher privilege hardening', () => {
       .send({ token });
     expect(enable.status).toBe(200);
     expect(enable.body.ok).toBe(true);
-    expect(enable.body.backupCodes).toHaveLength(10);
+    expect(enable.body.backupCodes).toHaveLength(12);
 
     // Endi dashboard ochiq (session berildi)
     const dash = await agent.get('/admin/dashboard');
