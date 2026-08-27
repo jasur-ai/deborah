@@ -77,6 +77,8 @@
     </a>
     <div style="font-size:.72rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-top:6px">Akkauntingizga ulangan barcha qurilmalar, oxirgi faollik va yakunlash.</div>
 
+    <% // 2026-08-27: MFA (Authenticator) faqat admin/o'qituvchi uchun %>
+    <% if (user && (user.role === 'teacher' || user.role === 'admin')) { %>
     <% const ms = accountCopy.mfaSettings || {}; %>
     <div class="sec-title" style="margin-top:18px"><%- icon('shieldCheck', 16) %> <%= ms.title || 'Ikki bosqichli tekshiruv (MFA)' %></div>
     <!-- AUTH D-08 §15: data-copy — mfa-settings.js i18n (4 til) -->
@@ -126,6 +128,12 @@
       </div>
     </div>
     <div style="font-size:.72rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-top:6px"><%= ms.footer || "MFA yoqilgan bo'lsa, har kirishda parol + 6 xonali kod talab qilinadi." %></div>
+    <% } else { %>
+    <div class="sec-title" style="margin-top:18px"><%- icon('shieldCheck', 16) %> Ikki bosqichli tekshiruv (MFA)</div>
+    <div class="mfa-card" style="background:var(--deborah-semantic-color-surface-raised);border-radius:16px;padding:18px;border:1px solid var(--deborah-semantic-color-border-default);">
+      <div class="hemis-profile" style="font-size:.78rem;font-weight:600;line-height:1.6">Authenticator (MFA) sizning akkauntingiz uchun kerak emas — parol bilan kirasiz. Bu funksiya faqat admin va o'qituvchi akkauntlariga qo'llaniladi.</div>
+    </div>
+    <% } %>
 
     <% const pk = accountCopy.passkeySettings || {}; %>
     <div class="sec-title" style="margin-top:18px"><%- icon('key', 16) %> <%= pk.title || 'Passkeylar (parolsiz kirish)' %></div>

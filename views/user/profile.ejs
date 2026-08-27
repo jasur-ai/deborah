@@ -92,8 +92,8 @@
     <section class="card">
       <div class="card-h"><%- icon('shieldCheck', 16) %> Xavfsizlik holati</div>
       <div class="rows">
-        <div class="row"><span class="row-k">MFA (Google Authenticator)</span><span class="row-v">
-          <% if (p.mfa && p.mfa.status === 'active') { %><span class="mfa-on">Yoqilgan</span><% } else { %><span class="mfa-off">O'chirilgan</span><% } %>
+        <div class="row"><span class="row-k">MFA (Authenticator)</span><span class="row-v">
+          <% if (p.mfa && p.mfa.status === 'active') { %><span class="mfa-on">Yoqilgan</span><% } else if (p.role === 'teacher' || p.role === 'admin') { %><span class="mfa-off">O'chirilgan</span><% } else { %><span class="row-v" style="font-weight:600">Kerak emas (faqat admin/o'qituvchi uchun)</span><% } %>
         </span></div>
         <div class="row"><span class="row-k">Qolgan zaxira kodlar</span><span class="row-v"><%= p.mfa && p.mfa.status === 'active' ? (p.mfa.backupCodesRemaining + ' ta') : '—' %></span></div>
       </div>
@@ -105,7 +105,7 @@
     <section class="card" id="bc-card">
       <div class="card-h"><%- icon('key', 16) %> Zaxira kodlar (12 ta)</div>
       <% if (p.mfa && p.mfa.status === 'active') { %>
-        <div class="hint">Zaxira kodlarni ko'rish uchun (yangilab olish) identifikatsiyani qayta tasdiqlang — <b>parolingiz</b> yoki <b>Authenticator kodingizni</b> kiriting. Yangi 12 ta kod yaratiladi, avvalgilari bekor bo'ladi.</div>
+        <div class="hint">Zaxira kodlarni ko'rish uchun (yangilab olish) <b>joriy kirish parolingizni</b> kiriting (Authenticator kodi so'ralmaydi). Yangi 12 ta kod yaratiladi, avvalgilari bekor bo'ladi.</div>
         <div class="actions">
           <button class="btn btn-primary" id="bc-open" type="button"><%- icon('key', 14) %> Zaxira kodlarni ko'rsatish</button>
         </div>
@@ -117,10 +117,14 @@
           </div>
         </div>
       <% } else { %>
-        <div class="hint">Zaxira kodlar faqat <b>MFA (Google Authenticator)</b> yoqilganda mavjud bo'ladi. Yoqish: Xavfsizlik profili → MFA.</div>
-        <div class="actions">
-          <a class="btn btn-quiet" href="/user/security-profile"><%- icon('lock', 14) %> MFA yoqish</a>
-        </div>
+        <% if (p.role === 'teacher' || p.role === 'admin') { %>
+          <div class="hint">Zaxira kodlar <b>MFA (Authenticator)</b> yoqilganda mavjud bo'ladi. Yoqish: Xavfsizlik profili → MFA.</div>
+          <div class="actions">
+            <a class="btn btn-quiet" href="/user/security-profile"><%- icon('lock', 14) %> MFA yoqish</a>
+          </div>
+        <% } else { %>
+          <div class="hint">Zaxira kodlar va Authenticator sizning akkauntingiz uchun kerak emas — bu funksiya faqat admin va o'qituvchilarga qo'llaniladi.</div>
+        <% } %>
       <% } %>
     </section>
   </main>
@@ -129,11 +133,8 @@
   <div class="modal-back" id="reauth-modal" hidden>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="reauth-title">
       <h3 id="reauth-title"><%- icon('lock', 16) %> Identifikatsiyani tasdiqlang</h3>
-      <div class="hint">Zaxira kodlaringizni ko'rsatish uchun parolingiz yoki Authenticator kodingizni kiriting.</div>
-      <% if (p.hasPassword) { %>
-        <input class="inp" id="reauth-pass" type="password" placeholder="Parol" autocomplete="current-password">
-      <% } %>
-      <input class="inp" id="reauth-totp" type="text" inputmode="numeric" maxlength="10" placeholder="Authenticator kodi (6 xona)" autocomplete="one-time-code">
+      <div class="hint">Zaxira kodlaringizni ko'rsatish uchun joriy kirish parolingizni kiriting.</div>
+      <input class="inp" id="reauth-pass" type="password" placeholder="<%= p.isAdminSession ? 'Admin paroli' : 'Joriy kirish paroli' %>" autocomplete="current-password">
       <div class="msg" id="reauth-msg"></div>
       <div class="actions">
         <button class="btn btn-primary" id="reauth-submit" type="button">Tasdiqlash</button>
@@ -167,9 +168,8 @@
 
       submitBtn.addEventListener('click', async function () {
         var pass = (document.getElementById('reauth-pass') || {}).value || '';
-        var totp = (document.getElementById('reauth-totp') || {}).value || '';
-        if (!pass && !totp) {
-          msgEl.textContent = 'Parol yoki Authenticator kodini kiriting.';
+        if (!pass) {
+          msgEl.textContent = 'Joriy kirish parolingizni kiriting.';
           msgEl.className = 'msg err';
           return;
         }
@@ -180,7 +180,7 @@
           var res = await fetch('/api/profile/backup-codes', {
             method: 'POST',
             headers: { 'content-type': 'application/json', 'x-csrf-token': window.__CSRF_TOKEN },
-            body: JSON.stringify({ password: pass || undefined, mfaCode: totp || undefined })
+            body: JSON.stringify({ password: pass })
           });
           var data = await res.json().catch(function () { return {}; });
           if (!res.ok || !data.ok) {

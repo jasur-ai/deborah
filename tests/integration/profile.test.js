@@ -14,6 +14,7 @@ import supertest from 'supertest';
 import { createApp } from '../../server.js';
 import { snapshotDb, restoreDb } from '../helpers/setup.js';
 import { generate } from 'otplib';
+import { fb } from '../../firebase/admin.js';
 
 let app;
 let ipCounter = 0;
@@ -91,10 +92,12 @@ describe('Profilim — hamma rollar uchun', () => {
     expect(res.body.error).toBe('mfa_disabled');
   });
 
-  it('MFA yoqilgancha: noto\u2018g\u2018ri parol → 403; TOTP/parol bilan → 12 ta kod', async () => {
+  it('MFA yoqilgancha: noto\u2018g\u2018ri parol → 403; parol bilan → 12 ta kod (TOTP so\u2018ralmaydi)', async () => {
     const agent = supertest.agent(app);
     const uname = `profmfa_${Date.now() % 1000000}`;
     await registerUser(agent, uname);
+    // MFA faqat privileged rollarda — teacher'ga ko'taramiz (rol versiyasiga tegmaymiz)
+    await fb.set(`users/${uname}/role`, 'teacher');
     const csrf = csrfFrom((await agent.get('/user/panel')).text);
 
     // MFA yoqish (faza 1 + 2)
@@ -110,24 +113,29 @@ describe('Profilim — hamma rollar uchun', () => {
     expect(bad.status).toBe(403);
     expect(bad.body.error).toBe('wrong_credentials');
 
-    // TOTP kodi bilan (Google-only akkaunt yo'li) → 12 kod
-    const totp2 = await generate({ secret: setup.body.secret });
-    const viaTotp = await agent.post('/api/profile/backup-codes')
-      .set('x-csrf-token', csrf).send({ mfaCode: totp2 });
-    expect(viaTotp.status).toBe(200);
-    expect(viaTotp.body.ok).toBe(true);
-    expect(viaTotp.body.backupCodes).toHaveLength(12);
-    viaTotp.body.backupCodes.forEach((c) => {
-      expect(c).toMatch(/^[0-9a-f]{10}$/);
-    });
+    // Parol yuborilmasa → 400 password_required (Authenticator kodi ENDI yo'l emas)
+    const noPass = await agent.post('/api/profile/backup-codes')
+      .set('x-csrf-token', csrf).send({ mfaCode: '123456' });
+    expect(noPass.status).toBe(400);
+    expect(noPass.body.error).toBe('password_required');
 
-    // Parol bilan ham → yana 12 YANGI kod
+    // Parol bilan → 12 ta kod
     const viaPass = await agent.post('/api/profile/backup-codes')
       .set('x-csrf-token', csrf).send({ password: 'parol-2026-x-uzun' });
     expect(viaPass.status).toBe(200);
     expect(viaPass.body.backupCodes).toHaveLength(12);
-    // rotate: yangi kodlar eski bilan bir xil emas
-    const overlap = viaPass.body.backupCodes.filter((c) => viaTotp.body.backupCodes.includes(c));
-    expect(overlap.length).toBe(0);
+    viaPass.body.backupCodes.forEach((c) => {
+      expect(c).toMatch(/^[0-9a-f]{10}$/);
+    });
+  });
+
+  it('talaba MFA yoqolmaydi: /api/mfa/totp/setup → 403 mfa_not_allowed', async () => {
+    const agent = supertest.agent(app);
+    const uname = `profstu_${Date.now() % 1000000}`;
+    await registerUser(agent, uname); // role=student qoladi
+    const csrf = csrfFrom((await agent.get('/user/panel')).text);
+    const res = await agent.post('/api/mfa/totp/setup').set('x-csrf-token', csrf).send({});
+    expect(res.status).toBe(403);
+    expect(res.body.error).toBe('mfa_not_allowed');
   });
 });

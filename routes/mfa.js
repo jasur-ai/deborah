@@ -216,10 +216,25 @@ router.get('/api/mfa/status', requireAuth, async (req, res) => {
   }
 });
 
+/** 2026-08-27 qaror: Authenticator FAQAT admin va o'qituvchi uchun. */
+async function isPrivilegedUser(userId) {
+  try {
+    const snap = await fb.get(`users/${userId}/role`);
+    if (snap.exists()) {
+      const r = snap.val();
+      return r === 'teacher' || r === 'admin';
+    }
+  } catch (_) { /* fail-closed quyida */ }
+  return false;
+}
+
 /** POST /api/mfa/totp/setup — faza 1: secret + QR. */
 router.post('/api/mfa/totp/setup', requireAuth, async (req, res) => {
   try {
     const userId = req.session.user.safeKey;
+    if (!(await isPrivilegedUser(userId))) {
+      return res.status(403).json({ ok: false, error: 'mfa_not_allowed', message: "Authenticator faqat admin va o'qituvchi akkauntlari uchun" });
+    }
     const result = await setupTotp(userId, {
       accountName: req.session.user.username || userId,
     });
@@ -239,6 +254,9 @@ router.post('/api/mfa/totp/setup', requireAuth, async (req, res) => {
 router.post('/api/mfa/totp/enable', requireAuth, async (req, res) => {
   try {
     const userId = req.session.user.safeKey;
+    if (!(await isPrivilegedUser(userId))) {
+      return res.status(403).json({ ok: false, error: 'mfa_not_allowed', message: "Authenticator faqat admin va o'qituvchi akkauntlari uchun" });
+    }
     const { token } = req.body || {};
     if (!token) return res.status(400).json({ ok: false, error: 'required' });
     const result = await enableTotp(userId, String(token).trim());

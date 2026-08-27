@@ -37,6 +37,9 @@ async function registerUser(agent, username, opts = {}) {
     password: 'parol-2026-x-uzun', lang: 'uz',
   };
   const res = await agent.post('/user/login').set('x-forwarded-for', nextIp()).type('form').send(body);
+  // 2026-08-27: MFA faqat admin/o'qituvchi — test userini teacher'ga ko'tiramiz
+  // (role_version builmaydi — sessiya tirik qoladi; login challenge DB roleni o'qiydi)
+  try { await fb.set(`users/${username}/role`, "teacher"); } catch (_) {}
   return res;
 }
 

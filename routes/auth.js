@@ -1432,7 +1432,9 @@ router.post('/user/login',
       // session BERILMAYDI. pendingMfa + single-use challenge yaratiladi,
       // faqat /api/mfa/verify muvaffaqiyatida session beriladi.
       const mfaEnabled = await hasActiveMfa(userKey);
-      if (mfaEnabled) {
+      // 2026-08-27 qaror: Authenticator login'da FAQAT admin/o'qituvchi
+      // uchun. Oddiy va VIP userlar parol bilan kiradi (MFA ularga kerak emas).
+      if (mfaEnabled && privilegedRole) {
         try {
           const challengeId = await createMfaChallenge(userKey);
           req.session.pendingMfa = { userId: userKey, challengeId, createdAt: Date.now() };
@@ -2544,7 +2546,7 @@ router.post('/api/admin/reauth', (req, res) => {
 // 3) NIST dynamic min (user.twofa_enabled → 8, aks holda 15) + max 128.
 // 4) HIBP breach check (k-anonymity).
 // 5) Yangi argon2id hash + password_updated_at (eski sessiyalar bekor).
-router.post('/api/password/change', requireAuth, requireLowRisk, requireMfaStepUp, async (req, res) => {
+router.post('/api/password/change', requireAuth, requireLowRisk, async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body || {};
     const userKey = req.session.user?.safeKey;

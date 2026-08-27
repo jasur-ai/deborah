@@ -19,10 +19,13 @@
  *   - 5 ta noto'g'ri urinish / 15 daqiqa rate limit
  *   - audit: PROFILE_BACKUP_CODES_ROTATE (muvaffaqiyatli/fail)
  */
+import crypto from 'node:crypto';
 import { Router } from 'express';
 import { requireAuth } from '../middleware/auth.js';
 import { fb } from '../firebase/admin.js';
 import { verifyPassword } from '../utils/helpers.js';
+import CONFIG from '../src/config/env.js';
+import { ADMIN_MFA_ACCOUNT } from '../src/modules/auth/admin-security.js';
 import {
   hasActiveMfa,
   getMfaStatus,
@@ -32,6 +35,36 @@ import {
 import { logAuthEvent } from '../src/modules/auth/audit.js';
 
 const router = Router();
+
+/** User YOKI admin sessiya — admin panel sidebaridagi "Profilim" ham ishlaydi. */
+function profileAuth(req, res, next) {
+  if (req.session && req.session.admin && !req.session.user) return next();
+  return requireAuth(req, res, next);
+}
+
+/** Admin (env-kreditual) profili — MFA mfa_totp/admin ostida. */
+async function collectAdminProfile(sessionAdmin) {
+  const mfa = await getMfaStatus(ADMIN_MFA_ACCOUNT).catch(() => ({ status: 'none' }));
+  return {
+    username: sessionAdmin.username || 'admin',
+    displayName: 'Administrator',
+    email: null,
+    emailVerified: false,
+    role: 'admin',
+    authProvider: 'admin',
+    avatarUrl: null,
+    isVip: false,
+    createdAt: null,
+    lastLoginAt: null,
+    teacherRole: null,
+    mfa: {
+      status: mfa.status || 'none',
+      backupCodesRemaining: typeof mfa.backupCodesRemaining === 'number' ? mfa.backupCodesRemaining : 0,
+    },
+    hasPassword: true, // env ADMIN_PASS orqali tasdiqlanadi
+    isAdminSession: true,
+  };
+}
 
 /** Foydalanuvchi profilini DB + sessiyadan yig'adi (parol/hash HECH QAYERDA chiqmaydi). */
 async function collectProfile(sessionUser) {
@@ -62,7 +95,18 @@ async function collectProfile(sessionUser) {
 }
 
 /** Barcha rollar uchun "Profilim" sahifasi. */
-router.get('/user/profile', requireAuth, async (req, res) => {
+router.get('/user/profile', profileAuth, async (req, res) => {
+  try {
+    if (!req.session.user && req.session.admin) {
+      const adminProfile = await collectAdminProfile(req.session.admin);
+      return res.render('user/profile', {
+        title: 'Profilim',
+        user: { username: adminProfile.username, role: 'admin' },
+        profile: adminProfile,
+        csrfToken: req.session.csrfToken,
+      });
+    }
+  } catch (err) { /* pastda umumiy yo'l */ }
   try {
     const profile = await collectProfile(req.session.user);
     res.render('user/profile', {
@@ -78,9 +122,11 @@ router.get('/user/profile', requireAuth, async (req, res) => {
 });
 
 /** To'liq profil JSON (UI dinamik yangilash uchun). */
-router.get('/api/profile/me', requireAuth, async (req, res) => {
+router.get('/api/profile/me', profileAuth, async (req, res) => {
   try {
-    const profile = await collectProfile(req.session.user);
+    const profile = req.session.user
+      ? await collectProfile(req.session.user)
+      : await collectAdminProfile(req.session.admin);
     res.json({ ok: true, profile });
   } catch (err) {
     console.error('[PROFILE] me error:', err);
@@ -103,66 +149,71 @@ function bcReset(safeKey) { bcAttempts.delete(safeKey); }
 
 /**
  * POST /api/profile/backup-codes — 12 ta YANGI zaxira kod (rotate).
- * Qayta tasdiqlash: parol YOKI joriy TOTP kodi (Google-only akkauntlar uchun).
- * Eslatma: rotate avvalgi kodlarni bekor qiladi — ko'rsatilganidan keyin
- * saqlash user zimmasida (plaintext DB'da UMMUMAN saqlanmaydi).
+ * Qayta tasdiqlash: FAQAT joriy kirish paroli (Authenticator kodi SO'RALMAYDI —
+ * 2026-08-27 qaror). Admin sessiya uchun — admin paroli (env) tekshiriladi.
  */
-router.post('/api/profile/backup-codes', requireAuth, async (req, res) => {
-  const safeKey = req.session.user.safeKey;
+router.post('/api/profile/backup-codes', profileAuth, async (req, res) => {
+  const isAdmin = !req.session.user && !!req.session.admin;
+  const actorKey = isAdmin ? ADMIN_MFA_ACCOUNT : req.session.user.safeKey;
   try {
-    if (bcLimited(safeKey)) {
+    if (bcLimited(actorKey)) {
       await logAuthEvent({
         action: 'profile.backup_codes_rotate', outcome: 'rate-limited',
-        method: 'password_or_totp', actorId: safeKey, ipAddress: req.ip,
+        method: 'password', actorId: actorKey, ipAddress: req.ip,
         userAgent: req.headers['user-agent'],
       }).catch(() => {});
       return res.status(429).json({ ok: false, error: 'rate_limited', message: 'Juda ko\u2018p urinish — 15 daqiqadan keyin qayta urinib ko\u2018ring' });
     }
 
-    if (!(await hasActiveMfa(safeKey))) {
+    if (!(await hasActiveMfa(actorKey))) {
       return res.status(400).json({
         ok: false, error: 'mfa_disabled',
-        message: 'Zaxira kodlar faqat MFA (Google Authenticator) yoqilganda mavjud. Avval Xavfsizlik profili → MFA ni yoqing.',
+        message: 'Zaxira kodlar faqat MFA (Authenticator) yoqilganda mavjud. MFA faqat admin va o\u2018qituvchi akkauntlarida.',
       });
     }
 
-    const { password, mfaCode } = req.body || {};
-    let verified = false;
-
-    // Yo'l 1: parol bilan (parolli akkauntlar)
-    if (typeof password === 'string' && password.length > 0) {
-      const snap = await fb.get(`users/${safeKey}/password`).catch(() => null);
-      if (snap && snap.exists()) {
-        verified = await verifyPassword(password, snap.val());
-      }
+    const password = typeof (req.body || {}).password === 'string' ? req.body.password : '';
+    if (!password) {
+      return res.status(400).json({ ok: false, error: 'password_required', message: 'Joriy kirish parolingizni kiriting.' });
     }
 
-    // Yo'l 2: joriy TOTP kodi bilan (Google-only akkauntlar ham)
-    if (!verified && typeof mfaCode === 'string' && mfaCode.length >= 6) {
-      const v = await verifyMfaCode(safeKey, mfaCode.trim(), req.ip).catch(() => ({ ok: false }));
-      verified = v && v.ok === true;
+    let verified = false;
+    if (isAdmin) {
+      // Admin: env ADMIN_PASS (timing-safe)
+      try {
+        const a = Buffer.from(String(password));
+        const b = Buffer.from(String(CONFIG.ADMIN_PASS || ''));
+        verified = a.length === b.length && crypto.timingSafeEqual(a, b);
+      } catch (_) { verified = false; }
+    } else {
+      const snap = await fb.get(`users/${req.session.user.safeKey}/password`).catch(() => null);
+      if (snap && snap.exists()) {
+        verified = await verifyPassword(password, snap.val());
+      } else {
+        return res.status(400).json({
+          ok: false, error: 'no_password',
+          message: 'Akkauntga parol o\u2018rnatilmagan — avval Xavfsizlik profilida parol o\u2018rnating (Google akkauntga parol qo\u2018shish).',
+        });
+      }
     }
 
     if (!verified) {
       await logAuthEvent({
         action: 'profile.backup_codes_rotate', outcome: 'wrong-credentials',
-        method: password ? 'password' : 'totp', actorId: safeKey, ipAddress: req.ip,
+        method: 'password', actorId: actorKey, ipAddress: req.ip,
         userAgent: req.headers['user-agent'],
       }).catch(() => {});
       return res.status(403).json({
         ok: false, error: 'wrong_credentials',
-        message: 'Tasdiqlash xato — parolingizni yoki Authenticator kodini tekshirib qayta kiriting.',
+        message: 'Parol xato — joriy kirish parolingizni tekshirib qayta kiriting.',
       });
     }
 
-    bcReset(safeKey);
-    // Parol/TOTP tasdiqlandi → requireRecentAuth darajasidagi ishonch
-    req.session.reauthedAt = Date.now();
-
-    const result = await rotateBackupCodes(safeKey);
+    bcReset(actorKey);
+    const result = await rotateBackupCodes(actorKey);
     await logAuthEvent({
       action: 'profile.backup_codes_rotate', outcome: 'success',
-      method: password ? 'password' : 'totp', actorId: safeKey, ipAddress: req.ip,
+      method: 'password', actorId: actorKey, ipAddress: req.ip,
       userAgent: req.headers['user-agent'],
       details: { backupCodeCount: Array.isArray(result.backupCodes) ? result.backupCodes.length : 0 },
     }).catch(() => {});
@@ -170,7 +221,7 @@ router.post('/api/profile/backup-codes', requireAuth, async (req, res) => {
     return res.json({ ok: true, backupCodes: result.backupCodes });
   } catch (err) {
     console.error('[PROFILE] backup-codes error:', err);
-    bcReset(safeKey);
+    bcReset(actorKey);
     return res.status(500).json({ ok: false, error: 'server' });
   }
 });
