@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <title>Profilim — Deborah</title>
+  <style>
+    body{background:var(--deborah-semantic-color-surface-default);min-height:100vh;transition:background .3s;}
+    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 55% 40% at 15% 20%,rgba(37,99,235,.1) 0%,transparent 65%),radial-gradient(ellipse 45% 35% at 85% 75%,rgba(56,189,248,.07) 0%,transparent 65%);}
+    .navbar{position:sticky;top:0;z-index:100;background:var(--bg-overlay);backdrop-filter:blur(18px);border-bottom:1px solid var(--deborah-semantic-color-border-default);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;transition:background .3s,border-color .3s;}
+    .nav-logo{font-family:'Manrope',cursive;font-size:1.25rem;text-decoration:none;display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--deborah-semantic-color-action-primary),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .nav-right{display:flex;align-items:center;gap:8px;}
+    .nav-btn{padding:7px 12px;border-radius:9px;border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-muted);font-family:'Source Sans 3',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s;display:flex;align-items:center;gap:5px;}
+    .nav-btn:hover{background:var(--bg-elevated);color:var(--deborah-semantic-color-text-primary);}
+    .panel{max-width:720px;margin:0 auto;padding:24px 20px 80px;position:relative;z-index:1;}
+    .greeting{font-family:'Manrope',cursive;font-size:1.5rem;display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+    .greeting-sub{font-size:.82rem;color:var(--deborah-semantic-color-text-muted);font-weight:700;margin-bottom:20px;}
+    .card{background:var(--deborah-semantic-color-surface-raised);border-radius:18px;padding:20px;border:1px solid var(--deborah-semantic-color-border-default);margin-bottom:14px;animation:slideDown .35s ease;}
+    @keyframes slideDown{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+    .card-h{font-family:'Manrope',cursive;font-size:1.02rem;font-weight:800;display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+    .prof-head{display:flex;gap:14px;align-items:center;margin-bottom:6px;}
+    .avatar{width:58px;height:58px;border-radius:16px;background:linear-gradient(135deg,var(--deborah-semantic-color-action-primary),var(--gold));display:flex;align-items:center;justify-content:center;font-family:'Manrope',cursive;font-size:1.35rem;font-weight:800;color:#fff;flex-shrink:0;}
+    .prof-name{font-family:'Manrope',cursive;font-size:1.15rem;font-weight:800;}
+    .role-badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:.68rem;font-weight:800;letter-spacing:.03em;text-transform:uppercase;background:rgba(37,99,235,.14);color:var(--deborah-semantic-color-action-primary);border:1px solid rgba(37,99,235,.25);}
+    .rows{display:grid;gap:0;}
+    .row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px dashed var(--deborah-semantic-color-border-subtle);font-size:.86rem;}
+    .row:last-child{border-bottom:none;}
+    .row-k{color:var(--deborah-semantic-color-text-muted);font-weight:700;flex-shrink:0;}
+    .row-v{font-weight:700;text-align:right;word-break:break-word;}
+    .ok-badge{display:inline-flex;align-items:center;gap:4px;color:#16a34a;font-weight:800;}
+    .warn-badge{display:inline-flex;align-items:center;gap:4px;color:#d97706;font-weight:800;}
+    .mfa-on{color:#16a34a;font-weight:800;}
+    .mfa-off{color:#d97706;font-weight:800;}
+    .btn{min-height:40px;padding:0 16px;border-radius:10px;border:none;cursor:pointer;font-weight:800;font-size:.82rem;font-family:'Source Sans 3',sans-serif;display:inline-flex;align-items:center;gap:6px;text-decoration:none;transition:transform .15s,opacity .2s;}
+    .btn:active{transform:scale(.97);}
+    .btn-primary{background:linear-gradient(135deg,var(--deborah-semantic-color-action-primary),#3b82f6);color:#fff;box-shadow:0 6px 18px rgba(37,99,235,.3);}
+    .btn-quiet{background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-primary);border:1px solid var(--deborah-semantic-color-border-default);}
+    .hint{font-size:.76rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;line-height:1.55;}
+    .codes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin:14px 0;}
+    .code-chip{font-family:ui-monospace,'Cascadia Mono',monospace;font-size:.92rem;font-weight:700;letter-spacing:.06em;padding:10px 8px;border-radius:10px;background:var(--deborah-semantic-color-surface-input);border:1px dashed var(--deborah-semantic-color-border-default);text-align:center;}
+    .modal-back{position:fixed;inset:0;background:rgba(4,8,20,.62);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px;}
+    .modal{width:100%;max-width:420px;background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-default);border-radius:18px;padding:22px;animation:slideDown .25s ease;}
+    .modal h3{font-family:'Manrope',cursive;font-size:1.05rem;margin-bottom:6px;}
+    .inp{width:100%;min-height:44px;border-radius:10px;border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-primary);font-family:'Source Sans 3',sans-serif;font-size:.9rem;padding:0 12px;margin:8px 0;box-sizing:border-box;}
+    .inp:focus{outline:2px solid var(--deborah-semantic-color-action-primary);outline-offset:1px;}
+    .msg{font-size:.8rem;font-weight:700;margin-top:8px;min-height:1.2em;}
+    .msg.err{color:#dc2626;}
+    .msg.ok{color:#16a34a;}
+    .warn-box{background:rgba(217,119,6,.09);border:1px solid rgba(217,119,6,.3);border-radius:12px;padding:12px 14px;font-size:.78rem;font-weight:700;color:#b45309;margin-top:12px;line-height:1.5;}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+    @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important;}}
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a class="nav-logo" href="/user/panel"><%- icon('home', 18) %> Deborah</a>
+    <div class="nav-right">
+      <a class="nav-btn" href="/user/panel"><%- icon('arrowLeft', 14) %> Panel</a>
+      <a class="nav-btn" href="/user/security-profile"><%- icon('shieldCheck', 14) %> Xavfsizlik</a>
+    </div>
+  </nav>
+
+  <main class="panel">
+    <div class="greeting"><%- icon('user', 20) %> Profilim</div>
+    <div class="greeting-sub">Akkaunt ma'lumotlaringiz va zaxira kodlaringiz — bir joyda</div>
+
+    <% const p = profile || {}; %>
+    <section class="card">
+      <div class="prof-head">
+        <div class="avatar"><%= (p.displayName || p.username || '?').trim().charAt(0).toUpperCase() %></div>
+        <div>
+          <div class="prof-name"><%= p.displayName || p.username || '—' %></div>
+          <span class="role-badge"><%= { student: 'Talaba', teacher: "O'qituvchi", admin: 'Administrator', proctor: 'Nazoratchi', marker: 'Belgilovchi', board: "Kengash a'zosi", teacher_pending: "O'qituvchi (kutilmoqda)", teacher_rejected: "O'qituvchi (rad etilgan)" }[p.role] || p.role || '—' %></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-h"><%- icon('clipboard', 16) %> Profil ma'lumotlari</div>
+      <div class="rows">
+        <div class="row"><span class="row-k">Username</span><span class="row-v"><%= p.username || '—' %></span></div>
+        <div class="row"><span class="row-k">Email</span><span class="row-v">
+          <%= p.email || '—' %>
+          <% if (p.emailVerified) { %><span class="ok-badge"><%- icon('checkCircle', 13) %> tasdiqlangan</span><% } else { %><span class="warn-badge"><%- icon('mail', 13) %> tasdiqlanmagan</span><% } %>
+        </span></div>
+        <div class="row"><span class="row-k">Rol</span><span class="row-v"><%= p.role || '—' %></span></div>
+        <div class="row"><span class="row-k">Kirish usuli</span><span class="row-v"><%= p.authProvider === 'google' ? 'Google akkaunt' : 'Parol' %><%= p.authProvider === 'google' ? ' + ' + (p.hasPassword ? 'parol' : 'faqat Google') : '' %></span></div>
+        <div class="row"><span class="row-k">VIP</span><span class="row-v"><%= p.isVip ? 'VIP a' + 'zo' : 'Standart' %></span></div>
+        <div class="row"><span class="row-k">Ro'yxatdan o'tgan</span><span class="row-v"><%= p.createdAt ? new Date(p.createdAt).toLocaleDateString('uz-UZ') : '—' %></span></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-h"><%- icon('shieldCheck', 16) %> Xavfsizlik holati</div>
+      <div class="rows">
+        <div class="row"><span class="row-k">MFA (Google Authenticator)</span><span class="row-v">
+          <% if (p.mfa && p.mfa.status === 'active') { %><span class="mfa-on">Yoqilgan</span><% } else { %><span class="mfa-off">O'chirilgan</span><% } %>
+        </span></div>
+        <div class="row"><span class="row-k">Qolgan zaxira kodlar</span><span class="row-v"><%= p.mfa && p.mfa.status === 'active' ? (p.mfa.backupCodesRemaining + ' ta') : '—' %></span></div>
+      </div>
+      <div class="actions">
+        <a class="btn btn-quiet" href="/user/security-profile"><%- icon('lock', 14) %> Xavfsizlik profilini boshqarish</a>
+      </div>
+    </section>
+
+    <section class="card" id="bc-card">
+      <div class="card-h"><%- icon('key', 16) %> Zaxira kodlar (12 ta)</div>
+      <% if (p.mfa && p.mfa.status === 'active') { %>
+        <div class="hint">Zaxira kodlarni ko'rish uchun (yangilab olish) identifikatsiyani qayta tasdiqlang — <b>parolingiz</b> yoki <b>Authenticator kodingizni</b> kiriting. Yangi 12 ta kod yaratiladi, avvalgilari bekor bo'ladi.</div>
+        <div class="actions">
+          <button class="btn btn-primary" id="bc-open" type="button"><%- icon('key', 14) %> Zaxira kodlarni ko'rsatish</button>
+        </div>
+        <div id="bc-result" hidden>
+          <div class="warn-box">⚠️ Bu kodlar <b>faqat bir marta</b> ko'rsatiladi. Hozir nusxalab oling va xavfsiz joyda saqlang — ular MFA kodi yo'qolganda kirish uchun yagona zaxira.</div>
+          <div class="codes-grid" id="bc-grid"></div>
+          <div class="actions">
+            <button class="btn btn-primary" id="bc-copy" type="button"><%- icon('clipboard', 14) %> Barchasini nusxalash</button>
+          </div>
+        </div>
+      <% } else { %>
+        <div class="hint">Zaxira kodlar faqat <b>MFA (Google Authenticator)</b> yoqilganda mavjud bo'ladi. Yoqish: Xavfsizlik profili → MFA.</div>
+        <div class="actions">
+          <a class="btn btn-quiet" href="/user/security-profile"><%- icon('lock', 14) %> MFA yoqish</a>
+        </div>
+      <% } %>
+    </section>
+  </main>
+
+  <!-- Qayta tasdiqlash modali -->
+  <div class="modal-back" id="reauth-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="reauth-title">
+      <h3 id="reauth-title"><%- icon('lock', 16) %> Identifikatsiyani tasdiqlang</h3>
+      <div class="hint">Zaxira kodlaringizni ko'rsatish uchun parolingiz yoki Authenticator kodingizni kiriting.</div>
+      <% if (p.hasPassword) { %>
+        <input class="inp" id="reauth-pass" type="password" placeholder="Parol" autocomplete="current-password">
+      <% } %>
+      <input class="inp" id="reauth-totp" type="text" inputmode="numeric" maxlength="10" placeholder="Authenticator kodi (6 xona)" autocomplete="one-time-code">
+      <div class="msg" id="reauth-msg"></div>
+      <div class="actions">
+        <button class="btn btn-primary" id="reauth-submit" type="button">Tasdiqlash</button>
+        <button class="btn btn-quiet" id="reauth-cancel" type="button">Bekor qilish</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.__CSRF_TOKEN = '<%= csrfToken %>';
+    (function () {
+      var openBtn = document.getElementById('bc-open');
+      if (!openBtn) return;
+      var modal = document.getElementById('reauth-modal');
+      var msgEl = document.getElementById('reauth-msg');
+      var submitBtn = document.getElementById('reauth-submit');
+
+      function showModal() {
+        modal.hidden = false;
+        msgEl.textContent = '';
+        msgEl.className = 'msg';
+        var first = document.getElementById('reauth-pass') || document.getElementById('reauth-totp');
+        if (first) first.focus();
+      }
+      function hideModal() { modal.hidden = true; }
+
+      openBtn.addEventListener('click', showModal);
+      document.getElementById('reauth-cancel').addEventListener('click', hideModal);
+      modal.addEventListener('click', function (e) { if (e.target === modal) hideModal(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hideModal(); });
+
+      submitBtn.addEventListener('click', async function () {
+        var pass = (document.getElementById('reauth-pass') || {}).value || '';
+        var totp = (document.getElementById('reauth-totp') || {}).value || '';
+        if (!pass && !totp) {
+          msgEl.textContent = 'Parol yoki Authenticator kodini kiriting.';
+          msgEl.className = 'msg err';
+          return;
+        }
+        submitBtn.disabled = true;
+        msgEl.textContent = 'Tekshirilmoqda…';
+        msgEl.className = 'msg';
+        try {
+          var res = await fetch('/api/profile/backup-codes', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json', 'x-csrf-token': window.__CSRF_TOKEN },
+            body: JSON.stringify({ password: pass || undefined, mfaCode: totp || undefined })
+          });
+          var data = await res.json().catch(function () { return {}; });
+          if (!res.ok || !data.ok) {
+            msgEl.textContent = (data && data.message) || ('Xato (' + res.status + ')');
+            msgEl.className = 'msg err';
+            return;
+          }
+          hideModal();
+          var grid = document.getElementById('bc-grid');
+          grid.innerHTML = '';
+          (data.backupCodes || []).forEach(function (c) {
+            var d = document.createElement('div');
+            d.className = 'code-chip';
+            d.textContent = c;
+            grid.appendChild(d);
+          });
+          document.getElementById('bc-result').hidden = false;
+          document.getElementById('bc-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } catch (e) {
+          msgEl.textContent = 'Tarmoq xatosi — qayta urinib ko\u2018ring.';
+          msgEl.className = 'msg err';
+        } finally {
+          submitBtn.disabled = false;
+        }
+      });
+
+      var copyBtn = document.getElementById('bc-copy');
+      if (copyBtn) {
+        copyBtn.addEventListener('click', function () {
+          var codes = Array.prototype.map.call(document.querySelectorAll('.code-chip'), function (el) { return el.textContent; });
+          var text = 'Deborah — zaxira kodlar (' + new Date().toLocaleString('uz-UZ') + ')\n' + codes.join('\n');
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(function () {
+              copyBtn.textContent = '✓ Nusxalandi';
+              setTimeout(function () { copyBtn.textContent = 'Barchasini nusxalash'; }, 2000);
+            });
+          } else {
+            var ta = document.createElement('textarea');
+            ta.value = text; document.body.appendChild(ta); ta.select();
+            document.execCommand('copy'); document.body.removeChild(ta);
+            copyBtn.textContent = '✓ Nusxalandi';
+          }
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

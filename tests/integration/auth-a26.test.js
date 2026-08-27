@@ -93,7 +93,7 @@ describe('AUTH A-26 — MFA/TOTP flow', () => {
     const enable = await agent.post('/api/mfa/totp/enable').set('x-csrf-token', csrf).send({ token });
     expect(enable.status).toBe(200);
     expect(enable.body.ok).toBe(true);
-    expect(enable.body.backupCodes).toHaveLength(10);
+    expect(enable.body.backupCodes).toHaveLength(12);
 
     // DB: secret encrypt, status active
     const rec = await fb.get(`mfa_totp/${uname}`);
@@ -109,7 +109,7 @@ describe('AUTH A-26 — MFA/TOTP flow', () => {
     const status = await agent.get('/api/mfa/status');
     expect(status.body.ok).toBe(true);
     expect(status.body.status).toBe('active');
-    expect(status.body.backupCodesRemaining).toBe(10);
+    expect(status.body.backupCodesRemaining).toBe(12);
   });
 
   it('login challenge: parol to\'g\'ri, MFA active → redirect /user/mfa, session BERILMAYDI', async () => {
@@ -224,7 +224,7 @@ describe('AUTH A-26 — MFA/TOTP flow', () => {
     // Status: fresh agent (verify'dan keyingi session) bilan
     const status = await fresh.get('/api/mfa/status');
     expect(status.body.ok).toBe(true);
-    expect(status.body.backupCodesRemaining).toBe(9);
+    expect(status.body.backupCodesRemaining).toBe(11); // 12 dan 1 tasi ishlatildi
   });
 
   it('5 xato urinish → 429 lockout (15 daqiqa)', async () => {
@@ -255,7 +255,7 @@ describe('AUTH A-26 — MFA/TOTP flow', () => {
     expect(locked.body.error).toBe('locked');
   });
 
-  it('rotate backup codes: yangi 10 ta, status 10', async () => {
+  it('rotate backup codes: yangi 12 ta, status 12', async () => {
     const agent = supertest.agent(app);
     const uname = `a26f_${Date.now() % 1000000}`;
     await registerUser(agent, uname);
@@ -275,9 +275,9 @@ describe('AUTH A-26 — MFA/TOTP flow', () => {
 
     const rotate = await agent.post('/api/mfa/totp/backup/rotate').set('x-csrf-token', csrf).send({});
     expect(rotate.status).toBe(200);
-    expect(rotate.body.backupCodes).toHaveLength(10);
+    expect(rotate.body.backupCodes).toHaveLength(12);
     const status = await agent.get('/api/mfa/status');
-    expect(status.body.backupCodesRemaining).toBe(10);
+    expect(status.body.backupCodesRemaining).toBe(12);
   });
 
   it('disable: reauth talab (403 reauth_required) — so\'ng reauth bilan 200', async () => {

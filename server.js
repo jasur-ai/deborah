@@ -55,6 +55,7 @@ import hemisWebhookRoutes from './routes/hemis-webhook.js';
 import hemisRoutes from './routes/hemis.js';
 import externalIntegrationRoutes from './routes/external-integration.js';
 import aiGenerateRoutes from './routes/ai-generate.js'; // REAL AI (Gemini)
+import profileRoutes from './routes/profile.js'; // "Profilim" — hamma rollar uchun
 import emailWebhookRoutes from './routes/email-webhook.js'; // E-07/D-32 email budget webhook
 import passkeyRoutes from './routes/passkey.js'; // E-05 passkey (WebAuthn)
 import pushRoutes from './routes/push.js'; // E-03 push bildirishnomalar (FCM/VAPID)
@@ -385,6 +386,7 @@ app.get('/health', (req, res) => {
   app.use('/', hemisRoutes);
   app.use('/', externalIntegrationRoutes);
   app.use('/', aiGenerateRoutes);
+  app.use('/', profileRoutes);
   app.use('/user', userRoutes);
   app.use('/', gameRoutes);
   app.use('/arena', arenaRoutes);

@@ -6,7 +6,7 @@
  *   - login challenge: parol to'g'ri → pending_mfa (session BERILMAYDI) →
  *     faqat MFA kod/backup code to'g'ri bo'lsa session beriladi
  *   - TOTP verify valid_window=1 (90s), 5 xato → 15 daqiqa lockout
- *   - backup codes: 10 ta, HMAC-SHA256 hash bilan saqlanadi (plaintext YO'Q),
+ *   - backup codes: 12 ta, HMAC-SHA256 hash bilan saqlanadi (plaintext YO'Q),
  *     ishlatilganda used (replay yo'q), rotate imkoniyati
  *   - challenge: single-use, 5 daqiqa TTL, consumed (reuse yo'q)
  *   - step-up: mfaAt — sensitive amallar uchun 30 daqiqa
@@ -42,7 +42,7 @@ const CHALLENGE_TTL_MS = 5 * 60 * 1000; // 5 daqiqa
 const LOCKOUT_MAX_FAILS = 5;
 const LOCKOUT_WINDOW_MS = 15 * 60 * 1000; // 15 daqiqa
 const STEP_UP_TTL_MS = 30 * 60 * 1000; // 30 daqiqa
-const BACKUP_CODE_COUNT = 10;
+const BACKUP_CODE_COUNT = 12;
 const RESET_DELAY_MS = 72 * 60 * 60 * 1000; // 72 soat
 
 // In-memory lockout (per-user + per-IP) — qayta ishga tushganda tozalanadi,
