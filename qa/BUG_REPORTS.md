@@ -869,6 +869,22 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-164: ⚪ 300/kun limitga yetish testi OCHIQ (quota tejash uchun sinov qilinmadi)
 
+### BUG-165: 🟠 HEMIS "butunlay olib tashlandi" da'vosi YALG'ON — endpointlari TIRIK yashirin qolgan
+- **Dalil:** `GET /user/hemis` → **401** (auth talab qiladi = route TIRIK); `server.js`'da hemis import/use 4 marta; `external-integration.ejs`'da hemis matni bor
+- **README zidi:** "🗑 2026-08-27'da UI'dan butunlay olib tashlandi" — faqat havolalar olib tashlangan, API yashashda (dead surface + xavfsizlik skaneri uchun yashirin sirt)
+
+### BUG-166: 🟡 Telegram login UI'da ko'rsatiladi lekin endpointlar 404 (env yo'q)
+- **Dalil:** /user/login sahifasida "Telegram" matni bor; `GET /auth/telegram` va `/auth/telegram/start` → **404**
+- **Ta'sir:** foydalanuvchi Telegram bilan kirishni topadi, bosishi mumkin — ishlamaydi (BUG-018 push bilan bir xil dizayn muammosi: env yo'q bo'lsa UI'dan yashirish kerak)
+
+### BUG-167: ✅ RE-VERIFY: Forgot-parol enumeration himoyasi OK
+- **Dalil:** mavjud va mavjud emas email → ikkalasi ham 200, bir xil turdagi javob matni (fayq qilish imkoni yo'q)
+
+### BUG-168: ✅ RE-VERIFY: Email verify complete validatsiyasi to'g'ri
+- wrong kod → 422 otp_invalid; 5/10 xona va bo'sh → 400 invalid_code_format (hech qanday bypass yo'q)
+
+### BUG-169: ⚪ RE-VERIFY: Canva 400 (BUG-022 o'zgarmagan), Slides 200 (ishlaydi), Push `push_disabled` (BUG-018 o'zgarmagan)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
