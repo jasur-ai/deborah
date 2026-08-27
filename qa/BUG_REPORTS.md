@@ -885,6 +885,24 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-169: ⚪ RE-VERIFY: Canva 400 (BUG-022 o'zgarmagan), Slides 200 (ishlaydi), Push `push_disabled` (BUG-018 o'zgarmagan)
 
+### BUG-170: 🟠 fans/save 500 — Firebase 'undefined' xatosi raw qaytadi
+- **Dalil:** `POST /admin/api/fans/save {name, questions:[{text,options,correct}]}` → **500 `{"error":"set failed: value argument contains undefined in property 'm..."}`**
+- **Ildiz:** payload'ning ba'zi maydonlari undefined (ehtimol fan obyektida metadata/id kutiladi); server sanitizatsiya qilmaydi va **Firebase'ning internal xato matnini foydalanuvchiga raw qaytaradi** (info disclosure + UX)
+- **Ta'sir:** minimal payload bilan yangi mock fan yaratish mumkin emas; UI to'liq payload yuborsa ishlashi mumkin (tekshirildi: UI `name+questions` yuboradi — xuddi shu payload bilan UI ham yiqilishi kerak, interaktiv repl keyin)
+
+### BUG-171: ✅ Role o'zgartirish ishlaydi (student->teacher->student, from/to javob bilan)
+
+### BUG-172: ✅ Block/unblock oqimi to'g'ri
+- block+reason → 200; bloklangan foydalanuvchi login'da **"blok" xabari** bilan to'siladi (jim yo'qolmaydi); unblock → 200 (idempotent)
+- block reason'siz → 400 "reason required" (yaxshi validatsiya)
+
+### BUG-173: 🟡 pre-groups/save minimal payload bilan 400 "Invalid data" — API shakli hujjatlanmagan
+- UI to'liq obyekt yuboradi (ishlaydi), lekin API mustaqil ishlatish uchun shartli maydonlar nomalum
+
+### BUG-174: ✅ signup-reviews pendingDepth 0 — holat konsistent
+
+### BUG-175: ℹ️ QA artefaktlar holati: landing_reg_0827 (VIP berilgan — BUG-066 testida), qa_tester_0827 (block/unblock testidan o'tdi) — xohlasangiz admin paneldan o'chirib tashlang
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
