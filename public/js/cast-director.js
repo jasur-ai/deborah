@@ -1232,6 +1232,79 @@
     }
   });
 
+  // AI javobini formaga qo'yish (navbat bilan qayta ishlatiladi)
+  function applyQpAiQuestion(q, statusEl, remaining) {
+    if (!q) return;
+    $('#qp-text').value = q.text;
+    const wrap = $('#qp-options-wrap');
+    if (wrap && !wrap.hidden && Array.isArray(q.options) && q.options.length >= 2) {
+      const list = $('#qp-options-list');
+      const freshRows = () => list.querySelectorAll('.qp-option-row');
+      let fr = freshRows();
+      while (fr.length > q.options.length && fr.length > 1) {
+        fr[fr.length - 1].querySelector('.qp-opt-del')?.click();
+        fr = freshRows();
+      }
+      while (freshRows().length < q.options.length) $('#qp-add-opt')?.click();
+      fr = freshRows();
+      fr.forEach((row, i) => {
+        const opt = row.querySelector('.qp-opt-input');
+        const cor = row.querySelector('.qp-correct');
+        if (opt) opt.value = q.options[i] || '';
+        if (cor) cor.checked = i === q.correctIndex;
+      });
+    }
+    const extra = remaining > 0 ? (' Yana ' + remaining + ' ta navbatda — tugmani yana bosing.') : '';
+    statusEl.textContent = '✅ AI savol tayyorladi' +
+      (q.explanation ? (' — izoh: ' + q.explanation.slice(0, 140)) : '') + '.' + extra;
+    statusEl.style.display = 'block';
+  }
+
+  // ✨ REAL AI (Gemini): mavzu bo‘yicha savol tuzish — server /api/ai/generate-questions
+  (function initQpAi() {
+    const btn = $('#qp-ai-go');
+    if (!btn) return;
+    btn.addEventListener('click', async () => {
+      const statusEl = $('#qp-ai-status');
+      // navbatda tayyor savol bo‘lsa — serverga borilmaydi
+      if (Array.isArray(window.__qpAiQueue) && window.__qpAiQueue.length) {
+        applyQpAiQuestion(window.__qpAiQueue.shift(), statusEl, window.__qpAiQueue.length);
+        return;
+      }
+      const topic = ($('#qp-ai-topic').value || '').trim();
+      const count = Number($('#qp-ai-count').value || '1');
+      const type = $('#qp-type').value;
+      if (topic.length < 3) {
+        statusEl.textContent = '⚠️ Avval mavzu yozing (kamida 3 belgi).';
+        statusEl.style.display = 'block';
+        return;
+      }
+      const original = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = '⏳ AI yozmoqda…';
+      statusEl.style.display = 'block';
+      statusEl.textContent = 'Gemini generatsiya qilmoqda (5–15 soniya)…';
+      try {
+        const res = await fetch('/api/ai/generate-questions', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', 'x-csrf-token': window.__CSRF_TOKEN },
+          body: JSON.stringify({ prompt: topic, count, lang: 'uz', difficulty: 'mixed', type: type === 'true_false' ? 'true_false' : 'single_choice' }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok || !Array.isArray(data.questions) || !data.questions.length) {
+          statusEl.textContent = '⚠️ AI javob bermadi (' + ((data && data.error) || res.status) + '). O‘zingiz yozing — savol ishlayveradi.';
+          return;
+        }
+        applyQpAiQuestion(data.questions[0], statusEl, data.questions.length - 1);
+      } catch (e) {
+        statusEl.textContent = '⚠️ Tarmoq xatosi. O‘zingiz yozing — savol ishlayveradi.';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
+    });
+  })();
+
   $('#qp-launch').addEventListener('click', async () => {
     hideQpErrors();
     const draft = getQpDraft();

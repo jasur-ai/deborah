@@ -50,6 +50,7 @@ import userRoutes from './routes/user.js';
 import gameRoutes from './routes/game.js';
 import arenaRoutes from './routes/arena.js';
 import oidcRoutes from './routes/oidc.js';
+import aiGenerateRoutes from './routes/ai-generate.js'; // REAL AI (Gemini)
 import hemisWebhookRoutes from './routes/hemis-webhook.js'; // E-02 HEMIS push webhook
 import emailWebhookRoutes from './routes/email-webhook.js'; // E-07/D-32 email budget webhook
 import passkeyRoutes from './routes/passkey.js'; // E-05 passkey (WebAuthn)
@@ -379,6 +380,7 @@ app.get('/health', (req, res) => {
   // OIDC google-setup — userRoutes (requireAuth) dan OLDI: /user/google-setup
   // pendingGoogle sessiyasi bilan ishlaydi, login talab qilmaydi (B-10).
   app.use('/', oidcRoutes);
+  app.use('/', aiGenerateRoutes);
   app.use('/user', userRoutes);
   app.use('/', gameRoutes);
   app.use('/arena', arenaRoutes);
