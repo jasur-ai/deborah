@@ -68,3 +68,4 @@
 - ✅ STEP 17 — yakunlandi (2026-08-27): BUG-114 🔴 (admin modal focus trap yo'q) + BUG-115 🟠 (200% zoom overflow) + BUG-116 🟡 (teacher/admin RU/EN yo'q) + BUG-117/118
 - ✅ STEP 18 — yakunlandi (2026-08-27): BUG-119 🟠 (correct out-of-range qabul — server validatsiya yo'q) + BUG-120…124 (5 ta) + BUG-126 ⚪ + BUG-127/128 (CRUD ijobiy + QA artefakt)
 - ✅ STEP 19 — yakunlandi (2026-08-27): BUG-129 🔴 (Excel import -> save questions:[] — end-to-end buzilgan) + BUG-130…132 (3 ta) + BUG-133 (BUG-050 re-confirm) + BUG-134 ijobiy
+- ✅ STEP 20 — yakunlandi (2026-08-27): BUG-139 (BUG-044 re-confirm: arena o'lik) + BUG-140 🟠 (add-bots teacher'ga 401 — rol nomuvofiq) + BUG-141…147 + BUG-148 (attempt API keyingi stepda)

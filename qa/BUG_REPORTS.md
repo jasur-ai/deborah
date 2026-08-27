@@ -785,6 +785,32 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 | Shablon download | ✅ (STEP 5) |
 | Preview render | ✅ (lekin state'ga bog'lanmaydi — BUG-129) |
 
+### BUG-139: ✅ RE-CONFIRM (yangi deploy): BUG-044 ARENA HAM O'LIK — `loadArena is not defined`
+- **Dalil:** "Yuklash" (.btn-load) bosildi → `Identifier '$'...` + `loadArena is not defined`, **API chaqiruv 0**, holat matni "Tayyor" (yolg'on)
+- Yangi deployda ham `$` global konflikti (BUG-012) tuzatilmagan
+
+### BUG-140: 🟠 Botlar tugmasi TEACHER'ga ko'rinadi, backend ADMIN talab qiladi (rol nomuvofiq)
+- **Dalil:** `POST /arena/api/add-bots` (teacher sessiya) → **401 "Admin avtorizatsiyasi talab qilinadi"**
+- **Ta'sir:** JS tuzatsa ham o'qituvchi botlarni qo'sha olmaydi — UI rolga qarab yashirishi yoki backend teacher'ga ruxsat berishi kerak
+
+### BUG-141: 🟡 "Tayyor" YALG'ON holat — yuklanmaganidan keyin ham Tayyor ko'rsatiladi
+- **Dalil:** Yuklash bosilib xato berdi, lekin status matni "Tayyor" qoldi (hech qanday xato holati ko'rsatilmaydi)
+
+### BUG-142: 🟡 Update-banner arena sahifasida ham — har sahifada "Yangi versiya mavjud" (foydalanuvchi charchatadi)
+
+### BUG-143: ✅ IJOBIY — Botlar/Tozalash tugmalari `disabled` boshlanishda (to'g'ri holat boshqaruvi)
+
+### BUG-144: ✅ IJOBIY — Arena backend tirik: `GET /arena/api/check-session` 200 `{"exists":false}`
+- Backend arxitekturasi jonli — muammo FAQAT frontend simlanish (BUG-044/012)
+
+### BUG-145: 🟡 `/arena/api/state` 404 — client'ning kutgan endpointlaridan biri umuman yo'q (dead client path)
+
+### BUG-146: ℹ️ `source=user` oqimi ham xuddi shu `loadArena`'ga bog'langan — student "Sinov rejimi" havolasi teng o'lik (BUG-044 qamrovi)
+
+### BUG-147: ⚪ Arena sahifasida 17 script yuklanadi (charts/data-table kabi ishlatilmaydiganlar ham) — sahifa og'irligi
+
+### BUG-148: ℹ️ UI oqimi to'liq bloklangani sababli attempt/submit API'lari UI'dan yetib bormaydi — bu API'lar STEP 39-41'da to'g'ridan-to'g'ri tekshiriladi
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
