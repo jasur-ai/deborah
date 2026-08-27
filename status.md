@@ -63,15 +63,21 @@ integration 104/104 · Playwright brauzer **10/10 PASS** (`scripts/repro-step2.m
 security-profile 0 pageerror + mfa-settings.js so'ralmaydi; teacher'da script yuklanadi + enable
 tugma tirik; guest teacher-approval → 302 login (brauzer Accept) / 401 JSON (Accept:json).
 
-## STEP 3 — 🔴 Admin panel buzilgan navigatsiya (5 havola) — ⏳
+## STEP 3 — 🔴 Admin panel buzilgan navigatsiya (5 havola) — ✅ YAKUNLANDI
 **Buglar:** BUG-006, BUG-007
-**Qanday:**
-- **BUG-007** — `views/partials/footer-scripts.ejs` MAVJUD EMAS → `/admin/camera-review` 500,
-  `/user/camera-pilot` xuddi shu xavfda. Fix: partial yaratish (yoki include'ni to'g'rilash).
-- **BUG-006** — 4 ta o'lik GET route (view bor, route yo'q): `/admin/question-gen`,
-  `/admin/presentation`, `/admin/intervention`; + `contracts` href noto'g'ri (to'g'risi
-  `/admin/api-contracts`). Fix: 3 ta GET route ulash + href tuzatish.
-**Verify:** admin sessiyada 5 sahifa 200 (supertest) + sidebar href audit.
+**Qilingan (aniq):**
+- **BUG-007** — `footer-scripts.ejs` HECH QACHON mavjud bo'lmagan (git tarixi bo'sh), ikkala view
+  o'z scriptlarini allaqachon yuklagan → o'lik include olib tashlandi: `admin/camera-review.ejs`
+  (500 edi), `user/camera-pilot.ejs` (xavfda edi). Bo'sh partial yaratish = fake feature.
+- **BUG-006 — routelar mavjud, yo'llar boshqacha ekan** (duplicate route ochildi emas, hreflar
+  to'g'rilandi): `/admin/question-gen`→`/admin/ai-question-gen`, `/admin/presentation`→
+  `/admin/presentations`, `/admin/intervention`→`/admin/interventions`, `/admin/contracts`→
+  `/admin/api-contracts`. 2 fayl: `dashboard.ejs` (4 href) + `partials/sidebar.ejs` (4 href +
+  4 `_isActive` — 12 ta admin sahifada ishlatiladi).
+
+**Verify (isbot):** server repro **15/15 PASS** (`scripts/repro-step3.mjs`): admin sessiyada 5
+sahifa 200 (camera-review oldin 500), dashboard+sidebar HTML'da yangi hreflar/eskilar yo'q,
+student camera-pilot 200. vitest camera/admin/e2e 27/27 ✓.
 
 ## STEP 4 — 🟡 Logout-CSRF + role gate (xavfsizlik) — ⏳
 **Buglar:** BUG-008, BUG-032, BUG-014, BUG-037
@@ -150,6 +156,7 @@ tugma tirik; guest teacher-approval → 302 login (brauzer Accept) / 401 JSON (A
 ## ✅ YAKUNLANGANLAR
 - **STEP 1** (2026-08-27): BUG-009/010/012/044 + 2 yangi topilma — 6 fayl; brauzer 13/13 PASS, vitest 45/45.
 - **STEP 2** (2026-08-27): BUG-011/016/041 — 5 fayl + 3 test sinxron; brauzer 10/10 PASS, auth 491/491, integration 104/104.
+- **STEP 3** (2026-08-27): BUG-006/007 — 4 fayl; server repro 15/15 PASS, vitest 27/27.
 
 ## 📋 MANBA HAVOLALAR
 - BUG hisobotlari: `workspace` branch → `qa/BUG_REPORTS.md`
