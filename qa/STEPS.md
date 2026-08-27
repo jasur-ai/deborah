@@ -52,3 +52,4 @@
 - ✅ STEP 1 — yakunlandi (2026-08-27): BUG-020…BUG-031 (12 ta) — BUG_REPORTS.md
 - ✅ STEP 2 — yakunlandi (2026-08-27): BUG-032…BUG-037 (6 ta) + BUG-038 ijobiy jadval
 - ✅ STEP 3 — yakunlandi (2026-08-27): BUG-039…BUG-042 (4 ta) + BUG-043 ijobiy (reg validatsiya, hamburger, admin modal/page, teacher ariza oqimi)
+- ✅ STEP 4 — yakunlandi (2026-08-27): BUG-044…BUG-047 (4 ta) + BUG-048 ijobiy (student panel: assignments/natijalar/notifications/arena/portfolio/sessions; Arena o'lik tugma isboti BUG-044)

@@ -336,6 +336,35 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 ### BUG-043: ✅ IJOBIY — Teacher ariza formasi (/user/register) to'liq va professional
 - Live DOM: rol kartalar (radio, Talaba default), teacher tanlovida 4 maydon dinamik, invite toggle, consent checkbox (unchecked — to'g'ri), honeypot, prevRole/prev* saqlanadi (B-03), server zod validatsiya (B-29) — arxitektura to'g'ri, FAQAT topilmayapti (BUG-040)
 
+### BUG-044: 🔴 Arena "Yuklash" tugmasi O'LIK — `loadArena is not defined` ("sinov ishlamayapti" ✅ TO'LIQ ISBOT)
+- **Live dalil (bosilganda):** `pageerror: ["Identifier '$' has already been declared", "loadArena is not defined"]`, API chaqiruv: 0 ta, visual javob yo'q
+- **Zanjir:** BUG-012 (`/js/main.js` global `const $` ↔ arena inline `const $`) → inline script SyntaxError → `loadArena`/`addBots`/`cleanupBots` umuman tuzilmaydi → asosiy "Yuklash" tugma jim
+- **Qo'shimcha:** `source=user` + testsiz holatda empty-state YO'Q — foydalanuvchi o'lik tugmani bosadi, hech narsa bo'lmaydi
+- **Ta'sir:** "Sinov rejimi" real brauzerda **to'liq ishlamaydi** — "sinov ishlamayapti" shikoyatining aniq texnik manbasi
+- **Izoh:** backend `/arena/api/*` tirik — muammo FAQAT frontend simlanish
+
+### BUG-045: 🟡 /sessions — qurilmalar "Noma'lum qurilma/brauzer" + dublikat qatorlar
+- **Dalil (live):** 4 sessiyadan 3 tasi "Noma'lum qurilma", **JORIY QURILMA ham**; bir xil IP 2 qator (joriy + 22 min) — qurilma bo'yicha guruhlanmagan
+- **Ta'sir:** foydalanuvchi qurilmalarni ajrata olmaydi → "shubhali qurilmani o'chiring" maslahati ishlamaydi
+- **Izoh:** headless UA parse qilinmasligi mumkin — real brauzerda qayta tekshirish kerak (open item)
+
+### BUG-046: 🟡 Notifications sozlamalari — mavjud bo'lmagan kanallar default ON
+- **Dalil (live DOM):** `ch_telegram` **checked=true** (Telegram integratsiyasi env kutilmoqda — README), `ch_push` checkbox bor (lekin push_disabled — BUG-018)
+- **Ta'sir:** foydalanuvchi ishonch bilan yoqadi, xabarlar kelmaydi
+
+### BUG-047: 🟡 Sessions sahifasi yo'li README'da noto'g'ri
+- **Dalil:** real sahifa **`/sessions`** (200, route: `routes/session.js:101`); README §2 va dead view `user/sessions.ejs` `/user/sessions` deydi → 404 (BUG-017 bilan bog'liq; security-profile havolasi to'g'ri)
+
+### BUG-048: ✅ IJOBIY — Student panel bloklari asosan toza (live tekshirildi)
+| Blok | Holat |
+|------|-------|
+| /user/assignments | toza empty state, Preflight arxitekturasi bor |
+| Panel natijalar/topshiriqlar | empty state'lar professional ("Birinchi testingizni yaratin") |
+| VIP upsell | "Tayyor to'plamlar — VIP imkoni" studentga ko'rinadi |
+| /user/portfolio | privacy chip, item-share, public /share/:token link-gated (README mos) |
+| /user/notifications | granular prefs (kanallar + turlar), empty state bor |
+| /sessions | ishlaydi, revoke tugmalar, "Barchasini o'chirish" |
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 | Talab | Holat |
 |-------|-------|
