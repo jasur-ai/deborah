@@ -903,6 +903,31 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-175: ℹ️ QA artefaktlar holati: landing_reg_0827 (VIP berilgan — BUG-066 testida), qa_tester_0827 (block/unblock testidan o'tdi) — xohlasangiz admin paneldan o'chirib tashlang
 
+### BUG-180: ✅ REPLAY PROTECTION ISHLAYDI (xavfsizlik)
+- **Dalil:** ishlatilgan backup kod (`9883e203c6`) qayta verify → **403 invalid_code** (kod single-use, mfa-totp.js' consumeBackupCode hujjatlashtirilganidek)
+
+### BUG-181: 🟠 BUG-016 YANA BOR: `retryAfterSeconds:-4061` (manfiy timer) invalid urinishda
+- Yangi deployda ham expired lockout manfiy timer qaytaryapti — hali tuzatilmagan
+
+### BUG-182: 🟠 Export key TRAVERSAL -> 500 UNHANDLED
+- **Dalil:** `GET /user/api/tests/export?key=../../etc/passwd` va `key=mtb../x` → **500** (404 bo'lishi kerak edi)
+- Firebase path'da taqiqlangan belgilar exception tashlaydi, route catch'lanmagan yagona 500'ga qaytadi
+- **Yaxshi tomoni:** ma'lumot oqishi yo'q (500, content yo'q); **yomon tomoni:** crafted input bilan server xatosi + log shovqini
+
+### BUG-183: ✅ XSS EXPORT xavfsiz: nomda quote/script bilan ham export JSON valid qaytadi (name nested), JSON buzilmaydi
+
+### BUG-184: ✅ verify/send RATE LIMIT ishlaydi: 429 too_many_requests + retryAfterSeconds (10/soat chegara)
+
+### BUG-185: ✅ Export auth'siz 401 (himoya OK)
+
+### BUG-186: 🟡 SERVER FLAKINESS: POST so'rovlar ba'zan 60-120s TIMEOUT (2x kuzatildi: save va verify/send) — SMTP'dan tashqari umumiy sekinlik (Render instance yuklamasi yoki bloklanuvchi call'lar); foydalanuvchiga spinner cheksiz
+
+### BUG-187: ⚪ Export JSON tuzilishi: `name` top-level emas (nested) — API hujjatlari yo'q
+
+### BUG-188: ✅ QA cleanup: XSS test o'chirildi (artefakt qolmadi)
+
+### BUG-189: ℹ️ verify/send 10/soat limit menga tegishli (testlar sabab) — foydalanuvchi uchun me'yor yetarli
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
