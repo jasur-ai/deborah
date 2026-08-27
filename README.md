@@ -1,106 +1,130 @@
-# Deborah
+# Deborah — Raqamlashtirilgan nazorat va imtihon platformasi
 
-**Real-time multiplayer quiz platform → full exam management system (Node.js Edition)**
+**Jonli sayt:** <https://deborah-ncj.onrender.com>
+**Stack:** Node.js 20 (ESM), Express, Socket.io, Firebase (Realtime DB + Auth admin), EJS, Playwright + Vitest (492 test fayl, CI'da majburiy).
 
-Deborah — jonli viktorina (Kahoot/Quizizz uslubidagi) o'yinlaridan tortib, universitet darajasidagi to'liq imtihon boshqaruv tizimigacha o'sgan ta'lim texnologiyalari (EdTech) platformasi. O'zbek tilidagi bozor uchun mo'ljallangan.
+Deborah — o'zbek tilidagi ta'lim platformasi: jonli dars o'yinlari (Kahoot uslubi), test va amaliyotlar, imtihonlarni to'liq boshqarish, AI yordamchi va tahlillar.
 
-## ✨ Imkoniyatlar
+---
 
-### 🎮 Asosiy o'yin
-- Real-time multiplayer quiz (Socket.io) — host / enter / arena
-- Mavzu va kartoon qahramonlar (emoji) tanlash
-- Jonli reyting va natijalar
+## 1. Kirish (test uchun)
 
-### 🧑‍🏫 Imtihon boshqaruvi
-- **Assessment builder**: competency, item bank, rubric, QTI import/export
-- **Attempt lifecycle**: preflight, attempt lease, response, offline journal, safe submit
-- **Proctoring**: kamera evidence, SEB, security profiles, proctor events
-- **Qog'oz imtihonlar**: paper packet, scan/OMR, answer-key reconciliation
-- **Baholash**: mark schemes, grade rules, AI grading, board ratification, special consideration
-- **AI yordamchi**: AI question generation, MLOps, Claude adapter, resource recommendation
+| Kim | Qanday | Manzil |
+|---|---|---|
+| **Administrator** | login: `edikit_admin` · parol: `admin0408` | `/admin/login` |
+| **O'qituvchi / talaba** | Google akkaunt bilan (real Google OIDC) | bosh sahifa → "Google bilan kirish" |
+| **O'qituvchi / talaba** | Email/username + parol, ro'yxatdan o'tish | bosh sahifa → ro'yxat |
+| Talaba (kod bilan) | O'yin kodini kiritish | `/play` (kod so'raladi) |
 
-### 🏛️ Institut darajasi
-- Tenant/RBAC/RLS, akademik struktura, roster, accommodation
-- Kalendar, publish, brief/policy, command center, exam seating
-- Program quality, credentials, multilingual (Uzbek Latin/Cyrillic), accessibility (WCAG 2.2 AA)
-- Data governance, HEMIS/OneID adapter, external integrations (Canva, Google Slides, Gamma)
+- Google login: **real OAuth 2.0 + PKCE** (`/auth/google` → Google → `/auth/google/callback`). Yangi Google user uchun rol tanlash oynasi (`/user/google-setup`).
+- Email bilan kirishda: MFA (TOTP), Passkey (WebAuthn), parol tiklash — hammasi real ishlaydi.
+- Rollar: `student`, `teacher` (admin tasdiqlaydi), `admin`, `proctor`, `marker`, `board`.
+- ⚠️ `ADMIN_USER`/`ADMIN_PASS` ataylab shu yozuvda — repo **private**. Public qilsangiz, darhol o'zgartiring!
 
-### 🔒 Xavfsizlik va ishonchlilik
-- ASVS 4.0, threat model, AI red-team
-- OpenTelemetry observability (metrics, SLO, alerts)
-- Reliability: peak load, chaos, backup/DR, release safety
-- Final migration, institutional pilot, procurement pack (HECVAT/ACR/DPA/SLA/exit)
-- System acceptance va handover (release sign-off, next-version backlog)
+## 2. Foydalanuvchi oqimlari (real sahifalar)
 
-## 🚀 Ishga tushirish
+### Talaba/o'qituvchi (`/user/...`)
+- `panel` — shaxsiy panel (topshiriqlar, natijalar, bildirishnomalar)
+- `create-test` — test yaratish ( savollar, variantlar)
+- `test-arena` — o'z-o'zini sinash maydoni
+- `assignments`, `portfolio` (ommaviy sahifasi `portfolio-share` bilan), `sessions`, `settings`, `notifications`, `onboarding`
+- Xavfsizlik: `security-profile` (parol, MFA, Passkey, sessiyalar), `email-change`, `mfa-setup`, `reset`/`forgot`
+
+### Jonli dars — Cast (`/cast/...`)
+- `director` — o'qituvchi pulti: savollar jonli yuborish, reyting, **⚡ Tezkor savol**
+  - **✨ "AI yozib beradi"** — REAL Gemini generatsiyasi: mavzu yoziladi (masalan "Kapital iqtisodiyoti"), 1–3 ta tanlanadi → 5–15 soniyada savol + 4 variant + to'g'ri javob + izoh formaga qo'yiladi
+- `participant` — talaba ekrani (real vaqt, Socket.io)
+- `projector` — proyektor ekrani, `results` — yakuniy natijalar, `replay` — takroriy ko'rish, `quality-lab`
+
+## 3. AI (Gemini) — real generatsiya
+
+| Endpoint | Nima | Himoya |
+|---|---|---|
+| `GET /api/ai/status` | `{enabled, model}` | ommaviy |
+| `POST /api/ai/generate-questions` | real savollar (matn, variantlar, to'g'ri javob, izoh) | login + CSRF + 12/daq, 300/kun limit |
+
+- Model: `GEMINI_MODEL` env (hozir `gemini-3.6-flash`), kalit: `GEMINI_API_KEY` (hech qayerda logga chiqmaydi).
+- Klient: `src/modules/ai/gemini-client.js` (timeout, retry, xavfsiz JSON ajratish).
+- UI'da: **Director → ⚡ Tezkor savol → ✨ AI yozib beradi**.
+- Qo'shimcha AI modullari (admin panel): `ai-question-gen` (blueprint/job pipeline), `ai-grading` (shadow mode), `ai-checkpoint`, `ai-mlops` (evaluatsiya/rollback), `claude` adapter.
+
+## 4. Integratsiyalar (holat: 2026-08-27)
+
+| Integratsiya | Holat | Qayerda |
+|---|---|---|
+| **Google OIDC (login)** | ✅ LIVE | bosh sahifa, `/auth/google` |
+| **Gemini AI** | ✅ LIVE | Director ✨, `/api/ai/*` |
+| **Canva Connect (OAuth)** | ✅ kod tayyor — konsol URI kutilmoqda | admin panel → Canva (`/admin/canva`), callback `/api/admin/canva/callback` |
+| **Google Slides (OAuth)** | ✅ kod tayyor — konsol URI kutilmoqda | admin panel → Google Slides, callback `/api/admin/google-slides/callback` |
+| **Email (SMTP/Postmark/SES)** | ✅ sozlangan (Gmail SMTP) + avtomatik fallback zanjiri | har qanday xat (verify/reset/welcome) |
+| **Telegram (OTP login + bot)** | ✅ kod va testlar tayyor | `telegram-auth`, `telegram-bot` (env kutiladi) |
+| **Gamma** | ❌ Gamma'da **ochiq (public) API yo'q** — soxta funksiya qilmaymiz | — |
+| **OneID / HEMIS** | 🗑 2026-08-27'da UI'dan butunlay olib tashlandi (client yo'q, aloqa yo'q) | — |
+
+**Canva API imkoniyatlari:** status, OAuth link/callback, dizaynlar ro'yxati, import/export (`/api/admin/canva/*`, `requireAdmin`).
+**Slides API:** status, link, callback (`/api/admin/google-slides/*`, `requireAdmin`).
+
+## 5. Admin panel (45+ sahifa, `/admin/...`)
+
+**Asosiy:** `dashboard` (Excel import: fan/subtest + pre-check, statistika), `users`, `teachers` (arizalar, approve/reject), `vip`, `audit`, `email-cost`, `mfa`.
+
+**Imtihon boshqaruvi:** `roster` (guruh ro'yxati staging), `scheduler` (imtihon jadvali yechimchi), `seating` (o'rindiq/bilet/check-in), `paper` (QR, packet, chain-of-custody), `scan` (OMR/OCR), `marking` (belgilash kalibrovkasi), `grading` (deterministik baho qoidalari), `board` (ratifikatsiya, ledger), `consideration` (appeal/resit), `command-center` (insidentlar), `reliability`, `security-guard`, `intervention`.
+
+**Kontent:** `question-gen` (AI savol generatori), `quiz-deck`, `deck-export`, `presentation`, `sources` (RAG), `resource-reco`, `item-bank`, `rubric`, `assessment`, `competency`.
+
+**Integratsiya/observability:** `canva`, `google-slides`, `provider`, `api-contracts`, `observability`, `data-governance`, `institutional`, `program-quality`, `acceptance`, `accessibility`, `multilingual`, `ai-checkpoint`, `ai-grading`, `ai-mlops`, `claude`, `camera-review`, `safe-submit`.
+
+## 6. Asosiy API oilalari
+
+- **Auth:** `/auth/google*`, `/api/auth/*`, `/api/mfa/*`, `/api/passkey/*`, `/api/reset/*`, `/auth/telegram/*`
+- **Cast (REST + Socket.io):** `/api/cast/*`, socket: `cast:join`, `cast:answer`, `cast:quickPromptLaunch`, ...
+- **AI:** `/api/ai/status`, `/api/ai/generate-questions`
+- **Imtihon:** `/api/attempt/*` (lease + server taymeri), `/api/response/*` (ACK + autosave), `/api/submit/*` (muhr + imzolangan receipt), `/api/proctor/*`
+- **Admin integratsiya:** `/api/admin/canva/*`, `/api/admin/google-slides/*`
+- **PWA/offline:** service worker, IndexedDB journal (`/api/offline/*`), Web Push (`/api/push/*`)
+- **Ochiq ma'lumotlar:** `/api/opendata/*`; Legal: `/privacy`, `/terms`, `/cookies`
+
+To'liq ro'yxat: `routes/` katalogida 80+ fayl — har birining sarlavhasida izoh.
+
+## 7. Xavfsizlik
+
+- Session: `regenerate` (fixation oldini olish), idle-timeout, role-version invalidatsiya, device fingerprint/risk tier
+- CSRF token (hamma POST/PUT/PATCH/DELETE), rate limiting, audit log (`audit` admin sahifasi)
+- OAuth: PKCE + state, exact redirect-uri tekshiruvi, callback abuse monitoring
+- Parollar: argon2id (memory-hard); passkey WebAuthn; email verify + double opt-in email change
+- Kirish huquqi: `requireAuth` / `requireAdmin` middleware'lari, rol allowlistlari
+
+## 8. Sifat nazorati (CI)
+
+GitHub Actions'da `npm run design:check:full`:
+
+1. `tokens` — design tokenlar konsistensiyasi
+2. `contrast` — 40/40 WCAG kontrast juftligi
+3. `lint` — design lint · 4. `perf-budget` — byudjet + route-split · 5. `legacy-usage` — regress yo'q
+6. `ejs-compile` — 112 view kompilyatsiya · 7. `axe` — WCAG 2.2 AA (12 test)
+8. `visual` — Playwright baseline (5 viewport × 3 mavzu, deterministik)
+
+Vitest: **492 test fayl** — birlik/integratsiya/e2e/xavfsizlik (CSRF, XSS scan, escalation, stuffing).
+
+## 9. Ishga tushirish (lokal)
 
 ```bash
-# Talablar: Node.js >= 18
-
-npm install          # Bog'liqliklarni o'rnatish
-npm run seed         # Demo ma'lumotlarni yaratish
-npm start            # http://localhost:3000
+npm ci
+npm run dev            # yoki: node server.js
 ```
 
-### Tezkor ishga tushirish
+Muhim env (`.env`): `SESSION_SECRET`, `ADMIN_USER`, `ADMIN_PASS`, `FIREBASE_SERVICE_ACCOUNT`, `FIREBASE_DATABASE_URL`, `BASE_URL`.
+Ixtiyoriy: `GEMINI_API_KEY`+`GEMINI_MODEL` (AI), `GOOGLE_CLIENT_ID/SECRET/REDIRECT_URI` (OIDC), `CANVA_CLIENT_ID/SECRET`, `SMTP_*`/`POSTMARK_SERVER_TOKEN` (email), `EMAIL_PROVIDER=smtp|postmark|ses|mock`.
 
-```bash
-npm run dev    # --watch rejimida
-npm run mock   # Mock server
-```
+## 10. Manzillar (konsollar uchun)
 
-## 🧪 Testlar
+| Konsol | Qiymat |
+|---|---|
+| Google OAuth redirect | `https://deborah-ncj.onrender.com/auth/google/callback` |
+| Google Slides redirect | `https://deborah-ncj.onrender.com/api/admin/google-slides/callback` |
+| Canva redirect | `https://deborah-ncj.onrender.com/api/admin/canva/callback` |
+| Authorized domain | `deborah-ncj.onrender.com` |
 
-```bash
-npm run typecheck         # TypeScript 0 xato
-npm run test:unit         # Unit testlar
-npm run test:integration  # Integration testlar
-npm run test:ci           # Barcha vitest testlari
-npm run test:security     # XSS security suite
-npm run test:reliability  # Reliability + load/chaos/backup drills
-npm run test:gate0        # Release gate-0 verifikasiyasi
-npm run verify:all        # To'liq release verifikasiyasi (typecheck + barcha testlar + drills + sign-off)
-```
+---
 
-**Hozirgi holat**: 3000+ test yashil (unit 2039, integration 527, e2e 434), XSS 60/60, 0 TypeScript xato.
-
-## 📁 Arxitektura
-
-| Papka | Maqsad |
-|-------|--------|
-| `server.js` | Express + Socket.io asosiy server (`createApp()` test factory) |
-| `routes/` | 61+ API/bet route handleri |
-| `src/modules/` | Feature modullar (biznes logika: schema/service/index) |
-| `middleware/` | Auth, CSRF, origin, roles, socket identity, rate limiting, telemetry |
-| `views/` | EJS shablonlar (admin/user/role/game) |
-| `migrations/` | PostgreSQL migratsiyalar (Kysely) |
-| `firebase/` | Lokal JSON DB emulyatsiyasi (`local-db.js`) |
-| `socket/` | Socket.io o'yin handleri |
-| `tests/` | unit / integration / e2e testlar |
-| `scripts/` | CI, security, reliability, migration skriptlari |
-| `.github/workflows/` | GitHub Actions CI |
-
-### Asosiy texnologiyalar
-
-Express 4 · Socket.io 4 · EJS · PostgreSQL (Kysely) · Firebase-admin (lokal) · Redis (session) · Zod · Argon2 · Helmet · Pino · Vitest · TypeScript
-
-## 🏗️ Rivojlanish holati
-
-`implementation-status.md` — butun rivojlanish tarixi (Prompt 11–73, har bir bosqich STATUS + test sonlari bilan).
-
-- **Prompt 71** — Reliability: peak load, chaos, backup/DR, release safety ✅
-- **Prompt 72** — Final migration, institutional pilot, procurement pack ✅
-- **Prompt 73** — Final system acceptance va handover (CHECKPOINT — yakuniy) ✅
-
-Yakuniy checkpoint: **release sign-off tayyor**, barcha 8 domain sign-off, next-version backlog shakllangan.
-
-## 📄 Hujjatlar
-
-- `ARCHITECTURE.md` — arxitektura qarorlari
-- `implementation-status.md` — bosqichma-bosqich holat
-- `reports/sbom.json` — Software Bill of Materials
-- `style.md` — kod uslubi
-
-## 📄 Litsenziya
-
-Tijoriy / xususiy loyiha.
+*Oxirgi yangilanish: 2026-08-27 · Google OIDC LIVE ✅ · Gemini AI LIVE ✅ · OneID/HEMIS olib tashlandi 🗑*

@@ -230,6 +230,14 @@ router.get('/auth/google/callback', async (req, res) => {
         return res.redirect('/user/login?error=session_error');
       }
 
+      // AUTH BUGFIX (2026-08-27): sessiyaga role/roleVersion/passwordUpdatedAt
+      // tushmayotgandi — invalidateIfStale (middleware/auth.js) DB'dagi
+      // role_version(1) !== undefined topib, birinchi requireAuth'da sessiyani
+      // o'ldirar edi ("Session yakunlandi" xatosi). Klassik login (auth.js)
+      // bilan izchil shakl:
+      const dbSnap = await fb.get(`users/${user.safeKey}`).catch(() => null);
+      const dbUser = dbSnap && dbSnap.exists() ? dbSnap.val() : {};
+
       // Set user session
       req.session.user = {
         id: user.id,
@@ -241,6 +249,10 @@ router.get('/auth/google/callback', async (req, res) => {
         isVip: user.isVip,
         authProvider: 'google',
         tenant_id: 1, // Default tenant
+        role: dbUser.role || 'student',
+        passwordUpdatedAt: dbUser.password_updated_at || 0,
+        roleVersion: typeof dbUser.role_version === 'number' ? dbUser.role_version : 0,
+        emailVerified: true, // Google email'i provider tomonidan tasdiqlangan
       };
       // regenerate() yangi bo'sh sessiya — CSRF token'ni qayta o'rnatamiz
       req.session.csrfToken = crypto.randomBytes(32).toString('hex');
@@ -376,6 +388,10 @@ router.post('/user/google-setup', async (req, res) => {
         role: existingRole,
         authProvider: existingSnap.auth_provider || 'google',
         tenant_id: 1,
+        // AUTH BUGFIX (2026-08-27): invalidateIfStale bilan izchillik
+        passwordUpdatedAt: existingSnap.password_updated_at || 0,
+        roleVersion: typeof existingSnap.role_version === 'number' ? existingSnap.role_version : 0,
+        emailVerified: true,
       };
       req.session.csrfToken = crypto.randomBytes(32).toString('hex');
       return res.redirect(existingRole === 'teacher' || existingRole === 'teacher_pending'
@@ -495,6 +511,11 @@ router.post('/user/google-setup', async (req, res) => {
       role: teacherRole,
       authProvider: 'google',
       tenant_id: 1, // Review fix: OIDC login path bilan session shakli izchil
+        // AUTH BUGFIX (2026-08-27): yangi akkaunt role_version=1 bilan
+        // yaratiladi — sessiya ham shu qiymatni olishi shart
+        passwordUpdatedAt: 0,
+        roleVersion: 1,
+        emailVerified: true,
     };
     req.session.csrfToken = crypto.randomBytes(32).toString('hex');
     // A-19: teacher_pending → "admin tasdiqlaydi" ekrani; student → panel
