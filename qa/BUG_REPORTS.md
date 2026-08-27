@@ -365,6 +365,30 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 | /user/notifications | granular prefs (kanallar + turlar), empty state bor |
 | /sessions | ishlaydi, revoke tugmalar, "Barchasini o'chirish" |
 
+### BUG-049: 🔴 cast-director.js — `$` helper mos emaslik: Director sahifasi (jonli dars pulti) katta qismi O'LIK
+- **Root cause (kod):** `public/js/cast-director.js` — `const $ = (id) => document.getElementById(id);` lekin qator 1203: `$('#qp-close').addEventListener(...)` — **hash bilan** chaqiruv → `getElementById('#qp-close')` = null → TypeError → **butun IIFE 1203-da o'ladi**
+- **Statistika:** 1203-dan OLDIN `$('#…')` x26 (callback'larda — ishlatilganda crash), KEYIN **x160 — umuman ishlamaydi**
+- **Live dalil:** `pageerror: "Cannot read properties of null (reading 'addEventListener')" at cast-director.js:1203:17 (2504:3)`; lobbi **"Kod: —"** (join kod ko'rsatilmaydi — sessiyada kod bor, BUG-020 API testida proven)
+- **Ta'sir:** jonli dars pulti: Quick Prompt (⚡ AI yozib beradi — README flagman da'vosi) buzil; kod ko'rsatish va keyingi handlerlar o'lik. Static tugmalar ko'rinadi lekin ko'plari javob bermaydi
+- **Boshqa cast fayllar toza** (participant/projector/results/replay: 0 hash-chaqiruv) — faqat director
+- **Tavsiya (hisobot):** `$`ni `document.querySelector`ga o'zgartirish yoki hash'siz chaqirish
+- **Bu "cast ishlamayapti" shikoyatining ENG KATTA texnik manbasi** (BUG-020 flaky join bilan birga)
+
+### BUG-050: 🟡 Create-test: bitta "Saqlash" bosilishiga 2xPOST /user/api/tests/save
+- **Live dalil (Playwright):** saqlash → `POST 200 x2` (autosave debounce + manual yoki double-fire); "Saqlandi" ko'rsatildi
+- **Ta'sir:** server idempotent bo'lmasa dublikat xavfi; trafik 2x
+- **Tavsiya:** scheduleSave va manual save orasida in-flight guard
+
+### BUG-051: ✅ IJOBIY — Create-test UI E2E + Excel + Cast Studio wizard ISHLAYDI (real brauzerda)
+| Oqim | Natija |
+|------|--------|
+| Test yaratish UI (nom → savol → matn/variantlar/to'g'ri javob → Saqlash) | "Saqlandi", POST 200, 0 pageerror (test-builder.js tirik) |
+| Savol turlari | 5 tur: single_choice, true_false, multiple_select, short_answer, exit_ticket |
+| Excel import | modal + 2 qadam (Shablon → Yuklash), accept=.xlsx,.xls |
+| Excel shablon download | ishlaydi (download event) |
+| Cast Studio wizard | 4 preset (Responsive Accuracy/Tavsiya, Classic Live, Team Challenge, Formative Check) + sozlamalar → "Lobbi ochish" → preflight+sessions 200 → /cast/:id/director ("Cast — STEP5 UI Testi") |
+| Dalillar | 28, 29, 31, 32, 33, 34 PNG (qa/evidence) |
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 | Talab | Holat |
 |-------|-------|
