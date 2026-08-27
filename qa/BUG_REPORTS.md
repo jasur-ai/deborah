@@ -313,6 +313,29 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 | Student panel empty states | ko'rsatiladi |
 | Session idle TTL | 30 daqiqa default (env.js:37) |
 
+### BUG-039: 🔴 Registratsiya POST ba'zan 90-180s TIMEOUT (takrorlangan 2x)
+- **Live dalil:** 2026-08-27 — 2 xil testda `POST /user/login (mode=reg)` **180s va 90s+ timeout**; bir xil so'rov keyinroq 0.4s da o'tdi (user yaratilgan edi). Login POST o'sha paytda 1.7s — faqat reg sekin
+- **Root cause (kod):** reg oqimi **sinxron email yuboradi**: `routes/auth.js:2033` `await sendVerifyCode(...)` → `email-verify.js:159` `await sendEmail(...)` → `provider.js:350` `sendViaSmtp` — **nodemailer transportda timeout sozlanmagan** (`createTransport`'da `connectionTimeout/socketTimeout/greetingTimeout` yo'q) + `RETRY_DELAYS_MS=[1s,3s,9s]` — SMTP sekin bo'lsa so'rov minutlar blok
+- **Ta'sir:** foydalanuvchi forma yuboradi, cheksiz spinner → timeout → qayta yuboradi → "allaqachon mavjud" xatosi (chalkash; dublikat urinish)
+- **Tavsiya (hisobot):** SMTP transportga qisqa timeout (5-10s) + emailni queue'ga async (queue.js mavjud, lekin bu yo'lda ishlatilmagan)
+
+### BUG-040: 🟠 Teacher ariza sahifasi landing'dan TOPILMAYDI — oqim uzilgan
+- **Tuzilma (kod+live):** to'liq teacher registratsiyasi `/user/register` sahifasida: rol kartalar (Talaba/O'qituvchi), teacher tanlansa Universitet/Fan/Tajriba/Maqsad dinamik ochiladi (live ✅), invite kod, consent CHECKBOX (to'g'ri!), device_fp, honeypot ("Website")
+- **Muammo:** landing'dagi 4 ta havola hammasi `#auth` (oddiy fReg'ga); `/user/register`ga havola YO'Q — faqat bilib topiladi
+- **Ta'sir:** landing'dan ro'yxatdan o'tgan teacher bo'lish imkoniyatidan xabardor bo'lmaydi; `role=teacher` kelmasa `wantsTeacher=false` → hamma student (BUG-035 davomi)
+- **Server mantiq:** `role=teacher` → `teacher_pending` roliga o'tadi, `/user/teacher-approval` ekrani (auth.js:2185) — oqim to'liq, lekin topilmaydi
+
+### BUG-041: 🟡 `/user/teacher-approval` auth'siz 401 JSON qaytaradi
+- **Dalil:** `GET /user/teacher-approval` (guest) → 401 xom JSON (65B)
+- **Ta'sir:** sessiya tugagan foydalanuvchi dizaynsiz JSON ko'radi (sahifalar HTML/login redirect bo'lishi kerak)
+
+### BUG-042: 🟡 Admin login page vs modal kontenti nomuvofiq
+- **Dalil (live):** `/admin/login` page'da MFA eslatma matni bor, faqat bosh sahifa havolasi; landing modal'da MFA ma'lumoti YO'Q — bir xil amal, ikki xil kontent
+- **Ta'sir:** foydalanuvchi talab qilgan "alohida page" MAVJUD va funksional — lekin landing uni modalga yo'naltirib page'ni yashiradi (BUG-028 bilan bog'liq)
+
+### BUG-043: ✅ IJOBIY — Teacher ariza formasi (/user/register) to'liq va professional
+- Live DOM: rol kartalar (radio, Talaba default), teacher tanlovida 4 maydon dinamik, invite toggle, consent checkbox (unchecked — to'g'ri), honeypot, prevRole/prev* saqlanadi (B-03), server zod validatsiya (B-29) — arxitektura to'g'ri, FAQAT topilmayapti (BUG-040)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 | Talab | Holat |
 |-------|-------|
