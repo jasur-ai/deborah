@@ -759,6 +759,32 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 ### BUG-128: ℹ️ QA test artefaktlari teacher panelida qoldi (V2, V3, T-*, EDIT-test...)
 - cleanup regex data-key'ni topmadi (attr format farqi); admin paneldan qo'lda o'chirish mumkin yoki keyingi stepda cleanup
 
+### BUG-129: 🔴 EXCEL IMPORT -> SAQLASH UZILGAN: preview ko'rsatadi, save'da `questions:[]`
+- **Live dalil:** to'g'ri formatli xlsx (2 savol) import → preview 3 qator ko'rinadi → "Saqlash" bosilganda POST payload: `{"name":"EXCEL-RT2","questions":[],"editKey":""}` → **400 Invalid data** → UI: **"Saqlashda xato"** (2 marta retry, xuddi shu)
+- **Root cause:** import parser (XLSX.js) qatorlarni o'qiydi va preview render qiladi, LEKIN parse natijasi `test-builder.js` state'iga (`state.questions`) bog'lanmaydi — import va builder modullari orasida integratsiya yo'q/buzilgan
+- **Ta'sir:** **Excel import funksiyasi end-to-end ISHLAMAYDI** (README §5 "savollar, variantlar" oqimining yarmi) — foydalanuvchi fayl yuklaydi, preview ko'radi, saqlay olmaydi
+- **Tuzatish (hisobot):** import callback'da state.questions = parsed; render qayta chaqirilishi kerak
+
+### BUG-130: 🟡 Buzilgan fayl (text renamed .xlsx) — SOKIN 0 qator, xato xabari YO'Q
+- **Dalil:** `import_bad.xlsx` (plain text) yuklandi → 0 qator preview, **hech qanday "fayl o'qilmadi" xabari yo'q**
+- **Ta'sir:** foydalanuvchi nima uchun import bo'lmaganini bilmaydi
+
+### BUG-131: 🟡 Ustunlar yetishmaydigan fayl QABUL qilinadi (strukturaviy validatsiya yo'q)
+- **Dalil:** faqat 3 ustunli (Savol/A/B) fayl → 2 qator preview — D/To'g'ri ustunlari bo'lmasa ham jim qabul
+- **Ta'sir:** import qilsa bo'sh variantlar (yoki BUG-129 tufayli umuman saqlanmaydi)
+
+### BUG-132: 🟡 Saqlash xatosi umumiy "Saqlashda xato" — sabab ko'rsatilmaydi (bo'sh questions ekanini foydalanuvchi bilmaydi)
+
+### BUG-133: ✅ RE-VERIFY: BUG-050 (2xPOST) yangi deployda ham mavjud (xatolikda 2x retry tabiiy, lekin oddiy saqlashda ham 2x kuzatilgan edi)
+
+### BUG-134: ✅ IJOBIY — Excel import texnik tomonlari (live)
+| Tekshiruv | Natija |
+|-----------|--------|
+| 500 qatorli fayl preview | ✅ 501 qator tez, 0 pageerror |
+| accept filtri | ✅ .xlsx,.xls |
+| Shablon download | ✅ (STEP 5) |
+| Preview render | ✅ (lekin state'ga bog'lanmaydi — BUG-129) |
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
