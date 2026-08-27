@@ -60,3 +60,4 @@
 - ✅ STEP 9 — yakunlandi (2026-08-27): BUG-062…BUG-063 (2 ta) + BUG-064 ijobiy (IDOR/XSS/open-redirect/role-escalation/cookie — xavfsizlik asosi mustahkam)
 - ✅ STEP 10 — yakunlandi (2026-08-27): BUG-065 (fans abadiy 'Yuklanmoqda...') + BUG-066 ijobiy (VIP grant negativ testlar bilan: 404/403/origin-block — himoya qattiq)
 - ✅ STEP 11 — yakunlandi (2026-08-27): BUG-067 🔴 (session keepalive ping CSRF'siz → 403 → idle uzaytirmaydi) + BUG-068 🟡 (revoke-sessions 5 deb hisoblaydi, sessiya tirik) + BUG-069 ijobiy (audit filtrlar/export/remember-me)
+- ✅ STEP 12 — yakunlandi (2026-08-27): BUG-070 🟡 (themeBtn aria-pressed yo'q) + BUG-071 ijobiy (dark landing: FOUC yo'q, kontrast 0, persist OK, mobile OK)

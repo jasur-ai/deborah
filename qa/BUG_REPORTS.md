@@ -515,6 +515,22 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 | Remember-me | ✅ deborah_remember cookie (selector:verifier, Max-Age 30 kun, Expires set) |
 | SessionTimeout client | ✅ obj mavjud (lekin BUG-067 keepalive 403) |
 
+### BUG-070: 🟡 Landing tema tugmasi aria-pressed YO'Q — screen reader holatni bilmaydi
+- **Dalil (live DOM):** `#themeBtn` — `aria-label="Tema"` bor, lekin **`aria-pressed`/`title` yo'q**; tugma dark/light holatini faqat vizual ikonka bilan beradi
+- **WCAG:** toggle tugmalar uchun holat programmatically exposed bo'lishi kerak (4.1.2 Name, Role, Value)
+- **Ta'sir:** ko'rish imkoniyati cheklangan foydalanuvchi temaning joriy holatini va bosgandan keyingi o'zgarishni eshitib bilmaydi
+
+### BUG-071: ✅ IJOBIY — Dark landing to'liq sog'lom (FAZA B boshlanishi bazasi yaxshi)
+| Tekshiruv | Natija |
+|-----------|--------|
+| FOUC (tema paint oldidan) | yo'q — `data-theme` DOM'da early, theme-core.js sinxron |
+| Kontrast skan (1440px dark) | 0 ta qiyin element |
+| Admin modal dark | 0 ta muammo |
+| Persist (landing → /user/login) | ✅ dark saqlanadi |
+| Mobile 375px dark | overflow yo'q |
+| Toggle sikl | dark↔light (landing'da by-design; yagona boshqaruv muammosi BUG/3-UI tashxisida) |
+| Dalil | 51, 52, 53 PNG |
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 | Talab | Holat |
 |-------|-------|
