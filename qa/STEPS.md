@@ -63,3 +63,4 @@
 - ✅ STEP 12 — yakunlandi (2026-08-27): BUG-070…BUG-078 (9 ta: footer legal '#', lang cookie GET / ishlamaydi, til saqlanmaydi, doneReg aria, scroll-lock yo'q, #admin anchor, aria-pressed...) + BUG-079 ijobiy (SEO/a11y asosi)
 - ✅ STEP 13 — yakunlandi (2026-08-27): BUG-080 🔴 (dark panel oilasida umuman yo'q — theme-core yuklanmaydi, deploy nomuvofiq) + BUG-081…088 (7 ta) + BUG-089 ijobiy
 - ✅ STEP 14 — yakunlandi (2026-08-27): DEPLOY O'ZGARDI — BUG-090 🟠 (MemoryStore sessiyalar o'chdi, B-03 confirm) + re-verify (BUG-006/007 hali bor, BUG-009/010 TUZATILGAN) + BUG-093 🟠 (admin tema regressiya: faqat System) + BUG-094…099
+- ✅ STEP 15 — yakunlandi (2026-08-27): BUG-100 🟠 (hc rejim UI toggle yo'q — yarim funksiya, funksional tasdiq) + BUG-101…103 (3 ta) + BUG-104 ijobiy (hc-dark sifatli, OS dark avto, legal ru/en)

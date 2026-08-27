@@ -638,6 +638,32 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-099: ✅ IJOBIY — Yangi deployda create-test 0 pageerror (leak/escape yo'q) — teacher asosiy oqimi toza boshlandi; BUG-092 bilan birga dev fix'lari ishlayapti
 
+### BUG-100: 🟠 hc rejim UX: faqat localStorage bilan yoqiladi — UI toggle umuman yo'q (yarim funksiya)
+- **Dalil (live):** localStorage `hc-dark` → landing `data-theme=high-contrast` ✅ ishlaydi (0 kontrast muammo, skrinshot 58/59); admin ham qabul qiladi. Lekin HECH QAYSI UI'da hc tugmasi yo'q (BUG 3-UI tashxisida 'yarim qolgan' deb yozilgan edi — endi funksional tasdiq)
+- **Ta'sir:** ko'rish imkoniyati cheklangan foydalanuvchi hc rejimni faqat DevTools orqali yoqa oladi — real foydalanuvchilar uchun mavjud emas
+
+### BUG-101: 🟡 Landing `lang` tanlovi cookie'ga YOZILMAYDI — server bilmaydi (BUG-072 chuqurlashtirildi)
+- **Dalil:** RU bosilgach `localStorage.lang=null`, cookie'da `lang` yo'q; `document.documentElement.lang='ru'` faqat client. `GET /` esa `lang=ru` cookie'sini o'qiy olmaydi (BUG-072), `/user/login` esa o'qiydi — bir xil mexanizm ikkita sahifada ikki xil
+- **Kelib chiqishi:** landing.js faqat DOM matnini almashtiradi, saqlash yo'q
+
+### BUG-102: ⚪ Admin jadval sanalari ISO formatda (`2026-08-27 17:25:57`) — uz lokali emas
+- **Dalil:** /admin/users sanalar ISO-like; landing/demo'da esa `27/08/2026, 07:59:49` (toLocaleString) — bir saytda 2 format
+- **Ta'sir:** izchillik; admin jadvallarida ISO qulay, lekin user panel'dan farqi chalkashlik
+
+### BUG-103: 🟡 Audit action nomlari dev-formatda (`auth:risk:scored`, `admin:mfa:required`) — admin uchun odam tilida emas
+- **Dalil:** /admin/audit — action'lar colon-notation; UI'da tarjima/label map yo'q (ko'rinishi tekshirildi)
+- **Ta'sir:** admin log'ni o'qiy olmaydi (texnik bilim talab)
+
+### BUG-104: ✅ IJOBIY — hc-dark sifati va i18n asosi (live)
+| Tekshiruv | Natija |
+|-----------|--------|
+| hc-dark landing (kontrast >= 2.5 skan) | 0 muammo — hc palitra ishlaydi |
+| hc-dark admin | 0 muammo |
+| System + OS dark emulyatsiya | ✅ avtomatik dark (localStorage bo'sh bo'lsa) |
+| Legal ru/en (server, cookie orqali) | ✅ Политика конфиденциальности / Privacy Policy — to'liq til versiyalari |
+| Login EN copy | ✅ (Sign in/Email...) |
+| term-utils (DeborahTerms) | ✅ mavjud (4.2KB) |
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
