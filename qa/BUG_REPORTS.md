@@ -811,6 +811,35 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-148: ℹ️ UI oqimi to'liq bloklangani sababli attempt/submit API'lari UI'dan yetib bormaydi — bu API'lar STEP 39-41'da to'g'ridan-to'g'ri tekshiriladi
 
+### BUG-149: ✅ RE-CONFIRM (yangi deploy): BUG-049 Director JS HAM O'LIK
+- **Dalil:** yangi sessiya (cast_9qD8zEwbdoeP, kod APDD3G): `pageerror: null addEventListener`; **"Kod: —"** (kod bor, ko'rsatilmaydi); Sessiyani boshlash/+5s/Pauza tugmalari ko'rinadi lekin handlerlari o'lik
+- Director `cast-director.js:1203` crash — hali tuzatilmagan
+
+### BUG-150: 🟠 /cast/:id/results va /replay → 200 lekin **"Mening Panelim"** render qiladi
+- **Dalil:** teacher bilan `/cast/{sid}/results` va `/replay` → HTTP 200, title "Mening Panelim" (panel'ga redirect + 200)
+- **Ta'sir:** o'yin tugagach natijalar sahifasi o'rniga panel ochiladi — xato ham yo'q, natija ham yo'q; API muvaffaqiyatsizligi UX'da yashirilgan
+
+### BUG-151: 🟡 /cast/:id/quality-lab → 403 (teacher) — ruxsat siyosati nomalum
+- Director'ga kiradigan teacher quality-lab'ga kira olmaydi; UI'da buning izohi yo'q
+
+### BUG-152: ✅ BUG-020 INTERMITTENT tasdiqlandi: bu safar birinchi urinishda join OK
+- **Dalil:** student (mobil) `/play?code=APDD3G` → "Cast — Ishtirokchi" (1-urinishda); oldingi testda birinchi urinish ishlamagan edi — flaky tabiat tasdiqlandi
+
+### BUG-153: 🟡 Mock fan key faqat ADMIN API'da — teacher Cast Studio'da mock tanlash yo'li yo'q
+- **Dalil:** mock_key `dasturlash2_mpvfzfns` /admin/api/fans'dan olindi; teacher Cast Studio source ro'yxati bo'sh ko'rsatilgan edi
+- **Ta'sir:** o'qituvchi mock/mashq sessiya o'tkazish yo'lini topolmaydi
+
+### BUG-154: ✅ Mock manba bilan sessiya API oqimi to'liq ishlaydi (preflight 200 + sessions 200)
+
+### BUG-155: 🟡 "Ko'rinadi lekin o'lik" UX — Director'da 12+ statik tugma (Sessiyani boshlash, Keyingi savol, +5s…+30s, Pauza, Javobni ko'rsatish) ko'rinadi, lekin BUG-049 tufayli aksariyati javob bermaydi
+- **Ta'sir:** foydalanuvchi uchun eng yomon holat: tugmalar bor, bosilsa jim
+
+### BUG-156: ⚪ Cast sahifalari `data-cast-theme` bilan OS'dan mustaqil — tema konflikti yo'q (dizayn qarori to'g'ri ishlaydi)
+
+### BUG-157: 🟡 `/cast/None/director` ham 200 render qiladi (noto'g'ri sessionId'ga ham sahifa) — 404/redirect bo'lishi kerak
+
+### BUG-158: ✅ IJOBIY — Dalil: 64_director_new.png (yangi deploy, kod APDD3G holati bilan)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
