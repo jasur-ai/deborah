@@ -78,3 +78,4 @@
 - ✅ STEP 27 — yakunlandi (2026-08-27): BUG-200 🟡 (users qidiruv debounce/param nomuvofiq) + BUG-201/203 ⚪ (limit param e'tiborsiz, RANDOM 25 badge eski) + BUG-202/204/205 ijobiy (audit pagination, uzun nom clip, ro'yxat asosi toza)
 - ✅ STEP 28 — yakunlandi (2026-08-27): BUG-206 🟡 (500 sahifada Orqaga yo'q) + BUG-207/208 ✅ (banner dismiss saqlanadi, offline OK) + BUG-209 ℹ️ (nav ERR_ABORTED flaky) — 404 sahifa toza
 - ✅ STEP 29 — yakunlandi (2026-08-27): BUG-220/221 🟡 (jcode label'siz, dupe id kontakt) + BUG-222 🟡 (admin refresh btn name yo'q) + BUG-223 ⚪ (h1 yo'q) + BUG-224 ✅ ijobiy (7 sahifa a11y skan asosi yaxshi)
+- ✅ STEP 30 — yakunlandi (2026-08-27): BUG-225 🟠 (logo 254KB) + BUG-226 🟡 (panel 328KB) + BUG-227/228 ✅ (console toza, br+cache) + BUG-229 (README yakuniy jadval) + BUG-230 🎯 (UMUMIY XULOSA: 3 global ildiz, prioritetlar, tez g'alabalar)

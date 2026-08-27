@@ -1023,6 +1023,43 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 | html lang | ✅ barcha sahifada uz (panel oilasi BUG-084 bundan mustasno) |
 | h1 | ✅ ko'pchilik sahifada 1 ta |
 
+### STEP 30 YAKUNIY — PERF + KONSOL + README MOSLIK (10 topilma)
+
+### BUG-225: 🟠 logo-vintage.png **254KB** — har admin sahifada yuklanadi (boshqa sahifalarda ham header'da)
+- **Dalil:** /admin/dashboard 57 request ~328KB, eng kattasi `/images/logo-vintage.png` (254KB, PNG formatda)
+- **Tavsiya:** WebP/AVIF + o'lcham optimizatsiya (80-90% tejash mumkin); dashboard'da icon-size kerak — 254KB ortiqcha
+
+### BUG-226: 🟡 PANEL 67 request ~328KB — eng og'ir sahifa (landing 18 req / 75KB bilan solishtirganda 3.7x)
+- **Ijobiy tomoni:** landing yengil ✅; br compress ✅; static cache-control max-age=86400 ✅ (1 kun — statik uchun qisqa, lekin bor)
+
+### BUG-227: ✅ Konsol WARNINGlar: landing/panel/admin — 0 ta (jami skan)
+
+### BUG-228: ✅ Brotli (br) + cache qaytariladi — server konfiguratsiyasi OK
+
+### BUG-229: 📋 README MOSLIK YAKUNIY JADVAL (30 step davomida to'plangan asosiylar)
+| README da'vo | Real holat |
+|---|---|
+| "Jonli dars o'yinlari (Kahoot uslubi)" | ❌ Director JS o'lik (BUG-049), join flaky (BUG-020/052), mobil overflow (BUG-053) |
+| "AI yordamchi" | ⚠️ API LIVE ✅, lekin UI ochilmaydi (BUG-049), hard rejim 502 (BUG-155), true_false correct None (BUG-156) |
+| "Imtihonlarni to'liq boshqarish" | ❌ 6 modul JS o'lik (BUG-059), camera-review 500 (BUG-007) |
+| "Excel import" | ❌ import->save uzilgan (BUG-129) |
+| "492 test, CI majburiy" | ❓ CI status ko'rinmadi (tekshirilmagan) |
+| "Rollar: student/teacher/admin/proctor/marker/board" | ✅ role guard ishlaydi |
+| "Passkey, MFA, parol tiklash real" | ✅ (reauth_required bilan) |
+| "PWA/offline" | ✅ SW + offline sahifa |
+| "Web Push" | ❌ push_disabled (BUG-018) |
+| "Telegram OTP + bot" | ❌ endpoint 404, UI'da esa ko'rinadi (BUG-166) |
+| "Canva/Slides" | ⚠️ Canva not configured, Slides LIVE |
+| "3 mavzu (light/dark/hc)" | ⚠️ landing/admin'da dark OK, panel oilasida YO'Q (BUG-080), hc UI toggle yo'q (BUG-100) |
+| "45+ admin sahifa" | ⚠️ 30 OK, 5 nav buzilgan, 6 modul JS o'lik |
+
+### BUG-230: 🎯 UMUMIY XULOSA (senior darajadagi yakun)
+- **Kuchli tomonlar:** backend xavfsizlik arxitekturasi (CSRF/origin/IDOR/replay/rate-limit), auth oqimlari (MFA/backup/remember/OIDC), Gemini integratsiya, PWA, mobil responsive asosi, admin statistika real ma'lumot bilan
+- **Global ildizlar (3 pattern):** (1) JS modul scope/escape buzilishlari — sahifa darajasida hamma narsani o'ldiradi; (2) repo-live deploy nomuvofikligi (eski versiya ishlayapti — head.ejs theme-core, panel fix'larini ko'rmaydi); (3) env/infra yetishmasligi (Redis, PostgreSQL, VAPID, Telegram, SMTP sekinligi) — modullar yashirin yiqiladi
+- **Prioritet 1 (foydalanuvchi yo'qotadi):** BUG-049 (director), BUG-052/053 (join), BUG-044 (arena), BUG-129 (excel), BUG-059 (6 modul), BUG-080 (dark panel), BUG-067 (keepalive)
+- **Prioritet 2:** BUG-006/007 (nav), BUG-033 (VIP UI), BUG-071 (legal linklar), BUG-093 (tema regressiya), BUG-098 (kodlar kamayib qoldi)
+- **Tez g'alabalar (1-qatorlik):** \$ IIFE fix (BUG-012/044/049 birjo'p), escape fix (BUG-009/010 tuzatilgan), footer-scripts.ejs qo'shish, SMTP timeout
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
