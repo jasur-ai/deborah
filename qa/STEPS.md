@@ -56,3 +56,4 @@
 - ✅ STEP 5 — yakunlandi (2026-08-27): BUG-049…BUG-050 (2 ta, BUG-049 🔴 DIRECTOR o'lik JS — 160 o'lik chaqiruv) + BUG-051 ijobiy (create-test E2E + Excel + Cast wizard live o'tdi)
 - ✅ STEP 6 — yakunlandi (2026-08-27): BUG-052…BUG-054 (3 ta, BUG-052 🔴 participant JOIN crash) + BUG-055 ijobiy (student bilan real join urinishasi)
 - ✅ STEP 7 — yakunlandi (2026-08-27): BUG-056…BUG-057 (2 ta, BUG-056 🔴 ai-question-gen PostgreSQL'siz o'lik) + BUG-058 ijobiy (AI generate LIVE, rate limit OK, 5 admin AI sahifa)
+- ✅ STEP 8 — yakunlandi (2026-08-27): BUG-059 🔴 EPIDEMIYA (6 imtihon moduli JS o'lik: global \$ konflikt + scan.ejs apostrof) + BUG-060 + BUG-061 ijobiy (marking/board/consideration toza)

@@ -432,6 +432,26 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 | /admin/ai-grading (Shadow), ai-checkpoint, ai-mlops, claude | sahifalar 200, navigatsiya toza |
 | rate limit 12/daq | 3 tezkor so'rovda 429 yo'q — to'g'ri |
 
+### BUG-059: 🔴 IMTIHON MODULLARI EPIDEMIYASI — 6 sahifada JS O'LIK (global `$` konflikt + sintaksis)
+- **Live dalil (admin, har sahifada pageerror):**
+  - /admin/scheduler: `Identifier '$' has already been declared` — Solver/Versions/Xonalar o'lik
+  - /admin/seating: xuddi shu — Seat-map/Check-in o'lik
+  - /admin/paper: xuddi shu — QR/chain-of-custody o'lik
+  - /admin/grading: xuddi shu — Rule/Hisoblash o'lik
+  - /admin/scan: `missing ) after argument list` — OMR/Reconciliation o'lik
+  - /admin/roster: 5 dead btn (fayl import interaktivligi shubhali)
+- **Root cause 1:** `public/js/main.js:6` — `const $ = ...` GLOBAL scope'da (IIFE emas), `partials/head.ejs:100` orqali HAR sahifada yuklanadi; `scheduler.js:16`da ham global `const $` → qayta deklaratsiya → butun fayl o'ladi
+- **Root cause 2:** `views/admin/scan.ejs` inline JS: `showMsg('Sahifa qo'shildi: ...')` — apostrof escape qilinmagan (node --check bilan isbotlandi)
+- **Ta'sir:** imtihon boshqaruvning 6 moduli (README §5 da'vosi) faqat vizual — interaktiv funksiya yo'q
+- **Tuzatish pattern:** main.js IIFE + scan.ejs apostrof escape
+
+### BUG-060: 🟡 "Mock Fanlar" atamasi — demo/real holat chalkash
+- **Dalil:** /admin/roster sidebar'da "Mock Fanlar" havolasi — admin real/demo ma'lumotni ajrata olmaydi
+
+### BUG-061: ✅ IJOBIY — 3 modul toza + elementlar
+- /admin/marking, /admin/board, /admin/consideration: 0 pageerror, to'liq tugma to'plamlari (Assignment/Taqsimlash/Kalibratsiya, Meeting/Ratify/Release to SIS, Case/Incident)
+- Dalillar: 41–49 PNG
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 | Talab | Holat |
 |-------|-------|
