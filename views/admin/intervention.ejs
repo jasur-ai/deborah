@@ -113,7 +113,7 @@
       }
       async function api(path, opts = {}) {
         const headers = { 'content-type': 'application/json' };
-        if (opts.method && opts.method !== 'GET') headers['x-csrf-token'] = CSRF;
+        if (opts.method && opts.method !== 'GET') headers['X-CSRF-Token'] = CSRF;
         const res = await fetch(path, { method: opts.method || 'GET', headers, body: opts.body ? JSON.stringify(opts.body) : undefined });
         return res.json();
       }

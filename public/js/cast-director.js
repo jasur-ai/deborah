@@ -180,7 +180,7 @@
   // ── Lobby ──
   async function loadLobbyInfo() {
     try {
-      const res = await fetch(`/api/cast/sessions/${BOOT.sessionId}/meta`, { headers: { 'x-csrf-token': window.__CSRF_TOKEN } });
+      const res = await fetch(`/api/cast/sessions/${BOOT.sessionId}/meta`, { headers: { 'X-CSRF-Token': window.__CSRF_TOKEN } });
       // Meta endpoint fallback: use initial boot if unavailable
     } catch (_) {}
   }
@@ -1287,7 +1287,7 @@
       try {
         const res = await fetch('/api/ai/generate-questions', {
           method: 'POST',
-          headers: { 'content-type': 'application/json', 'x-csrf-token': window.__CSRF_TOKEN },
+          headers: { 'content-type': 'application/json', 'X-CSRF-Token': window.__CSRF_TOKEN },
           body: JSON.stringify({ prompt: topic, count, lang: 'uz', difficulty: 'mixed', type: type === 'true_false' ? 'true_false' : 'single_choice' }),
         });
         const data = await res.json().catch(() => ({}));
@@ -2028,7 +2028,7 @@
     try {
       const res = await fetch('/api/cast/forge/library-save', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-csrf-token': window.__CSRF_TOKEN },
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': window.__CSRF_TOKEN },
         body: JSON.stringify({ sessionId: BOOT.sessionId, draftId }),
       });
       const data = await res.json();

@@ -178,7 +178,7 @@
       method: opts.method || 'GET',
       headers: {
         'content-type': 'application/json',
-        'x-csrf-token': CSRF,
+        'X-CSRF-Token': CSRF,
         ...(opts.headers || {}),
       },
       body: opts.body ? JSON.stringify(opts.body) : undefined,

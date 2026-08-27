@@ -224,7 +224,7 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-csrf-token': CSRF,
+            'X-CSRF-Token': CSRF,
           },
           body: JSON.stringify(body || {}),
         }).then(function (r) { return r.json().catch(function () { return { ok: false }; }); });

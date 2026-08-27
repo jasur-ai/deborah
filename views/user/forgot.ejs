@@ -131,7 +131,7 @@
       btn.textContent = label;
       fetch('/api/reset/request', {
         method: 'POST',
-        headers: { 'content-type': 'application/json', 'x-csrf-token': csrf },
+        headers: { 'content-type': 'application/json', 'X-CSRF-Token': csrf },
         body: JSON.stringify({ account: username, lang: lang }),
         credentials: 'same-origin'
       }).then(function (r) { return r.json(); }).then(function () {

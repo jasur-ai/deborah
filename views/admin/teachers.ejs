@@ -170,7 +170,7 @@
       try {
         const r = await fetch('/api/admin/reauth', {
           method: 'POST',
-          headers: { 'content-type': 'application/json', 'x-csrf-token': CSRF },
+          headers: { 'content-type': 'application/json', 'X-CSRF-Token': CSRF },
           body: JSON.stringify({ password: password.trim() }),
         });
         const j = await r.json();
@@ -232,7 +232,7 @@
         const url = '/admin/api/teachers/' + encodeURIComponent(modalId) + '/' + (modalAction === 'approve' ? 'approve' : 'reject');
         let r = await fetch(url, {
           method: 'POST',
-          headers: { 'content-type': 'application/json', 'x-csrf-token': CSRF },
+          headers: { 'content-type': 'application/json', 'X-CSRF-Token': CSRF },
           body: JSON.stringify({ justification: value.slice(0, 500) }),
         });
         let j = await r.json();
@@ -241,7 +241,7 @@
           if (!await ensureReauth()) { submitBtn.disabled = false; return; }
           r = await fetch(url, {
             method: 'POST',
-            headers: { 'content-type': 'application/json', 'x-csrf-token': CSRF },
+            headers: { 'content-type': 'application/json', 'X-CSRF-Token': CSRF },
             body: JSON.stringify({ justification: value.slice(0, 500) }),
           });
           j = await r.json();

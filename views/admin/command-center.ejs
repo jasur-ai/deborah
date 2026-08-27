@@ -214,7 +214,7 @@
 
     async function api(path, opts = {}) {
       const headers = { 'Content-Type': 'application/json' };
-      if (CSRF) headers['x-csrf-token'] = CSRF;
+      if (CSRF) headers['X-CSRF-Token'] = CSRF;
       const r = await fetch(path, { ...opts, headers });
       const data = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(data.error || ('HTTP ' + r.status));

@@ -20,7 +20,7 @@
     const headers = Object.assign({}, options.headers || {});
     if (isWrite) {
       headers['content-type'] = headers['content-type'] || 'application/json';
-      headers['x-csrf-token'] = csrfToken();
+      headers['X-CSRF-Token'] = csrfToken();
     }
     const res = await fetch(path, Object.assign({}, options, { headers }));
     if (!res.ok) {

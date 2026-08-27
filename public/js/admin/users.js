@@ -216,7 +216,7 @@
     try {
       const r = await fetch('/admin/api/users/block', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrf() },
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf() },
         body: JSON.stringify({ key, reason }),
       });
       const data = await r.json();
@@ -241,7 +241,7 @@
     try {
       const r = await fetch('/admin/api/users/unblock', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrf() },
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf() },
         body: JSON.stringify({ key }),
       });
       const data = await r.json();
@@ -269,7 +269,7 @@
     try {
       const r = await fetch('/admin/api/users/role', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrf() },
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf() },
         body: JSON.stringify({ key, role }),
       });
       const data = await r.json();
@@ -293,7 +293,7 @@
     try {
       const r = await fetch('/admin/api/users/revoke-sessions', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrf() },
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf() },
         body: JSON.stringify({ key }),
       });
       const data = await r.json();

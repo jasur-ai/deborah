@@ -38,6 +38,7 @@
     .codes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin:14px 0;}
     .code-chip{font-family:ui-monospace,'Cascadia Mono',monospace;font-size:.92rem;font-weight:700;letter-spacing:.06em;padding:10px 8px;border-radius:10px;background:var(--deborah-semantic-color-surface-input);border:1px dashed var(--deborah-semantic-color-border-default);text-align:center;}
     .modal-back{position:fixed;inset:0;background:rgba(4,8,20,.62);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px;}
+    .modal-back[hidden]{display:none;} /* hidden atribut display:flex'ni bosadi — Bekor qilish ishlaydi */
     .modal{width:100%;max-width:420px;background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-default);border-radius:18px;padding:22px;animation:slideDown .25s ease;}
     .modal h3{font-family:'Manrope',cursive;font-size:1.05rem;margin-bottom:6px;}
     .inp{width:100%;min-height:44px;border-radius:10px;border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-primary);font-family:'Source Sans 3',sans-serif;font-size:.9rem;padding:0 12px;margin:8px 0;box-sizing:border-box;}
@@ -179,7 +180,7 @@
         try {
           var res = await fetch('/api/profile/backup-codes', {
             method: 'POST',
-            headers: { 'content-type': 'application/json', 'x-csrf-token': window.__CSRF_TOKEN },
+            headers: { 'content-type': 'application/json', 'X-CSRF-Token': window.__CSRF_TOKEN },
             body: JSON.stringify({ password: pass })
           });
           var data = await res.json().catch(function () { return {}; });

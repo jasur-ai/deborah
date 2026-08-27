@@ -121,7 +121,7 @@
 
   <script>
     let currentPack = null;
-    const API = (p, m = 'GET', b) => fetch(p, { method: m, headers: { 'Content-Type': 'application/json', 'x-csrf-token': window.__CSRF_TOKEN || '' }, body: b ? JSON.stringify(b) : undefined }).then(r => r.json());
+    const API = (p, m = 'GET', b) => fetch(p, { method: m, headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': window.__CSRF_TOKEN || '' }, body: b ? JSON.stringify(b) : undefined }).then(r => r.json());
 
     function toast(msg, ok = true) {
       const t = document.getElementById('toast');

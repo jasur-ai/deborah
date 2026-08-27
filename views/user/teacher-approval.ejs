@@ -115,7 +115,7 @@
         btn.disabled = true;
         fetch('/api/teacher/appeal', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrf },
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
           body: JSON.stringify({ reason: reason }),
         })
           .then(function (r) { return r.json(); })

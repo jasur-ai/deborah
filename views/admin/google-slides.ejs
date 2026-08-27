@@ -80,7 +80,7 @@
   async function api(path, opts = {}) {
     const res = await fetch(path, {
       method: opts.method || 'GET',
-      headers: { 'content-type': 'application/json', 'x-csrf-token': CSRF },
+      headers: { 'content-type': 'application/json', 'X-CSRF-Token': CSRF },
       body: opts.body ? JSON.stringify(opts.body) : undefined,
     });
     const data = await res.json().catch(() => ({}));

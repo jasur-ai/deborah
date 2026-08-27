@@ -189,7 +189,7 @@
     const opts = { method: method || 'GET', headers: { 'Content-Type': 'application/json' } };
     // CSRF: attach the session token to every state-changing request
     // (required by the CSRF middleware for POST/PUT/DELETE).
-    if (method && method !== 'GET') opts.headers['x-csrf-token'] = window.__CSRF_TOKEN || '';
+    if (method && method !== 'GET') opts.headers['X-CSRF-Token'] = window.__CSRF_TOKEN || '';
     if (body !== undefined) opts.body = JSON.stringify(body);
     const r = await fetch(url, opts);
     const j = await r.json().catch(() => ({}));

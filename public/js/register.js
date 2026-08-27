@@ -113,7 +113,7 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-csrf-token': window.__CSRF_TOKEN || '',
+            'X-CSRF-Token': window.__CSRF_TOKEN || '',
           },
           body: JSON.stringify({ email: v }),
         })

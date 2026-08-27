@@ -139,7 +139,7 @@
   async function api(path, method = 'GET', body = null) {
     const opts = { method, headers: {} };
     if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
-    if (method !== 'GET' && CSRF) opts.headers['x-csrf-token'] = CSRF;
+    if (method !== 'GET' && CSRF) opts.headers['X-CSRF-Token'] = CSRF;
     const r = await fetch(path, opts);
     const data = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(data.error || ('HTTP ' + r.status));

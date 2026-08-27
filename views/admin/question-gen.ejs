@@ -110,7 +110,7 @@
   function badge(v) { return '<span class="badge ' + esc(v) + '">' + esc(v) + '</span>'; }
   async function api(path, opts = {}) {
     const headers = { 'Content-Type': 'application/json', ...(opts.headers || {}) };
-    if (opts.method && opts.method !== 'GET') headers['x-csrf-token'] = CSRF;
+    if (opts.method && opts.method !== 'GET') headers['X-CSRF-Token'] = CSRF;
     const res = await fetch(path, { method: opts.method || 'GET', headers, body: opts.body ? JSON.stringify(opts.body) : undefined });
     return res.json();
   }
