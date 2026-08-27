@@ -412,6 +412,26 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 | Step indikator | 1 Kod → 2 Ism → 3 Lobbi |
 | Socket klient | command envelope, ACK, dedupe, retry arxitekturasi tayyor |
 
+### BUG-056: 🔴 AI Question Generator (admin) ISHLAMAYDI — "PostgreSQL required"
+- **Live dalil (admin sessiya, to'liq payload):** `POST /api/admin/ai-question-gen/blueprints` → `400 {"ok":false,"error":"PostgreSQL required"}`; ro'yxat `blueprints:[]`
+- **UI qo'shimcha:** "+ Blueprint yaratish" tugma live'da **403** qaytadi (UI payload format bilan muvofiqligi buzilgan) — foydalanuvchiga yashirin xato
+- **Kod:** `routes/ai-question-gen.js:63` — blueprint yaratish PG talab qiladi; Render'da Postgres yo'q
+- **Ta'sir:** README §3 da'vosi ("ai-question-gen blueprint/job pipeline") **butunlay ishlamaydi**; sahifa ochiladi lekin funksiya yo'q, xato yashirin
+- **Tavsiya:** env to'ldirish yoki sahifada "PostgreSQL sozlanmagan" holati ko'rsatilishi
+
+### BUG-057: 🟡 Claude Adapter sahifasi — "API key: noma'lum"
+- **Dalil (live):** `/admin/claude` — "API key: noma'lum" (10 ta boshqaruv elementi)
+- **Ta'sir:** holat aniq ko'rsatilishi kerak (Canva bilan bir xil dizayn muammosi, BUG-022)
+
+### BUG-058: ✅ IJOBIY — AI zonalari holati (live)
+| Zona | Holat |
+|------|-------|
+| `/api/ai/generate-questions` (teacher) | 3/3 so'rov 200 — real savollar |
+| Director ⚡ Tezkor savol | Tugma+overlay+placeholder bor — lekin ochilishi BUG-049 qurboni (`orb-overlay` click to'sadi) |
+| /admin/ai-question-gen | sahifa 200, modul PG'siz o'lik (BUG-056) |
+| /admin/ai-grading (Shadow), ai-checkpoint, ai-mlops, claude | sahifalar 200, navigatsiya toza |
+| rate limit 12/daq | 3 tezkor so'rovda 429 yo'q — to'g'ri |
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 | Talab | Holat |
 |-------|-------|
