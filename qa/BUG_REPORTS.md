@@ -717,6 +717,48 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 | Reg label association | 0 xato |
 | admin login focus | ko'rinchan |
 
+### BUG-119: 🟠 `correct` index range tashqarisida ham SAQLANADI — savol "doim xato" bo'ladi
+- **Dalil:** `POST /user/api/tests/save` `{options:["a","b"], correct:5}` → **200 success** (server validatsiya yo'q)
+- **Ta'sir:** API/buzilgan client orqali kiritilgan savolda to'g'ri javob hech qachon tanlanmaydi — talaba to'g'ri javobni belgilasa ham "noto'g'ri" baholanadi (baholash intigri)
+- **UI:** create-test UI radio bilan cheklaydi — FAQAT server himoyasi yo'q
+
+### BUG-120: 🟡 1 variantli savol saqlanadi (kamida 2 bo'lishi kerak)
+- **Dalil:** `{options:["a"], correct:0}` → 200 success; UI'da 4 variant default beriladi, lekin server cheklovi yo'q
+- **Ta'sir:** API orqali yagona variantli savol — yaroqsiz test
+
+### BUG-121: 🟡 Test nomi uzunlik limiti YO'Q (300+ belgi qabul)
+- **Dalil:** 300-belgili nom → 200; UI maxlength ham yo'q
+- **Ta'sir:** layout buzilishi, DB katta maydonlar
+
+### BUG-122: 🟡 Variantlar soni server'da cheklanmagan (8+ qabul; UI 6 bilan cheklaydi)
+- **Dalil:** 8 variant → 200 success
+- **Ta'sir:** API client'lari UI qoidalarini chetlab o'tadi — cast render'da nomuvofiq ko'rinish mumkin
+
+### BUG-123: ⚪ Savollar soni limit YO'Q (100 savol → 200)
+- 10mb body limitgacha bo'lgan payloadlar qabul qilinadi; rate limit ham yo'q (faqat CSRF)
+
+### BUG-124: 🟡 IKKI XIL testKey formati: save `mtbXXXXXXXXXXXX` vs duplicate `t_<timestamp>_<rand>`
+- **Dalil:** save → `mtbwqkke0vb9`; duplicate → `t_1787858413763_2shqar`
+- **Ta'sir:** key formati izchil emas — debug/migratsiyada chalkashlik; sortlash timestamp-prefixed key bilan farqli
+
+### BUG-125: 🟡 `toggle-public` birmartalik bosishda test OMMAGA chiqadi (confirm YO'Q)
+- **Kod:** `workspace-library.js:243` — visibility toggle `apiAction`'ga to'g'ridan-to'g'ri; delete'da confirm bor, public'da YO'Q
+- **Ta'sir:** xato bosish bilan shaxsiy test (talaba javoblari bo'lishi mumkin) ommaviy ko'rinadi
+
+### BUG-126: ⚪ archive endpoint `archived` param'siz chaqirilsa `{"archived":false}` qaytaradi (toggle mantiq; JS to'g'ri param yuboradi)
+
+### BUG-127: ✅ IJOBIY — Test CRUD asosi mustahkam (live tekshirildi)
+| Amal | Natija |
+|------|--------|
+| bo'sh nom / bo'sh savollar | 400 Invalid data |
+| edit (editKey) | 200, preserve isPublic/createdAt |
+| duplicate/archive/rename/toggle-public | 200 |
+| 5 savol turi saqlash | 200 (single/true_false/multi/short/exit_ticket) |
+| 100 savol | 200 |
+
+### BUG-128: ℹ️ QA test artefaktlari teacher panelida qoldi (V2, V3, T-*, EDIT-test...)
+- cleanup regex data-key'ni topmadi (attr format farqi); admin paneldan qo'lda o'chirish mumkin yoki keyingi stepda cleanup
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI

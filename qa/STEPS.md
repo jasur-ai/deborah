@@ -66,3 +66,4 @@
 - ✅ STEP 15 — yakunlandi (2026-08-27): BUG-100 🟠 (hc rejim UI toggle yo'q — yarim funksiya, funksional tasdiq) + BUG-101…103 (3 ta) + BUG-104 ijobiy (hc-dark sifatli, OS dark avto, legal ru/en)
 - ✅ STEP 16 — yakunlandi (2026-08-27): BUG-105 🟠 (play mobil overflow re-confirm, join tugma yetib bormaydi) + BUG-106…110 (5 ta mobil UX) + BUG-111/112 ijobiy (mobil asosiy oqimlar toza) + BUG-113 (BUG-052+053 birgalikda Cast mobil join to'sadi)
 - ✅ STEP 17 — yakunlandi (2026-08-27): BUG-114 🔴 (admin modal focus trap yo'q) + BUG-115 🟠 (200% zoom overflow) + BUG-116 🟡 (teacher/admin RU/EN yo'q) + BUG-117/118
+- ✅ STEP 18 — yakunlandi (2026-08-27): BUG-119 🟠 (correct out-of-range qabul — server validatsiya yo'q) + BUG-120…124 (5 ta) + BUG-126 ⚪ + BUG-127/128 (CRUD ijobiy + QA artefakt)
