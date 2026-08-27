@@ -267,7 +267,7 @@ async function invalidateIfStale(req, res) {
 function expireSessionResponse(req, res, message) {
   const isApi = req.originalUrl.startsWith('/api/') || req.path.startsWith('/api/');
   const returnUrl = loginReturnUrl(req.originalUrl);
-  if (isApi || req.xhr || req.accepts('json')) {
+  if (isApi || req.xhr || req.accepts(['html', 'json']) === 'json') { // BUG-041: accepts('json') `*/*` tufayli brauzerga ham JSON qaytarardi — html afzal bo'lsa redirect
     return res.status(401).json({ error: message, redirect: `/user/login?returnUrl=${returnUrl}` });
   }
   return res.redirect(`/user/login?returnUrl=${returnUrl}`);
@@ -335,7 +335,7 @@ export async function requireAuth(req, res, next) {
   // Use originalUrl (not req.path) — scoped router.use('/api', ...) strips the
   // /api prefix from req.path, which would wrongly classify API calls as HTML.
   const isApi = req.originalUrl.startsWith('/api/') || req.path.startsWith('/api/');
-  if (isApi || req.xhr || req.accepts('json')) {
+  if (isApi || req.xhr || req.accepts(['html', 'json']) === 'json') { // BUG-041: accepts('json') `*/*` tufayli brauzerga ham JSON qaytarardi — html afzal bo'lsa redirect
     return res.status(401).json({ error: 'Avtorizatsiya talab qilinadi', redirect: '/user/login' });
   }
   res.redirect('/user/login');
@@ -359,7 +359,7 @@ export async function requireEmailVerified(req, res, next) {
   const user = req.session?.user;
   if (!user?.safeKey) {
     const isApi = req.originalUrl.startsWith('/api/') || req.path.startsWith('/api/');
-    if (isApi || req.xhr || req.accepts('json')) {
+    if (isApi || req.xhr || req.accepts(['html', 'json']) === 'json') { // BUG-041: accepts('json') `*/*` tufayli brauzerga ham JSON qaytarardi — html afzal bo'lsa redirect
       return res.status(401).json({ error: 'Avtorizatsiya talab qilinadi', redirect: '/user/login' });
     }
     return res.redirect('/user/login');
@@ -400,7 +400,7 @@ export async function requireEmailVerified(req, res, next) {
   } catch (_) { /* telemetry fail-soft */ }
 
   const isApi = req.originalUrl.startsWith('/api/') || req.path.startsWith('/api/');
-  if (isApi || req.xhr || req.accepts('json')) {
+  if (isApi || req.xhr || req.accepts(['html', 'json']) === 'json') { // BUG-041: accepts('json') `*/*` tufayli brauzerga ham JSON qaytarardi — html afzal bo'lsa redirect
     return res.status(403).json({ error: 'EMAIL_VERIFY_REQUIRED', redirect: '/user/panel' });
   }
   res.redirect('/user/panel');
@@ -442,7 +442,7 @@ export function requireAdmin(req, res, next) {
   // Use originalUrl (not req.path) — scoped router.use('/api', ...) strips the
   // /api prefix from req.path, which would wrongly classify API calls as HTML.
   const isApi = req.originalUrl.startsWith('/api/') || req.path.startsWith('/api/');
-  if (isApi || req.xhr || req.accepts('json')) {
+  if (isApi || req.xhr || req.accepts(['html', 'json']) === 'json') { // BUG-041: accepts('json') `*/*` tufayli brauzerga ham JSON qaytarardi — html afzal bo'lsa redirect
     return res.status(401).json({ error: 'Admin avtorizatsiyasi talab qilinadi', redirect: '/admin/login' });
   }
   res.redirect('/admin/login');

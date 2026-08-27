@@ -17,6 +17,9 @@
 
   // AUTH D-08 §15: i18n copy — security-profile.ejs `#mfa-card[data-copy]`
   var card = document.getElementById('mfa-card');
+  // BUG-011: MFA bloki render qilinmagan sahifada (student/VIP) jim no-op —
+  // aks holda pastdagi element ref'lari null bo'lib IIFE TypeError bilan o'lardi.
+  if (!card) return;
   var copy = {};
   try { copy = JSON.parse((card && card.getAttribute('data-copy')) || '{}'); } catch (_) {}
   function t(key, fallback) { return (copy && copy[key]) || fallback; }

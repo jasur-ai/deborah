@@ -60,12 +60,14 @@ vi.mock('../../../firebase/admin.js', () => {
 });
 
 import {
+  encryptSecret,
   hashBackupCode,
   isTotpCode,
   isBackupCodeFormat,
   verifyTotpCode,
   consumeBackupCode,
   isLockedOut,
+  verifyMfaCode,
   createMfaChallenge,
   readMfaChallenge,
   consumeMfaChallenge,
@@ -168,6 +170,27 @@ describe('AUTH D-15 §09 — lockout 5x15 + reset delay', () => {
     expect(typeof remaining).toBe('number');
     expect(remaining).toBeGreaterThan(0);
     expect(remaining).toBeLessThanOrEqual(15 * 60 * 1000);
+  });
+
+  it('BUG-016: eskirgan lockout + yangi xato → locked EMAS, manfiy retryAfterSeconds YO‘Q', async () => {
+    // 15 daqiqalik lock tugagan (lockoutUntil o'tgan timestamp), fails=2 qolgan
+    const uid = 'u-exp-lock';
+    testStore.mfa_totp = {
+      [uid]: {
+        status: 'active',
+        fails: 2,
+        lockoutUntil: Date.now() - 5 * 60 * 1000, // 5 daqiqa oldin tugagan
+        secretEnc: encryptSecret('JBSWY3DPEHPK3PXP'),
+      },
+    };
+    const r = await verifyMfaCode(uid, '31337', '203.0.113.66'); // noto'g'ri kod
+    expect(r.ok).toBe(false);
+    expect(r.error).toBe('invalid_code');
+    // Asosiy assert: locked bayrog'i va manfiy timer QAYTMASLIGI kerak
+    expect(r.locked).toBeUndefined();
+    expect(r.retryAfterSeconds).toBeUndefined();
+    // Yozuv ham tozalandi: lockoutUntil 0 (clamp)
+    expect(testStore.mfa_totp[uid].lockoutUntil).toBe(0);
   });
 
   it('requestMfaReset → executeMfaReset 72 soatdan keyin ishlaydi (RESET_DELAY_MS)', async () => {

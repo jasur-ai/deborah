@@ -31,7 +31,7 @@
 (panel: 3 global tirik; arena: loadArena/addBots=function; create-test: 'breakout' ko'rinmas;
 /play: head+inline const \$ birga) — `scripts/repro-step1.mjs`.
 
-## STEP 2 — 🟠 Auth/session backend buglari — ⏳
+## STEP 2 — 🟠 Auth/session backend buglari — ✅ YAKUNLANDI
 **Buglar:** BUG-011, BUG-016, BUG-041
 **Qanday:**
 - **BUG-011** — `mfa-settings.js:119`: MFA o'chirilgan userda `enableBtn=null` → TypeError → IIFE
@@ -41,7 +41,27 @@
   (-2931s live dalil). Fix: `lockoutUntil <= now` bo'lsa 0 ga tushirish.
 - **BUG-041** — `GET /user/teacher-approval` auth'siz 401 xom JSON qaytaradi. Fix: HTML login
   redirect (boshqa sahifalar kabi).
-**Verify:** unit/integration test + brauzer (MFA'siz security-profile crash yo'q).
+**Qilingan (aniq):**
+- **BUG-011 — 2 qatlamli fix**: (a) security-profile.ejs'da `mfaAllowed` hoist — mfa-settings.js
+  FAQAT teacher/admin'da yuklanadi (sabab: MFA kartasi role-shartli render, script esa shartsiz
+  yuklanar, student'da barcha element ref'lari null → L119 TypeError → IIFE o'lgan);
+  (b) mfa-settings.js IIFE boshiga `if (!card) return;` guard (defense-in-depth).
+- **BUG-016**: recordFailedAttempt'da eskirgan `lockoutUntil` (o'tgan timestamp) saqlanib
+  qolardi → lock tugagach birinchi xatoda `locked:true` + MANFIY retryAfterSeconds (-2931s).
+  Fix: `prevLockout = lockoutUntil > now ? ... : 0` — faqat kelajakdagi qiymat saqlanadi.
+  O'qish tomoni (isLockedOut) allaqachon to'g'ri edi — faqat yozish clamp qilindi.
+- **BUG-041 — ILDIZ**: `req.accepts('json')` brauzer `Accept: */*` tufayli deyarli har doim true →
+  sahifalar ham xom 401 JSON qaytarardi. Fix: `req.accepts(['html','json']) === 'json'` — 5 ta
+  middleware'da (expireSessionResponse, requireAuth, requireEmailVerified ×2, requireAdmin) —
+  butun klass yopildi: brauzer → 302 login redirect (returnUrl bilan), API/Accept:json → 401 JSON.
+- **Test yangilandi (3 joy, eski xatti-harakatni assert qilgan)**: dsar-ui-d23 (302|401 tolerant,
+  auth.test.js B-25 naqshi), auth.test.js L457 (location endi returnUrl bilan), L725
+  (`redirect: 'manual'` — fetch redirect'ni kuzatib 200 olardi).
+
+**Verify (isbot):** vitest auth paketi **491/491** (yangi BUG-016 regression case bilan) +
+integration 104/104 · Playwright brauzer **10/10 PASS** (`scripts/repro-step2.mjs`): student
+security-profile 0 pageerror + mfa-settings.js so'ralmaydi; teacher'da script yuklanadi + enable
+tugma tirik; guest teacher-approval → 302 login (brauzer Accept) / 401 JSON (Accept:json).
 
 ## STEP 3 — 🔴 Admin panel buzilgan navigatsiya (5 havola) — ⏳
 **Buglar:** BUG-006, BUG-007
@@ -129,6 +149,7 @@
 
 ## ✅ YAKUNLANGANLAR
 - **STEP 1** (2026-08-27): BUG-009/010/012/044 + 2 yangi topilma — 6 fayl; brauzer 13/13 PASS, vitest 45/45.
+- **STEP 2** (2026-08-27): BUG-011/016/041 — 5 fayl + 3 test sinxron; brauzer 10/10 PASS, auth 491/491, integration 104/104.
 
 ## 📋 MANBA HAVOLALAR
 - BUG hisobotlari: `workspace` branch → `qa/BUG_REPORTS.md`

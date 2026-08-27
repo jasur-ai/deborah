@@ -454,7 +454,8 @@ describe('Auth — reset flow (plan_login §5)', () => {
     });
     expect([302, 401]).toContain(panelRes.status);
     if (panelRes.status === 302) {
-      expect(panelRes.headers.get('location')).toBe('/user/login');
+      // BUG-041 fix: redirect returnUrl bilan (login'dan keyin panelga qaytadi)
+      expect(panelRes.headers.get('location').startsWith('/user/login')).toBe(true);
     } else {
       const body = await panelRes.json();
       // AUTH B-25: revoke server-side store destroy — sessiya topilmasa
@@ -721,7 +722,9 @@ describe('S27 — Test Builder professional authoring workspace', () => {
   });
 
   it('S27 — unauth: /user/create-test auth talab qiladi (401 yoki redirect)', async () => {
-    const res = await fetch(`${serverUrl}/user/create-test`);
+    // BUG-041 fix: sahifa uchun brauzer/json2 o'rniga 302 login redirect (manual —
+    // fetch default redirect'ni kuzatib 200 olib qoladi)
+    const res = await fetch(`${serverUrl}/user/create-test`, { redirect: 'manual' });
     expect([301, 302, 303, 401]).toContain(res.status);
   });
 

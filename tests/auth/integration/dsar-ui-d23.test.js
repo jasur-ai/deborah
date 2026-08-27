@@ -165,9 +165,14 @@ describe('AUTH D-23 §06-§12 — DSAR UI/SLA (wsl)', () => {
     expect(dj.message).toBe('account_scheduled_for_deletion');
     expect(dj.graceUntil - Date.now()).toBeGreaterThan(29 * 24 * 3600 * 1000);
 
-    // Sessiya bekor qilingan → panel 401
+    // Sessiya bekor qilingan → panel 401 (API/json) yoki 302 login redirect
+    // (BUG-041 fix: sahifa so'rovi html afzal ko'rsa — Accept: */* bilan ham —
+    // endi /user/login'ga redirect; auth.test.js B-25 singabi tolerant assert).
     const panel = await fetch(`${BASE}/user/panel`, { headers: { cookie: session, 'x-forwarded-for': XFF }, redirect: 'manual' });
-    expect(panel.status).toBe(401);
+    expect([302, 401]).toContain(panel.status);
+    if (panel.status === 302) {
+      expect(panel.headers.get('location').startsWith('/user/login')).toBe(true);
+    }
 
     // Login blok (soft-deleted user kira olmaydi) — status='blocked' → AUTH C-02 §10 permanent lock.
     // Haqiqiy o'chirilgan user bilan login: muvaffaqiyatli login 302 (panel) bo'lardi,

@@ -242,7 +242,10 @@ async function recordFailedAttempt(userId, ip) {
   const recSnap = await fb.get(`${MFA_TOTP_PATH}/${key}`);
   const rec = recSnap.exists() ? recSnap.val() : {};
   const fails = (rec.fails || 0) + 1;
-  const lockoutUntil = fails >= LOCKOUT_MAX_FAILS ? now + LOCKOUT_WINDOW_MS : rec.lockoutUntil || 0;
+  // BUG-016: eskirgan (o'tgan) lockoutUntil saqlanib qolib, keyingi xatoda
+  // `locked:true` + MANFIY retryAfterSeconds qaytardi — faqat kelajakdagi qiymat saqlanadi.
+  const prevLockout = (rec.lockoutUntil || 0) > now ? rec.lockoutUntil : 0;
+  const lockoutUntil = fails >= LOCKOUT_MAX_FAILS ? now + LOCKOUT_WINDOW_MS : prevLockout;
   const resetFails = lockoutUntil > 0 ? 0 : fails;
   await fb.set(`${MFA_TOTP_PATH}/${key}`, {
     ...rec,

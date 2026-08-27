@@ -78,7 +78,8 @@
     <div style="font-size:.72rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-top:6px">Akkauntingizga ulangan barcha qurilmalar, oxirgi faollik va yakunlash.</div>
 
     <% // 2026-08-27: MFA (Authenticator) faqat admin/o'qituvchi uchun %>
-    <% if (user && (user.role === 'teacher' || user.role === 'admin')) { %>
+    <% const mfaAllowed = !!(user && (user.role === 'teacher' || user.role === 'admin')); %>
+    <% if (mfaAllowed) { %>
     <% const ms = accountCopy.mfaSettings || {}; %>
     <div class="sec-title" style="margin-top:18px"><%- icon('shieldCheck', 16) %> <%= ms.title || 'Ikki bosqichli tekshiruv (MFA)' %></div>
     <!-- AUTH D-08 §15: data-copy — mfa-settings.js i18n (4 til) -->
@@ -196,7 +197,7 @@
   </div>
 
   <script src="/js/security-profile.js"></script>
-  <script src="/js/mfa-settings.js"></script>
+  <% if (mfaAllowed) { %><script src="/js/mfa-settings.js"></script><% } %><% /* BUG-011: mfa-settings.js faqat MFA bloki render qilinganda yuklanadi */ %>
   <script src="/js/passkey-settings.js"></script>
   <script src="/js/account-settings.js" defer></script>
   <script>
