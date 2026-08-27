@@ -75,3 +75,4 @@
 - ✅ STEP 24 — yakunlandi (2026-08-27): BUG-170 🟠 (fans/save 500 raw Firebase error — info disclosure) + BUG-171/172/174 ijobiy (role/block/unblock OK) + BUG-173/175
 - ✅ STEP 25 — yakunlandi (2026-08-27): BUG-180 ✅ (replay protection OK) + BUG-181 🟠 (manfiy timer yana) + BUG-182 🟠 (export traversal 500) + BUG-183…189 (XSS export OK, rate OK, flakiness)
 - ✅ STEP 26 — yakunlandi (2026-08-27): BUG-190/191 ✅ (remember revoke, sid regenerate) + BUG-192 🟡 (Origin:null bypass — past risk) + BUG-193 ✅ + BUG-194…196 ✅ (6/6 reg validatsiya) + BUG-197 🟡 (generic xabar) + BUG-198/199
+- ✅ STEP 27 — yakunlandi (2026-08-27): BUG-200 🟡 (users qidiruv debounce/param nomuvofiq) + BUG-201/203 ⚪ (limit param e'tiborsiz, RANDOM 25 badge eski) + BUG-202/204/205 ijobiy (audit pagination, uzun nom clip, ro'yxat asosi toza)

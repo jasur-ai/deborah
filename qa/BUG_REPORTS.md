@@ -959,6 +959,31 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-199: ℹ️ Xulosa: auth validatsiya zanjiri mustahkam, faqat foydalanuvchiga ko'rinadigan xabar matnlari buzilgan (BUG-197)
 
+### BUG-200: 🟡 Users qidiruv DEBOUNCE/endpoint param nomuvofiq — tez yozishda filtr ishlamaydi
+- **Dalil (live):** `si.type("jasur", delay=10)` (progrommatik tez yozish) + 1.2s kutish → qatorlar **117** (filtralanmagan); `?search=jasur` param ham 25 ta default qaytardi, faqat `?q=jasur` → 3 ta to'g'ri
+- **Ildiz:** dashboard UI qidiruvi `?q=` orqali ishlaydi (API to'g'ri), lekin input event handler debounce'siz yoki endpoint param nomi UI bilan mos emas — foydalanuvchi tez yozsa natija yangilanmaydi
+- **Ta'sir:** qidiruv natijalari kechikadi/yangilanmaydi
+
+### BUG-201: ⚪ `?limit=5` param e'tiborsiz (pageSize 25 qotib qolgan)
+- **Dalil:** `?limit=5` → 25 ta qaytardi (`pageSize` 25); faqat page param ishlaydi
+- **Ta'sir:** API consumer uchun kutilmagan (hujjat yo'q — qabul qilinadigan param `q` va `page`)
+
+### BUG-202: ✅ Audit pagination ISHLAYDI (page1 != page2, har safar 25 item)
+
+### BUG-203: 🟡 "RANDOM 25" badge — fans API'da 7 ta fan (badge matni eski/noto'g'ri)
+- **Dalil:** sidebar/dashboard "Namuna fanlar RANDOM 25" — API 7 ta qaytaradi; 25 emas
+
+### BUG-204: ✅ 300-belgili test nomi panel'da text-overflow: clip bilan to'g'ri kesiladi (overflow yo'q) — BUG-121 faqat API darajasida (UI himoyalangan)
+
+### BUG-205: ✅ IJOBIY — Ro'yxat oqimlari asosi toza (live)
+| Tekshiruv | Natija |
+|-----------|--------|
+| users API paginatsiya (page) | ✅ ishlaydi (25/page, total field bilan) |
+| `?q=` qidiruv | ✅ 3 natija (jasur*) |
+| audit pagination | ✅ |
+| uzun nom UI kesish | ✅ clip |
+| 320/375px mobil | ✅ (oldingi step) |
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
