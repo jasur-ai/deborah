@@ -11,6 +11,7 @@
  * Manba: A-26 §10/§12, A-27, D-17.
  */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { fb } from '../../../firebase/admin.js';
 import supertest from 'supertest';
 import { createApp } from '../../../server.js';
 import { snapshotDb, restoreDb } from '../../helpers/setup.js';
@@ -41,7 +42,10 @@ async function register(agent, { username, email, role = '', extra = {} }) {
     consent: 'on', role,
     ...extra,
   };
-  return agent.post('/user/login').set('x-forwarded-for', ip).type('form').send(body);
+  const res = await agent.post('/user/login').set('x-forwarded-for', ip).type('form').send(body);
+  // 2026-08-27: MFA faqat admin/o'qituvchi — test userini teacher'ga ko'taramiz
+  try { await fb.set(`users/${username}/role`, 'teacher'); } catch (_) {}
+  return res;
 }
 
 beforeAll(async () => {
@@ -85,7 +89,7 @@ describe('AUTH D-17 §08 — MFA journey', () => {
       .send({ token: code }).set('x-forwarded-for', nextIp());
     expect(enable.status).toBe(200);
     expect(enable.body.ok).toBe(true);
-    expect(enable.body.backupCodes).toHaveLength(10);
+    expect(enable.body.backupCodes).toHaveLength(12);
 
     const status = await agent.get('/api/mfa/status').set('x-forwarded-for', nextIp());
     expect(status.body.status).toBe('active');

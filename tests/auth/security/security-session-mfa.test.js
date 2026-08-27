@@ -10,6 +10,7 @@
  * Manba: A-02 §12 (regenerate), A-26 §10, A-25 §09, D-18 §07.
  */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { fb } from '../../../firebase/admin.js';
 import supertest from 'supertest';
 import { createApp } from '../../../server.js';
 import { snapshotDb, restoreDb } from '../../helpers/setup.js';
@@ -39,6 +40,8 @@ async function register(agent, { username, email }) {
     username, password: 'sirli-parol-2026-x', email,
   });
   expect([302, 303]).toContain(res.status);
+  // 2026-08-27: MFA faqat admin/o'qituvchi — test userini teacher'ga ko'tiramiz
+  try { await fb.set(`users/${username}/role`, 'teacher'); } catch (_) {}
 }
 
 async function login(agent, username) {
