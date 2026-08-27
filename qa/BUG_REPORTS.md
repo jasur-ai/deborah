@@ -491,6 +491,30 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 | Natijalar bloki | real userlar bilan |
 | pageerror | 0 |
 
+### BUG-067: 🔴 Session keepalive ping CSRF'siz — 403 → idle timeout davom etirilmaydi
+- **Live dalil:** panel ochiq + `POST /api/session/ping` (x-csrf-token bilan ham) → **403 "CSRF token validation failed"**
+- **Root cause (kod):** `public/js/components/session-timeout.js:83,96` — keepalive fetch **faqat Content-Type** header yuboradi, `x-csrf-token` YO'Q; server `server.js:293 validateCsrf` BARCHA POST'larda talab qiladi
+- **Ilova:** panel.ejs'dagi o'lik blok (BUG-009) global `__CSRF_TOKEN`'ni buzadi — lekin session-timeout.js umuman token ishlatmaydi, demak ikkala bug mustaqil
+- **Ta'sir (jadval bilan):** foydalanuvchi sahifada faol bo'lsa-da, "Davom etish" / keepalive 403 bilan yiqiladi → SESSION_IDLE_TIMEOUT_MS (30 daq) tugagach majburiy chiqariladi; "sessiya uzaytirish" funksiyasi nominal
+- **Tuzatish (hisobot):** fetch'ga `x-csrf-token: window.__CSRF_TOKEN` qo'shish
+
+### BUG-068: 🟡 Admin "Barcha sessiyalarni yakunlash" — 5 sessiya revoke deb hisoblaydi, lekin foydalanuvchi sessiyasi TIRIK qoladi
+- **Live dalil:** `POST /admin/api/users/revoke-sessions {key: jasurjonai}` → `200 {"success":true,"count":5}`; foydalanuvchi keyin panel ochsa → **200, sessiya ishlayveradi** (connect.sid o'zgarmagan)
+- **Kod:** `session-manager.js:79 revokeByUser` — `destroySessionInStore(realSid)`; count=5 — eski/merchant session record'lari sanalgan, joriy live sessiya record'i bo'lmasa (yoki remember-me qayta login qilmasa) foydalanuvchi ichida qolaveradi
+- **Ta'sir:** admin "xavfsizlik uchun chiqarildi" deb ishonadi — amalda foydalanuvchi tizimda; hisob yopish/o'chirish kabi amallarda kritik farq
+- **Keyingi tekshiruv:** remember-me auto-relogin oqimi bilan birga (STEP 67-68'da)
+
+### BUG-069: ✅ IJOBIY — Audit tizimi to'liq funksional (live)
+| Tekshiruv | Natija |
+|-----------|--------|
+| /admin/audit sahifa | 200 |
+| api/audit | 200 — real yozuvlar (auth:risk:scored...) |
+| action filtri (auth.login) | ✅ faqat shu action (25 item) |
+| aggregates | ✅ login_success:41, login_fail:2, hibp_hit... |
+| export CSV | ✅ 31KB, header qo'shtirnoq bilan, formula-injeksiya yo'q |
+| Remember-me | ✅ deborah_remember cookie (selector:verifier, Max-Age 30 kun, Expires set) |
+| SessionTimeout client | ✅ obj mavjud (lekin BUG-067 keepalive 403) |
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 | Talab | Holat |
 |-------|-------|
