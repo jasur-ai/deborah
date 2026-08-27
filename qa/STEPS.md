@@ -74,3 +74,4 @@
 - ✅ STEP 23 — yakunlandi (2026-08-27): BUG-165 🟠 (HEMIS 'olib tashlandi' yolg'on — endpointlar tirik) + BUG-166 🟡 (Telegram UI'da bor, endpoint 404) + BUG-167/168 ijobiy (forgot enumeration OK, verify validatsiya OK) + BUG-169 (Canva/Slides/Push re-check)
 - ✅ STEP 24 — yakunlandi (2026-08-27): BUG-170 🟠 (fans/save 500 raw Firebase error — info disclosure) + BUG-171/172/174 ijobiy (role/block/unblock OK) + BUG-173/175
 - ✅ STEP 25 — yakunlandi (2026-08-27): BUG-180 ✅ (replay protection OK) + BUG-181 🟠 (manfiy timer yana) + BUG-182 🟠 (export traversal 500) + BUG-183…189 (XSS export OK, rate OK, flakiness)
+- ✅ STEP 26 — yakunlandi (2026-08-27): BUG-190/191 ✅ (remember revoke, sid regenerate) + BUG-192 🟡 (Origin:null bypass — past risk) + BUG-193 ✅ + BUG-194…196 ✅ (6/6 reg validatsiya) + BUG-197 🟡 (generic xabar) + BUG-198/199

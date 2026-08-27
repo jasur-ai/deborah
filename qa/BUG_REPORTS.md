@@ -928,6 +928,37 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-189: ℹ️ verify/send 10/soat limit menga tegishli (testlar sabab) — foydalanuvchi uchun me'yor yetarli
 
+### BUG-190: ✅ Remember-me logout'dan keyin O'LMAGAN (revoke OK)
+- **Dalil:** logout → eski `deborah_remember` cookie bilan /user/panel → **401** (token revoke ishlaydi, session qayta tirilmaydi)
+
+### BUG-191: ✅ SESSION FIXATION himoyasi OK
+- **Dalil:** anonim sid `b53416ec...` → login'dan keyin `347555ae...` — **regenerate** bo'ldi (session.fixation himoyasi faol)
+
+### BUG-192: 🟡 `Origin: null` origin-check'dan O'TADI (defense-in-depth zaifligi)
+- **Dalil:** VIP grant so'rovi `Origin: null` bilan → **404 handler'ga yetdi** (same-origin 404, evil 403)
+- **Kontekst:** haqiqiy hujum uchun CSRF token baribir kerak (per-session), shuning uchun risk PAST — lekin sandboxed-iframe vektorida ikkinchi himoya qatlami ishlamaydi
+- **Tavsiya:** `Origin: null`'ni ham rad etish yoki token talabni kuchaytirish
+
+### BUG-193: ✅ Subdomain trick bloklangan: `deborah-ncj.onrender.com.evil.com` → 403 ORIGIN_BLOCKED
+
+### BUG-194–196: ✅ REGISTRATSIYA VALIDATSIYA ZANJIRI TO'LIQ ISHLAYDI (6/6 reject)
+| Test | Natija |
+|------|--------|
+| password1 (kuchsiz) | reject |
+| username bo'shliqli | reject |
+| username `admin` (reserved) | reject |
+| username confusable `admіn` | reject |
+| email noto'g'ri format | reject |
+| consent yo'q | reject |
+
+### BUG-197: 🟡 Validatsiya xabarlari GENERIC + NOTO'G'RI — har 6 holatda bir xil "Ism va parolni kiriting" chiqadi
+- **Dalil:** parol kuchsiz / username band / email format xato — barchasida bir xil required xabar; parseRegister errorKey (passwordWeak, usernameReserved, emailInvalid...) render'da xaritlanmayapti
+- **Ta'sir:** foydalanuvchi asl sababni bilmaydi — 6 xil xato uchun bitta noto'g'ri maslahat (B-03 errorKey tizimi bor, lekin chiqish yo'q)
+
+### BUG-198: ✅ Register sahifasi har chaqiruvda yangi CSRF (token ishlatilganidan keyin ham yangi forma)
+
+### BUG-199: ℹ️ Xulosa: auth validatsiya zanjiri mustahkam, faqat foydalanuvchiga ko'rinadigan xabar matnlari buzilgan (BUG-197)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
