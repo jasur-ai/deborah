@@ -560,6 +560,47 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 | mobil menyu | ✅ ochiladi, 4 item |
 | pageerror | ✅ 0 |
 
+### BUG-080: 🔴 DARK MODE panel oilasida UMUMAN ishlamaydi — theme-core yuklanmaydi (deploy nomuvofiq)
+- **Live dalil (5 sahifa):** `/user/panel`, `/teacher`, `/user/security-profile`, `/user/create-test`, `/user/settings` — `script[src*=theme-core]` **YO'Q**, `window.DeborahThemeCore = undefined`, `<html>`da data-theme attrlari **bo'sh**; localStorage'da 'dark' bo'lsa ham e'tiborsiz (sahifa doim light)
+- **Repo zidi:** `views/user/panel.ejs:4` head.ejs include qiladi, `partials/head.ejs:104` esa `<script src="/js/theme-core.js">` beradi — **live deploy boshqa (eski) versiya**
+- **Ta'sir:** foydalanuvchi "dark mode umuman ko'rinmayapti" shikoyatining **2-katta manbasi**: landing/admin dark, panel oilasi esa dark'ni umuman bilmaydi — bir foydalanuvchi uchun 2 xil realit
+- **Qamrov:** teacher VA student panellari + barcha user sahifalar
+
+### BUG-081: 🟠 Tema uzluksizligi YO'Q: landing dark → panel majburan light
+- **Dalil:** bir brauzer, localStorage dark: landing `data-theme=dark` ✅, `/user/panel` — light (BUG-080)
+- **Ta'sir:** sahifadan sahifaga o'tganda butun dizayn rejimi sakraydi — professional tajribaga zid
+
+### BUG-082: 🟡 panelThemeBtn nomuvofiq: ba'zan bor, ba'zan YO'Q
+- **Dalil:** oldingi sessiyada teacher panelida `panelThemeBtn` (aria "Tema (light/dark)") bor edi; joriy teacher/student sessiyalarda **umuman yo'q** (hech qanday tema tugmasi DOM'da yo'q)
+- **Ta'sir:** tema boshqaruvi tasodifiy — foydalanuvchi bir kuni ko'radi, keyingi kuni yo'qoladi
+
+### BUG-083: 🟡 Student panelda tema boshqaruvi UMUMAN yo'q
+- **Dalil:** jasurjonai panelida tema tugmasi 0 ta — student dark/light tanlay olmaydi (faqat admin/landing'da bor)
+
+### BUG-084: 🟡 Panel sahifalarida `<html lang="">` — BO'SH lang atributi
+- **Dalil:** /user/panel `lang=""` (landing'da `lang="uz"`); empty lang ekrano'quvchi tilini aniqlay olmaydi (WCAG 3.1.1)
+
+### BUG-085: 🟡 Panel sahifalarida skip-link YO'Q
+- **Dalil:** landingda `.skip-link` bor (ishlaydi), panel sahifalarida umuman yo'q — klaviatura foydalanuvchisi sidebar'dan o'tib qoladi
+
+### BUG-086: 🟡 Teacher panelida 401 console shovqini x2
+- **Dalil:** /user/panel va /teacher console'da 2x "Failed to load resource: 401" (student endpoint chaqiruvlari — BUG-013 oilasi)
+
+### BUG-087: 🟡 METODIK TUZATISH: avvalgi dark skan natijalari qismen false-negative
+- **Izoh:** STEP 4'da user sahifalari dark "toza" deb yozilgan edi — aslida tema qo'llanilmagani uchun light'da tekshirilgan; dark skan natijalari FAQAT theme-core yuklanadigan sahifalarda (landing/admin/auth) amal qiladi
+
+### BUG-088: ⚪ Panel oilasi CSS'ida dark variantlar umuman ishlatilmaydi
+- **Dalil:** live panel sahifalar `style.css`/`premium-theme.css`'ni ham yuklamaydi (head resource tekshiruvi) — deploy'da boshqa head; repo bilan live farqi BUG-009 "deploy xavfi" tasdig'i
+
+### BUG-089: ✅ IJOBIY — Panel oilasi toza tomonlari (live)
+| Tekshiruv | Natija |
+|-----------|--------|
+| 320px kichik telefon overflow | yo'q |
+| Duplicate id'lar | yo'q |
+| Teacher workspace dark skan | (tema qo'llanilmagan holatda) toza |
+| 401 noise tashqarisida boshqa console error | yo'q |
+| Dalillar | 54, 56, 57 PNG |
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI

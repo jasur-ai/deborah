@@ -61,3 +61,4 @@
 - ✅ STEP 10 — yakunlandi (2026-08-27): BUG-065 (fans abadiy 'Yuklanmoqda...') + BUG-066 ijobiy (VIP grant negativ testlar bilan: 404/403/origin-block — himoya qattiq)
 - ✅ STEP 11 — yakunlandi (2026-08-27): BUG-067 🔴 (session keepalive ping CSRF'siz → 403 → idle uzaytirmaydi) + BUG-068 🟡 (revoke-sessions 5 deb hisoblaydi, sessiya tirik) + BUG-069 ijobiy (audit filtrlar/export/remember-me)
 - ✅ STEP 12 — yakunlandi (2026-08-27): BUG-070…BUG-078 (9 ta: footer legal '#', lang cookie GET / ishlamaydi, til saqlanmaydi, doneReg aria, scroll-lock yo'q, #admin anchor, aria-pressed...) + BUG-079 ijobiy (SEO/a11y asosi)
+- ✅ STEP 13 — yakunlandi (2026-08-27): BUG-080 🔴 (dark panel oilasida umuman yo'q — theme-core yuklanmaydi, deploy nomuvofiq) + BUG-081…088 (7 ta) + BUG-089 ijobiy
