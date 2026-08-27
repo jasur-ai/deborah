@@ -664,6 +664,37 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 | Login EN copy | ✅ (Sign in/Email...) |
 | term-utils (DeborahTerms) | ✅ mavjud (4.2KB) |
 
+### BUG-105: 🟠 RE-CONFIRM (yangi deploy): /play mobil 1168px overflow — JOIN TUGMA BOSILMAYDI
+- **Dalil (2x urinish):** `scrollWidth 1168 vs 480`; "Qo'shilish" tugma `scrollIntoView` dan keyin ham **"Element is outside of the viewport"** — oddiy tap yetib bormaydi
+- **BUG-053 + BUG-052 birga:** talaba mobil qurilmadan jonli darsga qo'shilolmaydi (desktop'da crash — BUG-052)
+
+### BUG-106: 🟡 admin/marking mobilda to'liq navigatsiya YO'Q
+- **Dalil:** hamburger/drawer yo'q (`hamburger: None`); faqat 4 havola ko'rinadi (Dashboard/Grading/Safe Submit/Chiqish) — 20+ admin bo'limga chiqa olmaydi; boshqa admin sahifalarda hamburger bor (nomuvofiq)
+
+### BUG-107: 🟡 admin/users jadvali mobilda scroll wrapper'siz
+- **Dalil:** jadval 866px (viewport 375px), wrapper `overflow-x: visible` — o'ng ustunlar (VIP, O'chirish) qirqilib ko'rinadi yoki sahifa darajasida cho'zadi
+
+### BUG-108: 🟡 Touch targets < 44px (WCAG 2.5.8 / Apple HIG 44pt)
+- **Dalil:** landing til tugmalari 28-30px; admin "Menyu" hamburgeri 18px keng; login tema "System" chipi 29px bo'luvchi
+- **Ta'sir:** barmoq bilan aniq bosish qiyin — xato bosishlar
+
+### BUG-109: 🟡 1 ta inputda font-size < 16px — iOS fokusda avtomatik zoom
+- **Dalil:** login sahifada kamida 1 input `<16px` — iPhone foydalanuvchisi har fokusda sahifa zoom bo'ladi
+
+### BUG-110: 🟡 Admin drawer nomuvofiq: dashboardda bor, markingda YO'Q
+- **Dalil:** dashboard mobilda drawer ochiladi (sidebar tugmalari ko'rinadi — ishlaydi), marking'da umuman yo'q (BUG-106 bilan bir muammo, boshqa ko'rinish)
+
+### BUG-111: ✅ IJOBIY — Mobil asosiy oqimlar toza (yangi deploy)
+| Sahifa | 375px overflow | Kichik targetlar |
+|--------|----------------|------------------|
+| /user/panel, /teacher, create-test, security-profile, assignments, sessions | yo'q | yo'q |
+| landing, login | yo'q | til tugmalari (BUG-108) |
+| admin dashboard/users/roster/audit | yo'q | drawer ishlaydi |
+
+### BUG-112: ⚪ Honeypot to'g'ri yashirin (fokus qutisida 1px input topilmadi) — bot himoyasi a11y'ga xalal bermaydi
+
+### BUG-113: 🟡 BUG-052 holati yangi deployda: join tugma umuman yetib bormaydi — 'promise' crash'iga yetib bormasdan funksiya o'lik; ikkala bug birgalikda Cast mobil join'ni to'liq to'sadi (dev uchun: overflow fix + socket race fix ikkalasi kerak)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
