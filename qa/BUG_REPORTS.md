@@ -150,6 +150,65 @@
   3. 5 xato urinish → **15 daqiqa hisob-level lock** (403 `locked`)
 - **Qo'shimcha:** BUG-009 deploy bo'lsa MFA sahifasidagi CSRF ham singaydi → 403 aniq takrorlanadi
 
+### BUG-016: 🟠 Expired lockout qayta "locked" + MANFIY retryAfterSeconds qaytaradi
+- **Joy:** `src/modules/auth/mfa-totp.js:247-263` (`recordFailedAttempt`)
+- **Live dalil:** `{"ok":false,"error":"invalid_code","retryAfterSeconds":-2931}` (2026-08-27)
+- **Root cause:** eski lockout tugagach `lockoutUntil` DB'da o'tgan timestamp qoladi; yangi xatoda `fails < 5` bo'lsa `lockoutUntil = rec.lockoutUntil || 0` — o'tgan qiymat truthy → SAQLANADI; `locked = lockoutUntil > 0` → true → `retryAfterSeconds = ceil((eski_until - now)/1000)` = **manfiy**
+- **Ta'sir:** 15 daqiqalik lock tugagach birinchi xato urinishdayoq foydalanuvchi `locked` javobini manfiy timer bilan oladi (client timeri buziladi, chalkash UX)
+- **Tuzatish tavsiyasi (faqat hisobot):** `lockoutUntil <= now` bo'lsa 0 ga tushirish
+
+### BUG-017: 🟡 README §2'da da'vo qilingan sahifalar 404 — dead views
+- **Dalil (live, teacher+user):** `/user/sessions` 404, `/user/onboarding` 404, `/user/mfa-setup` 404
+- **Kod:** `views/user/sessions.ejs` VA `views/user/onboarding.ejs` MAVJUD — route ulanmagan (dead views); mfa-setup haqiqiy manzil `/user/mfa/setup` (ishlaydi)
+- **Ta'sir:** README foydalanuvchini mavjud bo'lmagan manzillarga yo'naltiradi
+
+### BUG-018: 🟡 Web Push live'da o'chirilgan (README §6'da da'vo qilingan)
+- **Dalil:** `GET /api/push/vapid-key` → `400 {"ok":false,"error":"push_disabled"}`
+- **Kod:** route bor (routes/push.js, server.js:395) — env (VAPID) sozlanmagan
+- **Ta'sir:** README'dagi "Web Push (/api/push/*)" hozir ishlamaydi
+
+### BUG-019: ℹ️ README-vs-live chalkashliklar (to'plam)
+| README da'vosi | Real holat |
+|----------------|------------|
+| `/cast/director`, `/cast/participant`... | Route'lar `/cast/:sessionId/director` ko'rinishda (sessiya ID talab); participant — `/play?code=` orqali. README manzillari to'liq emas (bosilsa 404) |
+| Cast Director kirish yo'li | Teacher panelda to'g'ridan-to'g'ri link YO'Q (faqat cast-studio.css yuklanadi) — sessiya API orqali yaratiladi |
+| opendata | `/api/opendata/stats` 200, lekin `isLive:false` (statik) |
+| Registratsiya | ✅ ishlaydi (email verify banner); birinchi so'rov 90s+ cho'zilishi mumkin (SMTP) — timeout xavfi |
+| Teacher ariza (admin tasdiqlaydi) | Registratsiyada experience/subject maydonlari bor ✅ |
+| Passkey "real ishlaydi" | ✅ + `reauth_required` (parol qayta tasdiqlash — to'g'ri dizayn) |
+
+### ℹ️ "3 xil UI" tashxisi (foydalanuvchi kuzatuvi TASDIQLANDI)
+Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bilan:
+| Qatlam | Dizayn | Mavzu boshqaruvi |
+|--------|--------|------------------|
+| Landing | Vintage/gold (landing.css) | 1 tugma, dark↔light (2 holat) |
+| User/Teacher panel | Design-system ko'k (head.ejs tokens) | `panelThemeBtn` — light↔dark (2 holat; **System'ga qaytish YO'Q**) |
+| Admin panel | Command UI (admin.css) | System/Light/Dark — 3 tugma (segmented) |
+| Cast | cast-studio.css, `data-cast-theme` | OS'dan mustaqil (alohida) |
+
+**Chalkashliklar:** (1) `theme-core`'da `hc-light/hc-dark` holatlari MAVJUD, lekin HECH QAYSI UI'da toggle YO'Q — yarim qolgan funksiya; (2) mavzu boshqaruvi har qatlamda har xil (1 tugma / 1 tugma / 3 tugma) — yagona tajriba yo'q; (3) panel System holatidan chiqib ketgan bo'lsa qaytarish imkoni yo'q
+
+### ✅ README DA'VOLARI — TASDIQLANGANLAR (live)
+| Da'vo | Holat |
+|-------|-------|
+| Admin login | ✅ |
+| Login + ro'yxatdan o'tish | ✅ (test user: qa_tester_0827, email verify banner ko'rsatildi) |
+| Talaba kod bilan /play | ✅ ("Bunday kod topilmadi" handler) |
+| Google OIDC | ✅ (PKCE live) |
+| MFA (TOTP) + backup | ✅ |
+| User sahifalar (panel/create-test/arena/assignments/portfolio/settings/notifications) | ✅ 200 (JS darajasida BUG-009/010/011/012 bor) |
+| security-profile | ✅ (MFA-off crash: BUG-011) |
+| email-change, forgot/reset, mfa-setup | ✅ (mfa-setup = /user/mfa/setup) |
+| Cast moduli arxitekturasi | ✅ live (kirish nuqtalari yashirin: BUG-019) |
+| Gemini AI | ✅ LIVE: {"enabled":true,"model":"gemini-3.6-flash"} |
+| Legal (/privacy, /terms, /cookies) | ✅ 200 |
+| PWA (manifest, SW, /offline) | ✅ (SW ro'yxatdan o'tdi) |
+| opendata | ✅ 200 (isLive:false) |
+| Socket.io | ✅ v4.8.3 |
+| Push | ⚠️ push_disabled (BUG-018) |
+| 45+ admin sahifa | ⚠️ 30 OK; 5 nav buzilgan (BUG-006/007) |
+| Mobil 375px | ✅ overflow yo'q (landing+panel) |
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 | Talab | Holat |
 |-------|-------|
