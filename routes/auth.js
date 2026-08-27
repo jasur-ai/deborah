@@ -18,7 +18,7 @@ import CONFIG from '../src/config/env.js';
 import { buildClientRules, RULES_VERSION } from '../src/modules/auth/validation-rules.js';
 const requireValidationRules = () => ({ buildClientRules, RULES_VERSION });
 import { fb } from '../firebase/admin.js';
-import { safeKey, hashPassword, verifyPassword, isLegacyHash, hashPass } from '../utils/helpers.js';
+import { safeKey, hashPassword, verifyPassword, isLegacyHash, hashPass, verifyLoginPassword } from '../utils/helpers.js';
 import { redirectIfAuth, redirectIfAdmin, requireAuth, requireRecentAuth, requireMfaStepUp, requireRecentAdminAuth, requireAdmin, requireLowRisk } from '../middleware/auth.js';
 // AUTH A-25: remember-me selector/verifier (login/logout) + reauth
 import {
@@ -2376,7 +2376,13 @@ router.post('/api/auth/reauth', requireAuth, async (req, res) => {
     }
     const snap = await fb.get(`users/${userKey}/password`);
     if (!snap.exists()) return res.status(404).json({ ok: false, error: 'not-found' });
-    const ok = await verifyPassword(password, snap.val());
+    // Login bilan bir xil tekshiruv (legacy sha256/plaintext + migratsiya) —
+    // aks holda eski akkauntlar to'g'ri parol bilan reauth'da 403 oladi
+    const v = await verifyLoginPassword(password, snap.val(), userKey);
+    if (v.ok && v.migrated && v.newHash) {
+      await fb.set(`users/${userKey}/password`, v.newHash).catch(() => {});
+    }
+    const ok = v.ok;
     if (!ok) {
       logAuthEvent({
         action: AUDIT_ACTIONS.REAUTH_FAILED,

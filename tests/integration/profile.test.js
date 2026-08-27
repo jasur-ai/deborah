@@ -15,6 +15,7 @@ import { createApp } from '../../server.js';
 import { snapshotDb, restoreDb } from '../helpers/setup.js';
 import { generate } from 'otplib';
 import { fb } from '../../firebase/admin.js';
+import { hashPass } from '../../utils/helpers.js';
 
 let app;
 let ipCounter = 0;
@@ -127,6 +128,54 @@ describe('Profilim — hamma rollar uchun', () => {
     viaPass.body.backupCodes.forEach((c) => {
       expect(c).toMatch(/^[0-9a-f]{10}$/);
     });
+  });
+
+  it('LEGACY sha256 parol (eski akkaunt): to\u2018g\u2018ri parol → 200 + 12 kod + argon2 migratsiya', async () => {
+    const agent = supertest.agent(app);
+    const uname = `profleg_${Date.now() % 1000000}`;
+    const pass = 'parol-2026-x-uzun';
+    await registerUser(agent, uname);
+    await fb.set(`users/${uname}/role`, 'teacher');
+    const csrf = csrfFrom((await agent.get('/user/panel')).text);
+
+    // MFA yoqish
+    const setup = await agent.post('/api/mfa/totp/setup').set('x-csrf-token', csrf).send({});
+    expect(setup.status).toBe(200);
+    const token = await generate({ secret: setup.body.secret });
+    await agent.post('/api/mfa/totp/enable').set('x-csrf-token', csrf).send({ token });
+
+    // ESKI formatga qaytaramiz (foydalanuvchining holati): sha256(qb_{userKey}_{pass})
+    await fb.set(`users/${uname}/password`, hashPass(pass, uname));
+
+    // To'g'ri parol → 200 (avval 403 berardi — verifyPassword argon2'gina edi)
+    const res = await agent.post('/api/profile/backup-codes')
+      .set('x-csrf-token', csrf).send({ password: pass });
+    expect(res.status).toBe(200);
+    expect(res.body.backupCodes).toHaveLength(12);
+
+    // Hash argon2'ga migratsiya bo'ldi
+    const after = await fb.get(`users/${uname}/password`);
+    expect(after.val().startsWith('$argon2')).toBe(true);
+  });
+
+  it('LEGACY sha256 XATO parol → 403 (migratsiya bo\u2018lmaydi)', async () => {
+    const agent = supertest.agent(app);
+    const uname = `proflg2_${Date.now() % 1000000}`;
+    const pass = 'parol-2026-x-uzun';
+    await registerUser(agent, uname);
+    await fb.set(`users/${uname}/role`, 'teacher');
+    const csrf = csrfFrom((await agent.get('/user/panel')).text);
+    const setup = await agent.post('/api/mfa/totp/setup').set('x-csrf-token', csrf).send({});
+    const token = await generate({ secret: setup.body.secret });
+    await agent.post('/api/mfa/totp/enable').set('x-csrf-token', csrf).send({ token });
+    await fb.set(`users/${uname}/password`, hashPass(pass, uname));
+
+    const res = await agent.post('/api/profile/backup-codes')
+      .set('x-csrf-token', csrf).send({ password: 'xato-parol-123' });
+    expect(res.status).toBe(403);
+    expect(res.body.error).toBe('wrong_credentials');
+    const after = await fb.get(`users/${uname}/password`);
+    expect(after.val().startsWith('$argon2')).toBe(false); // migratsiya bo'lmadi
   });
 
   it('talaba MFA yoqolmaydi: /api/mfa/totp/setup → 403 mfa_not_allowed', async () => {

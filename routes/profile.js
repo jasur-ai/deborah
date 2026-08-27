@@ -23,7 +23,7 @@ import crypto from 'node:crypto';
 import { Router } from 'express';
 import { requireAuth } from '../middleware/auth.js';
 import { fb } from '../firebase/admin.js';
-import { verifyPassword } from '../utils/helpers.js';
+import { verifyLoginPassword } from '../utils/helpers.js';
 import CONFIG from '../src/config/env.js';
 import { ADMIN_MFA_ACCOUNT } from '../src/modules/auth/admin-security.js';
 import {
@@ -188,7 +188,13 @@ router.post('/api/profile/backup-codes', profileAuth, async (req, res) => {
     } else {
       const snap = await fb.get(`users/${req.session.user.safeKey}/password`).catch(() => null);
       if (snap && snap.exists()) {
-        verified = await verifyPassword(password, snap.val());
+        // Login bilan bir xil tekshiruv (argon2 + legacy sha256/plaintext +
+        // muvaffaqiyatda argon2'ga migratsiya) — eski akkauntlar ham ishlaydi
+        const v = await verifyLoginPassword(password, snap.val(), req.session.user.safeKey);
+        verified = v.ok;
+        if (v.ok && v.migrated && v.newHash) {
+          await fb.set(`users/${req.session.user.safeKey}/password`, v.newHash).catch(() => {});
+        }
       } else {
         return res.status(400).json({
           ok: false, error: 'no_password',

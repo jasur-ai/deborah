@@ -79,6 +79,39 @@ export async function verifyPassword(password, hash) {
 }
 
 /**
+ * Login bilan BIR XIL parol tekshiruvi (argon2 + legacy sha256 + plaintext)
+ * va muvaffaqiyatda argon2id'ga migratsiya qiymatini qaytaradi.
+ * Secondary yo'llar (profil zaxira kodlari, reauth) login'ning
+ * L1146-1156 mantig'idan farq qilmasligi kerak — aks holda eski
+ * (legacy hash'li) akkauntlar to'g'ri parol bilan ham 403 oladi
+ * (2026-08-27 topilma: profil backup-codes aynan shunga uchragan).
+ * @returns {Promise<{ok:boolean, migrated:boolean, newHash:string|null, from:string|null}>}
+ */
+export async function verifyLoginPassword(password, storedHash, userKey) {
+  if (!password || !storedHash) return { ok: false, migrated: false, newHash: null, from: null };
+  let isMatch = false;
+  let from = null;
+  if (storedHash.startsWith('$argon2')) {
+    isMatch = await verifyPassword(password, storedHash);
+  } else if (isLegacyHash(storedHash)) {
+    isMatch = hashPass(password, userKey) === storedHash;
+    if (isMatch) from = 'sha256';
+  } else if (storedHash === password) {
+    isMatch = true;
+    from = 'plaintext';
+  }
+  if (!isMatch) return { ok: false, migrated: false, newHash: null, from: null };
+  if (from) {
+    try {
+      return { ok: true, migrated: true, newHash: await hashPassword(password), from };
+    } catch (_) {
+      return { ok: true, migrated: false, newHash: null, from };
+    }
+  }
+  return { ok: true, migrated: false, newHash: null, from: null };
+}
+
+/**
  * Check if a stored hash uses the legacy SHA-256 algorithm
  */
 export function isLegacyHash(hash) {
