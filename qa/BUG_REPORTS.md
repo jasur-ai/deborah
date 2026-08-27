@@ -999,6 +999,30 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 ### BUG-209: ℹ️ Admin dashboard navigation ba'zan ERR_ABORTED — update-banner reload bilan raqobat
 - **Dalil:** goto dashboard 1 marta `net::ERR_ABORTED` (update-banner auto-reload bilan bir vaqtda); qayta urinishda o'tdi — flaky navigatsiya
 
+### BUG-220: 🟡 Landing "Join kod" inputi label'siz (jcode) — placeholder faqat '00000'
+- **Dalil:** `#jcode` label=0, aria-label yo'q, placeholder faqat raqamlar — screen reader "matn kiritish maydoni" deb e'lon qiladi, maqsadi nomaqlum (WCAG 1.3.1/3.3.2)
+- **Kontekst:** bu cast join kodi maydoni (landing'dagi alohida dialog)
+
+### BUG-221: 🟡 Landing'da DUPLICATE ID `kontakt` (2 x element bir id)
+- **Dalil:** `#kontakt` 2 marta — anchor navigatsiya birinchisiga o'tadi, ikkinchisi malla; HTML valid emas
+
+### BUG-222: 🟡 Admin dashboard refresh tugmasida accessible name YO'Q
+- **Dalil:** `.admin-refresh-btn` (onclick=loadUsers) — faqat ikonka, aria-label/title yo'q; screen reader "tugma" deydi (qaysi blokni yangilashi nomaqlum)
+
+### BUG-223: ⚪ /play va create-test sahifalarida h1 YO'Q (0 ta) — sahifa ierarxiyasi h1 bilan boshlanishi kerak (WCAG best-practice)
+
+### BUG-224: ✅ IJOBIY — A11y asosi ko'p jihatdan YAXSHI (7 sahifa skan)
+| Tekshiruv | Natija |
+|-----------|--------|
+| img alt | ✅ 7 sahifada 0 muammo |
+| button accessible name | ✅ faqat 1 istisno (BUG-222) |
+| tabindex>0 (antipattern) | ✅ 0 |
+| a href'siz (ko'rinadigan) | ✅ 0 |
+| duplicate id | ✅ faqat landing (BUG-221) |
+| form label association | ✅ login/panel/admin toza |
+| html lang | ✅ barcha sahifada uz (panel oilasi BUG-084 bundan mustasno) |
+| h1 | ✅ ko'pchilik sahifada 1 ta |
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
