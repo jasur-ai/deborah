@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <link rel="stylesheet" href="/design/admin-command.css">
+  <style>
+    /* BUG-029: Barcha funksiyalar — bir ko'rinish (grid + qidiruv) */
+    .ai-wrap{max-width:1200px;margin:0 auto;padding:20px 18px 60px}
+    .ai-head{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:14px}
+    .ai-head h1{font-family:''Manrope'',cursive;font-size:1.4rem;margin:0;color:var(--deborah-semantic-color-text-primary)}
+    .ai-count{font-size:.78rem;font-weight:700;color:var(--deborah-semantic-color-text-secondary);background:var(--deborah-semantic-color-action-primary-soft);border:1px solid var(--deborah-semantic-color-action-primary-border);padding:4px 10px;border-radius:99px}
+    .ai-back{margin-left:auto;border-radius:9px;border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-secondary);padding:8px 14px;font-size:.8rem;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px;min-height:36px}
+    .ai-search{position:relative;margin-bottom:16px}
+    .ai-search input{width:100%;max-width:420px;padding:11px 14px;border-radius:10px;border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-primary);font-size:.9rem;min-height:44px}
+    .ai-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+    .ai-card{background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-default);border-radius:12px;padding:14px 16px}
+    .ai-card h2{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--deborah-semantic-color-text-muted);margin:0 0 10px}
+    .ai-card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+    .ai-card a{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;color:var(--deborah-semantic-color-text-secondary);text-decoration:none;font-size:.86rem;font-weight:600;min-height:36px}
+    .ai-card a:hover{background:var(--deborah-semantic-color-action-primary-soft);color:var(--deborah-semantic-color-action-primary-hover)}
+    .ai-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+    .ai-empty{padding:40px 0;text-align:center;color:var(--deborah-semantic-color-text-muted);font-weight:600;display:none}
+  </style>
+</head>
+<body>
+  <div class="ai-wrap">
+    <div class="ai-head">
+      <h1>Barcha funksiyalar</h1>
+      <span class="ai-count"><%= totalLinks %> funksiya · <%= catalog.length %> guruh</span>
+      <a href="/admin/dashboard" class="ai-back"><%- icon('arrowLeft', 14) %> Dashboard</a>
+    </div>
+    <div class="ai-search">
+      <label for="ai-q" class="ai-sr">Funksiya qidirish</label>
+      <input id="ai-q" type="search" placeholder="Funksiya qidirish (masalan: teachers, grading…)" autocomplete="off">
+    </div>
+    <div class="ai-grid" id="ai-grid">
+      <% for (const g of catalog) { %>
+        <section class="ai-card" data-group="<%= g.section.toLowerCase() %>">
+          <h2><%- g.section %></h2>
+          <ul>
+            <% for (const it of g.items) { %>
+              <li><a href="<%= it.href %>" data-name="<%= it.label.toLowerCase() %> <%= it.href.toLowerCase() %>"><%- it.label %></a></li>
+            <% } %>
+          </ul>
+        </section>
+      <% } %>
+    </div>
+    <div class="ai-empty" id="ai-empty">Hech narsa topilmadi — boshqa so'z bilan urinib ko'ring.</div>
+  </div>
+  <script>
+    // BUG-029: bir ko'rinish + tez qidiruv (server so'rovisiz)
+    (function () {
+      var q = document.getElementById('ai-q');
+      var cards = document.querySelectorAll('.ai-card');
+      var empty = document.getElementById('ai-empty');
+      q.addEventListener('input', function () {
+        var v = q.value.trim().toLowerCase();
+        var any = false;
+        cards.forEach(function (card) {
+          var links = card.querySelectorAll('a[data-name]');
+          var shown = 0;
+          links.forEach(function (a) {
+            var hit = !v || a.getAttribute('data-name').indexOf(v) !== -1;
+            a.parentElement.style.display = hit ? '' : 'none';
+            if (hit) shown++;
+          });
+          card.style.display = shown ? '' : 'none';
+          if (shown) any = true;
+        });
+        empty.style.display = any ? 'none' : 'block';
+      });
+    })();
+  </script>
+</body>
+</html>

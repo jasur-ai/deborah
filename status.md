@@ -241,13 +241,34 @@ i18n dict, teacher uz, VIP badge, notifications disabled+POST himoya) — **HAMM
 cast seed director 200 + push + admin nomlar (45+ tekshiruv) — **HAMMASI OK**.
 **Verify:** repro ✓; design+unit 4896/4896 ✓; integration (landing/legal/mfa) 36/36 ✓; design-lint PASS ✓.
 
-## STEP 10 — ⚠️ Feature-darajadagi talablar (bug emas — muhokama) — ⏳
-**Buglar:** BUG-026, BUG-027, BUG-029, BUG-030
-- **BUG-026** — "Maqola tavsiya" end-user ko'rmaydi (faqat admin). → Yangi feature.
-- **BUG-027** — teacher nazorat/statistika chuqurlashtirish. → Yangi feature.
-- **BUG-029** — admin sidebar "hammasi bir ko'rinishda". → UI arxitektura qarori.
-- **BUG-030** — "ikki marta tasdiq" kodda topilmadi — interaktiv repro kutilmoqda.
-**Qaror:** har biri alohida tasdiq bilan (scope katta — fake feature qilmaymiz).
+## STEP 10 — ⚠️ Feature-darajadagi talablar — ✅ (qaror + minimal real yechim) [PUSH NUQTASI]
+**Buglar:** BUG-026, BUG-027(a+b), BUG-029, BUG-030 + tekshiruvlar (jami 7 pozitsiya)
+**Qaror va yechim (qaysi+qanday):**
+- **BUG-026** "Maqola tavsiya" end-user — **QAROR: qurilmaydi**. Modul tashqi provider API
+  kalitlarisiz "not configured" qaytaradi (executeConnectorSearch:88) — end-user UI bo'sh qobiq
+  = yolg'on feature bo'lardi. Admin konsol qoladi (requireAdmin); README'ga qaror hujjatlandi.
+  Kalitlar ulanganda teacher/student panelga chiqarish alohida product-qaror.
+- **BUG-027a** approve/reject teacher/VIP ko'rishi — **QAROR: governance admin'da qoladi**
+  (rol ajratish + audit). Teacher O'Z ariza holatini ko'radi: `/user/teacher-approval` mavjud va
+  ishlaydi (repro: pending user uchun 200; /admin/teachers uchun 403/302).
+- **BUG-027b** statistika chuqur emas — **YECHIM**: `/admin/teachers` haqiqiy statistika strip:
+  status bo'yicha sonlar (kutilmoqda/tasdiqlangan/rad etilgan), 14 kunlik ariza/qaror trend
+  (diagramma), o'rtacha qaror vaqti — mavjud DB ma'lumotidan server-side agregat (seed bilan
+  raqamlar aniq tekshirildi: 2/1/1, 24 soat).
+- **BUG-029** "hamma funksiya bir ko'rinishda" — **YECHIM**: `/admin/index` "Barcha funksiyalar"
+  sahifasi: guruh grid (7 guruh, 38 havola) + klient tomonlama qidiruv + bo'sh holat. Katalog
+  dashboard sidebar'dan avto-parse qilinadi (yagona manba — sidebar o'zgarsa indeks o'zi yangilanadi).
+  Sidebar'ning eng yuqorisiga link qo'shildi; katalogdagi har bir havola 200 deb verify qilindi.
+- **BUG-030** "iki marta tasdiq" — **YECHIM (ildiz topildi)**: kodda confirm birmartalik, lekin
+  delete'dan keyin `location.reload()` — to'liq sahifa qayta yuklanadi ("ikki marta bosdim"
+  hissining manbai). Endi qator joyida o'chadi (`rows.splice + row.remove() + applyFilters()`),
+  toast xabar qoladi. (Shubhali "CSRF yo'q" versiyasi tekshirildi — head.ejs:111 global fetch-patch
+  header qo'shadi, xato emas.)
+- Tekshiruv: dashboard sidebar'dagi 37 havolaning hammasi 200 (S3 fixing saqlangan).
+**Tool:** `scripts/repro-step10.mjs` — 25 tekshiruv (qarorlar + statistika raqamlari + katalog
++ no-reload manba + delete API) — **HAMMASI OK**.
+**Verify:** repro 25/25 ✓; admin/auth/overlays integration 48/48 ✓; design+unit 4896/4896 ✓;
+design-lint PASS ✓. **PUSH:** S6–S10 (0a21500..HEAD) → origin/debugging.
 
 ---
 
@@ -261,6 +282,7 @@ cast seed director 200 + push + admin nomlar (45+ tekshiruv) — **HAMMASI OK**.
 - **STEP 7** (2026-08-27): BUG-023 (artefakt—isbot)+024+025 + YANGI 054–062 — kontrast skaner 0 buzilish (dark+light, 18 sahifa), vitest 4896/4896, design-lint PASS.
 - **STEP 8** (2026-08-28): BUG-003/004/028/033/034/042/046 + YANGI 063/064 — footer legal linklar, TOTP matni (4 til), admin alohida page (modal olib tashlandi), VIP badge, uz tablar, kanal mavjudligi; repro 36/36, vitest 4984/4984.
 - **STEP 9** (2026-08-28): BUG-005/017/018/019/047 + YANGI 065/066 — robots.txt, README real yo'llar (sessions/onboarding/cast), push shartli hujjat, 7 o'lik admin nomi; repro 45+ ✓, 4896/4896.
+- **STEP 10** (2026-08-28): BUG-026 (qaror)/027a (qaror)/027b (real statistika)/029 (Barcha funksiyalar sahifasi)/030 (no-reload delete) — repro 25/25, 4896/4896. [PUSH: S6–S10]
 
 ## 📋 MANBA HAVOLALAR
 - BUG hisobotlari: `workspace` branch → `qa/BUG_REPORTS.md`

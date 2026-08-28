@@ -21,7 +21,7 @@ import { safeKey } from '../../utils/helpers.js';
 
 // AUTH D-10 §13: admin UI copy — 4 til (AUTH_COPY[lang].admin).
 // users/audit JS `window.__ADMIN_COPY__` dan o'qiydi (yo'q bo'lsa fallback).
-async function adminCopyFor(req) {
+export async function adminCopyFor(req) {
   try {
     const { resolveAuthLang, AUTH_COPY } = await import('../../data/auth-i18n.js');
     return AUTH_COPY[resolveAuthLang(String(req.query.lang || 'uz'))]?.admin || {};
@@ -126,6 +126,19 @@ router.get('/teachers', async (req, res) => {
 
     const usersSnap = await fb.get(DB_PATHS.USERS);
     const rows = [];
+    // BUG-027b: statistika — status bo'yicha sonlar + 14 kunlik trend + o'rtacha qaror vaqti
+    const statCounts = { approved: 0, rejected: 0 };
+    const DAY = 86400000;
+    const trendMap = new Map();
+    const statTrend = {
+      add(ts, kind) {
+        const d = new Date(ts); d.setHours(0, 0, 0, 0);
+        const k = d.getTime();
+        if (!trendMap.has(k)) trendMap.set(k, { applied: 0, decided: 0 });
+        trendMap.get(k)[kind]++;
+      },
+    };
+    let decideSum = 0, decideN = 0;
     // Badge: filter/qidiruvdan MUSTAQIL global pending soni (B-15 review fix)
     let pendingTotal = 0;
     if (usersSnap.exists()) {
@@ -134,6 +147,13 @@ router.get('/teachers', async (req, res) => {
         const role = u.role;
         if (role !== 'teacher_pending' && role !== 'teacher_rejected' && role !== 'teacher') continue;
         if (role === 'teacher_pending') pendingTotal++;
+        // BUG-027b: haqiqiy statistika (mavjud ma'lumotdan agregat)
+        if (role === 'teacher') statCounts.approved++;
+        else if (role === 'teacher_rejected') statCounts.rejected++;
+        const uApplied = u.teacher_application?.appliedAt || app.created_at_by_user || 0;
+        const uDecided = u.teacher_decision_at || 0;
+        if (uApplied) statTrend.add(uApplied, 'applied');
+        if (uDecided) { statTrend.add(uDecided, 'decided'); if (uApplied && uDecided > uApplied) { decideSum += (uDecided - uApplied); decideN++; } }
         const app = appsByUser[key] || {};
         const entry = {
           id: key,
@@ -191,6 +211,18 @@ router.get('/teachers', async (req, res) => {
       page,
       totalPages,
       pendingCount: pendingTotal,
+      // BUG-027b: stats (view strip)
+      stats: {
+        pending: pendingTotal,
+        approved: statCounts.approved,
+        rejected: statCounts.rejected,
+        avgDecisionHours: decideN ? Math.round((decideSum / decideN) / 3600000) : null,
+        trend: Array.from({ length: 14 }, (_, i) => {
+          const d = new Date(Date.now() - (13 - i) * DAY); d.setHours(0, 0, 0, 0);
+          const e = trendMap.get(d.getTime()) || { applied: 0, decided: 0 };
+          return { label: `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}`, applied: e.applied, decided: e.decided };
+        }),
+      },
       // admin nav context (views/admin dashboard bilan bir xil pattern)
       csrfToken: req.session?.csrfToken || '',
       // AUTH D-10 §13: 4 til admin copy (AUTH_COPY[lang].admin) — __ADMIN_COPY__ kontrakti

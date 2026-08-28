@@ -80,6 +80,9 @@ Deborah — o'zbek tilidagi ta'lim platformasi: jonli dars o'yinlari (Kahoot usl
 **Kontent:** `ai-question-gen` (AI savol generatori), `quiz-deck`, `deck-export`, `presentations`, `sources` (RAG), `resource-reco`.
 ⚠️ FAQAT API (alohida admin sahifasi YO'Q): `item-bank` (`/api/item-banks*`), `rubric` (`/api/rubrics*`),
 `assessment` (`/api/assessment*`), `competency` (`/api/competency*`).
+- `resource-reco` (maqola/tavsiya) — faqat admin konsol: tashqi provider API kalitlari
+  (env) sozlanmaguncha "not configured" — end-user UI qilmaymiz (bo'sh qobiq = yolg'on feature).
+  Kalitlar ulanganda teacher/student panelga chiqarish alohida qaror (BUG-026).
 
 **Integratsiya/observability:** `canva`, `google-slides`, `provider`, `api-contracts`, `observability`, `data-governance`, `institutional`, `program-quality`, `acceptance`, `accessibility`, `multilingual`, `ai-checkpoint`, `ai-grading`, `ai-mlops`, `claude`, `camera-review`, `safe-submit`.
 

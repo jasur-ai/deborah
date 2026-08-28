@@ -264,7 +264,13 @@
         const data = await res.json();
         if (data.success) {
           window.showToast && window.showToast('Test o\'chirildi', 'ok');
-          window.location.reload();
+          // BUG-030: sahifa reload'i ("ikki marta bosdim" hissi manbai) o'rniga —
+          // qator joyida o'chiriladi, hisoblagich/bo'sh-holat qayta hisoblanadi
+          const row = item.closest('.ws-lib-row');
+          const idx = rows.indexOf(row);
+          if (idx !== -1) rows.splice(idx, 1);
+          if (row) row.remove();
+          applyFilters();
         } else {
           window.showToast && window.showToast('Xato: ' + (data.error || ''), 'err');
         }

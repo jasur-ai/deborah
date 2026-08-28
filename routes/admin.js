@@ -14,6 +14,8 @@ import crypto from 'crypto';
 import { safeKey } from '../utils/helpers.js';
 // AUTH A-19/B-15: teacher approval + B-34 signup review queue
 import teacherRoutes from './admin/teachers.js';
+// BUG-029: Barcha funksiyalar — bir ko'rinish indeks (sidebar'dan avto-katalog)
+import adminIndexRoutes from './admin/index.js';
 import signupReviewRoutes from './admin/signup-reviews.js';
 // C4-08: institution governance — policy CRUD, publish, diff, migration preview, audit export
 import {
@@ -39,6 +41,7 @@ const router = Router();
 
 router.use(requireAdmin);
 router.use(teacherRoutes);
+router.use(adminIndexRoutes); // GET /admin/index — BUG-029
 router.use(signupReviewRoutes);
 
 // ── Dashboard ──

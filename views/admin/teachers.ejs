@@ -5,6 +5,19 @@
   <link rel="stylesheet" href="/css/admin.css">
   <style>
     /* AUTH B-15 — filter tabs, pagination, accessible modal */
+    .t-stats{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px;background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-default);border-radius:12px;padding:12px 16px;margin:12px 0}
+    .t-stat{display:flex;flex-direction:column;min-width:86px}
+    .t-stat-n{font-family:'Manrope',cursive;font-size:1.3rem;font-weight:800;color:var(--deborah-semantic-color-text-primary)}
+    .t-stat-pend{color:var(--deborah-semantic-color-status-warning,#8f6a1f)}
+    .t-stat-ok{color:var(--deborah-semantic-color-status-success,#55724e)}
+    .t-stat-no{color:var(--deborah-semantic-color-status-danger,#93402f)}
+    .t-stat-l{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--deborah-semantic-color-text-muted)}
+    .t-trend{display:flex;gap:3px;align-items:flex-end;margin-left:auto;height:56px}
+    .t-trend-d{display:flex;flex-direction:column;justify-content:flex-end;gap:1px;height:100%;min-width:8px}
+    .t-trend-b{display:block;width:4px;border-radius:2px 2px 0 0;min-height:2px}
+    .t-trend-a{background:var(--deborah-semantic-color-action-primary);align-self:flex-end}
+    .t-trend-de{background:var(--deborah-semantic-color-status-success,#55724e);align-self:flex-end}
+    .t-trend-l{font-size:.55rem;color:var(--deborah-semantic-color-text-muted);text-align:center}
     .t-filter{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
     .t-filter a{padding:8px 14px;border-radius:var(--deborah-radius-sm,8px);border:1px solid var(--deborah-semantic-color-border-subtle);background:var(--gradient-glass);color:var(--deborah-semantic-color-text-secondary);font-size:.85rem;text-decoration:none;display:inline-flex;align-items:center;gap:6px;min-height:40px}
     .t-filter a.on{background:var(--deborah-semantic-color-action-primary);border-color:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#041018);font-weight:600} /* BUG-025: #fff cyan ustida 1.7:1 */
@@ -69,6 +82,25 @@
       </div>
 
       <div class="admin-msg" id="t-msg"></div>
+
+      <!-- BUG-027b: haqiqiy statistika strip (status sonlari + 14 kunlik trend + o'rtacha qaror vaqti) -->
+      <% if (typeof stats !== 'undefined' && stats) { const maxTrend = Math.max(1, ...stats.trend.map(d => Math.max(d.applied, d.decided))); %>
+      <section class="t-stats" aria-label="Arizalar statistikasi">
+        <div class="t-stat"><span class="t-stat-n t-stat-pend"><%= stats.pending %></span><span class="t-stat-l">Kutilmoqda</span></div>
+        <div class="t-stat"><span class="t-stat-n t-stat-ok"><%= stats.approved %></span><span class="t-stat-l">Tasdiqlangan</span></div>
+        <div class="t-stat"><span class="t-stat-n t-stat-no"><%= stats.rejected %></span><span class="t-stat-l">Rad etilgan</span></div>
+        <div class="t-stat"><span class="t-stat-n"><%= stats.avgDecisionHours === null ? '—' : stats.avgDecisionHours + ' soat' %></span><span class="t-stat-l">O'rtacha qaror vaqti</span></div>
+        <div class="t-trend" role="img" aria-label="14 kunlik trend: ko'k = kelgan ariza, yashil = qaror qilingan">
+          <% stats.trend.forEach(d => { %>
+            <div class="t-trend-d" title="<%= d.label %>: <%= d.applied %> ariza / <%= d.decided %> qaror">
+              <span class="t-trend-b t-trend-a" style="height:<%= Math.round((d.applied / maxTrend) * 100) %>%"></span>
+              <span class="t-trend-b t-trend-de" style="height:<%= Math.round((d.decided / maxTrend) * 100) %>%"></span>
+              <span class="t-trend-l"><%= d.label.slice(0, 2) %></span>
+            </div>
+          <% }) %>
+        </div>
+      </section>
+      <% } %>
 
       <!-- B-15 §06: filter tabs -->
       <nav class="t-filter" aria-label="Ariza filtri">
