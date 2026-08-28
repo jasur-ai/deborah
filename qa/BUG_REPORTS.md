@@ -1652,6 +1652,35 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230is10: ✅ IJOBIY — modul ARXITEKTURASI tayyor (connections + identities API 200); faqat env + client token header yetishmayapti
 
+### STEP 54 YAKUNIY — TEACHER APPROVAL OQIMI (10 topilma)
+
+### BUG-230ka: 🔴 TEACHER REGISTRATSIYA SOKIN RAD ETILADI (xabarsiz!)
+- **Dalil:** 4 xil to'liq payload bilan teacher reg urinishlari → hammasi **200**, sahifa title o'zgarmaydi, **redirect yo'q**, **xato xabari ham ko'rinmaydi**, login ham ishlamaydi (user yaratilmagan)
+- **Format:** name/email/username/password/role=teacher/university/subject/experience/reason/consent=on — barchasi to'g'ri
+- **Taqqoslash:** student reg (landing fReg) 200 OK MUVAFFAQIYATLI yaratiladi (BUG-230da re-verify); /user/register sahifasidan TEACHER reg esa jim rad etiladi
+- **Ta'sir:** teacher ro'yxatdan o'tolmaydi (FOYDALANUVCHI TALABIGA MOS: "teacher register qilolmaydi") — BU FOYDALANUVCHI AYTGAN MUAMMONING ANIQ ILDIZI (BUG-035 bilan birga)
+
+### BUG-230kb: ✅ Admin pending teachers API 200: `{"ok":true,"pending":[]}` (bo'sh — hech kim ro'yxatdan o'tmagan)
+
+### BUG-230kc: 🔴 `/user/teacher-approval` auth bilan 401 — BUG-230dt oilasi: student sessiyasi bilan 401 qaytadi (login'dan keyin ham)
+
+### BUG-230kd: ✅ Reg formada consent checkbox `required` (HTML5) — lekin consent yo'q bo'lsa ham generic xabar (BUG-197)
+
+### BUG-230ke: 🟡 teacher-approval auth oqimi: qayerdan redirect qilinishi kerak? Koddа auth.js:1638 da `role === 'teacher_pending'` uchun redirect bor — lekin bu yerda 401
+
+### BUG-230kf: ✅ Honeypot (website) bo'sh bo'lsa OK (reject emas)
+
+### BUG-230kg: 🟡 Reg formada 15 ta input — ko'p maydonlar bitta sahifada, UX uchun qadamlarga bo'lish mumkin edi (mayda)
+
+### BUG-230kh: ℹ️ MFA backup: teacher uchun `507655b928` ham ishlatilmagan (hali bor)
+
+### BUG-230ki: 🔴 Teacher approval 3 zanjirda buzilgan:
+1. Teacher reg JIM RAD (BUG-230ka)
+2. teacher-approval sahifa 401 (BUG-230kc)
+3. Admin pending ro'yxati bo'sh qoladi (BUG-230kb) — hech kim approve qila olmaydi
+
+### BUG-230kj: ℹ️ Dalillar: reg HTML xatosiz 200, login 200 lekin user yo'q
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
