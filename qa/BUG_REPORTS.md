@@ -2207,6 +2207,33 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 - teacher_pending status, approval sahifa ko'rsatiladi
 - Admin tasdiqlash uchun yangi kodlar kerak
 
+### STEP 69 YAKUNIY — PORTFOLIO XLSX IMPORT + ATTEMPT + LANDING HAVOLA (10 topilma)
+
+### BUG-230hz41: ✅ PORTFOLIO XLSX IMPORT 200 — 3 ta item YARATILDI (Matematika/Fizika/Informatika)
+- **Dalil:** `POST /api/user/portfolio/import` xlsx bilan → `{"ok":true,"created":3,"skipped":0}` → items 4 ta (1 qolgan + 3 yangi)
+- **Ijobiy:** xlsx import (fan/baho/kredit) real ishlaydi — foydalanuvchi transkript yuklab, portfolio to'ldirishi mumkin
+
+### BUG-230hz42: 🔴 ATTEMPT START 404 — `/api/student/attempt` endpoint YO'Q (BUG-230hz re-confirm)
+- Attempt boshlash API mavjud emas — talaba imtihon boshlay olmaydi (BUG-230hz davomi)
+
+### BUG-230hz43: 🔴 LANDING'DA /user/register HAVOLA YO'Q (BUG-230ka45 re-confirm)
+- **Dalil:** `GET /` sahifada `/user/register` satri yo'q
+- **Ta'sir:** teacher ro'yxatdan o'tish sahifasiga landing'dan BOSIB BORIB BO'LMAYDI (faqat URL yozish kerak)
+
+### BUG-230hz44: ✅ Portfolio items 4 ta (3 yangi + 1 eski) — ishlayapti
+
+### BUG-230hz45: ✅ attempt/meta 200 (holat mashinasi to'g'ri)
+
+### BUG-230hz46: ℹ️ /user/register sahifasi faqat login sahifasidan "Ro'yxatdan o'tish" tab orqali ochiladi — landing'dan to'g'ridan-to'g'ri havola YO'Q
+
+### BUG-230hz47: ℹ️ Portfolio xlsx import 3 item yaratar ekан — real transkriptda ko'proq bo'lardi (bu test xlsx faqat 3 qator edi)
+
+### BUG-230hz48: ✅ XLSX accept (.xlsx,.xls) to'g'ri ishlaydi
+
+### BUG-230hz49: ℹ️ Dalillar: xlsx import E2E, attempt 404, landing havola tekshiruvi
+
+### BUG-230hz50: ℹ️ Jami 69 stepda ~500 topilma, 87 skrinshot, 70 commit
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
