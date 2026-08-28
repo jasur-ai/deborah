@@ -1681,6 +1681,29 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230kj: ℹ️ Dalillar: reg HTML xatosiz 200, login 200 lekin user yo'q
 
+### STEP 55 YAKUNIY — TEACHER REG DEBUG (10 topilma)
+
+### BUG-230ka2: 🔴 Xato xabari ko'rsatilmaydi (server xatosi sahifada echo bo'lmaydi)
+- **Dalil:** reg POST 200 qaytadi, sahifa hajmi o'zgargan (113B), auth-error bloki sahifada umuman YO'Q (`id="auth-error"` GET'da ham POST'da ham yo'q)
+- **view/view holati:** /user/register sahifada auth-error elementi umuman YO'Q (login.ejs'da bor) — server xatolarni yuborsa ham foydalanuvchi ko'rmaydi
+- **BUG-197 bilan bog'liq:** generic "Ism va parolni kiriting" login.ejs'da chiqadi; register.ejs'da umuman chiqmaydi
+
+### BUG-230ka3: 🔴 Ro'yxatdan o'tish sahifasida auth-error elementi UMUMAN YO'Q (xatolar yashirin) — foydalanuvchi "bosaman, hech narsa bo'lmaydi" holatida qoladi
+
+### BUG-230ka4: 🔴 Zod xatosi birinchi maydon bo'yicha qaytadi (universityRequired/subjectRequired) lekin render yo'q — view'ning oxirigacha yetkazilmaydi
+
+### BUG-230ka5: 🟠 `experience: "5 yil"` va `"5"` ikkalasi ham reject — server maydon formatini kutadi (raqam string? bo'sh?) — hujjat yo'q
+
+### BUG-230ka6: 🔴 Ro'yxatdan o'tish sahifada foydalanuvchi xato ko'rmaydi (BUG-230ka3 + BUG-197 bilan birga) — platforma UX uchun JUDA MUHIM darajadagi muammo
+
+### BUG-230ka7: ℹ️ Zaif parol / kuchsiz parol xabari server'da bor (`passwordWeak`), lekin sahifaga chiqmaydi — sahifa `auth-error` divini umuman render qilmaydi
+
+### BUG-230ka8: ℹ️ Dalillar: 4 xil reg payload natijasi o'xshash (200, redirect yo'q, xato ko'rsatilmagan)
+
+### BUG-230ka9: ✅ IJOBIY — Reg formada email/username/parol + rol/kasb maydonlari mavjud; o'qituvchi uchun ariza UI tayyor
+
+### BUG-230ka10: ℹ️ Hisobot xulosasi: Teacher reg muammosi 2 ta alohida ildiz: (1) xato ko'rsatilmaydi (UX), (2) server rad etishi sababi noma'lum (kod)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI

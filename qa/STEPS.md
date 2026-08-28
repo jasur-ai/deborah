@@ -103,3 +103,4 @@
 - ✅ STEP 52 — yakunlandi (2026-08-27): BUG-230ij 🔴 (publishRoutes IMPORT bor lekin app.use YO'Q — butun modul o'lgan) + BUG-230ik 🔴 (publish yo'q — teacher test yaratadi, student ko'rmaydi) + BUG-230iq 🔴 (3 zanjirli imtihon bug)
 - ✅ STEP 53 — yakunlandi (2026-08-27): BUG-230is1 🔴 (HEMIS Pull roster 403 CSRF) + BUG-230is2 🟠 (HEMIS UI'da bor — BUG-165 re-confirm) + 230is3-10 (connections/identities 200, env yo'q)
 - ✅ STEP 54 — yakunlandi (2026-08-27): BUG-230ka 🔴 (teacher reg JIM RAD — xato xabari ham yo'q, login ishlamaydi) + BUG-230kc 🔴 (teacher-approval 401) + BUG-230ki 🔴 (3 zanjirli approval buzilishi)
+- ✅ STEP 55 — yakunlandi (2026-08-27): BUG-230ka2/ka3/ka4 🔴 (reg sahifada auth-error elementi YO'Q — xatolar yashirin) + BUG-230ka5 🟠 (experience format nomalum) + BUG-230ka6 🔴 (foydalanuvchi xato ko'rmaydi) + BUG-230ka7-10
