@@ -1501,6 +1501,30 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230gl: ⚪ Mark-as-read yo'qligi foydalanuvchi tomonidan his qilinadi (hech narsa o'qilmagan deb ko'rinadi) — minor UX
 
+### STEP 49 YAKUNIY — SAFE-SUBMIT/PROCTOR/PUSH OPTIN (10 topilma)
+
+### BUG-230gp: ✅ SAFE-SUBMIT 8 endpoint bor (uploads, chunks, finalize, submit/version, submissions, receipts/verify, transcripts, sessions) — README §6'da "safe-submit" arxitekturasi to'la
+
+### BUG-230gq: ✅ Safe-submit meta admin bilan 200; `requireAdmin` himoyasi to'g'ri
+
+### BUG-230gr: 🟠 Push optin-eligible LOGIKA XATO: `loginCount:18, threshold:2` lekin `eligible:false` qaytardi
+- **Kod:** `routes/push.js:174` — `eligible: pushEnabled() && subs.length===0 && count>=threshold` — **pushDisabled tufayli** false (BUG-018 bilan bir xil)
+- **Ta'sir:** foydalanuvchi 18 marta kirgan — opt-in so'ralishi kerak edi, lekin backend o'chirilgan
+
+### BUG-230gs: ✅ pushEnabled() false bo'lsa UI'da optin so'ralmasligi kerak — hozircha faqat API
+
+### BUG-230gt: ℹ️ Safe-submit real oqim: attempt kerak (BU-230a bilan bog'liq — attempt yo'q)
+
+### BUG-230gu: ✅ Proctor consent endpointlar topildi (POST/DELETE /api/student/assignments/:id/camera/consent) — BUG-230dt dagi manzil noto'g'ri edi (camera.js'da haqiqiy route bor — BUG-230dr/ds qisman yopiladi)
+
+### BUG-230gv: ✅ Receipts verify endpoint `/api/student/receipts/:token/verify` — imzolangan receipt oqimi tayyor
+
+### BUG-230gw: ℹ️ `transcripts` endpoint (portfolio import bilan aloqador) mavjud
+
+### BUG-230gx: 🟡 Safe-submit API'siz `GET /api/student/attempts/:id/submissions` ro'yxat ham 404 (attempt yo'q)
+
+### BUG-230gy: ✅ Proctor/camera/safe-submit modullari push.js'da xavfsizlik (CSRF + audit + PII) — professional darajada qurilgan
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
