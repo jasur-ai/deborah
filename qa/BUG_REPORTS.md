@@ -1184,6 +1184,36 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230au: ℹ️ Yig'ma hisob: 35 stepda 260+ topilma, 70+ skrinshot, 27 commit
 
+### STEP 36 YAKUNIY — PORTFOLIO SHARE E2E (10 topilma)
+
+### BUG-230av: ✅ PORTFOLIO SHARE E2E TO'LIQ ISHLAYDI (real token bilan guest ko'rdi!)
+- Oqim: item yaratish (200, id 094d7f...) → visibility PATCH → shared → `POST /api/user/items/:id/share` → **200 token (96-belgi hex)** → guest `/share/{token}` → **200 "Shared evidence"** va item matni ko'rinadi
+- Bogus token → 404 "Share not available" ✅
+
+### BUG-230aw: 🟡 Share tugma BOSILGANDA `{}` bo'sh body yuboradi → 400 "item is private" — item avval visibility'ga o'tishi kerak (2 bosqich foydalanuvchiga tushuntirilmagan)
+- **Ijobiy:** 400 xato matni tushunarli ("set visibility to shared/public first")
+
+### BUG-230ax: 🔴 Portfolio sahifasida **CSRF token UMUMAN yo'q** (hidden input/meta/global — 3 tekshiruv ham bo'sh)
+- **Dalil:** requests orqali share 403; sahifa DOM'da token 0
+- **Yechim yo'li:** Playwright UI oqimi orqali ishladi (brauzer cookie+origin) — lekin server `validateCsrf` global emaski, bu route origin-check'ga tayanadi (token'siz POST qabul qilindi — BUG-192 bilan bog'liq)
+- **Risk:** past (origin check bor), lekin izchillik buzilgan
+
+### BUG-230ay: 🟡 Share 200 javobida token/link **UI'da ko'rsatilmaydi** (clipboard'ga tushmaydi, link elementi yo'q) — foydalanuvchi havolani ko'rolmaydi
+- **Dalil:** POST 200 `{token,url:/share/...}` qaytdi, lekin sahifada hech qanday link ko'rinmadi
+
+### BUG-230az: ✅ Visibility PATCH (private→shared) ishlaydi (200)
+
+### BUG-230ba: ✅ portfolio/export: 404 "No transcript rows yet" — to'g'ri (dalil import qilinmagan); PDF transcript funksiyasi kodda mavjud
+
+### BUG-230bb: 🔴 `diploma-check` → **HTTP 451 "Kirish cheklangan"** — diplom tekshiruvi (universitet tasdig'i) hozircha YOPIQ
+- **Izoh:** 451 status to'g'ri tanlangan (legal restriction), lekin README'da bu funksiya tilga olinmagan — da'vo/realit mos emas
+
+### BUG-230bc: ⚪ Guest share sahifasida talaba ismi YASHIRILGAN (faqat item matni) — privacy to'g'ri sozlangan
+
+### BUG-230bd: ⚪ Share grant ro'yxatini o'qish endpointi yo'q (`GET /share-grants` 404) — faqat revoke bor
+
+### BUG-230be: ✅ IJOBIY — Privacy-first dizayn: link-gated share, email param, token revoke, ism yashirish — arxitektura o'ylangan
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
