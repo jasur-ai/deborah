@@ -96,3 +96,4 @@
 - ✅ STEP 45 — yakunlandi (2026-08-27): BUG-230ey 🔴 (portfolio import consent_required — UX yo'q) + BUG-230fa 🟠 (Telegram ON ammo integratsiya yo'q) + BUG-230ez/fb/fc/fd/ff ✅ ijobiy
 - ✅ STEP 46 — yakunlandi (2026-08-27): BUG-230fi/fj/fk ✅ (consent E2E to'g'ri: checkbox bor, disabled, haqiqiy PDF 200) + BUG-230fl…fq ijobiy/ℹ️ — BUG-230ey HUDUDI TORAYDI (UI'da checkbox bor edi)
 - ✅ STEP 47 — yakunlandi (2026-08-27): BUG-230fs/fy ✅ (settings PATCH 200) + BUG-230ft 🟠 (toggle switch ishlamaydi — false->false, API YOQ) + BUG-230fu/fv/fw/ga (Roziliklar tab yo'q, kk til lug'atsiz)
+- ✅ STEP 48 — yakunlandi (2026-08-27): BUG-230gc 🟡 (GET prefs 404 — server holat o'qilmaydi) + BUG-230ge 🔴 (mark-read 404 — o'qilgan belgilash YOQ) + BUG-230gd/gg/gk ✅ (POST to'liq 6 tur, telegram, xavfsizlik)

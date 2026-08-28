@@ -1477,6 +1477,30 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ga: ℹ️ Jami settings: 4 tab, 3 select, 2 checkbox, 1 toggle — ko'p qism interaktiv emas (BUG-230ft chuqurlashtirilgan xolos)
 
+### STEP 48 YAKUNIY — NOTIFICATIONS GRANULAR (10 topilma)
+
+### BUG-230gc: 🟡 Notifications prefs faqat POST (GET 404) — sahifa ochilganda joriy holat serverdan o'qilmaydi
+- **Dalil:** `GET /api/notifications/prefs` → 404; faqat `POST /api/notifications/prefs` 200
+- **Ta'sir:** UI default holatda ko'rsatadi (kodda hardcode), server holati boshqacha bo'lsa foydalanuvchi bilmasdan o'zgartiradi
+
+### BUG-230gd: ✅ POST to'liq: kanallar + 6 tur (assignment/result/practice/deadline/feedback/security) — 200
+
+### BUG-230ge: 🔴 `/api/notifications/read` 404 — "o'qilgan deb belgilash" endpointi YO'Q (notifications sahifada ochilgan bildirishnomalar o'qilmagan qoladi)
+
+### BUG-230gf: 🟡 Notifications sahifada faqat "Saqlash" tugma; alohida item-level boshqaruv yo'q (hech narsa saqlanmasa ham Saqlash bosiladi)
+
+### BUG-230gg: ✅ Telegram toggle default true (lekin backend integratsiya yo'q — BUG-230fa re-confirm)
+
+### BUG-230gh: ✅ Notifications sahifa: 200, toza layout
+
+### BUG-230gi: ℹ️ Real foydalanuvchi uchun: Telegram xabarlar ishlashi uchun env (TELEGRAM_BOT_TOKEN) va Push (VAPID) sozlanishi kerak
+
+### BUG-230gj: ℹ️ Deadline/feedback/security turlari — platformada deadline feature hali ko'rinmadi (assignments sahifada deadline ustuni yo'q)
+
+### BUG-230gk: ✅ Prefs PUT/POST orqali hisoblanadi (session per-user) — xavfsizlik OK
+
+### BUG-230gl: ⚪ Mark-as-read yo'qligi foydalanuvchi tomonidan his qilinadi (hech narsa o'qilmagan deb ko'rinadi) — minor UX
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
