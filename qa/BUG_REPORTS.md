@@ -2414,6 +2414,31 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ka90: ℹ️ Dalil: qisqartirilgan (server til cookie test)
 
+### STEP 75 — 75-STEP ORALIQ XULOSA (qisqartirilgan)
+
+### BUG-230ka91: 📊 75 STEP JAMI: ~680 yozuv (74🔴/42🟠/130🟡/34⚪/103ℹ️/215✅), 92 PNG, 80 commit, 22MB
+
+### BUG-230ka92: 🎯 PLATFORMA HOLATI (75 step): **6.5/10** — asos kuchli (xavfsizlik 9/10, auth 8/10, AI 8/10, portfolio 8/10), frontend buzilgan (cast 2/10, attempt 1/10, 50% sahifa JS xato)
+
+### BUG-230ka93: 🎯 3 GLOBAL ILDIZ (o'zgarmagan):
+1. JS `$` scope konflikt — 30+ bug
+2. HTML-escape — 5+ bug
+3. Env/infra yetishmasligi — 10+ modul yashirin buzilgan
+
+### BUG-230ka94: 🎯 TOP-10 FIX o'zgarmagan (BUG-230hz5) — 1-2 soat ish, 30+ bug hal
+
+### BUG-230ka95: ⚠️ MFA BACKUP: teacher 0, admin 0 — yangi kodlar SHART
+
+### BUG-230ka96: ✅ Platforma kuchli tomonlar o'zgarmagan (209+ PASS)
+
+### BUG-230ka97: 📌 Qolgan 25 step rejada tayyor (STEPS.md)
+
+### BUG-230ka98: ✅ Jami sahifalar test qilingan: 40+, endpoint: 90+, E2E oqim: 15+
+
+### BUG-230ka99: ✅ README da'volarining ~70% real, 30% buzilgan/yo'q
+
+### BUG-230ka100: ℹ️ Dalillar: 92 skrinshot, 82 commit `workspace` branch'da
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
