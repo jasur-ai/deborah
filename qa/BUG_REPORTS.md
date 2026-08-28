@@ -2464,6 +2464,32 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ka110: 📊 Security headers HOLATI: **7/13 yoqilgan (54%)** — CSP/Permissions/COEP qo'shilsa **10/13** bo'ladi
 
+### STEP 77 YAKUNIY — JS MODULLAR VA TERM-UTILS (10 topilma)
+
+### BUG-230ka111: 🟠 6 ta JS modul WINDOW'DA RO'YHATLANMAGAN (DeborahI18n/Terms/SessionTimeout/passkey/offline-banner/switch)
+- **Dalil:** `/user/panel` sahifada barcha global helperlar `undefined`
+- **Ildiz:** sahifa head.ejs'da `/js/i18n-formatters.js` va boshqa scriptlar bor, lekin global ro'yxatga olish mantiqida muammo (yoki sahifa alohida head ishlatadi)
+- **Ta'sir:** sana format uz bo'lsa browser default ishlaydi, lekin custom helperlar ishlamaydi
+
+### BUG-230ka112: ✅ `toLocaleDateString('uz-UZ')` browser'da ishlaydi: "2026-08-28"
+- I18n formatters ishlamasa ham browser native fallback yetarli
+
+### BUG-230ka113: ✅ 0 pageerror — modullar undefined bo'lsa ham crash YO'Q (fail-soft pattern)
+
+### BUG-230ka114: ✅ Sana formati uz-UZ: 2026-08-28 — to'g'ri
+
+### BUG-230ka115: ℹ️ `window.DeborahTerms` yo'q — term-utils.js fayli mavjud (4KB) lekin sahifaga qo'shilmagan
+
+### BUG-230ka116: ℹ️ Offline-banner elementi ham sahifada yo'q (komponent fayli bor, ishlatilmagan)
+
+### BUG-230ka117: ℹ️ Switch komponenti sahifada 0 ta (settings sahifada bor edi — boshqa sahifada yo'q)
+
+### BUG-230ka118: ✅ Jami: 74 stepda ~700 yozuv
+
+### BUG-230ka119: ℹ️ Dalil: yuqoridagi JS modullar holati
+
+### BUG-230ka120: ✅ IJOBIY — modullar yo'qligi sahifani buzmaydi (izchil fail-soft)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
