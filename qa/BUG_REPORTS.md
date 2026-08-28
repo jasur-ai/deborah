@@ -1432,6 +1432,28 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230fh: ℹ️ Bug bo'yicha jami kategoriyalar: funksional 120+, UI/UX 80+, xavfsizlik 40+, integratsiya 30+, performance 10+
 
+### STEP 46 YAKUNIY — PORTFOLIO IMPORT CONSENT E2E (10 topilma)
+
+### BUG-230fi: ✅ CONSENT UX TO'G'RI ISHLAYDI (BUG-230ey tuzatishiga qarshi dalil): checkbox `#fConsent` sahifada BOR va ko'rinadi; file+consent tanlanmasa importBtn `disabled=true` (ikki shart birlashgan)
+
+### BUG-230fj: ✅ Haqiqiy PDF bilan import 200: `{"ok":true,"created":0,"skipped":0,"warnings":["PDF'dan fan/..."]}` — parse ishlaydi (natija 0 chunki PDF strukturaviy test fayli — real transkript emas)
+
+### BUG-230fk: ✅ Consent bo'lmasa server RAD qiladi (BUG-230ey) — UI'da esa checkbox bor. Foydalanuvchi checkbox bosmasdan tugmani bosolmaydi (disabled) — xavfsiz va UX yaxshi
+
+### BUG-230fl: ℹ️ Import formada 2 bosqich: file yuklash + consent bosish (import tugmasi disabled status)
+
+### BUG-230fm: ✅ Portfolio items sahifada 6 ta ko'rinadi (dastlabki 6 dalil qoldi — BUG-230av'da yaratilgan)
+
+### BUG-230fn: ℹ️ `AI Level (A0-A4)` select — AI tarjima qilinishi bo'yicha darajalar (unique funksiya)
+
+### BUG-230fo: ⚪ PDF parse ishlaydi, lekin faqat strukturaviy transkript fayllarni tan oladi (warning xabari foydalanuvchiga aniq ko'rsatilgan)
+
+### BUG-230fp: ✅ Sahifada "import (PDF · Excel)" matni — ikki format qo'llab-quvvatlanishi ko'rinadi
+
+### BUG-230fq: ✅ `#fConsent` checkbox a11y: label bilan bog'langan (defaults to nearest label element)
+
+### BUG-230fr: ℹ️ Dalil: 80_portfolio_import.pdf_result.png
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
