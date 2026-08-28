@@ -1268,6 +1268,33 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230by: ⚪ Rate limit testlari davomida 6 hisob yaratildi — artefakt ro'yxati BUG-175'ga qo'shildi
 
+### STEP 39 YAKUNIY — PROJECTOR + PARTICIPANT DESKTOP (10 topilma)
+
+### BUG-230bz: ✅ PROJECTOR token bilan GUEST ochiladi (200 "Cast — Dasturlash2", 0 pageerror)
+- O'qituvchi ikkinchi ekranga proyektor ochishi mumkin (token link orqali)
+
+### BUG-230ca: 🔴 PARTICIPANT CRASH DESKTOPDA HAM: `Cannot access 'promise' before initialization`
+- **Dalil:** 1280px desktop, yangi sessiya (AKHBZ8): ism kiritildi → "Qo'shilish" → sahifada "promise')" xato matni; BUG-052 bilan bir xil ildiz (cast-socket-client.js:75/106 race) — lekin endi XATO MATNI o'zgargan: "setting 'promise'" → **"before initialization"** (TDZ error)
+- **Ta'sir:** desktop'da ham join YO'Q — faqat mobil emas
+
+### BUG-230cb: 🔴 DIRECTOR HAMON "Kod: —" + 0 ishtirokchi (BUG-049/BUG-230f re-confirm)
+
+### BUG-230cc: 🟡 Projector "SAVOLGA QO'SHILING" matni va "0 ishtirokchi" — kod ko'rsatilmaydi (join kod proyektorda ko'rinmasa talaba qanday qo'shiladi?)
+
+### BUG-230cd: ✅ Participant UI desktop'da toza (480px'lik BUG-053 overflow faqat kichik ekranda)
+
+### BUG-230ce: ℹ️ Yangi sessiya kod AKHBZ8 — har yangi sessiya yangi kod (to'g'ri)
+
+### BUG-230cf: ℹ️ Join formada ism maydoni va qo'shilish tugmasi ishlaydi (Klik yetadi desktop'da)
+
+### BUG-230cg: ✅ Projector sahifada 0 pageerror — projector JS sog'lom
+
+### BUG-230ch: ⚪ Projector'da proyektor rejimi indikatori yo'q (faqat kontent) — mayda
+
+### BUG-230ci: 🎯 XULOSA: Cast join zanjiri 3 qatlamda buzilgan: (1) mobil overflow (BUG-053), (2) socket race crash (BUG-052/230ca), (3) director ko'rsatmaydi (BUG-049) — bittasi tuzatilsa ham keyingisi to'sadi
+
+### BUG-230cj: ℹ️ Dalil: 72_projector.png, 73_participant_desktop.png, 74_director_s39.png
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
