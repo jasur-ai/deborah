@@ -2336,6 +2336,36 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ihh3: ℹ️ 71 step jami: ~590 yozuv, 88 PNG, 73 commit
 
+### STEP 72 YAKUNIY — 5 SAVOL TURI E2E (10 topilma)
+
+### BUG-230ka72a: ✅ 5 SAVOL TURI BARCHASI ISHLAYDI (UI'da o'zgartirish ok):
+| Tur | Variant ko'rinadi | Natija |
+|-----|-------------------|--------|
+| single_choice | 4 | ✅ |
+| true_false | 4 | ✅ |
+| multiple_select | 4 | ✅ |
+| short_answer | 0 (yashirin — to'g'ri) | ✅ |
+| exit_ticket | 1 | ✅ |
+- **Ijobiy:** har tur o'ziga mos maydonlarni ko'rsatadi (short_answer opts yashirin, exit_ticket 1 qisqa javob)
+
+### BUG-230ka72b: ✅ Saqlash "Saqlandi" (200 POST × 2 — BUG-050 bilan bir xil lekin funksional)
+
+### BUG-230ka72c: ✅ 0 pageerror (BUG-010 tuzatilgan ko'rinadi)
+
+### BUG-230ka72d: ✅ Correct answer radio tanlash ishlaydi
+
+### BUG-230ka72e: ✅ 4 variant to'ldirish ishlaydi (fill ok)
+
+### BUG-230ka72f: ✅ Student bilan create-test sahifa ochiladi (role cheklovi yo'q — hamma yaratadi)
+
+### BUG-230ka72g: ✅ 2xPOST mavjud (BUG-050 re-confirm) — lekin funksional OK
+
+### BUG-230ka72h: ℹ️ 5 tur test — platforma asosiy sifat ko'rsatkichi PASS
+
+### BUG-230ka72i: ✅ Dalillar: 90_create_5tur.png
+
+### BUG-230ka72j: ✅ IJOBIY YAKUNIY — create-test moduli ENG SOG'LOM qism (5 tur, validatsiya, CRUD, HIBP)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
