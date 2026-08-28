@@ -2653,6 +2653,31 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230hz70: ✅ IJOBIY — Portfolio CRUD+Share E2E (3 amal yangi sessiyada ham OK)
 
+### STEP 83 YAKUNIY — EMAIL CHANGE/PUSH DEVICE (10 topilma)
+
+### BUG-230hz71: ✅ Email change sahifa 200 (newEmail input) — sahifa to'g'ri
+
+### BUG-230hz72: 🔴 Email change request 403 reauth_required — foydalanuvchi parol qayta kiritishi SHART
+- **Dalil:** new_email + password bilan POST → 403 `reauth_required` — parol sahifada input YO'Q
+- **Ijobiy:** xavfsizlik qat'iy (reauth) — xavfsizlik muhim
+- **Muammo:** sahifada password input YO'Q — reauth qanday amalga oshiriladi?
+
+### BUG-230hz73: ✅ Email cancel 400 required — param yo'q bo'lsa to'g'ri rad
+
+### BUG-230hz74: ✅ Push device register fake-token → 400 invalid_token (to'g'ri rad)
+
+### BUG-230hz75: ✅ Push device unregister → 200 (idempotent, non-existent ham success)
+
+### BUG-230hz76: ✅ Push optin-eligible 200 (loginCount:24, eligible:false — push disabled tufayli)
+
+### BUG-230hz77: ℹ️ Push disabled BUG-018 hali bor (BUG-230gr bilan bir xil)
+
+### BUG-230hz78: ℹ️ Reauth flow (parol qayta tasdiqlash sahifasi) topilmadi — foydalanuvchi email o'zgartirolmaydi (UI'da input yo'q)
+
+### BUG-230hz79: ✅ IJOBIY — Push register/unregister endpointlar to'g'ri ishlaydi
+
+### BUG-230hz80: ✅ Jami 83 step: ~820 yozuv, 95 PNG
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI

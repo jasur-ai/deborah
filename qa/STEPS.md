@@ -126,6 +126,7 @@
 - ✅ STEP 80 — 80-STEP XULOSA: ~760 yozuv, 6.5/10 platforma, 3 ildiz, MFA 0, 92 PNG, 85 commit
 - ✅ STEP 81 — yakunlandi: BUG-230hz52 🔴 (camera-pilot 500 — BUG-007 re-confirm) + 230hz51/53-60 ✅ℹ️
 - ✅ STEP 82 — yakunlandi: BUG-230hz61-66 ✅ (Portfolio CRUD+Share E2E 4 amal) + BUG-230hz63 ⚠️ (guest 404 — item delete sabab, to'g'ri xatti-harakat)
+- ✅ STEP 83 — yakunlandi: BUG-230hz72 🔴 (email change reauth_required lekin sahifada password input YO'Q — reauth flow uzilgan) + BUG-230hz73-80 ✅ℹ️ (push/prefs OK)
 - ✅ STEP 62 — yakunlandi (2026-08-27): STUDENT 10 sahifa skan — 5 tasi toza, 5 tasi pageerror (BUG-009/012/011 re-confirm) + BUG-230hz11 🔴 YANGI (settings 'profile is not defined')
 - ✅ STEP 63 — yakunlandi (2026-08-27): BUG-230hz25 🔴 (email/change 404 — mount YO'Q) + BUG-230hz21 🟡 (password change generic xato) + BUG-230hz22/23/24/27/30 ✅ (notifications, portfolio CRUD, push, xavfsizlik)
 - ✅ STEP 64 — yakunlandi (2026-08-27): BUG-230hz31 ✅ (email change 403 reauth — BUG-230hz25 QAYTA YOZILDI, endpoint TIRIK) + BUG-230hz35 🔴 (/api/account/sessions 404) + 230hz32-34/36-39 ✅
