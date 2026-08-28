@@ -99,3 +99,4 @@
 - ✅ STEP 48 — yakunlandi (2026-08-27): BUG-230gc 🟡 (GET prefs 404 — server holat o'qilmaydi) + BUG-230ge 🔴 (mark-read 404 — o'qilgan belgilash YOQ) + BUG-230gd/gg/gk ✅ (POST to'liq 6 tur, telegram, xavfsizlik)
 - ✅ STEP 49 — yakunlandi (2026-08-27): BUG-230gp/gq ✅ (safe-submit 8 endpoint arxitektura, meta admin OK) + BUG-230gr 🟠 (push optin-eligible false — push disabled tufayli) + BUG-230gu ✅ (proctor consent manzil topildi) + gv/gx/gy
 - ✅ STEP 50 — KATTA ORALIQ XULOSA: re-verify (barcha Critical buglar hali bor) + statistika (350+ yozuv, 80 PNG, 41 commit) + 3 global ildiz tasdiqlandi + MFA kodlar TUGAGAN ogohlantirish
+- ✅ STEP 51 — yakunlandi (2026-08-27): BUG-230hz 🔴 (actorId user.id noto'g'ri — session safeKey bor; /api/student/assignments 401 HAMISHA — imtihon topolmaydi) + BUG-230ib/ic/id 🔴 (preflight/attempt zanjiri 401)

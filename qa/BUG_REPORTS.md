@@ -1565,6 +1565,35 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230hy: ⚠️ MUHIM ESLATMA: MFA backup kodlar: teacher 2-3 ta qoldi, admin 0 ta (yangi ro'yxat berilsin!)
 
+### STEP 51 YAKUNIY — ATTEMPT OQIMI (roster user) — 10 topilma
+
+### BUG-230hz: 🔴 `/api/student/assignments` HAMISHA 401 — `actorId()` noto'g'ri maydonni o'qiydi
+- **Kod:** `routes/preflight.js:41-43` — `actorId(req)` → `req.session?.user?.id` — lekin session'da `user.id` mavjud EMAS, faqat `safeKey` bor (`routes/auth.js:1478-1486`)
+- **Natija:** student sessiyasida bo'lsa ham **401 Authentication required** — assignments list HECH QACHON yuklanmaydi
+- **Ta'sir:** bug-230da bilan birga: sahifa ko'rinadi (aylanadi), lekin API hech qachon data qaytarmaydi
+- **Tuzatish (hisobot):** `actorId` safeKey'ga o'zgartirilishi yoki session'ga `id` qo'shilishi kerak
+
+### BUG-230ia: ✅ /api/student/attempt/meta student bilan 200 (metalar konsistent)
+
+### BUG-230ib: ✅ /api/student/response/meta student bilan 200 (modes+statuses)
+
+### BUG-230ic: 🔴 /api/assignments (publish.js) teacher/studentga 404 — route bor lekin mount YO'Q yoki path noto'g'ri (publish.js import/use tekshirilmagan)
+
+### BUG-230id: 🔴 Prefflight E2E: assignments 401 → preflight POST ham u zanjirdan 401 qaytaradi — foydalanuvchi assignment-based imtihon topa olmaydi
+- **Ketma-ketlik:** roster import → commit OK → user yaratildi → assignments API 401 (BUG-230hz) → preflight ham 401 → attempt ham 401
+- **Ta'sir:** imtihon oqimi bu yo'lda to'liq BUZILGAN
+
+### BUG-230ie: ℹ️ Admin'ning "users qidiruv" `qa.roster` topdi — roster commit ishlagan tasdiqlandi (BUG-230df)
+
+### BUG-230if: ✅ Sessiyada user obyekt strukturasi: username/safeKey/isVip/role/passwordUpdatedAt — to'g'ri tuzilgan (faqat `id` yo'q)
+
+### BUG-230ig: ✅ Assignments sahifa EJS'da to'g'ri render bo'ladi (empty state ko'rsatadi) — API 401 yashirin qoladi (200 empty deb ko'rsatilgan)
+
+### BUG-230ih: 🔴 STUDENT IMTIHON TOPOLMAYDI (asosiy oqim) — 1 ta xato sababli: `actorId` noto'g'ri maydon. Bu platformaning ASOSIY maqsadi
+- **Xulosa:** imtihon o'tkazish — platforma asosiy vazifasi; hozircha foydalanuvchi faqat test yaratadi, IMTIHON TOPOLMAYDI
+
+### BUG-230ii: ℹ️ Dalillar: /api/me 404, actorId kod qatorlari, session.user obyekt tuzilishi
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
