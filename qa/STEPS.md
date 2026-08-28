@@ -116,6 +116,7 @@
 - ✅ STEP 60 — 60-STEP ORALIQ XULOSA: 494 yozuv (53🔴/39🟠/120🟡/32⚪/78ℹ️/165✅), 86 PNG, 58 commit, 21MB. 3 global ildiz + TOP-10 dev fix. 60-stepda to'xtash tavsiya.
 - ✅ STEP 61 — yakunlandi (2026-08-27): PUBLISH/ASSIGNMENT re-verify — /api/publish/* va /api/assignments user bilan ham 404 (BUG-230hz2 re-confirm). ⚠️ MFA backup: Teacher BARCHASI invalid, Admin 429 LOCKED (15 daqiqa) — YANGI KODLAR SHART!
 - ✅ STEP 72 — yakunlandi (2026-08-27): BUG-230ka72a-j ✅ (5 savol turi BARCHASI ishlaydi, saqlash OK, 0 pageerror — create-test ENG SOG'LOM modul)
+- ✅ STEP 73 — yakunlandi: BUG-230ka73a 🔴 (arena RE-CONFIRM o'lik) + 73b/c/f 🔴 + 73d/e ✅ (layout toza)
 - ✅ STEP 62 — yakunlandi (2026-08-27): STUDENT 10 sahifa skan — 5 tasi toza, 5 tasi pageerror (BUG-009/012/011 re-confirm) + BUG-230hz11 🔴 YANGI (settings 'profile is not defined')
 - ✅ STEP 63 — yakunlandi (2026-08-27): BUG-230hz25 🔴 (email/change 404 — mount YO'Q) + BUG-230hz21 🟡 (password change generic xato) + BUG-230hz22/23/24/27/30 ✅ (notifications, portfolio CRUD, push, xavfsizlik)
 - ✅ STEP 64 — yakunlandi (2026-08-27): BUG-230hz31 ✅ (email change 403 reauth — BUG-230hz25 QAYTA YOZILDI, endpoint TIRIK) + BUG-230hz35 🔴 (/api/account/sessions 404) + 230hz32-34/36-39 ✅

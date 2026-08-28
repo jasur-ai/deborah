@@ -2366,6 +2366,30 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ka72j: ✅ IJOBIY YAKUNIY — create-test moduli ENG SOG'LOM qism (5 tur, validatsiya, CRUD, HIBP)
 
+### STEP 73 YAKUNIY — ARENA STUDENT OQIMI (10 topilma)
+
+### BUG-230ka73a: 🔴 RE-CONFIRM: Arena "Yuklash" HAM O'LIK (mock va user ikkala source'da)
+- `loadArena is not defined` + `$ has already been declared` — BUG-044/BUG-012 hali bor
+- Holat "Tayyor" yolg'on (q:0, code:None)
+
+### BUG-230ka73b: 🟠 Botlar/Tozalash tugmalari disabled boshlanishda (to'g'ri, lekin ishlamayapti chunki loadArena o'lik)
+
+### BUG-230ka73c: 🔴 Arena API CHAQIRUV 0 — loadArena o'lgani uchun backend hech qachon murojaat qilmaydi
+
+### BUG-230ka73d: ✅ Arena sahifada sahifa struktura toza (tugmalar ko'rinadi, layout buzilmagan)
+
+### BUG-230ka73e: ✅ "Yangilash" tugma (update-banner) ishlaydi — alohida
+
+### BUG-230ka73f: 🔴 mock va user ikkala source ham o'lik — arena modul ENTUMUN ishlamaydi
+
+### BUG-230ka73g: ℹ️ Arena backend tirik (check-session 200) — faqat frontend simlanish muammosi
+
+### BUG-230ka73h: ℹ️ Yangi deploy ham o'zgarish yo'q — hal bo'lmagan
+
+### BUG-230ka73i: ✅ Dalillar: avvalgi 15_test_arena.png + hozirgi skan natijalari
+
+### BUG-230ka73j: ℹ️ 73 step jami: ~640 yozuv
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
