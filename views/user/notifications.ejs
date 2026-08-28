@@ -56,12 +56,13 @@
     <div class="sec-card">
       <div class="sec-title"><%- icon('send', 15) %> <%= notifCopy.channelsTitle %></div>
       <div class="sec-sub"><%= notifCopy.channelsSub %></div>
+      <% const AV = (typeof channelAvail !== 'undefined' && channelAvail) || { telegram: true, email: true, push: true }; %>
       <div class="toggle-row">
         <div class="toggle-info">
           <div class="toggle-name"><%- icon('send', 14) %> <%= notifCopy.telegram %></div>
-          <div class="toggle-desc">Telegram — O'zbekiston uchun standart kanal</div>
+          <div class="toggle-desc"><%= AV.telegram ? "Telegram — O'zbekiston uchun standart kanal" : "Telegram hozircha sozlanmagan — kanal qo'shilganda yoqiladi" %></div>
         </div>
-        <label class="switch"><input type="checkbox" id="ch_telegram" <%= prefs.channels.telegram ? 'checked' : '' %> aria-label="<%= notifCopy.telegram %>"><span class="slider"></span></label>
+        <label class="switch"><input type="checkbox" id="ch_telegram" <%= AV.telegram && prefs.channels.telegram ? 'checked' : '' %> <%= AV.telegram ? '' : 'disabled' %> aria-label="<%= notifCopy.telegram %>"><span class="slider"></span></label>
       </div>
       <div class="toggle-row">
         <div class="toggle-info">
@@ -73,9 +74,9 @@
       <div class="toggle-row">
         <div class="toggle-info">
           <div class="toggle-name"><%- icon('bell', 14) %> <%= notifCopy.push %></div>
-          <div class="toggle-desc"><%= notifCopy.push %> (PWA)</div>
+          <div class="toggle-desc"><%= AV.push ? notifCopy.push + ' (PWA)' : "Push bildirishnomalar bu serverda yoqilmagan (VAPID kalitlari yo'q)" %></div>
         </div>
-        <label class="switch"><input type="checkbox" id="ch_push" <%= prefs.channels.push ? 'checked' : '' %> aria-label="<%= notifCopy.push %>"><span class="slider"></span></label>
+        <label class="switch"><input type="checkbox" id="ch_push" <%= AV.push && prefs.channels.push ? 'checked' : '' %> <%= AV.push ? '' : 'disabled' %> aria-label="<%= notifCopy.push %>"><span class="slider"></span></label>
       </div>
     </div>
 

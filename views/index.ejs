@@ -39,38 +39,16 @@
       <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
       <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5 5l1.6 1.6M17.4 17.4 19 19M19 5l-1.6 1.6M6.6 17.4 5 19"/></svg>
     </button>
-    <button class="abtn" id="adminBtn" type="button" aria-haspopup="dialog">
+    <a class="abtn" id="adminBtn" href="/admin/login">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15" r="1.6"/></svg>
       <span data-i18n="admin.btn">Admin</span>
-    </button>
+    </a>
     <button class="hbtn" id="hbtn" type="button" aria-label="Menyu">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
     </button>
   </div>
 </header>
 <!-- ADMIN LOGIN (faqat login — ro'yxatdan o'tish yo'q) -->
-<div class="admin-overlay" id="adminOverlay" role="dialog" aria-modal="true" aria-label="Admin tizimga kirish">
-  <div class="admin-card">
-    <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
-    <button class="close" id="adminClose" type="button" aria-label="Yopish">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
-    </button>
-    <div class="admin-head">
-      <div class="k" data-i18n="admin.k">Admin panel</div>
-      <h3 data-i18n="admin.h3">Administrator <em>kirishi</em></h3>
-      <p data-i18n="admin.p">Faqat administratorlar uchun.</p>
-    </div>
-    <form id="adminForm" action="/admin/login" method="POST" novalidate>
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <input type="hidden" name="username" id="aLoginH">
-            <input type="hidden" name="password" id="aPassH">
-      <div class="afld"><label for="aLogin" data-i18n="admin.loginL">Login</label><input id="aLogin" type="text" autocomplete="username" autocapitalize="off"></div>
-      <div class="afld"><label for="aPass" data-i18n="admin.passL">Parol</label><input id="aPass" type="password" autocomplete="current-password"></div>
-      <div class="admin-err" id="adminErr" data-i18n="admin.err">Login yoki parol xato.</div>
-      <button class="btn btn-gold auth-submit" type="submit" data-i18n="admin.go">Kirish</button>
-    </form>
-  </div>
-</div>
 <!-- O'YINGA KIRISH -->
 <div class="join-overlay" id="joinOverlay" role="dialog" aria-modal="true" aria-label="Castga kirish">
   <div class="join-card">
@@ -99,7 +77,7 @@
   <a href="#auth" data-i18n="hm.kirish">Kirish</a>
   <a href="#cast" data-i18n="hm.cast">Cast</a>
   <a href="#kontakt" data-i18n="hm.documents">Hujjatlar</a>
-  <a href="#admin" data-i18n="admin.btn">Admin</a>
+  <a href="/admin/login" data-i18n="admin.btn">Admin</a>
 </div>
 <!-- SAHIFA -->
 <main class="page" id="main">
@@ -217,15 +195,14 @@
     </div>
     <div>
       <h4 data-i18n="ftr.col2t">Hujjatlar</h4>
-      <a href="#" data-i18n="ftr.l5">Maxfiylik siyosati</a>
-      <a href="#" data-i18n="ftr.l6">Foydalanish shartlari</a>
-      <a href="#" data-i18n="ftr.l7">Xavfsizlik</a>
-      <a href="#" data-i18n="ftr.l8">Qonuniy ma'lumot</a>
+      <a href="/privacy" data-i18n="ftr.l5">Maxfiylik siyosati</a>
+      <a href="/terms" data-i18n="ftr.l6">Foydalanish shartlari</a>
+      <a href="/cookies" data-i18n="ftr.l7">Cookie siyosati</a>
+      <a href="/legal" data-i18n="ftr.l8">Qonuniy ma'lumot</a>
     </div>
     <div id="kontakt">
       <h4 data-i18n="ftr.col3t">Aloqa</h4>
-      <a href="#">hello@deborah.uz</a>
-      <a href="#" data-i18n="ftr.l9">Status</a>
+      <a href="mailto:hello@deborah.uz">hello@deborah.uz</a>
     </div>
     <div>
       <h4 data-i18n="ftr.col4t">Til</h4>

@@ -33,7 +33,8 @@ const _isActive = (href) => {
 
   <div class="shell-role-chip" role="status">
     <span class="shell-role-ico"><%- icon('user', 13) %></span>
-    <span class="shell-role-label"><%= _roleLabel %></span>
+    <span class="shell-role-label"><%= (typeof isVip !== 'undefined' && isVip && _role === 'student') ? 'VIP Talaba' : _roleLabel %></span>
+    <% if (typeof isVip !== 'undefined' && isVip && _role === 'student') { %><span class="shell-role-vip">VIP</span><% } %>
     <% if (_uname) { %><span class="shell-role-user">@<%= _uname %></span><% } %>
   </div>
 
@@ -103,10 +104,10 @@ const _isActive = (href) => {
       <a href="/student" class="shell-nav-link<%= _isActive('/student') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('user', 16) %></span><span>Talaba</span></a>
     <% } else if (_role === 'teacher') { %>
       <div class="shell-nav-sec">Ish maydoni</div>
-      <a href="/teacher" class="shell-nav-link<%= _isActive('/teacher') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('grid', 16) %></span><span>Overview</span></a>
+      <a href="/teacher" class="shell-nav-link<%= _isActive('/teacher') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('grid', 16) %></span><span>Umumiy ko'rinish</span></a>
       <a href="/teacher?tab=courses" class="shell-nav-link<%= _active === 'courses' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('bookOpen', 16) %></span><span>Kurslar</span></a>
       <a href="/teacher?tab=assessments" class="shell-nav-link<%= _active === 'assessments' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('target', 16) %></span><span>Baholashlar</span></a>
-      <a href="/teacher?tab=grading" class="shell-nav-link<%= _active === 'grading' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('clipboard', 16) %></span><span>Grading queue</span></a>
+      <a href="/teacher?tab=grading" class="shell-nav-link<%= _active === 'grading' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('clipboard', 16) %></span><span>Baholash navbati</span></a>
       <div class="shell-nav-sec">Asboblar</div>
       <a href="/user/panel" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('book', 16) %></span><span>Testlarim</span></a>
       <a href="/user/create-test" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('plus', 16) %></span><span>Yangi test</span></a>
@@ -123,7 +124,7 @@ const _isActive = (href) => {
       <a href="/admin/command-center" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('zap', 16) %></span><span>Command Center</span></a>
     <% } else if (_role === 'marker') { %>
       <div class="shell-nav-sec">Baholovchi</div>
-      <a href="/marker" class="shell-nav-link<%= _active === 'queue' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('clipboard', 16) %></span><span>Grading queue</span></a>
+      <a href="/marker" class="shell-nav-link<%= _active === 'queue' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('clipboard', 16) %></span><span>Baholash navbati</span></a>
       <a href="/admin/marking" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('checkCircle', 16) %></span><span>Marking</span></a>
       <a href="/admin/consideration" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('alertTriangle', 16) %></span><span>Consideration</span></a>
     <% } else if (_role === 'board') { %>

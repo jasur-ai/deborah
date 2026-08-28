@@ -292,7 +292,7 @@ export const AUTH_COPY = {
     },
     mfaLogin: {
       title: 'Ikki bosqichli tekshiruv',
-      sub: 'Telefoningizdagi 6 xonali kodni kiriting.',
+      sub: 'Autentifikator ilovasidagi 6 xonali kodni kiriting.',
       codeLabel: 'Tasdiqlash kodi',
       codeShort: 'Kod 6 xonali bo\'lishi kerak.',
       hint: 'Kod har 30 soniyada yangilanadi.',
@@ -774,7 +774,7 @@ export const AUTH_COPY = {
     },
     mfaLogin: {
       title: 'Икки босқичли тасдиқлаш',
-      sub: 'Телефонингиздаги 6 хонали кодни киритинг.',
+      sub: 'Аутентификатор иловасидаги 6 хонали кодни киритинг.',
       codeLabel: 'Тасдиқлаш коди',
       codeShort: 'Код 6 хонали бўлиши керак.',
       hint: 'Код ҳар 30 сонияда янгиланади.',
@@ -1256,7 +1256,7 @@ export const AUTH_COPY = {
     },
     mfaLogin: {
       title: 'Двухфакторная проверка',
-      sub: 'Введите 6-значный код с телефона.',
+      sub: 'Введите 6-значный код из приложения-аутентификатора.',
       codeLabel: 'Код подтверждения',
       codeShort: 'Код должен состоять из 6 цифр.',
       hint: 'Код обновляется каждые 30 секунд.',
@@ -1738,7 +1738,7 @@ export const AUTH_COPY = {
     },
     mfaLogin: {
       title: 'Two-factor verification',
-      sub: 'Enter the 6-digit code from your phone.',
+      sub: 'Enter the 6-digit code from your authenticator app.',
       codeLabel: 'Verification code',
       codeShort: 'The code must be 6 digits.',
       hint: 'The code refreshes every 30 seconds.',

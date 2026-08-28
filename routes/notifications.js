@@ -8,6 +8,15 @@
  * middleware orqali; audit NOTIF_PREFS_UPDATED.
  */
 import { Router } from 'express';
+import CONFIG from '../src/config/env.js';
+import { pushEnabled } from '../src/modules/student/push.js';
+
+// BUG-046: kanal mavjudligi — sozlanmagan kanal UI'da yoqilib ko'rinmaydi
+const channelAvail = () => ({
+  telegram: CONFIG.TELEGRAM_ENABLED !== false && Boolean(CONFIG.TELEGRAM_BOT_TOKEN),
+  email: true,
+  push: pushEnabled(),
+});
 import { requireAuth } from '../middleware/auth.js';
 import { getNotifPrefs, setNotifPrefs } from '../src/modules/student/notifications.js';
 import { AUTH_COPY, resolveAuthLang } from '../data/auth-i18n.js';
@@ -41,12 +50,17 @@ router.get('/user/notifications', async (req, res) => {
     const lang = await userLang(req);
     const copy = AUTH_COPY[lang] || AUTH_COPY.uz;
     const prefs = await getNotifPrefs(req.session.user.safeKey);
+    const avail = channelAvail();
+    // BUG-046: sozlanmagan kanal UI'da yoqilganholda ko'rinmasin (faqat ko'rinish — DB o'zgarmaydi)
+    if (!avail.telegram) prefs.channels.telegram = false;
+    if (!avail.push) prefs.channels.push = false;
     return res.render('user/notifications', {
       layout: false,
       lang,
       user: req.session.user,
       prefs,
       notifCopy: copy.notif,
+      channelAvail: avail,
       accountCopy: copy.account || {},
       __csrf: res.locals.csrfToken || null,
     });
@@ -70,6 +84,10 @@ router.post('/api/notifications/prefs', async (req, res) => {
       if (typeof body[`tp_${t}`] === 'boolean') types[t] = body[`tp_${t}`];
       else if (body[`tp_${t}`] === 'true' || body[`tp_${t}`] === 'false') types[t] = body[`tp_${t}`] === 'true';
     }
+    const avail2 = channelAvail();
+    // BUG-046: sozlanmagan kanalni server tomonda ham qabul qilmaymiz
+    if (!avail2.telegram) channels.telegram = false;
+    if (!avail2.push) channels.push = false;
     const result = await setNotifPrefs({
       userId: req.session.user.safeKey,
       channels: Object.keys(channels).length ? channels : undefined,

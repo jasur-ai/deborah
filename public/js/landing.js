@@ -42,7 +42,7 @@
     'admin.loginL':'Login','admin.passL':'Parol','admin.go':'Kirish','admin.err':'Login yoki parol xato.','admin.ok':'Kirish muvaffaqiyatli',
     'ftr.col1t':'Sahifalar','ftr.l1':'Bosh sahifa','ftr.l2':'Cast','ftr.l3':'Kirish','ftr.l4':"Ro'yxatdan o'tish",
 'ftr.teachers':"O'qituvchilar",
-    'ftr.col2t':'Hujjatlar','ftr.l5':'Maxfiylik siyosati','ftr.l6':'Foydalanish shartlari','ftr.l7':'Xavfsizlik','ftr.l8':'Qonuniy ma\'lumot',
+    'ftr.col2t':'Hujjatlar','ftr.l5':'Maxfiylik siyosati','ftr.l6':'Foydalanish shartlari','ftr.l7':'Cookie siyosati','ftr.l8':'Qonuniy ma\'lumot',
     'ftr.col3t':'Aloqa','ftr.l9':'Status',
     'ftr.col4t':'Til',
     'prov.g.off':'Google kirish serverda sozlanmagan (GOOGLE_CLIENT_ID). Administratorga murojaat qiling — hozir email bilan kiring.',
@@ -89,7 +89,7 @@
     'admin.loginL':'Логин','admin.passL':'Пароль','admin.go':'Войти','admin.err':'Неверный логин или пароль.','admin.ok':'Вход успешен',
     'ftr.col1t':'Страницы','ftr.l1':'Главная','ftr.l2':'Cast','ftr.l3':'Вход','ftr.l4':'Регистрация',
 'ftr.teachers':'Преподавателям',
-    'ftr.col2t':'Документы','ftr.l5':'Политика конфиденциальности','ftr.l6':'Условия использования','ftr.l7':'Безопасность','ftr.l8':'Правовая информация',
+    'ftr.col2t':'Документы','ftr.l5':'Политика конфиденциальности','ftr.l6':'Условия использования','ftr.l7':'Политика cookies','ftr.l8':'Правовая информация',
     'ftr.col3t':'Контакты','ftr.l9':'Статус',
     'ftr.col4t':'Язык',
     'prov.g.off':'Вход через Google не настроен на сервере (GOOGLE_CLIENT_ID). Обратитесь к администратору — пока входите по email.',
@@ -136,7 +136,7 @@
     'admin.loginL':'Login','admin.passL':'Password','admin.go':'Sign in','admin.err':'Wrong login or password.','admin.ok':'Sign-in successful',
     'ftr.col1t':'Pages','ftr.l1':'Home','ftr.l2':'Cast','ftr.l3':'Sign in','ftr.l4':'Register',
 'ftr.teachers':'For instructors',
-    'ftr.col2t':'Documents','ftr.l5':'Privacy policy','ftr.l6':'Terms of use','ftr.l7':'Security','ftr.l8':'Legal notice',
+    'ftr.col2t':'Documents','ftr.l5':'Privacy policy','ftr.l6':'Terms of use','ftr.l7':'Cookie policy','ftr.l8':'Legal notice',
     'ftr.col3t':'Contact','ftr.l9':'Status',
     'ftr.col4t':'Language',
     'prov.g.off':'Google sign-in is not configured on the server (GOOGLE_CLIENT_ID). Contact the administrator — use email for now.',
@@ -216,52 +216,6 @@
   });
   hmenu.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){hmenu.classList.remove('open');});});
 
-  /* ═══ REAL: Admin login → POST /admin/login ═══ */
-  var adminOverlay=document.getElementById('adminOverlay');
-  var adminForm=document.getElementById('adminForm');
-  var adminErr=document.getElementById('adminErr');
-  function openAdmin(){adminOverlay.classList.add('open');adminErr.classList.remove('show');adminForm.reset();setTimeout(function(){var f=document.getElementById('aLogin');if(f)f.focus();},120);}
-  function closeAdmin(){adminOverlay.classList.remove('open');}
-  document.getElementById('adminBtn').addEventListener('click',function(e){e.stopPropagation();openAdmin();});
-  /* Foydalanuvchi talabi: admin 3-chiziq (hamburger) menyu ichida ham */
-  document.querySelectorAll('#hmenu a[href="#admin"]').forEach(function(a){
-    a.addEventListener('click',function(e){e.preventDefault();openAdmin();});
-  });
-  document.getElementById('adminClose').addEventListener('click',closeAdmin);
-  adminOverlay.addEventListener('click',function(e){if(e.target===adminOverlay)closeAdmin();});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&adminOverlay.classList.contains('open'))closeAdmin();});
-  adminForm.addEventListener('submit',function(e){
-    e.preventDefault();
-    var d=I18N[document.documentElement.getAttribute('lang')]||I18N.uz;
-    var login=document.getElementById('aLogin').value.trim();
-    var pass=document.getElementById('aPass').value;
-    if(!login||!pass){adminErr.textContent=d['admin.err'];adminErr.classList.add('show');return;}
-    adminErr.style.color='';
-    adminErr.textContent=d['admin.ok']||'…';
-    adminErr.classList.add('show');
-    fetch('/admin/login',{
-      method:'POST',
-      headers:{'content-type':'application/x-www-form-urlencoded'},
-      body:new URLSearchParams({_csrf:window.__CSRF_TOKEN||'',username:login,password:pass}).toString(),
-      redirect:'follow',
-      credentials:'same-origin'
-    }).then(function(r){
-      /* MFA oqimi (/admin/mfa/enroll yoki /admin/mfa) = parol TO'G'RI belgisi —
-         yakuniy URL admin zonasida va /admin/login emas = muvaffaqiyat. */
-      var path='';
-      try{path=new URL(r.url).pathname;}catch(_){path=r.url||'';}
-      if(r.ok&&path.indexOf('/admin')===0&&path!=='/admin/login'){
-        window.location.href=r.url;
-      }else{
-        adminErr.style.color='';
-        adminErr.textContent=d['admin.err'];
-        adminErr.classList.add('show');
-      }
-    }).catch(function(){
-      adminErr.textContent=d['admin.err'];
-      adminErr.classList.add('show');
-    });
-  });
 
   /* ═══ Tabs (Kirish / Ro'yxatdan o'tish) ═══ */
   var tabs=document.querySelectorAll('.tabs button');

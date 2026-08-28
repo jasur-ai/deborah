@@ -90,7 +90,7 @@
 </head>
 <body>
   <!-- Skip-link sidebar'da (shell) -->
-  <%- include('../partials/sidebar', { active: 'panel', user: { username } }) %>
+  <%- include('../partials/sidebar', { active: 'panel', user: { username }, role: 'student', isVip: (typeof isVip !== 'undefined' && isVip) === true }) %>
 
   <main class="main" id="main-content" tabindex="-1">
 

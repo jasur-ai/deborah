@@ -300,7 +300,7 @@ describe('Landing — HTTP routing (CAST demo 1:1 — tasdiqlangan cast.html por
   it('LANDING HMENU — Admin 3-chiziq menyu ichida (foydalanuvchi qarori)', async () => {
     const html = await (await fetch(`${serverUrl}/`)).text();
     const m = html.match(/<div class="hmenu" id="hmenu">[\s\S]*?<\/div>/) || [''];
-    expect(m[0]).toContain('href="#admin"');
+    expect(m[0]).toContain('href="/admin/login"'); // BUG-028: alohida page (modal emas)
     expect(m[0]).toContain('href="#auth"');
     // footer kontakt anchor (demo #kontakt)
     expect(html).toContain('<footer class="ftr" id="kontakt">');
@@ -315,7 +315,7 @@ describe('Landing — HTTP routing (CAST demo 1:1 — tasdiqlangan cast.html por
     expect(js).toContain("'/play?code='");
     expect(js).toContain("'/auth/google'");
     expect(js).not.toContain("'/auth/hemis'"); // HEMIS 2026-08-27'da butunlay olib tashlandi
-    expect(js).toContain('/admin/login');
+    expect(js).not.toContain('adminOverlay'); // BUG-028/042: admin modal olib tashlandi — alohida page
     expect(js).toContain('__AUTH_PROVIDERS');
     // Provider-off xabarlari (3 til)
     expect(js).toContain('prov.g.off');

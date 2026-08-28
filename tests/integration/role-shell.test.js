@@ -109,7 +109,7 @@ describe('role workspace routes — access control', () => {
     const res = await agent.get('/teacher');
     expect(res.text).toContain('O\'qituvchi ish maydoni');
     expect(res.text).toContain('role-tabs');
-    expect(res.text).toContain('Overview');
+    expect(res.text).toContain("Umumiy ko'rinish"); // BUG-034: EN tab olib tashlandi
   });
 
   it('renders student workspace for admin preview', async () => {

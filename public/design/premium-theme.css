@@ -5,3 +5,5 @@
 [data-theme="light"] .nav-logo,body.theme-light .nav-logo{background:none;-webkit-background-clip:initial;background-clip:initial;-webkit-text-fill-color:currentColor;color:var(--deborah-semantic-color-action-primary);}
 
 .shell-nav-btn{width:100%;display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;text-align:left;font:inherit;color:inherit}
+
+.shell-role-vip{margin-left:auto;padding:2px 8px;border-radius:6px;font-size:.62rem;font-weight:800;letter-spacing:.08em;background:var(--deborah-semantic-color-action-primary-soft);color:var(--deborah-semantic-color-action-primary-hover);border:1px solid var(--deborah-semantic-color-action-primary-border);}

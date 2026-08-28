@@ -68,7 +68,7 @@ describe('AUTH B-21 — Notification preferences (integration)', () => {
   });
 
   it('GET /user/notifications — anonim → login sahifasiga redirect', async () => {
-    const anon = await fetch(`${base}/user/notifications`);
+    const anon = await fetch(`${base}/user/notifications`, { redirect: 'manual' }); // BUG-041: html redirect — follow bo'lsa 200 ko'rinadi
     expect([301, 302, 401, 403]).toContain(anon.status);
   });
 

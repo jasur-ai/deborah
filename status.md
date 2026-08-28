@@ -188,18 +188,33 @@ gradient worst-stop, background-clip:text, to'liq alfa kompozit (shaffof qatlaml
 barcha inputlar. 18 sahifa (6 user + 12 admin): **0 ta buzilish**.
 **Verify:** skaner 0/0 (dark+light); vitest design+unit **4896/4896** ✓; design-lint PASS ✓.
 
-## STEP 8 — 🟡 UI/i18n mayda buglar — ⏳
-**Buglar:** BUG-004, BUG-033, BUG-034, BUG-046, BUG-003, BUG-028, BUG-042
-**Qanday:**
-- **BUG-004** — MFA matni "Telefoningizdagi" → TOTP/authenticator deb to'g'rilash (agar qolsa).
-- **BUG-033** — VIP badge UI'da yo'q (`roleLabel` student default). Fix: VIP belgisi panel'da.
-- **BUG-034** — teacher.ejs "Overview"/"Grading queue" EN → uz.
-- **BUG-046** — notifications: `ch_telegram` default ON (integratsiya yo'q). Fix: mavjud bo'lmagan
-  kanal default OFF + disabled belgi.
-- **BUG-003** — footer `#` linklar (main'da 0 ta topildi — verify qilinadi, yopiladi).
-- **BUG-028/042** — landing admin modal → alohida `/admin/login` page yo'lini ustun qilish
-  (foydalanuvchi talabi: alohida page). ⚠️ UI arxitektura qarori — STEPda tasdiqlanadi.
-**Verify:** brauzer skrinshot + i18n grep.
+## STEP 8 — 🟡 UI/i18n mayda buglar — ✅
+**Buglar:** BUG-004, BUG-033, BUG-034, BUG-046, BUG-003, BUG-028, BUG-042 + YANGI BUG-063/064 (jami 9)
+**Qanday (qaysi+qanday):**
+- **BUG-004** MFA matni SMS taassuroti — manba `data/auth-i18n.js` mfaLogin.sub (4 til) →
+  "Autentifikator ilovasidagi 6 xonali kodni kiriting." (uz/uz-cyrl/ru/en).
+- **BUG-033** VIP ko'rinmaydi — panel sidebar include'ga `role+isVip` uzatildi; sidebar role chipda
+  "VIP Talaba" + `.shell-role-vip` badge (faqat VIP o'z panelda — vip.js yashirinlik prinsipi saqlangan,
+  oddiy foydalanuvchida hech narsa ko'rinmaydi).
+- **BUG-034** EN tablar — 3 manba: `views/role/teacher.ejs` (tabs+statlar), `views/partials/sidebar.ejs`
+  (default nav) VA asosiyysi `middleware/roles.js` navItems (teacher/marker/proctor workspace) →
+  "Umumiy ko'rinish", "Baholash navbati", "Belgilash", "Ko'rib chiqish", "Kamera tekshiruvi",
+  "Boshqaruv markazi".
+- **BUG-046** sozlanmagan kanallar default ON — `routes/notifications.js`: `channelAvail()`
+  (TELEGRAM_BOT_TOKEN / VAPID env asosida); GET: sozlanmagan kanal unchecked+DISABLED ko'rinadi +
+  izoh matni; POST: sozlanmagan kanalni server majburan false qiladi.
+- **BUG-003** footer 9 o'lik link — `/privacy`, `/terms`, `/cookies`, `/legal` (hammasi mavjud
+  legal modul), email → `mailto:`, "Status" (sahifasi yo'q) olib tashlandi; i18n ftr.l7 3 tilda
+  "Cookie siyosati" bo'ldi.
+- **BUG-028/042** admin kirish modal emas — landing'dagi admin modal BUTUNLAY olib tashlandi
+  (markup + landing.js mantiq); header `#adminBtn` va hamburger link to'g'ridan `/admin/login`
+  page'ga boradi (page'da MFA eslatmasi bor — kontent nomuvofiqligi ildizi yo'qoldi).
+- **BUG-063** (o'zim topdim) `middleware/roles.js` marker/proctor navlarida qolgan EN labelar.
+- **BUG-064** (o'zim topdim) `notifications-b21` anon-redirect testi BUG-041 dan keyin eskirgan
+  (fetch follow → 200) → `redirect:'manual'`.
+**Tool:** `scripts/repro-step8.mjs` — 36 tekshiruv (footer linklar, legal 200×4, admin page link,
+i18n dict, teacher uz, VIP badge, notifications disabled+POST himoya) — **HAMMASI OK**.
+**Verify:** repro 36/36 ✓; vitest integration 88/88 (6 fayl) ✓; design+unit 4896/4896 ✓; design-lint PASS ✓.
 
 ## STEP 9 — 📄 README/hujjat mosligi + SEO — ⏳
 **Buglar:** BUG-017, BUG-047, BUG-019, BUG-005, BUG-018
@@ -229,6 +244,7 @@ barcha inputlar. 18 sahifa (6 user + 12 admin): **0 ta buzilish**.
 - **STEP 5** (2026-08-27): BUG-035/036/040/039 — landing rol+consent+teacher havola, SMTP timeout+5s cap; brauzer 12/12, email 28/28, auth/a11y 86/86. [PUSH nuqtasi]
 - **STEP 6** (2026-08-27): BUG-020/021/002 + YANGI 049/050/051/052/053 (186 jQuery-uzilish!) — repro 17/17, cast testlari 25/25.
 - **STEP 7** (2026-08-27): BUG-023 (artefakt—isbot)+024+025 + YANGI 054–062 — kontrast skaner 0 buzilish (dark+light, 18 sahifa), vitest 4896/4896, design-lint PASS.
+- **STEP 8** (2026-08-28): BUG-003/004/028/033/034/042/046 + YANGI 063/064 — footer legal linklar, TOTP matni (4 til), admin alohida page (modal olib tashlandi), VIP badge, uz tablar, kanal mavjudligi; repro 36/36, vitest 4984/4984.
 
 ## 📋 MANBA HAVOLALAR
 - BUG hisobotlari: `workspace` branch → `qa/BUG_REPORTS.md`

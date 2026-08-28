@@ -177,7 +177,7 @@ describe('roles — renderRoleNav', () => {
     const html = renderRoleNav('teacher', '/teacher');
     expect(html).toContain('shell-nav-link');
     expect(html).toContain('Ish maydoni');
-    expect(html).toContain('Overview');
+    expect(html).toContain("Umumiy ko'rinish"); // BUG-034
     expect(html).toContain('active');
   });
 
