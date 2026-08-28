@@ -108,3 +108,4 @@
 - ✅ STEP 57 — yakunlandi (2026-08-27): BUG-230ka22 🟠 (Kurslar tabida 'Kurs yaratish' TUGMA YO'Q — teacher kurs yaratolmaydi, README §2 zid) + BUG-230ka21/24/25/28/29 ✅ (4 tab toza) + ka23/26/27/30 ℹ️
 - ✅ STEP 58 — yakunlandi (2026-08-27): BUG-230ca2/cb2 🔴 RE-CONFIRM (participant crash, director 0 ishtirokchi) + BUG-230ck ✅ (sessiya yaratish E2E) + BUG-230cm/cn ℹ️ (kodlar holati, rate limiter OK)
 - ✅ STEP 59 — yakunlandi (2026-08-27): BUG-230hb 🟡 (qidiruv filtralamaydi) + BUG-230hd 🔴 (archive CSRF — interaktiv faqat UI) + BUG-230hf 🔴 (panel escape re-confirm) + 230ha/hc/he/hj ✅ ijobiy
+- ✅ STEP 60 — 60-STEP ORALIQ XULOSA: 494 yozuv (53🔴/39🟠/120🟡/32⚪/78ℹ️/165✅), 86 PNG, 58 commit, 21MB. 3 global ildiz + TOP-10 dev fix. 60-stepda to'xtash tavsiya.

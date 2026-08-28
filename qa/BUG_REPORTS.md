@@ -1837,6 +1837,111 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230hl: ℹ️ Dalillar: 63-84 PNG (oldingi)
 
+### STEP 60 — 60-STEP ORALIQ XULOSA (katta yakuniy hisobot)
+
+### BUG-230hx2: 📊 60 STEP UMUMIY STATISTIKA
+- **Jami yozuvlar:** 494 ta (BUG-001…230hl)
+- **Severity taqsimot:**
+  - 🔴 Critical: **53** (saytning asosiy funksiyalari buzilgan)
+  - 🟠 Major: **39** (muhim oqimlar ishlamaydi)
+  - 🟡 Minor: **120** (UX/kosmetik/cheklovlar)
+  - ⚪ Trivial: **32**
+  - ℹ️ Info: **78**
+  - ✅ Positive PASS: **165** (sayt ko'p narsani to'g'ri qilgan!)
+- **Dalillar:** 86 skrinshot (`qa/evidence/`)
+- **Commitlar:** 58 ta `workspace` branch'da (hammasi jasurjonai)
+- **Workspace hajmi:** ~21MB / 100MB (78% bo'sh joy bor)
+- **Muhit:** Playwright + Chromium + 4 rol sessiyalari (teacher 2-3 kod, admin 0 kod, user 2 hisob)
+
+### BUG-230hy2: 📊 MODUL TAQSIMOTI (en ko'p muammo)
+1. **Admin panel:** ~110 (barcha sahifalar, CRUD, monitoring)
+2. **Cast/Join:** ~55 (3-qatlam buzilgan)
+3. **Test/Arena:** ~50 (start endpoint yo'q, loadArena o'lik)
+4. **Auth/Validatsiya:** ~35 (generic xabarlar, teacher reg rad)
+5. **Email/SMTP:** ~20 (timeout, push_disabled)
+6. **Portfolio:** ~12 (import consent, share token)
+7. **PWA/Offline:** ~10 (journal bo'sh)
+8. **Integratsiya:** ~10 (Telegram/HEMIS/Canva not configured)
+9. **Notifications:** ~8 (mark-read 404, telegram prefs)
+10. **Settings/Profile:** ~8 (toggle ishlamaydi)
+
+### BUG-230hz2: 📋 CRITICAL BUGLAR RO'YXATI (53 ta, eng muhim 12 ta)
+1. **BUG-044** Arena `loadArena is not defined` — sinov maydoni o'lik
+2. **BUG-049** Director null crash — jonli dars pulti o'lik
+3. **BUG-052/230ca** Participant TDZ crash — desktop+mobile ham
+4. **BUG-059** 6 imtihon modulida JS o'lik
+5. **BUG-007** camera-review 500
+6. **BUG-230a** Arena start endpoint YO'Q
+7. **BUG-230hz** Assignments API 401 (actorId xato)
+8. **BUG-230ij** publish.js mount YO'Q
+9. **BUG-230ka** Teacher reg JIM RAD
+10. **BUG-090** Redis MemoryStore — deploy'da sessiyalar yo'q
+11. **BUG-230bq** Reg rate limit YO'Q
+12. **BUG-230ey** Portfolio import consent UX YO'Q
+
+### BUG-230hz3: ✅ 100+ PASS — SAYT NIMALARNI TO'G'RI QILGAN (qisqacha)
+- Xavfsizlik: CSRF/origin/IDOR/replay/rate/cookie/fixation/enumeration
+- Auth: MFA+backup+remember+OIDC PKCE+passkey+parol o'zgartirish E2E
+- PWA: SW 19 fayl cache, offline rejim ishlaydi
+- Gemini AI: haqiqiy uz tilida savollar (rate limit bilan)
+- Cast Governance: full pipeline (create/update/publish/version/audit)
+- Portfolio: item+visibility+share token+guest access
+- Roster: xlsx import E2E (upload→map→commit→user yaratildi)
+- Settings: lang/theme PATCH 200
+- Notifications: POST prefs 6 tur
+- Parol o'zgartirish E2E to'liq
+- A11y asosi: alt/label/tabindex/focus-visible 7 sahifada toza
+- Performance: GET p95=136ms, br compress, cache
+- 0 FOUC, 0 pageerror (panel/teacher/landing)
+
+### BUG-230hz4: 🎯 3 GLOBAL ILDIZ (80% muammoning manbasi)
+1. **JS `$` scope konflikt:** `main.js` global `const $` bilan sahifa-scope `const $` to'qnashadi → butun skript o'ladi (arena/director/grading/scheduler/seating/paper/scan = 20+ bug)
+2. **HTML-escape xatolar:** `<%= JSON.stringify %>` (panel), literal `</script>` (create-test) — CSRF/i18n global o'ladi
+3. **Env/infra yetishmasligi:** Redis yo'q (sessiyalar), PostgreSQL yo'q (ai-question-gen), VAPID yo'q (push), Telegram token yo'q, SMTP sekin — modullar yashirin buziladi
+
+### BUG-230hz5: 🎯 DEV UCHUN TOP-10 FIX (1-2 soat ish, 30+ bug hal bo'ladi)
+1. `main.js` IIFE'ga o'rash (yoki `$` nomini o'zgartirish) — 20+ bug ✅
+2. `cast-socket-client.js:75/106` race fix — 2 bug ✅
+3. `views/partials/footer-scripts.ejs` yaratish — 1 bug ✅
+4. Panel/create-test `theme-core` include — dark mode ✅
+5. SMTP `createTransport` timeout — reg timeout ✅
+6. `/cast/:id/results|replay` route render — 2 bug ✅
+7. Arena start endpoint qo'shish — 1 bug ✅
+8. Admin nav href to'g'irlash (4x) — 1 bug ✅
+9. Footer legal linklar `/privacy` ga — 1 bug ✅
+10. Redis session store ulash — deploy sessiyalar ✅
+
+### BUG-230hz6: ⚠️ MFA BACKUP HOLATI
+- **Teacher:** ~2-3 ta qoldi (3fc3a80ee7, 80adf33dca, 507655b928 ishlatilgan)
+- **Admin:** 0 ta (BARCHASI ishlatildi)
+- **Student:** MFA yo'q (MFA o'chirilgan)
+- **Tavsiya:** yangi kodlar ro'yxati kerak (yoki MFA vaqtincha o'chirilsin)
+
+### BUG-230hz7: 📌 QOLGAN 40 STEP REJASI (STEPS.md)
+- FAZA D: Attempt/Response/Submit API (4 step)
+- FAZA E: Cast chuqur (7 step)
+- FAZA F: AI (8 step)
+- FAZA G: Integratsiya (8 step)
+- FAZA H: Admin qolgan sahifalar (8 step)
+- FAZA I-J: Xavfsizlik/Perf/UX (10 step)
+- Yakuniy: README audit + 100-step xulosa
+
+### BUG-230hz8: 📊 SIFAT KO'RSATKICHLARI
+| Ko'rsatkich | Qiymat |
+|---|---|
+| Jami sahifalar tekshirilgan | 40+ |
+| Jami endpointlar tekshirilgan | 90+ |
+| E2E oqim test qilingan | 12 (login, roster, portfolio, parol, VIP, Governance...) |
+| Playwright brauzer testlari | 30+ |
+| API testlari (curl/requests) | 200+ |
+| Console error topilgan sahifalar | 15 |
+| Critical vaziyatda deploy o'zgarishlar | 2 |
+
+### BUG-230hz9: ✅ IJOBIY YAKUNIY JADVAL — README da'volarining 60% REALLIKKA MOS
+- Platforma ARXITEKTURASI hujjatga mos — lekin FRONTEND 40% bug bilan
+
+### BUG-230hz10: ✅ YAKUNIY: 60-stepda to'xtash tavsiya etiladi — fix'lar deploy bo'lgach re-verify rejimi ko'proq samarali bo'ladi (yoki 41-100 steplar davom etaman)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
