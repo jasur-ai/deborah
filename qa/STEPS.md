@@ -88,3 +88,4 @@
 - ✅ STEP 37 — yakunlandi (2026-08-27): BUG-230bf/bg/bh ✅ (SW cache 19 fayl, OFFLINE rejim landing ishlaydi, offline sahifa OK) + BUG-230bi 🔴 (IndexedDB journal BO'SH — offline javoblar saqlanmaydi)
 - ✅ STEP 38 — yakunlandi (2026-08-27): BUG-230bq 🔴 (REG RATE LIMIT ISHLAMAYDI — 6/6 yaratildi) + BUG-230br 🔴 (CSP/Permissions-Policy yo'q) + BUG-230bp/bt/bv/bx ✅ (latency avg 140ms p95 136ms, COOP, admin limiter)
 - ✅ STEP 39 — yakunlandi (2026-08-27): BUG-230bz ✅ (projector guest OK) + BUG-230ca 🔴 (participant crash DESKTOPDA ham — TDZ error) + BUG-230cb 🔴 (director 'Kod: —' re-confirm) + BUG-230cc/ci (3-qatlamli join buzilishi xulosa)
+- ✅ STEP 40 — ORALIQ XULOSA: 302 yozuv (28🔴/30🟠/100🟡/24⚪/25ℹ️/91✅), modul taqsimot (admin 99, cast 48, test+arena 48, auth 19), TOP-10 dev fix ro'yxati, 3 global ildiz — 41-100 steplar rejada yoki re-verify rejimiga o'tish tavsiya

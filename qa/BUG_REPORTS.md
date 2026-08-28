@@ -1295,6 +1295,42 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230cj: ℹ️ Dalil: 72_projector.png, 73_participant_desktop.png, 74_director_s39.png
 
+### STEP 40 — ORALIQ XULOSA (statistik tahlil)
+
+### BUG-230ck: 📊 JAMI: 302 yozuv = 28 🔴 + 30 🟠 + 100 🟡 + 24 ⚪ + 25 ℹ️ + 91 ✅ + 3 🎯 xulosa
+
+### BUG-230cl: 📊 MODUL TAQSIMOTI (en ko'p muammo)
+1. **Admin panel: 99** — deyarli uchdan biri (nav 5x, monitoring qotishlar, JS o'lik modullar, CRUD xatolar)
+2. **Cast: 48** — join 3-qatlam buzilgan, director o'lik, projector OK
+3. **Test/Arena: 24+24** — start endpoint yo'q, loadArena o'lik, server validatsiya kam
+4. **Auth: 19** — validatsiya kuchli (ijobiy ko'p), generic xabar muammosi
+5. **Email: 15** — SMTP timeout, reg rate yo'q
+6. Portfolio: 10 · MFA: 7 · Board: 5 · Rate: 5 · boshqalar: <4
+
+### BUG-230cm: 📊 KUCHLI TOMONLAR (91 ✅) — sayt nimalarni TO'G'RI qilgan
+- Xavfsizlik: CSRF/origin/IDOR/replay/rate/cookie/enumeration/fixation — professional darajada
+- Auth: MFA+backup+remember+OIDC PKCE+passkey — zamonaviy
+- PWA: SW cache 19 fayl, offline ishlaydi
+- Gemini AI: haqiqiy generatsiya, uz tilida sifatli
+- Cast Governance pipeline: holat mashina + 2-bosqichli publish
+- A11y asosi: alt/label/tabindex/focus-visible asosan toza
+- Mobil: 12 sahifada overflow yo'q
+- Performance: GET p95=136ms, br, cache
+
+### BUG-230cn: 🎯 DEV UCHUN TOP-10 FIX (effekt/maqtap bo'yicha)
+1. `main.js` \$ → IIFE (BUG-012/044/059/230ao bir yo'la)
+2. Cast socket-client race fix (BUG-052/230ca)
+3. `footer-scripts.ejs` partial qo'shish (BUG-007)
+4. Panel oilasiga head.ejs theme-core (BUG-080)
+5. SMTP timeout + queue (BUG-039)
+6. `/cast/:id/results|replay` route render (BUG-150)
+7. Arena start endpoint (BUG-230a)
+8. Admin nav href to'g'irlash (BUG-006)
+9. Footer legal linklar (BUG-071)
+10. Redis session store (BUG-090)
+
+### BUG-230co: 📌 QOLGAN 70 STEP REJASI tayyor (STEPS.md FAZA D-J) — davom etish mumkin; yoki fix'lar deploy bo'lgach re-verify rejimiga o'tish tavsiya etiladi (chunki asosiy buzilishlar ildizlari topildi — yangi skanlar yangi yuzalar beradi, lekin ildizlar shu 3 ta)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
