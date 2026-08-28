@@ -2132,6 +2132,34 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ka40: ✅ IJOBIY — Password breach check HIBP live ishlaydi
 
+### STEP 67 YAKUNIY — TEACHER REG E2E MUVAFFAQIYAT! (10 topilma)
+
+### BUG-230ka41: ✅ TEACHER REG ISHLAYDI (15 belgili parol bilan) — RO'YXATDAN O'TISH MUVAFFAQIYATLI!
+- **Dalil:** to'liq forma (name/email/username/parol 19 belgi/role=teacher/university/subject/experience/reason/consent) submit → login `302 → /user/teacher-approval` → **"Tasdiqlash kutilmoqda"** sahifa
+- **Zanjir:** forma submit → POST /user/login (mode=reg) → 200 → user yaratilgan (role=teacher_pending) → login 302 → teacher-approval sahifa ✅
+- **Xulosa:** teacher reg ISHLAYDI, lekin faqat **parol 15+ belgi** bo'lsa (BUG-230ka31)
+
+### BUG-230ka42: ✅ teacher_pending oqim ISHLAYDI: login → /user/teacher-approval sahifaga redirect (auth.js:1638 to'g'ri ishlaydi)
+
+### BUG-230ka43: ✅ teacher-approval sahifa title: "Tasdiqlash kutilmoqda" — foydalanuvchi holatini ko'radi
+
+### BUG-230ka44: ✅ Admin pending teachers API: s66 foydalanuvchi pending ro'yxatda bo'lishi kerak (tekshirilmadi — keyingi stepda)
+
+### BUG-230ka45: 🟡 Landing fReg'da teacher reg YO'Q (BUG-035 re-confirm) — teacher faqat /user/register sahifadan ro'yxatdan o'tishi kerak, landing'da havola YO'Q
+
+### BUG-230ka46: 🔴 Parol 15 belgi minimal MUVOFIQ EMAS: landing fReg'da 8 belgi, /user/register'da 15 belgi — foydalanuvchi landing'da 8 belgili parol yozsa, student bo'lib ro'yxatdan o'tadi (teacher tanlovi yo'q!)
+
+### BUG-230ka47: ℹ️ Password breach check HIBP live: `POST /api/validate/password-breach` 200
+
+### BUG-230ka48: ✅ Reg oqimida email validate ham bor: `POST /api/validate/email` 200
+
+### BUG-230ka49: ℹ️ Dalil: /user/teacher-approval sahifa "Tasdiqlash kutilmoqda" 200
+
+### BUG-230ka50: 📌 FOYDALANUVCHI SHIKOYATI JAVOB: "teacher register qilolmaydi" — 2 sabab:
+1. Parol 15+ belgi bo'lishi kerak (foydalanuvchi ko'pincha qisqaroq yozadi)
+2. Landing sahifada teacher tanlash maydoni YO'Q (faqat student reg bor)
+→ Teacher bo'lish uchun /user/register sahifasiga borish + 15 belgili parol kiritish kerak
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
