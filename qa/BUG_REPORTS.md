@@ -2071,6 +2071,31 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230hz40: ℹ️ Dalillar: yuqoridagi curl/test natijalari
 
+### STEP 65 YAKUNIY — CAST STUDENT OQIMI RE-TEST (10 topilma)
+
+### BUG-230ha2: 🔴 ESKI CAST (GNGKSH) HANUZ "Ulanish…" holatida QOTGAN (expired holat YO'Q)
+- **Dalil:** `/play?code=GNGKSH` → 200, "Ulanish…" holati, **expired/muddati tugagan matni YO'Q**
+- **Kod:** challenge TTL 5 daqiqa (BUG-230hz), cast sessiyalar ko'p soat saqlanadi — eski sessiya uchun clear xato yo'q
+- **Ta'sir:** foydalanuvchi eski kod bilan kirsa — abadiy kutadi (expired matni yo'q)
+
+### BUG-230ha3: 🟠 Student CAST SESSION YARATOLMAYDI (403 CSRF — dizayn to'g'ri)
+- **Dalil:** student bilan `/api/cast/preflight` + `/sessions` POST → **403 CSRF token validation failed**
+- **Ta'sir:** bu DIZAYNGA mos (faqat teacher yaratadi) — lekin student o'z testini CAST qila olmaydi
+
+### BUG-230ha4: 🔴 Participant TDZ crash re-confirm (yangi deployda ham)
+
+### BUG-230ha5: ℹ️ Cast sahifada step indikator (1 Kod → 2 Ism → 3 Lobbi) aniq ko'rinadi
+
+### BUG-230ha6: ✅ Cast sahifada Sinfda/Uzoqdan tanlov maydonlari bor (to'g'ri)
+
+### BUG-230ha7: ✅ Karta raqami maydoni bor (qog'oz kartochka rejimi) — oddiy talaba uchun kerak
+
+### BUG-230ha8: ℹ️ Qo'shilish tugmasi sahifa pastida (BUG-053 bilan bir xil — scroll kerak)
+
+### BUG-230ha9: ✅ Dalil: 87_cast_s65.png (yangi)
+
+### BUG-230ha10: 🎯 XULOSA: Cast oqimi 3 muammodan iborat: (1) eski sessiya expired xatosiz, (2) student TDZ crash, (3) teacher'ning director sahifasi o'lik. Yagona ishlayotgan qism — PROJECTOR (BUG-230bz)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI

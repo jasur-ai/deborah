@@ -113,3 +113,4 @@
 - ✅ STEP 62 — yakunlandi (2026-08-27): STUDENT 10 sahifa skan — 5 tasi toza, 5 tasi pageerror (BUG-009/012/011 re-confirm) + BUG-230hz11 🔴 YANGI (settings 'profile is not defined')
 - ✅ STEP 63 — yakunlandi (2026-08-27): BUG-230hz25 🔴 (email/change 404 — mount YO'Q) + BUG-230hz21 🟡 (password change generic xato) + BUG-230hz22/23/24/27/30 ✅ (notifications, portfolio CRUD, push, xavfsizlik)
 - ✅ STEP 64 — yakunlandi (2026-08-27): BUG-230hz31 ✅ (email change 403 reauth — BUG-230hz25 QAYTA YOZILDI, endpoint TIRIK) + BUG-230hz35 🔴 (/api/account/sessions 404) + 230hz32-34/36-39 ✅
+- ✅ STEP 65 — yakunlandi (2026-08-27): BUG-230ha2 🔴 (eski cast GNGKSH 'Ulanish...' qotgan — expired xato YOQ) + BUG-230ha3 🟠 (student cast yaratolmaydi — dizayn) + BUG-230ha4 🔴 (TDZ crash re-confirm) + BUG-230ha10 🎯 (3 muammo xulosa)
