@@ -2096,6 +2096,42 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ha10: 🎯 XULOSA: Cast oqimi 3 muammodan iborat: (1) eski sessiya expired xatosiz, (2) student TDZ crash, (3) teacher'ning director sahifasi o'lik. Yagona ishlayotgan qism — PROJECTOR (BUG-230bz)
 
+### STEP 66 YAKUNIY — TEACHER REG DEBUG NANOQADAM (10 topilma)
+
+### BUG-230ka31: 🔴 PAROL minlength="15" — 10 belgili parol HTML5'da RAD, lekin FOYDALANUVCHI BILMAYDI
+- **Dalil:** `#reg-password` inputida **`minlength="15"`** attribute mavjud
+- **Test:** `Test1234x` (10 belgi) bilan form.checkValidity() = **False**
+- **validationMessage:** " " (bo'sh) — HTML5 xato matni YO'Q
+- **Zid:** landing `#fReg` reg paroli `minlength="8"` (BUG-230ka re-confirm) — **2 sahifada 2 xil parol talabi!**
+- **Hint:** `fld-hint` elementi YO'Q (login sahifada bor) — foydalanuvchiga "15 belgi kerak" deyilmagan
+
+### BUG-230ka32: 🔴 Teacher reg paroli 15 belgi OSHIQ TALAB qiladi (landing student reg 8 belgi) — RO'YXATDAN O'TISH NIZO MASALASI
+- **Ta'sir:** teacher ro'yxatdan o'tishda 15+ belgi parol kerak — foydalanuvchi bilmaydi, forma submit qilinmaydi, xato ham ko'rinmaydi
+- **Ijobiy tomoni:** server ham minlength:15 validatsiya qiladi (parseRegister passwordMin)
+
+### BUG-230ka33: 🔴 Password validationMessage BO'SH — HTML5 xato matni yo'q (shunchaki bo'sh string)
+- **Natija:** forma submit bo'lmaydi, foydalanuvchiga qizil ramka/yozuv ko'rinmaydi — **jim xato**
+
+### BUG-230ka34: 🔴 Register sahifada `auth-error` bloki YO'Q (BUG-230ka2 re-confirm) — server xatolari HAM ko'rsatilmaydi
+
+### BUG-230ka35: ✅ Teacher maydonlar (universitet/fan/tajriba/sabab) role=teacher tanlanganda dinamik ochiladi ✅
+
+### BUG-230ka36: ✅ Password breach check (HIBP) bor: `POST /api/validate/password-breach` 200 — xavfsizlik funksiyasi OK
+
+### BUG-230ka37: ℹ️ 15 belgi parol bilan yana urinish: form.checkValidity() → password hali invalid (validationMessage bo'sh)
+- **Izoh:** minlength 15 bajarildi lekin custom validation (data-pw-check) hali ishlamaydi bo'lishi mumkin
+
+### BUG-230ka38: ℹ️ Dalil: `register.ejs:159` — `minlength="15"` attribute aniq ko'rsatilgan
+
+### BUG-230ka39: 🔴 FOYDALANUVCHI TALABI TASDIQLANDI: "teacher register qilolmaydi" muammosining KOMPLEKS ildizi:
+1. Parol minlength 15 foydalanuvchiga ko'rsatilmagan (hint yo'q)
+2. HTML5 validationMessage bo'sh
+3. auth-error elementi sahifada yo'q
+4. Generic xatolar ham ko'rsatilmaydi
+=> O'qituvchi ro'yxatdan o'tish formasi 4 ta sababdan IShLAMAYDI
+
+### BUG-230ka40: ✅ IJOBIY — Password breach check HIBP live ishlaydi
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI

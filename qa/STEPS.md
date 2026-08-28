@@ -104,6 +104,7 @@
 - ✅ STEP 53 — yakunlandi (2026-08-27): BUG-230is1 🔴 (HEMIS Pull roster 403 CSRF) + BUG-230is2 🟠 (HEMIS UI'da bor — BUG-165 re-confirm) + 230is3-10 (connections/identities 200, env yo'q)
 - ✅ STEP 54 — yakunlandi (2026-08-27): BUG-230ka 🔴 (teacher reg JIM RAD — xato xabari ham yo'q, login ishlamaydi) + BUG-230kc 🔴 (teacher-approval 401) + BUG-230ki 🔴 (3 zanjirli approval buzilishi)
 - ✅ STEP 55 — yakunlandi (2026-08-27): BUG-230ka2/ka3/ka4 🔴 (reg sahifada auth-error elementi YO'Q — xatolar yashirin) + BUG-230ka5 🟠 (experience format nomalum) + BUG-230ka6 🔴 (foydalanuvchi xato ko'rmaydi) + BUG-230ka7-10
+- ✅ STEP 66 — yakunlandi (2026-08-27): BUG-230ka31 🔴 (parol minlength=15, landing'da 8 — 2 xil talab!) + ka32 🔴 + ka33 🔴 (validationMessage bo'sh) + ka34 🔴 + ka39 🔴 (4 sabab bilan teacher reg IShLAMAYDI) + ka36/40 ✅ (HIBP OK)
 - ✅ STEP 56 — yakunlandi (2026-08-27): BUG-230ka11 ✅ (remember-me Max-Age 30 kun + revoke OK) + BUG-230ka12/13 🟡 (RU aralash, tab bosilganda hech narsa ko'rinmaydi) + ka14-20
 - ✅ STEP 57 — yakunlandi (2026-08-27): BUG-230ka22 🟠 (Kurslar tabida 'Kurs yaratish' TUGMA YO'Q — teacher kurs yaratolmaydi, README §2 zid) + BUG-230ka21/24/25/28/29 ✅ (4 tab toza) + ka23/26/27/30 ℹ️
 - ✅ STEP 58 — yakunlandi (2026-08-27): BUG-230ca2/cb2 🔴 RE-CONFIRM (participant crash, director 0 ishtirokchi) + BUG-230ck ✅ (sessiya yaratish E2E) + BUG-230cm/cn ℹ️ (kodlar holati, rate limiter OK)
