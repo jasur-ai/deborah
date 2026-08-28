@@ -2490,6 +2490,40 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ka120: ✅ IJOBIY — modullar yo'qligi sahifani buzmaydi (izchil fail-soft)
 
+### STEP 78 YAKUNIY — JS MODULLAR FAYL TARKIBI (10 topilma)
+
+### BUG-230ka121: ✅ 5 TA JS MODUL FAYLI MAVJUD VA TO'LIQ (fail qiziqarli):
+| Fayl | Hajm | Global define |
+|------|------|---------------|
+| term-utils.js | 4.3KB | window.DeborahTerms ✅ |
+| offline-banner.js | 6.1KB | (reconnect banner) |
+| i18n-formatters.js | 3.4KB | (Intl format) |
+| switch.js | 1.6KB | (toggle) |
+| session-timeout.js | 7.6KB | window.SessionTimeout ✅ |
+
+### BUG-230ka122: ✅ Term-utils: `window.DeborahTerms` define qilingan — kodda bor
+- **Amaliy holat:** panel sahifada `undefined` — fayl sahifaga **qo'shilmagan** (include yo'q)
+
+### BUG-230ka123: ✅ SessionTimeout: `window.SessionTimeout` define qilingan — kodda bor
+- **Amaliy holat:** panel sahifada undefined — fayl sahifaga qo'shilmagan (BUG-230ka111 re-confirm)
+
+### BUG-230ka124: ✅ Offline-banner: reconnect banner bilan — kichik fayl (6.1KB)
+- **Ijobiy:** IndexedDB journal arxitekturasi tayyor (BUG-230bi bilan bog'liq)
+
+### BUG-230ka125: ℹ️ i18n-formatters: `Intl` API bilan number/percent/date formatting — sifatli modul
+
+### BUG-230ka126: ℹ️ Switch: 1.6KB kichik toggle komponent — ishlatilmagan
+
+### BUG-230ka127: 🔴 5 TA MODUL BARIBIR FAYLGA QO'SHILMAGAN (panel sahifada undefined)
+- **Ildiz:** `views/user/panel.ejs` head.ejs'dan foydalanadi, lekin **modullar include qilinmagan** (panel.ejs alohida head ishlatadi, boshqa sahifalardan farqli)
+- **Tuzatish:** panel.ejs head'ga `<script src="/js/i18n-formatters.js">` va boshqalarni qo'shish kerak
+
+### BUG-230ka128: ✅ Jami: 75 stepda ~720 yozuv (modullar tahlili qo'shildi)
+
+### BUG-230ka129: ℹ️ Bug hal bo'lishi: panel.ejs head yangilansa 6 modul tiklanadi (BUG-080 bilan bir pattern)
+
+### BUG-230ka130: ✅ Jami dalillar: fayl tarkibi + window holati solishtirilgan
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI

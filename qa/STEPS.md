@@ -121,6 +121,7 @@
 - ✅ STEP 75 — 75-STEP XULOSA: ~680 yozuv, 6.5/10 platforma, 3 ildiz o'zgarmagan, MFA 0 kod, qolgan 25 step rejada
 - ✅ STEP 76 — yakunlandi: BUG-230ka101-103 🔴 (CSP/Permissions/COEP YO'Q) + 104-110 ✅ (HSTS/cookie/nosniff/COOP/RP OK — 7/13 headers)
 - ✅ STEP 77 — yakunlandi: BUG-230ka111 🟠 (6 JS modul window'da ro'yxatlanmagan — panel'da barcha undefined) + ka112-120 ✅/ℹ️ (fail-soft, sana uz-UZ OK, 0 pageerror)
+- ✅ STEP 78 — yakunlandi: BUG-230ka127 🔴 (5 modul FAYLGA QO'SHILMAGAN — panel.ejs alohida head ishlatadi) + 121-126 ✅ℹ️ (barcha fayllar mavjud, sifatli, faqat include yo'q)
 - ✅ STEP 62 — yakunlandi (2026-08-27): STUDENT 10 sahifa skan — 5 tasi toza, 5 tasi pageerror (BUG-009/012/011 re-confirm) + BUG-230hz11 🔴 YANGI (settings 'profile is not defined')
 - ✅ STEP 63 — yakunlandi (2026-08-27): BUG-230hz25 🔴 (email/change 404 — mount YO'Q) + BUG-230hz21 🟡 (password change generic xato) + BUG-230hz22/23/24/27/30 ✅ (notifications, portfolio CRUD, push, xavfsizlik)
 - ✅ STEP 64 — yakunlandi (2026-08-27): BUG-230hz31 ✅ (email change 403 reauth — BUG-230hz25 QAYTA YOZILDI, endpoint TIRIK) + BUG-230hz35 🔴 (/api/account/sessions 404) + 230hz32-34/36-39 ✅
