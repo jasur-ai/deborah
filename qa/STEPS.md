@@ -83,3 +83,4 @@
 - ✅ STEP 32 — yakunlandi (2026-08-27): BUG-230k ✅ (Governance pipeline to'liq) + 230l/m ✅ (holat mashina, 2-bosqichli publish) + 230o ✅ (MFA step-up LIVE) + 230n/p/q/r/s/t
 - ✅ STEP 33 — yakunlandi (2026-08-27): BUG-230u 🟠 (command-center snapshot qotgan) + 230v/x/y ✅ (SLO real, Security Guard jonli, modullar UI to'la) + 230w/aa/ac mayda
 - ✅ STEP 34 — yakunlandi (2026-08-27): BUG-230af 🔴 (budget API HTML qaytaradi) + BUG-230ag/ai/am ✅ (roster xlsx import 201 REAL) + BUG-230ah 🟡 (201'dan keyin UI javobsiz) + qolgan izohlar
+- ✅ STEP 35 — yakunlandi (2026-08-27): BUG-230ao 🔴 (4 modul interaktiv tugmalari o'lik — 403 CSRF + undefined funksiyalar) + BUG-230ap 🔴 (allocate ID bo'sh) + BUG-230aq/ar/as/au (xulosa: \$ + CSRF fix modullarni tiriltiradi)

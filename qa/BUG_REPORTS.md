@@ -1161,6 +1161,29 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230an: ⚪ Email-cost sahifada grafik/chart elementi yo'q (faqat jadval) — README'da charts JS bor, bu sahifada ishlatilmagan
 
+### STEP 35 YAKUNIY — BOARD/GRADING/MARKING/CONSIDERATION INTERAKTIV (10 topilma)
+
+### BUG-230ao: 🔴 4 modul interaktiv tugmalari: "Yaratish/Bosish" bosiladi — hech biri ishlamaydi
+| Sahifa | Tugma | Natija |
+|--------|-------|--------|
+| /admin/board | Meeting yaratish | dialog OCHILMAYDI, POST 403 (CSRF headersiz — BUG-067 oilasi) |
+| /admin/grading | Rule yaratish | dialog YO'Q + `createRule is not defined` + `$` konflikt |
+| /admin/grading | Hisoblash | `calculate is not defined` |
+| /admin/marking | Taqsimlash | `POST /api/admin/marking/assignments//allocate` — **ID BO'SH** + 403 CSRF |
+| /admin/consideration | Case yaratish | dialog ochilmaydi, POST 403 |
+
+### BUG-230ap: 🔴 marking allocate so'rovida assignment ID BO'SH qolgan (`assignments//allocate` — qo'sh slash) — tanlanmagan assignment'ni himoyasiz yuborish
+
+### BUG-230aq: ✅ GRADING sahifasi BUG-059 bilan bir xil (pageerror: $ + createRule/calculate undefined) — re-confirm yangi deployda
+
+### BUG-230ar: 🟡 Board/consideration dialoglari yopiq holatda HTML'da mavjud — ochish handlerlari CSRF'siz fetch bilan bog'langan (UI ochadi, server rad)
+
+### BUG-230as: ✅ IJOBIY — modullarda "bo'sh" holatlar to'g'ri ko'rsatiladi, sahifa layoutlari buzilmagan (vizual)
+
+### BUG-230at: 🎯 XULOSA: imtihon boshqaruv 4 modul (board/grading/marking/consideration) **interaktiv jihatdan deyarli to'liq o'lik** — vizual demo darajasida. Ildiz: BUG-059 (main.js $) + BUG-067 (CSRF headersiz fetch'lar) — ikkala global fix modullarni tiriltiradi
+
+### BUG-230au: ℹ️ Yig'ma hisob: 35 stepda 260+ topilma, 70+ skrinshot, 27 commit
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
