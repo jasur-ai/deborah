@@ -1942,6 +1942,43 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230hz10: ✅ YAKUNIY: 60-stepda to'xtash tavsiya etiladi — fix'lar deploy bo'lgach re-verify rejimi ko'proq samarali bo'ladi (yoki 41-100 steplar davom etaman)
 
+### STEP 61 YAKUNIY — PUBLISH/ASSIGNMENT RE-VERIFY (10 topilma)
+
+### BUG-230ka11: ✅ Remember-me: cookie Max-Age=2592000 (30 kun), logout'da REVOKE OK
+
+### BUG-230ka12: 🟡 Settings sahifada RU/uz ARALASH ("Согласия" kirill)
+
+### BUG-230ka13: 🟡 Settings tab bosilganda HECH NARSA ko'rinmaydi (bo'sh)
+
+### BUG-230ka14: 🟡 Profile email "tasdiqlanmagan" belgisi bor — verify tugmasi YO'Q
+
+### BUG-230ka15-20: ✅ VIP Standart, sana format, email probel va boshqalar
+
+### BUG-230hz: 🔴 RE-CONFIRM (user bilan): /api/student/assignments 401 (actorId safeKey bug)
+
+### BUG-230hz2: 🔴 RE-CONFIRM: /api/publish/* barcha 404 (user bilan) — publish mount YO'Q
+- **Dalil:** /api/publish/meta, /api/assignments — user bilan ham 404 (publish.js app.use yuqoridagi izohga mos emas)
+
+### BUG-230hz3: ⚠️ MFA BACKUP HOLATI (KRITIK):
+- **Teacher:** BARCHA kodlar ishlatildi/invalid (3fc3a80ee7, 80adf33dca, 507655b928, c745de5358, 15900a12d9 hammasi 403 invalid!)
+- **Admin:** 429 LOCKED (5 xato urinishdan keyin, 15 daqiqa kutish kerak)
+- **Student:** MFA yo'q (yaqinda o'chirilgan)
+- **Xulosa:** Admin panel va Teacher'ga KIRIB BO'LMAYDI — deploy'dan keyin yangi kodlar berilishi SHART
+
+### BUG-230hz4: ✅ User sessiyasi yangilandi (jasurjonai) — student testlar davom etishi mumkin
+
+### BUG-230hz5: ℹ️ admin lockout 15 daqiqa — keyingi stepda qayta urinib bo'lmaydi (yangi kodlar kerak)
+
+### BUG-230hz6: ℹ️ publish.js import bor server.js:124 — lekin app.use() YO'Q (BUG-230ij re-confirm)
+
+### BUG-230hz7: ℹ️ /api/publish/meta 404 user bilan ham, teacher bilan ham ( mounting YO'Q umuman)
+
+### BUG-230hz8: ℹ️ publish.js'dagi route'lar: /api/publish/meta, /plan, /hash, /secret-scan, /key, /publish, /api/assignments, /api/assignments/:id — HAMMASI 404
+
+### BUG-230hz9: ✅ Dalillar: saqlanmagan (minimal API test)
+
+### BUG-230hz10: 📌 TAVSIYA: Teacher/Admin'ga yangi backup kodlar berilsin — keyingi stepda davom etish uchun. Yoki MFA'ni vaqtincha o'chirish mumkin (har bir foydalanuvchi uchun)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
