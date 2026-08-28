@@ -108,12 +108,12 @@ describe('S11.10 — cascade layers', () => {
 });
 
 describe('S11.11 — !important allowlist', () => {
-  it('!important ≤25 (reduced-motion/HC allowlist)', () => {
+  it('!important ≤26 (reduced-motion/HC + S13 mobil-a11y: input 16px anti-zoom ×3)', () => {
     const cssDir = join(ROOT, 'public/css');
     let total = 0;
     for (const f of readdirSync(cssDir).filter((x) => x.endsWith('.css'))) {
       total += (rd(`public/css/${f}`).match(/!important/g) || []).length;
     }
-    expect(total).toBeLessThanOrEqual(25);
+    expect(total).toBeLessThanOrEqual(26);
   });
 });

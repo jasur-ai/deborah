@@ -154,3 +154,37 @@
   overflow-y: auto;
   overflow-x: hidden;
 }
+
+/* ── S13 mobil qatlam (BUG-080/081/082/083) ── */
+@media (max-width: 640px) {
+  /* BUG-080: iOS fokus auto-zoom — matn maydonlari kamida 16px shrift */
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='submit']):not([type='button']):not([type='file']):not([type='image']):not([type='color']),
+  select,
+  textarea {
+    font-size: max(16px, 1em) !important;
+  }
+  /* BUG-081: WCAG 2.5.8 (AA) — belgi nishonlari ≥24px */
+  input[type='checkbox'],
+  input[type='radio'] {
+    min-width: 24px;
+    min-height: 24px;
+  }
+  /* BUG-082: tugma/select nishon balandligi ≥24px (lib .sel 19px, .adm-btn 21px, auJourney 19px) */
+  button,
+  select {
+    min-height: 24px;
+  }
+  /* BUG-083: ikon-tugmalar minimal o'lchami (hamburger 18px, refresh 14×14) */
+  button,
+  [role='button'] {
+    min-width: 24px;
+  }
+  /* BUG-083: logo-link nishoni ≥24px (login/register 16×32, portfolio 82×13 —
+     style.css tizimidagi sahifalarda .nav-logo inline, min-height no-op edi) */
+  a.nav-logo {
+    display: inline-flex;
+    align-items: center;
+    min-width: 24px;
+    min-height: 24px;
+  }
+}

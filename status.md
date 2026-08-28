@@ -334,6 +334,43 @@ clean S11 HEAD (b60e862 worktree)da ham xato: 8 pre-existing (telegram-redirect 
 izolyatsiyada o'tadi)** → S12 regressioni 0; test sinxron: http.test (Accept aniq),
 cast-projector (302 /play), teacher-sla-b16 (A-19 stealth 404 brauzer uchun); design-lint PASS ✓.
 
+## STEP 13 — 🟠 Faza B: mobil qatlam (overflow, touch-target, input-zoom, [hidden]) — ✅
+**Buglar:** BUG-078/079/080/081/082/083 (jami 6 guruh, 20+ ko'rinish)
+**Qanday (qaysi+qanday):**
+- **BUG-078** cast-participant.css — `[hidden]` atributi ishlamagan: `.part-center{display:flex}`
+  (author) brauzerning UA `[hidden]{display:none}`'ini yengadi → /play'da BARCHA screenlar (join,
+  waiting, forge, question) yonma-yon ko'rinib, 390px'da **+733px** (320px'da +554px) gorizontal
+  overflow; director'da bu muammo uchun `.dir-overflow-menu[hidden]` fix BOR edi, participantda
+  unutilgan. Fix: fayl oxiriga `[hidden]{display:none}` (source-order yutadi) + `.part-card{max-width:
+  100%;box-sizing:border-box}` (shrink-to-fit 400px) + `.join-steps{flex-wrap:wrap}`.
+- **BUG-079** cast-director.css `.dir-topbar` — mobil breakpoint YO'Q: `dir-topbar-right` 390px'da
+  **+315px** chiqib ketardi. Fix: ≤640px `flex-wrap:wrap` topbar + chiplar.
+- **BUG-080** iOS fokus auto-zoom — input/textarea/select `font-size<16px` (landing 14.72,
+  settings 13.12, portfolio 13.33, play cast-input 13.33, director 14.4, admin 12–13.33) — 15+
+  sahifa, 20+ maydon. Fix: `@media≤640px` `font-size:max(16px,1em)!important` — responsive.css
+  (design sahifalar) + admin.css (21 ta admin view responsive.css yuklamaydi, o'z head'i bor) +
+  cast-participant/director (.cast-input).
+- **BUG-081** WCAG 2.5.8 — checkbox/radio 13–20px (adm-a11y 13×13, login remember 15×15,
+  portfolio consent 13×20, director qp-correct 20×20). Fix: `@media≤640px` `min-width/min-height:
+  24px` (responsive.css + admin.css + cast-director.css).
+- **BUG-082** tugma/select balandligi <24px (panel `.sel` 19px, `.adm-btn` 21px, `#auJourney`
+  19px). Fix: `@media≤640px` `button,select{min-height:24px}` ×3 CSS.
+- **BUG-083** ikon-nishonlar — login/register `a.nav-logo` 16×32 (portfolio'da 82×13 — style.css
+  tizimida inline, min-height no-op), admin hamburger 18px, admin-refresh 14×14. Fix:
+  `a.nav-logo{display:inline-flex;min-width/min-height:24px}` responsive.css + portfolio.ejs'ga
+  responsive.css link; `button{min-width:24px}` hamburger/refresh'ni yopadi.
+- **Tester yaxshilanishi:** scanner 3 bosqichda FP chiqarmaydi: FIXED-OFF `transform:none` sharti
+  (nav-drawer translateX off-canvas), CLIPPED sr-only pattern skip, TARGET lazy-img kutish +
+  `naturalWidth` guard.
+**Tool:** `scripts/scan-step13.mjs` (PORT 4604; 36 sahifa × 390px to'liq audit: overflow+touch+
+input-zoom+fixed+clipped, +320px overflow-only; PUB 9/USER 11/CAST 4/ADMIN 15) +
+`scripts/repro-step13.mjs` (PORT 4606, 24 tekshiruv) + probe'lar.
+**Verify:** scan 1-run'da 124 topilma → fix'lar → **0 buzilish, 40/40 toza**; repro **24/24
+HAMMASI OK**; design foundations 16/16 (allowlist 25→26 hujjatlangan: S13 anti-zoom ×3);
+cast e2e 21+5 o'tdi; design-lint PASS ✓; full vitest 7098/7108 — 9 ta S12'dan ma'lum
+pre-existing (S11 HEAD worktree'da ham xato) + 1 S13 regression ([hidden] important +2) TOPILDI
+VA TA'SIRLANDI (27→26, chegara yangilandi, test o'tdi).
+
 ## ✅ YAKUNLANGANLAR
 - **STEP 1** (2026-08-27): BUG-009/010/012/044 + 2 yangi topilma — 6 fayl; brauzer 13/13 PASS, vitest 45/45.
 - **STEP 2** (2026-08-27): BUG-011/016/041 — 5 fayl + 3 test sinxron; brauzer 10/10 PASS, auth 491/491, integration 104/104.
@@ -347,6 +384,7 @@ cast-projector (302 /play), teacher-sla-b16 (A-19 stealth 404 brauzer uchun); de
 - **STEP 10** (2026-08-28): BUG-026 (qaror)/027a (qaror)/027b (real statistika)/029 (Barcha funksiyalar sahifasi)/030 (no-reload delete) — repro 25/25, 4896/4896. [PUSH: S6–S10]
 - **STEP 11** (2026-08-28): BUG-013/015/022/045 + YANGI 068/069/070 (settings crash, S10 TDZ regress, eskirgan test) — konsol-scan 12/12 toza, repro 16/16, 4896/4896.
 - **STEP 12** (2026-08-28): BUG-071…077 (sessions/cast/enter kontrast, projector 302, roles html/json negotiate, hc graceful) — scan 24+ sahifa 0 buzilish, repro 16/16, full 7099/7108 (9 fail pre-existing @HEAD), design-lint PASS.
+- **STEP 13** (2026-08-28): BUG-078…083 (participant [hidden] +733px overflow, director topbar +315px, iOS input-zoom <16px, touch-target <24px) — scan 36 sahifa 0 buzilish, repro 24/24, cast e2e 21+5, design-lint PASS.
 
 ## 📋 MANBA HAVOLALAR
 - BUG hisobotlari: `workspace` branch → `qa/BUG_REPORTS.md`

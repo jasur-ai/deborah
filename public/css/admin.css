@@ -677,3 +677,26 @@ body.admin-nav-open .admin-nav-hamburger span:nth-child(3) { transform: translat
   .admin-navbar { padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-4, 16px); gap: 8px; }
   .admin-nav-brand { font-size: .85rem; }
 }
+
+/* ── S13 mobil qatlam (BUG-080/081/082) — admin viewlar responsive.css yuklamaydi,
+   o'z head'lari orqali admin.css oladi ── */
+@media (max-width: 640px) {
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='submit']):not([type='button']):not([type='file']):not([type='image']):not([type='color']),
+  select,
+  textarea {
+    font-size: max(16px, 1em) !important;
+  }
+  input[type='checkbox'],
+  input[type='radio'] {
+    min-width: 24px;
+    min-height: 24px;
+  }
+  button,
+  select {
+    min-height: 24px;
+  }
+  button,
+  [role='button'] {
+    min-width: 24px;
+  }
+}

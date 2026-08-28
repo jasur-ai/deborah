@@ -902,3 +902,29 @@
   border-radius: var(--deborah-radius-md, 12px);
   background: rgba(255,255,255,0.05);
 }
+
+/* ── S13 BUG-079: topbar mobil (≤640px) — dir-topbar-right 390px'da +315px chiqib
+   ketardi; chiplar qatorga o'tadi ── */
+@media (max-width: 640px) {
+  .dir-topbar { flex-wrap: wrap; gap: 8px; padding: 10px 12px; }
+  .dir-topbar-right { flex-wrap: wrap; gap: 8px; }
+}
+
+/* ── S13 BUG-080 (cast): mobil input-zoom — cast-input ≥16px ── */
+@media (max-width: 640px) {
+  .cast-input,
+  select.cast-input,
+  input.cast-input,
+  textarea.cast-input {
+    font-size: max(16px, 1em) !important;
+  }
+}
+
+/* ── S13 BUG-081 (cast): nishonlar ≥24px — director responsive.css yuklamaydi ── */
+@media (max-width: 640px) {
+  input[type='checkbox'],
+  input[type='radio'] {
+    min-width: 24px;
+    min-height: 24px;
+  }
+}

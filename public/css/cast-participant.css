@@ -789,3 +789,22 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
 .part-leaderboard-body .lb-row {
   background: var(--deborah-surface-muted, #252b3d);
 }
+
+/* ── S13 BUG-078 (davom): part-card shrink-to-fit 400px'ga chiqib viewportni oshirardi ── */
+.part-card { max-width: 100%; box-sizing: border-box; }
+.join-steps { flex-wrap: wrap; max-width: 100%; }
+
+/* ── S13 BUG-078: [hidden] atributi ishlashi (author display:flex UA display:none'ni
+   yengadi — barcha screenlar yonma-yon ko'rinib, /play +733px overflow berardi).
+   Director'da .dir-overflow-menu[hidden] uchun xuddi shu fix bor edi — participantda yo'q) ── */
+[hidden] { display: none; } /* important shart emas — bu qoida fayl oxirida, .part-center'dan keyin */
+
+/* ── S13 BUG-080 (cast): mobil input-zoom — cast-input ≥16px ── */
+@media (max-width: 640px) {
+  .cast-input,
+  select.cast-input,
+  input.cast-input,
+  textarea.cast-input {
+    font-size: max(16px, 1em) !important;
+  }
+}
