@@ -1454,6 +1454,29 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230fr: ℹ️ Dalil: 80_portfolio_import.pdf_result.png
 
+### STEP 47 YAKUNIY — SETTINGS INTERAKTIV (10 topilma)
+
+### BUG-230fs: ✅ Settings sahifa to'liq funksional: lang (uz/ru/en/kk), theme (light/dark), Saqlash PATCH 200
+
+### BUG-230ft: 🟠 Settings toggle (Maxfiylik switch) bosilganda HOLAT O'ZGARMAYDI (false -> false)
+- **Dalil:** `aria-checked`/className oldin va keyin bir xil; API so'rov ham YO'Q
+- **Ta'sir:** foydalanuvchi maxfiylikni yoqsa — yangilanmaydi (cheklovsiz interaktiv bug)
+
+### BUG-230fu: 🟡 "Roziliklar" tab tugmasi SAHIFADA YO'Q (btns ro'yxatida bor lekin DOM'da topilmaydi — menu item, page ochilmaydi)
+- **Kod:** `account-settings.js` 4.5KB faqat boshqa narsalar; roziliklar sahifasi alohida bo'lishi kerak
+
+### BUG-230fv: 🟡 "Bildirishnomalar" settings sahifada 2 toggle bor, lekin ular ham `role=switch` boshqaruvisiz (maxfiylik bilan bir xil muammo)
+
+### BUG-230fw: 🟡 Settings til select `kk` (Qozoq) bor — i18n lug'atida kk varianti YO'Q (BUG-230cl faqat uz/ru/en edi); kk tanlansa nima bo'ladi tekshirilmagan
+
+### BUG-230fx: ✅ Theme select light/dark (hc yo'q — BUG-100 bilan bir xil)
+
+### BUG-230fy: ✅ PATCH /user/api/settings/profile 200 (til/theme saqlanadi)
+
+### BUG-230fz: ✅ Sidebar navigatsiya ishlaydi (Profil, Xavfsizlik, Maxfiylik dropdown)
+
+### BUG-230ga: ℹ️ Jami settings: 4 tab, 3 select, 2 checkbox, 1 toggle — ko'p qism interaktiv emas (BUG-230ft chuqurlashtirilgan xolos)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
