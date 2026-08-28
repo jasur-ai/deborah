@@ -1331,6 +1331,29 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230co: 📌 QOLGAN 70 STEP REJASI tayyor (STEPS.md FAZA D-J) — davom etish mumkin; yoki fix'lar deploy bo'lgach re-verify rejimiga o'tish tavsiya etiladi (chunki asosiy buzilishlar ildizlari topildi — yangi skanlar yangi yuzalar beradi, lekin ildizlar shu 3 ta)
 
+### STEP 41 YAKUNIY — PROFILE/PAROL O'ZGARTIRISH E2E (10 topilma)
+
+### BUG-230cp: ✅ PAROL O'ZGARTIRISH E2E TO'LIQ ISHLAYDI (bug yo'q!)
+- Oqim: wrong current → 403 `current-password` (to'g'ri rad); to'g'ri current → 200 "yangilandi"; yangi parol bilan boshqa browserda login → 302 panel; qaytarish ham OK
+
+### BUG-230cq: ✅ Parol o'zgartirishda boshqa device'larda sessiya holati: revoke-sessions avtomatik EMAS (tayinli dizayn — boshqa qurilmalar faol qoladi). Ba'zi platformalar majburan chiqaradi — mahalliy qaror
+
+### BUG-230cr: 🟡 security-profile sahifasida "Parol o'zgartirish" bloki SARLAVHASIZ (label None) — faqat "Parolni o'zgartirish" tugma; foydalanuvchi blok maqsadini tez anglamaydi
+
+### BUG-230cs: ✅ Profile sahifada username/email/rol ko'rsatiladi (jasurjonai / jasurjonai@gmail.com / TALABA) + zaxira kodlar havolasi bor
+
+### BUG-230ct: ✅ security-profile: passkey status, security-events, sessions link — to'liq xavfsizlik boshqaruv markazi
+
+### BUG-230cu: 🟡 Profile email maydonida ORTIQCHA PROBEL ("jasurjonai@gmail.com ") — copy-paste'da buziladi (mayda)
+
+### BUG-230cv: ℹ️ Telegram login elementlari login sahifada TOPILMADI (BUG-166 tezisi qayta ko'rilgan — "Telegram" matni boshqa kontekstda edi); muhim emas, BUG-166 endi yopiladi
+
+### BUG-230cw: ⚪ Profile "Yangilash" tugma bormi — interaktiv forma testlarida ishlatilmadi (mayda)
+
+### BUG-230cx: ✅ /api/passkey/status va /api/account/security-events 200 (sessiyada OK)
+
+### BUG-230cy: ✅ Parol validatsiya UI: pw-current/pw-new majburiy (bo'sh bo'lsa tugma ishlamaydi kutilgandek)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
