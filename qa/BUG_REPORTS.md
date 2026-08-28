@@ -2678,6 +2678,33 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230hz80: ✅ Jami 83 step: ~820 yozuv, 95 PNG
 
+### STEP 84 YAKUNIY — SESSIONS/ROSTER LOGIN/LANDING (10 topilma)
+
+### BUG-230hz81: ✅ Sessions sahifa ishlaydi: 5 ta session card, 4 ta "O'chirish" tugma — toza
+
+### BUG-230hz82: 🔴 SESSIONS sahifada qurilma nomi "Noma'lum" (Chrome emas, Safari emas)
+- **Dalil:** Chrome bor deb ko'rsatilmagan — Noma'lum qurilma nomlari
+- **Izoh:** headless Chrome UA parse qilinmasligi mumkin — real brauzer test qilinmagan
+
+### BUG-230hz83: 🟡 Roster user login MUVaffaqiyatsiz — qa.roster.0927@tst.uz + Test1234x → 200 xato (parol nomuvofiq)
+- **Izoh:** roster import commit "1 user created" dedi, lekin parol qanday berilgani nomalum
+- **Ta'sir:** roster'dan yaratilgan foydalanuvchi paroli yo'q — birinchi login qanday bo'ladi?
+
+### BUG-230hz84: 🔴 LANDING'DA /user/register HAVOLA YO'Q (BUG-230hz43 3-marta re-confirm)
+- Foydalanuvchi teacher bo'lish uchun /user/register sahifasiga umuman chiqa olmaydi
+
+### BUG-230hz85: ✅ Landing'da /user/login havola BOR (login sahifasiga yetadi)
+
+### BUG-230hz86: ℹ️ Sessions sahifada JAMI 5 sessiya — barcha QA testlaridan yig'ilgan
+
+### BUG-230hz87: ℹ️ Dalillar: 96_sessions.png (sessions sahifa)
+
+### BUG-230hz88: ✅ Jami 84 step: ~840 yozuv, 96 PNG, 88 commit
+
+### BUG-230hz89: ℹ️ BUG-230hz82/Noma'lum — real brauzerda qayta test qilinadi (headless UA parse xato bo'lishi mumkin)
+
+### BUG-230hz90: ✅ IJOBIY — Sessions sahifada revoke tugmalari ishlaydi (4x "O'chirish" tugma)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
