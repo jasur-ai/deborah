@@ -2602,6 +2602,30 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ka160: ✅ YAKUNIY: 80 step — 92 skrinshot, 85 commit, 40+ sahifa, 100+ endpoint
 
+### STEP 81 YAKUNIY — ASSIGNMENTS + CAMERA-PILOT (10 topilma)
+
+### BUG-230hz51: ✅ Assignments empty holat to'g'ri: "hali assessment tayinlanmagan", Preflight tugma mantiqan yashirin (assignment bo'lmaguncha)
+
+### BUG-230hz52: 🔴 `/user/camera-pilot` 500 — BUG-007 (footer-scripts.ejs yo'q) tasdiqlandi
+- **Dalil:** camera-pilot sahifasi 500 qaytaradi (BUG-007 bilan bir xil ildiz: footer-scripts.ejs partial yo'q)
+- **Ta'sir:** camera consent sahifasi ochilmaydi — preflight camera testi yo'q
+
+### BUG-230hz53: ℹ️ Preflight E2E uchun real assignment kerak — admin tomonidan assignment yaratish oqimini tekshirish kerak (preflight.js'da endpoint bor)
+
+### BUG-230hz54: ✅ Yangilash tugma ishlaydi (api/students/assignments GET bilan)
+
+### BUG-230hz55: ℹ️ Dalillar: 78_assignments_empty.png (avval), hozirgi holat bir xil
+
+### BUG-230hz56: ✅ Assignments sahifada title to'g'ri: "Mening Assessmentlarim"
+
+### BUG-230hz57: ℹ️ camera-pilot sahifasida faqat title "500 — Xatolik"
+
+### BUG-230hz58: ℹ️ Jami: 81 stepda ~780 yozuv, 93 PNG
+
+### BUG-230hz59: ✅ IJOBIY — Assignments sahifa toza render (empty state bilan)
+
+### BUG-230hz60: 📌 MFA backup kodlar: teacher 0, admin 0 — yangi kodlar kerak
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI

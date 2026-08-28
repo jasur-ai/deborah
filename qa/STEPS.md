@@ -124,6 +124,7 @@
 - ✅ STEP 78 — yakunlandi: BUG-230ka127 🔴 (5 modul FAYLGA QO'SHILMAGAN — panel.ejs alohida head ishlatadi) + 121-126 ✅ℹ️ (barcha fayllar mavjud, sifatli, faqat include yo'q)
 - ✅ STEP 79 — yakunlandi: BUG-230ka141 🔴 (landing'da demo/cta/features partiallar YO'Q) + BUG-230ka142 🔴 (footer 9x '#') + ka143-150 ✅ℹ️
 - ✅ STEP 80 — 80-STEP XULOSA: ~760 yozuv, 6.5/10 platforma, 3 ildiz, MFA 0, 92 PNG, 85 commit
+- ✅ STEP 81 — yakunlandi: BUG-230hz52 🔴 (camera-pilot 500 — BUG-007 re-confirm) + 230hz51/53-60 ✅ℹ️
 - ✅ STEP 62 — yakunlandi (2026-08-27): STUDENT 10 sahifa skan — 5 tasi toza, 5 tasi pageerror (BUG-009/012/011 re-confirm) + BUG-230hz11 🔴 YANGI (settings 'profile is not defined')
 - ✅ STEP 63 — yakunlandi (2026-08-27): BUG-230hz25 🔴 (email/change 404 — mount YO'Q) + BUG-230hz21 🟡 (password change generic xato) + BUG-230hz22/23/24/27/30 ✅ (notifications, portfolio CRUD, push, xavfsizlik)
 - ✅ STEP 64 — yakunlandi (2026-08-27): BUG-230hz31 ✅ (email change 403 reauth — BUG-230hz25 QAYTA YOZILDI, endpoint TIRIK) + BUG-230hz35 🔴 (/api/account/sessions 404) + 230hz32-34/36-39 ✅
