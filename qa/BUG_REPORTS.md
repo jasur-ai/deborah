@@ -1241,6 +1241,33 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230bo: ✅ IJOBIY — PWA jamlangan holda README §6'ni asoslaydi (journal bundan mustasno)
 
+### STEP 38 YAKUNIY — FLAKINESS/HEADERS/RATE (10 topilma)
+
+### BUG-230bp: ✅ SERVER LATENCY SOG'LOM: 30/30 so'rov OK, avg 140ms, p95 136ms, 0 fail
+- GET / uchun — server flakiness FAQAT og'ir POST'larda (BUG-186: SMTP/reg bilan)
+
+### BUG-230bq: 🔴 REGISTRATSIYA RATE LIMIT ISHLAMAYDI: 6 ketma-kat reg → 6/6 **200 yaratildi** (rltest0..5)
+- **Kod:** server.js:303-304 faqat `/admin/login` va `/user/login` ga `loginLimiter`; reg uchun `authRateLimiter('register')` bor lekin muvaffaqiyatli reg'lar hammasi o'tdi (limit baland yoki key per-IP/chegara noto'g'ri)
+- **Ta'sir:** bot mass-registratsiya → DB spam, Gmail SMTP limit, DB maliyati
+- **Artefakt:** rltest00927…rltest50927 — 6 hisob yaratildi (ochirish kerak)
+
+### BUG-230br: 🔴 CSP + Permissions-Policy YO'Q (BUG-063 to'liq tasdiqlandi)
+- Helmet qisman: HSTS/nosniff/XFO/referrer/COOP bor; CSP/permissions-policy/COEP yo'q
+
+### BUG-230bs: ✅ `x-xss-protection: 0` — zamonaviy standart (deprecated header, to'g'ri o'chirilgan)
+
+### BUG-230bt: ✅ COOP: same-origin — isolation bor
+
+### BUG-230bu: 🟡 Rate limit logi ko'rinmadi — qaysi limiter qanday limitda ishlayotgani server javob header'larida (Retry-After/X-RateLimit) ko'rsatilmaydi (debugging qiyinlashadi)
+
+### BUG-230bv: ✅ Admin login brute-force uchun alohida limiter bor (server.js:303)
+
+### BUG-230bw: ℹ️ p95 136ms ajoyib — Render free uchun; baribir POST flakiness (BUG-186) alohida hal etilishi kerak
+
+### BUG-230bx: ✅ 30 so'rovda ERR yo'q — GET yo'li barqaror
+
+### BUG-230by: ⚪ Rate limit testlari davomida 6 hisob yaratildi — artefakt ro'yxati BUG-175'ga qo'shildi
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI

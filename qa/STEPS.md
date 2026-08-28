@@ -86,3 +86,4 @@
 - ✅ STEP 35 — yakunlandi (2026-08-27): BUG-230ao 🔴 (4 modul interaktiv tugmalari o'lik — 403 CSRF + undefined funksiyalar) + BUG-230ap 🔴 (allocate ID bo'sh) + BUG-230aq/ar/as/au (xulosa: \$ + CSRF fix modullarni tiriltiradi)
 - ✅ STEP 36 — yakunlandi (2026-08-27): BUG-230av ✅ (share E2E guest bilan to'liq ishladi!) + BUG-230ax 🔴 (portfolio CSRF token umuman yo'q — origin-ga tayanadi) + BUG-230aw/ay/ba/bb/bc/bd
 - ✅ STEP 37 — yakunlandi (2026-08-27): BUG-230bf/bg/bh ✅ (SW cache 19 fayl, OFFLINE rejim landing ishlaydi, offline sahifa OK) + BUG-230bi 🔴 (IndexedDB journal BO'SH — offline javoblar saqlanmaydi)
+- ✅ STEP 38 — yakunlandi (2026-08-27): BUG-230bq 🔴 (REG RATE LIMIT ISHLAMAYDI — 6/6 yaratildi) + BUG-230br 🔴 (CSP/Permissions-Policy yo'q) + BUG-230bp/bt/bv/bx ✅ (latency avg 140ms p95 136ms, COOP, admin limiter)
