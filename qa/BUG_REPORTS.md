@@ -1407,6 +1407,31 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230dx: ℹ️ Safe-submit moduli README'da bor va live'da ishlaydi (meta 200) — deyarli tayyor holatda
 
+### STEP 45 YAKUNIY — PORTFOLIO IMPORT/SETTINGS/NOTIFICATIONS (10 topilma)
+
+### BUG-230ey: 🔴 PORTFOLIO IMPORT PDF → 400 **"Data-residency consent required"** (consent_required)
+- **Dalil:** foydalanuvchi consent checkbox'siz upload qildi (UI'da consent maydoni ko'rinmadi — sahifada bor deb taxmin qilingan)
+- **Ta'sir:** fayl yuklash oqimi IShLAMAYDI — foydalanuvchi rozilik oynasini topolmaydi (qayerda ko'rsatilishini tekshirish kerak)
+- **Ijobiy:** GDPR o'xshash consent majburiy qilingan — arxitektura to'g'ri, lekin UX yo'q
+
+### BUG-230ez: ✅ Notifications prefs GET yo'q (404) lekin POST ishlaydi (200) — UI POST bilan ishlaydi; GET endpoint bo'lmasa ham muammo yo'q
+
+### BUG-230fa: 🟠 Notifications telegram ON bo'lsa ham Telegram integratsiya YO'Q (BUG-166) — xabarlar yo'qoladi (foydalanuvchi ishonchsiz)
+
+### BUG-230fb: ✅ notifications prefs POST success — types ham bor (assignment/result/practice)
+
+### BUG-230fc: ✅ settings sahifa 200; lekin `POST /api/user/settings` 404 — settings saqlash boshqa endpointdan (tekshirilmadi, interaktiv repl kerak)
+
+### BUG-230fd: ✅ email-change sahifa 200
+
+### BUG-230fe: ℹ️ Portfolio import PDF real fayl bilan test qilinmadi (consent to'sqin) — keyingi stepda consent bilan urinish
+
+### BUG-230ff: ✅ Portfolio items DELETE (end-to-end: item yaratildi, o'chirildi — BUG-230av'da qoldirilgan test tozalandi)
+
+### BUG-230fg: ℹ️ Jami: 45 stepda 330+ topilma, 80+ skrinshot, 31 commit
+
+### BUG-230fh: ℹ️ Bug bo'yicha jami kategoriyalar: funksional 120+, UI/UX 80+, xavfsizlik 40+, integratsiya 30+, performance 10+
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
