@@ -1625,6 +1625,33 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230is: ✅ Yakuniy: publish.js davom ettirilishi kerak (hisobotga kiritildi)
 
+### STEP 53 YAKUNIY — EXTERNAL INTEGRATION (HEMIS/OneID) (10 topilma)
+
+### BUG-230is1: 🔴 HEMIS Pull roster — sahifadagi tugma BOSILSADA 403 CSRF
+- **Dalil:** "Pull roster" tugma bosildi → POST `/api/admin/external-integration/hemis/pull` → **403 "CSRF token validation failed"**
+- **Ildiz:** tugma onclick handlerda `x-csrf-token` header YO'Q yoki token qiymati sahifada olinmaydi (BUG-067/BUG-009 bilan bir pattern)
+- **README zidi:** HEMIS "olib tashlandi" da'vosi yolg'on — sahifa HEMIS/OneID paneliga ega
+
+### BUG-230is2: 🟠 HEMIS/OneID UI'da Mavjud (Bug-165 qayta tasdiqlandi — da'vo "olib tashlandi" yolg'on)
+- **Dalil:** sahifa title "External Integration", hemis/oneid matnlar bor, 8 tugma: Register/Check status/Pull roster/Push grades/Reconcile/List jobs/Link account/Store token
+
+### BUG-230is3: ✅ GET /api/admin/external-integration/connections 200 (roster connection API ishlaydi)
+
+### BUG-230is4: ✅ GET /api/admin/external-integration/identities 200 (identities list)
+
+### BUG-230is5: 🟠 Boshqa tugmalar ham shu CSRF xatosiga duch kelishi kutilmoqda (Push grades, Reconcile, Register hammasi bir pattern bilan yozilgan)
+
+### BUG-230is6: 🟡 HEMIS connection ro'yxati bo'sh (configure qilinmagan) — env'tda HEMIS_BASE_URL yo'q
+- **Ta'sir:** pull roster bosilsa — server 500 yoki bo'sh ro'yxat qaytaradi (interaktiv test qilinmadi)
+
+### BUG-230is7: ✅ Page toza layout, modali bor (Store token modal)
+
+### BUG-230is8: ℹ️ OneID ham bir xil — tashqi API kalitlari yo'qligi sabab ishlamaydi
+
+### BUG-230is9: ℹ️ Dalil: 82_external_pull.png
+
+### BUG-230is10: ✅ IJOBIY — modul ARXITEKTURASI tayyor (connections + identities API 200); faqat env + client token header yetishmayapti
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
