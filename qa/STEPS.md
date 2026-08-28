@@ -100,3 +100,4 @@
 - ✅ STEP 49 — yakunlandi (2026-08-27): BUG-230gp/gq ✅ (safe-submit 8 endpoint arxitektura, meta admin OK) + BUG-230gr 🟠 (push optin-eligible false — push disabled tufayli) + BUG-230gu ✅ (proctor consent manzil topildi) + gv/gx/gy
 - ✅ STEP 50 — KATTA ORALIQ XULOSA: re-verify (barcha Critical buglar hali bor) + statistika (350+ yozuv, 80 PNG, 41 commit) + 3 global ildiz tasdiqlandi + MFA kodlar TUGAGAN ogohlantirish
 - ✅ STEP 51 — yakunlandi (2026-08-27): BUG-230hz 🔴 (actorId user.id noto'g'ri — session safeKey bor; /api/student/assignments 401 HAMISHA — imtihon topolmaydi) + BUG-230ib/ic/id 🔴 (preflight/attempt zanjiri 401)
+- ✅ STEP 52 — yakunlandi (2026-08-27): BUG-230ij 🔴 (publishRoutes IMPORT bor lekin app.use YO'Q — butun modul o'lgan) + BUG-230ik 🔴 (publish yo'q — teacher test yaratadi, student ko'rmaydi) + BUG-230iq 🔴 (3 zanjirli imtihon bug)

@@ -1594,6 +1594,37 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ii: ℹ️ Dalillar: /api/me 404, actorId kod qatorlari, session.user obyekt tuzilishi
 
+### STEP 52 YAKUNIY — PUBLISH.JS modul — IMPORT bor, app.use YO'Q (10 topilma)
+
+### BUG-230ij: 🔴 publishRoutes IMPORT bor, lekin `app.use()` HAM YO'Q — butun modul o'lgan
+- **Dalil:** `server.js:124` `import publishRoutes from './routes/publish.js'` bor; lekin butun faylda `app.use(publishRoutes)` UMUMAN YO'Q
+- **Natija:** `/api/assignments` 404 (test qilindi)
+- **Modul ichidagi route'lar:** `/api/assignments`, `/api/assignments/:id`, `/api/assignments/:id/public-items`, `/api/assignments/:id/private-scores`, `/api/assignments/:id/roster` — HAMMASI o'lgan
+- **Ta'sir:** imtihon publish oqimi butunlay mavjud emas (foydalanuvchi imtihon yaratadi, lekin PUBLISH qila olmaydi — talaba ko'rmaydi)
+
+### BUG-230ik: 🔴 Publish yo'q bo'lsa — imtihon PUBLISH qilish tugmasi YO'Q (teacher panelda ko'rinmagan) — teacher test yaratadi, lekin student ko'ra olmaydi
+- **Zanjir:** teacher test yaratadi (mtb...) → studentga assignment yo'q → publish endpoint yo'q → talaba imtihon ko'rmaydi
+
+### BUG-230il: ℹ️ publish.js kod ichidagi izohlar (§1, §3, §5) — modul dastlabki versiyasi sifatida qolgan
+- **Kod sifati:** to'liq funksional (public-items, private-scores, roster) — faqat mount qilinishi kerak
+
+### BUG-230im: ✅ Kod import qilingan — dev e'tiborga olishi mumkin (linter yoki IDE warning bo'lmagan bo'lsa mayda)
+
+### BUG-230in: ℹ️ publish.js'da `/api/assignments/:id/roster` roster snaps — bu roster bilan bog'liq (BUG-230df re-verify: roster import ishlayapti, publish yo'q)
+
+### BUG-230io: ✅ S31'da test yaratilgan (mtcfsh4zlryl) — bugun S31'dan keyin teacher'da 3 test qoldi (mtb, mtbte4vtizx0, S31)
+
+### BUG-230ip: ℹ️ server.js'da boshqa modullar ham bor: `external-integration`, `ai-question-gen`, `hemis` — hech biri mount qilinmagan bo'lsa yana buglar chiqadi (kod tekshiruvi yakunlandi: ai-question-gen MOUNT bor)
+
+### BUG-230iq: 🔴 platforma asosiy funksiyasi IMTIHON TOPOLMAYDI (3 zanjirli bug):
+1. Assignments API 401 (BUG-230hz)
+2. Assignments publish endpoint 404 (BUG-230ij)
+3. Student imtihon sahifasiga havola YO'Q (faqat roster user ko'rinishi kerak edi)
+
+### BUG-230ir: ℹ️ Bu bilan 50-step oralig'ida topilgan critical daraja OSHDI (28 → 35+)
+
+### BUG-230is: ✅ Yakuniy: publish.js davom ettirilishi kerak (hisobotga kiritildi)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
