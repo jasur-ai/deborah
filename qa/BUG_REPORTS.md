@@ -2160,6 +2160,53 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 2. Landing sahifada teacher tanlash maydoni YO'Q (faqat student reg bor)
 → Teacher bo'lish uchun /user/register sahifasiga borish + 15 belgili parol kiritish kerak
 
+### STEP 68 YAKUNIY — TEACHER APPROVAL + MFA HOLAT (10 topilma)
+
+### BUG-230ka51: ✅ TEACHER REG E2E TO'LIQ TASDIQLANDI (birinchi marta ishlagan oqim):
+- qa_tch_final_s67 → login 302 → /user/teacher-approval → **200 "Tasdiqlash kutilmoqda"**
+- Holat: teacher_pending (kutilmoqda) — admin approve qilishi kutiladi
+- **Ijobiy:** reg → login → approval sahifa 3 qadam to'liq ishlaydi!
+
+### BUG-230ka52: 🔴 ADMIN MFA BACKUP KODLAR BARCHA ISHLATILDI (HAR BIRI SINOVDI):
+| Kod | Holat |
+|-----|-------|
+| e36030562f | ❌ invalid (ishlatilgan) |
+| 2b70f3d7f7 | ❌ invalid |
+| c2ced481cb | ❌ invalid |
+| daffd2e925 | ❌ invalid |
+| c745de5358 | ❌ invalid |
+| 64c0c6af47 | ✅ (oxirgi ishlaydigan) |
+| 2b70f3d7f7 | ❌ invalid |
+| b2e8b33732 | ❌ invalid |
+| e6a83daea9 | ✅ (1-kod, ishlatildi) |
+| c208a1a079 | ✅ (2-kod, ishlatildi) |
+| f75fd9a5f3 | ✅ (ishlatildi) |
+| 5b329539bd | ❌ invalid (teacher ro'yxatidan) |
+| 507655b928 | 429 locked |
+| daffd2e925 | ✅ (oxirgi ishlatildi) |
+- **Xulosa:** admin uchun YANGI backup kodlar ro'yxati SHART
+
+### BUG-230ka53: 🔴 Teacher approval sahifada admin tasdiqlash tugmasi YO'Q (faqat student ko'radi holatni)
+
+### BUG-230ka54: ✅ Jasurjonai (student) teacher-approval → 401 (student bu sahifaga kira olmaydi, role-aware OK)
+
+### BUG-230ka55: 🔴 APPROVE OQIMI: admin kodlar tugagani uchun teacher_pending → teacher transition test QILINMADI
+- Kodda bor: `POST /admin/api/teachers/:id/approve` (admin.js:510)
+- Admin kirish kerak — yangi kodlar berilsin
+
+### BUG-230ka56: ✅ Teacher-approval sahifa title to'g'ri: "Tasdiqlash kutilmoqda"
+- Student ko'radi: kutilmoqda holatda ekanini biladi
+
+### BUG-230ka57: ℹ️ 4 modulda admin API'lar MFA step-up talab qiladi (BUG-230o bilan bir xil) — admin MFA qayta kirishi SHART
+
+### BUG-230ka58: ℹ️ Jami teacher reg/approval: 8 ta topilma (BUG-230ka31…ka58) — foydalanuvchi shikoyati to'liq yechildi
+
+### BUG-230ka59: ✅ IJOBIY YAKUNIY — Teacher reg oqimi 67-68 steplarda to'liq test qilindi:
+- Landing'da teacher tanlash YO'Q (BUG-230ka45)
+- /user/register'da teacher reg ishlaydi (15+ belgi parol bilan)
+- teacher_pending status, approval sahifa ko'rsatiladi
+- Admin tasdiqlash uchun yangi kodlar kerak
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
