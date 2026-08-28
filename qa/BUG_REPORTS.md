@@ -1135,6 +1135,32 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ad: ℹ️ Dalil: 67_command_center.png
 
+### STEP 34 YAKUNIY — EMAIL-COST + ROSTER IMPORT (10 topilma)
+
+### BUG-230ae: ✅ email-cost REAL ishlaydi: sahifa 200, report.csv (oy,provider,count,cost_usd — mock 2 xat, 0.00$)
+- SMTP mock rejimida xarajat 0 — izchil
+
+### BUG-230af: 🔴 `POST /admin/email-cost/budget` — JSON javob o'rniga **HTML sahifa qaytadi** (negativ -5 ham, 100 ham)
+- **Dalil:** ikkala so'rov 200 lekin body HTML (`<!DOCTYPE html>...`)
+- **Ta'sir:** API consumer (yoki JS fetch) `.json()` parse'da yiqiladi; budget o'rnatish UI orqali ishlaydi lekin API darajada mo'ljallanmangan
+- **Ijobiy:** -5 rad etilmagan ko'rinadi — server tomon validatsiya yo'qligi ham shu yerda ko'rinadi (interaktiv repl kerak)
+
+### BUG-230ag: ✅ Roster import xlsx REAL: `POST /api/roster/upload` → **201 Created** (1 talaba qabul)
+
+### BUG-230ah: 🟡 Roster upload 201'dan keyin UI javob ko'rsatmaydi (preview/msg bo'sh) — foydalanuvchi muvaffaqiyatni ko'rmaydi (toast yo'q)
+
+### BUG-230ai: ✅ Roster accept `.xlsx,.csv` — format kengaytirilgan
+
+### BUG-230aj: ℹ️ email-cost CSV 47B (2 qator) — minimal lekin struktura to'g'ri
+
+### BUG-230ak: ℹ️ Budget API HTML qaytargani sahifa navigatsiyasidan (form POST redirect pattern) — legacy API
+
+### BUG-230al: ℹ️ Dalil: 68_roster_import.png (import UI)
+
+### BUG-230am: ✅ Roster import — talaba "QA Talaba 101-A" DB'ga yozildi (201) — test ma'lumot keyin o'chirilishi mumkin
+
+### BUG-230an: ⚪ Email-cost sahifada grafik/chart elementi yo'q (faqat jadval) — README'da charts JS bor, bu sahifada ishlatilmagan
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI

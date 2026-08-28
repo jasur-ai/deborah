@@ -82,3 +82,4 @@
 - ✅ STEP 31 — yakunlandi (2026-08-27): BUG-230a 🔴 (arena start endpointi YO'Q) + BUG-230b 🟠 (bots admin-only) + BUG-230c…230j (attempt meta ✅, watch socket o'lik, student tanlov UI'siz)
 - ✅ STEP 32 — yakunlandi (2026-08-27): BUG-230k ✅ (Governance pipeline to'liq) + 230l/m ✅ (holat mashina, 2-bosqichli publish) + 230o ✅ (MFA step-up LIVE) + 230n/p/q/r/s/t
 - ✅ STEP 33 — yakunlandi (2026-08-27): BUG-230u 🟠 (command-center snapshot qotgan) + 230v/x/y ✅ (SLO real, Security Guard jonli, modullar UI to'la) + 230w/aa/ac mayda
+- ✅ STEP 34 — yakunlandi (2026-08-27): BUG-230af 🔴 (budget API HTML qaytaradi) + BUG-230ag/ai/am ✅ (roster xlsx import 201 REAL) + BUG-230ah 🟡 (201'dan keyin UI javobsiz) + qolgan izohlar
