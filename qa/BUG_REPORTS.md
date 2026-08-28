@@ -1704,6 +1704,35 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ka10: ℹ️ Hisobot xulosasi: Teacher reg muammosi 2 ta alohida ildiz: (1) xato ko'rsatilmaydi (UX), (2) server rad etishi sababi noma'lum (kod)
 
+### STEP 56 YAKUNIY — ACCOUNT SETTINGS + REMEMBER-ME (10 topilma)
+
+### BUG-230ka11: ✅ REMEMBER-ME to'g'ri: cookie Max-Age=2592000 (30 kun), logout'da REVOKE (eski cookie bilan panel 401)
+- **Dalil:** remember=True, Max-Age=2592000; logout keyin panel 401 (qayta login talab)
+
+### BUG-230ka12: 🟡 Settings sahifa matni RU/EN ARALASH: "Согласия" kirill so'zi (Roziliklar o'rnida)
+- **Dalil:** `Согласия` sidebar matnida ko'rinadi (boshqa elementlar uz); i18n to'liq emas
+- **Ta'sir:** til aralashgan sahifa — professional emas
+
+### BUG-230ka13: 🟡 Settings sahifada FAQAT NAV tugmalari bor (Profil/Xavfsizlik/Maxfiylik) — ular bosilganda hech qanday panel KO'RINMAYDI (inputs: [])
+- **Ta'sir:** foydalanuvchi tab'ga bosadi, hech narsa o'zgarmaydi (faqat sahifa yuklanadi) — forma bo'sh
+
+### BUG-230ka14: 🟡 Profile sahifada "tasdiqlanmagan" email belgisi bor (jasurjonai@gmail.com) — lekin verify kod yuborilmagan
+- **Ijobiy tomoni:** holat to'g'ri ko'rsatilgan
+- **Xavf:** email tasdiqlash tugmasi ko'rinmaydi (faqat matn)
+
+### BUG-230ka15: ✅ Profile sahifada VIP holat "Standart" ko'rsatilgan (VIP emas deb to'g'ri)
+- **Yaxshilash mumkin:** VIP bo'lsa alohida badge
+
+### BUG-230ka16: ✅ Register sana "26/08/2026" format bilan ko'rsatilgan (user-friendly)
+
+### BUG-230ka17: 🟡 Email "jasurjonai@gmail.com " (2x probel) — HTML'da whitespace qolgan (BUG-230cu bilan bir xil)
+
+### BUG-230ka18: ℹ️ Settings sahifada boshqa interaktiv element YO'Q (faqat nav + Saqlash tugma) — ko'p qismi statik
+
+### BUG-230ka19: ✅ Security-profile sahifada password inputs (pw-current/pw-new) mavjud (BUG-230cp'da test qilingan)
+
+### BUG-230ka20: ℹ️ Dalillar: 83_settings_full.png, 75-76 PNG (oldingi)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
