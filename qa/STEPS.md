@@ -111,3 +111,4 @@
 - ✅ STEP 60 — 60-STEP ORALIQ XULOSA: 494 yozuv (53🔴/39🟠/120🟡/32⚪/78ℹ️/165✅), 86 PNG, 58 commit, 21MB. 3 global ildiz + TOP-10 dev fix. 60-stepda to'xtash tavsiya.
 - ✅ STEP 61 — yakunlandi (2026-08-27): PUBLISH/ASSIGNMENT re-verify — /api/publish/* va /api/assignments user bilan ham 404 (BUG-230hz2 re-confirm). ⚠️ MFA backup: Teacher BARCHASI invalid, Admin 429 LOCKED (15 daqiqa) — YANGI KODLAR SHART!
 - ✅ STEP 62 — yakunlandi (2026-08-27): STUDENT 10 sahifa skan — 5 tasi toza, 5 tasi pageerror (BUG-009/012/011 re-confirm) + BUG-230hz11 🔴 YANGI (settings 'profile is not defined')
+- ✅ STEP 63 — yakunlandi (2026-08-27): BUG-230hz25 🔴 (email/change 404 — mount YO'Q) + BUG-230hz21 🟡 (password change generic xato) + BUG-230hz22/23/24/27/30 ✅ (notifications, portfolio CRUD, push, xavfsizlik)

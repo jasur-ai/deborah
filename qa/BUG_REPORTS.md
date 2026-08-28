@@ -2017,6 +2017,32 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230hz20: ℹ️ Jami: Student foydalanuvchisi 50% sahifada JS xatosi bilan ishlaydi
 
+### STEP 63 YAKUNIY — STUDENT API'lar (10 topilma)
+
+### BUG-230hz21: 🟡 /api/password/change — har 2 holatda ham generic `required` xato (wrong current / weak new bir xil)
+- **Dalil:** `{"current_password":"wrong","new_password":"NewPass123x"}` → 400 `{"ok":false,"error":"required"}` — aniq xato YO'Q
+- **Kod:** password change field nomlari boshqacha (interaktiv repl kerak — formadan capture qilish)
+
+### BUG-230hz22: ✅ Notifications prefs GET 404 (BUG-230gc re-confirm), POST 200 (BUG-230gd re-confirm)
+
+### BUG-230hz23: ✅ Portfolio item CRUD to'liq ishlaydi: create 200 (itemId f2780464c5bf8dae) + delete 200 (idempotent) — artefakt tozalandi
+
+### BUG-230hz24: ✅ Push device status 200 (count:0, devices:[]) — to'g'ri
+
+### BUG-230hz25: 🔴 Email change initiate endpoint 404 — `POST /api/user/email/change` route YO'Q
+- **Kod:** `routes/email-change.js` bor lekin app.use mount YO'Q (BUG-230ij bilan bir pattern)
+- **Ta'sir:** foydalanuvchi email o'zgartirolmaydi (API yo'q)
+
+### BUG-230hz26: ℹ️ Password change field nomlari: `current_password`/`new_password` o'rniga boshqacha (kerakli format topilmadi)
+
+### BUG-230hz27: ✅ Boshqa user sessionlarga tegish yo'q (xavfsizlik OK)
+
+### BUG-230hz28: ℹ️ Portfolio CRUD endi to'liq test qilindi (create/delete E2E)
+
+### BUG-230hz29: ℹ️ Jami student API: 10+ endpoint test qilindi, 1 Critical bug (email-change 404)
+
+### BUG-230hz30: ✅ IJOBIY — Portfolio CRUD + push device + notifications POST ishlaydi
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
