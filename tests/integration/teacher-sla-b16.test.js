@@ -108,9 +108,10 @@ describe('AUTH B-16 — teacher SLA + limited mode', () => {
     expect(loginRes.status).toBe(302);
     expect(loginRes.headers.location).toContain('/user/teacher-approval');
 
-    // /teacher workspace — pending uchun blok
-    const ws = await agent.get('/teacher');
-    expect([401, 403, 302]).toContain(ws.status);
+    // /teacher workspace — pending uchun blok (brauzerga stealth 404 — A-19 §14,
+    // "sahifa yo'q" ko'rinadi; BUG-076: */* brauzer endi JSON ololmaydi)
+    const ws = await agent.get('/teacher').set('Accept', 'text/html');
+    expect(ws.status).toBe(404);
 
     // API — aniq 403 xabar (B-16 §09/§10): user API'lar limited-mode blokidan
     // keyin mount qilingan → 403 "Ruxsat etilmagan rol"

@@ -133,7 +133,8 @@
 
 .cast-btn-danger {
   background: var(--cast-red);
-  color: #fff;
+  /* Kontrast: oq matn --cast-red (#ff4366) ustida 3.35:1 — to'q matn 4.5+ */
+  color: #2a0714;
 }
 
 .cast-btn-focus {

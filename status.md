@@ -300,6 +300,40 @@ konsol/pageerror/HTTP-xato skani — 12 sahifa) — **HAMMASI OK, 12/12 sahifa t
 **Verify:** repro 16/16 ✓; scan 12 sahifa 0 xato ✓; canva/teachers/mfa/settings integration
 52/52 ✓; design+unit 4896/4896 ✓; design-lint PASS ✓.
 
+## STEP 12 — 🟠 Faza B: mavzu qatlamlari (dark+light kontrast, FOUC, hc, rol redirectlari) — ✅
+**Buglar:** BUG-071/072/073/074/075/076 + 077 (jami 7)
+**Qanday (qaysi+qanday):**
+- **BUG-071** views/user/sessions.ejs — skip-link oq matn oq plashka ustida; on-action
+  tokenga o'tdi.
+- **BUG-072** views/user/sessions.ejs `.lang-link.on` — `#fff` (--cast-yoruq ustida 2.32:1)
+  → on-action rang.
+- **BUG-073** public/css/cast-tokens.css `.cast-btn-danger` — oq matn --cast-red (#ff4466)
+  ustida 2.32:1 → `#2a0714` to'q matn (3.35:1+).
+- **BUG-074** routes/cast.js projector — ticket'siz brauzerga xom 403 JSON qaytardi →
+  endi `res.redirect('/play')` (meta-missing/catch shoxlari ham).
+- **BUG-075** views/game/enter.ejs `.btn-red` — gradient(135deg, accent→#1d4ed8) ustida oq
+  matn 2.32:1 → solid `var(--accent)` + on-action matn.
+- **BUG-076** middleware/roles.js L153/167/174 — `req.accepts('json')` `*/*` brauzerda ham
+  truthy → anonim/wrong-rol `/student /proctor /marker /board /teacher` brauzerga xom 401/403
+  JSON qaytarardi → `req.accepts(['html','json']) === 'json'`: brauzer 302 login (anonim) /
+  stealth 404 (rolsiz, A-19 §14 saqlanadi), API/json 401/403 JSON saqlanadi.
+- **BUG-077** hc (yuqori kontrast) — PREMISE tuzatildi: `[data-theme="high-contrast"]` CSS
+  mavjud (generated/tokens.css 38 qatorlik token override + theme.css print-bloki), lekin
+  TO'LIQ sheet emas. Xato: theme-core resolveState hc/hc-dark/system+prefersHC →
+  'high-contrast' qo'yib, sahifani yarim uslublang holatga tushirardi (head-resolver va
+  engine o'rtasida ham mosmaslik). Fix: hc-light/hc-dark/system+prefersHC → bazaviy
+  light/dark'ga GRACEFUL resolve (state saqlanadi, hc sheet qo'shilganda shu nuqtada
+  yoqiladi) + testlar (tests/design/theme.test.js 6 assertion) yangi kontraktga moslandi.
+**Tool:** `scripts/scan-step12.mjs` (PORT 4600; PUB 7 + USER 8 + CAST 4 sahifa dark+light
+WCAG, FOUC DCL-listener, 390×844 mobil overflow 10 sahifa; admin cookie + seed'lar) +
+`scripts/repro-step12.mjs` (PORT 4602, 16 tekshiruv).
+**Verify:** scanner — 24+ sahifa dark+light 0 kontrast buzilishi; FOUC light@DCL ✓; MOB
+10/10 ✓; repro **16/16 HAMMASI OK**; full vitest **7099 passed / 9 failed — 9tasi ham
+clean S11 HEAD (b60e862 worktree)da ham xato: 8 pre-existing (telegram-redirect fetch,
+4×MFA journey/session, A-30, revoke_token — env-bog'liq) + 1 flake (logout-GET,
+izolyatsiyada o'tadi)** → S12 regressioni 0; test sinxron: http.test (Accept aniq),
+cast-projector (302 /play), teacher-sla-b16 (A-19 stealth 404 brauzer uchun); design-lint PASS ✓.
+
 ## ✅ YAKUNLANGANLAR
 - **STEP 1** (2026-08-27): BUG-009/010/012/044 + 2 yangi topilma — 6 fayl; brauzer 13/13 PASS, vitest 45/45.
 - **STEP 2** (2026-08-27): BUG-011/016/041 — 5 fayl + 3 test sinxron; brauzer 10/10 PASS, auth 491/491, integration 104/104.
@@ -312,6 +346,7 @@ konsol/pageerror/HTTP-xato skani — 12 sahifa) — **HAMMASI OK, 12/12 sahifa t
 - **STEP 9** (2026-08-28): BUG-005/017/018/019/047 + YANGI 065/066 — robots.txt, README real yo'llar (sessions/onboarding/cast), push shartli hujjat, 7 o'lik admin nomi; repro 45+ ✓, 4896/4896.
 - **STEP 10** (2026-08-28): BUG-026 (qaror)/027a (qaror)/027b (real statistika)/029 (Barcha funksiyalar sahifasi)/030 (no-reload delete) — repro 25/25, 4896/4896. [PUSH: S6–S10]
 - **STEP 11** (2026-08-28): BUG-013/015/022/045 + YANGI 068/069/070 (settings crash, S10 TDZ regress, eskirgan test) — konsol-scan 12/12 toza, repro 16/16, 4896/4896.
+- **STEP 12** (2026-08-28): BUG-071…077 (sessions/cast/enter kontrast, projector 302, roles html/json negotiate, hc graceful) — scan 24+ sahifa 0 buzilish, repro 16/16, full 7099/7108 (9 fail pre-existing @HEAD), design-lint PASS.
 
 ## 📋 MANBA HAVOLALAR
 - BUG hisobotlari: `workspace` branch → `qa/BUG_REPORTS.md`

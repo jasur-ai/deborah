@@ -50,18 +50,25 @@ describe('Login pages', () => {
 });
 
 describe('Auth pages redirect when not logged in', () => {
-  it('GET /user/panel should return 401 (JSON) when not logged in', async () => {
+  it('GET /user/panel → 401 JSON (API client, Accept: json)', async () => {
     const supertest = await import('supertest');
-    const res = await supertest.default(app).get('/user/panel');
-    // Middleware returns 401 JSON when request accepts JSON (supertest default)
+    const res = await supertest.default(app).get('/user/panel').set('Accept', 'application/json');
+    // BUG-076: json clientlar uchun 401 JSON saqlanadi
     expect(res.status).toBe(401);
     expect(res.body).toHaveProperty('error');
     expect(res.body).toHaveProperty('redirect', '/user/login');
   });
 
-  it('GET /admin/dashboard should return 401 (JSON) when not logged in', async () => {
+  it('GET /user/panel → 302 login (brauzer, Accept: html — BUG-076)', async () => {
     const supertest = await import('supertest');
-    const res = await supertest.default(app).get('/admin/dashboard');
+    const res = await supertest.default(app).get('/user/panel').set('Accept', 'text/html');
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/user/login');
+  });
+
+  it('GET /admin/dashboard → 401 JSON (API client, Accept: json)', async () => {
+    const supertest = await import('supertest');
+    const res = await supertest.default(app).get('/admin/dashboard').set('Accept', 'application/json');
     expect(res.status).toBe(401);
     expect(res.body).toHaveProperty('error');
     expect(res.body).toHaveProperty('redirect', '/admin/login');

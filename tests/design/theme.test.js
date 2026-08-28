@@ -32,16 +32,18 @@ describe('Theme Core (S07.01) — state → resolved', () => {
     expect(r.colorScheme).toBe('dark');
   });
 
-  it('resolves hc-light → high-contrast / colorScheme light', () => {
+  it('resolves hc-light → light (graceful, BUG-077: hc sheet yo‘q)', () => {
     const r = resolveState('hc-light', false, false);
-    expect(r.resolved).toBe('high-contrast');
+    expect(r.resolved).toBe('light'); // hc token sheeti yo‘q — bazaviy tema
     expect(r.colorScheme).toBe('light');
+    expect(r.state).toBe('hc-light'); // holat saqlanadi
   });
 
-  it('resolves hc-dark → high-contrast / colorScheme dark', () => {
+  it('resolves hc-dark → dark (graceful, BUG-077)', () => {
     const r = resolveState('hc-dark', true, true);
-    expect(r.resolved).toBe('high-contrast');
+    expect(r.resolved).toBe('dark');
     expect(r.colorScheme).toBe('dark');
+    expect(r.state).toBe('hc-dark');
   });
 });
 
@@ -59,22 +61,22 @@ describe('Theme Core (S07.08) — system state', () => {
     expect(r.colorScheme).toBe('dark');
   });
 
-  it('system + prefers-contrast: more → high-contrast', () => {
+  it('system + prefers-contrast: more → bazaviy dark (BUG-077: hc sheet yo‘q)', () => {
     const r = resolveState('system', false, true);
-    expect(r.resolved).toBe('high-contrast');
-    expect(r.colorScheme).toBe('dark'); // OS dark bo'lsa
+    expect(r.resolved).toBe('dark'); // hc CSS yo‘q — OS kontrast pref'i temani buzmaydi
+    expect(r.colorScheme).toBe('dark');
   });
 
-  it('system + HC + OS light → high-contrast / colorScheme light', () => {
+  it('system + HC + OS light → bazaviy light (BUG-077)', () => {
     const r = resolveState('system', true, true);
-    expect(r.resolved).toBe('high-contrast');
+    expect(r.resolved).toBe('light');
     expect(r.colorScheme).toBe('light');
   });
 
   it('invalid state string → system fallback', () => {
     const r = resolveState('banana', false, true);
     expect(r.state).toBe('system');
-    expect(r.resolved).toBe('high-contrast');
+    expect(r.resolved).toBe('dark'); // graceful (hc emas)
   });
 
   it('undefined/null state → system fallback', () => {
@@ -92,9 +94,9 @@ describe('Theme Core (S07.05) — canvas sync qiymatlari', () => {
     expect(resolveState('dark', false, false).canvas).toBe('#080C1A');
   });
 
-  it('high-contrast → #FFFFFF', () => {
-    expect(resolveState('hc-light', false, false).canvas).toBe('#FFFFFF');
-    expect(resolveState('hc-dark', false, false).canvas).toBe('#FFFFFF');
-    expect(resolveState('system', false, true).canvas).toBe('#FFFFFF');
+  it('hc holatlari → bazaviy canvas (BUG-077 graceful)', () => {
+    expect(resolveState('hc-light', false, false).canvas).toBe('#F5F7FB');
+    expect(resolveState('hc-dark', false, false).canvas).toBe('#080C1A');
+    expect(resolveState('system', false, true).canvas).toBe('#080C1A');
   });
 });

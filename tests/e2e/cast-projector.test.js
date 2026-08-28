@@ -46,10 +46,13 @@ describe('T-03 cast-projector: safe projection', () => {
   it('projector route rejects without valid ticket — safe by default (item 7)', async () => {
     const { sessionId } = await seedCastSession({ title: 'Proj', owner: 'user:user' });
     const page = await newPage(context);
-    // Ticket'siz — 403 (projector faqat director tomonidan chiqarilgan bir martalik
-    // token bilan ochiladi; default holatda answer key hech qachon ko'rinmaydi)
+    // Ticket'siz — /play'ga yo'naltiriladi (BUG-074: brauzer uchun xom 403 JSON
+    // o'rniga; projector faqat director chiqargan bir martalik ticket bilan ochiladi,
+    // default holatda answer key hech qachon ko'rinmaydi)
     const resp = await page.goto(`${serverUrl}/cast/${sessionId}/projector`, { waitUntil: 'domcontentloaded', timeout: 15000 });
-    expect(resp.status()).toBe(403);
+    // projector URL'dan kelganda /play'da tugadi → 302 ishladi (BUG-074)
+    expect(new URL(resp.url()).pathname).toBe('/play');
+    expect(resp.status()).toBe(200);
     await page.close();
   }, 30000);
 });

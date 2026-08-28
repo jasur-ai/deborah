@@ -150,7 +150,7 @@ export function requireRole(...allowed) {
     if (role === 'teacher_pending' || role === 'teacher_rejected') {
       // API/HTML uchun bir xil stealth: 404 HTML / 403 JSON.
       const isApi = req.originalUrl?.startsWith('/api/') || req.path?.startsWith('/api/');
-      if (isApi || req.xhr || req.accepts('json')) {
+      if (isApi || req.xhr || req.accepts(['html','json']) === 'json') { // BUG-041/076: */* brauzer JSON olib qolmasin
         return res.status(403).json({ error: 'Ruxsat etilmagan rol' });
       }
       return res.status(404).render('error', {
@@ -164,14 +164,14 @@ export function requireRole(...allowed) {
 
     // Login qilmagan — login sahifasiga (yoki API uchun 401 JSON).
     if (!role) {
-      if (isApi || req.xhr || req.accepts('json')) {
+      if (isApi || req.xhr || req.accepts(['html','json']) === 'json') { // BUG-041/076: */* brauzer JSON olib qolmasin
         return res.status(401).json({ error: 'Avtorizatsiya talab qilinadi', redirect: '/user/login' });
       }
       return res.redirect('/user/login');
     }
 
     // Login qilgan, lekin rolsiz — stealth 404 (sahifa "yo'q" ko'rinadi).
-    if (isApi || req.xhr || req.accepts('json')) {
+    if (isApi || req.xhr || req.accepts(['html','json']) === 'json') { // BUG-041/076: */* brauzer JSON olib qolmasin
       return res.status(403).json({ error: 'Ruxsat etilmagan rol' });
     }
     return res.status(404).render('error', {

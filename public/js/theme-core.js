@@ -32,14 +32,17 @@
       return { state: s, resolved: 'dark', colorScheme: 'dark', canvas: '#080C1A' };
     }
     if (s === 'hc-light') {
-      return { state: s, resolved: 'high-contrast', colorScheme: 'light', canvas: '#FFFFFF' };
+      // BUG-077: to'liq hc token sheeti yo'q — hc holatlari bazaviy temaga graceful resolve
+      // qilinadi (state saqlanadi; sheet qo'shilganda shu joyda almashtiriladi)
+      return { state: s, resolved: 'light', colorScheme: 'light', canvas: '#F5F7FB' };
     }
     if (s === 'hc-dark') {
-      return { state: s, resolved: 'high-contrast', colorScheme: 'dark', canvas: '#FFFFFF' };
+      return { state: s, resolved: 'dark', colorScheme: 'dark', canvas: '#080C1A' };
     }
     // system — OS preferencelar (S07.08: user override yo'q)
     if (prefersHC) {
-      return { state: s, resolved: 'high-contrast', colorScheme: prefersLight ? 'light' : 'dark', canvas: '#FFFFFF' };
+      // BUG-077: OS 'prefers-contrast: more' mavjud temani buzmasin — bazaviy resolve
+      return { state: s, resolved: prefersLight ? 'light' : 'dark', colorScheme: prefersLight ? 'light' : 'dark', canvas: prefersLight ? '#F5F7FB' : '#080C1A' };
     }
     return {
       state: s,

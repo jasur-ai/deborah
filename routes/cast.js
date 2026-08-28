@@ -821,7 +821,9 @@ router.get('/cast/:sessionId/projector', async (req, res) => {
     const { sessionId } = req.params;
     const { t } = req.query;
     const ok = await redeemProjectorTicket(sessionId, t);
-    if (!ok) return res.status(403).json({ error: 'Yaroqsiz projector token' });
+    // BUG-074: bu brauzer sahifasi — xom JSON 403 o'rniga /play'ga redirect
+    // (meta-missing/catch shoxlari bilan bir xil; API emas).
+    if (!ok) return res.redirect('/play');
 
     const meta = await getSessionMeta(sessionId);
     if (!meta) return res.redirect('/play');
