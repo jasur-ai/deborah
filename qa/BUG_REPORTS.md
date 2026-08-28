@@ -1354,6 +1354,16 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230cy: ✅ Parol validatsiya UI: pw-current/pw-new majburiy (bo'sh bo'lsa tugma ishlamaydi kutilgandek)
 
+### STEP 42 YAKUNIY — ASSIGNMENTS EMPTY holat (5 topilma)
+
+### BUG-230cz: ⚪ Assignments empty holat TO'G'RI: "hali assessment tayinlanmagan", faqat Yangilash tugmalari ko'rinadi (Preflight yashirin — assignment bo'lmaguncha mantiqan ko'rinmasligi kerak)
+
+### BUG-230da: ✅ /api/student/assignments student uchun 401 — bu TEACHER/ADMIN uchun ham himoyalangan edi (BUG-013 re-confirm: sahifa role-aware emas, lekin empty state toza)
+
+### BUG-230db: ℹ️ Preflight oqimini REAL assignment'siz test qilib bo'lmaydi — admin paneldan roster talaba tayinlash kerak (keyingi stepda roster talaba bilan urinish)
+
+### BUG-230dc: ℹ️ Dalil: 78_assignments_empty.png
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
