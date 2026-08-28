@@ -2309,6 +2309,33 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ij: ℹ️ Dalillar: 87 skrinshot, 72 commit, 22MB workspace (100MB ichida ✅)
 
+### STEP 71 YAKUNIY — LANDING DEMO/HEADING/ARIA (10 topilma)
+
+### BUG-230iha: 🟡 Landing'da demo/video bo'limi YO'Q (faqat statik matn + ikon)
+- README "demo" da'vosi ko'rinmadi — sahifada iframe 0, animatsiya 0
+- Mayda: vizual demo ko'proq jozibor bo'lardi (mahsulot UX)
+
+### BUG-230ihb: 🟡 Hamburger menyu aria-expanded YO'Q (BUG-230ka re-confirm: aria-label bor, aria-expanded/controls yo'q)
+- WCAG 4.1.2: menyu ochilish/yopilish holati ko'rsatilmagan
+
+### BUG-230ihc: 🟡 Landing sahifada heading tartibi buzilgan: H1 → H3 → H3 → H1 → H2 → H4 (mayda)
+- H1 1 ta ✅ lekin H3 H1 dan oldin keladi — WCAG 1.3.1 best-practice buzilgan
+- Ta'sir: ekran o'quvchi uchun strukturasi chalg'ituvchi
+
+### BUG-230ihd: ✅ _blank linklar hammasi noopener bilan (0 muammo) — xavfsizlik OK
+
+### BUG-230ihe: ✅ Formalar hammasi label bilan (landing/login)
+
+### BUG-230ihf: ℹ️ Hero bo'limi interaktiv tugmasiz (faqat navigatsiyada tugmalar bor)
+
+### BUG-230ihg: ✅ Console 0 error/warning (landing toza)
+
+### BUG-230ihh: ℹ️ Dalil: yuqoridagi DOM skan natijalari
+
+### BUG-230ihh2: ✅ Jami: landing mayda a11y muammolari bilan (heading tartib, aria-expanded) — funksional darajada yaxshi
+
+### BUG-230ihh3: ℹ️ 71 step jami: ~590 yozuv, 88 PNG, 73 commit
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
