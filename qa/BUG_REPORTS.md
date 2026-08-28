@@ -1060,6 +1060,34 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 - **Prioritet 2:** BUG-006/007 (nav), BUG-033 (VIP UI), BUG-071 (legal linklar), BUG-093 (tema regressiya), BUG-098 (kodlar kamayib qoldi)
 - **Tez g'alabalar (1-qatorlik):** \$ IIFE fix (BUG-012/044/049 birjo'p), escape fix (BUG-009/010 tuzatilgan), footer-scripts.ejs qo'shish, SMTP timeout
 
+### STEP 31 YAKUNIY — ATTEMPT/ARENA OQIMI (10 topilma)
+
+### BUG-230a: 🔴 ARENA UCHUN START ENDPOINTI YO'Q — test yuklanadi lekin HECH QANDAYYO'L BOSHLASH YO'Q
+- **Dalil:** teacher test yaratildi (mtcfsh4zlryl) → `/api/attempt/start|create|lease`, `/arena/api/start` — HAMMASI 404
+- **Kod:** `routes/arena.js`'da FAQAT 3 endpoint: check-session (GET), add-bots (admin), cleanup-bots (admin) — start/join endpointi umuman yo'q
+- **Ta'sir:** arena "Yuklash" ishlasa ham (BUG-044), boshlash yo'li YO'Q — funksiya konseptual tugallanmagan
+
+### BUG-230b: 🟠 arena add-bots/cleanup-bots `requireAdmin` — lekin arena TEACHER/student funksiyasi
+- O'qituvchi o'z arena sinovida bot ishlatolmaydi (UI tugmasi ko'rinadi, backend rad etadi) — BUG-140ning keng qamrovi
+
+### BUG-230c: ✅ attempt META ma'lumotlari konsistent: statuses ready/in_progress/submitted/terminated + transitions map bor
+- `GET /api/student/attempt/meta` 200 — imtihon holat mashinasi hujjatlashtirilgan
+
+### BUG-230d: 🟡 `/api/student/assignments` teacherga 401 (BUG-013 re-confirm yangi deployda ham)
+
+### BUG-230e: ✅ response META: first/editable/item_lock rejimlar + pending/accepted holatlar — javob siyosati sozlangan
+
+### BUG-230f: 🔴 ARENA WATCH (real-time) — `arena:watch` socket event bor (game-handler.js:449) lekin sahifada yuklanadigan sahifa-skript o'lik (BUG-044) → socket hech qachon ulanmaydi
+- `arena:stateUpdate`, `arena:playerCount` eventlar server tomonda tayyor — client murojaat qilmaydi
+
+### BUG-230g: 🟡 Student arena source=user sahifasida test tanlash SELECTI YO'Q (opts bo'sh) — o'z testini tanlash UI'siz (loadBtn bor lekin nima yuklashi nomaqlum)
+
+### BUG-230h: ℹ️ README'dagi `/api/response/*` (ACK+autosave) va `/api/submit/*` (muhr+imzo receipt) endpoints `routes/response.js`'da meta qismigina live tekshirildi; submit imzolash oqimi assignment'ga bog'liq (assignments 401 → yetib bo'lmadi — B-01 qoldiq)
+
+### BUG-230i: 🟡 Mock fanlar "RANDOM 25" da'vosi — constants MOCK_COUNT: 25, lekin API 7 ta qaytardi (BUG-203 re-confirm, koddan ham: MOCK_COUNT=25 mantiq qaeradadir qo'llanilmaydi)
+
+### BUG-230j: ✅ teacher yangi test (S31-Arena-Test) cleanup qilindi — artefakt yo'q
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI

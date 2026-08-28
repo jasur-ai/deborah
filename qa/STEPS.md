@@ -79,3 +79,4 @@
 - ✅ STEP 28 — yakunlandi (2026-08-27): BUG-206 🟡 (500 sahifada Orqaga yo'q) + BUG-207/208 ✅ (banner dismiss saqlanadi, offline OK) + BUG-209 ℹ️ (nav ERR_ABORTED flaky) — 404 sahifa toza
 - ✅ STEP 29 — yakunlandi (2026-08-27): BUG-220/221 🟡 (jcode label'siz, dupe id kontakt) + BUG-222 🟡 (admin refresh btn name yo'q) + BUG-223 ⚪ (h1 yo'q) + BUG-224 ✅ ijobiy (7 sahifa a11y skan asosi yaxshi)
 - ✅ STEP 30 — yakunlandi (2026-08-27): BUG-225 🟠 (logo 254KB) + BUG-226 🟡 (panel 328KB) + BUG-227/228 ✅ (console toza, br+cache) + BUG-229 (README yakuniy jadval) + BUG-230 🎯 (UMUMIY XULOSA: 3 global ildiz, prioritetlar, tez g'alabalar)
+- ✅ STEP 31 — yakunlandi (2026-08-27): BUG-230a 🔴 (arena start endpointi YO'Q) + BUG-230b 🟠 (bots admin-only) + BUG-230c…230j (attempt meta ✅, watch socket o'lik, student tanlov UI'siz)
