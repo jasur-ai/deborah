@@ -1386,6 +1386,27 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230do: ℹ️ Admin MFA backup kodlari TUGAGAN (daffd2e925 oxirgi ishlatildi) — yangi kodlar berilsin
 
+### STEP 44 YAKUNIY — SAFE-SUBMIT/PROCTOR/CAMERA/OFFLINE (10 topilma)
+
+### BUG-230dp: ✅ Safe-submit META to'liq: 4 kind (file/code/audio/video), 6 session holati, quarantine 4 holat (PENDING/CLEAN/INFECTED/UNSCANNABLE) — antivirus pipeline arxitekturasi sozlangan
+
+### BUG-230dq: ✅ Offline packages API 200 (bo'sh ro'yxat — to'g'ri)
+
+### BUG-230dr: 🟠 Camera review API admin bilan 404 — `/api/admin/attempts/:id/camera/review` route koddа bor (camera.js) lekin ANIQLASHTIRILGAN yo'l boshqacha; view'da chaqirilgan API yo'q ekan
+- **Izoh:** camera-review sahifasi BUG-007'da 500 — bu modul butunlay qismlarga bo'linmagan holatda
+
+### BUG-230ds: 🟠 Proctor queue API 404 — view/route nomlarini mos emas; README'dagi "/api/proctor/*" oilasidan faqat ba'zilari live
+
+### BUG-230dt: 🔴 Student camera consent → 404 (test-id bilan) — `camera/consent` route koddа bor lekin manzil farq qiladi; UI'da bu yashirin
+
+### BUG-230du: ℹ️ Safe-submit yuklash oqimi (chunk upload) test qilinmadi — session ID kerak (real attempt)
+
+### BUG-230dv: ✅ Offline packages 200 (bo'sh) — admin qismi tayyor
+
+### BUG-230dw: ℹ️ Proctor/camera modullari README §6'da bor; lekin live'da UI page (BUG-007 camera-review 500) + API 404 — README'dan boshqa holat
+
+### BUG-230dx: ℹ️ Safe-submit moduli README'da bor va live'da ishlaydi (meta 200) — deyarli tayyor holatda
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI

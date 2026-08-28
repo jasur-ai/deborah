@@ -92,3 +92,4 @@
 - ✅ STEP 41 — yakunlandi (2026-08-27): BUG-230cp ✅ (parol o'zgartirish E2E to'liq: wrong 403, OK yangilandi, yangi parol login OK) + BUG-230cr/cu 🟡 (blok sarlavhasiz, email probel) + BUG-230cv (Telegram UI'da yo'q — BUG-166 yopildi)
 - ✅ STEP 42 — yakunlandi (2026-08-27): BUG-230cz ✅ (assignments empty holat toza, Preflight mantiqan yashirin) + BUG-230da/db ℹ️ (roster talaba bilan keyin)
 - ✅ STEP 43 — yakunlandi (2026-08-27): BUG-230df ✅ (ROSTER E2E: upload->map->commit->1 user yaratildi) + BUG-230di/dj 🟡 (validate 404, UI refresh) + BUG-230do ⚠️ (admin MFA kodlar TUGAGAN)
+- ✅ STEP 44 — yakunlandi (2026-08-27): BUG-230dp/dv ✅ (safe-submit meta to'la, offline packages OK) + BUG-230dr/ds/dt 🟠🔴 (camera/proctor/consent API 404 — route nomlar mos emas)
