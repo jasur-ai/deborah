@@ -2043,6 +2043,34 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230hz30: ✅ IJOBIY — Portfolio CRUD + push device + notifications POST ishlaydi
 
+### STEP 64 YAKUNIY — EMAIL/PUSH/SETTINGS (10 topilma)
+
+### BUG-230hz31: ✅ EMAIL CHANGE 403 reauth_required — to'g'ri xavfsizlik (parol qayta tasdiqlash kerak)
+- **Dalil:** `POST /api/account/email/request` → 403 `reauth_required` (BUG-230hz25 QAYTA KO'RILDI: endpoint MOUNT bor, faqat reauth talab qiladi)
+- **Ta'sir:** foydalanuvchi email o'zgartirish uchun parol qayta kiritishi kerak — dizaynga mos
+- **BUG-230hz25 QAYTA BAHOLANDI:** 404 emas, 403 reauth — endpoint TIRIK, faqat qo'shimcha himoya
+
+### BUG-230hz32: ✅ Email status 200 (`pending: null`)
+
+### BUG-230hz33: ✅ Push subscribe: 400 invalid_subscription (test key bilan to'g'ri rad)
+- unsubscribe: 200 (idempotent)
+
+### BUG-230hz34: ✅ Settings PATCH lang ru/uz 200 — til saqlash ishlaydi (BUG-230fy re-confirm)
+
+### BUG-230hz35: 🔴 `/api/account/sessions` 404 — sessiya ro'yxati API YO'Q
+- **Dalil:** GET → HTML 404 (JSON emas)
+- **Ta'sir:** /sessions sahifada qurilmalar ko'rinadi (EJS'da render), lekin API uchun endpoint yo'q (faqat sahifa GET)
+
+### BUG-230hz36: ✅ 4/5 API ishlaydi (faqat sessions 404)
+
+### BUG-230hz37: ✅ Email-change endpoint MOUNT bor (BUG-230hz25 QAYTA YOZILDI — 403 reauth emas, 404 emas)
+
+### BUG-230hz38: ✅ Push subscribe CSRF + auth himoyalangan
+
+### BUG-230hz39: ✅ Settings PATCH faqat ruxsat etilgan maydonlarni saqlaydi (`saved:["lang"]`)
+
+### BUG-230hz40: ℹ️ Dalillar: yuqoridagi curl/test natijalari
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI

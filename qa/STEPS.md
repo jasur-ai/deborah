@@ -112,3 +112,4 @@
 - ✅ STEP 61 — yakunlandi (2026-08-27): PUBLISH/ASSIGNMENT re-verify — /api/publish/* va /api/assignments user bilan ham 404 (BUG-230hz2 re-confirm). ⚠️ MFA backup: Teacher BARCHASI invalid, Admin 429 LOCKED (15 daqiqa) — YANGI KODLAR SHART!
 - ✅ STEP 62 — yakunlandi (2026-08-27): STUDENT 10 sahifa skan — 5 tasi toza, 5 tasi pageerror (BUG-009/012/011 re-confirm) + BUG-230hz11 🔴 YANGI (settings 'profile is not defined')
 - ✅ STEP 63 — yakunlandi (2026-08-27): BUG-230hz25 🔴 (email/change 404 — mount YO'Q) + BUG-230hz21 🟡 (password change generic xato) + BUG-230hz22/23/24/27/30 ✅ (notifications, portfolio CRUD, push, xavfsizlik)
+- ✅ STEP 64 — yakunlandi (2026-08-27): BUG-230hz31 ✅ (email change 403 reauth — BUG-230hz25 QAYTA YOZILDI, endpoint TIRIK) + BUG-230hz35 🔴 (/api/account/sessions 404) + 230hz32-34/36-39 ✅
