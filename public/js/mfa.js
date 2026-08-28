@@ -137,9 +137,15 @@
             lockUI(Number(data.retryAfterSeconds) || 900);
             return;
           }
-          showErr(data.error === 'invalid_code'
+          // BUG-015: aniq, amalga yo'naltirilgan xabarlar (xom kod emas)
+          if (data.error === 'no_pending_challenge' || res.status === 401) {
+            showErr(form.getAttribute('data-expired') || 'The code request expired — please sign in again.');
+            setTimeout(function () { window.location.href = '/user/login'; }, 2200);
+            return;
+          }
+          showErr(data.error === 'invalid_code' || data.error === 'challenge_invalid'
             ? (form.getAttribute('data-invalid-code') || 'Invalid code')
-            : (data.error === 'challenge_invalid' ? (form.getAttribute('data-invalid-code') || 'Invalid code') : (data.error || 'error')));
+            : (data.error === 'no_pending_challenge' ? (form.getAttribute('data-expired') || 'Expired') : (data.error || 'error')));
           if (singleDigits) focusDigit(0);
         })
         .catch(function () { showErr(form.getAttribute('data-network') || 'Connection error'); })

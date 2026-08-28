@@ -201,11 +201,14 @@
     }
   }
 
-  pick.addEventListener('change', function () {
-    const v = pick.value;
-    if (v) loadProfile(parseInt(v, 10));
-    else content.innerHTML = '<div class="empty">Assessment tanlang.</div>';
-  });
-
-  loadAssignments();
+  // BUG-013: Assessment UI faqat talaba uchun render qilinadi — teacher/admin'da
+  // pick/content Yo'Q (avval null.addEventListener crash + student API 401 noise edi)
+  if (pick) {
+    pick.addEventListener('change', function () {
+      const v = pick.value;
+      if (v) loadProfile(parseInt(v, 10));
+      else content.innerHTML = '<div class="empty">Assessment tanlang.</div>';
+    });
+    loadAssignments();
+  }
 })();

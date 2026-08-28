@@ -272,6 +272,34 @@ design-lint PASS ✓. **PUSH:** S6–S10 (0a21500..HEAD) → origin/debugging.
 
 ---
 
+## STEP 11 — 🟠 Qolgan hisobot buglari + konsol-audit topilmalari — ✅
+**Buglar:** BUG-013, BUG-015, BUG-022, BUG-045 (hisobot) + YANGI BUG-068/069/070 (jami 7)
+**Qanday (qaysi+qanday):**
+- **BUG-013** security-profile teacher'da student API 401 (console noise) — Assessment bo'limi
+  endi FAQAT studentda render qilinadi (view role-shartli); security-profile.js'da `if (pick)`
+  guard — yuklash va listener faqat picker mavjud bo'lsa (ikkinchi yashirin crash —
+  `pick.addEventListener` null — ham shu bilan yopildi).
+- **BUG-015** MFA 403 tashxisi — xabarlar amalga yo'naltirilgan: `expiredChallenge` (challenge
+  TTL 5 daqiqa o'tsa — "qayta kiring" + avto-redirect) va `invalidHint` (stale authenticator
+  yozuvi ehtimoli + 30s rotatsiya eslatmasi), 4 til; mfa.js `no_pending_challenge`/401 handler.
+- **BUG-022** Canva status qarama-qarshiligi — status faqat CLIENT_ID'ni tekshirardi, link esa
+  clientId+secret+redirect talab qilardi → endi ikkalasi ham `isCanvaConfigured()` (yagona manba):
+  faqat CLIENT_ID bilan `configured:false` (repro bilan isbot).
+- **BUG-045** /sessions "Noma'lum qurilma" + dublikatlar — parseUa brauzersiz so'rovlar
+  (curl/node/bot)ni aniqlaydi → "Brauzersiz so'rov (server/test)" label; sessiyalar
+  device+browser+ipHash bo'yicha guruhlanadi (separator + "Shu qurilmadan yana bir sessiya").
+- **BUG-068** (o'zim, konsol-scan) /user/settings `ReferenceError: profile is not defined` —
+  inline JS'da EJS o'zgaruvchisi xom ishlatilgan → `window.__SETTINGS_PROFILE__` dan o'qiladi.
+- **BUG-069** (o'zim, konsol-scan — S10 REGRESS) /admin/teachers `app` TDZ 500 — S10
+  statistikam `const app` deklaratsiyasidan oldin unga murojaat qilgan; S10 repro'da seed
+  userlar `appliedAt`'li bo'lgani uchun short-circuit bilan yashiringan edi. `const app` yuqori
+  chiqarildi (canonical fallback `app.created_at` — eski `created_at_by_user` typosi ham tuzatildi).
+- **BUG-070** (o'zim) settings-d09 anon-test eskirgan (BUG-041 klas) → `redirect:'manual'`.
+**Tool:** `scripts/repro-step11.mjs` (16 tekshiruv) + `scripts/scan-console.mjs` (Playwright
+konsol/pageerror/HTTP-xato skani — 12 sahifa) — **HAMMASI OK, 12/12 sahifa toza**.
+**Verify:** repro 16/16 ✓; scan 12 sahifa 0 xato ✓; canva/teachers/mfa/settings integration
+52/52 ✓; design+unit 4896/4896 ✓; design-lint PASS ✓.
+
 ## ✅ YAKUNLANGANLAR
 - **STEP 1** (2026-08-27): BUG-009/010/012/044 + 2 yangi topilma — 6 fayl; brauzer 13/13 PASS, vitest 45/45.
 - **STEP 2** (2026-08-27): BUG-011/016/041 — 5 fayl + 3 test sinxron; brauzer 10/10 PASS, auth 491/491, integration 104/104.
@@ -283,6 +311,7 @@ design-lint PASS ✓. **PUSH:** S6–S10 (0a21500..HEAD) → origin/debugging.
 - **STEP 8** (2026-08-28): BUG-003/004/028/033/034/042/046 + YANGI 063/064 — footer legal linklar, TOTP matni (4 til), admin alohida page (modal olib tashlandi), VIP badge, uz tablar, kanal mavjudligi; repro 36/36, vitest 4984/4984.
 - **STEP 9** (2026-08-28): BUG-005/017/018/019/047 + YANGI 065/066 — robots.txt, README real yo'llar (sessions/onboarding/cast), push shartli hujjat, 7 o'lik admin nomi; repro 45+ ✓, 4896/4896.
 - **STEP 10** (2026-08-28): BUG-026 (qaror)/027a (qaror)/027b (real statistika)/029 (Barcha funksiyalar sahifasi)/030 (no-reload delete) — repro 25/25, 4896/4896. [PUSH: S6–S10]
+- **STEP 11** (2026-08-28): BUG-013/015/022/045 + YANGI 068/069/070 (settings crash, S10 TDZ regress, eskirgan test) — konsol-scan 12/12 toza, repro 16/16, 4896/4896.
 
 ## 📋 MANBA HAVOLALAR
 - BUG hisobotlari: `workspace` branch → `qa/BUG_REPORTS.md`

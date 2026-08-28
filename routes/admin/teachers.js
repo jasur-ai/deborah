@@ -147,14 +147,15 @@ router.get('/teachers', async (req, res) => {
         const role = u.role;
         if (role !== 'teacher_pending' && role !== 'teacher_rejected' && role !== 'teacher') continue;
         if (role === 'teacher_pending') pendingTotal++;
+        const app = appsByUser[key] || {};
         // BUG-027b: haqiqiy statistika (mavjud ma'lumotdan agregat)
         if (role === 'teacher') statCounts.approved++;
         else if (role === 'teacher_rejected') statCounts.rejected++;
-        const uApplied = u.teacher_application?.appliedAt || app.created_at_by_user || 0;
+        // inline appliedAt asosiy; canonical record fallback (S10'dagi TDZ xatosi tuzatildi)
+        const uApplied = u.teacher_application?.appliedAt || app.created_at || 0;
         const uDecided = u.teacher_decision_at || 0;
         if (uApplied) statTrend.add(uApplied, 'applied');
         if (uDecided) { statTrend.add(uDecided, 'decided'); if (uApplied && uDecided > uApplied) { decideSum += (uDecided - uApplied); decideN++; } }
-        const app = appsByUser[key] || {};
         const entry = {
           id: key,
           username: u.username || key,

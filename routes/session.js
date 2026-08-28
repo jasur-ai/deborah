@@ -61,7 +61,9 @@ function parseUa(ua) {
   else if (/safari\//.test(lower)) browser = 'Safari';
   else if (/opera|opr\//.test(lower)) browser = 'Opera';
 
-  return { device, browser };
+  // BUG-045: brauzersiz so'rovlar (server/test/monitoring) — "Noma'lum" emas, aniq belgi
+  const noUa = !s.trim() || /curl|wget|node-fetch|node|python|axios|postman|insomnia|bot|spider|monitor|uptime/i.test(s);
+  return { device, browser, noUa };
 }
 
 /** Oxirgi faollikni odam o'qiydigan formatga keltirish. */
@@ -79,12 +81,13 @@ async function buildSessionList(userId) {
   const sessions = await getUserSessions(userId);
   return Object.entries(sessions || {})
     .map(([key, s]) => {
-      const { device, browser } = parseUa(s.userAgent);
+      const { device, browser, noUa } = parseUa(s.userAgent);
       return {
         key,
         sessionId: s.sessionId || key,
         device: device || null,
         browser: browser || null,
+        noUa: noUa === true,
         userAgent: s.userAgent || null,
         ipHash: s.ipHash || null,
         authMethod: s.authMethod || 'password',
@@ -94,7 +97,14 @@ async function buildSessionList(userId) {
         role: s.role || null,
       };
     })
-    .sort((a, b) => (b.lastActiveAt || 0) - (a.lastActiveAt || 0));
+    .sort((a, b) => (b.lastActiveAt || 0) - (a.lastActiveAt || 0))
+    // BUG-045: bir xil qurilma (device+browser+ipHash) ketma-ket guruhlanadi
+    // (barqaror comparator — avval guruh, guruh ichida lastActive tartibi saqlanadi)
+    .sort((a, b) => {
+      const ka = `${a.device || '?'}|${a.browser || '?'}|${a.ipHash || ''}`;
+      const kb = `${b.device || '?'}|${b.browser || '?'}|${b.ipHash || ''}`;
+      return ka === kb ? (b.lastActiveAt || 0) - (a.lastActiveAt || 0) : ka.localeCompare(kb);
+    });
 }
 
 // ── AUTH A-08: GET /sessions — o'z sessiyalari ──

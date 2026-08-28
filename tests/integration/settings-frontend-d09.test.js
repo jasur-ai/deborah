@@ -68,8 +68,8 @@ async function loginAs(username) {
 
 describe('AUTH D-09 — GET /user/settings', () => {
   it('authsiz → 401 (himoya)', async () => {
-    const res = await fetch(`${base}/user/settings`);
-    expect([401, 302]).toContain(res.status);
+    const res = await fetch(`${base}/user/settings`, { redirect: 'manual' }); // BUG-041: fetch follow 200 ko'rsatardi
+    expect([401, 302, 301]).toContain(res.status);
   });
 
   it('auth bilan → 200: 4 section + aria + settings.js + copy/profile', async () => {

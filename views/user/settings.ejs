@@ -357,7 +357,8 @@
         ru: { ok: 'Готово', fail: 'Ошибка — попробуйте снова', reauth: 'Для безопасности подтвердите пароль', delConfirm: 'Аккаунт будет удалён через 30 дней. Продолжить?', delDone: 'Удаление запланировано — отмена возможна в течение 30 дней', restricted: 'Ограничен', active: 'Активен' },
         en: { ok: 'Done', fail: 'Error — try again', reauth: 'Confirm your password for security', delConfirm: 'Your account will be deleted after 30 days. Continue?', delDone: 'Deletion scheduled — can be cancelled within 30 days', restricted: 'Restricted', active: 'Active' },
       };
-      var t = T[(profile && profile.lang === 'ru') ? 'ru' : (profile && profile.lang === 'en') ? 'en' : 'uz'];
+      var P = window.__SETTINGS_PROFILE__ || {}; // BUG-068: 'profile' faqat EJS scope'da — JS'da ReferenceError edi
+      var t = T[(P && P.lang === 'ru') ? 'ru' : (P && P.lang === 'en') ? 'en' : 'uz'];
       function say(txt, ok) { if (!msg) return; msg.textContent = txt; msg.className = 'settings-msg ' + (ok ? 'ok' : 'fail'); }
       async function reauth() {
         var pw = window.prompt(t.reauth);

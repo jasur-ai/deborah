@@ -36,8 +36,11 @@ function actorId(req) {
 }
 
 /** GET /api/admin/canva/status — config/scope status. */
-router.get('/api/admin/canva/status', requireAdmin, (req, res) => {
-  res.json({ ...CANVA_META, configured: Boolean(process.env.CANVA_CLIENT_ID) });
+router.get('/api/admin/canva/status', requireAdmin, async (req, res, next) => {
+  // BUG-022: status faqat CLIENT_ID'ni tekshirardi, link esa clientId+clientSecret+redirectUri
+  // talab qilardi → "configured ✓" + "Canva not configured" qarama-qarshiligi. Yagona manba:
+  const { isCanvaConfigured } = await import('../src/modules/canva/canva.client.js');
+  try { res.json({ ...CANVA_META, configured: isCanvaConfigured() }); } catch (e) { next(e); }
 });
 
 /** POST /api/admin/canva/link — start OAuth (returns authorize URL). */

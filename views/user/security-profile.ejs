@@ -188,12 +188,14 @@
       <div id="events-list"><div class="loading"><span class="spinner" style="border-color:var(--deborah-semantic-color-text-muted);border-top-color:var(--deborah-semantic-color-action-primary)"></span></div></div>
     </div>
 
+    <% if (user && user.role === 'student') { %>
     <div class="sec-title" style="margin-top:18px"><%- icon('layers', 16) %> Assessment</div>
     <select class="assign-pick" id="assign-pick">
       <option value="">Assessment tanlang...</option>
     </select>
 
     <div id="content"><div class="loading"><span class="spinner" style="border-color:var(--deborah-semantic-color-text-muted);border-top-color:var(--deborah-semantic-color-action-primary)"></span> Yuklanmoqda...</div></div>
+    <% } %>
   </div>
 
   <script src="/js/security-profile.js"></script>

@@ -42,7 +42,7 @@
     <div class="mfa-title"><%= copy.mfaLogin.title %></div>
     <div class="mfa-sub"><%= copy.mfaLogin.sub %></div>
 
-    <form id="mfa-form" data-challenge-id="<%= challengeId %>" data-code-short="<%= copy.mfaLogin.codeShort %>" data-invalid-code="<%= copy.mfaLogin.invalidCode %>" data-network="<%= copy.mfaLogin.network %>" data-locked-tpl="<%= copy.mfaLogin.locked %>" novalidate>
+    <form id="mfa-form" data-challenge-id="<%= challengeId %>" data-code-short="<%= copy.mfaLogin.codeShort %>" data-invalid-code="<%= copy.mfaLogin.invalidHint || copy.mfaLogin.invalidCode %>" data-expired="<%= copy.mfaLogin.expiredChallenge || 'Kod so\'rovi muddati o\'tdi — qayta kiring.' %>" data-network="<%= copy.mfaLogin.network %>" data-locked-tpl="<%= copy.mfaLogin.locked %>" novalidate>
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <!-- D-08 §08: single-digit 6 input (OTP autofill) — mfa.js navigatsiya qiladi -->
       <div class="digits" id="mfa-digits" role="group" aria-label="<%= copy.mfaLogin.codeLabel %>">

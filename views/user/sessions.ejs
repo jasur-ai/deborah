@@ -16,6 +16,7 @@
     .msg{border-radius:10px;padding:10px 14px;font-size:.8rem;font-weight:700;margin-bottom:16px;display:none;}
     .msg.err{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:#f87171;display:block;}
     .msg.ok{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);color:#4ade80;display:block;}
+    .sess-sep{height:1px;background:var(--deborah-semantic-color-divider,rgba(125,125,125,.2));margin:6px 0;border-radius:1px}
     .sess-list{display:flex;flex-direction:column;gap:12px;}
     .sess-card{background:var(--deborah-semantic-color-surface-raised,#141b2e);border:1px solid var(--deborah-semantic-color-border-subtle,#1f2a44);border-radius:18px;padding:18px;display:flex;align-items:center;gap:16px;transition:border-color .2s,transform .2s;}
     .sess-card:hover{border-color:var(--deborah-semantic-color-border-default,#2b3a5e);}
@@ -70,15 +71,19 @@
       <div class="sec-empty"><%= copy.sessions.empty %></div>
     <% } else { %>
       <div class="sess-list">
+        <% var prevGroup = null; %>
         <% sessions.forEach(function(s){ %>
           <% var isCurrent = s.sessionId === currentSessionId; %>
+          <% var grp = (s.device || '?') + '|' + (s.browser || '?') + '|' + (s.ipHash || ''); %>
+          <% if (grp !== prevGroup && prevGroup !== null) { %><div class="sess-sep" role="separator"></div><% } %>
+          <% var dupOfPrev = grp === prevGroup; prevGroup = grp; %>
           <div class="sess-card" data-session-key="<%= s.key %>">
             <div class="sess-icon <%= isCurrent ? 'cur' : '' %>">
               <%- icon(isCurrent ? 'check' : 'monitor', 22) %>
             </div>
             <div class="sess-body">
               <div class="sess-name">
-                <%= s.device || copy.sessions.unknownDevice %>
+                <%= s.noUa ? copy.sessions.noUaDevice : (dupOfPrev ? copy.sessions.sameDeviceMore : (s.device || copy.sessions.unknownDevice)) %>
                 <% if (isCurrent) { %><span class="badge-cur"><%= copy.sessions.current %> ✓</span><% } %>
                 <span class="badge-method"><%= s.authMethod %></span>
               </div>
