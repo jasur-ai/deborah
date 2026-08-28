@@ -1364,6 +1364,28 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230dc: ℹ️ Dalil: 78_assignments_empty.png
 
+### STEP 43 YAKUNIY — ROSTER OQIMI (10 topilma)
+
+### BUG-230df: ✅ ROSTER IMPORT TO'LIQ ISHLAYDI (end-to-end): upload 201 → session → auto-map → commit → **1 user yaratildi (qa.roster.0927@tst.uz, role student)** — README "HEMIS Excel/CSV" REAL
+
+### BUG-230dg: ✅ Mapping avtomatik: ustun nomlari (Email/Familiya/Guruh/Ism) field'larga map qilindi (manual xarita ham bor)
+
+### BUG-230dh: ✅ Commit statistika javobi batafsil: created/createdUsers/updated/deactivated
+
+### BUG-230di: 🟡 /api/roster/sessions/{id}/validate 404 — validate endpointi yo'q (map+commit bor); UI'da "pre-check" matni README'da bor (BUG-019 oilasi)
+
+### BUG-230dj: 🟡 Roster sahifa UI: session ro'yxatini ko'rsatish uchun "Yangilash" bosish kerak (faqat import formasi default); commit'dan keyin UI refresh yo'q
+
+### BUG-230dk: ℹ️ Roster yaratilgan user paroli DB/SMTP orqali (default?) — login test qilinmadi (parol nomalum, xavfsizlik nuqtayi nazaridan yaxshi)
+
+### BUG-230dl: ℹ️ Jasurjonai'ga assignment tayinlanmadi (roster user ≠ assignment) — preflight E2E uchun admin tomonidan assignment yaratish kerak (alohida oqim)
+
+### BUG-230dm: ✅ Roster sahifada HEMIS izohi: "HEMIS Excel/CSV faylidan..." — HEMIS nomi UI'da qolgan (BUG-165 bilan bog'liq: da'vo 'olib tashlandi')
+
+### BUG-230dn: ✅ Dalil: 79_roster_admin.png
+
+### BUG-230do: ℹ️ Admin MFA backup kodlari TUGAGAN (daffd2e925 oxirgi ishlatildi) — yangi kodlar berilsin
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
