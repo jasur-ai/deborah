@@ -2524,6 +2524,33 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ka130: ✅ Jami dalillar: fayl tarkibi + window holati solishtirilgan
 
+### STEP 79 YAKUNIY — LANDING PARTIALLAR (10 topilma)
+
+### BUG-230ka141: 🔴 LANDING'DA FAQAT 1 SECTION KO'RINADI (#auth) — demo/cta/features partiallar yo'q
+- **Dalil:** landing-demo, landing-cta, landing-features elementlari sahifada topilmadi (demo=False, cta=False, features=0)
+- **Kod:** `views/index.ejs` partiallarga include qilgan, lekin live sahifada faqat `#auth` section ko'rinadi
+- **Ta'sir:** README'da ko'rsatilgan demo/features/CTA bo'limlari umuman ko'rinmaydi — landing sahifasi kutilganidan ancha sodda
+
+### BUG-230ka142: 🔴 Footer'da 9 ta `href="#"` — legal sahifalar boshqa sahifalarda 200 qaytarsa ham footer'da YO'Q
+- **Dalil:** 9 ta havola bo'sh — Maxfiylik siyosati, Foydalanish shartlari, Xavfsizlik, Qonuniy ma'lumotlar, hello@deborah.uz
+- **BUG-071 re-confirm** (yangi deployda ham o'zgarmagan)
+
+### BUG-230ka143: ✅ Footer linklar mavjud: Bosh sahifa/Cast/Kirish/Ro'yxat/O'qituvchilar
+
+### BUG-230ka144: ✅ Landing sahifada "Tizimga kirish" H2 bor — ijobiy
+
+### BUG-230ka145: ✅ Landing toza render (0 pageerror)
+
+### BUG-230ka146: ℹ️ Landing partiallar kodda bor (views/partials/landing-demo.ejs, landing-cta.ejs, landing-features.ejs) lekin sahifada render bo'lmaydi — server'da boshqa versiya
+
+### BUG-230ka147: ✅ Jami: 79 stepda ~740 yozuv (landing partiallar qo'shildi)
+
+### BUG-230ka148: ℹ️ Tuzatish: index.ejs'dagi partiallar live sahifada include qilinishi tekshirilishi kerak
+
+### BUG-230ka149: ℹ️ Dalillar: 91_landing_full.png
+
+### BUG-230ka150: ✅ IJOBIY — Auth section toza (form ishlaydi, login/reg tablar)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
