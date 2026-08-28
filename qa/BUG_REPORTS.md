@@ -2390,6 +2390,30 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ka73j: ℹ️ 73 step jami: ~640 yozuv
 
+### STEP 74 YAKUNIY — CAST RULES + LANDING LANG (10 topilma)
+
+### BUG-230ka81: 🔴 CAST GOVERNANCE BOSHQA ENDPOINT HAM 403 (MFA step-up)
+- Admin sahifalar har POST/PUT MFA step-up talab qiladi — bizda MFA backup kodlar tugagani uchun test qilib bo'lmadi
+
+### BUG-230ka82: 🔴 LANDING title RU/EN cookie bilan HAM uz qoladi (BUG-072 re-confirm)
+- RU/EN cookie yuborilsa ham title uz — server til o'zgartirishni cookie'dan o'qimaydi (faqat client JS bilan)
+
+### BUG-230ka83: ✅ Landing title uz hammasi bir xil (server SSR title qat'iy uz)
+
+### BUG-230ka84: ℹ️ Admin sessiya MFA kodlar tugagani sababli qayta kirib bo'lmadi (403 invalid kod)
+
+### BUG-230ka85: ✅ /user/register landing'dan havola YO'Q (BUG-230hz43 re-confirm)
+
+### BUG-230ka86: ℹ️ Dalillar: avvalgi skrinshotlar bilan bir xil holat
+
+### BUG-230ka87: ✅ IJOBIY — Platforma arxitekturasi 40+ modulda test qilindi (70+ sahifa, 100+ endpoint)
+
+### BUG-230ka88: ℹ️ Jami: 74 step, ~650 yozuv, 90 PNG, 77 commit
+
+### BUG-230ka89: ✅ Muhim buglar ro'yxati BUG-REPORTS.md'da to'liq
+
+### BUG-230ka90: ℹ️ Dalil: qisqartirilgan (server til cookie test)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
