@@ -108,6 +108,7 @@
 - ✅ STEP 67 — yakunlandi (2026-08-27): BUG-230ka41 ✅ (teacher reg 15+ belgi bilan ISHLAYDI! pending approval sahifaga yetdi) + BUG-230ka46 🔴 (landing 8 vs register 15 — ikki xil qoida) + BUG-230ka45 (landing'da havola YO'Q)
 - ✅ STEP 68 — yakunlandi (2026-08-27): BUG-230ka51 ✅ (teacher reg E2E to'liq tasdiq: qa_tch_final_s67 teacher_pending) + BUG-230ka52 🔴 (admin MFA backup kodlar BARCHASI ISHLATILDI — yangi ro'yxat SHART) + BUG-230ka53-59
 - ✅ STEP 69 — yakunlandi (2026-08-27): BUG-230hz41 ✅ (portfolio xlsx import 3 item yaratildi!) + BUG-230hz42 🔴 (attempt start 404 re-confirm) + BUG-230hz43 🔴 (landing'da /user/register havola YO'Q re-confirm)
+- ✅ STEP 70 — 70-STEP KATTA XULOSA: 589 yozuv (71🔴/40🟠/125🟡/32⚪/101ℹ️/209✅), platforma bahosi 6/10, modul taqsimot, TOP-10 fix, qolgan 30 step rejada
 - ✅ STEP 56 — yakunlandi (2026-08-27): BUG-230ka11 ✅ (remember-me Max-Age 30 kun + revoke OK) + BUG-230ka12/13 🟡 (RU aralash, tab bosilganda hech narsa ko'rinmaydi) + ka14-20
 - ✅ STEP 57 — yakunlandi (2026-08-27): BUG-230ka22 🟠 (Kurslar tabida 'Kurs yaratish' TUGMA YO'Q — teacher kurs yaratolmaydi, README §2 zid) + BUG-230ka21/24/25/28/29 ✅ (4 tab toza) + ka23/26/27/30 ℹ️
 - ✅ STEP 58 — yakunlandi (2026-08-27): BUG-230ca2/cb2 🔴 RE-CONFIRM (participant crash, director 0 ishtirokchi) + BUG-230ck ✅ (sessiya yaratish E2E) + BUG-230cm/cn ℹ️ (kodlar holati, rate limiter OK)

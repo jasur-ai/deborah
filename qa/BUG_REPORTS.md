@@ -2234,6 +2234,81 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230hz50: ℹ️ Jami 69 stepda ~500 topilma, 87 skrinshot, 70 commit
 
+### STEP 70 — 70-STEP KATTA ORALIQ XULOSA
+
+### BUG-230ib: 📊 70 STEP JAMI STATISTIKA (589 yozuv)
+| Severity | Soni | Foiz |
+|----------|------|------|
+| 🔴 Critical | **71** | 12% |
+| 🟠 Major | **40** | 7% |
+| 🟡 Minor | **125** | 21% |
+| ⚪ Trivial | **32** | 5% |
+| ℹ️ Info | **101** | 17% |
+| ✅ Positive PASS | **209** | 36% |
+| 🎯 Xulosa | 9 | — |
+| 📋 Jadval | 2 | — |
+| **JAMI** | **589** | |
+
+### BUG-230ic: 📊 MODUL TAQSIMOTI
+1. Admin panel: 148 (eng ko'p — katta sahifa miqdori)
+2. Cast: 79 (join/director/participant/projector)
+3. Test/Arena: 68+33 = 101
+4. Email: 51
+5. Auth: 42
+6. Portfolio: 33
+7. Panel: 16
+8. Push: 14 · MFA: 10 · Password: 10 · Excel: 9
+
+### BUG-230id: 🎯 PLATFORMA HOLATI (70 step yakuniy bahosi)
+| Qatlam | Holat | Ball |
+|--------|-------|------|
+| Xavfsizlik arxitekturasi | Professional (CSRF/origin/IDOR/rate) | 9/10 |
+| Auth oqimlari (MFA/OIDC/passkey) | Ishlaydi + reauth step-up | 8/10 |
+| Teacher reg oqimi | Ishlaydi (15 belgili parol bilan) | 6/10 |
+| Student panel asosi | 50% sahifada JS xato | 4/10 |
+| Cast jonli dars | 3 halqada buzilgan | 2/10 |
+| Imtihon attempt/submit | Boshlanmagan (endpoint 404) | 1/10 |
+| Admin CRUD/dashboard | Ishlaydi lekin 5 nav buzilgan | 6/10 |
+| AI/Gemini | Haqiqiy generatsiya LIVE | 8/10 |
+| Portfolio/Share | E2E to'liq ishlaydi | 8/10 |
+| PWA/Offline | SW cache ishlaydi, journal bo'sh | 6/10 |
+| **UMUMIY** | **Platforma asosi kuchli, frontend buzilgan** | **6/10** |
+
+### BUG-230ie: 🎯 DEV UCHUN YAKUNIY TOP-10 FIX (yangilangan)
+1. `main.js` IIFE → **30+ bug** hal (arena/director/grading/scheduler/seating/paper/scan)
+2. `cast-socket-client.js:75/106` race fix → participant crash hal
+3. `views/partials/footer-scripts.ejs` yaratish → camera-review 500 hal
+4. Panel oilasiga `theme-core` include → dark mode panel'da ishlaydi
+5. `routes/preflight.js:42` actorId fix (safeKey) → assignments 401 hal
+6. `server.js` publish.js app.use qo'shish → assignments/publish hal
+7. SMTP `createTransport` timeout → reg timeout hal
+8. Admin nav href to'g'irlash → 5 link hal
+9. Footer legal linklar + landing'da /user/register havola → 2 bug
+10. Redis session store → deploy'da sessiyalar saqlanadi
+
+### BUG-230if: ✅ PLATFORMA KUCHLI TOMONLARI (165+ PASS natija qisqacha)
+- Xavfsizlik: CSRF/origin/IDOR/replay/rate/cookie/fixation/enumeration — hammasi to'g'ri
+- Auth: MFA+backup+remember+OIDC PKCE+passkey+parol o'zgartirish E2E
+- PWA: SW cache, offline rejim
+- Gemini AI: uz tilida real savollar
+- Cast Governance: full pipeline + 2-bosqichli publish
+- Portfolio: item+visibility+share token+guest access+xlsx import
+- Roster: xlsx import E2E
+- Settings: lang/theme PATCH, notifications prefs
+- Password: change E2E + HIBP breach check
+- Performance: GET p95=136ms, br, cache
+
+### BUG-230ig: ✅ IJOBIY JAMI: 209 ta pozitiv PASS — bu katta raqam va platforma asosi kuchli ekanini ko'rsatadi
+
+### BUG-230ih: ⚠️ MUHIM ESLATMA
+- MFA backup kodlar: **teacher 0, admin 0** — yangi ro'yxat kerak
+- QA artefaktlar: qa_tester_0827, landing_reg_0827, rltest0..5 (6 hisob) — ochirish kerak
+- PAT: sessiya tugagach REVOKE qilish kerak
+
+### BUG-230ii: 📌 QOLGAN 30 STEP REJASI tayyor (STEPS.md FAZA D-J) — davom etish mumkin yoki re-verify rejimiga o'tish
+
+### BUG-230ij: ℹ️ Dalillar: 87 skrinshot, 72 commit, 22MB workspace (100MB ichida ✅)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
