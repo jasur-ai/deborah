@@ -1088,6 +1088,29 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230j: ✅ teacher yangi test (S31-Arena-Test) cleanup qilindi — artefakt yo'q
 
+### STEP 32 YAKUNIY — CAST GOVERNANCE + VIP (10 topilma)
+
+### BUG-230k: ✅ Cast Governance pipeline TO'LIQ ISHLAYDI (senior darajada qurilgan)
+- create → 200 (policyId `inst_default_v1`), get, update, version (v2 yaratildi!), audit, migration-preview, migration-preview 200
+
+### BUG-230l: ✅ Holat mashinasi himoyalangan: deprecate faqat PUBLISHED dan (DRAFT→400 INVALID_TRANSITION)
+
+### BUG-230m: ✅ Publish IKKI BOSQICHLI TASDIQ talab qiladi (CONFIRM_REQUIRED) — xavfsizlikga mos (foydalanuvchi "ikki marta tasdiq" talabini bu yerda server jurnalida ko'rdik)
+
+### BUG-230n: 🟡 diff endpoint param nomlari nomalum (`policyA/policyB` talab qiladi; `fromId/toId` 400) — hujjat yo'q
+
+### BUG-230o: ✅ sensitive amallarda MFA STEP-UP FAOL: teachers approve + signup-reviews approve → **403 reauth_required** (BUG-092'da eslatilgan arxitektura live ishlayapti!)
+
+### BUG-230p: ✅ VIP revoke ishlaydi (landing_reg_0827 → 200)
+
+### BUG-230q: 🟡 Policy "o'chirish" endpointi YO'Q — QA-Policy test siyosati DRAFT/PUBLISHED holatda qoldi (deprecate faqat published'dan; draft'ni olib tashlash yo'li yo'q)
+
+### BUG-230r: 🟡 Policy create minimal payload qabul qiladi lekin majburiy maydonlar nomalum (name+description bilan yaratildi; validation xabarlari bo'sh)
+
+### BUG-230s: ✅ policies list `presets` bilan qaytadi (responsive_accuracy...) — UI uchun tayyor ma'lumot
+
+### BUG-230t: ⚪ /admin/mfa/stepup sahifasi 200 (step-up UI mavjud)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
