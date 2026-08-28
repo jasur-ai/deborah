@@ -1,0 +1,12 @@
+# Deborah — robots.txt (BUG-005)
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /user/
+Disallow: /play
+Disallow: /sessions
+Disallow: /onboarding
+Disallow: /cast/
+
+# Ommaviy hujjatlar indekslanadi: /, /privacy, /terms, /cookies, /legal

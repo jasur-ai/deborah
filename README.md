@@ -27,14 +27,21 @@ Deborah — o'zbek tilidagi ta'lim platformasi: jonli dars o'yinlari (Kahoot usl
 - `panel` — shaxsiy panel (topshiriqlar, natijalar, bildirishnomalar)
 - `create-test` — test yaratish ( savollar, variantlar)
 - `test-arena` — o'z-o'zini sinash maydoni
-- `assignments`, `portfolio` (ommaviy sahifasi `portfolio-share` bilan), `sessions`, `settings`, `notifications`, `onboarding`
-- Xavfsizlik: `security-profile` (parol, MFA, Passkey, sessiyalar), `email-change`, `mfa-setup`, `reset`/`forgot`
+- `assignments`, `portfolio` (ommaviy sahifasi `portfolio-share` bilan), `settings`, `notifications`
+- ⚠️ Prefikssiz sahifalar: `/sessions` (qurilmalar/sessiyalar), `/onboarding` — eski
+  `/user/`-prefikslangan shakllari (sessions, onboarding, mfa-setup) 404 beradi
+- Xavfsizlik: `/user/security-profile` (parol, MFA yoqish, Passkey, sessiyalar), `/user/email-change`,
+  `reset`/`forgot`. `/user/mfa/setup` — faqat majburiy enroll o'tish sahifasi (pendingMfaSetup
+  holatida; oddiy holatda panelga redirect)
 
-### Jonli dars — Cast (`/cast/...`)
-- `director` — o'qituvchi pulti: savollar jonli yuborish, reyting, **⚡ Tezkor savol**
+### Jonli dars — Cast
+- **Kirish nuqtalari:** teacher panel → **Cast Studio** (test yaratilgach "Start") — sessiya
+  API orqali yaratiladi; talaba `/play?code=XXXXXX` (6 belgili harf/raqam kod) orqali qo'shiladi
+- `/cast/:sessionId/director` — o'qituvchi pulti: savollar jonli yuborish, reyting, **⚡ Tezkor savol**
   - **✨ "AI yozib beradi"** — REAL Gemini generatsiyasi: mavzu yoziladi (masalan "Kapital iqtisodiyoti"), 1–3 ta tanlanadi → 5–15 soniyada savol + 4 variant + to'g'ri javob + izoh formaga qo'yiladi
-- `participant` — talaba ekrani (real vaqt, Socket.io)
-- `projector` — proyektor ekrani, `results` — yakuniy natijalar, `replay` — takroriy ko'rish, `quality-lab`
+- `/cast/:sessionId/projector` — proyektor ekrani, `/cast/:sessionId/results` — yakuniy natijalar,
+  `/cast/:sessionId/quality-lab`, `/cast/qr` — QR kod. (`/cast/director` yoki `/cast/participant`
+  deb to'g'ridan-to'g'ri yo'l YO'Q — sessiya ID talab)
 
 ## 3. AI (Gemini) — real generatsiya
 
@@ -68,9 +75,11 @@ Deborah — o'zbek tilidagi ta'lim platformasi: jonli dars o'yinlari (Kahoot usl
 
 **Asosiy:** `dashboard` (Excel import: fan/subtest + pre-check, statistika), `users`, `teachers` (arizalar, approve/reject), `vip`, `audit`, `email-cost`, `mfa`.
 
-**Imtihon boshqaruvi:** `roster` (guruh ro'yxati staging), `scheduler` (imtihon jadvali yechimchi), `seating` (o'rindiq/bilet/check-in), `paper` (QR, packet, chain-of-custody), `scan` (OMR/OCR), `marking` (belgilash kalibrovkasi), `grading` (deterministik baho qoidalari), `board` (ratifikatsiya, ledger), `consideration` (appeal/resit), `command-center` (insidentlar), `reliability`, `security-guard`, `intervention`.
+**Imtihon boshqaruvi:** `roster` (guruh ro'yxati staging), `scheduler` (imtihon jadvali yechimchi), `seating` (o'rindiq/bilet/check-in), `paper` (QR, packet, chain-of-custody), `scan` (OMR/OCR), `marking` (belgilash kalibrovkasi), `grading` (deterministik baho qoidalari), `board` (ratifikatsiya, ledger), `consideration` (appeal/resit), `command-center` (insidentlar), `reliability`, `security-guard`, `interventions` (aralashuvlar).
 
-**Kontent:** `question-gen` (AI savol generatori), `quiz-deck`, `deck-export`, `presentation`, `sources` (RAG), `resource-reco`, `item-bank`, `rubric`, `assessment`, `competency`.
+**Kontent:** `ai-question-gen` (AI savol generatori), `quiz-deck`, `deck-export`, `presentations`, `sources` (RAG), `resource-reco`.
+⚠️ FAQAT API (alohida admin sahifasi YO'Q): `item-bank` (`/api/item-banks*`), `rubric` (`/api/rubrics*`),
+`assessment` (`/api/assessment*`), `competency` (`/api/competency*`).
 
 **Integratsiya/observability:** `canva`, `google-slides`, `provider`, `api-contracts`, `observability`, `data-governance`, `institutional`, `program-quality`, `acceptance`, `accessibility`, `multilingual`, `ai-checkpoint`, `ai-grading`, `ai-mlops`, `claude`, `camera-review`, `safe-submit`.
 
@@ -82,7 +91,9 @@ Deborah — o'zbek tilidagi ta'lim platformasi: jonli dars o'yinlari (Kahoot usl
 - **Imtihon:** `/api/attempt/*` (lease + server taymeri), `/api/response/*` (ACK + autosave), `/api/submit/*` (muhr + imzolangan receipt), `/api/proctor/*`
 - **Admin integratsiya:** `/api/admin/canva/*`, `/api/admin/google-slides/*`
 - **PWA/offline:** service worker, IndexedDB journal (`/api/offline/*`), Web Push (`/api/push/*`)
-- **Ochiq ma'lumotlar:** `/api/opendata/*`; Legal: `/privacy`, `/terms`, `/cookies`
+  ⚠️ Push faqat `VAPID_PUBLIC_KEY`/`VAPID_PRIVATE_KEY` env sozlanganda ishlaydi — aks holda
+  `push_disabled` (notifications sozlamalarida kanal avtomatik o'chirilgan ko'rinadi)
+- **Ochiq ma'lumotlar:** `/api/opendata/*` (statik snapshot — `isLive:false`); Legal: `/privacy`, `/terms`, `/cookies`
 
 To'liq ro'yxat: `routes/` katalogida 80+ fayl — har birining sarlavhasida izoh.
 

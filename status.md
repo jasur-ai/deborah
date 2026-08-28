@@ -216,15 +216,30 @@ barcha inputlar. 18 sahifa (6 user + 12 admin): **0 ta buzilish**.
 i18n dict, teacher uz, VIP badge, notifications disabled+POST himoya) — **HAMMASI OK**.
 **Verify:** repro 36/36 ✓; vitest integration 88/88 (6 fayl) ✓; design+unit 4896/4896 ✓; design-lint PASS ✓.
 
-## STEP 9 — 📄 README/hujjat mosligi + SEO — ⏳
-**Buglar:** BUG-017, BUG-047, BUG-019, BUG-005, BUG-018
-**Qanday:**
-- **BUG-017/047** — README'dagi o'lik manzillar (`/user/sessions` → `/sessions`, mfa-setup →
-  `/user/mfa/setup`); dead view `user/sessions.ejs` yo'q qilinadi yoki route ulanadi.
-- **BUG-019** — README cast manzillari to'g'rilash.
-- **BUG-005** — robots.txt qo'shish.
-- **BUG-018** — Web Push README'da "env kutilmoqda" deb belgilash (kod emas, env masalasi).
-**Verify:** README link audit skripti.
+## STEP 9 — 📄 README/hujjat mosligi + SEO — ✅
+**Buglar:** BUG-017, BUG-047, BUG-019, BUG-005, BUG-018 + YANGI BUG-065/066 (jami 7)
+**Qanday (qaysi+qanday):**
+- **BUG-005** robots.txt yo'q (404) → `public/robots.txt`: `/admin/ /api/ /user/ /play /sessions
+  /onboarding /cast/` Disallow; ommaviy sahifalar (`/`, legal) Allow.
+- **BUG-017/047** README §2 o'lik manzillar → tekshiruvda chiqdi: viewlar DEAD EMAS, yo'llar
+  boshqacha: `/sessions` (routes/session.js) va `/onboarding` (routes/onboarding.js) prefikssiz;
+  mfa-setup — `/user/mfa/setup` (faqat majburiy enroll o'tish sahifasi, oddiy holatda panelga
+  redirect — README shunday hujjatlandi). README eski `/user/`-shakllarni "404 beradi" deb belgiladi.
+- **BUG-019** README cast bo'limi — real yo'llar hujjatlandi: teacher panel → Cast Studio (sessiya
+  API orqali), talaba `/play?code=`, `/cast/:sessionId/director|projector|results|quality-lab`,
+  `/cast/qr`; "to'g'ridan `/cast/director` yo'q" ogohlantirisi. Seed qilingan real sessiya bilan
+  director sahifasi 200 deb tekshirildi. opendata — "(statik snapshot, isLive:false)".
+- **BUG-018** Web Push README §6 — shartli hujjat: VAPID_PUBLIC_KEY/VAPID_PRIVATE_KEY env talabi,
+  aks holda `push_disabled` (STEP 8'da UI kanali ham avtomatik o'chadi).
+- **BUG-065** (o'zim topdim) README §5 da'vo qilgan 7 admin sahifa 404: `intervention`→yo'q
+  (real `/admin/interventions`), `question-gen`→`/admin/ai-question-gen`, `presentation`→
+  `/admin/presentations`; `item-bank/rubric/assessment/competency` — FAQAT API modullari
+  (sahifa yo'q) → README'da alohida "faqat API" blokiga ko'chirildi.
+- **BUG-066** (o'zim topdim) README'dagi admin sahifa ro'yxati to'liq audit qilindi — 30 nomning
+  hammasi endi 200 qaytaradi (repro'da 9 tasining sahifasi + 5 ta eski noto'g'ri yo'l 404 deb).
+**Tool:** `scripts/repro-step9.mjs` — robots + README matn tekshiruvlari + 10 user sahifa +
+cast seed director 200 + push + admin nomlar (45+ tekshiruv) — **HAMMASI OK**.
+**Verify:** repro ✓; design+unit 4896/4896 ✓; integration (landing/legal/mfa) 36/36 ✓; design-lint PASS ✓.
 
 ## STEP 10 — ⚠️ Feature-darajadagi talablar (bug emas — muhokama) — ⏳
 **Buglar:** BUG-026, BUG-027, BUG-029, BUG-030
@@ -245,6 +260,7 @@ i18n dict, teacher uz, VIP badge, notifications disabled+POST himoya) — **HAMM
 - **STEP 6** (2026-08-27): BUG-020/021/002 + YANGI 049/050/051/052/053 (186 jQuery-uzilish!) — repro 17/17, cast testlari 25/25.
 - **STEP 7** (2026-08-27): BUG-023 (artefakt—isbot)+024+025 + YANGI 054–062 — kontrast skaner 0 buzilish (dark+light, 18 sahifa), vitest 4896/4896, design-lint PASS.
 - **STEP 8** (2026-08-28): BUG-003/004/028/033/034/042/046 + YANGI 063/064 — footer legal linklar, TOTP matni (4 til), admin alohida page (modal olib tashlandi), VIP badge, uz tablar, kanal mavjudligi; repro 36/36, vitest 4984/4984.
+- **STEP 9** (2026-08-28): BUG-005/017/018/019/047 + YANGI 065/066 — robots.txt, README real yo'llar (sessions/onboarding/cast), push shartli hujjat, 7 o'lik admin nomi; repro 45+ ✓, 4896/4896.
 
 ## 📋 MANBA HAVOLALAR
 - BUG hisobotlari: `workspace` branch → `qa/BUG_REPORTS.md`
