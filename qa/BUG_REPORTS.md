@@ -1758,6 +1758,33 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ka30: ℹ️ Jami: Teacher workspace 4 tabda funksional muammo 1 ta (kurs yaratish yo'q) — qolganlari vizual darajada
 
+### STEP 58 YAKUNIY — CAST 2-BRAUZER E2E RE-VERIFY (10 topilma)
+
+### BUG-230ca2: 🔴 RE-CONFIRM: Participant CRASH yangi sessiyada HAM: `Cannot access 'promise' before initialization`
+- **Dalil:** yangi sessiya cast_K85v9gCWkMMo / kod GNGKSH: ism kiritildi, Qo'shilish bosildi → `qoshildi:False`, `err:promise')`
+- **Xulosa:** BUG-052/BUG-230ca hali tuzatilmagan (deploy yo'q yoki fix kelmagan)
+
+### BUG-230cb2: 🔴 RE-CONFIRM: Director 0 ishtirokchi + QA Talaba ko'rinmaydi (BUG-049/BUG-230cb hali bor)
+
+### BUG-230ck: ✅ Yangi sessiya yaratish E2E: preflight 200 → sessions 200 → yangi kod GNGKSH (har safar yangi) ✅
+
+### BUG-230cl: 🎯 40-steppagi xulosaga qo'shimcha: CAST ZANJIRI 3 HALQADA BUZILGAN va hali ham tuzatilmagan — platforma "jonli dars" funksiyasi deyarli ISHLAMAYDI
+
+### BUG-230cm: ⚪ 507655b928 teacher backup kod ishlatildi — teacher uchun faqat 2 ta kod qoldi (oxirgi: c745de5358/507655b928 dan keyin)
+
+### BUG-230cn: ⚪ Teacher login 403 rate limit 1 marta (qisqa vaqt ichida qayta urinish) — limiter OK
+- **Ijobiy:** Rate limiter 1 daqiqada tiklanadi
+
+### BUG-230co: ℹ️ Dalillar: 85-86 PNG (yangi deploy, yangi sessiya)
+
+### BUG-230cp: ℹ️ Student pageerror: TDZ error (yo'q bo'lsaham sahifa render)
+
+### BUG-230cq: ℹ️ Director sahifada ham pe yo'q (faqat qotish)
+
+### BUG-230cr: ℹ️ Join soni: 0 hali ham
+
+### BUG-230cs: ℹ️ Barcha tuzatishlar dev uchun mo'ljallangan ro'yxatda (BUG-230cn TOP-10)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
