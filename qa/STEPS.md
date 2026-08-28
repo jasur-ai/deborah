@@ -119,6 +119,7 @@
 - ✅ STEP 73 — yakunlandi: BUG-230ka73a 🔴 (arena RE-CONFIRM o'lik) + 73b/c/f 🔴 + 73d/e ✅ (layout toza)
 - ✅ STEP 74 — yakunlandi: BUG-230ka81 🔴 (cast gov MFA step-up) + ka82 🔴 (landing title cookie e'tiborsiz) + 83-90 ℹ️✅
 - ✅ STEP 75 — 75-STEP XULOSA: ~680 yozuv, 6.5/10 platforma, 3 ildiz o'zgarmagan, MFA 0 kod, qolgan 25 step rejada
+- ✅ STEP 76 — yakunlandi: BUG-230ka101-103 🔴 (CSP/Permissions/COEP YO'Q) + 104-110 ✅ (HSTS/cookie/nosniff/COOP/RP OK — 7/13 headers)
 - ✅ STEP 62 — yakunlandi (2026-08-27): STUDENT 10 sahifa skan — 5 tasi toza, 5 tasi pageerror (BUG-009/012/011 re-confirm) + BUG-230hz11 🔴 YANGI (settings 'profile is not defined')
 - ✅ STEP 63 — yakunlandi (2026-08-27): BUG-230hz25 🔴 (email/change 404 — mount YO'Q) + BUG-230hz21 🟡 (password change generic xato) + BUG-230hz22/23/24/27/30 ✅ (notifications, portfolio CRUD, push, xavfsizlik)
 - ✅ STEP 64 — yakunlandi (2026-08-27): BUG-230hz31 ✅ (email change 403 reauth — BUG-230hz25 QAYTA YOZILDI, endpoint TIRIK) + BUG-230hz35 🔴 (/api/account/sessions 404) + 230hz32-34/36-39 ✅

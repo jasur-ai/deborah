@@ -2439,6 +2439,31 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ka100: ℹ️ Dalillar: 92 skrinshot, 82 commit `workspace` branch'da
 
+### STEP 76 YAKUNIY — SECURITY HEADERS CHUQUR (10 topilma)
+
+### BUG-230ka101: 🔴 CSP (Content-Security-Policy) YO'Q — xss deep-defence yo'q
+- Helmet'da CSP yoqilmagan — inline script'lar ko'p bo'lsa ham `report-only` boshlash mumkin edi
+
+### BUG-230ka102: 🔴 Permissions-Policy YO'Q — camera/mic/geolocation API'larga cheklov yo'q
+- Tavsiya: `camera=(self), microphone=(self), geolocation=()` (kamera moduli uchun camera=self kerak)
+
+### BUG-230ka103: 🔴 COEP (Cross-Origin-Embedder-Policy) YO'Q — cross-origin izolyatsiya yo'q
+- COOP bor ✅, COEP yo'q — Spectre hujumdan to'liq himoya yo'q
+
+### BUG-230ka104: ✅ HSTS: max-age 15552000 (6 oy), includeSubDomains ✅ (preload yo'q — mayda)
+
+### BUG-230ka105: ✅ Cookie flags: HttpOnly+Secure+SameSite=Lax (oldingi testlardan tasdiqlangan)
+
+### BUG-230ka106: ✅ X-Content-Type-Options: nosniff ✅, X-Frame-Options: SAMEORIGIN ✅, Referrer-Policy: no-referrer ✅
+
+### BUG-230ka107: ✅ X-Permitted-Cross-Domain-Policies: none, X-Download-Options: noopen ✅
+
+### BUG-230ka108: ✅ Origin-Agent-Cluster: ?1 ✅ (Spectre qisman himoya)
+
+### BUG-230ka109: ✅ Cross-Origin-Resource-Policy: same-origin ✅
+
+### BUG-230ka110: 📊 Security headers HOLATI: **7/13 yoqilgan (54%)** — CSP/Permissions/COEP qo'shilsa **10/13** bo'ladi
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
