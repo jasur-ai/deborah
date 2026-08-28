@@ -1214,6 +1214,33 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230be: ✅ IJOBIY — Privacy-first dizayn: link-gated share, email param, token revoke, ism yashirish — arxitektura o'ylangan
 
+### STEP 37 YAKUNIY — PWA OFFLINE CHUQUR (10 topilma)
+
+### BUG-230bf: ✅ SW CACHE JONLI: cache 'deborah-static-v2.1.0-ffb97b1d' — 19 fayl keshda
+- Versioned cache nomi + 19 static asset — offline rejimda landing to'liq ochildi (serverga murojaatsiz)
+
+### BUG-230bg: ✅ OFFLINE rejimda sahifa IShLAYDI: internet o'chirilgach landing render bo'ldi (1171 belgi matn, CAST/KIRISH/tema boshqaruvi bilan)
+- README §6 "PWA/offline" da'vosi REAL
+
+### BUG-230bh: ✅ Offline sahifa to'g'ri: "Qayta urinish" + "Bosh sahifa" + Kirish/Admin linklari
+
+### BUG-230bi: 🔴 IndexedDB JOURNAL BO'SH — offline-journal.js kodi bor lekin DB yaratilmagan
+- **Dalil:** `indexedDB.databases()` → `[]`; faylda "encrypted local journal of every response edit" deyiladi
+- **Ta'sir:** offline javoblar saqlanmaydi → crash/uzilishda yo'qoladi (imtihon vaqtida kritik)
+- **Ildiz:** journal init faqat attempt/submit oqimida chaqiriladi (BUG-230a — attempt UI o'lik)
+
+### BUG-230bj: ✅ Push.js to'g'ri: vapidKey bo'lmasa subscribe'ni bloklaydi (BUG-018 sababli crash emas)
+
+### BUG-230bk: ⚪ SW scope '/' (butun sayt) — to'g'ri
+
+### BUG-230bl: ⚪ Offline sahifada "Bosh sahifa" 2 marta (dublikat link — mayda)
+
+### BUG-230bm: ✅ FOUC himoyasi offline rejimda ham (tema saqlangan)
+
+### BUG-230bn: ℹ️ Cache 1 kun max-age + SW cache (double caching) — yangilanish kechikishi mumkin, lekin versioned nom bilan xavfsiz
+
+### BUG-230bo: ✅ IJOBIY — PWA jamlangan holda README §6'ni asoslaydi (journal bundan mustasno)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI

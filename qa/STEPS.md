@@ -85,3 +85,4 @@
 - ✅ STEP 34 — yakunlandi (2026-08-27): BUG-230af 🔴 (budget API HTML qaytaradi) + BUG-230ag/ai/am ✅ (roster xlsx import 201 REAL) + BUG-230ah 🟡 (201'dan keyin UI javobsiz) + qolgan izohlar
 - ✅ STEP 35 — yakunlandi (2026-08-27): BUG-230ao 🔴 (4 modul interaktiv tugmalari o'lik — 403 CSRF + undefined funksiyalar) + BUG-230ap 🔴 (allocate ID bo'sh) + BUG-230aq/ar/as/au (xulosa: \$ + CSRF fix modullarni tiriltiradi)
 - ✅ STEP 36 — yakunlandi (2026-08-27): BUG-230av ✅ (share E2E guest bilan to'liq ishladi!) + BUG-230ax 🔴 (portfolio CSRF token umuman yo'q — origin-ga tayanadi) + BUG-230aw/ay/ba/bb/bc/bd
+- ✅ STEP 37 — yakunlandi (2026-08-27): BUG-230bf/bg/bh ✅ (SW cache 19 fayl, OFFLINE rejim landing ishlaydi, offline sahifa OK) + BUG-230bi 🔴 (IndexedDB journal BO'SH — offline javoblar saqlanmaydi)
