@@ -1733,6 +1733,31 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ka20: ℹ️ Dalillar: 83_settings_full.png, 75-76 PNG (oldingi)
 
+### STEP 57 YAKUNIY — TEACHER TABS CHUQUR (10 topilma)
+
+### BUG-230ka21: ✅ Teacher 4 tab toza: 0 pageerror, 0 API error, layout yaxshi
+- Overview (0 Bugungi darslar), Assessment (bo'sh), Kurslar, Grading queue (bo'sh) — hammasi ishlaydi
+
+### BUG-230ka22: 🟠 "Kurslar bo'limi" — 'Kurs yaratish' TUGMASI YO'Q (faqat "O'tish" havola boshqa sahifaga)
+- **Dalil:** courses tabida hech qanday create tugma yo'q (faqat boshqa sahifaga link)
+- **Ta'sir:** o'qituvchi KURS YARATOLMAYDI (test yaratadi, kurs emas) — README §2'da "courses" da'vosi mavjud, lekin yaratish funksiyasi YO'Q
+
+### BUG-230ka23: 🟡 Grading queue sahifada MODE tanlash tugmasi bor (matn ko'rinadi) lekin hech qanday interaktiv element yo'q (bo'sh holatda to'g'ri)
+
+### BUG-230ka24: ✅ Teacher'da Testlarim/Yangi test havolalari mavjud (panelga qaytadi)
+
+### BUG-230ka25: ✅ Sidebar (ISH MAYDONI/ASBOBLAR/AKKAUNT) toza, i18n uz
+
+### BUG-230ka26: ⚪ Overview'da "Bugungi darslar 0" — bugungi darslar qayerdan keladi (calendars) ko'rsatilmagan — mayda
+
+### BUG-230ka27: ℹ️ Dalil: 84_teacher_grading.png
+
+### BUG-230ka28: ✅ IJOBIY — API chaqiruvlarida xato yo'q (bo'sh tab'lar bekorga API chaqirmaydi)
+
+### BUG-230ka29: ⚪ Kurslar bo'limi faqat link — kurs yaratish/enroll funksiyasi muvofiq yo'q (README §2 zid)
+
+### BUG-230ka30: ℹ️ Jami: Teacher workspace 4 tabda funksional muammo 1 ta (kurs yaratish yo'q) — qolganlari vizual darajada
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
