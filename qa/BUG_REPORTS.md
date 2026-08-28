@@ -1785,6 +1785,58 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230cs: ℹ️ Barcha tuzatishlar dev uchun mo'ljallangan ro'yxatda (BUG-230cn TOP-10)
 
+### STEP 59 YAKUNIY — TESTS CRUD MAYDA (10 topilma)
+
+### BUG-230ha: ✅ Teacher panelida 12 test ko'rinadi (S31, EDIT, T-* va boshqalar) — saqlash ishlaydi
+
+### BUG-230hb: 🟡 Tests qidiruv: "S31" yozilganda 12 ta qoladi (filtralanmagan) — qidiruv input sahifada BO'SH ISHLAYDI (debounce/search endpoint bog'lanmagan)
+
+### BUG-230hc: ✅ Export 200 (JSON 642B) — to'g'ri
+
+### BUG-230hd: 🔴 Archive endpoint `CSRF token validation failed` (UI'dan chaqirilsa ishlaydi — Playwright'da boshqa cookie header) — interaktiv faqat UI orqali
+
+### BUG-230he: ✅ Sort ishlaydi
+
+### BUG-230hf: 🔴 pageerror: "Unexpected token '&'" — panel sahifada HANUZ HTML-escape xatosi bor (BUG-009 re-confirm, yangi deploy ham)
+
+### BUG-230hg: ℹ️ 12 ta test — ba'zilari yaratilgan QA artefakt (V2, EDIT, T-* va boshqalar)
+
+### BUG-230hh: ℹ️ Tests sahifada 2x POST yo'q (BUG-050 tuzatilgan ko'rinadi — faqat bitta POST)
+
+### BUG-230hi: ℹ️ Test nomlari izchil formatda (key prefix turli: mtb/t_)
+
+### BUG-230hj: ✅ IJOBIY — CRUD asosi: yaratish/saqlash/export ishlaydi, archive UI orqali
+
+### BUG-230hk: ℹ️ 12 test = 4 QA test (hisobotlarda) + 8 eskisi — ro'yxat toza emas
+
+### BUG-230hl: ℹ️ Dalillar: 63-84 PNG (oldingi)
+
+### STEP 59 YAKUNIY — TESTS CRUD MAYDA (10 topilma)
+
+### BUG-230ha: ✅ Teacher panelida 12 test ko'rinadi (S31, EDIT, T-* va boshqalar) — saqlash ishlaydi
+
+### BUG-230hb: 🟡 Tests qidiruv: "S31" yozilganda 12 ta qoladi (filtralanmagan) — qidiruv input sahifada BO'SH ISHLAYDI (debounce/search endpoint bog'lanmagan)
+
+### BUG-230hc: ✅ Export 200 (JSON 642B) — to'g'ri
+
+### BUG-230hd: 🔴 Archive endpoint `CSRF token validation failed` (UI'dan chaqirilsa ishlaydi — Playwright'da boshqa cookie header) — interaktiv faqat UI orqali
+
+### BUG-230he: ✅ Sort ishlaydi
+
+### BUG-230hf: 🔴 pageerror: "Unexpected token '&'" — panel sahifada HANUZ HTML-escape xatosi bor (BUG-009 re-confirm, yangi deploy ham)
+
+### BUG-230hg: ℹ️ 12 ta test — ba'zilari yaratilgan QA artefakt (V2, EDIT, T-* va boshqalar)
+
+### BUG-230hh: ℹ️ Tests sahifada 2x POST yo'q (BUG-050 tuzatilgan ko'rinadi — faqat bitta POST)
+
+### BUG-230hi: ℹ️ Test nomlari izchil formatda (key prefix turli: mtb/t_)
+
+### BUG-230hj: ✅ IJOBIY — CRUD asosi: yaratish/saqlash/export ishlaydi, archive UI orqali
+
+### BUG-230hk: ℹ️ 12 test = 4 QA test (hisobotlarda) + 8 eskisi — ro'yxat toza emas
+
+### BUG-230hl: ℹ️ Dalillar: 63-84 PNG (oldingi)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI

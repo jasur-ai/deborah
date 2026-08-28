@@ -107,3 +107,4 @@
 - ✅ STEP 56 — yakunlandi (2026-08-27): BUG-230ka11 ✅ (remember-me Max-Age 30 kun + revoke OK) + BUG-230ka12/13 🟡 (RU aralash, tab bosilganda hech narsa ko'rinmaydi) + ka14-20
 - ✅ STEP 57 — yakunlandi (2026-08-27): BUG-230ka22 🟠 (Kurslar tabida 'Kurs yaratish' TUGMA YO'Q — teacher kurs yaratolmaydi, README §2 zid) + BUG-230ka21/24/25/28/29 ✅ (4 tab toza) + ka23/26/27/30 ℹ️
 - ✅ STEP 58 — yakunlandi (2026-08-27): BUG-230ca2/cb2 🔴 RE-CONFIRM (participant crash, director 0 ishtirokchi) + BUG-230ck ✅ (sessiya yaratish E2E) + BUG-230cm/cn ℹ️ (kodlar holati, rate limiter OK)
+- ✅ STEP 59 — yakunlandi (2026-08-27): BUG-230hb 🟡 (qidiruv filtralamaydi) + BUG-230hd 🔴 (archive CSRF — interaktiv faqat UI) + BUG-230hf 🔴 (panel escape re-confirm) + 230ha/hc/he/hj ✅ ijobiy
