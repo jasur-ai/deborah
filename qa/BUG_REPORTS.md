@@ -1111,6 +1111,30 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230t: ⚪ /admin/mfa/stepup sahifasi 200 (step-up UI mavjud)
 
+### STEP 33 YAKUNIY — MONITORING SAHIFALAR (10 topilma)
+
+### BUG-230u: 🟠 Command Center "jonli snapshot — Yuklanmoqda..." QOTGAN (BUG-065 oilasi)
+- **Dalil:** XONALAR/KELGANLAR/KELMAGANLAR/OCHIQ INCIDENT — hammasi "—", pastda "jonli snapshot | Yuklanmoqda..." abadiy; sidebar tugmalari YO'Q (btns: [])
+- **Ta'sir:** "exam-day yagona markaz" (README/eylar) — ma'lumot yuklanmaydi
+
+### BUG-230v: ✅ Observability SLO REAL: 99.95% uptime, xato foizlari — jonli metrikalar
+
+### BUG-230w: 🟡 Reliability "hali tekshirilmagan" (0/4, 0/6, 0/3) — runs umuman o'tkazilmagan (bo'sh holat to'g'ri ko'rsatilgan)
+
+### BUG-230x: ✅ Security Guard jonli: 6/9, 7/9, 5/10, 7/7... — checkpoint skorlari mavjud
+
+### BUG-230y: ✅ Data-governance: Register/Place hold/Create DSAR (D-23) tugmalari, Acceptance 0/8, Accessibility "Run audit", Multilingual "Transliterate" — modullar UI to'la
+
+### BUG-230z: ✅ Institutional "hali o'tkazilmagan" to'g'ri empty-state
+
+### BUG-230aa: 🟡 Monitoring sahifalarida "Yangilash" qo'lda bosish talabi (avto-refresh yo'q yoki DEBUG:BUG-065 pattern) — security-guard/observability/reliability'da ham Yangilash tugmasi bor
+
+### BUG-230ab: ℹ️ safe-submit meta 200 (kinds: file/code/audio/video) — safe-submit arxitekturasi tayyor
+
+### BUG-230ac: ℹ️ Har monitoring sahifada 'Administrator Administrator' matni — foydalanuvchi nomi 2 marta render (mayda UI dublikat)
+
+### BUG-230ad: ℹ️ Dalil: 67_command_center.png
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI

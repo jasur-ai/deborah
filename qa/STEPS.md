@@ -81,3 +81,4 @@
 - ✅ STEP 30 — yakunlandi (2026-08-27): BUG-225 🟠 (logo 254KB) + BUG-226 🟡 (panel 328KB) + BUG-227/228 ✅ (console toza, br+cache) + BUG-229 (README yakuniy jadval) + BUG-230 🎯 (UMUMIY XULOSA: 3 global ildiz, prioritetlar, tez g'alabalar)
 - ✅ STEP 31 — yakunlandi (2026-08-27): BUG-230a 🔴 (arena start endpointi YO'Q) + BUG-230b 🟠 (bots admin-only) + BUG-230c…230j (attempt meta ✅, watch socket o'lik, student tanlov UI'siz)
 - ✅ STEP 32 — yakunlandi (2026-08-27): BUG-230k ✅ (Governance pipeline to'liq) + 230l/m ✅ (holat mashina, 2-bosqichli publish) + 230o ✅ (MFA step-up LIVE) + 230n/p/q/r/s/t
+- ✅ STEP 33 — yakunlandi (2026-08-27): BUG-230u 🟠 (command-center snapshot qotgan) + 230v/x/y ✅ (SLO real, Security Guard jonli, modullar UI to'la) + 230w/aa/ac mayda
