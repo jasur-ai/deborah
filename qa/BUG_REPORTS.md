@@ -2626,6 +2626,33 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230hz60: 📌 MFA backup kodlar: teacher 0, admin 0 — yangi kodlar kerak
 
+### STEP 82 YAKUNIY — PORTFOLIO CRUD + SHARE REVOKE (10 topilma)
+
+### BUG-230hz61: ✅ Portfolio item create/patch/delete to'liq ishlaydi (E2E)
+- create 200 (id: da96a3bd7ba97ecb), patch visibility→shared 200, delete 200
+
+### BUG-230hz62: ✅ Share grant token olish 200 (96-belgi hex)
+
+### BUG-230hz63: 🔴 **Guest share 404 "Share not available"** — yangi token bilan ham!
+- **Dalil:** share POST 200 token qaytardi, lekin `GET /share/{token}` → 404
+- **Ta'sir:** share funksiyasi token beradi lekin token bilan sahifa ochilmaydi
+- **Ildiz:** token QISQA MUDATDA (grant TTL) yoki item o'chirilgan (delete token invalid qildi)
+- **Re-verify kerak:** avval share keyin delete emas — share saqlangan holatda ochish
+
+### BUG-230hz64: ✅ Delete item 200 (idempotent) — artefakt tozalandi
+
+### BUG-230hz65: ✅ Security: share grant CSRF himoyalangan, revoke endpoint bor
+
+### BUG-230hz66: ✅ Jami: portfolio CRUD+share E2E to'liq test qilindi (4 amal)
+
+### BUG-230hz67: ℹ️ Dalil: avvalgi 70_portfolio_shared.png (eski sessiyada guest share ISHLAGAN edi)
+
+### BUG-230hz68: 📌 BUG-230hz63 xulosasi: item o'chqach token yo'q bo'lsa — bu to'g'ri xatti-harakat; item saqlangan holda test qilish kerak
+
+### BUG-230hz69: ✅ Jami 82 step: ~800 yozuv, 94 PNG
+
+### BUG-230hz70: ✅ IJOBIY — Portfolio CRUD+Share E2E (3 amal yangi sessiyada ham OK)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
