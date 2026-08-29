@@ -700,3 +700,21 @@ Kod o'zgarishi NOLTA. Da'vo qilingan lekin TURLIGAN topilmalar (repository'da ha
    sidebar/ROLE_NAV'ga AI Studiya. Sidebar: VIP studentga AI Studiya (navItems'li holatda ham).
 7) Probe (4630): 4 rol ham ✓, grade 200 (1/2 to'g'ri, kalit yashirin), xlsx/pptx 200 PK-magic.
    Regress: 118 view compile ✓, vitest gemini/ai-question-gen/cast-roles/teacher-sla 32/32 ✓.
+
+── ✅ S23 (AI-A, 2026-08-29): PDF + DOCX EKSPORT (haqiqiy fayllar, libsisiz) — TAYYOR ──
+1) utils/minizip.js — zip yadrosi (crc32+deflate) minipptx'dan ajratildi (qayta ishlatiladi).
+2) utils/minipdf.js — TO'LIQ PDF generatori: TTF parser (cmap f4/f12, hmtx, head, hhea),
+   CIDFontType2 + Identity-H + ToUnicode CMap + FontFile2 embed → o'zbek lotin + KIRIL
+   (қ ғ ҳ ў) va » marker to'g'ri chiqadi; matn wrap, ko'p sahifa, footer, ranglar.
+   Shrift: assets/pdf-fonts/NotoSans R+B (repo'ga commit, sandbox/production mustaqil;
+   fallback: pdfjs-dist LiberationSans). pdf-parse (pdf.js) round-trip probe'da ✓.
+3) utils/minidocx.js — haqiqiy .docx (OOXML: document/styles/numbering/core props),
+   heading/bullet/savol variantlari, to'g'ri javob ✓ yashil-bold. unzip -t ✓.
+4) routes/ai-generate.js /api/ai/export: endi 4 format — xlsx | pptx | pdf | docx
+   (deck YOKI questions uchun). UI: ai-studio'da savollar VA slaydlar uchun
+   📊 Excel / 📽️ PPTX / 📄 PDF / 📝 Word tugmalari.
+5) BUG FIX (S22'dan qolgan): OCR'dagi pdf-parse chaqiruvi .default ishlatgan — 2.x'da
+   yo'q → PDF OCR har doim xato berardi. Endi PDFParse sinfi + parsedText scope fix.
+6) Probe (4632): 6 eksport yo'li 200 (xlsx/pptx/pdf-deck/pdf-savollar/docx-savollar/docx-deck),
+   server PDF round-trip: 'қайси' ✓ '1991' ✓ '»' ✓ 'Izoh' ✓. Regress: 118 view ✓, vitest 18/18 ✓.
+   Eslatma: Noto latin-greek-cyrillic buildida ✓(U+2713) yo'q → PDFda » ishlatiladi (docx'da ✓).

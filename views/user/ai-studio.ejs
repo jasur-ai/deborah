@@ -173,10 +173,14 @@
         <div class="st-actions st-no-print" style="display:flex;gap:10px;flex-wrap:wrap">
           <button type="button" class="btn btn-ok" id="ai-save-test">💾 Test sifatida saqlash</button>
           <button type="button" class="btn btn-quiet" id="ai-xlsx">📊 Excel (xlsx)</button>
-          <button type="button" class="btn btn-quiet" onclick="window.print()">🖨️ Chop etish / PDF</button>
+          <button type="button" class="btn btn-quiet" id="ai-pdf">📄 PDF</button>
+          <button type="button" class="btn btn-quiet" id="ai-docx">📝 Word (docx)</button>
+          <button type="button" class="btn btn-quiet" onclick="window.print()">🖨️ Chop etish</button>
         </div>`;
       $('#ai-save-test').addEventListener('click', () => saveAsTest(questions));
       $('#ai-xlsx').addEventListener('click', () => exportFile({ format: 'xlsx', questions, name: lastQuestionsName }));
+      $('#ai-pdf')?.addEventListener('click', () => exportFile({ format: 'pdf', questions, name: lastQuestionsName }));
+      $('#ai-docx')?.addEventListener('click', () => exportFile({ format: 'docx', questions, name: lastQuestionsName }));
     }
 
     function renderDeck(container, deck) {
@@ -186,9 +190,13 @@
         ${deck.slides.map((s, i) => `<div class="slide"><h3>${i + 1}. ${esc(s.title)}</h3><ul>${s.bullets.map((b) => `<li>${esc(b)}</li>`).join('')}</ul></div>`).join('')}
         <div class="st-actions st-no-print" style="display:flex;gap:10px;flex-wrap:wrap">
           <button type="button" class="btn btn-ok" id="ai-pptx">📽️ PPTX yuklab olish</button>
-          <button type="button" class="btn btn-quiet" onclick="window.print()">🖨️ Chop etish / PDF</button>
+          <button type="button" class="btn btn-quiet" id="ai-pdf-deck">📄 PDF</button>
+          <button type="button" class="btn btn-quiet" id="ai-docx-deck">📝 Word (docx)</button>
+          <button type="button" class="btn btn-quiet" onclick="window.print()">🖨️ Chop etish</button>
         </div>`;
       container.querySelector('#ai-pptx').addEventListener('click', () => exportFile({ format: 'pptx', deck, name: 'ai-taqdimot' }));
+      container.querySelector('#ai-pdf-deck')?.addEventListener('click', () => exportFile({ format: 'pdf', deck, name: 'ai-taqdimot' }));
+      container.querySelector('#ai-docx-deck')?.addEventListener('click', () => exportFile({ format: 'docx', deck, name: 'ai-taqdimot' }));
     }
 
     async function saveAsTest(questions) {
@@ -217,7 +225,9 @@
       const blob = await res.blob();
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = payload.format === 'pptx' ? payload.name + '.pptx' : payload.name + '-savollar.xlsx';
+      const ext = { pptx: '.pptx', pdf: '.pdf', docx: '.docx', xlsx: '-savollar.xlsx' }[payload.format] || '.bin';
+      const fname = payload.format === 'pdf' && payload.deck ? payload.name + '.pdf' : payload.name + (payload.format === 'xlsx' || payload.format === 'pdf' ? ext : (payload.format === 'docx' && payload.deck ? '.docx' : '-savollar' + ext));
+      a.download = fname;
       a.click();
       URL.revokeObjectURL(a.href);
     }

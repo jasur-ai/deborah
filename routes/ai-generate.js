@@ -15,6 +15,8 @@ import { fb } from '../firebase/admin.js';
 import { isAiEnabled, aiGenerateQuestions, aiGenerateSlides, aiGenerateVision, aiGenerateText, extractJson } from '../src/modules/ai/gemini-client.js';
 import { recordMetric } from '../src/telemetry/index.js';
 import { buildPptx } from '../utils/minipptx.js';
+import { buildDocx, deckToDocxBlocks, questionsToDocxBlocks } from '../utils/minidocx.js';
+import { buildPdf, deckToPdfBlocks, questionsToPdfBlocks } from '../utils/minipdf.js';
 
 const router = Router();
 
@@ -150,13 +152,21 @@ router.post('/api/ai/ocr-generate', requireAuth, requireStudio, ocrUpload.single
     // 1) Matnni ajratish: PDF → pdf-parse (text layer); rasm → Gemini vision OCR
     let text = '';
     if (req.file.mimetype === 'application/pdf') {
-      const pdfParse = (await import('pdf-parse')).default;
-      const parsed = await pdfParse(req.file.buffer);
-      text = String(parsed?.text || '').trim();
+      // pdf-parse 2.x: PDFParse sinfi (S23 — eski .default 2.x'da YO'Q edi)
+      const { PDFParse } = await import('pdf-parse');
+      const parser = new PDFParse({ data: req.file.buffer });
+      let parsed;
+      try {
+        parsed = await parser.getText();
+      } finally {
+        await parser.destroy().catch(() => {});
+      }
+      const parsedText = String(parsed?.text || '').trim();
       // Text layer juda kambag'al bo'lsa — birinchi sahifani rasm sifatida vision'ga
-      if (text.length < 40) {
+      if (parsedText.length < 40) {
         return res.status(400).json({ ok: false, error: 'pdf_no_text', message: "PDFda matn qatlami yo'q — rasmni PNG/JPG sifatida yuklang" });
       }
+      text = parsedText;
     } else {
       const sharp = (await import('sharp')).default;
       const png = await sharp(req.file.buffer).rotate().resize({ width: 1600, height: 2200, fit: 'inside', withoutEnlargement: true }).png({ quality: 90 }).toBuffer();
@@ -202,7 +212,7 @@ router.post('/api/ai/ocr-generate', requireAuth, requireStudio, ocrUpload.single
 // ── Eksport: xlsx / pptx (server-side, haqiqiy fayl) ──
 router.post('/api/ai/export', requireAuth, requireStudio, async (req, res) => {
   try {
-    const format = req.body?.format === 'pptx' ? 'pptx' : 'xlsx';
+    const format = ['pptx', 'pdf', 'docx'].includes(req.body?.format) ? req.body.format : 'xlsx';
     const name = String(req.body?.name || 'deborah').replace(/[^\w\-]+/g, '_').slice(0, 40) || 'deborah';
     if (format === 'pptx') {
       const deck = req.body?.deck;
@@ -213,6 +223,41 @@ router.post('/api/ai/export', requireAuth, requireStudio, async (req, res) => {
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.presentationml.presentation');
       res.setHeader('Content-Disposition', `attachment; filename="${name}.pptx"`);
       return res.send(buf);
+    }
+    if (format === 'pdf') {
+      // Deck YOKI savollar → haqiqiy .pdf (Noto Sans embed: o'zbek lotin + kiril)
+      const deck = req.body?.deck;
+      const questions = req.body?.questions;
+      if (deck && Array.isArray(deck.slides) && deck.slides.length) {
+        const buf = buildPdf({ title: deck.title || name, subtitle: 'AI Studiya · Deborah', blocks: deckToPdfBlocks(deck), footerName: name });
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="${name}.pdf"`);
+        return res.send(buf);
+      }
+      if (Array.isArray(questions) && questions.length) {
+        const buf = buildPdf({ title: (deck?.title || name) + ' — savollar', subtitle: 'AI Studiya · Deborah', blocks: questionsToPdfBlocks(questions), footerName: name });
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="${name}-savollar.pdf"`);
+        return res.send(buf);
+      }
+      return res.status(400).json({ ok: false, error: 'deck_or_questions_required' });
+    }
+    if (format === 'docx') {
+      const deck = req.body?.deck;
+      const questions = req.body?.questions;
+      if (deck && Array.isArray(deck.slides) && deck.slides.length) {
+        const buf = buildDocx({ title: deck.title || name, subtitle: 'AI Studiya · Deborah', blocks: deckToDocxBlocks(deck) });
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        res.setHeader('Content-Disposition', `attachment; filename="${name}.docx"`);
+        return res.send(buf);
+      }
+      if (Array.isArray(questions) && questions.length) {
+        const buf = buildDocx({ title: name + ' — savollar', subtitle: 'AI Studiya · Deborah', blocks: questionsToDocxBlocks(questions) });
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        res.setHeader('Content-Disposition', `attachment; filename="${name}-savollar.docx"`);
+        return res.send(buf);
+      }
+      return res.status(400).json({ ok: false, error: 'deck_or_questions_required' });
     }
     const questions = req.body?.questions;
     if (!Array.isArray(questions) || !questions.length) {
