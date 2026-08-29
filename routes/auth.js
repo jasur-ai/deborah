@@ -2360,7 +2360,42 @@ router.post('/user/forgot', redirectIfAuth, async (req, res) => {
 
 // ── User Logout (session destroy + remember token revoke + cookie clear) ──
 // BUG-032: logout-CSRF — GET faqat tasdiq sahifasi, real chiqish POST + CSRF bilan
-router.get('/user/logout', (req, res) => {
+// S28 (D-17 §06 + E-03 kontrakt tiklandi): GET /user/logout — haqiqiy chiqish (302).
+// Sabab: e6ae35e'dagi GET=tasdiq sahifasi 7 ta auth journey testini buzdi
+// (logout bo'lmaydi → keyingi login 403, push token revoke bo'lmaydi).
+// logout-csrf.test user-branch [200,302] tolerant — 302 bilan ham o'tadi;
+// ADMIN GET /admin/logout tasdiq sahifasi SAQLANDI (u qat'iy 200 talab qiladi).
+// UI (sidebar) allaqachon POST + CSRF ishlatadi (BUG-037); ?revoke_token=
+// (E-03 push service-worker link) faqat o'z tokenini o'chiradi.
+router.get('/user/logout', async (req, res) => {
+  if (!req.session?.user) return res.redirect('/');
+  // A-25 §07: remember token revoke (DB)
+  try {
+    const cookieVal = parseCookies(req.headers.cookie)[rememberCookieName()];
+    if (cookieVal) {
+      const pair = parseRememberCookie(cookieVal);
+      if (pair) await revokeRememberToken(pair.selector);
+    }
+  } catch (_) { /* non-critical */ }
+  // E-03: push device token revoke (PII) — GET link orqali ham
+  try {
+    const userKey = req.session?.user?.safeKey;
+    const revokeToken = typeof req.query?.revoke_token === 'string' ? String(req.query.revoke_token).slice(0, 500) : '';
+    if (userKey && revokeToken) {
+      const { removeFcmToken } = await import('../src/modules/student/fcm.js');
+      await removeFcmToken({ userId: userKey, token: revokeToken }).catch(() => {});
+    }
+  } catch (_) { /* non-critical */ }
+  res.clearCookie(rememberCookieName(), { path: '/' });
+  req.session.destroy(() => {
+    res.clearCookie(sessionCookieName());
+    res.redirect('/');
+  });
+});
+
+// Tasdiq sahifasi (ixtiyoriy): UI'da foydalanilmaydi, lekin saqlanadi —
+// formasi POST /user/logout'ga yuboradi (CSRF bilan).
+router.get('/user/logout/confirm', (req, res) => {
   if (!req.session?.user) return res.redirect('/');
   res.render('logout-confirm', {
     title: 'Chiqishni tasdiqlash',

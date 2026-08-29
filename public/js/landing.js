@@ -5,7 +5,7 @@
   var I18N={
   uz:{
     'hdr.kirish':'Kirish',
-    'hm.kirish':"O'qituvchi kirishi",'hm.cast':'Cast','hm.documents':'Hujjatlar',
+    'hm.kirish':'Kirish','hm.cast':'Cast','hm.documents':'Hujjatlar',
     'join.k':"Tayyor cast",
     'join.h3':"Castga <em>kirish</em>",
     'join.p':'Kodni kiriting.',
@@ -53,7 +53,7 @@
      lekin I18Nda uz-cyrl yo'q edi → aralash skript (server kirill, data-i18n lotin) */
   'uz-cyrl':{
     'hdr.kirish':'Кириш',
-    'hm.kirish':'Ўқитувчи кириши','hm.cast':'Cast','hm.documents':'Ҳужжатлар',
+    'hm.kirish':'Кириш','hm.cast':'Cast','hm.documents':'Ҳужжатлар',
     'join.k':'Тайёр cast',
     'join.h3':'Castга <em>кириш</em>',
     'join.p':'Кодни киритинг.',
@@ -98,7 +98,7 @@
   },
   ru:{
     'hdr.kirish':'Вход',
-    'hm.kirish':'Вход для учителей','hm.cast':'Cast','hm.documents':'Документы',
+    'hm.kirish':'Вход','hm.cast':'Cast','hm.documents':'Документы',
     'join.k':'Готовый cast',
     'join.h3':'Вход в <em>cast</em>',
     'join.p':'Введите код.',
@@ -145,7 +145,7 @@
   },
   en:{
     'hdr.kirish':'Sign in',
-    'hm.kirish':'Teacher sign in','hm.cast':'Cast','hm.documents':'Documents',
+    'hm.kirish':'Sign in','hm.cast':'Cast','hm.documents':'Documents',
     'join.k':'Ready cast',
     'join.h3':'Join the <em>cast</em>',
     'join.p':'Enter the code.',

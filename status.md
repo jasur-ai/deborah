@@ -818,3 +818,22 @@ Kod o'zgarishi NOLTA. Da'vo qilingan lekin TURLIGAN topilmalar (repository'da ha
  5) Regress: 119 view compile ✓ (ustoz.ejs qo'shildi), design:check 6/6 ✓,
     landing vitest 38/38 ✓ (HMENU testi yangi qarorga yangilandi), visual
     critical-pages update+verify 70/70 ✓.
+
+── ✅ S28 (AI-A, 2026-08-29): CI 7 QIZIL FIX (GET /user/logout kontrakt) + burger "Kirish" ──
+  1) SABAB: e6ae35e BUG-032 doirasida GET /user/logout'ni "tasdiq sahifasi" (200,
+     sessiya tirik) qilgan — D-17 §06/E-03 journey kontraktini buzdi: logout
+     bo'lmaydi → keyingi GET /user/login redirectIfAuth 302 → csrf topilmaydi →
+     POST login 403 (security-session-mfa ×3, journey-mfa-passkey ×2);
+     push-device-e03: ?revoke_token= ishlamaydi (count 1≠0); journey-login-session:
+     logout 200≠302/303. Jami 7 qizil (484 passed).
+  2) FIX (routes/auth.js): GET /user/logout — haqiqiy chiqish (302): remember
+     token revoke (A-25 §07) + ?revoke_token= query PII revoke (E-03, POST'da
+     body varianti allaqachon bor) + sessiya destroy + cookie clear. Tasdiq
+     sahifasi /user/logout/confirm'da SAQLANDI (ixtiyoriy). ADMIN GET
+     /admin/logout tasdiq sahifasi TEGILMADI (logout-csrf.test qat'iy 200).
+     logout-csrf.test user-branch [200,302] tolerant → 302 bilan o'tadi.
+  3) NIQOB tuzatish (user): burger label "O'qituvchi kirishi" → ODDIY "Kirish"
+     (index.ejs + landing.js i18n ×4 uz/ru/en/+). UI'da "o'qituvchi" so'zi
+     ko'rinmaydi; havola /ustoz saqlanadi.
+  4) Regress: auth 491/491 ✓ logout-csrf+3 journey+security ✓ integration
+     (a09/a20/a26/landing/landing-copy) 58/58 ✓ 119 view compile ✓.
