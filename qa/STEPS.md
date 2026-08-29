@@ -140,3 +140,4 @@
 - ✅ STEP 89 — yakunlandi: BUG-230hz143 🔴 (parol minlength=15 TASDIQLANDI DOM'da) + BUG-230hz141-150 (13 input to'liq jadval: honeypot/role/consent/teacher shartli maydonlar hammasi to'g'ri)
 - ✅ STEP 90 — 90-STEP XULOSA: ~1000 yozuv, 82🔴/48🟠/140🟡/36⚪/112ℹ️/240✅, platforma 6.5/10, TOP-15 Critical, 98 PNG, 93 commit
 - ✅ STEP 91 — yakunlandi: BUG-230ka222 🔴 (CSP tavsiya 10 band bilan) + 221/223-230 ✅ℹ️ (cookie/nav/mobile toza)
+- ✅ STEP 92 — yakunlandi: BUG-230ka231 ✅ (nav semantik — BUG-230ka223 QAYTA YOZILDI) + ka232-235 ✅ (SW 19 fayl, journal 11.7KB kod to'la, i18n 130 kalit uz/ru/en)

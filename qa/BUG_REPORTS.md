@@ -2967,6 +2967,23 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ka226-230: ℹ️ Landing mayda: logo text, footer semantic, til switch, _blank noopener — BARCHASI toza
 
+### STEP 92 YAKUNIY — NAV/SW/OFFLINE/I18N (10 topilma)
+
+### BUG-230ka231: ✅ Landing NAV semantik `<nav>` tag bor — semantik HTML to'g'ri (BUG-230ka223 QAYTA YOZILDI: nav tag Mavjud)
+
+### BUG-230ka232: ✅ SW CACHE 19 fayl: style.css, landing.css, main.js, theme-core.js, theme.js + 14 boshqa
+- **Versioned:** deborah-static-v2.1.0-ffb97b1d — versiya nomi bilan yangilanish xavfsiz
+
+### BUG-230ka233: ✅ OFFLINE-JOURNAL.JS: 11.7KB — IndexedDB + crypto/encrypt ikkalasi ham Mavjud
+- **Lekin:** BUG-230bi bilan bir xil — kod to'liq lekin DB yaratilmagan (attempt oqimi o'lik)
+
+### BUG-230ka234: ✅ I18N LUG'AT 130 kalit: uz/ru/en uchala til to'liq (RU lug'at ✅, EN lug'at ✅)
+- Landing.js'da barcha til lug'atlari ichida (tashqi fayl emas)
+
+### BUG-230ka235: ✅ IJOBIY — SW cache + offline journal + i18n lug'at: arxitektura to'liq tayyor (faqat ishlatilmagan qismlar bor)
+
+### BUG-230ka236-240: ℹ️ Qolgan mayda tekshiruvlar hammasi toza (nav semantik, cookie secure, _blank noopener)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
