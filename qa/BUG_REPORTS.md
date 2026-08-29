@@ -2705,6 +2705,60 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230hz90: ✅ IJOBIY — Sessions sahifada revoke tugmalari ishlaydi (4x "O'chirish" tugma)
 
+### STEP 85 — 85-STEP ORALIQ XULOSA
+
+### BUG-230ka161: 📊 85 STEP JAMI: ~880 yozuv, 96 PNG, 88 commit, 23MB
+- 🔴 Critical: **81** | 🟠 Major: **46** | 🟡 Minor: **136** | ⚪ Trivial: **35**
+- ℹ️ Info: **109** | ✅ Positive: **230** | 🎯 Xulosa: **10** | 📋 Jadval: **2**
+
+### BUG-230ka162: 📊 MODUL HOLATI YANGILANGAN (85 step)
+| Modul | Ball | O'zgarish |
+|-------|------|-----------|
+| Xavfsizlik arxitekturasi | 9/10 | o'zgarmagan |
+| Auth (MFA/OIDC/passkey) | 8/10 | o'zgarmagan |
+| AI/Gemini | 8/10 | o'zgarmagan |
+| Portfolio/Share | 8/10 | o'zgarmagan |
+| Create-test (5 tur) | 8/10 | o'zgarmagan |
+| Cast Governance | 8/10 | o'zgarmagan |
+| Roster import | 8/10 | ✅ E2E ishlaydi |
+| Settings/Password | 7/10 | o'zgarmagan |
+| PWA/Offline | 6/10 | o'zgarmagan |
+| Teacher reg | 6/10 | ✅ 15 belgi bilan ISHLAYDI (BUG-230ka41) |
+| Landing | 4/10 | ↓ /user/register YO'Q (BUG-230hz84 3x re-confirm) |
+| Sessions sahifa | 5/10 | ↓ Noma'lum qurilma (BUG-230hz82) |
+| Student panel | 4/10 | o'zgarmagan |
+| Admin monitoring | 5/10 | o'zgarmagan |
+| Cast jonli dars | 2/10 | o'zgarmagan |
+| Attempt/Submit | 1/10 | o'zgarmagan |
+| **UMUMIY** | **6.5/10** | |
+
+### BUG-230ka163: 🎯 3 GLOBAL ILDIZ (80+ stepda o'zgarmagan)
+1. JS `$` scope konflikt — 30+ bug
+2. HTML-escape xatolar — 5+ bug
+3. Env/infra yetishmasligi — 10+ modul
+
+### BUG-230ka164: 🔴 CRITICAL 81 ta — asosiylari o'zgarmagan (TOP-12 BUG-230hz2'da)
+
+### BUG-230ka165: ⚠️ MFA BACKUP: teacher 0, admin 0 — YANGI KODLAR SHART
+
+### BUG-230ka166: ✅ PLATFORMA KUCHLI: 230+ PASS natija
+
+### BUG-230ka167: 🔴 YANGI BUGLAR (75-85 steplar):
+- BUG-230hz82 Sessions "Noma'lum qurilma"
+- BUG-230hz83 Roster login parol nomuvofiq
+- BUG-230hz84 Landing /user/register YO'Q (3x re-confirm)
+- BUG-230hz72 Email change reauth flow buzilgan
+
+### BUG-230ka168: ✅ YANGI IJOBIY (75-85):
+- BUG-230hz41 Portfolio xlsx import 3 item
+- BUG-230ka41 Teacher reg E2E 15 belgili parol bilan ISHLAYDI
+- BUG-230hz31 Email change reauth OK (BUG-230hz25 qayta baholandi)
+- BUG-230hz51 Assignments empty to'g'ri
+
+### BUG-230ka169: ℹ️ Dalillar: 96 skrinshot
+
+### BUG-230ka170: ✅ QOLGAN 15 STEP: FAZA D-J rejada, fix'lar deploy bo'lsa re-verify
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
