@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="<%= lang === 'uz-cyrl' ? 'uz-Cyrl' : lang %>" dir="ltr">
+<head>
+  <%- include('partials/head') %>
+  <style>
+    .legal-page{min-height:100vh;background:var(--deborah-semantic-color-surface-default);padding:34px 20px 60px;}
+    .legal-wrap{max-width:760px;margin:0 auto;}
+    .legal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+    .legal-logo{height:30px;width:auto;}
+    .legal-title{font-family:var(--font-display);font-size:1.6rem;margin:6px 0 4px;}
+    .legal-meta{font-size:.78rem;color:var(--deborah-semantic-color-text-muted);font-weight:700;}
+    .legal-box{background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:18px;padding:28px 30px;box-shadow:var(--shadow-lg);}
+    .legal-langs{display:flex;gap:6px;flex-wrap:wrap;}
+    .legal-lang{padding:5px 11px;border-radius:9px;font-size:.72rem;font-weight:700;color:var(--deborah-semantic-color-text-muted);text-decoration:none;border:1px solid var(--deborah-semantic-color-border-subtle);min-height:32px;display:inline-flex;align-items:center;}
+    .legal-lang:hover{border-color:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-primary);}
+    .legal-lang.on{background:var(--deborah-semantic-color-action-primary);border-color:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#041018);}
+    .legal-section h2{font-family:var(--font-display);font-size:1.05rem;margin:26px 0 8px;padding-top:16px;border-top:1px solid var(--deborah-semantic-color-border-subtle);}
+    .legal-section:first-of-type h2{border-top:none;margin-top:6px;padding-top:0;}
+    .legal-section p{font-size:.9rem;line-height:1.65;color:var(--deborah-semantic-color-text-primary);margin:0 0 10px;}
+    .legal-changelog{margin-top:26px;padding-top:14px;border-top:1px solid var(--deborah-semantic-color-border-subtle);font-size:.78rem;color:var(--deborah-semantic-color-text-muted);}
+    .legal-changelog h2{font-size:.85rem;text-transform:uppercase;letter-spacing:.5px;margin:0 0 8px;border:none;padding:0;}
+    .legal-contact{margin-top:18px;font-size:.82rem;font-weight:700;}
+    .legal-footer{margin-top:22px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;font-size:.78rem;font-weight:700;}
+    .legal-footer a{color:var(--deborah-semantic-color-text-muted);text-decoration:none;}
+    .legal-footer a:hover{color:var(--deborah-semantic-color-action-primary);}
+    .badge{display:inline-block;background:rgba(37,99,235,.12);color:var(--deborah-semantic-color-action-primary,#3b82f6);font-size:.7rem;font-weight:800;padding:3px 9px;border-radius:999px;margin-left:8px;vertical-align:middle;text-transform:uppercase;letter-spacing:.4px;}
+  </style>
+</head>
+<body>
+  <main class="legal-page" id="main">
+    <div class="legal-wrap">
+      <div class="legal-head">
+        <div>
+          <a href="/"><img src="/img/logo.svg" alt="Deborah" class="legal-logo" onerror="this.style.display='none'"></a>
+          <h1 class="legal-title"><%= docData.title %><span class="badge">v<%= docData.version %></span></h1>
+          <div class="legal-meta">
+            <%= lang === 'uz' ? 'So\u02bbnggi ko\u02bbrib chiqilgan:' : lang === 'uz-cyrl' ? '\u0421\u045e\u043d\u0433\u0438 \u043a\u045e\u0440\u0438\u0431 \u0447\u0438\u049b\u0438\u043b\u0433\u0430\u043d:' : lang === 'ru' ? '\u041f\u043e\u0441\u043b\u0435\u0434\u043d\u044f\u044f \u043f\u0440\u043e\u0432\u0435\u0440\u043a\u0430:' : 'Last reviewed:' %> <%= docData.lastReviewed %>
+          </div>
+        </div>
+        <nav class="legal-langs" aria-label="Til">
+          <% AUTH_LANGS.forEach((l) => { %>
+            <a class="legal-lang<%= l === lang ? ' on' : '' %>" href="?lang=<%= l %>" hreflang="<%= l === 'uz-cyrl' ? 'uz-Cyrl' : l %>" aria-current="<%= l === lang ? 'true' : 'false' %>"><%= l %></a>
+          <% }) %>
+        </nav>
+      </div>
+
+      <article class="legal-box">
+        <% docData.sections.forEach((s) => { %>
+          <section class="legal-section" id="<%= s.id %>">
+            <h2><%= s.heading %></h2>
+            <% s.body.forEach((p) => { %>
+              <p><%= p %></p>
+            <% }) %>
+          </section>
+        <% }) %>
+
+        <div class="legal-changelog">
+          <h2><%= lang === 'uz' ? 'O\u02bbzgarishlar tarixi' : lang === 'uz-cyrl' ? '\u040e\u0437\u0433\u0430\u0440\u0438\u0448\u043b\u0430\u0440 \u0442\u0430\u0440\u0438\u0445\u0438' : lang === 'ru' ? '\u0416\u0443\u0440\u043d\u0430\u043b \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u0439' : 'Changelog' %></h2>
+          <% docData.changelog.forEach((c) => { %>
+            <p><strong>v<%= c.version %></strong> — <%= c.date %>: <%= c.note %></p>
+          <% }) %>
+        </div>
+
+        <div class="legal-contact">
+          <%= lang === 'uz' ? 'Savollar uchun' : lang === 'uz-cyrl' ? '\u0421\u0430\u0432\u043e\u043b\u043b\u0430\u0440 \u0443\u0447\u0443\u043d' : lang === 'ru' ? '\u041f\u043e \u0432\u043e\u043f\u0440\u043e\u0441\u0430\u043c' : 'Questions' %>:
+          <a href="mailto:<%= docData.contact.support %>"><%= docData.contact.support %></a>
+          <% if (doc === 'privacy') { %> · <a href="mailto:<%= docData.contact.security %>"><%= docData.contact.security %></a><% } %>
+        </div>
+      </article>
+
+      <footer class="legal-footer">
+        <a href="/privacy?lang=<%= lang %>"><%= lang === 'uz' ? 'Maxfiylik siyosati' : lang === 'uz-cyrl' ? '\u041c\u0430\u0445\u0444\u0438\u0439\u043b\u0438\u043a \u0441\u0438\u0451\u0441\u0430\u0442\u0438' : lang === 'ru' ? '\u041f\u043e\u043b\u0438\u0442\u0438\u043a\u0430 \u043a\u043e\u043d\u0444\u0438\u0434\u0435\u043d\u0446\u0438\u0430\u043b\u044c\u043d\u043e\u0441\u0442\u0438' : 'Privacy Policy' %></a>
+        <a href="/terms?lang=<%= lang %>"><%= lang === 'uz' ? 'Foydalanish shartlari' : lang === 'uz-cyrl' ? '\u0424\u043e\u0439\u0434\u0430\u043b\u0430\u043d\u0438\u0448 \u0448\u0430\u0440\u0442\u043b\u0430\u0440\u0438' : lang === 'ru' ? '\u0423\u0441\u043b\u043e\u0432\u0438\u044f \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u043d\u0438\u044f' : 'Terms of Service' %></a>
+        <a href="/cookies?lang=<%= lang %>"><%= lang === 'uz' ? 'Cookie siyosati' : lang === 'uz-cyrl' ? 'Cookie \u0441\u0438\u0451\u0441\u0430\u0442\u0438' : lang === 'ru' ? '\u041f\u043e\u043b\u0438\u0442\u0438\u043a\u0430 cookie' : 'Cookie Policy' %></a>
+        <span>© <%= new Date().getFullYear() %> Deborah</span>
+      </footer>
+    </div>
+  </main>
+</body>
+</html>

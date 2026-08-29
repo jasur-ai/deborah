@@ -1,0 +1,23 @@
+<!-- Landing trust (STEP 21 S21.08) — safety/accessibility + real proof, doc linklar bilan -->
+<% const TRUST_ICONS = {
+  privacy: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>',
+  camera: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>',
+  a11y: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4" r="2"/><path d="M12 6v4m0 0l-2 6m2-6l2 6"/><circle cx="12" cy="16" r="4"/></svg>',
+  rank: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>',
+}; %>
+<section class="ld-trust" aria-labelledby="ld-trust-title" id="trust">
+  <div class="ld-container">
+    <h2 class="ld-section-title" id="ld-trust-title"><%= copy.trust.title %></h2>
+    <p class="ld-section-desc"><%= copy.trust.desc %></p>
+    <div class="ld-trust-grid">
+      <% copy.trust.items.forEach((t, i) => { %>
+        <a class="ld-trust-item" href="<%= t.link %>" data-analytics="trust_view" data-trust="<%= i %>">
+          <div class="ld-trust-icon" aria-hidden="true"><%- TRUST_ICONS[t.icon] || TRUST_ICONS.privacy %></div>
+          <h3 class="ld-trust-title"><%= t.title %></h3>
+          <p class="ld-trust-desc"><%= t.desc %></p>
+          <span class="ld-trust-more"><%= copy.trust.readMore %></span>
+        </a>
+      <% }) %>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/cast-tokens.css">
+  <link rel="stylesheet" href="/css/cast-quality.css">
+  <link rel="stylesheet" href="/design/foundations/typography.css">
+  <link rel="stylesheet" href="/design/foundations/layout.css">
+  <link rel="stylesheet" href="/design/foundations/motion.css">
+  <script>
+    window.__BOOT__ = <%- JSON.stringify(boot) %>;
+    window.__CSRF_TOKEN = '<%= boot.csrfToken %>';
+  </script>
+</head>
+<body class="cast-page" data-cast-theme="focus_dark">
+  <div class="cast-live-region" aria-live="polite" id="ql-live"></div>
+  <div class="cast-live-region" aria-live="assertive" id="ql-alert"></div>
+
+  <header class="ql-topbar">
+    <div class="ql-topbar-left">
+      <span class="ql-logo">🧪 Quality Lab</span>
+      <span class="ql-title" id="ql-title"><%= boot.title %></span>
+      <% if (boot.rehearsal) { %><span class="ql-badge ql-badge-sim">SIMULATION</span><% } %>
+    </div>
+    <div class="ql-topbar-right">
+      <a class="cast-btn cast-btn-ghost" href="/cast/<%= boot.sessionId %>/director">🎬 Director</a>
+      <a class="cast-btn cast-btn-ghost" href="/user/panel">← Panel</a>
+    </div>
+  </header>
+
+  <div class="ql-layout">
+    <main class="ql-main cast-surface">
+
+      <!-- ── Rehearsal controls ── -->
+      <section class="ql-section" id="ql-rehearsal">
+        <div class="ql-section-head">
+          <h2 class="ql-section-title">🎭 Rehearsal — Bot Simulation</h2>
+          <span class="ql-muted">Test sessiyasini botlar bilan mashq qiling — production ma'lumotlarga kirmaydi</span>
+        </div>
+
+        <% if (!boot.rehearsal) { %>
+          <div class="ql-notice">
+            Bu sessiya <b>production</b> rejimida. Botlar faqat rehearsal (simulation) sessiyalarda ishlaydi.
+            <br><span class="ql-muted">Director'da «Sessiyani tugatish» → yangi sessiya yaratishda <b>Rehearsal</b> rejimini tanlang.</span>
+          </div>
+        <% } else { %>
+          <div class="ql-bot-controls">
+            <div class="ql-field">
+              <label class="ql-label" for="ql-scenario">Scenario</label>
+              <select id="ql-scenario" class="ql-input">
+                <option value="fast_correct">⚡ Fast Correct — tez + to'g'ri</option>
+                <option value="slow_correct">🐢 Slow Correct — sekin + to'g'ri</option>
+                <option value="wrong_cluster">🎯 Wrong Cluster — bir xil noto'g'ri javob</option>
+                <option value="disconnect">📴 Disconnect — javobdan keyin uzilish</option>
+                <option value="late_join">🕐 Late Join — o'rtada qo'shilish</option>
+                <option value="no_answers">🤐 No Answers — umuman javob yo'q</option>
+                <option value="all_instant">💥 All Instant — hammasi birdan</option>
+                <option value="duplicate_answer">🔁 Duplicate Answer — takroriy submit</option>
+                <option value="lost_ack">📮 Lost ACK — same commandId retry (idempotent)</option>
+                <option value="host_disconnect">🧊 Host Disconnect — direktor uzilishi</option>
+              </select>
+            </div>
+            <div class="ql-field ql-field-narrow">
+              <label class="ql-label" for="ql-bot-count">Botlar soni</label>
+              <input id="ql-bot-count" class="ql-input" type="number" min="1" max="100" value="10">
+            </div>
+            <div class="ql-field ql-field-btns">
+              <button class="cast-btn cast-btn-primary" id="ql-start-bots">▶ Botlarni ishga tushirish</button>
+              <button class="cast-btn cast-btn-danger" id="ql-stop-bots" disabled>⏹ To'xtatish</button>
+              <button class="cast-btn cast-btn-ghost" id="ql-reset"><%- icon('refresh', 16) %> Reset</button>
+            </div>
+          </div>
+          <div class="ql-bot-status" id="ql-bot-status">Botlar: faol emas</div>
+        <% } %>
+      </section>
+
+      <!-- ── Preflight ── -->
+      <section class="ql-section" id="ql-preflight-sec">
+        <div class="ql-section-head">
+          <h2 class="ql-section-title">🛡 Preflight</h2>
+          <span class="ql-muted">Sessiya boshlanishidan oldin test sifatini tekshiradi</span>
+          <button class="cast-btn cast-btn-ghost ql-run-btn" id="ql-run-preflight">Ishga tushirish</button>
+        </div>
+        <div class="ql-findings" id="ql-preflight-results">
+          <div class="ql-empty">Preflight hali ishga tushirilmagan</div>
+        </div>
+      </section>
+
+      <!-- ── Postflight ── -->
+      <section class="ql-section" id="ql-postflight-sec">
+        <div class="ql-section-head">
+          <h2 class="ql-section-title">🔍 Postflight</h2>
+          <span class="ql-muted">Sessiya yakunida statistika va signal tahlili</span>
+          <button class="cast-btn cast-btn-ghost ql-run-btn" id="ql-run-postflight" <%= boot.rehearsal ? '' : 'disabled' %>>Tahlil qilish</button>
+        </div>
+        <div class="ql-findings" id="ql-postflight-results">
+          <div class="ql-empty"><%= boot.rehearsal ? 'Postflight hali ishga tushirilmagan' : 'Faqat rehearsal sessiyalarda' %></div>
+        </div>
+      </section>
+
+      <!-- ── All findings ── -->
+      <section class="ql-section" id="ql-findings-sec">
+        <div class="ql-section-head">
+          <h2 class="ql-section-title">📋 Findings</h2>
+          <span class="ql-muted">Barcha xulosalar — accept / dismiss / resolve</span>
+        </div>
+        <div class="ql-findings" id="ql-findings-list">
+          <div class="ql-empty">Hozircha xulosalar yo'q</div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="/js/cast-quality.js"></script>
+</body>
+</html>

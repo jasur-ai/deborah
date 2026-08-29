@@ -1,0 +1,119 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<!-- STEP 08 (S08.05): critical UI font preload; self-hosted — CDN yo'q (S23.05) -->
+<link rel="preload" href="/fonts/source-sans-3-latin-200.woff2" as="font" type="font/woff2" crossorigin>
+<meta name="theme-color" content="#1c1813" id="meta-theme-color" data-light="#ece3d0" data-dark="#1c1813" data-hc="#FFFFFF">
+
+<!-- ═══════════ THEME BOOT (S07.02) — tiny synchronous, FOUC'siz ═══════════ -->
+<script>
+(function(){var K='deborah-theme-state',L='deborah-theme',s=null;try{s=localStorage.getItem(K)}catch(_){}if(!s){try{var l=localStorage.getItem(L);if(l==='light'||l==='dark'){s=l;try{localStorage.setItem(K,s)}catch(_){}}}catch(_){}}
+var STATES=['system','light','dark','hc-light','hc-dark'];if(STATES.indexOf(s)<0)s='system';
+var dc=document.documentElement.getAttribute('data-cast-theme');if(!dc&&document.body&&document.body.getAttribute('data-cast-theme'))dc=1;
+if(!dc){
+var mL=window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches;
+var mC=window.matchMedia&&matchMedia('(prefers-contrast: more)').matches;
+var r='dark',cs='dark',cv='#1c1813';
+if(s==='light'){r='light';cs='light';cv='#F5F7FB'}
+else if(s==='dark'){r='dark';cs='dark';cv='#1c1813'}
+else if(s==='hc-light'){r='light';cs='light'} /* BUG-077: hc token sheeti yo'q — bazaga graceful resolve */
+else if(s==='hc-dark'){r='dark';cs='dark'}
+else{r='dark';cs='dark';cv='#1c1813';try{localStorage.setItem('deborah-theme-state','dark')}catch(_){}} // Demo kontrakti: birinchi tashrif DARK (demo data-theme="dark"); saqlangan tanlov ustun
+var d=document.documentElement;d.setAttribute('data-theme',r);d.setAttribute('data-resolved-theme',r);d.setAttribute('data-theme-state',s);d.style.colorScheme=cs;
+var mc=document.getElementById('meta-theme-color');if(mc)mc.setAttribute('content',cv);
+}
+})();
+</script>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<title><%= title %></title>
+<meta name="description" content="<%= description %>">
+
+<!-- Canonical (S23.06) — til variantlari uchun yagona URL -->
+<link rel="canonical" href="<%= siteUrl + path %>">
+<% // S14 (BUG-091): hreflang alternates — / uz(default), /ru, /en, /uz-cyrl %>
+<link rel="alternate" hreflang="uz-Latn" href="<%= siteUrl + '/' %>">
+<link rel="alternate" hreflang="uz-Cyrl" href="<%= siteUrl + '/uz-cyrl' %>">
+<link rel="alternate" hreflang="ru" href="<%= siteUrl + '/ru' %>">
+<link rel="alternate" hreflang="en" href="<%= siteUrl + '/en' %>">
+<link rel="alternate" hreflang="x-default" href="<%= siteUrl + '/' %>">
+
+<!-- Open Graph (S23.06) — actual product positioning + product poster -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Deborah">
+<meta property="og:title" content="<%= title %>">
+<meta property="og:description" content="<%= description %>">
+<meta property="og:image" content="<%= siteUrl + '/images/product/poster.webp' %>">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="760">
+<meta property="og:url" content="<%= siteUrl + path %>">
+<meta property="og:locale" content="<%= lang === 'ru' ? 'ru_RU' : lang === 'en' ? 'en_US' : 'uz_UZ' %>">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="<%= title %>">
+<meta name="twitter:description" content="<%= description %>">
+<meta name="twitter:image" content="<%= siteUrl + '/images/product/poster.webp' %>">
+
+<!-- Structured data (S23.06) — WebSite + WebApplication -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "name": "Deborah",
+      "url": "<%= siteUrl + path %>",
+      "inLanguage": "<%= lang === 'uz-cyrl' ? 'uz' : lang %>",
+      "description": "<%= description.replace(/"/g, '\\"') %>"
+    },
+    {
+      "@type": "WebApplication",
+      "name": "Deborah",
+      "applicationCategory": "EducationalApplication",
+      "url": "<%= siteUrl + path %>",
+      "operatingSystem": "Any",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    }
+  ]
+}
+</script>
+
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/png" href="/images/favicon-vintage.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/pwa-icon-180.png">
+
+<!-- STEP 23 S23.04: faqat landing uchun minimal CSS — app component/style/cast yuklanmaydi -->
+<link rel="stylesheet" href="/design/generated/tokens.css">
+<link rel="stylesheet" href="/design/foundations/typography.css">
+<link rel="stylesheet" href="/design/foundations/motion.css">
+<link rel="stylesheet" href="/design/foundations/responsive.css">
+<link rel="stylesheet" href="/design/foundations/reset.css">
+<link rel="stylesheet" href="/design/foundations/base.css">
+<link rel="stylesheet" href="/design/foundations/focus.css">
+<link rel="stylesheet" href="/design/foundations/utilities.css">
+<link rel="stylesheet" href="/design/brand.css">
+<link rel="stylesheet" href="/design/foundations/theme.css">
+<link rel="stylesheet" href="/css/landing.css">
+
+<!-- STEP 23 S23.04: landing uchun minimal JS — theme + tabs + landing (socket.io/main.js yo'q) -->
+<script src="/js/theme-core.js"></script>
+<script src="/js/theme.js"></script>
+<script src="/js/components/tabs.js" defer></script>
+
+<!-- STEP 40 S40.02: feature flag status -->
+<script>
+  document.documentElement.setAttribute('data-ff-theme', '<%= typeof featureFlags !== 'undefined' && featureFlags.theme === false ? 'off' : 'on' %>');
+  document.documentElement.setAttribute('data-ff-landing', '<%= typeof featureFlags !== 'undefined' && featureFlags.landing === false ? 'off' : 'on' %>');
+  document.documentElement.setAttribute('data-ff-cast', '<%= typeof featureFlags !== 'undefined' && featureFlags.cast === false ? 'off' : 'on' %>');
+</script>
+
+<!-- Service Worker (S23.08) -->
+<script>
+if ('serviceWorker' in navigator && !navigator.serviceWorker.controller) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/service-worker.js', { scope: '/' });
+  });
+}
+</script>

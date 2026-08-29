@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deborah Brand Gallery — Blind Recognition Prototype</title>
+  <!-- S11 fix: CDN fontlar olib tashlandi — self-hosted (S08). Font race flaky'sini yo'q qiladi -->
+  <link rel="stylesheet" href="/design/foundations/typography.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/design/brand.css">
+  <style>
+    body { font-family: 'Source Sans 3', system-ui, sans-serif; background: #0A0F1F; color: #E8EDF7; margin: 0; padding: 40px 24px; }
+    .wrap { max-width: 880px; margin: 0 auto; }
+    h1 { font-family: 'Manrope', system-ui, sans-serif; font-weight: 800; letter-spacing: 0.5px; }
+    h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 3px; color: #8A94AD; margin-top: 48px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 12px; }
+    .panel { background: #101830; border: 1px solid rgba(120,130,160,.18); border-radius: 14px; padding: 28px; text-align: center; min-height: 190px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+    .panel p { margin: 0; font-size: 13px; color: #9AA3BD; }
+    .panel--light { background: #F5F7FB; }
+    .mark-box { background: #FFFFFF; border-radius: 14px; padding: 24px; display: inline-flex; }
+    .rail-row { display: flex; gap: 28px; align-items: center; justify-content: center; }
+    .sizes { display: flex; gap: 26px; align-items: flex-end; justify-content: center; min-height: 90px; }
+    .note { font-size: 12px; color: #6B7692; margin-top: 24px; line-height: 1.6; }
+    code { background: #0D1426; padding: 2px 6px; border-radius: 4px; font-size: 12px; color: #7FD1E8; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Brand Gallery — Blind Recognition</h1>
+    <p style="color:#9AA3BD;max-width:620px">
+      Nom va wordmark olib tashlangan. Quyidagi uchta element alohida tanilish testiga
+      tayyor: <strong>Evidence Mark</strong>, <strong>Signal Rail</strong>, <strong>Response Mosaic</strong>.
+    </p>
+
+    <h2>1 · Evidence Mark — variantlar</h2>
+    <div class="grid">
+      <div class="panel panel--light">
+        <img src="/images/brand/evidence-mark.svg" width="56" height="56" alt="Deborah Evidence Mark" role="img">
+        <p>Cobalt</p>
+      </div>
+      <div class="panel panel--light">
+        <!-- Monochrome: <img> kontekstida currentColor SVG'ning o'z rangiga
+             (qora) tushadi; currentColor adaptatsiya inline SVG/ikon sistemalar
+             uchun mo'ljallangan (docs/brand-assets.md §4) -->
+        <img src="/images/brand/evidence-mark-monochrome.svg" width="56" height="56" alt="" role="img">
+        <p>Monochrome (currentColor — inline SVG)</p>
+      </div>
+      <div class="panel">
+        <img src="/images/brand/evidence-mark-inverse.svg" width="56" height="56" alt="" role="img">
+        <p>Inverse</p>
+      </div>
+      <div class="panel panel--light">
+        <img src="/images/brand/evidence-mark-high-contrast.svg" width="56" height="56" alt="" role="img">
+        <p>High-contrast</p>
+      </div>
+    </div>
+
+    <h2>1b · Legibility — 16 / 24 / 32 / 64px</h2>
+    <div class="panel panel--light">
+      <div class="sizes">
+        <img src="/images/brand/evidence-mark.svg" width="16" height="16" alt="" role="img">
+        <img src="/images/brand/evidence-mark.svg" width="24" height="24" alt="" role="img">
+        <img src="/images/brand/evidence-mark.svg" width="32" height="32" alt="" role="img">
+        <img src="/images/brand/evidence-mark.svg" width="64" height="64" alt="" role="img">
+      </div>
+      <p>16px favicon'da ham rail + 3 tick + node taniladi</p>
+    </div>
+
+    <h2>2 · Signal Rail — 3px semantic states</h2>
+    <div class="panel">
+      <div class="rail-row">
+        <span class="sr-rail sr-rail--current" aria-hidden="true"></span>
+        <span class="sr-rail sr-rail--live" aria-hidden="true"></span>
+        <span class="sr-rail sr-rail--attention" aria-hidden="true"></span>
+        <span class="sr-rail sr-rail--error" aria-hidden="true"></span>
+      </div>
+      <p>current · live · attention · error</p>
+    </div>
+
+    <h2>3 · Response Mosaic — 5×5</h2>
+    <div class="panel">
+      <div class="rm-mosaic" aria-hidden="true">
+        <span class="rm-cell rm-cell--correct"></span><span class="rm-cell rm-cell--correct"></span><span class="rm-cell rm-cell--correct"></span><span class="rm-cell rm-cell--pending"></span><span class="rm-cell rm-cell--incorrect"></span>
+        <span class="rm-cell rm-cell--correct"></span><span class="rm-cell rm-cell--live"></span><span class="rm-cell rm-cell--correct"></span><span class="rm-cell rm-cell--correct"></span><span class="rm-cell rm-cell--pending"></span>
+        <span class="rm-cell rm-cell--pending"></span><span class="rm-cell rm-cell--correct"></span><span class="rm-cell rm-cell--correct"></span><span class="rm-cell rm-cell--incorrect"></span><span class="rm-cell rm-cell--correct"></span>
+        <span class="rm-cell rm-cell--correct"></span><span class="rm-cell rm-cell--correct"></span><span class="rm-cell rm-cell--pending"></span><span class="rm-cell rm-cell--correct"></span><span class="rm-cell rm-cell--correct"></span>
+        <span class="rm-cell rm-cell--incorrect"></span><span class="rm-cell rm-cell--correct"></span><span class="rm-cell rm-cell--correct"></span><span class="rm-cell rm-cell--correct"></span><span class="rm-cell rm-cell--live"></span>
+      </div>
+      <p>correct · incorrect · pending · live</p>
+    </div>
+
+    <h2>4 · Lockup showcase</h2>
+    <div class="panel panel--light">
+      <img src="/images/brand/wordmark-horizontal.svg" width="296" height="64" alt="Deborah" role="img" style="color:#0F172A">
+      <p>Horizontal lockup (min 140px)</p>
+    </div>
+
+    <p class="note">
+      Ushbu sahifa <code>/brand/gallery.html</code> — blind-recognition prototype (S05.12).
+      Product UI'da gradient ishlatilmaydi (S05.09). Alt/aria policy: docs/brand-assets.md §9.
+    </p>
+  </div>
+</body>
+</html>

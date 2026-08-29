@@ -1,0 +1,415 @@
+/**
+ * Deborah — Cast Design Tokens
+ * ----------------------------
+ * WCAG-compatible tokens, Focus Dark/Light + High Contrast variants.
+ * Projector typography tokenlari (C2-09).
+ */
+
+:root {
+  --cast-page-bg: #07111f;
+  --cast-surface: #102033;
+  --cast-surface-2: #16283f;
+  --cast-text: #ffffff;
+  --cast-muted-text: #c5d2e0;
+  --cast-focus: #ffd60a;
+  --cast-green: #00ffaa;
+  --cast-red: #ff4466;
+  --cast-blue: #38bdf8;
+  --cast-purple: #c084fc;
+  --cast-border: rgba(255, 255, 255, 0.12);
+  --cast-radius: 14px;
+  --cast-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+
+  /* Typography */
+  --cast-question-size: clamp(28px, 3.2vw, 64px);
+  --cast-option-size: clamp(22px, 2vw, 40px);
+  --cast-meta-size: clamp(20px, 1.7vw, 32px);
+  --cast-code-size: clamp(48px, 8vw, 120px);
+
+  --cast-font: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+/* ── Focus Dark (default) ── */
+[data-cast-theme='focus_dark'] {
+  --cast-page-bg: #07111f;
+  --cast-surface: #102033;
+  --cast-surface-2: #16283f;
+  --cast-text: #ffffff;
+  --cast-muted-text: #c5d2e0;
+  --cast-focus: #ffd60a;
+}
+
+/* ── Focus Light ── */
+[data-cast-theme='focus_light'] {
+  --cast-page-bg: #f4f7fb;
+  --cast-surface: #ffffff;
+  --cast-surface-2: #eef2f8;
+  --cast-text: #0d1b2a;
+  --cast-muted-text: #4a5a6e;
+  --cast-focus: #e6a700;
+  --cast-border: rgba(13, 27, 42, 0.15);
+  --cast-shadow: 0 10px 30px rgba(13, 27, 42, 0.12);
+}
+
+/* ── High Contrast Dark ── */
+[data-cast-theme='hc_dark'] {
+  --cast-page-bg: #000000;
+  --cast-surface: #0a0a0a;
+  --cast-surface-2: #1a1a1a;
+  --cast-text: #ffffff;
+  --cast-muted-text: #ffff66;
+  --cast-focus: #ffd60a;
+  --cast-border: #ffffff;
+}
+
+/* ── High Contrast Light ── */
+[data-cast-theme='hc_light'] {
+  --cast-page-bg: #ffffff;
+  --cast-surface: #ffffff;
+  --cast-surface-2: #f0f0f0;
+  --cast-text: #000000;
+  --cast-muted-text: #1a1a1a;
+  --cast-focus: #0055cc;
+  --cast-border: #000000;
+  --cast-shadow: none;
+}
+
+/* ── Base ── */
+.cast-page {
+  background: var(--cast-page-bg);
+  color: var(--cast-text);
+  font-family: var(--cast-font);
+  min-height: 100vh; min-height: 100svh;
+}
+
+.cast-surface {
+  background: var(--cast-surface);
+  border: 1px solid var(--cast-border);
+  border-radius: var(--cast-radius);
+  box-shadow: var(--cast-shadow);
+}
+
+.cast-btn {
+  font-family: var(--cast-font);
+  font-weight: 600;
+  border: none;
+  border-radius: var(--deborah-radius-md, 12px);
+  padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-4, 16px); /* S12 fix:  qoldig'i olib tashlandi */
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.2s ease, opacity 0.2s ease;
+  background: var(--cast-surface-2);
+  color: var(--cast-text);
+  border: 1px solid var(--cast-border);
+  min-height: 44px;
+}
+.cast-btn svg {
+  width: 18px;
+  height: 18px;
+  vertical-align: -3px;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+.cast-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.cast-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.cast-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.cast-btn-primary {
+  background: var(--cast-green);
+  color: #00241a;
+}
+
+.cast-btn-danger {
+  background: var(--cast-red);
+  /* Kontrast: oq matn --cast-red (#ff4366) ustida 3.35:1 — to'q matn 4.5+ */
+  color: #2a0714;
+}
+
+.cast-btn-focus {
+  background: var(--cast-focus);
+  color: #1a1400;
+}
+
+/* Focus ring — barcha interactive control'larga */
+.cast-btn:focus-visible,
+.cast-option:focus-visible,
+.cast-input:focus-visible,
+.cast-card:focus-visible {
+  outline: 3px solid var(--cast-focus);
+  outline-offset: 2px;
+}
+
+.cast-input {
+  font-family: var(--cast-font);
+  background: var(--cast-surface-2);
+  border: 1px solid var(--cast-border);
+  color: var(--cast-text);
+  border-radius: var(--deborah-radius-md, 12px);
+  padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-3, 12px)
+  font-size: 1rem;
+  min-height: 44px;
+}
+
+/* Live regions */
+.cast-live-region {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .cast-page * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+[data-cast-motion='none'] .cast-anim {
+  animation: none !important;
+}
+
+/* Option symbols (color-independent) */
+.cast-opt-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ══ C4-04 Accessibility ══ */
+
+/* Item 13: motion faqat transform/opacity orqali (joy siljish emas) */
+.cast-anim {
+  animation-duration: 0.3s !important;
+}
+.cast-anim,
+[class*='cast-']:hover {
+  transition-property: transform, opacity, background-color, color, border-color !important;
+}
+
+/* Item 17: touch targets — 44px minimum */
+.cast-btn,
+.cast-option,
+.cast-tab,
+.cast-icon-btn,
+.cast-chip,
+button.cast-card {
+  min-height: 44px;
+  min-width: 44px;
+}
+.cast-option {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+/* Item 2: focus ring barcha interactive controllarda */
+.cast-btn:focus-visible,
+.cast-option:focus-visible,
+.cast-input:focus-visible,
+.cast-card:focus-visible,
+.cast-tab:focus-visible,
+.cast-icon-btn:focus-visible,
+.cast-chip:focus-visible,
+.cast-hints button:focus-visible,
+a.cast-link:focus-visible {
+  outline: 3px solid var(--cast-focus);
+  outline-offset: 2px;
+}
+
+/* Item 18: user font scale (dataset orqali) */
+[data-cast-font-scale='1.25'] {
+  font-size: 1.25em;
+}
+[data-cast-font-scale='1.5'] {
+  font-size: 1.5em;
+}
+
+/* Item 15: 200% zoom'da horizontal scroll yo'q — flex wrap */
+@media (max-width: 900px) {
+  .cast-row,
+  [class*='cast-row'],
+  .dir-grid,
+  .part-grid {
+    flex-wrap: wrap;
+  }
+}
+.cast-page {
+  overflow-x: hidden;
+}
+
+/* Item 16: 320px layout */
+@media (max-width: 340px) {
+  .cast-btn { width: 100%; }
+  .cast-option { width: 100%; }
+  .cast-surface { padding: var(--deborah-spacing-3, 12px) !important; }
+  .part-timer,
+  .proj-timer { font-size: 1rem !important; }
+}
+
+/* Item 23: keyboard hint panel */
+.cast-hints {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 2000;
+  background: var(--cast-surface, #1e1e2e);
+  border: 2px solid var(--cast-focus, #ffd60a);
+  border-radius: 12px;
+  padding: var(--deborah-spacing-4, 16px);
+  max-width: 320px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+.cast-hints-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.cast-hints-close {
+  min-width: 28px;
+  min-height: 28px;
+  border-radius: var(--deborah-radius-sm, 8px);
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: inherit;
+  cursor: pointer;
+}
+.cast-hint-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 0.85rem;
+}
+.cast-hint-row kbd {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 5px;
+  padding: 2px 8px;
+  font-weight: 600;
+  min-width: 34px;
+  text-align: center;
+}
+
+/* Item 10: rangdan tashqari symbol (chart table fallback) */
+.cast-chart-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+.cast-chart-table th,
+.cast-chart-table td {
+  border: 1px solid var(--cast-border, rgba(255,255,255,0.2));
+  padding: var(--deborah-spacing-2, 8px) var(--deborah-spacing-2, 8px)
+  text-align: left;
+}
+.cast-chart-table caption {
+  text-align: left;
+  font-weight: 600;
+  padding-bottom: 4px;
+}
+
+/* C4-04 review fix: a11y toggle bar base styles */
+.cast-a11y-bar {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 1500;
+  display: flex;
+  gap: 8px;
+}
+.cast-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--cast-border, rgba(255,255,255,0.2));
+  background: var(--cast-surface, #1e1e2e);
+  color: var(--cast-text, #f3f4f6);
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: var(--cast-shadow, 0 2px 10px rgba(0,0,0,0.3));
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+.cast-icon-btn:hover {
+  transform: translateY(-1px);
+  background: var(--cast-surface-2, #2a2a3e);
+}
+
+/* ══ C4-05 Internationalization / RTL ══ */
+
+/* Item 11: logical properties — RTL'da margin/padding/border oyna ko'rinadi */
+.cast-surface,
+.part-card,
+.dir-panel,
+.cast-hints {
+  margin-inline: auto;
+}
+.cast-hint-row {
+  padding-inline-start: 0;
+}
+
+/* Item 12: left/right iconlar RTL'da aylantiriladi */
+.cast-rtl .ev-dist-track,
+.cast-rtl .proj-goal-fill {
+  transform: scaleX(-1);
+}
+.cast-rtl .cast-a11y-bar {
+  left: 12px;
+  right: auto;
+}
+.cast-rtl .part-timer {
+  text-align: start;
+}
+
+/* Item 13: timer/code mixed bidi — unicode-bidi isolate */
+.part-timer,
+.proj-timer,
+.proj-code,
+.join-code-value {
+  unicode-bidi: isolate;
+  direction: ltr;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Item 8: dir=auto user text */
+[dir='auto'] {
+  unicode-bidi: plaintext;
+}
+bdi {
+  unicode-bidi: isolate;
+}
+
+/* Item 17: pseudo-locale (debug) */
+.cast-pseudo .part-title,
+.cast-pseudo .part-sub,
+.cast-pseudo .cast-btn,
+.cast-pseudo .part-status,
+.cast-pseudo .proj-label,
+.cast-pseudo .dir-title {
+  letter-spacing: 0.05em;
+  word-spacing: 0.15em;
+}

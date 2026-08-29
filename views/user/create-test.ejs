@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <link rel="stylesheet" href="/design/contexts/test-builder.css">
+  <style>
+    .tb-props-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+    @media (max-width: 640px) { .tb-props-grid { grid-template-columns: 1fr; } }
+    .tb-import-body { display: none; }
+    .tb-import-body.is-open { display: block; }
+    .tb-import-pane { display: none; }
+    .tb-import-pane.is-active { display: block; }
+  </style>
+</head>
+<body>
+  <div class="tb-shell">
+    <!-- ── Sticky top bar (S27.01/07) ── -->
+    <header class="tb-topbar">
+      <a href="/user/panel" class="tb-back"><%- icon('arrowLeft', 15) %> Panel</a>
+      <div class="tb-title">
+        <input id="tb-name" type="text" placeholder="Test nomi (masalan: Matematika 2024)" maxlength="60" aria-label="Test nomi">
+      </div>
+      <span class="tb-status" id="tb-status" data-save="saved" role="status" aria-live="polite">
+        <span class="tb-status-dot" aria-hidden="true"></span><span id="tb-status-txt">Saqlandi</span>
+      </span>
+      <div class="tb-topbar-actions">
+        <button type="button" class="btn btn-quiet" id="tb-preview-btn" data-preview disabled><%- icon('eye', 15) %> <span class="tb-btn-label">Ko'rish</span></button>
+        <button type="button" class="btn btn-primary" id="tb-save-btn"><%- icon('save', 15) %> <span class="tb-btn-label">Saqlash</span></button>
+      </div>
+    </header>
+
+    <!-- ── Workspace: outline + editor (S27.02) ── -->
+    <div class="tb-body">
+      <aside class="tb-outline" id="tb-outline" aria-label="Savollar ro'yxati">
+        <div class="tb-outline-hd">
+          <span class="tb-outline-title">Savollar</span>
+          <button type="button" class="tb-move tb-outline-toggle" id="tb-outline-close" aria-label="Outline yopish"><%- icon('x', 14) %></button>
+        </div>
+        <div class="tb-outline-list" id="tb-outline-list"></div>
+        <button type="button" class="btn btn-quiet" id="tb-add-outline" style="width:100%;margin-top:10px"><%- icon('plus', 13) %> Savol qo'shish</button>
+      </aside>
+
+      <main class="tb-editor" id="tb-editor">
+        <button type="button" class="tb-outline-toggle" id="tb-outline-open" style="margin-bottom:14px"><%- icon('menu', 14) %> Savollar ro'yxati</button>
+
+        <!-- S27.08: error summary -->
+        <div class="tb-err-summary" id="tb-err-summary">
+          <span class="tb-err-summary-title"><%- icon('alertTriangle', 15) %> Diqqat talab qiladigan maydonlar</span>
+          <ul class="tb-err-summary-list" id="tb-err-list"></ul>
+        </div>
+
+        <div id="tb-q-editor"></div>
+
+        <div style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap">
+          <button type="button" class="btn btn-secondary" id="tb-add-question"><%- icon('plus', 14) %> Savol qo'shish</button>
+          <button type="button" class="btn btn-quiet" id="tb-import-btn"><%- icon('upload', 14) %> Excel import</button>
+        </div>
+      </main>
+
+      <aside class="tb-rail" aria-hidden="true"></aside>
+    </div>
+  </div>
+
+  <!-- ── Excel import modal (S27.09) ── -->
+  <div class="tb-import" id="tb-import-modal" hidden>
+    <div class="tb-import-dialog">
+      <div class="tb-import-hd">
+        <h2 id="tb-import-title">Excel orqali savollar import</h2>
+        <button type="button" class="tb-import-close" id="tb-import-close" aria-label="Yopish"><%- icon('x', 16) %></button>
+      </div>
+      <div class="tb-import-steps" aria-label="Import bosqichlari">
+        <span class="tb-import-step is-active" data-step="1"><span class="tb-step-num">1</span> Shablon</span>
+        <span class="tb-import-step" data-step="2"><span class="tb-step-num">2</span> Yuklash</span>
+        <span class="tb-import-step" data-step="3"><span class="tb-step-num">3</span> Tekshirish</span>
+        <span class="tb-import-step" data-step="4"><span class="tb-step-num">4</span> Tasdiqlash</span>
+      </div>
+
+      <div class="tb-import-pane is-active" data-pane="1">
+        <p class="tb-import-desc">Shablonda har bir qator bitta savol: Savol, A-D variantlar, to'g'ri javob indeksi (0-3).</p>
+        <button type="button" class="btn btn-secondary" id="tb-template-btn" style="width:100%"><%- icon('download', 14) %> Excel shablon yuklab olish</button>
+        <div class="tb-import-next">
+          <button type="button" class="btn btn-primary" id="tb-import-next1"><%- icon('arrowRight', 14) %> Davom etish</button>
+        </div>
+      </div>
+
+      <div class="tb-import-pane" data-pane="2">
+        <div class="tb-import-zone" id="tb-import-zone" role="button" tabindex="0" aria-label="Excel fayl tanlash">
+          <span class="tb-import-ico"><%- icon('upload', 26) %></span>
+          <p id="tb-import-zone-txt">Excel fayl tanlash yoki bu yerga tashlash</p>
+        </div>
+        <input type="file" id="tb-import-input" accept=".xlsx,.xls" style="display:none">
+        <div class="tb-import-msg" id="tb-import-msg"></div>
+        <div class="tb-import-next">
+          <button type="button" class="btn btn-secondary" id="tb-import-back2"><%- icon('arrowLeft', 14) %> Orqaga</button>
+        </div>
+      </div>
+
+      <div class="tb-import-pane" data-pane="3">
+        <div class="tb-import-preview" id="tb-import-preview"></div>
+        <div class="tb-import-msg" id="tb-import-parse-msg"></div>
+        <div class="tb-import-next">
+          <button type="button" class="btn btn-secondary" id="tb-import-back3"><%- icon('arrowLeft', 14) %> Orqaga</button>
+          <button type="button" class="btn btn-primary" id="tb-import-confirm"><%- icon('check', 14) %> Qo'shish</button>
+        </div>
+      </div>
+
+      <div class="tb-import-pane" data-pane="4">
+        <div class="tb-import-msg is-open is-ok" id="tb-import-done"><%- icon('checkCircle', 15) %> <span id="tb-import-done-txt">Savollar qo'shildi</span></div>
+        <div class="tb-import-next">
+          <button type="button" class="btn btn-primary" id="tb-import-finish"><%- icon('check', 14) %> Yakunlash</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# S15 BUG-099: cdnjs o'rniga self-hosted xlsx (offline/intranet ishlashi; xlsx^0.18.5 node_modules'da) %>\n  <script src="/js/vendor/xlsx.full.min.js"></script>
+  <script>
+    // STEP 27 — server-side initial state (test-builder.js o'qiydi)
+    // XSS: JSON'dagi `<` `\u003c` ga aylantiriladi — `<\/script>` breakout'ning oldi olinadi
+    window.__CSRF_TOKEN = <%- JSON.stringify(csrfToken || '') %>;
+    window.__TB_INIT = {
+      isEdit: <%= isEdit ? 'true' : 'false' %>,
+      editKey: <%- JSON.stringify((editKey || '').replace(/</g, '\\u003c')) %>,
+      name: <%- JSON.stringify((testData ? (testData.name || '') : '').replace(/</g, '\\u003c')) %>,
+      questions: <%- JSON.stringify(testData && Array.isArray(testData.questions)
+        ? testData.questions.map(q => ({
+            type: ['single_choice', 'true_false', 'multiple_select', 'short_answer', 'exit_ticket'].includes(q.type) ? q.type : 'single_choice',
+            text: q.text || '',
+            options: Array.isArray(q.options) ? q.options.map(String) : [],
+            correct: typeof q.correct === 'number' ? q.correct : 0,
+            explanation: q.explanation || '',
+            tags: Array.isArray(q.tags) ? q.tags : (q.tag ? [q.tag] : []),
+            timing: q.timing || 0,
+          }))
+        : []).replace(/</g, '\\u003c') %>,
+    };
+  </script>
+  <script src="/js/test-builder.js" defer></script>
+</body>
+</html>

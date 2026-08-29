@@ -1,0 +1,360 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`T-01 Golden: config canonical hash > canonicalSerialize output is stable (golden) 1`] = `"{"participation":{"paperCardMode":false},"scoring":{"scorePolicy":"accuracy"},"timer":{"defaultSeconds":30,"mode":"soft"}}"`;
+
+exports[`T-01 Golden: initial state snapshot > allowed commands per phase table (golden) 1`] = `
+{
+  "DISCUSSION": [
+    "discuss:end",
+    "revote:open",
+    "question:next",
+    "session:end",
+  ],
+  "ENDED": [],
+  "EXPLANATION_OPEN": [
+    "question:pause",
+    "time:add",
+    "poe:closeExplanation",
+    "session:end",
+  ],
+  "LEADERBOARD": [
+    "question:next",
+    "orb:launch",
+    "session:end",
+  ],
+  "LOBBY_OPEN": [
+    "session:start",
+    "lock:lobby",
+    "participant:join",
+    "session:end",
+  ],
+  "OBSERVATION": [
+    "poe:startExplanation",
+    "poe:mediaAction",
+    "session:end",
+  ],
+  "ORB_COLLECT": [
+    "orb:close",
+    "session:end",
+  ],
+  "ORB_REVIEW": [
+    "orb:runCluster",
+    "orb:manual",
+    "orb:end",
+    "session:end",
+  ],
+  "PREDICTION_OPEN": [
+    "question:pause",
+    "time:add",
+    "poe:closePrediction",
+    "session:end",
+  ],
+  "QUESTION_LOCKED": [
+    "question:reveal",
+    "discuss:start",
+    "mastery:launch",
+    "poe:launch",
+    "orb:launch",
+    "session:end",
+  ],
+  "QUESTION_OPEN": [
+    "question:pause",
+    "time:add",
+    "question:close",
+    "session:end",
+    "quick_prompt:launch",
+    "mastery:launch",
+  ],
+  "REVEAL": [
+    "question:next",
+    "leaderboard:show",
+    "discuss:start",
+    "revote:open",
+    "mastery:launch",
+    "poe:launch",
+    "orb:launch",
+    "session:end",
+  ],
+  "REVOTE_OPEN": [
+    "question:close",
+    "question:reveal",
+    "session:end",
+  ],
+  "THINK_TIME": [
+    "question:open",
+    "question:pause",
+    "question:skip",
+    "poe:launch",
+    "orb:launch",
+    "session:end",
+  ],
+}
+`;
+
+exports[`T-01 Golden: initial state snapshot > initialState shape (golden) 1`] = `
+{
+  "choreography": null,
+  "closesAt": null,
+  "discussionEndsAt": null,
+  "discussionInstructions": null,
+  "endedAt": null,
+  "leaderboardVisible": false,
+  "masteryFlowActive": false,
+  "masteryFlowType": null,
+  "openedAt": null,
+  "orbFlow": null,
+  "pausedAt": null,
+  "phase": "LOBBY_OPEN",
+  "poeFlow": null,
+  "primaryDirectorId": "d1",
+  "questionId": "q_01",
+  "questionPosition": 0,
+  "revision": 1,
+  "selfPaced": {
+    "active": false,
+    "paused": false,
+    "startedAt": null,
+  },
+  "timerMode": "soft",
+  "totalPausedMs": 0,
+  "totalQuestions": 2,
+  "transferSourceQuestionId": null,
+  "voteRound": 1,
+}
+`;
+
+exports[`T-01 Golden: initial state snapshot > phase transitions table (golden) 1`] = `
+{
+  "DISCUSSION": [
+    "REVOTE_OPEN",
+    "QUESTION_OPEN",
+    "ENDED",
+  ],
+  "ENDED": [],
+  "EXPLANATION_OPEN": [
+    "QUESTION_LOCKED",
+    "ENDED",
+  ],
+  "LEADERBOARD": [
+    "QUESTION_OPEN",
+    "ORB_COLLECT",
+    "ENDED",
+  ],
+  "LOBBY_OPEN": [
+    "THINK_TIME",
+  ],
+  "OBSERVATION": [
+    "EXPLANATION_OPEN",
+    "ENDED",
+  ],
+  "ORB_COLLECT": [
+    "ORB_REVIEW",
+    "ENDED",
+  ],
+  "ORB_REVIEW": [
+    "QUESTION_OPEN",
+    "ENDED",
+  ],
+  "PREDICTION_OPEN": [
+    "OBSERVATION",
+    "ENDED",
+  ],
+  "QUESTION_LOCKED": [
+    "REVEAL",
+    "DISCUSSION",
+    "PREDICTION_OPEN",
+  ],
+  "QUESTION_OPEN": [
+    "QUESTION_LOCKED",
+    "REVEAL",
+  ],
+  "REVEAL": [
+    "QUESTION_OPEN",
+    "LEADERBOARD",
+    "DISCUSSION",
+    "REVOTE_OPEN",
+    "PREDICTION_OPEN",
+    "ORB_COLLECT",
+    "ENDED",
+  ],
+  "REVOTE_OPEN": [
+    "REVEAL",
+    "QUESTION_LOCKED",
+  ],
+  "THINK_TIME": [
+    "QUESTION_OPEN",
+    "QUESTION_LOCKED",
+    "PREDICTION_OPEN",
+  ],
+}
+`;
+
+exports[`T-01 Golden: no answer-key projection (item 7) > participant projection never leaks answer key (golden) 1`] = `
+{
+  "closesAt": null,
+  "isDouble": false,
+  "media": null,
+  "openedAt": null,
+  "options": [
+    {
+      "id": "o_a",
+      "text": "2",
+    },
+    {
+      "id": "o_b",
+      "text": "3",
+    },
+    {
+      "id": "o_c",
+      "text": "4",
+    },
+    {
+      "id": "o_d",
+      "text": "5",
+    },
+  ],
+  "phase": "QUESTION_OPEN",
+  "questionId": "q_01",
+  "revision": undefined,
+  "text": "1 + 1 = ?",
+  "type": "single_choice",
+}
+`;
+
+exports[`T-01 Golden: no answer-key projection (item 7) > publicStateProjection contains no private data (golden) 1`] = `
+{
+  "choreography": null,
+  "closesAt": null,
+  "openedAt": null,
+  "orb": null,
+  "pausedAt": null,
+  "phase": "THINK_TIME",
+  "poe": null,
+  "questionId": "q_01",
+  "questionPosition": 0,
+  "revision": 1,
+  "selfPaced": null,
+  "timerMode": "soft",
+  "totalPausedMs": 0,
+  "totalQuestions": 1,
+}
+`;
+
+exports[`T-01 Golden: preset registry snapshot > registry has exactly the documented presets 1`] = `
+[
+  "classic_live",
+  "formative_check",
+  "minor_safe",
+  "responsive_accuracy",
+  "self_paced_race",
+  "team_challenge",
+]
+`;
+
+exports[`T-01 Golden: scoring > accuracy score policy (golden) 1`] = `
+{
+  "breakdown": {
+    "accepted": true,
+    "base": 0,
+    "creditFraction": 1,
+    "engagementMultiplier": 1,
+    "isCorrect": false,
+    "late": false,
+    "mode": "accuracy",
+    "multiplier": 1,
+    "preEngagement": 0,
+    "scoringVersion": "score_v2",
+    "speed": 0,
+    "total": 0,
+  },
+  "score": 0,
+}
+`;
+
+exports[`T-01 Golden: scoring > participationPoints golden 1`] = `100`;
+
+exports[`T-01 Golden: scoring > speed score policy (golden) 1`] = `
+{
+  "breakdown": {
+    "accepted": true,
+    "base": 0,
+    "creditFraction": 1,
+    "engagementMultiplier": 1,
+    "isCorrect": false,
+    "late": false,
+    "mode": "accuracy",
+    "multiplier": 1,
+    "preEngagement": 0,
+    "scoringVersion": "score_v2",
+    "speed": 0,
+    "total": 0,
+  },
+  "score": 0,
+}
+`;
+
+exports[`T-01 Golden: state-machine event reducer > applyEvent returns deterministic next state for open (golden) 1`] = `
+{
+  "choreography": null,
+  "closesAt": 32000,
+  "discussionEndsAt": null,
+  "discussionInstructions": null,
+  "endedAt": null,
+  "leaderboardVisible": false,
+  "masteryFlowActive": false,
+  "masteryFlowType": null,
+  "openedAt": 2000,
+  "orbFlow": null,
+  "pausedAt": null,
+  "phase": "QUESTION_OPEN",
+  "poeFlow": null,
+  "primaryDirectorId": "d1",
+  "questionId": "q_01",
+  "questionPosition": 1,
+  "revision": 1,
+  "selfPaced": {
+    "active": false,
+    "paused": false,
+    "startedAt": null,
+  },
+  "startedAt": 1000,
+  "timerMode": "soft",
+  "totalPausedMs": 0,
+  "totalQuestions": 1,
+  "transferSourceQuestionId": null,
+  "voteRound": 1,
+}
+`;
+
+exports[`T-01 Golden: state-machine event reducer > replayEvents determinism (golden final state) 1`] = `
+{
+  "choreography": null,
+  "closesAt": 32000,
+  "discussionEndsAt": null,
+  "discussionInstructions": null,
+  "endedAt": null,
+  "leaderboardVisible": false,
+  "masteryFlowActive": false,
+  "masteryFlowType": null,
+  "openedAt": 2000,
+  "orbFlow": null,
+  "pausedAt": null,
+  "phase": "QUESTION_OPEN",
+  "poeFlow": null,
+  "primaryDirectorId": "d1",
+  "questionId": "q_01",
+  "questionPosition": 1,
+  "revision": 1,
+  "selfPaced": {
+    "active": false,
+    "paused": false,
+    "startedAt": null,
+  },
+  "startedAt": 1000,
+  "timerMode": "soft",
+  "totalPausedMs": 0,
+  "totalQuestions": 2,
+  "transferSourceQuestionId": null,
+  "voteRound": 1,
+}
+`;

@@ -1,0 +1,336 @@
+/* ═══════════════════════════════════════════════════════════════
+   S30 — Projector classroom display (back-row readable)
+   Classroom Light / Classroom Dark / High Contrast profillar.
+   cast-projector.css asosida, S30 token override + profillar.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── S30.08: Classroom profillar (body[data-proj-mode]) ── */
+body[data-proj-mode='classroom_dark'] {
+  --proj-bg: #0d1117;
+  --proj-surface: #161b22;
+  --proj-surface-2: rgba(255, 255, 255, 0.06);
+  --proj-text: #f0f4f8;
+  --proj-muted: #aab3c2;
+  --proj-accent: #5fd3ff;
+  --proj-correct: #34d399;
+  --proj-wrong: #ff6b6b;
+  --proj-border: rgba(255, 255, 255, 0.16);
+  --proj-option-bg: #1b2230;
+  --proj-option-hover: #232c3d;
+  --proj-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+}
+
+body[data-proj-mode='classroom_light'] {
+  --proj-bg: #f6f8fb;
+  --proj-surface: #ffffff;
+  --proj-surface-2: rgba(15, 30, 50, 0.06);
+  --proj-text: #10233c;
+  --proj-muted: #43536b;
+  --proj-accent: #0d5fae;
+  --proj-correct: #0a7d4d;
+  --proj-wrong: #c92c3c;
+  --proj-border: rgba(15, 30, 50, 0.18);
+  --proj-option-bg: #ffffff;
+  --proj-option-hover: #eef3f9;
+  --proj-shadow: 0 16px 40px rgba(15, 30, 50, 0.16);
+}
+
+body[data-proj-mode='high_contrast'] {
+  --proj-bg: #000000;
+  --proj-surface: #000000;
+  --proj-surface-2: #ffffff;
+  --proj-text: #ffffff;
+  --proj-muted: #ffffff;
+  --proj-accent: #ffff00;
+  --proj-correct: #00ff66;
+  --proj-wrong: #ff3333;
+  --proj-border: #ffffff;
+  --proj-option-bg: #000000;
+  --proj-option-hover: #1a1a1a;
+  --proj-shadow: none;
+}
+
+/* ── S30.04/09: font-size floor + safe area (4vw/3vh + 16:9/4:3 overscan) ── */
+:root {
+  --proj-safe-x: max(4vw, calc((100vw - 1920px) / 2));
+  --proj-safe-y: max(3vh, calc((100vh - 1080px) / 2));
+  --proj-qsize: clamp(40px, 3.4vw, 64px);
+  --proj-osize: clamp(28px, 2.4vw, 40px);
+  --proj-msize: clamp(24px, 1.8vw, 32px);
+  --proj-csize: clamp(72px, 9vw, 120px);
+}
+
+html, body { background: var(--proj-bg, var(--cast-bg, #0d1117)); }
+
+.cast-page[data-proj-mode] .proj-screen {
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: var(--proj-safe-y, 3vh) var(--proj-safe-x, 4vw);
+  box-sizing: border-box;
+}
+
+/* ── S30.04: o'lcham override (floor: question 40-64, option 28-40, meta >=24, code 72-120) ── */
+.cast-page[data-proj-mode] .proj-code { font-size: var(--proj-csize); letter-spacing: 0.12em; }
+.cast-page[data-proj-mode] .proj-label { font-size: var(--proj-msize); letter-spacing: 4px; }
+.cast-page[data-proj-mode] .proj-link { font-size: var(--proj-msize); }
+.cast-page[data-proj-mode] .proj-count { font-size: var(--proj-msize); }
+.cast-page[data-proj-mode] .proj-q-meta { font-size: var(--proj-msize); margin-bottom: 16px; }
+.cast-page[data-proj-mode] .proj-q-text { font-size: var(--proj-qsize); line-height: 1.25; max-width: 1400px; }
+.cast-page[data-proj-mode] .proj-options { gap: 20px; max-width: 1400px; }
+.cast-page[data-proj-mode] .proj-option { font-size: var(--proj-osize); padding: 22px 28px; }
+.cast-page[data-proj-mode] .proj-option .symbol { min-width: 56px; height: 56px; font-size: 1.5rem; border-radius: 14px; }
+
+/* ── S30.05: solid option surface + shape + letter + text (no shimmer) ── */
+.cast-page[data-proj-mode] .proj-option {
+  background: var(--proj-option-bg, var(--cast-surface));
+  border: 3px solid var(--proj-border, var(--cast-border));
+  color: var(--proj-text, var(--cast-text));
+}
+.cast-page[data-proj-mode] .proj-option .opt-letter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 56px;
+  height: 56px;
+  font-weight: 800;
+  border-radius: 14px;
+  background: var(--proj-surface-2);
+  flex-shrink: 0;
+}
+.cast-page[data-proj-mode] .proj-option.correct {
+  border-color: var(--proj-correct, var(--cast-green));
+  background: var(--proj-surface-2);
+}
+.cast-page[data-proj-mode] .proj-option.correct .opt-letter,
+.cast-page[data-proj-mode] .proj-option.correct .symbol {
+  background: var(--proj-correct);
+  color: #06120c;
+}
+
+/* ── S30.06: timer — number + label + ring, flashing/color-only yo'q ── */
+.cast-page[data-proj-mode] .proj-timer {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 30px;
+  padding: 12px 22px 12px 18px;
+  border: 2px solid var(--proj-border, var(--cast-border));
+  border-radius: 999px;
+  background: var(--proj-surface-2);
+}
+.cast-page[data-proj-mode] .proj-timer-num {
+  font-size: var(--proj-qsize);
+  font-weight: 800;
+  color: var(--proj-text);
+  font-variant-numeric: tabular-nums;
+  min-width: 2ch;
+}
+.cast-page[data-proj-mode] .proj-timer-label {
+  font-size: var(--proj-msize);
+  font-weight: 600;
+  color: var(--proj-muted);
+}
+.cast-page[data-proj-mode] .proj-timer-ring {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--proj-accent, var(--cast-focus));
+}
+/* critical: rang + 'vaqt tugayapti' label — faqat rang EMAS (color-blind safe), flashing yo'q */
+.cast-page[data-proj-mode] .proj-timer.is-critical { border-color: var(--proj-wrong, var(--cast-red)); }
+.cast-page[data-proj-mode] .proj-timer.is-critical .proj-timer-ring {
+  background: var(--proj-wrong, var(--cast-red));
+}
+.cast-page[data-proj-mode] .proj-timer.is-critical .proj-timer-label::after { content: ' — vaqt tugayapti'; font-weight: 700; }
+
+/* ── S30.07: public distribution — max 5 bar ── */
+.cast-page[data-proj-mode] .proj-dist {
+  margin-top: 28px;
+  padding: 24px 32px;
+  max-width: 1100px;
+  width: 100%;
+  text-align: left;
+  background: var(--proj-surface, var(--cast-surface));
+  border: 2px solid var(--proj-border, var(--cast-border));
+}
+.cast-page[data-proj-mode] .proj-dist-title {
+  font-size: var(--proj-msize);
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--proj-text);
+  margin-bottom: 16px;
+}
+.cast-page[data-proj-mode] .proj-dist-row {
+  display: grid;
+  grid-template-columns: 64px 1fr 120px;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.cast-page[data-proj-mode] .proj-dist-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  border-radius: 14px;
+  background: var(--proj-surface-2);
+  color: var(--proj-text);
+}
+.cast-page[data-proj-mode] .proj-dist-track {
+  height: 26px;
+  background: var(--proj-surface-2);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.cast-page[data-proj-mode] .proj-dist-bar {
+  height: 100%;
+  border-radius: 8px;
+  background: var(--proj-accent, var(--cast-focus));
+  min-width: 4px;
+  transition: none; /* static — reduced motion default */
+}
+.cast-page[data-proj-mode] .proj-dist-bar.is-correct { background: var(--proj-correct, var(--cast-green)); }
+.cast-page[data-proj-mode] .proj-dist-num {
+  font-size: var(--proj-msize);
+  font-weight: 800;
+  color: var(--proj-text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── S30.03: kod minimize chip ── */
+.cast-page[data-proj-mode] .proj-code-chip {
+  position: fixed;
+  top: var(--proj-safe-y, 3vh);
+  right: var(--proj-safe-x, 4vw);
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  font-size: var(--proj-msize);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--proj-text);
+  background: var(--proj-surface, var(--cast-surface));
+  border: 2px solid var(--proj-border, var(--cast-border));
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: var(--proj-shadow);
+}
+.cast-page[data-proj-mode] .proj-code-chip .icon-inline { color: var(--proj-accent); }
+
+/* ── S30.02: QR row ── */
+.cast-page[data-proj-mode] .proj-qr-row { margin-bottom: 12px; }
+.cast-page[data-proj-mode] .proj-qr {
+  width: min(26vw, 280px);
+  height: min(26vw, 280px);
+  border-radius: 16px;
+  background: #fff; /* QR har doim oq fon — contrast profillarida ham skan qilinadi */
+  padding: 10px;
+  box-sizing: border-box;
+  border: 2px solid var(--proj-border, var(--cast-border));
+}
+
+/* ── S30.11: reduced motion — scene static, celebration static ── */
+@media (prefers-reduced-motion: reduce) {
+  .cast-page[data-proj-mode] .proj-goal-complete.celebrate { animation: none; transform: none; }
+  .cast-page[data-proj-mode] *, .cast-page[data-proj-mode] *::before, .cast-page[data-proj-mode] *::after {
+    animation-duration: 0.001s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001s !important;
+  }
+}
+
+/* ── S30.09/10: media reflow — 4:3 va 16:9 overscan kompensatsiya ── */
+@media (max-aspect-ratio: 4/3) {
+  .cast-page[data-proj-mode] .proj-screen {
+    padding-left: max(5vw, 60px);
+    padding-right: max(5vw, 60px);
+  }
+  .cast-page[data-proj-mode] .proj-q-text { font-size: min(var(--proj-qsize), 7.5vh); }
+  .cast-page[data-proj-mode] .proj-option { font-size: min(var(--proj-osize), 5.5vh); }
+}
+@media (max-width: 720px) {
+  /* device fallback — telefon/planshet'da projector view minimal */
+  .cast-page[data-proj-mode] .proj-options { grid-template-columns: 1fr; }
+  .cast-page[data-proj-mode] .proj-q-text { font-size: clamp(28px, 6vw, 48px); }
+  .cast-page[data-proj-mode] .proj-option { font-size: clamp(20px, 4.5vw, 32px); padding: 14px 18px; }
+  .cast-page[data-proj-mode] .proj-option .symbol, .cast-page[data-proj-mode] .proj-option .opt-letter { min-width: 40px; height: 40px; font-size: 1.1rem; }
+  .cast-page[data-proj-mode] .proj-dist-row { grid-template-columns: 44px 1fr 90px; gap: 10px; }
+  .cast-page[data-proj-mode] .proj-dist-symbol { width: 40px; height: 40px; font-size: 1.1rem; }
+}
+
+/* ═══ STYLE S32 — Public Top-N leaderboard (projector) ═══ */
+.cast-page[data-proj-mode] .proj-leaderboard {
+  margin: clamp(12px, 2vh, 24px) auto 0;
+  width: min(92vw, 680px);
+  padding: clamp(12px, 2vh, 20px) clamp(14px, 2vw, 24px);
+  border-radius: var(--proj-radius, 20px);
+  background: var(--proj-surface, rgba(23, 27, 40, 0.92));
+  border: 1px solid var(--proj-border, rgba(255, 255, 255, 0.14));
+}
+
+.cast-page[data-proj-mode] .proj-leaderboard-title {
+  font-size: clamp(18px, 2vw, 24px);
+  font-weight: 700;
+  margin-bottom: clamp(8px, 1.2vh, 14px);
+  color: var(--proj-text, #f2f4f8);
+}
+
+/* Projector'da lb-row — proj tokenlari bilan (katta ekran) */
+.cast-page[data-proj-mode] .lb-row {
+  min-height: clamp(40px, 5.2vh, 56px);
+  font-size: clamp(16px, 1.6vw, 20px);
+  background: var(--proj-surface-raised, rgba(40, 46, 68, 0.85));
+}
+
+.cast-page[data-proj-mode] .lb-rank-num {
+  min-width: clamp(32px, 4vw, 44px);
+  height: clamp(32px, 4vw, 44px);
+  font-size: clamp(14px, 1.4vw, 18px);
+}
+
+/* Proj light / high-contrast profil moslashuvi */
+.cast-page[data-proj-mode="classroom_light"] .proj-leaderboard {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(15, 20, 40, 0.16);
+}
+.cast-page[data-proj-mode="classroom_light"] .proj-leaderboard-title {
+  color: #17202c;
+}
+.cast-page[data-proj-mode="classroom_light"] .lb-row {
+  background: #eef1f8;
+  color: #17202c;
+}
+.cast-page[data-proj-mode="classroom_light"] .lb-name {
+  color: #17202c;
+}
+.cast-page[data-proj-mode="classroom_light"] .lb-score {
+  color: #44506b;
+}
+
+.cast-page[data-proj-mode="classroom_high_contrast"] .proj-leaderboard {
+  background: #000;
+  border-color: #fff;
+}
+.cast-page[data-proj-mode="classroom_high_contrast"] .lb-row {
+  background: #000;
+  border: 1px solid #fff;
+}
+.cast-page[data-proj-mode="classroom_high_contrast"] .lb-name,
+.cast-page[data-proj-mode="classroom_high_contrast"] .lb-score {
+  color: #fff;
+}
+
+/* Reduced motion — leaderboard stagger'ni o'chiradi */
+@media (prefers-reduced-motion: reduce) {
+  .cast-page[data-proj-mode] .lb-row {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

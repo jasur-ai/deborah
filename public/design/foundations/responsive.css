@@ -1,0 +1,190 @@
+/*
+ * STYLE STEP 20 — Responsive, container queries, safe areas va input modality.
+ * Mobile-first: default holat to'liq usable — container/enhancement qatlamlari
+ * @supports bilan himoyalangan (S20.12).
+ */
+
+/* ═══════════════════════════════════════════════════════════
+   S20.03 — Dynamic viewport height
+   Mobile full-page flowlar 100vh emas — svh/dvh ishlatadi
+   (keyboard + address bar o'zgarishiga moslashadi).
+   ═══════════════════════════════════════════════════════════ */
+.vh-full { min-height: 100vh; min-height: 100svh; }
+@supports (height: 100dvh) {
+  .vh-dynamic { min-height: 100dvh; }
+}
+.vh-fill { height: 100vh; height: 100svh; }
+@supports (height: 100dvh) {
+  .vh-fill-dynamic { height: 100dvh; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   S20.04 — Safe area util'lar
+   Home indicator / notch / landscape insets. Cast & PWA viewlar
+   viewport-fit=cover ishlatadi.
+   ═══════════════════════════════════════════════════════════ */
+.safe-pb { padding-bottom: env(safe-area-inset-bottom, 0px); }
+.safe-pt { padding-top: env(safe-area-inset-top, 0px); }
+.safe-px {
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+/* Bottom fixed controls — home indicator ustida qoladi */
+.safe-controls {
+  padding-bottom: max(var(--deborah-spacing-3, 12px), env(safe-area-inset-bottom, 0px));
+}
+/* Landscape: top/side notch chetlari */
+@media (orientation: landscape) {
+  .safe-landscape {
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   S20.01 — Container query foundation (S20.02 breakpoints)
+   Card/toolbar componentlari viewport emas, o'z container'iga
+   qarab moslashadi. Support yo'q bo'lsa default (mobile-first)
+   to'liq usable qoladi (S20.12).
+   ═══════════════════════════════════════════════════════════ */
+@supports (container-type: inline-size) {
+  /* Test card — panelda tor/ensiz joylashuv */
+  .cq-test-card { container-type: inline-size; }
+  /* Library row (S26) — test kutubxonasi tor joylashuv */
+  .ws-lib-row { container-type: inline-size; }
+  /* Metric / evidence card — director evidence paneli */
+  .cq-metric-card { container-type: inline-size; }
+  /* Mode card — studio/rejim tanlash gridi */
+  .cq-mode-card { container-type: inline-size; }
+  /* Action toolbar — tugmalar clusteri */
+  .cq-toolbar { container-type: inline-size; }
+
+  /* Test card: tor container'da ustun, kengida qator (S20.02)
+     Panel (views/user/panel.ejs) test-card'lariga cq-test-card ulangan. */
+  @container (max-width: 360px) {
+    .cq-test-card {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--deborah-spacing-3, 12px);
+    }
+    .cq-test-card .tc-actions { justify-content: flex-start; }
+    .ws-lib-row {
+      grid-template-columns: 1fr;
+      gap: var(--deborah-spacing-3, 12px);
+    }
+    .ws-lib-actions {
+      grid-column: 1 / -1;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+    }
+  }
+  /* Metric card: juda tor bo'lsa context yashirinadi — qiymat yetakchi */
+  @container (max-width: 240px) {
+    .cq-metric-card .ev-metric-context { display: none; }
+  }
+  /* Mode card: tor grid 1 ustun, keng 3 ustun */
+  @container (min-width: 480px) {
+    .cq-mode-card .mode-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @container (max-width: 479px) {
+    .cq-mode-card .mode-grid { grid-template-columns: 1fr; }
+  }
+  /* Action toolbar: tor container'da tugmalar ustunga, label'lar
+     qisqaradi — functionality yo'qolmaydi (S20.09) */
+  @container (max-width: 420px) {
+    .cq-toolbar .toolbar-group { flex-wrap: wrap; }
+    .cq-toolbar .toolbar-group .btn-label { display: none; }
+    .cq-toolbar .toolbar-group .btn-icon { margin-right: 0; }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   S20.05 — Input modality: pointer va hover
+   Hover enhancements faqat fine pointer'da (touch'da hover
+   yopishqoq bo'lmaydi). Coarse pointer'da target/spacing
+   kattalashtiriladi (>= 48px).
+   ═══════════════════════════════════════════════════════════ */
+@media (hover: hover) and (pointer: fine) {
+  .hover-lift { transition: transform 160ms ease, box-shadow 160ms ease; }
+  .hover-lift:hover { transform: translateY(-2px); }
+}
+
+@media (pointer: coarse) {
+  /* Touch: kichik interaktiv elementlar uchun min target 48px */
+  .coarse-target {
+    min-height: 48px;
+    min-width: 48px;
+  }
+  .coarse-spaced { gap: var(--deborah-spacing-3, 12px); }
+  /* Tooltip hover-only emas — tap'da ham ko'rinadi (S19.07) */
+  [data-tip]::after { pointer-events: none; }
+}
+
+/* S20.01 — Preference media feature: reduced motion (motion) */
+@media (prefers-reduced-motion: reduce) {
+  .hover-lift { transition: none; }
+  .hover-lift:hover { transform: none; }
+  .ev-dist-bar, .ev-pair-bar { animation: none !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   S20.08 — Ultra-wide guard
+   Contentni cheksiz cho'zmaydi: workspace max 1440-1600px,
+   reading column 65ch (layout.css container tokenlarida).
+   Ultra-wide'da giper-keng satrlarning oldini olish.
+   ═══════════════════════════════════════════════════════════ */
+@media (min-width: 1600px) {
+  .container-workspace { max-width: var(--deborah-container-workspace-wide, 1440px); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   S20.11 — Zoom va text spacing guard
+   200%/400% zoom + text spacing'da ikki o'lchamli scroll
+   critical page'larda paydo bo'lmasligi (E2E'da tekshiriladi).
+   ═══════════════════════════════════════════════════════════ */
+.zoom-safe {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  min-width: 0;
+}
+/* Text spacing ko'tarilganda fixed header/drawer content'ni kesmasin */
+.zoom-safe header,
+.zoom-safe nav,
+.zoom-safe .shell-sidebar {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ── S13 mobil qatlam (BUG-080/081/082/083) ── */
+@media (max-width: 640px) {
+  /* BUG-080: iOS fokus auto-zoom — matn maydonlari kamida 16px shrift */
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='submit']):not([type='button']):not([type='file']):not([type='image']):not([type='color']),
+  select,
+  textarea {
+    font-size: max(16px, 1em) !important;
+  }
+  /* BUG-081: WCAG 2.5.8 (AA) — belgi nishonlari ≥24px */
+  input[type='checkbox'],
+  input[type='radio'] {
+    min-width: 24px;
+    min-height: 24px;
+  }
+  /* BUG-082: tugma/select nishon balandligi ≥24px (lib .sel 19px, .adm-btn 21px, auJourney 19px) */
+  button,
+  select {
+    min-height: 24px;
+  }
+  /* BUG-083: ikon-tugmalar minimal o'lchami (hamburger 18px, refresh 14×14) */
+  button,
+  [role='button'] {
+    min-width: 24px;
+  }
+  /* BUG-083: logo-link nishoni ≥24px (login/register 16×32, portfolio 82×13 —
+     style.css tizimidagi sahifalarda .nav-logo inline, min-height no-op edi) */
+  a.nav-logo {
+    display: inline-flex;
+    align-items: center;
+    min-width: 24px;
+    min-height: 24px;
+  }
+}

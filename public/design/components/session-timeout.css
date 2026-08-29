@@ -1,0 +1,108 @@
+/* ═══════════════════════════════════════════════════════════════
+   Session Timeout Component (AUTH A-02)
+   ---------------------------------------------------------------
+   Idle timeout ogohlantirishi — sessiya tugashidan 60 soniya oldin.
+   - role="alertdialog" + aria-live (a11y)
+   - Desktop: markaziy dialog
+   - Mobile (≤640px): pastki yumshoq banner (bloklamaydi)
+   Semantic tokenlardan foydalanadi; inline CSS yo'q.
+   Cascade layer: components
+   ═══════════════════════════════════════════════════════════════ */
+
+@layer components {
+  .session-timeout-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-dialog, 9500);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: var(--deborah-semantic-color-surface-scrim, rgba(4, 8, 20, 0.55));
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.18s ease, visibility 0.18s ease;
+  }
+  .session-timeout-backdrop.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .session-timeout-dialog {
+    width: min(92vw, 440px);
+    background: var(--deborah-semantic-color-surface-raised, #0f1630);
+    border: 1px solid var(--deborah-semantic-color-border-default, #2c3346);
+    border-radius: var(--deborah-radius-lg, 14px);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.4);
+    padding: 22px 22px 18px;
+    transform: translateY(8px);
+    transition: transform 0.18s ease;
+  }
+  .session-timeout-backdrop.is-open .session-timeout-dialog {
+    transform: translateY(0);
+  }
+
+  .session-timeout-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.02rem;
+    font-weight: 800;
+    color: var(--deborah-semantic-color-text-primary, #f2f4f8);
+    margin-bottom: 8px;
+  }
+  .session-timeout-title svg {
+    color: var(--deborah-semantic-color-status-warning, #f2b84b);
+    flex-shrink: 0;
+  }
+
+  .session-timeout-body {
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--deborah-semantic-color-text-secondary, #a9b1c4);
+    margin-bottom: 14px;
+  }
+
+  .session-timeout-count {
+    font-weight: 800;
+    color: var(--deborah-semantic-color-text-primary, #f2f4f8);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .session-timeout-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+  .session-timeout-actions .btn {
+    min-width: 128px;
+  }
+
+  /* ── Mobile: yumshoq pastki banner (sahifani bloklamaydi) ── */
+  @media (max-width: 640px) {
+    .session-timeout-backdrop {
+      align-items: flex-end;
+      padding: 12px;
+      background: var(--deborah-semantic-color-surface-scrim, rgba(4, 8, 20, 0.55));
+    }
+    .session-timeout-dialog {
+      width: 100%;
+      border-radius: var(--deborah-radius-lg, 14px);
+      padding: 16px;
+      box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.35);
+    }
+    .session-timeout-actions .btn {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  /* Harakat imkoniyatini kamaytirgan foydalanuvchilar uchun */
+  @media (prefers-reduced-motion: reduce) {
+    .session-timeout-backdrop,
+    .session-timeout-dialog {
+      transition: none;
+    }
+  }
+}

@@ -1,0 +1,66 @@
+# Deborah — CI Test Pipeline
+#
+# Runs on push and pull request to main branch.
+# Steps: lint → unit → integration → existing security/vip tests.
+
+name: Deborah CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        # Node 18 chiqarildi: vitest 4 (rolldown) 'styleText' ni talab qiladi,
+        # u faqat Node >= 20.12 da mavjud (Node 18'da CI yiqiladi).
+        node-version: [20, 22]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # E2E cast testlari (vitest ichida) playwright brauzerini ishga tushiradi —
+      # CI runner'ida Chromium yo'qligi "Executable doesn't exist" xatosi beradi.
+      # `--with-deps` emas — ubuntu-latest'da deps preinstalled, apt esa sekin.
+      - name: Install Playwright browsers
+        run: npx playwright install chromium
+
+      - name: TypeScript typecheck
+        run: npm run typecheck
+
+      - name: Unit & Integration tests
+        run: npm run test:ci
+        env:
+          NODE_ENV: test
+          SESSION_SECRET: ci-secret-for-testing
+
+      - name: Security tests (XSS)
+        run: npm run test:security
+
+      - name: Reliability drills (load/chaos/backup-restore)
+        run: npm run test:reliability
+        env:
+          NODE_ENV: test
+          SESSION_SECRET: ci-secret-for-testing
+
+      - name: Release readiness (sign-off + migration rehearsal)
+        run: node scripts/release-signoff.js --rehearsal && node scripts/final-migration.js --rehearsal
+
+      - name: VIP browser tests
+        run: npm run test:vip
+        env:
+          PORT: 3458

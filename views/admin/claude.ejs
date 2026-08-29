@@ -1,0 +1,280 @@
+<% const current = user || {}; %>
+<!DOCTYPE html>
+<html lang="uz" dir="ltr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — Deborah Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body class="adm-body">
+  <div class="adm-shell">
+    <aside class="adm-sidebar">
+      <div class="adm-brand">
+        <img src="/images/logo-vintage.png" alt="Deborah" class="logo-img" style="height:34px;width:auto">
+        <span>Deborah</span>
+      </div>
+      <nav class="adm-nav">
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/users">Users</a>
+        <a href="/admin/claude" class="active">Claude Adapter</a>
+        <a href="/admin/presentations">Presentation Studio</a>
+        <a href="/admin/interventions">Interventions</a>
+        <a href="/admin/vip">VIP</a>
+      </nav>
+      <div class="adm-side-foot">
+        <a href="/admin/logout">Chiqish</a>
+      </div>
+    </aside>
+
+    <main class="adm-main">
+      <header class="adm-topbar">
+        <h1>Claude Native Adapter</h1>
+        <span class="adm-chip" id="keyStatus">API key: tekshirilmoqda…</span>
+      </header>
+
+      <!-- Synthesis form -->
+      <section class="adm-card">
+        <h2>Source Synthesis</h2>
+        <p class="adm-hint">Claude'ga source pack'lar asosida canonical deck yaratish (streaming SSE progress). API key serverda — browserga chiqmaydi.</p>
+        <div class="adm-form">
+          <div class="field"><label>Mavzu (title)</label>
+            <input class="input" id="fTitle" placeholder="Fotosintez — 8-sinf">
+          </div>
+          <div class="field"><label>Auditoriya</label>
+            <input class="input" id="fAudience" placeholder="8-sinf">
+          </div>
+          <div class="adm-row">
+            <div class="field"><label>Til</label>
+              <select class="input" id="fLanguage">
+                <option value="uz">O'zbek</option>
+                <option value="ru">Русский</option>
+                <option value="en">English</option>
+                <option value="kk">Қазақша</option>
+                <option value="az">Azərbaycanca</option>
+                <option value="tr">Türkçe</option>
+              </select>
+            </div>
+            <div class="field"><label>Tema</label>
+              <select class="input" id="fTheme">
+                <option value="default">Default</option>
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+                <option value="academic">Academic</option>
+                <option value="playful">Playful</option>
+              </select>
+            </div>
+            <div class="field"><label>Slaydlar</label>
+              <input class="input" id="fSlides" type="number" min="1" max="30" value="10">
+            </div>
+            <div class="field"><label>Uslub</label>
+              <select class="input" id="fTone">
+                <option value="formal">Formal</option>
+                <option value="simple">Simple</option>
+                <option value="engaging">Engaging</option>
+                <option value="exam-prep">Exam-prep</option>
+              </select>
+            </div>
+          </div>
+          <div class="field"><label>Source pack ID lar (vergul bilan)</label>
+            <input class="input" id="fSources" placeholder="1, 2, 3">
+          </div>
+          <div class="adm-row">
+            <button class="btn btn-primary" id="btnSynth">Synthesize Deck</button>
+            <button class="btn" id="btnEnsure">Ensure Providers</button>
+            <span class="adm-hint" id="synthStatus"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Job result -->
+      <section class="adm-card" id="resultCard" style="display:none">
+        <h2>Result</h2>
+        <div class="adm-stats" id="resultStats"></div>
+        <pre class="adm-pre" id="resultDoc" style="max-height:420px;overflow:auto"></pre>
+      </section>
+
+      <!-- Jobs -->
+      <section class="adm-card">
+        <h2>Jobs</h2>
+        <button class="btn" id="btnRefresh">Refresh</button>
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead><tr><th>ID</th><th>Title</th><th>Model</th><th>Status</th><th>Slides</th><th>Cost</th><th>PII</th><th>Created</th><th></th></tr></thead>
+            <tbody id="jobsBody"><tr><td colspan="9" class="adm-muted">Yuklanmoqda…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Dashboard -->
+      <section class="adm-card">
+        <h2>Usage / Providers / Circuit</h2>
+        <div class="adm-stats" id="dashStats"></div>
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead><tr><th>Model</th><th>Status</th><th>Enabled</th><th>Quota/day</th><th>Max tokens</th><th>Temp</th><th></th></tr></thead>
+            <tbody id="provBody"></tbody>
+          </table>
+        </div>
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead><tr><th>Day</th><th>Model</th><th>In</th><th>Out</th><th>Cache W/R</th><th>Cost</th><th>Req</th></tr></thead>
+            <tbody id="usageBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+<script>
+(function () {
+  const CSRF = '<%= csrfToken || "" %>';
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const fmt = (n) => (Number(n) || 0).toFixed(4);
+
+  async function api(path, opts = {}) {
+    const res = await fetch(path, {
+      method: opts.method || 'GET',
+      headers: {
+        'content-type': 'application/json',
+        'X-CSRF-Token': CSRF,
+        ...(opts.headers || {}),
+      },
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    return data;
+  }
+
+  // API key status (no key leak — only presence)
+  async function checkKey() {
+    try {
+      const dash = await api('/api/admin/claude/dashboard');
+      const configured = (dash.providers || []).some((p) => p.enabled);
+      $('keyStatus').textContent = configured ? 'API key: serverda' : 'API key: sozlanmagan (env)';
+      $('keyStatus').className = 'adm-chip ' + (configured ? 'chip-ok' : 'chip-warn');
+    } catch (e) {
+      $('keyStatus').textContent = 'API key: noma\u2018lum';
+    }
+  }
+
+  async function synthesize() {
+    $('synthStatus').textContent = 'Ishlamoqda…';
+    try {
+      const sources = $('fSources').value.split(',').map((s) => Number(s.trim())).filter((n) => Number.isInteger(n) && n > 0);
+      const r = await api('/api/admin/claude/synthesize', {
+        method: 'POST',
+        body: {
+          title: $('fTitle').value,
+          audience: $('fAudience').value,
+          language: $('fLanguage').value,
+          theme: $('fTheme').value,
+          slideCount: Number($('fSlides').value) || 10,
+          tone: $('fTone').value,
+          sources,
+        },
+      });
+      $('synthStatus').textContent = r.cached ? 'Cached (idempotent)' : 'Done ✓';
+      $('resultCard').style.display = '';
+      $('resultStats').innerHTML =
+        `<span><b>Job</b> #${esc(r.jobId)}</span>` +
+        `<span><b>Slides</b> ${(r.document?.slides || []).length}</span>` +
+        `<span><b>Cost</b> $${fmt(r.usage?.cost)}</span>`;
+      $('resultDoc').textContent = JSON.stringify(r.document, null, 2);
+      loadJobs();
+      loadDash();
+    } catch (e) {
+      $('synthStatus').textContent = '✗ ' + e.message;
+    }
+  }
+
+  async function loadJobs() {
+    try {
+      const { jobs } = await api('/api/admin/claude/jobs?limit=20');
+      $('jobsBody').innerHTML = jobs.map((j) => `
+        <tr>
+          <td>#${j.id}</td>
+          <td>${esc(j.title)}</td>
+          <td>${esc(j.model || '-')}</td>
+          <td><span class="chip chip-${j.status === 'completed' ? 'ok' : j.status === 'failed' ? 'err' : 'warn'}">${esc(j.status)}</span></td>
+          <td>${j.canonical_document?.slides?.length ?? '-'}</td>
+          <td>$${fmt(j.usage?.cost)}</td>
+          <td>${j.error ? '✗' : '-'}</td>
+          <td>${esc((j.created_at || '').slice(0, 19))}</td>
+          <td>${j.canonical_document ? `<button class="btn btn-sm" onclick="viewJob(${j.id})">View</button>` : ''}</td>
+        </tr>`).join('') || '<tr><td colspan="9" class="adm-muted">Hozircha job yo\u2018q</td></tr>';
+    } catch (e) { $('jobsBody').innerHTML = `<tr><td colspan="9" class="adm-muted">${esc(e.message)}</td></tr>`; }
+  }
+
+  window.viewJob = async function (id) {
+    try {
+      const j = await api(`/api/admin/claude/jobs/${id}`);
+      $('resultCard').style.display = '';
+      $('resultStats').innerHTML =
+        `<span><b>Job</b> #${esc(j.id)}</span>` +
+        `<span><b>Status</b> ${esc(j.status)}</span>` +
+        `<span><b>Model</b> ${esc(j.model || '-')}</span>` +
+        `<span><b>Cost</b> $${fmt(j.usage?.cost)}</span>` +
+        (j.error ? `<span class="adm-err">✗ ${esc(j.error)}</span>` : '');
+      $('resultDoc').textContent = JSON.stringify(j.canonical_document || j.attribution || {}, null, 2);
+    } catch (e) { alert(e.message); }
+  };
+
+  async function loadDash() {
+    try {
+      const dash = await api('/api/admin/claude/dashboard');
+      const totalCost = (dash.usage || []).reduce((a, u) => a + Number(u.cost_estimate || 0), 0);
+      const totalReq = (dash.usage || []).reduce((a, u) => a + Number(u.request_count || 0), 0);
+      $('dashStats').innerHTML =
+        `<span><b>Models</b> ${(dash.providers || []).length}</span>` +
+        `<span><b>Jobs</b> ${(dash.jobs || []).length}</span>` +
+        `<span><b>Requests</b> ${totalReq}</span>` +
+        `<span><b>Total cost</b> $${fmt(totalCost)}</span>`;
+      $('provBody').innerHTML = (dash.providers || []).map((p) => `
+        <tr>
+          <td>${esc(p.model)}</td>
+          <td><span class="chip chip-${p.status === 'enabled' ? 'ok' : 'warn'}">${esc(p.status)}</span></td>
+          <td>${p.enabled ? '✓' : '—'}</td>
+          <td>${p.quota_limit_daily}</td>
+          <td>${p.max_tokens}</td>
+          <td>${p.temperature}</td>
+          <td><button class="btn btn-sm" onclick="toggleProvider('${esc(p.model)}', ${!p.enabled})">${p.enabled ? 'Disable' : 'Enable'}</button></td>
+        </tr>`).join('') || '<tr><td colspan="7" class="adm-muted">Provider yo\u2018q — Ensure tugmasini bosing</td></tr>';
+      $('usageBody').innerHTML = (dash.usage || []).map((u) => `
+        <tr>
+          <td>${esc(u.day)}</td>
+          <td>${esc(u.model)}</td>
+          <td>${u.input_tokens}</td>
+          <td>${u.output_tokens}</td>
+          <td>${u.cache_creation_tokens}/${u.cache_read_tokens}</td>
+          <td>$${fmt(u.cost_estimate)}</td>
+          <td>${u.request_count}</td>
+        </tr>`).join('') || '<tr><td colspan="7" class="adm-muted">Usage yo\u2018q</td></tr>';
+    } catch (e) { /* ignore */ }
+  }
+
+  window.toggleProvider = async function (model, enabled) {
+    try {
+      await api(`/api/admin/claude/providers/${encodeURIComponent(model)}`, { method: 'POST', body: { enabled } });
+      loadDash();
+    } catch (e) { alert(e.message); }
+  };
+
+  $('btnSynth').addEventListener('click', synthesize);
+  $('btnRefresh').addEventListener('click', () => { loadJobs(); loadDash(); });
+  $('btnEnsure').addEventListener('click', async () => {
+    try { await api('/api/admin/claude/providers/ensure', { method: 'POST', body: {} }); loadDash(); }
+    catch (e) { alert(e.message); }
+  });
+
+  checkKey();
+  loadJobs();
+  loadDash();
+})();
+</script>
+</body>
+</html>

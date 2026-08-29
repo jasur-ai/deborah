@@ -1,0 +1,472 @@
+/* ═══════════════════════════════════════════════════════════════
+   Deborah — Cast Setup Studio (STEP 28)
+   Token-based dialog: mode radio cards, essentials/advanced,
+   preset summary, preflight summaries, governance locks, focus.
+   S28.11: raw colors yo'q — hammasi deborah semantic token'lardan.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── S28.01 Overlay + dialog (desktop 880–960px) ── */
+.cast-studio-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: var(--deborah-semantic-color-surface-scrim, rgba(2, 6, 16, 0.6));
+  backdrop-filter: blur(8px);
+}
+.cast-studio-overlay.open { display: flex; }
+
+.cast-studio-dialog {
+  background: var(--deborah-semantic-color-surface-raised);
+  border: 1px solid var(--deborah-semantic-color-border-subtle);
+  border-radius: var(--deborah-radius-lg, 20px);
+  width: 100%;
+  max-width: 960px;
+  max-height: 92vh;
+  box-shadow: var(--shadow-xl, 0 24px 70px rgba(0, 0, 0, 0.45));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Header ── */
+.cast-studio-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: var(--deborah-spacing-5, 20px) var(--deborah-spacing-6, 24px);
+  border-bottom: 1px solid var(--deborah-semantic-color-border-subtle);
+  background: var(--deborah-semantic-color-surface-raised);
+}
+.cast-studio-heading { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.cast-studio-heading-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--deborah-radius-md, 12px);
+  background: var(--deborah-semantic-color-action-primary-soft);
+  color: var(--deborah-semantic-color-action-primary);
+  flex-shrink: 0;
+}
+.cast-studio-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--deborah-semantic-color-text-primary);
+  line-height: 1.2;
+}
+.cast-studio-meta {
+  margin: 2px 0 0;
+  font-size: 0.78rem;
+  color: var(--deborah-semantic-color-text-muted);
+  font-weight: 600;
+}
+.cast-studio-close {
+  flex-shrink: 0;
+}
+
+/* ── Body ── */
+.cast-studio-body {
+  padding: var(--deborah-spacing-5, 20px) var(--deborah-spacing-6, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--deborah-spacing-4, 16px);
+  overflow-y: auto;
+  min-height: 200px;
+}
+
+/* Loading / error */
+.cast-studio-loading {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--deborah-semantic-color-text-muted);
+  font-weight: 700;
+}
+.cast-studio-loading .spinner {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--deborah-semantic-color-border-default);
+  border-top-color: var(--deborah-semantic-color-action-primary);
+  border-radius: 50%;
+  animation: cast-spin 0.8s linear infinite;
+  margin-bottom: 10px;
+}
+@keyframes cast-spin { to { transform: rotate(360deg); } }
+
+.cast-studio-error {
+  padding: 24px;
+  text-align: center;
+  color: var(--deborah-semantic-color-status-danger);
+  font-weight: 600;
+}
+.cast-studio-error button {
+  margin-top: 12px;
+  background: var(--deborah-semantic-color-surface-nested);
+  border: 1px solid var(--deborah-semantic-color-border-default);
+  color: var(--deborah-semantic-color-text-primary);
+  border-radius: var(--deborah-radius-sm, 10px);
+  padding: 8px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+/* ── S28.02/03 Mode radio cards (neutral, no rainbow) ── */
+.cast-modes-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--deborah-semantic-color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+.cast-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cast-mode-card {
+  border: 2px solid var(--deborah-semantic-color-border-subtle);
+  background: var(--deborah-semantic-color-surface-nested);
+  border-radius: var(--deborah-radius-md, 12px);
+  padding: 12px 14px;
+  cursor: pointer;
+  text-align: left;
+  min-height: 44px;
+  transition: border-color 120ms ease, background-color 120ms ease, box-shadow 120ms ease;
+}
+.cast-mode-card:hover {
+  border-color: var(--deborah-semantic-color-border-default);
+  background: var(--deborah-semantic-color-surface-default);
+}
+.cast-mode-card.selected {
+  border-color: var(--deborah-semantic-color-action-primary-border);
+  background: var(--deborah-semantic-color-action-primary-soft);
+  box-shadow: 0 0 0 1px var(--deborah-semantic-color-action-primary-border);
+}
+/* Native radio (S28.02) — ko'zga ko'rinmaydi lekin fokus/hit uchun mavjud */
+.cast-mode-card input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.cast-mode-card:has(input[type="radio"]:focus-visible) {
+  outline: 2px solid var(--deborah-semantic-color-focus);
+  outline-offset: 2px;
+}
+.cast-mode-card .mc-name {
+  font-weight: 700;
+  font-size: 0.86rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--deborah-semantic-color-text-primary);
+}
+.cast-mode-card .mc-name .icon-inline { color: var(--deborah-semantic-color-action-primary); }
+.cast-mode-card .mc-desc { font-size: 0.72rem; color: var(--deborah-semantic-color-text-muted); font-weight: 600; margin-top: 3px; }
+.cast-mode-card .mc-rec {
+  font-size: 0.6rem;
+  background: var(--deborah-semantic-color-status-success-soft);
+  color: var(--deborah-semantic-color-status-success);
+  border-radius: 50px;
+  padding: 2px 8px;
+  font-weight: 700;
+  margin-left: 6px;
+  letter-spacing: 0.3px;
+}
+
+/* ── S28.05 Preset summary bar + customized badge + Reset ── */
+.cast-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-4, 16px);
+  border: 1px solid var(--deborah-semantic-color-border-subtle);
+  border-radius: var(--deborah-radius-md, 12px);
+  background: var(--deborah-semantic-color-surface-nested);
+}
+.cast-summary-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--deborah-semantic-color-text-secondary);
+}
+.cast-summary-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--deborah-semantic-color-text-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.cast-summary .cs-customized {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--deborah-semantic-color-action-insight);
+  background: var(--deborah-semantic-color-action-primary-soft);
+  border-radius: 50px;
+  padding: 2px 9px;
+  letter-spacing: 0.3px;
+}
+.cast-summary .cs-reset {
+  margin-left: auto;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--deborah-semantic-color-action-primary);
+  background: transparent;
+  border: 1px solid var(--deborah-semantic-color-border-default);
+  border-radius: var(--deborah-radius-sm, 10px);
+  padding: 6px 14px;
+  min-height: 36px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+.cast-summary .cs-reset:hover { background: var(--deborah-semantic-color-action-primary-soft); border-color: var(--deborah-semantic-color-action-primary-border); }
+
+/* ── S28.04 Essentials + Advanced accordion ── */
+.cast-studio-section {
+  border-top: 1px solid var(--deborah-semantic-color-border-subtle);
+  padding-top: 14px;
+}
+.cs-field {
+  margin-bottom: 12px;
+}
+.cs-field > label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--deborah-semantic-color-text-secondary);
+  margin-bottom: 5px;
+}
+.cast-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.cast-chip {
+  border: 1.5px solid var(--deborah-semantic-color-border-default);
+  background: var(--deborah-semantic-color-surface-nested);
+  color: var(--deborah-semantic-color-text-primary);
+  border-radius: 50px;
+  padding: var(--deborah-spacing-2, 8px) 13px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 36px;
+  transition: border-color 120ms ease, background-color 120ms ease, color 120ms ease;
+}
+.cast-chip:hover { border-color: var(--deborah-semantic-color-action-primary-border); }
+.cast-chip.selected {
+  border-color: var(--deborah-semantic-color-action-primary-border);
+  background: var(--deborah-semantic-color-action-primary-soft);
+  color: var(--deborah-semantic-color-action-primary);
+}
+.cast-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cast-num-input {
+  background: var(--deborah-semantic-color-surface-input);
+  border: 1.5px solid var(--deborah-semantic-color-border-default);
+  color: var(--deborah-semantic-color-text-primary);
+  border-radius: var(--deborah-radius-sm, 10px);
+  padding: 8px 10px;
+  font-weight: 700;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 44px;
+}
+.cast-num-input:focus { outline: none; border-color: var(--deborah-semantic-color-action-primary); box-shadow: 0 0 0 3px var(--deborah-semantic-color-focus); }
+
+/* Advanced accordion */
+.cs-advanced { margin-top: 4px; }
+.cs-advanced-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--deborah-semantic-color-text-secondary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 8px 0;
+  cursor: pointer;
+  min-height: 44px;
+  text-align: left;
+}
+.cs-advanced-toggle .icon-inline { color: var(--deborah-semantic-color-action-primary); transition: transform 120ms ease; }
+.cs-advanced[aria-expanded="false"] .cs-advanced-toggle .icon-inline { transform: rotate(-90deg); }
+.cs-advanced-panel { display: none; }
+.cs-advanced[aria-expanded="true"] .cs-advanced-panel { display: block; }
+
+/* ── Governance lock (S28.08: hidden emas — marker + izoh) ── */
+.cs-locked {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--deborah-semantic-color-text-muted);
+  background: var(--deborah-semantic-color-surface-nested);
+  border: 1px dashed var(--deborah-semantic-color-border-default);
+  border-radius: 50px;
+  padding: 1px 8px;
+  margin-left: 4px;
+  letter-spacing: 0.2px;
+}
+.cs-locked .icon-inline { color: var(--deborah-semantic-color-text-muted); }
+.cs-locked-chip {
+  position: relative;
+  border-style: dashed;
+  opacity: 0.72;
+  cursor: not-allowed;
+  padding-right: 22px;
+}
+.cs-locked-chip::after {
+  content: '';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--deborah-semantic-color-text-muted);
+}
+.cs-gov-banner {
+  display: flex;
+  gap: 10px;
+  padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-4, 16px);
+  border: 1px solid var(--deborah-semantic-color-border-subtle);
+  border-radius: var(--deborah-radius-md, 12px);
+  background: var(--deborah-semantic-color-surface-nested);
+}
+.cs-gov-banner .icon-inline { color: var(--deborah-semantic-color-text-muted); flex-shrink: 0; margin-top: 1px; }
+.cs-gov-banner strong { font-size: 0.78rem; color: var(--deborah-semantic-color-text-secondary); }
+.cs-gov-banner p { margin: 2px 0 0; font-size: 0.74rem; color: var(--deborah-semantic-color-text-muted); line-height: 1.6; font-weight: 600; }
+.cs-gov-banner code { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; }
+
+/* ── S28.06/07 Preflight summaries (danger/amber/info, icon+title+action) ── */
+.cs-preflight { display: flex; flex-direction: column; gap: 8px; }
+.cs-summary-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  border-radius: var(--deborah-radius-md, 12px);
+  padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-4, 16px);
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.55;
+}
+.cs-summary-item .icon-inline { flex-shrink: 0; margin-top: 1px; }
+.cs-summary-item.cs-title { font-weight: 700; }
+.cs-summary-item--danger {
+  background: var(--deborah-semantic-color-status-danger-soft);
+  border: 1px solid var(--deborah-semantic-color-status-danger);
+  color: var(--deborah-semantic-color-status-danger);
+}
+.cs-summary-item--warning {
+  background: var(--deborah-semantic-color-status-warning-soft);
+  border: 1px solid var(--deborah-semantic-color-status-warning);
+  color: var(--deborah-semantic-color-status-warning);
+}
+.cs-summary-item--info {
+  background: var(--deborah-semantic-color-action-primary-soft);
+  border: 1px solid var(--deborah-semantic-color-action-primary-border);
+  color: var(--deborah-semantic-color-action-primary);
+}
+.cs-summary-item--neutral {
+  background: var(--deborah-semantic-color-surface-nested);
+  border: 1px solid var(--deborah-semantic-color-border-subtle);
+  color: var(--deborah-semantic-color-text-secondary);
+}
+.cs-summary-actions { display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+.cs-summary-actions .cs-action-btn {
+  font-size: 0.74rem;
+  font-weight: 700;
+  border-radius: var(--deborah-radius-sm, 10px);
+  padding: 6px 12px;
+  min-height: 34px;
+  cursor: pointer;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  transition: background-color 120ms ease;
+}
+.cs-summary-actions .cs-action-btn:hover { background: rgba(127, 127, 127, 0.12); }
+
+/* Duration / privacy / a11y info chips */
+.cs-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+/* ── Dirty state dot (S28.09) ── */
+.cs-dirty-dot {
+  display: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--deborah-semantic-color-action-insight);
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.cast-studio-overlay.is-dirty .cs-dirty-dot { display: inline-block; }
+
+/* ── Footer (sticky, S28.06) ── */
+.cast-studio-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: var(--deborah-spacing-4, 16px) var(--deborah-spacing-6, 24px);
+  border-top: 1px solid var(--deborah-semantic-color-border-subtle);
+  background: var(--deborah-semantic-color-surface-raised);
+}
+.cast-studio-footer-status {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--deborah-semantic-color-text-muted);
+}
+.cast-studio-footer-actions { display: flex; gap: 10px; }
+
+/* ── S28.10 Launch pending (label saqlanadi) ── */
+.cast-studio-launch[aria-busy="true"] {
+  opacity: 0.75;
+  cursor: progress;
+}
+.cast-studio-launch[aria-busy="true"] .cs-launch-spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: cast-spin 0.7s linear infinite;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.cast-studio-launch .cs-launch-spinner { display: none; }
+
+/* ── S28.01 Mobile: full-screen sheet ── */
+@media (max-width: 640px) {
+  .cast-studio-overlay { padding: 0; align-items: flex-end; }
+  .cast-studio-dialog {
+    max-width: none;
+    max-height: none;
+    height: 92dvh;
+    border-radius: var(--deborah-radius-lg, 20px) var(--deborah-radius-lg, 20px) 0 0;
+    border-bottom: none;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .cast-modes { grid-template-columns: 1fr; }
+  .cast-row { grid-template-columns: 1fr; }
+  .cs-info-grid { grid-template-columns: 1fr; }
+  .cast-studio-body { padding: var(--deborah-spacing-4, 16px); }
+  .cast-studio-header, .cast-studio-footer { padding: var(--deborah-spacing-4, 16px); }
+}

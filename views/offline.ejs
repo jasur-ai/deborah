@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <%- include('partials/head') %>
+  <style>
+    /* S34.06: Offline — reconnect status + retry + cached actions (Evidence Mark) */
+    /* S36.01: offline sahifa dark-optimized — light mode'da ham dark fon (text contrast barqaror) */
+    .offline-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:#080C1A;color:#E8EDF7;}
+    .offline-page .offline-box{width:100%;max-width:440px;text-align:center;}
+    .offline-mark{width:56px;height:56px;margin:0 auto 18px;opacity:.95;display:block;}
+    /* S36.01: sahifa dark-optimized — theme tokenlari (light'da dark ink beradi) ishlatilmaydi */
+    .offline-title{font-size:1.25rem;font-weight:800;color:#F2F4F8;margin-bottom:8px;}
+    .offline-desc{font-size:.92rem;line-height:1.65;color:#A8B0C4;margin-bottom:6px;}
+    .offline-status{display:inline-flex;align-items:center;gap:8px;margin-top:10px;font-size:.8rem;font-weight:600;color:#52D0D8;}
+    .offline-status .dot{width:9px;height:9px;border-radius:50%;background:var(--deborah-semantic-color-action-signal, #52D0D8);animation:offline-blink 1.6s ease-in-out infinite;}
+    @keyframes offline-blink{0%,100%{opacity:1}50%{opacity:.35}}
+    @media (prefers-reduced-motion: reduce){.offline-status .dot{animation:none;}}
+    .offline-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+    .offline-actions .btn{min-height:44px;}
+    .offline-cached{margin-top:22px;padding-top:16px;border-top:1px solid var(--deborah-semantic-color-border-subtle, #2C3346);}
+    .offline-cached-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#B8C1DC;margin-bottom:8px;}
+    .offline-cached a{display:inline-flex;align-items:center;gap:6px;color:#7AA8FF;font-size:.85rem;font-weight:600;text-decoration:none;margin:0 6px 6px 0;padding:6px 10px;border-radius:8px;background:#0F1630;border:1px solid #2C3346;}
+    .offline-cached a:hover{background:#131B3A;}
+  </style>
+</head>
+<body>
+  <div class="offline-page">
+    <div class="offline-box">
+      <img src="/images/brand/evidence-mark.svg" alt="Deborah" class="offline-mark" width="56" height="56">
+      <h1 class="offline-title">Siz oflaynsiz</h1>
+      <p class="offline-desc">Hozircha internetga ulanish yo'q. Ulanish tiklanganda sahifalar avtomatik yangilanadi.</p>
+      <div class="offline-status" role="status" aria-live="polite" id="offline-status">
+        <span class="dot" aria-hidden="true"></span>
+        <span id="offline-status-text">Ulanish qidirilmoqda…</span>
+      </div>
+      <div class="offline-actions">
+        <button type="button" class="btn btn-primary" id="offline-retry"><%- icon('refresh', 16) %> Qayta urinish</button>
+        <a href="/" class="btn btn-quiet">Bosh sahifa</a>
+      </div>
+      <div class="offline-cached">
+        <div class="offline-cached-title">Oflayn rejimda ham mavjud</div>
+        <a href="/"><%- icon('home', 14) %> Bosh sahifa</a>
+        <a href="/user/login"><%- icon('logIn', 14) %> Kirish</a>
+        <a href="/admin/login"><%- icon('shield', 14) %> Admin</a>
+      </div>
+    </div>
+  </div>
+  <script>
+    // S34.06: reconnect detection — online bo'lganda avtomatik yangilash
+    (function () {
+      var statusEl = document.getElementById('offline-status-text');
+      var retry = document.getElementById('offline-retry');
+      function update() {
+        if (navigator.onLine) {
+          statusEl.textContent = 'Ulanish tiklandi — sahifa yangilanmoqda…';
+          setTimeout(function () { location.reload(); }, 600);
+        } else {
+          statusEl.textContent = 'Ulanish qidirilmoqda…';
+        }
+      }
+      window.addEventListener('online', update);
+      window.addEventListener('offline', update);
+      if (retry) retry.addEventListener('click', function () { update(); location.reload(); });
+      update();
+    })();
+  </script>
+</body>
+</html>

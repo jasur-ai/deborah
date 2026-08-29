@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <style>
+    body{background:var(--deborah-semantic-color-surface-default);min-height:100vh;transition:background .3s;}
+    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 55% 40% at 15% 20%,rgba(37,99,235,.1) 0%,transparent 65%),radial-gradient(ellipse 45% 35% at 85% 75%,rgba(56,189,248,.07) 0%,transparent 65%);}
+    .navbar{position:sticky;top:0;z-index:100;background:var(--bg-overlay);backdrop-filter:blur(18px);border-bottom:1px solid var(--deborah-semantic-color-border-default);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;transition:background .3s,border-color .3s;}
+    .nav-logo{font-family:''Manrope'',cursive;font-size:1.25rem;text-decoration:none;display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--deborah-semantic-color-action-primary),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .nav-right{display:flex;align-items:center;gap:8px;}
+    .nav-btn{padding:7px 12px;border-radius:9px;border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-muted);font-family:'Source Sans 3',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;text-decoration:none;transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s;display:flex;align-items:center;gap:5px;}
+    .nav-btn:hover{background:var(--bg-elevated);color:var(--deborah-semantic-color-text-primary);}
+    .panel{max-width:1060px;margin:0 auto;padding:24px 20px 90px;position:relative;z-index:1;}
+    .greeting{font-family:''Manrope'',cursive;font-size:1.5rem;display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+    .greeting-sub{font-size:.82rem;color:var(--deborah-semantic-color-text-muted);font-weight:700;margin-bottom:20px;}
+    .grid{display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start;}
+    @media(max-width:820px){.grid{grid-template-columns:1fr;}}
+    .card{background:var(--deborah-semantic-color-surface-raised);border-radius:16px;padding:18px;border:1px solid var(--deborah-semantic-color-border-default);margin-bottom:14px;animation:slideDown .3s ease;transition:background .3s,border-color .3s;}
+    .card-h{font-family:''Manrope'',cursive;font-size:.95rem;display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+    .card-h small{font-family:'Source Sans 3',sans-serif;font-size:.66rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-left:auto;}
+    .field{margin-bottom:11px;}
+    .field label{display:block;font-size:.72rem;font-weight:700;color:var(--deborah-semantic-color-text-muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px;}
+    .inp{width:100%;background:var(--deborah-semantic-color-surface-input);border:2px solid var(--deborah-semantic-color-border-default);border-radius:10px;padding:9px 12px;color:var(--deborah-semantic-color-text-primary);font-family:'Source Sans 3',sans-serif;font-size:.82rem;font-weight:600;outline:none;transition:border-color .3s;}
+    .inp:focus{border-color:var(--deborah-semantic-color-action-primary);}
+    .btn{border-radius:10px;border:none;padding:10px 16px;cursor:pointer;transition:color .3s ease,background-color .3s ease,border-color .3s ease,box-shadow .3s ease,transform .3s ease,opacity .3s ease;font-family:'Source Sans 3',sans-serif;font-weight:700;font-size:.8rem;background:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#041018);display:inline-flex;align-items:center;gap:6px;}
+    .btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+    .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+    .btn.ghost{background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-muted);border:1px solid var(--deborah-semantic-color-border-default);}
+    .btn.ghost:hover{color:var(--deborah-semantic-color-text-primary);background:var(--bg-elevated);}
+    .btn.green{background:linear-gradient(135deg,#00e5a0,#00b37e);color:#04120c;}
+    .btn.warn{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1a1204;}
+    .run-preview{font-size:.72rem;color:var(--deborah-semantic-color-text-muted);font-weight:700;background:var(--deborah-semantic-color-surface-input);border:1px solid var(--deborah-semantic-color-border-default);border-radius:10px;padding:9px 12px;margin-bottom:11px;white-space:pre-wrap;line-height:1.5;max-height:190px;overflow:auto;}
+    .run-preview.ok{color:var(--green);border-color:rgba(0,229,160,.3);}
+    .run-preview.err{color:var(--deborah-semantic-color-action-primary);border-color:rgba(248,113,113,.3);}
+    .table{width:100%;border-collapse:collapse;font-size:.76rem;}
+    .table th{text-align:left;font-size:.66rem;text-transform:uppercase;letter-spacing:.4px;color:var(--deborah-semantic-color-text-muted);padding:7px 9px;border-bottom:1px solid var(--deborah-semantic-color-border-default);font-weight:700;}
+    .table td{padding:8px 9px;border-bottom:1px solid var(--deborah-semantic-color-border-default);color:var(--deborah-semantic-color-text-primary);font-weight:700;}
+    .table tr:hover td{background:var(--deborah-semantic-color-surface-input);}
+    .chip{display:inline-flex;align-items:center;gap:5px;font-size:.66rem;font-weight:700;border-radius:7px;padding:3px 9px;text-transform:uppercase;letter-spacing:.3px;}
+    .chip.seated{background:rgba(0,229,160,.1);color:var(--green);border:1px solid rgba(0,229,160,.3);}
+    .chip.checked{background:rgba(56,189,248,.12);color:var(--cyan,#38bdf8);border:1px solid rgba(56,189,248,.3);}
+    .chip.unseated{background:rgba(248,113,113,.1);color:var(--deborah-semantic-color-action-primary);border:1px solid rgba(248,113,113,.3);}
+    .chip.assigned{background:rgba(251,191,36,.12);color:var(--gold);border:1px solid rgba(251,191,36,.3);}
+    .mini-btn{font-size:.68rem;font-weight:700;border-radius:8px;padding:5px 10px;border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-muted);cursor:pointer;transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s;font-family:'Source Sans 3',sans-serif;margin-right:5px;}
+    .mini-btn:hover{color:var(--deborah-semantic-color-text-primary);background:var(--bg-elevated);transform:translateY(-1px);}
+    .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-default);border-radius:12px;padding:11px 18px;font-size:.8rem;font-weight:600;z-index:999;opacity:0;pointer-events:none;transition:color .35s ease,background-color .35s ease,border-color .35s ease,box-shadow .35s ease,transform .35s ease,opacity .35s ease;box-shadow:var(--shadow-lg);}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+    .empty{text-align:center;padding:24px;color:var(--deborah-semantic-color-text-muted);font-weight:700;font-size:.78rem;background:var(--deborah-semantic-color-surface-input);border-radius:12px;border:1px dashed var(--deborah-semantic-color-border-default);}
+    .loading{text-align:center;padding:26px;color:var(--deborah-semantic-color-text-muted);font-weight:600;font-size:.8rem;}
+    .tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+    .tab{padding:7px 14px;border-radius:9px;font-size:.74rem;font-weight:700;cursor:pointer;background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-muted);border:1px solid var(--deborah-semantic-color-border-default);transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s;font-family:'Source Sans 3',sans-serif;}
+    .tab.active{background:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#041018);border-color:transparent;}
+    .seat-map-preview{font-family:monospace;font-size:.7rem;color:var(--deborah-semantic-color-text-muted);background:var(--deborah-semantic-color-surface-default);border:1px solid var(--deborah-semantic-color-border-default);border-radius:10px;padding:10px;white-space:pre;overflow:auto;max-height:220px;line-height:1.6;}
+    .kv{display:flex;justify-content:space-between;font-size:.72rem;font-weight:700;color:var(--deborah-semantic-color-text-muted);padding:4px 0;border-bottom:1px dashed var(--deborah-semantic-color-border-default);}
+    .kv b{color:var(--deborah-semantic-color-text-primary);font-weight:700;}
+  </style>
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="nav-logo">Deborah</a>
+    <div class="nav-right">
+      <a href="/admin/dashboard" class="nav-btn">Dashboard</a>
+      <a href="/admin/scheduler" class="nav-btn">Imtihon jadvali</a>
+      <a href="/admin/seating" class="nav-btn">O'rinlar</a>
+      <form action="/admin/logout" method="post" style="margin:0">
+        <button class="nav-btn" type="submit">Chiqish</button>
+      </form>
+    </div>
+  </nav>
+
+  <div class="panel">
+    <div class="greeting">O'rinlar va proktorlar</div>
+    <div class="greeting-sub">Seat allocation, proctor duty, signed hall ticket va offline check-in (Prompt 40)</div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="seatmap">Seat-map</button>
+      <button class="tab" data-tab="allocate">Joylashtirish</button>
+      <button class="tab" data-tab="proctor">Proktorlar</button>
+      <button class="tab" data-tab="tickets">Hall ticket</button>
+      <button class="tab" data-tab="checkin">Check-in</button>
+      <button class="tab" data-tab="reseat">Reseat</button>
+      <button class="tab" data-tab="registers">Registrlar</button>
+    </div>
+
+    <div class="grid">
+      <!-- ── LEFT: controls ── -->
+      <div>
+        <div class="card" id="tab-seatmap">
+          <div class="card-h">Room seat-map <small>versioned layout</small></div>
+          <div class="field"><label>Room ID</label><input class="inp" id="smRoomId" type="number" placeholder="Masalan: 1"></div>
+          <div class="field"><label>Layout (JSON)</label><textarea class="inp" id="smLayout" rows="8" style="font-family:monospace;font-size:.72rem">{
+  "rows": [
+    { "label": "A", "seats": [
+      { "label": "1", "features": [], "accessible": false },
+      { "label": "2", "features": [], "accessible": false },
+      { "label": "3", "features": ["wheelchair_access"], "accessible": true },
+      { "label": "4", "features": [], "accessible": false }
+    ]},
+    { "label": "B", "seats": [
+      { "label": "1", "features": [], "accessible": false },
+      { "label": "2", "features": [], "accessible": false },
+      { "label": "3", "features": [], "accessible": false },
+      { "label": "4", "features": [], "accessible": false }
+    ]}
+  ]
+}</textarea></div>
+          <button class="btn" id="btnSaveSeatMap">Seat-map saqlash</button>
+          <button class="btn ghost" id="btnLoadSeatMap" style="margin-left:6px">Yuklash</button>
+          <div id="smOutput" style="margin-top:10px"></div>
+        </div>
+
+        <div class="card" id="tab-allocate" style="display:none">
+          <div class="card-h">Seat allocation <small>deterministic seed</small></div>
+          <div class="field"><label>Run ID</label><input class="inp" id="alRunId" type="number" placeholder="Masalan: 1"></div>
+          <div class="field"><label>Assignment (JSON)</label><textarea class="inp" id="alAssignment" rows="6" style="font-family:monospace;font-size:.72rem">{
+  "id": 1,
+  "event_id": 1,
+  "period_id": 1,
+  "room_id": 1,
+  "student_ids": [101, 102, 103, 104, 105, 106]
+}</textarea></div>
+          <div class="field"><label>Accommodations (JSON)</label><textarea class="inp" id="alAccoms" rows="3" style="font-family:monospace;font-size:.72rem">[
+  { "userId": 103, "flags": ["accessible_seat"] },
+  { "userId": 105, "flags": ["extra_time"] }
+]</textarea></div>
+          <div class="field"><label>Seed</label><input class="inp" id="alSeed" type="number" value="1"></div>
+          <button class="btn" id="btnAllocate">Joylashtirish</button>
+          <div id="alOutput" style="margin-top:12px"></div>
+        </div>
+
+        <div class="card" id="tab-proctor" style="display:none">
+          <div class="card-h">Proctor allocation <small>no clash + fairness</small></div>
+          <div class="field"><label>Run ID</label><input class="inp" id="prRunId" type="number" placeholder="Masalan: 1"></div>
+          <div class="field"><label>Assignments (JSON)</label><textarea class="inp" id="prAssignments" rows="5" style="font-family:monospace;font-size:.72rem">[
+  { "period_id": 1, "room_id": 1 },
+  { "period_id": 1, "room_id": 2 },
+  { "period_id": 2, "room_id": 1 }
+]</textarea></div>
+          <div class="field"><label>Proctors (JSON)</label><textarea class="inp" id="prProctors" rows="4" style="font-family:monospace;font-size:.72rem">[
+  { "userId": 501, "maxPerDay": 4, "availability": [1, 2] },
+  { "userId": 502, "maxPerDay": 4, "availability": [1, 2] },
+  { "userId": 503, "maxPerDay": 2, "availability": [1] }
+]</textarea></div>
+          <div class="field"><label>Seed</label><input class="inp" id="prSeed" type="number" value="1"></div>
+          <button class="btn" id="btnProctorAllocate">Proktor joylash</button>
+          <div id="prOutput" style="margin-top:12px"></div>
+        </div>
+
+        <div class="card" id="tab-tickets" style="display:none">
+          <div class="card-h">Hall ticket <small>signed QR payload</small></div>
+          <div class="field"><label>Assignment ID</label><input class="inp" id="htAssignmentId" type="number" placeholder="Masalan: 1"></div>
+          <button class="btn" id="btnGetTicket">Ticket olish</button>
+          <div id="htOutput" style="margin-top:12px"></div>
+        </div>
+
+        <div class="card" id="tab-checkin" style="display:none">
+          <div class="card-h">Offline check-in journal <small>client_seq idempotent</small></div>
+          <div class="field"><label>Device ID</label><input class="inp" id="ciDeviceId" placeholder="masalan: tablet-01"></div>
+          <div class="field"><label>Entries (JSON)</label><textarea class="inp" id="ciEntries" rows="6" style="font-family:monospace;font-size:.72rem">[
+  { "clientSeq": 1, "eventType": "checkin", "payload": { "seatAssignmentId": 1, "checkedInAt": "2025-06-02T08:55:00Z" } }
+]</textarea></div>
+          <button class="btn" id="btnApplyJournal">Journal qo'llash</button>
+          <button class="btn ghost" id="btnGetJournal" style="margin-left:6px">O'qish</button>
+          <div id="ciOutput" style="margin-top:12px"></div>
+        </div>
+
+        <div class="card" id="tab-reseat" style="display:none">
+          <div class="card-h">Reseat / replacement <small>reason CODES only</small></div>
+          <div class="field"><label>Run ID</label><input class="inp" id="rsRunId" type="number"></div>
+          <div class="field"><label>Student ID</label><input class="inp" id="rsStudent" type="number"></div>
+          <div class="field"><label>From Seat Assignment ID</label><input class="inp" id="rsFrom" type="number"></div>
+          <div class="field"><label>To Seat Assignment ID</label><input class="inp" id="rsTo" type="number"></div>
+          <div class="field"><label>Reason</label><select class="inp" id="rsReason">
+            <option value="no_show">no_show</option>
+            <option value="accessibility">accessibility</option>
+            <option value="disruption">disruption</option>
+            <option value="replacement">replacement</option>
+            <option value="identity_verification">identity_verification</option>
+          </select></div>
+          <button class="btn warn" id="btnReseat">Reseat</button>
+          <div id="rsOutput" style="margin-top:12px"></div>
+        </div>
+
+        <div class="card" id="tab-registers" style="display:none">
+          <div class="card-h">Registrlar <small>answer-key-free</small></div>
+          <div class="field"><label>Run ID</label><input class="inp" id="rgRunId" type="number" placeholder="Masalan: 1"></div>
+          <button class="btn" id="btnRoomRegister">Room register</button>
+          <button class="btn ghost" id="btnProctorRegister" style="margin-left:6px">Proctor register</button>
+          <div id="rgOutput" style="margin-top:12px"></div>
+        </div>
+      </div>
+
+      <!-- ── RIGHT: results ── -->
+      <div>
+        <div class="card" id="rightCard">
+          <div class="card-h">Natijalar <small id="rightHint">tab tanlang</small></div>
+          <div id="rightBody"><div class="empty">Chap tomondan amal tanlang</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const toast = (msg) => { const t = $('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2600); };
+    const show = (html) => { $('rightBody').innerHTML = html; };
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const parseJSON = (id, fallback) => { try { return JSON.parse($(id).value || 'null'); } catch (e) { toast('JSON xato: ' + e.message); return fallback; } };
+    const api = async (url, body) => {
+      const res = await fetch(url, {
+        method: body ? 'POST' : 'GET',
+        headers: body ? { 'Content-Type': 'application/json' } : undefined,
+        body: body ? JSON.stringify(body) : undefined,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+      return data;
+    };
+
+    // ── Tabs ──
+    document.querySelectorAll('.tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
+        tab.classList.add('active');
+        document.querySelectorAll('.card[id^="tab-"]').forEach((c) => {
+          c.style.display = c.id === 'tab-' + tab.dataset.tab ? '' : 'none';
+        });
+      });
+    });
+
+    // ── Seat-map ──
+    $('btnLoadSeatMap').addEventListener('click', async () => {
+      try {
+        const roomId = Number($('smRoomId').value);
+        if (!roomId) return toast('Room ID kiriting');
+        const data = await api('/api/admin/seating/seat-maps/' + roomId);
+        $('smLayout').value = JSON.stringify(data.seatMap.layout, null, 2);
+        toast('Seat-map yuklandi (v' + data.seatMap.version + ')');
+      } catch (e) { toast(e.message); }
+    });
+    $('btnSaveSeatMap').addEventListener('click', async () => {
+      try {
+        const roomId = Number($('smRoomId').value);
+        if (!roomId) return toast('Room ID kiriting');
+        const layout = parseJSON('smLayout', null);
+        if (!layout) return;
+        const data = await api('/api/admin/seating/seat-maps/' + roomId, { layout });
+        show('<div class="kv"><span>Holat</span><b>OK</b></div>' +
+             '<div class="kv"><span>Version</span><b>' + data.version + '</b></div>' +
+             '<div class="kv"><span>Seat soni</span><b>' + data.seatCount + '</b></div>');
+        toast('Seat-map saqlandi (v' + data.version + ')');
+      } catch (e) { toast(e.message); }
+    });
+
+    // ── Allocate ──
+    $('btnAllocate').addEventListener('click', async () => {
+      try {
+        const runId = Number($('alRunId').value);
+        const assignment = parseJSON('alAssignment', null);
+        const accoms = parseJSON('alAccoms', []) || [];
+        const seed = Number($('alSeed').value) || 1;
+        if (!runId || !assignment) return toast('Run ID va assignment kerak');
+        const data = await api('/api/admin/seating/allocate', { runId, assignment, studentAccommodations: accoms, seed });
+        if (data.error) throw new Error(data.error);
+        const rows = (data.assignments || []).map((a) =>
+          '<tr><td>' + esc(a.userId) + '</td><td>' + esc(a.rowLabel) + '-' + esc(a.seatLabel) + '</td><td>' + esc(a.variant || '—') + '</td><td>' + (a.flags || []).join(', ') + '</td></tr>').join('');
+        show('<div class="kv"><span>Joylashtirildi</span><b>' + (data.assignments || []).length + '</b></div>' +
+             '<div class="kv"><span>Joylashtirilmadi</span><b>' + (data.unseated || []).length + '</b></div>' +
+             '<table class="table" style="margin-top:10px"><tr><th>Student</th><th>O\'rin</th><th>Variant</th><th>Flags</th></tr>' + rows + '</table>');
+        toast('Allocation OK');
+      } catch (e) { toast(e.message); }
+    });
+
+    // ── Proctors ──
+    $('btnProctorAllocate').addEventListener('click', async () => {
+      try {
+        const runId = Number($('prRunId').value);
+        const assignments = parseJSON('prAssignments', []) || [];
+        const proctors = parseJSON('prProctors', []) || [];
+        const seed = Number($('prSeed').value) || 1;
+        if (!runId) return toast('Run ID kerak');
+        const data = await api('/api/admin/seating/proctors', { runId, assignments, proctors, seed });
+        const rows = (data.duties || []).map((d) =>
+          '<tr><td>' + esc(d.periodId) + '</td><td>' + esc(d.roomId) + '</td><td>' + esc(d.proctorUserId) + '</td></tr>').join('');
+        show('<div class="kv"><span>Duty</span><b>' + (data.duties || []).length + '</b></div>' +
+             '<div class="kv"><span>Unassigned</span><b>' + (data.unassigned || []).length + '</b></div>' +
+             '<table class="table" style="margin-top:10px"><tr><th>Period</th><th>Room</th><th>Proctor</th></tr>' + rows + '</table>');
+        toast('Proctor allocation OK');
+      } catch (e) { toast(e.message); }
+    });
+
+    // ── Hall ticket ──
+    $('btnGetTicket').addEventListener('click', async () => {
+      try {
+        const id = Number($('htAssignmentId').value);
+        if (!id) return toast('Assignment ID kiriting');
+        const data = await api('/api/admin/seating/hall-ticket/' + id);
+        const t = data.ticket;
+        show('<div class="kv"><span>Assignment</span><b>' + t.row.id + '</b></div>' +
+             '<div class="kv"><span>O\'rin</span><b>' + esc(t.row.row_label) + '-' + esc(t.row.seat_label) + '</b></div>' +
+             '<div class="kv"><span>Variant</span><b>' + esc(t.row.variant || '—') + '</b></div>' +
+             '<div class="kv"><span>Room</span><b>' + t.row.room_id + '</b></div>' +
+             '<div class="kv"><span>Check-in</span><b>' + (t.row.checked_in_at ? 'Ha' : 'Yo\'q') + '</b></div>' +
+             '<div style="margin-top:10px;font-size:.7rem;color:var(--deborah-semantic-color-text-muted);font-weight:700">Token</div>' +
+             '<div class="run-preview ok" style="margin-top:4px">' + esc(t.token) + '</div>');
+        toast('Hall ticket OK');
+      } catch (e) { toast(e.message); }
+    });
+
+    // ── Check-in journal ──
+    $('btnApplyJournal').addEventListener('click', async () => {
+      try {
+        const deviceId = $('ciDeviceId').value;
+        const entries = parseJSON('ciEntries', []) || [];
+        if (!deviceId) return toast('Device ID kerak');
+        const data = await api('/api/admin/seating/checkin/journal', { deviceId, entries });
+        const rows = (data.results || []).map((r) =>
+          '<tr><td>' + r.clientSeq + '</td><td>' + esc(r.eventType) + '</td><td>' + (r.ok ? '<span class="chip seated">OK</span>' : '<span class="chip unseated">' + esc(r.error || 'ERR') + '</span>') + '</td></tr>').join('');
+        show('<div class="kv"><span>nextAckedSeq</span><b>' + data.nextAckedSeq + '</b></div>' +
+             '<table class="table" style="margin-top:10px"><tr><th>Seq</th><th>Type</th><th>Holat</th></tr>' + rows + '</table>');
+        toast('Journal qo\'llandi');
+      } catch (e) { toast(e.message); }
+    });
+    $('btnGetJournal').addEventListener('click', async () => {
+      try {
+        const data = await api('/api/admin/seating/checkin/journal?deviceId=' + encodeURIComponent($('ciDeviceId').value));
+        const rows = (data.journal || []).map((j) =>
+          '<tr><td>' + j.client_seq + '</td><td>' + esc(j.event_type) + '</td><td>' + esc(j.status) + '</td><td>' + esc(JSON.stringify(j.payload)) + '</td></tr>').join('');
+        show('<table class="table"><tr><th>Seq</th><th>Type</th><th>Status</th><th>Payload</th></tr>' + rows + '</table>');
+        toast('Journal o\'qildi');
+      } catch (e) { toast(e.message); }
+    });
+
+    // ── Reseat ──
+    $('btnReseat').addEventListener('click', async () => {
+      try {
+        const data = await api('/api/admin/seating/reseat', {
+          runId: Number($('rsRunId').value),
+          studentUserId: Number($('rsStudent').value),
+          fromSeatAssignmentId: Number($('rsFrom').value),
+          toSeatAssignmentId: Number($('rsTo').value),
+          reason: $('rsReason').value,
+        });
+        show('<div class="kv"><span>Holat</span><b>OK</b></div><div class="kv"><span>Sabab</span><b>' + esc($('rsReason').value) + '</b></div>');
+        toast('Reseat amalga oshirildi');
+      } catch (e) { toast(e.message); }
+    });
+
+    // ── Registers ──
+    $('btnRoomRegister').addEventListener('click', async () => {
+      try {
+        const runId = Number($('rgRunId').value);
+        const data = await api('/api/admin/seating/register/room' + (runId ? '?runId=' + runId : ''));
+        const rows = (data.register || []).map((r) =>
+          '<tr><td>' + r.roomId + '</td><td>' + esc(r.studentUserId) + '</td><td>' + esc(r.rowLabel) + '-' + esc(r.seatLabel) + '</td><td>' + (r.checkedIn ? '<span class="chip checked">Ha</span>' : '<span class="chip assigned">Yo\'q</span>') + '</td></tr>').join('');
+        show('<div class="kv"><span>Yozuvlar</span><b>' + (data.register || []).length + '</b></div>' +
+             '<table class="table" style="margin-top:10px"><tr><th>Room</th><th>Student</th><th>O\'rin</th><th>Check-in</th></tr>' + rows + '</table>');
+        toast('Room register OK');
+      } catch (e) { toast(e.message); }
+    });
+    $('btnProctorRegister').addEventListener('click', async () => {
+      try {
+        const runId = Number($('rgRunId').value);
+        const data = await api('/api/admin/seating/register/proctor' + (runId ? '?runId=' + runId : ''));
+        const rows = (data.register || []).map((d) =>
+          '<tr><td>' + d.period_id + '</td><td>' + d.room_id + '</td><td>' + d.proctor_user_id + '</td><td>' + esc(d.status) + '</td></tr>').join('');
+        show('<table class="table"><tr><th>Period</th><th>Room</th><th>Proctor</th><th>Status</th></tr>' + rows + '</table>');
+        toast('Proctor register OK');
+      } catch (e) { toast(e.message); }
+    });
+  </script>
+</body>
+</html>

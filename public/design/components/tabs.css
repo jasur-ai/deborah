@@ -1,0 +1,81 @@
+/**
+ * Deborah — Tabs (STYLE STEP 14, S14.07-08)
+ * -------------------------------------------
+ * S14.07 — tablist/tab/tabpanel roles, arrow-key nav, Home/End,
+ *          focus/selection separation (roving tabindex)
+ * S14.08 — auto-rotate YO'Q; selected tab DOM'da saqlanadi
+ */
+@layer components {
+
+.tabs {
+  display: flex;
+  flex-direction: column;
+}
+
+.tablist {
+  display: flex;
+  gap: 2px;
+  flex-wrap: wrap;
+  border-bottom: 2px solid var(--deborah-semantic-color-border-subtle, var(--deborah-semantic-color-border-default));
+}
+
+.tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--deborah-spacing-2, 8px);
+  min-height: 44px;
+  padding: var(--deborah-spacing-2, 8px) var(--deborah-spacing-4, 16px);
+  font-family: inherit;
+  font-size: var(--deborah-typography-font-size-md, 16px);
+  font-weight: 600;
+  color: var(--deborah-semantic-color-text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: var(--deborah-radius-sm, 8px) var(--deborah-radius-sm, 8px) 0 0;
+  cursor: pointer;
+  transition: color 140ms ease, background-color 140ms ease;
+}
+
+.tab:hover { color: var(--deborah-semantic-color-text-primary); background: oklch(0 0 0 / 0.04); }
+
+.tab[aria-selected='true'] {
+  color: var(--deborah-semantic-color-action-primary);
+  font-weight: 700;
+}
+/* S14.07: selected — 2px underline indicator */
+.tab[aria-selected='true']::after {
+  content: '';
+  position: absolute;
+  left: var(--deborah-spacing-2, 8px);
+  right: var(--deborah-spacing-2, 8px);
+  bottom: -2px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--deborah-semantic-color-action-primary);
+}
+
+.tab:focus-visible {
+  outline: 3px solid var(--deborah-semantic-color-focus, oklch(55% 0.2 264));
+  outline-offset: -2px;
+  outline-offset: 2px;
+}
+
+.tab[disabled] {
+  color: var(--deborah-semantic-color-text-disabled, var(--deborah-semantic-color-text-tertiary));
+  cursor: not-allowed;
+}
+
+.tabpanel {
+  padding: var(--deborah-spacing-4, 16px);
+  background: var(--deborah-semantic-color-surface-card, var(--deborah-semantic-color-surface-elevated));
+  border: 2px solid var(--deborah-semantic-color-border-subtle, var(--deborah-semantic-color-border-default));
+  border-top: none;
+  border-radius: 0 0 var(--deborah-radius-md, 12px) var(--deborah-radius-md, 12px);
+}
+
+@media (forced-colors: active) {
+  .tab[aria-selected='true']::after { background: Highlight; }
+  .tab[aria-selected='true'] { color: Highlight; }
+}
+}

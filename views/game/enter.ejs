@@ -1,0 +1,658 @@
+<% const chars = typeof characters !== 'undefined' ? characters : []; %>
+<% const initCode = typeof initialCode !== 'undefined' ? initialCode : ''; %>
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <style>
+    :root{--oa:#e84040;--ob:#2d9cdb;--oc:#f2a827;--od:#27ae60;--oe:#9b59b6;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Source Sans 3',sans-serif;min-height:100vh;overflow-x:hidden;}
+    .screen{display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:20px;position:relative;}
+    .screen.on{display:flex;}
+    .toplink{position:absolute;top:18px;left:18px;color:var(--muted);font-size:.8rem;font-weight:600;text-decoration:none;padding:7px 12px;border-radius:9px;background:rgba(255,255,255,.06);transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s;}
+    .toplink:hover{color:var(--text);background:rgba(255,255,255,.12);}
+    .logo{font-family:''Manrope'',cursive;font-size:1.9rem;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:8px;}
+    .logo img{height:34px;width:auto;}
+    .box{background:var(--card);border-radius:22px;padding:28px;width:100%;max-width:420px;border:1px solid rgba(255,255,255,.07);box-shadow:0 20px 60px rgba(0,0,0,.4);}
+    .box-title{font-family:''Manrope'',cursive;font-size:1.25rem;margin-bottom:4px;}
+    .box-sub{color:var(--muted);font-size:.8rem;font-weight:700;line-height:1.6;margin-bottom:18px;}
+    .code-input{width:100%;background:rgba(255,255,255,.05);border:3px solid rgba(255,255,255,.1);border-radius:14px;padding:16px 12px;color:var(--text);font-family:''Manrope'',cursive;font-size:2.6rem;text-align:center;letter-spacing:12px;outline:none;transition:border-color .3s;margin-bottom:14px;}
+    .code-input:focus{border-color:var(--accent);}
+    .inp{width:100%;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.08);border-radius:11px;padding:12px 14px;color:var(--text);font-family:'Source Sans 3',sans-serif;font-size:.95rem;font-weight:700;outline:none;transition:border-color .25s;margin-bottom:12px;}
+    .inp:focus{border-color:var(--accent);}
+    .btn{width:100%;border:none;border-radius:11px;padding:13px;color:#fff;font-family:'Source Sans 3',sans-serif;font-size:.96rem;font-weight:700;cursor:pointer;transition:color .22s,background-color .22s,border-color .22s,box-shadow .22s,transform .22s,opacity .22s;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;}
+    .btn-red{background:var(--accent);color:var(--deborah-semantic-color-action-on-action,#041018);}
+    .btn-green{background:linear-gradient(135deg,var(--green),#1d9bcf);color:#000;}
+    .btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.4);}
+    .btn:disabled{opacity:.45;cursor:not-allowed;}
+    .msg{border-radius:9px;padding:9px 13px;font-size:.81rem;font-weight:700;margin-bottom:11px;display:none;}
+    .msg.on{display:block;}
+    .msg.err{background:rgba(37,99,235,.1);border:1px solid rgba(37,99,235,.3);color:var(--accent);}
+    .msg.ok{background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.25);color:var(--green);}
+    .emoji-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0 18px;}
+    .e-btn{border-radius:14px;border:2px solid rgba(255,255,255,.07);background:rgba(255,255,255,.04);cursor:pointer;transition:color .18s,background-color .18s,border-color .18s,box-shadow .18s,transform .18s,opacity .18s;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:8px 6px 7px;gap:4px;min-height:100px;position:relative;overflow:hidden;}
+    .e-btn img{width:64px;height:64px;object-fit:contain;transition:transform .2s;}
+    .e-btn .e-name{font-size:.6rem;font-weight:600;color:var(--muted);text-align:center;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+    .e-btn:hover{border-color:var(--accent);background:rgba(37,99,235,.08);}
+    .e-btn:hover img{transform:scale(1.12) translateY(-3px);}
+    .e-btn.sel{border-color:var(--gold);background:rgba(56,189,248,.1);}
+    .e-btn.sel img{transform:scale(1.1) translateY(-4px);}
+    .e-btn.sel .e-name{color:var(--gold);}
+    .lobby-wrap{text-align:center;max-width:560px;width:100%;}
+    #s-lobby{background:radial-gradient(ellipse at 25% 30%,rgba(37,99,235,.15) 0%,transparent 55%),radial-gradient(ellipse at 75% 70%,rgba(56,189,248,.1) 0%,transparent 55%),var(--bg);}
+    .lob-label{color:var(--muted);font-size:.76rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;margin-top:20px;}
+    .lob-code{font-family:''Manrope'',cursive;font-size:4.5rem;color:var(--gold);letter-spacing:10px;animation:glow 2.5s ease-in-out infinite;}
+    @keyframes glow{0%,100%{text-shadow:0 0 20px rgba(56,189,248,.3)}50%{text-shadow:0 0 50px rgba(56,189,248,.7)}}
+    .lob-count{font-family:''Manrope'',cursive;font-size:1.3rem;color:var(--green);margin:14px 0 10px;}
+    .lob-players{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;}
+    .p-chip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:50px;padding:5px 12px;font-size:.78rem;font-weight:600;display:flex;align-items:center;gap:5px;}
+    .dots{display:flex;gap:5px;justify-content:center;margin-top:18px;}
+    .dot{width:9px;height:9px;border-radius:50%;background:var(--muted);animation:blink 1.4s ease-in-out infinite;}
+    .dot:nth-child(2){animation-delay:.2s;}.dot:nth-child(3){animation-delay:.4s;}
+    @keyframes blink{0%,100%{opacity:.2}50%{opacity:1;background:var(--accent)}}
+    #s-qprev{background:linear-gradient(135deg,#0a0a20,#180a2a);text-align:center;}
+    .qprev-num{color:var(--muted);font-size:.85rem;font-weight:600;margin-bottom:8px;}
+    .qprev-text{font-family:''Manrope'',cursive;font-size:clamp(1.4rem,5vw,2.4rem);max-width:660px;line-height:1.45;}
+    .badge-double{display:inline-block;padding:5px 14px;border-radius:50px;font-size:.75rem;font-weight:700;background:rgba(56,189,248,.18);border:1px solid rgba(56,189,248,.4);color:var(--gold);margin-bottom:10px;}
+    #s-qact{flex-direction:column;align-items:center;justify-content:flex-start;padding:14px 12px 80px;}
+    .q-top{width:100%;max-width:920px;text-align:center;padding:8px 10px 12px;}
+    .q-text{font-family:''Manrope'',cursive;font-size:clamp(1.1rem,4vw,1.9rem);line-height:1.4;}
+    .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:920px;margin-top:12px;}
+    .opts.single{grid-template-columns:1fr;}
+    .opt{position:relative;overflow:hidden;background:#101a2e;border:2px solid var(--opt-c,rgba(255,255,255,.15));border-radius:14px;padding:18px 14px;font-family:'Source Sans 3',sans-serif;font-size:.97rem;font-weight:600;cursor:pointer;transition:transform .15s,border-color .2s,background .2s;color:#fff;text-align:left;display:flex;align-items:center;gap:10px;min-height:76px;word-break:break-word;animation:optShimmer 4.5s ease-in-out infinite;animation-delay:var(--opt-delay,0s);}
+    .opt::before{content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(115deg,transparent,rgba(255,255,255,.07),transparent);animation:optSweep 5.5s ease-in-out infinite;animation-delay:var(--opt-delay,0s);pointer-events:none;}
+    @keyframes optShimmer{0%,100%{box-shadow:inset 0 0 0 0 rgba(255,255,255,0)}50%{box-shadow:inset 0 0 32px 0 rgba(255,255,255,.04)}}
+    @keyframes optSweep{0%{left:-60%}45%{left:120%}100%{left:120%}}
+    .opt:hover:not(:disabled){transform:translateY(-2px);background:#142036;}
+    .opt:disabled{cursor:not-allowed;animation:none;}
+    .opt:disabled::before{display:none;}
+    .opt.dim{opacity:.45;transform:scale(.97)!important;}
+    .opt.pick{border-color:var(--gold)!important;box-shadow:0 0 0 1px var(--gold)!important;transform:scale(1.02)!important;}
+    .opt-sym{font-size:1.3rem;flex-shrink:0;color:var(--opt-c,#fff);}
+    .pbadge{position:fixed;bottom:14px;left:14px;z-index:80;background:rgba(6,6,15,.85);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);border-radius:50px;padding:7px 13px;display:none;align-items:center;gap:7px;font-size:.8rem;font-weight:600;}
+    .pbadge.on{display:flex;}
+    .pb-em{font-size:1.15rem;}
+    .timer-wrap{position:fixed;bottom:14px;right:14px;z-index:80;}
+    .t-ring{position:relative;width:56px;height:56px;}
+    .t-ring svg{transform:rotate(-90deg);}
+    .t-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:''Manrope'',cursive;font-size:1.1rem;}
+    .t-ring circle.bg-c{stroke:rgba(255,255,255,.08);}
+    .t-ring circle.fg-c{stroke:var(--accent);stroke-linecap:round;transition:stroke .5s;}
+    #s-wait{text-align:center;background:radial-gradient(ellipse at 50% 50%,rgba(56,189,248,.12) 0%,transparent 60%),var(--bg);}
+    .wait-icon{font-size:4rem;animation:pop .35s ease-out;}
+    @keyframes pop{0%{transform:scale(0)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
+    .wait-title{font-family:''Manrope'',cursive;font-size:1.5rem;color:var(--green);margin-top:10px;}
+    .wait-sub{color:var(--muted);font-size:.84rem;margin-top:5px;}
+    #s-lb,#s-end{text-align:center;background:radial-gradient(ellipse at 50% 20%,rgba(56,189,248,.18) 0%,transparent 55%),var(--bg);}
+    .lb-title{font-family:''Manrope'',cursive;font-size:2rem;color:var(--gold);margin-bottom:18px;animation:gleam 2s ease-in-out infinite;}
+    @keyframes gleam{0%,100%{text-shadow:0 0 20px rgba(56,189,248,.3)}50%{text-shadow:0 0 50px rgba(56,189,248,.9)}}
+    .lb-list{width:100%;max-width:480px;margin:0 auto;}
+    .lbi{display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.05);border-radius:13px;padding:11px 15px;margin-bottom:7px;border:1px solid rgba(255,255,255,.06);animation:slideIn .4s ease-out both;}
+    .lbi:nth-child(1){border-color:rgba(56,189,248,.4);background:rgba(56,189,248,.07);animation-delay:0s;}
+    .lbi:nth-child(2){border-color:rgba(192,192,192,.35);background:rgba(192,192,192,.05);animation-delay:.06s;}
+    .lbi:nth-child(3){border-color:rgba(205,127,50,.35);background:rgba(205,127,50,.05);animation-delay:.12s;}
+    .lbi:nth-child(4){animation-delay:.18s;}.lbi:nth-child(5){animation-delay:.24s;}
+    .lbi:nth-child(6){animation-delay:.30s;}.lbi:nth-child(7){animation-delay:.36s;}
+    @keyframes slideIn{from{transform:translateX(-28px);opacity:0}to{transform:translateX(0);opacity:1}}
+    .lbi.me{border-color:rgba(37,99,235,.5)!important;background:rgba(37,99,235,.09)!important;}
+    .lb-rank{font-family:''Manrope'',cursive;font-size:1.05rem;width:26px;text-align:center;}
+    .lb-em{font-size:1.55rem;display:flex;align-items:center;justify-content:center;}
+    .lb-nm{font-weight:600;flex:1;text-align:left;}
+    .lb-sc{font-family:''Manrope'',cursive;font-size:.95rem;color:var(--gold);}
+    .lbi-plain{background:transparent!important;border:none!important;box-shadow:none;padding:7px 15px;animation:none!important;}
+    .lbi-plain .lb-rank{color:var(--muted);font-family:'Source Sans 3',sans-serif;font-weight:600;font-size:.8rem;}
+    .lbi-plain .lb-em{font-size:1.25rem;opacity:.75;}
+    .lbi-plain .lb-nm{font-weight:700;font-size:.84rem;color:var(--muted);}
+    .lbi-plain .lb-sc{color:var(--muted);font-size:.85rem;}
+    .confetti{font-size:3.5rem;animation:bounce 1.2s ease-in-out infinite;}
+    @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
+    .spin{width:38px;height:38px;border:4px solid rgba(255,255,255,.08);border-top-color:var(--accent);border-radius:50%;animation:sp .8s linear infinite;}
+    @keyframes sp{to{transform:rotate(360deg)}}
+    @keyframes sway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+    .end-title{font-family:''Manrope'',cursive;font-size:2.2rem;color:var(--green);margin:10px 0 18px;}
+    #s-end .lb-list{max-height:55vh;overflow-y:auto;padding-right:4px;}
+    #s-end .lb-list::-webkit-scrollbar{width:4px;}
+    #s-end .lb-list::-webkit-scrollbar-track{background:rgba(255,255,255,.04);}
+    #s-end .lb-list::-webkit-scrollbar-thumb{background:rgba(56,189,248,.35);border-radius:4px;}
+    @media(max-width:600px){.opts{grid-template-columns:1fr;}.emoji-grid{grid-template-columns:repeat(3,1fr);}.e-btn{min-height:88px;}.e-btn img{width:52px;height:52px;}.screen{padding:14px;}.box{padding:20px 16px;border-radius:18px;}.opt{min-height:60px;font-size:.9rem;padding:14px 11px;}.lob-code{font-size:clamp(3rem,18vw,5rem);letter-spacing:6px;}.lb-list{padding:0 4px;}.pbadge{padding:5px 10px;font-size:.75rem;}.timer-wrap .t-ring{width:48px;height:48px;}.timer-wrap svg{width:48px;height:48px;}.t-num{font-size:.95rem;}.q-text{font-size:clamp(1rem,4.5vw,1.5rem);}}
+    @media(max-width:400px){.emoji-grid{grid-template-columns:repeat(3,1fr);gap:7px;}.e-btn{min-height:80px;}.e-btn img{width:46px;height:46px;}.e-btn .e-name{font-size:.55rem;}.logo{font-size:1.5rem;}.wait-title{font-size:1.2rem;}}
+    #s-result{text-align:center;background:radial-gradient(ellipse at 50% 40%,rgba(56,189,248,.12) 0%,transparent 55%),var(--bg);}
+    .res-icon{font-size:5rem;margin-bottom:16px;animation:pop .35s ease-out;}
+    .res-title{font-size:1.6rem;font-weight:700;color:#fff;margin-bottom:8px;}
+    .res-pts{font-size:1.1rem;font-weight:700;color:var(--green);margin-bottom:6px;}
+    .res-correct{font-size:.9rem;color:var(--muted);margin-bottom:24px;}
+    #s-wait-lb{background:radial-gradient(ellipse at 50% 40%,rgba(56,189,248,.12) 0%,transparent 55%),var(--bg);}
+    .wlb-icon{font-size:3.5rem;margin-bottom:14px;animation:bounce 1.4s ease-in-out infinite;}
+    .lb-my-pos{display:none;margin-top:12px;padding:12px 16px;background:rgba(37,99,235,.12);border:1px solid rgba(37,99,235,.3);border-radius:13px;text-align:center;font-weight:600;font-size:.88rem;color:var(--text);}
+  </style>
+</head>
+<body>
+
+<!-- ══ S1: ENTER CODE ══ -->
+<div class="screen on" id="s-code">
+  <a href="/" class="toplink">← Orqaga</a>
+  <div class="logo"><img src="/images/logo-vintage.png" alt="Deborah"></div>
+  <p style="color:var(--muted);font-size:.82rem;font-weight:700;margin-bottom:24px;">O'yinga qo'shilish</p>
+  <div class="box">
+    <div class="box-title">O'yin kodini kiriting</div>
+    <p class="box-sub">Host tomonidan berilgan 5 xonali kodni kiriting</p>
+    <div class="msg" id="code-msg"></div>
+    <% /* BUG-050: cast join-kodlari 6 belgi A-Z2-9 — input faqat 5 raqamni qabul
+         qilardi; endi ikkala tizim: 5 raqam (o'yin) | 6 harf/raqam (cast) */ %>
+    <input class="code-input" id="code-inp" type="text" autocapitalize="characters" spellcheck="false" maxlength="6" placeholder="·····" autocomplete="off" style="text-transform:uppercase">
+    <button type="button" class="btn btn-red" id="code-btn" onclick="checkCode()">Davom etish →</button>
+  </div>
+</div>
+
+<!-- ══ S2: ENTER NAME ══ -->
+<div class="screen" id="s-name">
+  <button type="button" class="toplink" onclick="goTo('s-code')" style="border:none;cursor:pointer;">← Orqaga</button>
+  <div class="box">
+    <div class="box-title">Ismingizni kiriting</div>
+    <p class="box-sub">O'yinda ko'rsatiladi. Bir xil ism ishlatib bo'lmaydi!</p>
+    <div class="msg" id="name-msg"></div>
+    <input class="inp" id="name-inp" type="text" maxlength="20" placeholder="Ismingiz..." autocomplete="off">
+    <button type="button" class="btn btn-red" id="name-btn" onclick="checkName()">Davom etish →</button>
+  </div>
+</div>
+
+<!-- ══ S3: CHOOSE EMOJI ══ -->
+<div class="screen" id="s-emoji">
+  <button type="button" class="toplink" onclick="goTo('s-name')" style="border:none;cursor:pointer;">← Orqaga</button>
+  <div class="box" style="max-width:540px;">
+    <div class="box-title">Karakteringizni tanlang</div>
+    <div class="emoji-grid" id="emoji-grid"></div>
+    <button type="button" class="btn btn-green" id="join-btn" disabled onclick="joinGame()">O'yinga qo'shilish ✓</button>
+  </div>
+</div>
+
+<!-- ══ S4: LOBBY ══ -->
+<div class="screen" id="s-lobby">
+  <div class="lobby-wrap">
+    <div class="logo" style="font-size:1.5rem;margin-bottom:4px;"><img src="/images/logo-vintage.png" alt="Deborah" style="height:30px"> Lobby</div>
+    <div class="lob-label">O'YIN KODI</div>
+    <div class="lob-code" id="lob-code">—</div>
+    <div class="lob-count" id="lob-count">0 o'yinchi</div>
+    <div class="lob-players" id="lob-players"></div>
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <p style="color:var(--muted);font-size:.74rem;margin-top:14px;">Host boshlash tugmasini bosganida avtomatik kiradi</p>
+  </div>
+</div>
+
+<!-- ══ S5: QUESTION PREVIEW ══ -->
+<div class="screen" id="s-qprev">
+  <div class="qprev-num" id="qp-num">Savol 1</div>
+  <div id="qp-badge"></div>
+  <div class="qprev-text" id="qp-text">Savol yuklanmoqda...</div>
+</div>
+
+<!-- ══ S6: QUESTION ACTIVE ══ -->
+<div class="screen" id="s-qact">
+  <div class="q-top">
+    <div id="qa-badge"></div>
+    <div class="q-text" id="qa-text">Savol...</div>
+  </div>
+  <div class="opts" id="opts-grid"></div>
+  <div class="timer-wrap" id="timer-wrap">
+    <div class="t-ring">
+      <svg width="56" height="56" viewBox="0 0 56 56">
+        <circle class="bg-c" cx="28" cy="28" r="23" fill="none" stroke-width="4"/>
+        <circle class="fg-c" id="t-arc" cx="28" cy="28" r="23" fill="none" stroke-width="4" stroke-dasharray="144.5" stroke-dashoffset="0"/>
+      </svg>
+      <div class="t-num" id="t-num">20</div>
+    </div>
+  </div>
+  <div class="pbadge on" id="pb-act">
+    <span class="pb-em" id="pb-em1"></span><span id="pb-nm1">—</span>
+  </div>
+</div>
+
+<!-- ══ S7: ANSWERED WAIT ══ -->
+<div class="screen" id="s-wait">
+  <div class="wait-icon" id="wait-icon">✅</div>
+  <div class="wait-title">Javob berildi!</div>
+  <div class="wait-sub">Boshqalar javob berishi va natijalarni kuting...</div>
+  <div class="dots" style="margin-top:20px;justify-content:center;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+  <div class="pbadge on" id="pb-wait" style="position:fixed;">
+    <span class="pb-em" id="pb-em2"></span><span id="pb-nm2">—</span>
+  </div>
+</div>
+
+<!-- ══ S7b: LB WAITING ══ -->
+<div class="screen" id="s-wait-lb">
+  <div style="text-align:center;">
+    <div class="wlb-icon">🏆</div>
+    <div style="font-family:''Manrope'',cursive;font-size:1.5rem;color:var(--gold);animation:gleam 2s ease-in-out infinite;">Shoxsupa...</div>
+    <div class="dots" style="justify-content:center;margin-top:16px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+  </div>
+</div>
+
+<!-- ══ S8: RESULT ══ -->
+<div class="screen" id="s-result">
+  <div class="res-icon" id="res-icon">✅</div>
+  <div class="res-title" id="res-title">To'g'ri!</div>
+  <div class="res-pts" id="res-pts"></div>
+  <div class="res-correct" id="res-correct"></div>
+  <div class="dots" style="justify-content:center;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+  <div style="font-size:.8rem;color:var(--muted);margin-top:14px;">Shoxsupa kutilmoqda...</div>
+</div>
+
+<!-- ══ S9: LEADERBOARD ══ -->
+<div class="screen" id="s-lb">
+  <div style="width:100%;max-width:480px;">
+    <div class="lb-title">🏆 Shoxsupa</div>
+    <div class="lb-list" id="lb-list"></div>
+    <div class="lb-my-pos" id="lb-my-pos"></div>
+  </div>
+</div>
+
+<!-- ══ S10: GAME ENDED ══ -->
+<div class="screen" id="s-end">
+  <div class="confetti">🎉</div>
+  <div class="end-title">O'yin Tugadi!</div>
+  <div class="lb-list" id="end-lb"></div>
+  <a id="end-back-btn" href="/" class="btn btn-red" style="display:inline-flex;max-width:280px;margin-top:22px;text-decoration:none;">← Orqaga qaytish</a>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+  const chars = <%- JSON.stringify(chars) %>;
+  const SHAPES = ['▲','●','■','♦','★'];
+  const OPT_COLORS = ['#ff4466','#38bdf8','#ffd60a','#00ffaa','#c084fc'];
+  const RANK_EMOJI = ['🥇','🥈','🥉','4️⃣','5️⃣','6️⃣','7️⃣'];
+  const RANK_CLS = ['r1','r2','r3','','','',''];
+
+  // ── STATE ──
+  let code = '', name = '', emoji = '', selEmoji = '';
+  const backUrl = '/';
+  let timerIv = null, qTime = 20, qStartAt = 0, gameEnded = false, lbTimeoutId = null;
+  let hasAnswered = false, curQIdx = -1, lastPickedIdx = -1, lastCorrectIdx = -1, lastCorrectText = '', lastEarned = 0;
+
+  const $ = id => document.getElementById(id);
+  function goTo(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+    $(id).classList.add('on');
+  }
+  function showMsg(id, txt, type = 'err') {
+    const e = $(id);
+    e.textContent = txt;
+    e.className = 'msg on ' + type;
+  }
+  function hideMsg(id) { $(id).className = 'msg'; }
+  function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function charImg(imgPath, size) {
+    size = size || 28;
+    if (!imgPath) return '<span style="font-size:'+size+'px">👤</span>';
+    const safePath = esc(imgPath);
+    if (imgPath.startsWith('characters/') || imgPath.startsWith('http') || imgPath.startsWith('/'))
+      return '<img src="' + safePath + '" style="width:'+size+'px;height:'+size+'px;object-fit:contain;vertical-align:middle;border-radius:4px;" alt="">';
+    return '<span style="font-size:'+size+'px">'+safePath+'</span>';
+  }
+
+  // Seeded shuffle
+  function seededShuffle(arr, seed) {
+    const a = [...arr];
+    let s = 0;
+    for (let i = 0; i < (seed || '').length; i++) s += (seed || '').charCodeAt(i);
+    for (let i = a.length - 1; i > 0; i--) { s = (s * 1103515245 + 12345) & 0x7fffffff; const j = s % (i + 1); [a[i], a[j]] = [a[j], a[i]]; }
+    return a;
+  }
+
+  // Build character grid
+  document.addEventListener('DOMContentLoaded', () => {
+    const grid = $('emoji-grid');
+    chars.forEach(ch => {
+      const b = document.createElement('button');
+      b.className = 'e-btn';
+      b.innerHTML = charImg(ch.image, 64) + '<div class="e-name">' + esc(ch.name) + '</div>';
+      const img = b.querySelector('img');
+      if (img) {
+        b.onmouseenter = () => { if (img) img.style.animation = ch.animationStyle ? ch.animationStyle + ',sway 2.5s ease-in-out infinite' : 'sway 2.5s ease-in-out infinite'; };
+        b.onmouseleave = () => { if (!b.classList.contains('sel') && img) img.style.animation = ''; };
+      }
+      b.onclick = () => {
+        document.querySelectorAll('.e-btn').forEach(x => { x.classList.remove('sel'); const xi = x.querySelector('img'); if (xi) xi.style.animation = ''; });
+        b.classList.add('sel');
+        if (img) img.style.animation = (ch.animationStyle || '');
+        selEmoji = ch.image;
+        $('join-btn').disabled = false;
+      };
+      grid.appendChild(b);
+    });
+
+    // Auto-fill code from URL (BUG-051: cast kodlari ham — 6 belgi A-Z0-9)
+    const urlCode = new URLSearchParams(location.search).get('code');
+    if (urlCode && /^(\d{5}|[A-Z0-9]{6})$/i.test(urlCode)) {
+      $('code-inp').value = urlCode.toUpperCase();
+      setTimeout(() => checkCode(), 300);
+    }
+    // BUG-020: cast kodi yuborilgan lekin sessiya topilmadi — jim o'yin formasi
+    // o'rniga aniq xabar (avval foydalanuvchi hech narsa tushunmasdi)
+    const castMiss = new URLSearchParams(location.search).get('castMiss');
+    if (castMiss) {
+      showMsg('code-msg', 'Cast kodi topilmadi yoki sessiya hozir tayyorlanmoqda — kodni tekshirib, bir necha soniyadan keyin qayta urinib ko\'ring.');
+    }
+
+    // Set back button
+    const endBtn = document.getElementById('end-back-btn');
+    if (endBtn) endBtn.href = '/'; // isAdmin hech qachon ta'riflanmagan edi (ReferenceError) — ikkala yo'l '/' bo'lgan
+
+    // Rejoin: check session storage
+    try {
+      const ss = JSON.parse(sessionStorage.getItem('deborah_player') || 'null');
+      if (ss && ss.code && urlCode && urlCode === ss.code) {
+        code = ss.code; name = ss.name; emoji = ss.emoji;
+        rejoinSession();
+        return;
+      }
+      sessionStorage.removeItem('deborah_player');
+    } catch (_) { sessionStorage.removeItem('deborah_player'); }
+  });
+
+  // ── STEP 1: Check Code ──
+  window.checkCode = function() {
+    const v = $('code-inp').value.trim().toUpperCase();
+    $('code-inp').value = v;
+    if (/^[A-Z0-9]{6}$/.test(v) && !/^\d{6}$/.test(v)) {
+      /* Cast kodi (6 belgi, harf bor) — /play?code= orqali server resolve */
+      window.location.href = '/play?code=' + encodeURIComponent(v);
+      return;
+    }
+    if (!/^\d{5}$/.test(v)) { showMsg('code-msg', '5 xonali o\'yin kodi yoki 6 belgili cast kodi kiriting'); return; }
+    const btn = $('code-btn'); btn.disabled = true; btn.textContent = 'Tekshirilmoqda...';
+    socket.emit('player:checkCode', { code: v });
+    socket.once('code:checked', (data) => {
+      if (data.exists) {
+        if (data.status === 'ended') { showMsg('code-msg', 'Bu o\'yin tugagan'); btn.disabled = false; btn.textContent = 'Davom etish →'; return; }
+        if (data.status !== 'waiting') { showMsg('code-msg', 'O\'yin allaqachon boshlangan'); btn.disabled = false; btn.textContent = 'Davom etish →'; return; }
+        code = v; hideMsg('code-msg'); goTo('s-name');
+      } else {
+        showMsg('code-msg', 'Bunday kod topilmadi');
+      }
+      btn.disabled = false; btn.textContent = 'Davom etish →';
+    });
+  };
+  $("code-inp").addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); });
+  $('code-inp').addEventListener('keydown', e => { if (e.key === 'Enter') checkCode(); });
+
+  // ── STEP 2: Check Name ──
+  window.checkName = function() {
+    const v = $('name-inp').value.trim();
+    if (!v) { showMsg('name-msg', 'Ism kiriting'); return; }
+    if (v.length > 20) { showMsg('name-msg', 'Ism 20 harfdan oshmasin'); return; }
+    if (/[.$#\[\]\/\x00-\x1F\x7F]/.test(v)) { showMsg('name-msg', 'Ismda quyidagi belgilar bo\'lmasin: . $ # [ ] /'); return; }
+    const btn = $('name-btn'); btn.disabled = true; btn.textContent = 'Tekshirilmoqda...';
+    socket.emit('player:checkName', { code, name: v });
+    socket.once('name:checked', (data) => {
+      if (data.available) {
+        name = v; hideMsg('name-msg'); goTo('s-emoji');
+      } else {
+        showMsg('name-msg', 'Bu ism band, boshqa ism tanlang');
+      }
+      btn.disabled = false; btn.textContent = 'Davom etish →';
+    });
+  };
+  $('name-inp').addEventListener('keydown', e => { if (e.key === 'Enter') checkName(); });
+
+  // ── STEP 3: Join Game ──
+  window.joinGame = function() {
+    if (!selEmoji) return;
+    emoji = selEmoji;
+    const btn = $('join-btn'); btn.disabled = true; btn.textContent = 'Qo\'shilmoqda...';
+    socket.emit('player:join', { code, playerName: name, emoji });
+  };
+
+  socket.on('player:joined', (data) => {
+    sessionStorage.setItem('deborah_player', JSON.stringify({ code, name, emoji }));
+    startLobby();
+  });
+
+  socket.on('player:joinError', (data) => {
+    $('join-btn').disabled = false; $('join-btn').textContent = 'O\'yinga qo\'shilish ✓';
+    showMsg('name-msg', data.message || 'Xatolik');
+    goTo('s-name');
+  });
+
+  // ── LOBBY ──
+  function startLobby() {
+    $('lob-code').textContent = code;
+    updatePBadge();
+    goTo('s-lobby');
+  }
+
+  socket.on('players:update', (data) => {
+    const players = data.players || [];
+    $('lob-count').textContent = players.length + ' o\'yinchi';
+    $('lob-players').innerHTML = players.map(p => '<div class="p-chip">' + charImg(p.emoji, 22) + ' ' + esc(p.name) + '</div>').join('');
+  });
+
+  // ── GAME STATE ──
+  socket.on('game:questionPreview', (data) => {
+    curQIdx = data.qIndex;
+    $('qp-num').textContent = 'Savol ' + (data.qIndex + 1);
+    $('qp-text').textContent = data.qText || '...';
+    $('qp-badge').innerHTML = data.qIsDouble ? '<div class="badge-double">⚡ IKKI BAROBAR BALL</div>' : '';
+    goTo('s-qprev');
+  });
+
+  socket.on('game:questionActive', (data) => {
+    if (curQIdx === data.qIndex && hasAnswered) return;
+    if (curQIdx !== data.qIndex) { curQIdx = data.qIndex; hasAnswered = false; }
+    stopTimer();
+
+    $('qa-text').textContent = data.qText || '...';
+    $('qa-badge').innerHTML = data.qIsDouble ? '<div class="badge-double">⚡ IKKI BAROBAR</div>' : '';
+
+    // Shuffle options with seed
+    const rawOpts = (data.qOptions || []).map((o, i) => ({ text: o, idx: i }));
+    const opts = seededShuffle(rawOpts, name + data.qIndex);
+    const grid = $('opts-grid');
+    grid.className = 'opts' + (opts.length <= 2 ? ' single' : '');
+    grid.innerHTML = opts.map((o, pos) => {
+      const c = OPT_COLORS[pos] || OPT_COLORS[pos % OPT_COLORS.length];
+      return '<button type="button" class="opt" data-idx="' + o.idx + '" style="--opt-c:' + c + ';--opt-delay:' + (pos * 0.6) + 's" onclick="pickAns(' + o.idx + ',this)"><span class="opt-sym">' + (SHAPES[pos] || '•') + '</span>' + esc(o.text) + '</button>';
+    }).join('');
+
+    updatePBadge();
+    goTo('s-qact');
+
+    // 🔒 SECURITY: qCorrect is NOT sent from server — answer revealed after scoring
+    // Player does NOT know the correct answer until game:answerReveal event
+    lastCorrectIdx = -1; // Will be set by game:answerReveal after scoring
+    lastCorrectText = '';
+    lastPickedIdx = -1;
+    qTime = data.qTime || 20;
+    qStartAt = data.startedAt || Date.now();
+    startTimer(qStartAt, qTime);
+  });
+
+  window.pickAns = function(idx, btn) {
+    if (hasAnswered) return;
+    hasAnswered = true;
+    const elapsed = Date.now() - qStartAt;
+
+    document.querySelectorAll('.opt').forEach(b => { b.disabled = true; b.classList.add('dim'); });
+    btn.classList.remove('dim');
+    btn.classList.add('pick');
+
+    lastPickedIdx = idx;
+    socket.emit('player:answer', { code, qIndex: curQIdx, optionIndex: idx, timeMs: elapsed });
+
+    stopTimer();
+    $('wait-icon').textContent = '✅';
+    document.querySelector('#s-wait .wait-title').textContent = 'Javob berildi!';
+    document.querySelector('#s-wait .wait-sub').textContent = 'Boshqalar javob berishi va natijalarni kuting...';
+    updatePBadge2();
+    goTo('s-wait');
+  };
+
+  // Timer
+  function startTimer(startAt, totalSec) {
+    const arc = $('t-arc'), numEl = $('t-num');
+    const circ = 144.5;
+    stopTimer();
+    timerIv = setInterval(() => {
+      const el = (Date.now() - startAt) / 1000;
+      const rem = Math.max(0, totalSec - el);
+      arc.style.strokeDashoffset = circ * (1 - rem / totalSec);
+      numEl.textContent = Math.ceil(rem);
+      arc.style.stroke = rem < totalSec * .3 ? '#2563eb' : rem < totalSec * .6 ? '#f2a827' : 'var(--green)';
+      if (rem <= 0) {
+        stopTimer();
+        if (!hasAnswered) {
+          hasAnswered = true;
+          lastPickedIdx = -1;
+          $('wait-icon').textContent = '⏱️';
+          document.querySelector('#s-wait .wait-title').textContent = 'Vaqt tugadi!';
+          document.querySelector('#s-wait .wait-sub').textContent = 'Keyingi savol kutilmoqda...';
+          updatePBadge2();
+          goTo('s-wait');
+        }
+      }
+    }, 100);
+  }
+  function stopTimer() { if (timerIv) { clearInterval(timerIv); timerIv = null; } }
+
+  // Leaderboard rendering
+  function renderLb(lb) {
+    return (lb || []).slice(0, 7).map((p, i) =>
+      '<div class="lbi' + (p.name === name ? ' me' : '') + '">' +
+      '<div class="lb-rank ' + (RANK_CLS[i] || '') + '">' + (RANK_EMOJI[i] || (i + 1)) + '</div>' +
+      '<div class="lb-em">' + charImg(p.emoji, 32) + '</div>' +
+      '<div class="lb-nm">' + esc(p.name) + (p.name === name ? ' 👈' : '') + '</div>' +
+      '<div class="lb-sc">' + (p.score || 0) + ' ball</div></div>'
+    ).join('');
+  }
+
+  function renderLbAll(lb) {
+    return (lb || []).map((p, i) => {
+      const plain = i >= 7;
+      const rankLabel = plain ? (i + 1) : (RANK_EMOJI[i] || (i + 1));
+      return '<div class="lbi' + (p.name === name ? ' me' : '') + (plain ? ' lbi-plain' : '') + '">' +
+        '<div class="lb-rank ' + (plain ? '' : (RANK_CLS[i] || '')) + '">' + rankLabel + '</div>' +
+        '<div class="lb-em">' + charImg(p.emoji, plain ? 26 : 32) + '</div>' +
+        '<div class="lb-nm">' + esc(p.name) + (p.name === name ? ' 👈' : '') + '</div>' +
+        '<div style="text-align:right"><div class="lb-sc">' + (p.score || 0) + ' ball</div>' +
+        '<div style="font-size:.65rem;color:var(--muted);font-weight:700">' + fmtMs(p.time) + '</div></div></div>';
+    }).join('');
+  }
+
+  function fmtMs(ms) {
+    const s = Math.round((ms || 0) / 1000);
+    return s < 60 ? s + 's' : Math.floor(s / 60) + 'min ' + (s % 60) + 's';
+  }
+
+  // ── LEADERBOARD SHOWN ──
+  socket.on('game:leaderboard', (data) => {
+    stopTimer();
+    if (lbTimeoutId) clearTimeout(lbTimeoutId);
+    const lb = data.leaderboard || [];
+
+    // Show result first
+    const curId = (document.querySelector('.screen.on') || {}).id || '';
+    const alreadyShown = (curId === 's-result' || curId === 's-lb');
+    if (!alreadyShown) {
+      const isCorrect = lastPickedIdx !== -1 && lastPickedIdx === lastCorrectIdx;
+      const noAnswer = lastPickedIdx === -1;
+      if (noAnswer) {
+        $('res-icon').textContent = '⏱️';
+        $('res-title').textContent = "Vaqt tugadi!";
+        $('res-pts').textContent = '';
+        $('res-correct').textContent = lastCorrectText ? "To'g'ri javob: " + lastCorrectText : 'Javob bermadingiz';
+      } else if (isCorrect) {
+        $('res-icon').textContent = '✅';
+        $('res-title').textContent = "To'g'ri!";
+        const me = lb.find(p => p.name === name);
+        $('res-pts').textContent = me ? me.score + ' ball' : '';
+        $('res-correct').textContent = '';
+      } else {
+        $('res-icon').textContent = '❌';
+        $('res-title').textContent = "Xato!";
+        $('res-pts').textContent = '';
+        $('res-correct').textContent = lastCorrectText ? "To'g'ri javob: " + lastCorrectText : '';
+      }
+      goTo('s-result');
+    }
+
+    lbTimeoutId = setTimeout(() => {
+      if (gameEnded) return;
+      $('lb-list').innerHTML = renderLb(lb);
+      const myPos = lb.findIndex(p => p.name === name);
+      const myPosEl = $('lb-my-pos');
+      if (myPos >= 7) {
+        const me = lb[myPos];
+        myPosEl.style.display = 'block';
+        myPosEl.textContent = 'Sizning o\'rningiz: ' + (myPos + 1) + '-o\'rin • ' + (me.score || 0) + ' ball';
+      } else {
+        myPosEl.style.display = 'none';
+      }
+      goTo('s-lb');
+    }, alreadyShown ? 400 : 2500);
+  });
+
+  // ── GAME ENDED ──
+  socket.on('game:ended', (data) => {
+    gameEnded = true;
+    if (lbTimeoutId) { clearTimeout(lbTimeoutId); lbTimeoutId = null; }
+    stopTimer();
+    $('end-lb').innerHTML = renderLbAll(data.leaderboard || []);
+    goTo('s-end');
+    sessionStorage.removeItem('deborah_player');
+  });
+
+  socket.on('error', (data) => {
+    showMsg('code-msg', data.message || 'Xatolik');
+  });
+
+  // ── ANSWER REVEAL (sent after scoring, includes correct answer) ──
+  socket.on('game:answerReveal', (data) => {
+    if (data.qIndex === curQIdx) {
+      lastCorrectIdx = typeof data.correctOptionIndex === 'number' ? data.correctOptionIndex : -1;
+      lastCorrectText = data.correctText || '';
+    }
+  });
+
+  socket.on('host:disconnected', () => {
+    showToast('Host ulanishi uzildi. O\'yin tugadi.', 'err');
+    location.reload();
+  });
+
+  // ── REJOIN ──
+  async function rejoinSession() {
+    socket.emit('player:rejoin', { code, name, emoji });
+    socket.once('rejoin:state', (data) => {
+      if (data.status === 'ended') {
+        gameEnded = true;
+        $('end-lb').innerHTML = renderLbAll(data.leaderboard || []);
+        goTo('s-end');
+        return;
+      }
+      if (data.status === 'expired') {
+        sessionStorage.removeItem('deborah_player');
+        goTo('s-code');
+        $('code-inp').value = '';
+        showMsg('code-msg', 'O\'yin sessiyasi tugagan. Yangi kod kiriting.');
+        return;
+      }
+      startLobby();
+    });
+  }
+
+  // ── HELPERS ──
+  function updatePBadge() {
+    $('pb-em1').innerHTML = charImg(emoji || 'characters/baby-boss.svg', 24);
+    $('pb-nm1').textContent = name || '—';
+  }
+  function updatePBadge2() {
+    $('pb-em2').innerHTML = charImg(emoji || 'characters/baby-boss.svg', 24);
+    $('pb-nm2').textContent = name || '—';
+  }
+
+  window.goTo = goTo;
+</script>
+</body>
+</html>

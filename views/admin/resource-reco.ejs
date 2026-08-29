@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr" data-theme="dark">
+<head>
+  <%- include('../partials/head', { title, user }) %>
+  <style>
+    .rr-grid { display: grid; grid-template-columns: 300px 1fr; gap: 18px; }
+    .rr-panel { background: var(--deborah-semantic-color-surface-raised); border: 1px solid var(--deborah-semantic-color-border-default); border-radius: 12px; padding: 16px; }
+    .rr-panel h3 { margin: 0 0 12px; font-size: 14px; letter-spacing: .04em; color: var(--deborah-semantic-color-text-muted); text-transform: uppercase; }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 12px; color: var(--deborah-semantic-color-text-muted); margin-bottom: 4px; }
+    .input, textarea.input { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--deborah-semantic-color-border-default); background: var(--deborah-semantic-color-surface-raised); color: var(--deborah-semantic-color-text-primary); font-size: 13px; box-sizing: border-box; }
+    .btn { padding: 6px 14px; border-radius: 8px; border: 1px solid var(--deborah-semantic-color-border-default); background: var(--deborah-semantic-color-surface-raised); color: var(--deborah-semantic-color-text-primary); cursor: pointer; font-size: 13px; transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s; }
+    .btn:hover { border-color: var(--deborah-semantic-color-action-primary); }
+    .btn.primary { background: var(--deborah-semantic-color-action-primary); border-color: var(--deborah-semantic-color-action-primary); color: #fff; }
+    .btn.sm { padding: 4px 10px; font-size: 12px; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+    .badge.verified_academic { background: rgba(0,229,160,.15); color: #00e5a0; }
+    .badge.oer { background: rgba(37,99,235,.15); color: #60a5fa; }
+    .badge.popular_video { background: rgba(251,191,36,.15); color: #fbbf24; }
+    .badge.recent_news { background: rgba(148,163,184,.15); color: #94a3b8; }
+    .prov-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--deborah-semantic-color-border-default); font-size: 12px; cursor: pointer; transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s; margin: 0 6px 6px 0; }
+    .prov-chip.on { border-color: var(--deborah-semantic-color-action-primary); background: color-mix(in srgb, var(--deborah-semantic-color-action-primary) 10%, transparent); }
+    .result-card { padding: 12px 14px; border: 1px solid var(--deborah-semantic-color-border-default); border-radius: 10px; margin-bottom: 10px; transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s; }
+    .result-card:hover { border-color: var(--deborah-semantic-color-action-primary); }
+    .result-card .rtitle { font-weight: 600; font-size: 14px; }
+    .result-card .rmeta { font-size: 12px; color: var(--deborah-semantic-color-text-muted); margin: 4px 0; }
+    .result-card .rwhy { font-size: 12px; color: var(--deborah-semantic-color-action-primary); background: color-mix(in srgb, var(--deborah-semantic-color-action-primary) 8%, transparent); padding: 4px 8px; border-radius: 6px; margin: 6px 0; }
+    .result-card .ractions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+    .score { font-variant-numeric: tabular-nums; color: var(--deborah-semantic-color-action-primary); font-weight: 700; }
+    .toast { position: fixed; top: 16px; right: 16px; z-index: 50; padding: 10px 16px; border-radius: 10px; background: var(--deborah-semantic-color-surface-raised); border: 1px solid var(--deborah-semantic-color-border-default); box-shadow: 0 8px 24px rgba(0,0,0,.3); opacity: 0; transform: translateY(-8px); transition:color .25s,background-color .25s,border-color .25s,box-shadow .25s,transform .25s,opacity .25s; font-size: 13px; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.err { border-color: rgba(248,113,113,.5); }
+    .toast.ok { border-color: rgba(0,229,160,.5); }
+    .muted { color: var(--deborah-semantic-color-text-muted); }
+    .warn { color: #fbbf24; font-size: 12px; margin: 4px 0; }
+    .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+    .dot.ok { background: #00e5a0; }
+    .dot.no { background: #64748b; }
+    .dot.warn { background: #fbbf24; }
+    table.rr-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table.rr-table th, table.rr-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--deborah-semantic-color-border-default); }
+    table.rr-table th { color: var(--deborah-semantic-color-text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+    @media (max-width: 960px) { .rr-grid { grid-template-columns: 1fr; } }
+  </style>
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body>
+  <%- include('../partials/sidebar', { active: 'resource-reco', user }) %>
+  <main class="main">
+    <div class="topbar">
+      <h1>Resource Recommendations</h1>
+      <div class="topbar-right">
+        <button class="btn" onclick="loadProviders()">Providers</button>
+        <button class="btn" onclick="loadDashboard()">Dashboard</button>
+      </div>
+    </div>
+
+    <div class="rr-grid">
+      <div class="rr-panel">
+        <h3>Qidiruv</h3>
+        <div class="field">
+          <label>Mavzu / query</label>
+          <input class="input" id="q" placeholder="masalan: fotosintez biokimyo" />
+        </div>
+        <div class="field">
+          <label>Topic (ixtiyoriy)</label>
+          <input class="input" id="topic" placeholder="Biologiya — 9-sinf" />
+        </div>
+        <div class="field">
+          <label>Kontekst (ixtiyoriy)</label>
+          <textarea class="input" id="ctx" rows="2" placeholder="student darajasi, maqsad..."></textarea>
+        </div>
+        <div class="field">
+          <label>Natijalar soni</label>
+          <input class="input" id="limit" type="number" min="1" max="50" value="10" />
+        </div>
+        <div class="field">
+          <label>Providerlar</label>
+          <div id="providers"></div>
+        </div>
+        <button class="btn primary" onclick="runSearch()">Qidirish</button>
+        <div id="warnings"></div>
+      </div>
+
+      <div>
+        <div class="rr-panel">
+          <h3>Natijalar</h3>
+          <div id="results"><div class="muted">Provider konfiguratsiyasi va API kalitlari sozlangach natijalar chiqadi. <br/>Stop condition: provider ToS/quota production loadga mos bo'lmasa (research.md §11.1).</div></div>
+        </div>
+        <div class="rr-panel" style="margin-top:18px">
+          <h3>Provider holati</h3>
+          <table class="rr-table">
+            <thead><tr><th>Provider</th><th>Status</th><th>Kunlik quota</th><th>Ishlatilgan</th><th>ToS</th><th></th></tr></thead>
+            <tbody id="provTable"><tr><td colspan="6" class="muted">Yuklanmoqda...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      const CSRF = '<%- csrfToken %>';
+      const PROV = ['openalex','semantic_scholar','crossref','core','youtube','rss'];
+      let activeProviders = new Set(PROV);
+
+      function toast(msg, type) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = 'toast show ' + (type || 'ok');
+        setTimeout(() => (t.className = 'toast'), 2600);
+      }
+      async function api(path, opts = {}) {
+        const headers = { 'content-type': 'application/json' };
+        if (opts.method && opts.method !== 'GET') headers['X-CSRF-Token'] = CSRF;
+        const res = await fetch(path, { method: opts.method || 'GET', headers, body: opts.body ? JSON.stringify(opts.body) : undefined });
+        return res.json();
+      }
+
+      function renderProviders() {
+        const box = document.getElementById('providers');
+        box.innerHTML = PROV.map((p) =>
+          `<span class="prov-chip ${activeProviders.has(p) ? 'on' : ''}" onclick="toggleProv('${p}')">${p}</span>`
+        ).join('');
+      }
+      function toggleProv(p) {
+        if (activeProviders.has(p)) activeProviders.delete(p);
+        else activeProviders.add(p);
+        renderProviders();
+      }
+
+      async function runSearch() {
+        const query = document.getElementById('q').value.trim();
+        if (!query) return toast('Query kiriting', 'err');
+        const body = {
+          query,
+          topic: document.getElementById('topic').value.trim() || null,
+          context: document.getElementById('ctx').value.trim() || '',
+          limit: parseInt(document.getElementById('limit').value || '10', 10),
+          providers: [...activeProviders],
+        };
+        const res = await api('/api/admin/resource-reco/search', { method: 'POST', body });
+        if (res.error) return toast(res.error, 'err');
+        const w = document.getElementById('warnings');
+        w.innerHTML = (res.warnings || []).map((x) => `<div class="warn"><span class="dot warn"></span>${x}</div>`).join('');
+        renderResults(res.results || []);
+      }
+
+      function sourceBadge(rec) {
+        if (rec.type === 'paper') return '<span class="badge verified_academic">Verified academic</span>';
+        if (rec.type === 'institutional') return '<span class="badge verified_academic">Institutional</span>';
+        if (rec.type === 'video') return '<span class="badge popular_video">Popular video</span>';
+        if (rec.type === 'news') return '<span class="badge recent_news">Recent news</span>';
+        return '<span class="badge oer">OER</span>';
+      }
+
+      function renderResults(results) {
+        const box = document.getElementById('results');
+        if (!results.length) { box.innerHTML = '<div class="muted">Hech qanday natija yo\'q — providerlar sozlanmagan yoki query bo\'sh.</div>'; return; }
+        box.innerHTML = results.map((r) => {
+          const meta = r.metadata && typeof r.metadata === 'object' ? r.metadata : {};
+          const views = meta.viewCount ? ` • ${Number(meta.viewCount).toLocaleString()} views` : '';
+          const cite = r.citation || '';
+          return `<div class="result-card">
+            <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+              <div class="rtitle">${r.title || ''}</div>
+              <div class="score">${Number(r.score || 0).toFixed(2)}</div>
+            </div>
+            <div class="rmeta">${(r.authors || []).slice(0,3).join(', ') || '—'} • ${r.provider}${views}</div>
+            <div class="rmeta">${r.language || ''} • ${r.license || ''}${r.is_open_access ? ' • OA' : ''}${r.citations ? ' • ' + r.citations + ' iqtibos' : ''}</div>
+            ${sourceBadge(r)}
+            ${r.why_recommended ? `<div class="rwhy">Nega tavsiya qilindi? — ${r.why_recommended}</div>` : ''}
+            ${cite ? `<div class="rmeta" style="font-size:11px">${cite}</div>` : ''}
+            <div class="ractions">
+              <button class="btn sm" onclick="feedback(${r.id || 0},'trust')">Ishonch</button>
+              <button class="btn sm" onclick="feedback(${r.id || 0},'save')">Saqlash</button>
+              <button class="btn sm" onclick="feedback(${r.id || 0},'hide')">Yashirish</button>
+              <a class="btn sm" href="${r.url || '#'}" target="_blank" rel="noopener">Ochish</a>
+            </div>
+          </div>`;
+        }).join('');
+      }
+
+      async function feedback(recordId, action) {
+        const res = await api(`/api/admin/resource-reco/records/${recordId}/feedback`, { method: 'POST', body: { action } });
+        if (res.error) return toast(res.error, 'err');
+        toast(`Feedback: ${action}`);
+      }
+
+      async function loadProviders() {
+        const res = await api('/api/admin/resource-reco/providers');
+        if (res.error) return toast(res.error, 'err');
+        const tb = document.getElementById('provTable');
+        tb.innerHTML = (res.providers || []).map((p) => `<tr>
+          <td><b>${p.name}</b></td>
+          <td>${p.status}</td>
+          <td>${p.quota_limit_daily || 0}/kun</td>
+          <td>${p.quota_used || 0}</td>
+          <td><span class="dot ${p.terms_ok ? 'ok' : 'no'}"></span>${p.terms_ok ? 'Ha' : '—'}</td>
+          <td><button class="btn sm" onclick="toggleProvider('${p.name}')">${p.enabled ? 'O\'chirish' : 'Yoqish'}</button></td>
+        </tr>`).join('');
+      }
+      async function toggleProvider(name) {
+        // Hozirgi holatni dashboard'dan olamiz va teskarisini yuboramiz
+        const dash = await api('/api/admin/resource-reco/dashboard');
+        if (dash.error) return toast(dash.error, 'err');
+        const cur = (dash.providers || []).find((p) => p.name === name);
+        const next = cur ? !cur.enabled : true;
+        const res = await api(`/api/admin/resource-reco/providers/${name}`, { method: 'POST', body: { enabled: next } });
+        if (res.error) return toast(res.error, 'err');
+        toast(`${name} ${next ? 'yoqildi' : 'o\'chirildi'}`);
+        loadProviders();
+      }
+
+      async function loadDashboard() {
+        const res = await api('/api/admin/resource-reco/dashboard');
+        if (res.error) return toast(res.error, 'err');
+        toast(`Feedback: trust ${res.feedback.trust} • save ${res.feedback.save} • hide ${res.feedback.hide}`);
+      }
+
+      renderProviders();
+      loadProviders();
+    </script>
+  </main>
+</body>
+</html>

@@ -1,0 +1,111 @@
+/* ═══════════════════════════════════════════════════════════════
+   Deborah Icon-Button Component (STYLE STEP 12, S12.07-08)
+   ---------------------------------------------------------------
+   S12.07 — 44px hit area, accessible name (aria-label), tooltip
+            (title + data-tip), icon 20-24px dan katta EMAS
+   S12.08 — Toggle: aria-pressed + selected marker (faqat icon rang
+            o'zgarishi bilan cheklanmaydi)
+   Cascade layer: components
+   ═══════════════════════════════════════════════════════════════ */
+
+@layer components {
+  .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;   /* S12.07 hit area */
+    height: 44px;
+    border-radius: var(--deborah-radius-sm, 8px);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--deborah-semantic-color-text-secondary, #566176);
+    cursor: pointer;
+    position: relative;
+    transition: background-color var(--motion-feedback, 120ms) var(--ease-out, ease-out),
+                color var(--motion-feedback, 120ms) var(--ease-out, ease-out),
+                border-color var(--motion-feedback, 120ms) var(--ease-out, ease-out),
+                transform var(--motion-hover, 80ms) var(--ease-out, ease-out);
+  }
+  .icon-btn svg {
+    width: 20px;   /* S12.07 20-24px */
+    height: 20px;
+  }
+  .icon-btn:hover:not(:disabled) {
+    background: var(--deborah-semantic-color-surface-nested, #F7F9FC);
+    color: var(--deborah-semantic-color-text-primary, #1F2937);
+  }
+  .icon-btn:active:not(:disabled) {
+    transform: scale(0.96);
+  }
+  .icon-btn:focus-visible {
+    outline: 3px solid var(--deborah-semantic-color-focus, #7AA8FF);
+    outline-offset: 3px;
+  }
+  .icon-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* S12.08 — Toggle selected: marker dot + soft bg + border */
+  .icon-btn.is-selected,
+  .icon-btn[aria-pressed='true'] {
+    background: var(--deborah-semantic-color-action-primary-soft, #E9EFFF);
+    border-color: var(--deborah-semantic-color-action-primary, #1746D1);
+    color: var(--deborah-semantic-color-action-primary, #1746D1);
+  }
+  .icon-btn.is-selected::after,
+  .icon-btn[aria-pressed='true']::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* Tooltip (S12.07) — :hover/:focus-visible da */
+  .icon-btn[data-tip]::before {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--deborah-semantic-color-surface-scrim, #0A0F1F);
+    /* S37: scrim ikkala theme'da dark — text doim light (on-action/text-inverse dark'da ink beradi) */
+    --tip-fg: #FFFFFF;
+    color: var(--tip-fg, #FFFFFF);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    padding: 6px 10px;
+    border-radius: var(--deborah-radius-sm, 8px);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--motion-popup, 160ms) ease;
+    z-index: var(--deborah-z-index-toast, 40);
+  }
+  .icon-btn[data-tip]:hover::before,
+  .icon-btn[data-tip]:focus-visible::before {
+    opacity: 1;
+  }
+
+  @media (forced-colors: active) {
+    .icon-btn {
+      border: 1px solid ButtonText;
+    }
+    .icon-btn[data-tip]::before {
+      border: 1px solid ButtonText;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .icon-btn,
+    .icon-btn[data-tip]::before {
+      transition: none;
+    }
+  }
+}

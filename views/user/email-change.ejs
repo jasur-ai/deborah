@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="<%= lang || 'uz' %>" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <style>
+    body{background:var(--deborah-semantic-color-surface-default);min-height:100vh;transition:background .3s;font-family:'Source Sans 3',sans-serif;}
+    .navbar{position:sticky;top:0;z-index:100;background:var(--bg-overlay);backdrop-filter:blur(18px);border-bottom:1px solid var(--deborah-semantic-color-border-default);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+    .nav-logo{font-family:'Manrope',cursive;font-size:1.25rem;text-decoration:none;display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--deborah-semantic-color-action-primary),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .nav-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+    .nav-btn{padding:7px 12px;border-radius:9px;border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-muted);font-family:'Source Sans 3',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:5px;}
+    .panel{max-width:680px;margin:0 auto;padding:24px 20px 80px;}
+    .greeting{font-family:'Manrope',cursive;font-size:1.5rem;display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+    .greeting-sub{font-size:.82rem;color:var(--deborah-semantic-color-text-muted);font-weight:700;margin-bottom:20px;}
+    .sec-card{background:var(--deborah-semantic-color-surface-raised);border-radius:16px;padding:18px 20px;border:1px solid var(--deborah-semantic-color-border-default);margin-bottom:14px;}
+    .sec-title{font-family:'Manrope',cursive;font-size:1.02rem;display:flex;align-items:center;gap:8px;margin:0 0 4px;}
+    .sec-sub{font-size:.76rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-bottom:14px;}
+    .reauth-note{display:flex;align-items:center;gap:7px;font-size:.74rem;font-weight:700;color:var(--gold);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:8px;padding:8px 11px;margin-bottom:14px;}
+    .field-label{display:block;font-size:.78rem;font-weight:700;margin:10px 0 5px;}
+    .text-input{width:100%;padding:11px 13px;border-radius:10px;border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-default);font-family:'Source Sans 3',sans-serif;font-size:.88rem;box-sizing:border-box;}
+    .text-input:focus-visible{outline:2px solid var(--deborah-semantic-color-action-primary);outline-offset:2px;}
+    .save-btn{border-radius:10px;border:none;padding:12px 22px;cursor:pointer;font-family:'Source Sans 3',sans-serif;font-weight:700;font-size:.82rem;background:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#041018);display:inline-flex;align-items:center;gap:7px;margin-top:14px;}
+    .save-btn:disabled{opacity:.55;cursor:not-allowed;}
+    .ghost-btn{border-radius:10px;padding:12px 18px;cursor:pointer;font-family:'Source Sans 3',sans-serif;font-weight:700;font-size:.82rem;background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-muted);border:1px solid var(--deborah-semantic-color-border-default);display:inline-flex;align-items:center;gap:7px;margin-top:14px;}
+    .save-bar{position:sticky;bottom:0;background:var(--bg-overlay);backdrop-filter:blur(18px);border-top:1px solid var(--deborah-semantic-color-border-default);padding:12px 0;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:18px;}
+    .status-msg{font-size:.78rem;font-weight:700;}
+    .status-msg.ok{color:var(--green);}
+    .status-msg.fail{color:var(--deborah-semantic-color-action-primary);}
+    @media(max-width:600px){.save-bar{flex-direction:column;}.save-btn{width:100%;justify-content:center;}.ghost-btn{width:100%;justify-content:center;}}
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Asosiy qismga o'tish →</a>
+  <nav class="navbar">
+    <a href="/" class="nav-logo"><img src="/images/logo-vintage.png" alt="Deborah" class="logo-img" style="height:34px;width:auto"></a>
+    <div class="nav-right">
+      <a href="/user/panel" class="nav-btn" style="text-decoration:none"><%- icon('book', 14) %> <%= (copy.sidebar && copy.sidebar.panel) || 'Panel' %></a>
+      <a href="/user/security-profile" class="nav-btn" style="text-decoration:none"><%- icon('shieldCheck', 14) %> <%= (copy.sidebar && copy.sidebar.security) || 'Xavfsizlik' %></a>
+      <button type="button" class="nav-btn" data-theme-toggle title="Light mode"><%- icon('moon', 16) %></button>
+      <a href="/user/logout" class="nav-btn" style="text-decoration:none"><%- icon('logOut', 14) %> <%= (copy.sidebar && copy.sidebar.logout) || 'Chiqish' %></a>
+    </div>
+  </nav>
+
+  <div class="panel" id="main">
+    <div class="greeting"><img src="/images/logo-vintage.png" alt="Deborah" class="logo-img" style="height:30px;width:auto"> <%= emailCopy.title %></div>
+    <div class="greeting-sub"><%= emailCopy.subtitle %></div>
+
+    <!-- Yangi email so'rovi -->
+    <div class="sec-card" id="ec-request-card">
+      <div class="sec-title"><%- icon('mail', 15) %> <%= emailCopy.newEmailTitle %></div>
+      <div class="sec-sub"><%= emailCopy.newEmailSub %></div>
+      <div class="reauth-note"><%- icon('shieldCheck', 13) %> <%= emailCopy.reauthNote %></div>
+      <label class="field-label" for="new-email"><%= emailCopy.newEmail %></label>
+      <input class="text-input" type="email" id="new-email" name="newEmail" placeholder="<%= emailCopy.newEmailPh %>" autocomplete="email" required aria-required="true">
+      <div>
+        <button type="button" id="req-btn" class="save-btn"><%- icon('send', 14) %> <%= emailCopy.submit %></button>
+      </div>
+    </div>
+
+    <!-- Tasdiqlash (pending bo'lganda) -->
+    <div class="sec-card" id="ec-confirm-card" hidden>
+      <div class="sec-title"><%- icon('checkCircle', 15) %> <%= emailCopy.confirmTitle %></div>
+      <div class="sec-sub" id="ec-confirm-sub"><%= emailCopy.confirmSub %></div>
+      <label class="field-label" for="new-code"><%= emailCopy.newCodeLabel %></label>
+      <input class="text-input" type="text" id="new-code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" aria-required="true">
+      <label class="field-label" for="old-token"><%= emailCopy.oldTokenLabel %></label>
+      <input class="text-input" type="text" id="old-token" maxlength="64" autocomplete="one-time-code" aria-required="true">
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button type="button" id="confirm-btn" class="save-btn"><%- icon('check', 14) %> <%= emailCopy.confirm %></button>
+        <button type="button" id="cancel-btn" class="ghost-btn"><%- icon('x', 14) %> <%= emailCopy.cancel %></button>
+      </div>
+    </div>
+
+    <div class="save-bar">
+      <div id="status" class="status-msg" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <script>
+    window.__CSRF__ = <%- JSON.stringify(__csrf || '') %>;
+    window.__EC_COPY__ = {
+      sent: <%- JSON.stringify(emailCopy.sent) %>,
+      success: <%- JSON.stringify(emailCopy.success) %>,
+      expired: <%- JSON.stringify(emailCopy.expired) %>,
+      pendingTitle: <%- JSON.stringify(emailCopy.pendingTitle) %>,
+      pendingSub: <%- JSON.stringify(emailCopy.pendingSub) %>,
+      reauth_required: <%- JSON.stringify(emailCopy.errors && emailCopy.errors.reauth_required) %>,
+      mfa_required: <%- JSON.stringify(emailCopy.errors && emailCopy.errors.mfa_required) %>,
+      unknown: <%- JSON.stringify(emailCopy.errors && emailCopy.errors.not_found) %>,
+    };
+    document.addEventListener('DOMContentLoaded', function () {
+      var csrf = window.__CSRF__ || '';
+      var copy = window.__EC_COPY__ || {};
+      var status = document.getElementById('status');
+      var reqBtn = document.getElementById('req-btn');
+      var confirmCard = document.getElementById('ec-confirm-card');
+      var confirmSub = document.getElementById('ec-confirm-sub');
+
+      function errText(data, statusCode) {
+        if (statusCode === 401) return copy.reauth_required || 'Reauth required';
+        if (statusCode === 403) return copy.mfa_required || 'MFA required';
+        return copy[data && data.error] || data && data.error || copy.unknown || 'Error';
+      }
+      function showMsg(text, ok) {
+        status.className = 'status-msg ' + (ok ? 'ok' : 'fail');
+        status.textContent = text;
+      }
+
+      // Pending bo'lsa confirm kartani ko'rsatish
+      fetch('/api/account/email/status', { headers: { 'X-CSRF-Token': csrf } })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d.ok && d.pending) {
+            confirmCard.hidden = false;
+            confirmSub.textContent = (copy.pendingSub || '').replace('{masked}', d.pending.newEmailMasked || '');
+            if (d.pending.expired) showMsg(copy.expired || 'Expired', false);
+          }
+        }).catch(function () {});
+
+      reqBtn.addEventListener('click', async function () {
+        var email = document.getElementById('new-email').value.trim();
+        if (!email) { showMsg(copy[ 'required' ] || 'Required', false); return; }
+        reqBtn.disabled = true;
+        status.className = 'status-msg';
+        status.textContent = '';
+        try {
+          var res = await fetch('/api/account/email/request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
+            body: JSON.stringify({ newEmail: email }),
+          });
+          var data = await res.json();
+          if (data.ok) {
+            confirmCard.hidden = false;
+            confirmSub.textContent = (copy.pendingSub || '').replace('{masked}', data.maskedNew || '');
+            showMsg(copy.sent || 'Sent', true);
+          } else {
+            showMsg(errText(data, res.status), false);
+          }
+        } catch (e) {
+          showMsg(copy.unknown || 'Error', false);
+        } finally {
+          reqBtn.disabled = false;
+        }
+      });
+
+      var confirmBtn = document.getElementById('confirm-btn');
+      confirmBtn.addEventListener('click', async function () {
+        var code = document.getElementById('new-code').value.trim();
+        var token = document.getElementById('old-token').value.trim();
+        if (!code || !token) { showMsg(copy[ 'required' ] || 'Required', false); return; }
+        confirmBtn.disabled = true;
+        try {
+          var res = await fetch('/api/account/email/confirm', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
+            body: JSON.stringify({ newCode: code, oldToken: token }),
+          });
+          var data = await res.json();
+          if (data.ok) {
+            confirmCard.hidden = true;
+            document.getElementById('ec-request-card').hidden = true;
+            showMsg(copy.success || 'Done', true);
+          } else {
+            showMsg(errText(data, res.status), false);
+          }
+        } catch (e) {
+          showMsg(copy.unknown || 'Error', false);
+        } finally {
+          confirmBtn.disabled = false;
+        }
+      });
+
+      var cancelBtn = document.getElementById('cancel-btn');
+      cancelBtn.addEventListener('click', async function () {
+        var token = document.getElementById('old-token').value.trim();
+        if (!token) { showMsg(copy[ 'required' ] || 'Required', false); return; }
+        cancelBtn.disabled = true;
+        try {
+          var res = await fetch('/api/account/email/cancel', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
+            body: JSON.stringify({ oldToken: token }),
+          });
+          var data = await res.json();
+          if (data.ok) {
+            confirmCard.hidden = true;
+            showMsg('Cancelled', true);
+          } else {
+            showMsg(errText(data, res.status), false);
+          }
+        } catch (e) {
+          showMsg(copy.unknown || 'Error', false);
+        } finally {
+          cancelBtn.disabled = false;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+/* ═══════════════════════════════════════════════════════════════
+   Deborah Brand Components (STYLE STEP 05)
+   ---------------------------------------------------------------
+   1. Signal Rail      — 3px semantic primitive (S05.05)
+   2. Response Mosaic  — 5×5 responsive cell pattern (S05.06)
+
+   Barcha component'lar qorong'i/oq fonlarda ishlaydi (var() orqali).
+   Reduced-motion: live pulse'lar o'chiriladi (WCAG 2.3.3).
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── 1. Signal Rail (S05.05) ────────────────────────────────────
+   Vertical 3px rail + marker nuqta. State'lar:
+   - current   : faol masala/bo'lim (cobalt)
+   - live      : jonli javoblar kelmoqda (signal green + pulse)
+   - attention : o'qituvchi e'tibori kerak (insight amber)
+   - error     : xato/bloklangan (alert red)
+   DOM: <div class="sr-rail sr-rail--live"></div> */
+.sr-rail {
+  --sr-c: var(--deborah-semantic-color-action-primary, #1746D1);
+  --sr-live: #16A34A;
+  --sr-attention: #F59E0B;
+  --sr-error: #DC2626;
+  position: relative;
+  width: 3px;
+  min-height: 28px;
+  border-radius: 2px;
+  background: currentColor;
+  color: var(--sr-c);
+  flex: none;
+}
+.sr-rail::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -4px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: currentColor;
+  transform: translateX(-50%);
+  /* Fallback (color-mix qo'llab-quvvatlamaydigan brauzerlar) */
+  box-shadow: 0 0 0 3px rgba(128, 138, 168, 0.28);
+}
+.sr-rail--current { color: var(--sr-c); }
+.sr-rail--live { color: var(--sr-live); }
+.sr-rail--live::before { animation: sr-pulse 2s ease-in-out infinite; }
+.sr-rail--attention { color: var(--sr-attention); }
+.sr-rail--error { color: var(--sr-error); }
+
+/* color-mix qo'llab-quvvatlansa — state rangiga mos halo (2023+ brauzerlar) */
+@supports (color: color-mix(in srgb, red 50%, blue)) {
+  .sr-rail::before {
+    box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 18%, transparent);
+  }
+}
+
+@keyframes sr-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(128, 138, 168, 0.28); }
+  50%      { box-shadow: 0 0 0 6px rgba(128, 138, 168, 0.12); }
+}
+
+@supports (color: color-mix(in srgb, red 50%, blue)) {
+  @keyframes sr-pulse {
+    0%, 100% { box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 18%, transparent); }
+    50%      { box-shadow: 0 0 0 6px color-mix(in srgb, currentColor 8%, transparent); }
+  }
+}
+
+/* ── 2. Response Mosaic (S05.06) ────────────────────────────────
+   5×5 grid — sinf javoblarining jonli xaritasi.
+   Cell state'lar: correct / incorrect / pending / live.
+   DOM:
+     <div class="rm-mosaic" aria-label="5×5 sinf xaritasi">
+       <span class="rm-cell rm-cell--correct"></span> × 25
+     </div>
+   Live-demo uchun .rm-mosaic--live qo'shilsa pending→live animatsiya. */
+.rm-mosaic {
+  --rm-correct: #16A34A;
+  --rm-incorrect: #DC2626;
+  --rm-pending: var(--deborah-semantic-color-border-subtle, rgba(120, 130, 160, 0.35));
+  --rm-live: #06B6D4;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  width: 100%;
+  max-width: 220px;
+}
+.rm-cell {
+  aspect-ratio: 1 / 1;
+  border-radius: 3px;
+  background: var(--rm-pending);
+  transition: background 200ms ease;
+}
+.rm-cell--pending { background: var(--rm-pending); }
+.rm-cell--correct { background: var(--rm-correct); }
+.rm-cell--incorrect { background: var(--rm-incorrect); }
+.rm-cell--live { background: var(--rm-live); animation: rm-flicker 1.6s ease-in-out infinite; }
+
+@keyframes rm-flicker {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.55; }
+}
+
+/* Static demo uchun animatsiyasiz versiya */
+.rm-mosaic--static .rm-cell--live,
+.rm-mosaic--static .rm-cell { animation: none; }
+
+/* Reduced-motion — barcha animatsiyalarni o'chiradi (WCAG 2.3.3) */
+@media (prefers-reduced-motion: reduce) {
+  .sr-rail--live::before,
+  .rm-cell--live { animation: none; }
+  .rm-cell { transition: none; }
+}
+
+/* ── 3. Forced-colors mode (S06.11) ────────────────────────────
+   Windows High Contrast / forced-colors: system color'larga map.
+   - CanvasText / Canvas: default text va bg
+   - ButtonText / ButtonFace: interaktiv elementlar
+   - Highlight / HighlightText: fokus + selection
+   - LinkText: havolalar
+   forced-color-adjust: none — faqat allowlist (Evidence Mark SVG kabi
+   ma'nosiz bo'lmaydigan, geometric grafikalar) uchun. */
+@media (forced-colors: active) {
+  :root {
+    color-scheme: light;
+    forced-color-adjust: auto;
+  }
+  body {
+    color: CanvasText;
+    background-color: Canvas;
+  }
+  a { color: LinkText; }
+  button,
+  input,
+  select,
+  textarea { color: ButtonText; }
+  ::selection { background-color: Highlight; color: HighlightText; }
+  :focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
+  .sr-rail,
+  .rm-mosaic { forced-color-adjust: none; } /* geometric — shape saqlanadi */
+}
+
+/* Allowlist — forced-color-adjust: none istisnolari (S06.11) */
+.forced-color-keep-shape { forced-color-adjust: none; }

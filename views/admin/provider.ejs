@@ -1,0 +1,367 @@
+<% const current = user || {}; %>
+<!DOCTYPE html>
+<html lang="uz" dir="ltr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — Deborah Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body class="adm-body">
+  <div class="adm-shell">
+    <aside class="adm-sidebar">
+      <div class="adm-brand">
+        <img src="/images/logo-vintage.png" alt="Deborah" class="logo-img" style="height:34px;width:auto">
+        <span>Deborah</span>
+      </div>
+      <nav class="adm-nav">
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/users">Users</a>
+        <a href="/admin/provider" class="active">Provider Adapters</a>
+        <a href="/admin/claude">Claude Adapter</a>
+        <a href="/admin/presentations">Presentation Studio</a>
+        <a href="/admin/interventions">Interventions</a>
+        <a href="/admin/vip">VIP</a>
+      </nav>
+      <div class="adm-side-foot">
+        <a href="/admin/logout">Chiqish</a>
+      </div>
+    </aside>
+
+    <main class="adm-main">
+      <header class="adm-topbar">
+        <h1>Provider Adapters (Gamma + Manus)</h1>
+        <span class="adm-chip" id="keyStatus">API key: tekshirilmoqda…</span>
+      </header>
+
+      <!-- Capability / limitation matrix -->
+      <section class="adm-card">
+        <h2>Capability Matrix</h2>
+        <p class="adm-hint">Rasmiy provider capability'lar (research §9.4) — soxta capability ko'rsatilmaydi.</p>
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead><tr><th>Provider</th><th>Create</th><th>Poll</th><th>Cancel</th><th>Webhook</th><th>Preview</th><th>Embedded edit</th><th>Cheklov</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><b>Gamma v1</b></td>
+                <td>✓</td><td>✓</td><td>✓</td><td>—</td><td>✓ iframe</td>
+                <td><span class="chip chip-warn">Yo'q</span></td>
+                <td class="adm-muted">Create-oriented API — edit Gamma'da amalga oshiriladi (soxta edit ko'rsatilmaydi)</td>
+              </tr>
+              <tr>
+                <td><b>Manus v2</b></td>
+                <td>✓</td><td>—</td><td>—</td><td>✓ signed</td><td>✓ viewer</td>
+                <td><span class="chip chip-warn">Follow-up</span></td>
+                <td class="adm-muted">Agent job 5–15 daqiqa — background job sifatida ko'rsatiladi (timeout emas)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Create job form -->
+      <section class="adm-card">
+        <h2>Create Provider Job</h2>
+        <p class="adm-hint">Gamma: async generation + polling. Manus: file/project/task + signed webhook. API key faqat server env'da.</p>
+        <div class="adm-form">
+          <div class="adm-row">
+            <div class="field"><label>Provider</label>
+              <select class="input" id="fProvider">
+                <option value="gamma">Gamma v1</option>
+                <option value="manus">Manus v2</option>
+              </select>
+            </div>
+            <div class="field" style="flex:2"><label>Mavzu (title)</label>
+              <input class="input" id="fTitle" placeholder="Fotosintez — 8-sinf">
+            </div>
+            <div class="field"><label>Auditoriya</label>
+              <input class="input" id="fAudience" placeholder="8-sinf">
+            </div>
+          </div>
+          <div class="adm-row">
+            <div class="field"><label>Til</label>
+              <select class="input" id="fLanguage">
+                <option value="uz">O'zbek</option>
+                <option value="ru">Русский</option>
+                <option value="en">English</option>
+              </select>
+            </div>
+            <div class="field"><label>Tema</label>
+              <select class="input" id="fTheme">
+                <option value="default">Default</option>
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+                <option value="academic">Academic</option>
+              </select>
+            </div>
+            <div class="field"><label>Slaydlar</label>
+              <input class="input" id="fSlides" type="number" min="3" max="30" value="10">
+            </div>
+            <div class="field"><label>Uslub</label>
+              <select class="input" id="fTone">
+                <option value="formal">Formal</option>
+                <option value="simple">Simple</option>
+                <option value="engaging">Engaging</option>
+              </select>
+            </div>
+          </div>
+          <div class="field"><label>Source pack ID lar (vergul bilan, ixtiyoriy)</label>
+            <input class="input" id="fSources" placeholder="1, 2, 3">
+          </div>
+          <div class="field"><label>Brief (Manus uchun muhim — task prompt)</label>
+            <textarea class="input" id="fBrief" rows="3" placeholder="Research qiling va 10 slaydli o'quv taqdimoti tayyorlang…"></textarea>
+          </div>
+          <div class="adm-row">
+            <button class="btn btn-primary" id="btnCreate">Create Job</button>
+            <button class="btn" id="btnEnsure">Ensure Configs</button>
+            <span class="adm-hint" id="createStatus"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Result -->
+      <section class="adm-card" id="resultCard" style="display:none">
+        <h2>Result</h2>
+        <div class="adm-stats" id="resultStats"></div>
+        <pre class="adm-pre" id="resultDoc" style="max-height:320px;overflow:auto"></pre>
+        <div class="adm-row">
+          <button class="btn" id="btnPoll" style="display:none">Poll (Gamma)</button>
+          <button class="btn" id="btnCancel" style="display:none">Cancel</button>
+          <button class="btn" id="btnFollowUp" style="display:none">Follow-up</button>
+        </div>
+      </section>
+
+      <!-- Jobs -->
+      <section class="adm-card">
+        <h2>Jobs</h2>
+        <button class="btn" id="btnRefresh">Refresh</button>
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead><tr><th>ID</th><th>Provider</th><th>Title</th><th>Status</th><th>Job ID</th><th>Artifact</th><th>Created</th><th></th></tr></thead>
+            <tbody id="jobsBody"><tr><td colspan="8" class="adm-muted">Yuklanmoqda…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Dashboard -->
+      <section class="adm-card">
+        <h2>Dashboard</h2>
+        <div class="adm-stats" id="dashStats"></div>
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead><tr><th>Provider</th><th>Model</th><th>Status</th><th>Enabled</th><th>Quota/day</th><th></th></tr></thead>
+            <tbody id="configBody"></tbody>
+          </table>
+        </div>
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead><tr><th>Dead letters</th><th>Error</th><th>Attempt</th><th>Created</th></tr></thead>
+            <tbody id="dlBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+<script>
+(function () {
+  const CSRF = '<%= csrfToken || "" %>';
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  let currentJobId = null;
+
+  async function api(path, opts = {}) {
+    const res = await fetch(path, {
+      method: opts.method || 'GET',
+      headers: {
+        'content-type': 'application/json',
+        'X-CSRF-Token': CSRF,
+        ...(opts.headers || {}),
+      },
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    return data;
+  }
+
+  async function checkKey() {
+    try {
+      const dash = await api('/api/admin/provider/dashboard');
+      const configured = (dash.configs || []).some((c) => c.enabled);
+      $('keyStatus').textContent = configured ? 'API key: serverda (env)' : 'API key: sozlanmagan (env)';
+      $('keyStatus').className = 'adm-chip ' + (configured ? 'chip-ok' : 'chip-warn');
+    } catch (e) {
+      $('keyStatus').textContent = 'API key: noma\u2018lum';
+    }
+  }
+
+  async function createJob() {
+    $('createStatus').textContent = 'Ishlamoqda…';
+    try {
+      const sources = $('fSources').value.split(',').map((s) => Number(s.trim())).filter((n) => Number.isInteger(n) && n > 0);
+      const r = await api('/api/admin/provider/jobs', {
+        method: 'POST',
+        body: {
+          provider: $('fProvider').value,
+          title: $('fTitle').value,
+          audience: $('fAudience').value,
+          language: $('fLanguage').value,
+          theme: $('fTheme').value,
+          numCards: Number($('fSlides').value) || 10,
+          tone: $('fTone').value,
+          sourcePackIds: sources,
+          brief: $('fBrief').value || null,
+        },
+      });
+      $('createStatus').textContent = r.cached ? 'Cached (idempotent)' : 'Done ✓';
+      currentJobId = r.jobId;
+      $('resultCard').style.display = '';
+      $('resultStats').innerHTML =
+        `<span><b>Job</b> #${esc(r.jobId)}</span>` +
+        `<span><b>Provider</b> ${esc(r.provider)}</span>` +
+        `<span><b>Status</b> ${esc(r.status)}</span>` +
+        (r.providerJobId ? `<span><b>Provider job</b> ${esc(r.providerJobId)}</span>` : '');
+      $('resultDoc').textContent = JSON.stringify(r, null, 2);
+      $('btnPoll').style.display = r.provider === 'gamma' ? '' : 'none';
+      $('btnCancel').style.display = r.status === 'completed' || r.status === 'failed' ? 'none' : '';
+      $('btnFollowUp').style.display = r.provider === 'manus' ? '' : 'none';
+      loadJobs();
+      loadDash();
+    } catch (e) {
+      $('createStatus').textContent = '✗ ' + e.message;
+    }
+  }
+
+  async function pollJob() {
+    if (!currentJobId) return;
+    $('createStatus').textContent = 'Polling… (async backoff)';
+    try {
+      const r = await api(`/api/admin/provider/jobs/${currentJobId}/poll`, { method: 'POST', body: { maxAttempts: 60 } });
+      $('createStatus').textContent = 'Status: ' + r.status;
+      $('resultDoc').textContent = JSON.stringify(r, null, 2);
+      loadJobs();
+    } catch (e) {
+      $('createStatus').textContent = '✗ ' + e.message;
+    }
+  }
+
+  async function cancelJob() {
+    if (!currentJobId) return;
+    try {
+      const r = await api(`/api/admin/provider/jobs/${currentJobId}/cancel`, { method: 'POST', body: {} });
+      $('createStatus').textContent = 'Cancelled: ' + r.status;
+      loadJobs();
+    } catch (e) {
+      $('createStatus').textContent = '✗ ' + e.message;
+    }
+  }
+
+  async function followUp() {
+    if (!currentJobId) return;
+    const msg = prompt('Manus task uchun follow-up xabar:');
+    if (!msg) return;
+    try {
+      const r = await api(`/api/admin/provider/jobs/${currentJobId}/follow-up`, { method: 'POST', body: { message: msg } });
+      $('createStatus').textContent = 'Follow-up yuborildi ✓';
+    } catch (e) {
+      $('createStatus').textContent = '✗ ' + e.message;
+    }
+  }
+
+  async function loadJobs() {
+    try {
+      const { jobs } = await api('/api/admin/provider/jobs?limit=20');
+      $('jobsBody').innerHTML = jobs.map((j) => `
+        <tr>
+          <td>#${j.id}</td>
+          <td><span class="chip">${esc(j.provider)}</span></td>
+          <td>${esc(j.title)}</td>
+          <td><span class="chip chip-${j.status === 'completed' ? 'ok' : j.status === 'failed' ? 'err' : 'warn'}">${esc(j.status)}</span></td>
+          <td class="adm-muted">${esc(j.provider_job_id || '-')}</td>
+          <td>${j.artifact_key ? esc(j.artifact_key.slice(0, 40)) + '…' : '-'}</td>
+          <td>${esc((j.created_at || '').slice(0, 19))}</td>
+          <td><button class="btn btn-sm" onclick="viewJob(${j.id})">View</button></td>
+        </tr>`).join('') || '<tr><td colspan="8" class="adm-muted">Hozircha job yo\u2018q</td></tr>';
+    } catch (e) { $('jobsBody').innerHTML = `<tr><td colspan="8" class="adm-muted">${esc(e.message)}</td></tr>`; }
+  }
+
+  window.viewJob = async function (id) {
+    try {
+      const j = await api(`/api/admin/provider/jobs/${id}`);
+      currentJobId = j.id;
+      $('resultCard').style.display = '';
+      $('resultStats').innerHTML =
+        `<span><b>Job</b> #${esc(j.id)}</span>` +
+        `<span><b>Provider</b> ${esc(j.provider)}</span>` +
+        `<span><b>Status</b> ${esc(j.status)}</span>` +
+        (j.preview_url ? `<span><b>Preview</b> <a href="${esc(j.preview_url)}" target="_blank">iframe</a></span>` : '') +
+        (j.export_url ? `<span><b>Export</b> <a href="${esc(j.export_url)}" target="_blank">open</a></span>` : '') +
+        (j.artifact_key ? `<span><b>Copied</b> ${esc(j.artifact_key)}</span>` : '') +
+        (j.error ? `<span class="adm-err">✗ ${esc(j.error)}</span>` : '');
+      $('resultDoc').textContent = JSON.stringify({ brief: j.brief, attribution: j.attribution, artifact_meta: j.artifact_meta, usage: j.usage }, null, 2);
+      $('btnPoll').style.display = j.provider === 'gamma' && j.status !== 'completed' && j.status !== 'failed' && j.status !== 'cancelled' ? '' : 'none';
+      $('btnCancel').style.display = j.status === 'completed' || j.status === 'failed' || j.status === 'cancelled' ? 'none' : '';
+      $('btnFollowUp').style.display = j.provider === 'manus' ? '' : 'none';
+    } catch (e) { alert(e.message); }
+  };
+
+  async function loadDash() {
+    try {
+      const dash = await api('/api/admin/provider/dashboard');
+      const jobs = dash.jobs || [];
+      const total = jobs.length;
+      const completed = jobs.filter((j) => j.status === 'completed').length;
+      const failed = jobs.filter((j) => j.status === 'failed').length;
+      $('dashStats').innerHTML =
+        `<span><b>Jobs</b> ${total}</span>` +
+        `<span><b>Completed</b> ${completed}</span>` +
+        `<span><b>Failed</b> ${failed}</span>` +
+        `<span><b>Dead letters</b> ${(dash.deadLetters || []).length}</span>` +
+        `<span><b>Storage</b> ${esc(dash.storage?.type || 'local')}</span>`;
+      $('configBody').innerHTML = (dash.configs || []).map((c) => `
+        <tr>
+          <td><b>${esc(c.provider)}</b></td>
+          <td>${esc(c.model)}</td>
+          <td><span class="chip chip-${c.status === 'enabled' ? 'ok' : 'warn'}">${esc(c.status)}</span></td>
+          <td>${c.enabled ? '✓' : '—'}</td>
+          <td>${c.quota_limit_daily}</td>
+          <td><button class="btn btn-sm" onclick="toggleConfig('${esc(c.provider)}', ${!c.enabled})">${c.enabled ? 'Disable' : 'Enable'}</button></td>
+        </tr>`).join('') || '<tr><td colspan="6" class="adm-muted">Config yo\u2018q — Ensure tugmasini bosing</td></tr>';
+      $('dlBody').innerHTML = (dash.deadLetters || []).map((d) => `
+        <tr>
+          <td>${esc(d.provider)} / #${d.job_id}</td>
+          <td class="adm-muted">${esc((d.error || '').slice(0, 80))}</td>
+          <td>${d.attempt}</td>
+          <td>${esc((d.created_at || '').slice(0, 19))}</td>
+        </tr>`).join('') || '<tr><td colspan="4" class="adm-muted">Dead letter yo\u2018q</td></tr>';
+    } catch (e) { /* ignore */ }
+  }
+
+  window.toggleConfig = async function (provider, enabled) {
+    try {
+      await api(`/api/admin/provider/configs/${encodeURIComponent(provider)}`, { method: 'POST', body: { enabled } });
+      loadDash();
+    } catch (e) { alert(e.message); }
+  };
+
+  $('btnCreate').addEventListener('click', createJob);
+  $('btnRefresh').addEventListener('click', () => { loadJobs(); loadDash(); });
+  $('btnEnsure').addEventListener('click', async () => {
+    try { await api('/api/admin/provider/configs/ensure', { method: 'POST', body: {} }); loadDash(); }
+    catch (e) { alert(e.message); }
+  });
+  $('btnPoll').addEventListener('click', pollJob);
+  $('btnCancel').addEventListener('click', cancelJob);
+  $('btnFollowUp').addEventListener('click', followUp);
+
+  checkKey();
+  loadJobs();
+  loadDash();
+})();
+</script>
+</body>
+</html>

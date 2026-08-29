@@ -1,0 +1,100 @@
+/* ═══════════════════════════════════════════════════════════════
+   Deborah Layout Foundations (STYLE STEP 09)
+   ---------------------------------------------------------------
+   1. Containers (S09.02) — landing/workspace/reading/auth/studio
+   2. Grid primitives (S09.03) — 12/8/4 col + 24/20/16 gutter
+   3. Density (S09.09) — comfortable default, compact teacher/admin
+   4. z-index qatlamlari (S09.06) — sticky 10 → system 60
+   5. Radius grammar yordamchilari (S09.04/05)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── 1. Containers (S09.02) ── */
+.container-landing  { width: 100%; max-width: var(--deborah-container-landing, 1200px); margin-inline: auto; padding-inline: var(--deborah-spacing-4, 16px); }
+.container-workspace { width: 100%; max-width: var(--deborah-container-workspace, 1280px); margin-inline: auto; padding-inline: var(--deborah-spacing-4, 16px); }
+.container-workspace-wide { width: 100%; max-width: var(--deborah-container-workspace-wide, 1440px); margin-inline: auto; padding-inline: var(--deborah-spacing-4, 16px); }
+.container-reading  { width: 100%; max-width: var(--deborah-container-reading, 65ch); margin-inline: auto; }
+.container-auth     { width: 100%; max-width: var(--deborah-container-auth, 440px); margin-inline: auto; padding-inline: var(--deborah-spacing-4, 16px); }
+.container-studio   { width: 100%; max-width: var(--deborah-container-studio, 920px); margin-inline: auto; padding-inline: var(--deborah-spacing-4, 16px); }
+
+/* ── 2. Grid primitives (S09.03) ──
+   Desktop 12-col / 24px gutter; tablet 8-col / 20px; mobile 4-col / 16px. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols, 12), minmax(0, 1fr));
+  gap: var(--grid-gutter, var(--deborah-grid-gutter-desktop, 24px));
+}
+@media (max-width: 1024px) {
+  .grid { --grid-cols: 8; --grid-gutter: var(--deborah-grid-gutter-tablet, 20px); }
+}
+@media (max-width: 640px) {
+  .grid { --grid-cols: 4; --grid-gutter: var(--deborah-grid-gutter-mobile, 16px); }
+}
+
+/* Column span helpers */
+.col-span-2 { grid-column: span 2 / span 2; }
+.col-span-3 { grid-column: span 3 / span 3; }
+.col-span-4 { grid-column: span 4 / span 4; }
+.col-span-6 { grid-column: span 6 / span 6; }
+.col-span-8 { grid-column: span 8 / span 8; }
+.col-span-12 { grid-column: span 12 / span 12; }
+@media (max-width: 640px) {
+  .col-span-2, .col-span-3, .col-span-4, .col-span-6, .col-span-8, .col-span-12 { grid-column: span 4 / span 4; }
+}
+
+/* ── 3. Density (S09.09) ──
+   Default: comfortable. `[data-density="compact"]` faqat teacher/admin
+   sahifalarida qo'llaniladi (participant view'larda yo'q). */
+:root {
+  --density-control-height: var(--deborah-density-comfortable-control-height, 40px);
+  --density-control-pad-y: var(--deborah-density-comfortable-control-pad-y, 10px);
+  --density-control-pad-x: var(--deborah-density-comfortable-control-pad-x, 16px);
+  --density-row-gap: var(--deborah-density-comfortable-row-gap, 16px);
+}
+[data-density="compact"] {
+  --density-control-height: var(--deborah-density-compact-control-height, 32px);
+  --density-control-pad-y: var(--deborah-density-compact-control-pad-y, 6px);
+  --density-control-pad-x: var(--deborah-density-compact-control-pad-x, 12px);
+  --density-row-gap: var(--deborah-density-compact-row-gap, 8px);
+}
+/* Compact scoping: faqat admin/teacher qobiqlarida. Participant/cast
+   view'larida compact aktiv bo'lmasligi uchun default qobiq selektorlari. */
+.admin-layout, .teacher-layout, .studio-shell { --density-mode: comfortable; }
+.admin-layout[data-density="compact"], .teacher-layout[data-density="compact"] { --density-mode: compact; }
+
+/* ── 4. z-index qatlamlari (S09.06) ──
+   Semantic layers: base 0 → sticky 10 → dropdown 20 → modal 30 → toast 40 → system 60.
+   Component'lar raw raqam o'rniga shu token'lar yoki shu qatlam oralig'ini ishlatadi. */
+.layer-sticky    { z-index: var(--deborah-z-index-sticky, 10); }
+.layer-dropdown  { z-index: var(--deborah-z-index-dropdown, 20); }
+.layer-modal     { z-index: var(--deborah-z-index-modal, 30); }
+.layer-toast     { z-index: var(--deborah-z-index-toast, 40); }
+.layer-system    { z-index: var(--deborah-z-index-system, 60); }
+
+/* ── 5. Radius grammar yordamchilari (S09.04/05) ──
+   control 8 / card 12 / modal 16 / pill faqat status-chips. */
+.r-control { border-radius: var(--deborah-radius-sm, 8px); }
+.r-card    { border-radius: var(--deborah-radius-md, 12px); }
+.r-modal   { border-radius: var(--deborah-radius-lg, 16px); }
+.r-pill    { border-radius: var(--deborah-radius-pill, 999px); }
+
+/* Elevation yordamchilari (S09.06) */
+.e-surface { box-shadow: var(--deborah-elevation-surface); }
+.e-sticky  { box-shadow: var(--deborah-elevation-sticky); }
+.e-modal   { box-shadow: var(--deborah-elevation-modal); }
+.e-toast   { box-shadow: var(--deborah-elevation-toast); }
+
+/* ── 6. Border-first strategiya (S09.07) ──
+   Dark theme'da shadow'ga tayanmaymiz — surface luminance + border yetarli.
+   Light'da subtle border + limited shadow. */
+html[data-theme="light"] .e-surface { border: 1px solid var(--deborah-semantic-color-border-subtle); }
+html[data-theme="dark"]  .e-surface,
+html[data-theme="high-contrast"] .e-surface { border: 1px solid var(--deborah-semantic-color-border-default); box-shadow: none; }
+
+/* ── 7. 320px + ultra-wide qo'llab-quvvatlash (S09.11) ── */
+@media (max-width: 360px) {
+  .container-landing, .container-workspace, .container-studio { padding-inline: var(--deborah-spacing-3, 12px); }
+  .grid { --grid-cols: 4; }
+}
+@media (min-width: 1920px) {
+  .container-workspace-wide { max-width: 1600px; }
+}

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <script src="/socket.io/socket.io.js"></script>
+  <style>
+    :root{--bg:#06080f;--surf:#0b0e1a;--card:#0f1525;--border:rgba(255,255,255,.07);--accent:#2563eb;--gold:#FBBF24;--green:#00e5a0;--accent:#f87171;--text:#e8edf7;--muted:#8b96b3;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html,body{height:100%;overflow:hidden;}
+    body{font-family:'Source Sans 3',sans-serif;background:var(--deborah-semantic-color-surface-default);color:var(--deborah-semantic-color-text-primary);display:flex;flex-direction:column;}
+
+    /* ── TOPBAR ── */
+    #topbar{
+      background:rgba(4,6,18,.98);border-bottom:1px solid var(--deborah-semantic-color-border-default);
+      padding:7px 12px;display:flex;align-items:center;gap:6px;
+      flex-shrink:0;overflow-x:auto;white-space:nowrap;
+    }
+    .logo{font-family:''Manrope'',cursive;font-size:.95rem;
+      background:linear-gradient(135deg,#e7c078,#fbbf24);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      flex-shrink:0;margin-right:2px;}
+    #topbar input{
+      background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:7px;
+      padding:5px 8px;color:var(--deborah-semantic-color-text-primary,#f2ede3);font-family:'Source Sans 3',sans-serif;font-size:.76rem;font-weight:700;
+      outline:none;transition:border-color .2s;
+    }
+    #topbar input:focus{border-color:var(--deborah-semantic-color-action-primary);}
+
+    /* Arena — qat'iy qorong'u "orol": light temada ham chrome qorong'u, tokenlar dark qiymatida qoladi */
+    [data-theme="light"]{
+      --deborah-semantic-color-text-primary:#f2ede3;
+      --deborah-semantic-color-text-secondary:#c0b7a4;
+      --deborah-semantic-color-text-muted:#9a9178;
+      --deborah-semantic-color-border-default:rgba(201,165,101,.16);
+      --gold:#fbbf24; --green:#7fa878; --blue:#22d3ee; --purple:#a78bfa;
+      --deborah-semantic-color-surface-raised:#241f18;
+      --deborah-semantic-color-surface-input:#241f18;
+    }
+
+    #topbar input::placeholder{color:var(--deborah-semantic-color-text-muted,#9a9178);}
+    #code-inp{width:82px;font-family:''Manrope'',cursive;letter-spacing:3px;text-align:center;}
+    #bot-count,#correct-rate,#answer-rate{width:46px;text-align:center;}
+    .tb-lbl{color:var(--deborah-semantic-color-text-muted);font-weight:600;font-size:.65rem;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;}
+    .tb-btn{
+      border:none;border-radius:7px;padding:5px 11px;
+      font-family:'Source Sans 3',sans-serif;font-size:.74rem;font-weight:700;
+      cursor:pointer;transition:color .18s,background-color .18s,border-color .18s,box-shadow .18s,transform .18s,opacity .18s;flex-shrink:0;
+    }
+    .tb-btn:disabled{opacity:.35;cursor:not-allowed;}
+    .btn-load{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;}
+    .btn-bots{background:linear-gradient(135deg,#00e5a0,#059669);color:#04120c;}
+    .btn-bots:hover{transform:translateY(-1px);}
+    .btn-clean{background:rgba(120,30,30,.55);border:1px solid rgba(248,113,113,.45);color:#f87171;}
+    .btn-clean:hover{background:rgba(239,68,68,.2);}
+    .tb-sep{width:1px;height:18px;background:rgba(255,255,255,.08);flex-shrink:0;}
+    #status-pill{
+      margin-left:auto;font-size:.68rem;font-weight:600;padding:3px 10px;border-radius:50px;
+      background:rgba(255,255,255,.06);color:var(--deborah-semantic-color-text-muted);flex-shrink:0;
+    }
+    #status-pill.live{background:rgba(0,229,160,.12);color:var(--green);border:1px solid rgba(0,229,160,.25);}
+
+    /* ── MAIN: 2 kolonka ── */
+    #main{flex:1;display:flex;min-height:0;overflow:hidden;}
+
+    /* CHAP — host iframe */
+    #left-pane{
+      flex:1;min-width:0;display:flex;flex-direction:column;
+      border-right:2px solid rgba(255,255,255,.05);background:#000;
+    }
+
+    /* O'NG — telefon */
+    #right-pane{
+      width:370px;flex-shrink:0;display:flex;flex-direction:column;background:#07090f;
+    }
+
+    /* Pane header */
+    .pane-hd{
+      padding:5px 10px;background:rgba(255,255,255,.03);border-bottom:1px solid var(--deborah-semantic-color-border-default);
+      font-size:.68rem;font-weight:600;color:var(--deborah-semantic-color-text-muted);display:flex;align-items:center;gap:5px;flex-shrink:0;
+    }
+    .pane-hd b{color:var(--deborah-semantic-color-text-primary);font-size:.72rem;}
+    .phd-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+    .dot-purple{background:#a78bfa;}
+    .dot-green{background:var(--green);}
+    .dot-blue{background:var(--deborah-semantic-color-action-primary);}
+
+    /* Host iframe */
+    #left-frame-wrap{flex:1;position:relative;}
+    #left-frame-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none;}
+
+    /* ── TELEFON ── */
+    #phone-area{
+      flex:1;display:flex;align-items:center;justify-content:center;
+      padding:10px 8px;min-height:0;
+      background:radial-gradient(ellipse at 50% 30%,rgba(37,99,235,.07) 0%,transparent 60%),#07090f;
+    }
+    #phone-device{
+      width:320px;height:100%;max-height:660px;min-height:380px;
+      border-radius:40px;background:#08080f;
+      border:3px solid rgba(255,255,255,.14);
+      box-shadow:0 0 0 1px rgba(0,0,0,.9),0 0 50px rgba(37,99,235,.1),0 20px 60px rgba(0,0,0,.8),inset 0 0 0 1px rgba(255,255,255,.04);
+      display:flex;flex-direction:column;overflow:hidden;position:relative;
+    }
+    .phone-notch{
+      flex-shrink:0;height:28px;background:#08080f;
+      display:flex;align-items:center;justify-content:center;position:relative;z-index:2;
+    }
+    .phone-notch::after{
+      content:'';width:100px;height:20px;background:#000;
+      border-radius:0 0 14px 14px;display:block;
+    }
+    #phone-content{flex:1;position:relative;overflow:hidden;background:#06060f;}
+    #phone-content iframe{
+      position:absolute;top:0;left:0;
+      border:none;transform-origin:top left;
+    }
+    .phone-home{
+      flex-shrink:0;height:20px;background:#08080f;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .phone-home::after{content:'';width:90px;height:4px;background:rgba(255,255,255,.2);border-radius:4px;display:block;}
+
+    .placeholder{
+      position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+      flex-direction:column;gap:8px;color:var(--deborah-semantic-color-text-muted);font-size:.75rem;font-weight:700;text-align:center;padding:16px;
+    }
+
+    /* ── SVG icon inline ── */
+    .logo svg{margin-right:4px;vertical-align:middle;}
+    .tb-btn svg{vertical-align:middle;margin-right:4px;}
+  </style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px"><path d="M9 3L3 7l6 4"/><path d="M15 3l6 4-6 4"/><path d="M9 21V11"/><path d="M15 21V11"/><path d="M3 7v10l6 4"/><path d="M21 7v10l-6 4"/></svg>Test Arena</div>
+  <span class="tb-lbl">Kod</span>
+  <input type="text" id="code-inp" placeholder="12345" maxlength="5" inputmode="numeric">
+  <button type="button" class="tb-btn btn-load" onclick="loadArena()">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:3px"><path d="M8 5v14l11-7z"/></svg>Yuklash
+  </button>
+  <div class="tb-sep"></div>
+  <span class="tb-lbl">Botlar</span>
+  <input type="number" id="bot-count" value="15" min="1" max="50">
+  <span class="tb-lbl">To'g'ri%</span>
+  <input type="number" id="correct-rate" value="70" min="0" max="100">
+  <span class="tb-lbl">Javob%</span>
+  <input type="number" id="answer-rate" value="90" min="0" max="100">
+  <button type="button" class="tb-btn btn-bots" id="add-bots-btn" onclick="addBots()" disabled>
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:3px"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="16" r="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Botlar
+  </button>
+  <button type="button" class="tb-btn btn-clean" id="clean-btn" onclick="cleanupBots()" disabled>
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:3px"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Tozalash
+  </button>
+  <div id="status-pill">Tayyor</div>
+</div>
+
+<div id="main">
+
+  <!-- CHAP: Host -->
+  <div id="left-pane">
+    <div class="pane-hd"><span class="phd-dot dot-purple"></span><b>Cast (Host)</b></div>
+    <div id="left-frame-wrap">
+      <div class="placeholder">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+        <div>Kodni kiritib, Yuklash tugmasini bosing</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- O'NG: Telefon -->
+  <div id="right-pane">
+    <div class="pane-hd"><span class="phd-dot dot-green"></span><b>O'yinchi (siz)</b></div>
+    <div id="phone-area">
+      <div id="phone-device">
+        <div class="phone-notch"></div>
+        <div id="phone-content">
+          <div class="placeholder" id="phone-placeholder">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".5"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            <div>Kodni kiritib, Yuklash tugmasini bosing</div>
+          </div>
+        </div>
+        <div class="phone-home"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── DOM refs ──
+const $id = id => document.getElementById(id);
+const CHAR_PATH = '/characters';
+const BOT_PREFIX = 'Bot';
+
+const CARTOON_CHARS = <%- JSON.stringify(characters || []) %>;
+
+let curCode = null, curBotCount = 15, processedQIdx = -1;
+let stateUnsub = null, botTimeouts = [];
+
+// ── Socket.io ──
+const socket = io();
+
+// ── Status ──
+function setStatus(txt, live) {
+  const el = $id('status-pill');
+  el.className = live ? 'live' : '';
+  el.textContent = txt;
+}
+
+// ── Phone iframe scale ──
+function updatePhoneScale() {
+  const content = $id('phone-content');
+  if (!content) return;
+  const availW = content.clientWidth || 294;
+  const availH = content.clientHeight || 580;
+  const IFRAME_W = 390;
+  const IFRAME_H = 844;
+  const scale = availW > 0 && availH > 0 ? Math.max(availW / IFRAME_W, availH / IFRAME_H) : 1;
+  const iframe = content.querySelector('iframe');
+  if (iframe) {
+    iframe.style.width = IFRAME_W + 'px';
+    iframe.style.height = IFRAME_H + 'px';
+    iframe.style.transform = 'scale(' + scale + ')';
+    iframe.style.transformOrigin = 'top left';
+    const scaledW = IFRAME_W * scale;
+    iframe.style.left = Math.round((availW - scaledW) / 2) + 'px';
+    iframe.style.top = '0';
+  }
+}
+window.addEventListener('resize', updatePhoneScale);
+
+// ── Load Arena ──
+window.loadArena = function() {
+  const code = $id('code-inp').value.trim();
+  if (!/^\d{5}$/.test(code)) { showToast('5 xonali kod kiriting', 'err'); return; }
+  curCode = code;
+
+  // Host iframe
+  $id('left-frame-wrap').innerHTML = '<iframe src="/host?code=' + code + '&auto=0" allow="clipboard-write"></iframe>';
+
+  // Phone iframe
+  const pc = $id('phone-content');
+  pc.innerHTML = '<iframe src="/play?code=' + code + '" id="phone-iframe"></iframe>';
+  const pif = pc.querySelector('iframe');
+  if (pif) pif.addEventListener('load', updatePhoneScale);
+  setTimeout(updatePhoneScale, 80);
+  setTimeout(updatePhoneScale, 400);
+
+  $id('add-bots-btn').disabled = false;
+  $id('clean-btn').disabled = false;
+  setStatus('Yuklandi: ' + code, true);
+  watchGame(code);
+};
+
+// ── Bot qo'shish ──
+window.addBots = async function() {
+  if (!curCode) return;
+  const count = Math.max(1, Math.min(50, parseInt($id('bot-count').value || '15', 10)));
+  curBotCount = count;
+  const btn = $id('add-bots-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:3px"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Qo\'shilmoqda...';
+  try {
+    // Check session exists
+    const res = await fetch('/arena/api/check-session?code=' + curCode);
+    const data = await res.json();
+    if (!data.exists) { showToast('Sessiya topilmadi', 'err'); btn.disabled = false; btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:3px"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="16" r="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Botlar'; return; }
+
+    // Add bots via API
+    const addRes = await fetch('/arena/api/add-bots', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, count, prefix: BOT_PREFIX })
+    });
+    const addData = await addRes.json();
+    if (addData.success) {
+      setStatus(count + ' bot qo\'shildi', true);
+    } else {
+      showToast('Xato: ' + (addData.error || 'Noma\'lum'), 'err');
+    }
+  } catch(e) { showToast('Xato: ' + e.message, 'err'); }
+  btn.disabled = false;
+  btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:3px"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="16" r="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Botlar';
+};
+
+// ── Botlarni tozalash ──
+window.cleanupBots = async function() {
+  if (!curCode) return;
+  if (!(await showConfirm('Tozalash', 'Barcha botlarni o\'chirasizmi?', 'Tozala'))) return;
+  const btn = $id('clean-btn');
+  btn.disabled = true;
+  try {
+    const res = await fetch('/arena/api/cleanup-bots', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, prefix: BOT_PREFIX })
+    });
+    const data = await res.json();
+    if (data.success) setStatus('Botlar tozalandi', false);
+  } catch(_) {}
+  btn.disabled = false;
+};
+
+// ── Watch game state via socket.io ──
+function watchGame(code) {
+  // Clean up previous listeners
+  socket.off('arena:stateUpdate');
+  processedQIdx = -1;
+
+  socket.emit('arena:watch', { code });
+
+  socket.on('arena:stateUpdate', function(data) {
+    const st = data.state;
+    if (!st) return;
+    if (st.status === 'question_active' && st.q_index !== processedQIdx) {
+      processedQIdx = st.q_index;
+      scheduleAnswers(code, st);
+    }
+  });
+}
+
+// ── Bot answer scheduling ──
+function scheduleAnswers(code, st) {
+  const qIndex = st.q_index;
+  const qTimeMs = (st.q_time || 20) * 1000;
+  const correctIdx = typeof st.q_correct === 'number' ? st.q_correct : 0;
+  const numOptions = (st.q_options || []).length || 4;
+
+  // Clear previous bot timeouts
+  botTimeouts.forEach(function(t) { clearTimeout(t); });
+  botTimeouts = [];
+
+  const correctRate = Math.max(0, Math.min(1, (parseFloat($id('correct-rate').value) || 70) / 100));
+  const answerRate = Math.max(0, Math.min(1, (parseFloat($id('answer-rate').value) || 90) / 100));
+  const maxDelay = Math.max(400, qTimeMs - 600);
+
+  for (let i = 1; i <= curBotCount; i++) {
+    if (Math.random() > answerRate) continue;
+    const name = BOT_PREFIX + i;
+    const isCorrect = Math.random() < correctRate;
+    let opt;
+    if (isCorrect) { opt = correctIdx; }
+    else { do { opt = Math.floor(Math.random() * numOptions); } while (opt === correctIdx && numOptions > 1); }
+    const delay = 400 + Math.random() * Math.max(0, maxDelay - 400);
+    const t = setTimeout(function() {
+      // Emit bot answer through socket.io so host sees real-time count
+      socket.emit('arena:botAnswer', {
+        code: code,
+        qIndex: qIndex,
+        playerName: name,
+        optionIndex: opt,
+        timeMs: Math.round(delay)
+      });
+    }, delay);
+    botTimeouts.push(t);
+  }
+}
+
+// ── Code input Enter key ──
+$id('code-inp').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') window.loadArena();
+});
+
+// ── URL dan auto-load ──
+(function() {
+  var p = new URLSearchParams(location.search);
+  var c = p.get('code');
+  if (c && /^\d{4,6}$/.test(c)) {
+    $id('code-inp').value = c;
+    if (p.get('auto') === '1') setTimeout(function() { window.loadArena(); }, 200);
+  }
+})();
+</script>
+</body>
+</html>

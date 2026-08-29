@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="<%= lang === 'uz-cyrl' ? 'uz-Cyrl' : lang %>" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <style>
+    .auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:30px 20px;background:radial-gradient(ellipse 55% 40% at 15% 20%,rgba(37,99,235,.08) 0%,transparent 65%),radial-gradient(ellipse 45% 35% at 85% 75%,rgba(56,189,248,.05) 0%,transparent 65%),var(--deborah-semantic-color-surface-default);}
+    .auth-wrap{width:100%;max-width:440px;}
+    .auth-header{text-align:center;margin-bottom:22px;}
+    .auth-logo{height:34px;width:auto;margin-bottom:12px;}
+    .auth-title{font-family:var(--font-display);font-size:1.45rem;margin-bottom:4px;}
+    .auth-sub{color:var(--deborah-semantic-color-text-muted);font-size:.82rem;font-weight:700;}
+    .auth-box{background:var(--deborah-semantic-color-surface-raised);border-radius:20px;padding:26px;border:1px solid var(--deborah-semantic-color-border-subtle);box-shadow:var(--shadow-lg);}
+    .lbl{font-size:.72rem;font-weight:600;color:var(--deborah-semantic-color-text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:block;}
+    /* S24.04: raw white alpha emas — semantic surface/border token'lar (global .inp/input.css) */
+    .inp{margin-bottom:6px;width:100%;}
+    .inp-error{border-color:var(--deborah-semantic-color-status-danger)!important;}
+    .pw-wrap{position:relative;}
+    .pw-toggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--deborah-semantic-color-text-muted);cursor:pointer;padding:8px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:color .2s;min-width:44px;min-height:44px;}
+    .pw-toggle:hover{color:var(--deborah-semantic-color-text-primary);}
+    .btn{width:100%;border:none;border-radius:12px;padding:13px;font-family:var(--font-body);font-size:.92rem;font-weight:700;cursor:pointer;transition:color .25s,background-color .25s,border-color .25s,box-shadow .25s,transform .25s,opacity .25s;display:flex;align-items:center;justify-content:center;gap:7px;min-height:48px;}
+    .btn-primary{background:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#fff);}
+    .btn-primary:hover:not(:disabled){background:var(--deborah-semantic-color-action-primary-hover);transform:translateY(-2px);}
+    .btn-secondary{background:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#fff);}
+    .btn-secondary:hover:not(:disabled){background:var(--deborah-semantic-color-action-primary-hover);transform:translateY(-2px);}
+    .msg{border-radius:10px;padding:10px 14px;font-size:.8rem;font-weight:700;margin-bottom:14px;display:none;}
+    .msg.err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444;display:block;}
+    .msg.ok{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:#22c55e;display:block;}
+    /* ── Strength meter ── */
+    .strength{display:block;margin-bottom:14px;}
+    .strength-bar{height:4px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;}
+    .strength-fill{height:100%;width:0;border-radius:99px;transition:width .3s,background .3s;}
+    .strength-hint{font-size:.7rem;font-weight:700;color:var(--deborah-semantic-color-text-muted);margin-top:4px;display:block;}
+    /* ── Expired / states ── */
+    .state-icon{font-size:2.4rem;line-height:1;margin-bottom:10px;}
+    .state-title{font-family:var(--font-display);font-size:1.15rem;font-weight:600;margin-bottom:6px;}
+    .state-sub{color:var(--deborah-semantic-color-text-muted);font-size:.8rem;font-weight:700;margin-bottom:18px;}
+    .back-link{margin-top:18px;text-align:center;font-size:.84rem;font-weight:700;color:var(--deborah-semantic-color-text-muted);}
+    .back-link a{color:var(--deborah-semantic-color-action-primary,#3b82f6);font-weight:700;text-decoration:none;}
+    .back-link a:hover{text-decoration:underline;}
+    .footer-links{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:18px;flex-wrap:wrap;}
+    .footer-link{color:var(--deborah-semantic-color-text-muted);font-size:.76rem;font-weight:700;text-decoration:none;transition:color .2s;}
+    .footer-link:hover{color:var(--deborah-semantic-color-text-primary);}
+    .skip-link{position:absolute;left:-999px;top:0;background:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#041018);padding:10px 16px;border-radius:0 0 10px 0;font-weight:600;font-size:.8rem;text-decoration:none;z-index:1000;}
+    .skip-link:focus{left:0;}
+    .err-text{font-size:.74rem;font-weight:700;color:#ef4444;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+    /* S24.09: floating circle o'rniga accessible theme menu */
+    .auth-theme-float{position:fixed;top:14px;right:14px;z-index:999;}
+    .auth-theme-float .theme-segmented{box-shadow:var(--shadow-lg,0 10px 30px rgba(0,0,0,.25));}
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link"><%= copy.reset.btn %> →</a>
+  <div class="auth-page">
+    <div class="auth-wrap">
+      <div class="auth-header">
+        <img src="/images/logo-text.svg" alt="Deborah" class="auth-logo">
+        <div class="auth-title"><%= copy.reset.title %></div>
+        <div class="auth-sub"><%= copy.reset.sub %></div>
+      </div>
+
+      <div class="auth-box">
+        <% if (state === 'valid') { %>
+          <div id="auth-alert" class="msg <%= typeof error !== 'undefined' && error ? 'err' : '' %>" role="alert" aria-live="assertive"><%= typeof error !== 'undefined' && error ? error : '' %></div>
+
+          <form id="form-reset" method="POST" action="/user/reset">
+            <input type="hidden" name="lang" value="<%= lang %>">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="hidden" name="token" value="<%= typeof token !== 'undefined' ? token : '' %>">
+
+            <label class="lbl" for="reset-password"><%= copy.reset.password %></label>
+            <div class="pw-wrap">
+              <input class="inp" id="reset-password" name="password" type="password" placeholder="<%= copy.reset.passwordPh %>" autocomplete="new-password" minlength="8" required style="padding-right:52px" data-inline-error="err-password">
+              <button type="button" class="pw-toggle" data-pw-toggle="reset-password" data-label-show="<%= copy.login.show %>" data-label-hide="<%= copy.login.hide %>" aria-label="<%= copy.login.show %>" aria-pressed="false">
+                <span data-pw-toggle-label><%- icon('eye', 16) %></span>
+              </button>
+            </div>
+            <div class="err-text" id="err-password" style="display:none"></div>
+            <div class="strength">
+              <div class="strength-bar"><div class="strength-fill" id="pw-strength-bar"></div></div>
+              <span class="strength-hint" id="pw-strength-hint" data-labels='<%= JSON.stringify(copy.register.passwordStrength) %>'></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary" data-analytics="reset_complete"><%- icon('shield', 15) %> <%= copy.reset.btn %></button>
+          </form>
+        <% } else if (state === 'success') { %>
+          <div class="state-icon">✅</div>
+          <div class="state-title"><%= copy.reset.success %></div>
+          <div class="state-sub"><%= copy.reset.successSub %></div>
+          <a href="<%= typeof redirectUrl !== 'undefined' && redirectUrl ? redirectUrl : '/user/panel' %>" class="btn btn-primary" style="text-decoration:none"><%= copy.login.loginBtn %></a>
+          <% if (typeof redirectUrl !== 'undefined' && redirectUrl) { %>
+          <script>setTimeout(function(){ window.location.href = '<%= redirectUrl %>'; }, 2500);</script>
+          <% } %>
+        <% } else { %>
+          <div class="state-icon"><%= state === 'expired' ? '⏳' : '⚠️' %></div>
+          <div class="state-title"><%= copy.reset.expiredTitle %></div>
+          <div class="state-sub"><%= copy.reset.expiredSub %></div>
+          <a href="/user/forgot?lang=<%= lang %>" class="btn btn-secondary" style="text-decoration:none" data-analytics="reset_new_link"><%= copy.reset.newLink %></a>
+        <% } %>
+      </div>
+
+      <div class="back-link"><a href="/user/login?lang=<%= lang %>">← <%= copy.login.loginBtn %></a></div>
+
+      <div class="footer-links">
+        <a href="/" class="footer-link">← <%= copy.footer.home %></a>
+        <a href="/privacy" class="footer-link"><%= copy.footer.privacy %></a>
+        <a href="/terms" class="footer-link"><%= copy.footer.terms %></a>
+        <a href="/cookies" class="footer-link"><%= copy.footer.cookies %></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-theme-float"><%- include('../partials/theme-control') %></div>
+
+  <script src="/js/reset.js" defer></script>
+</body>
+</html>

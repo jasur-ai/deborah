@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr" data-theme="dark">
+<head>
+  <%- include('../partials/head', { title, user }) %>
+  <style>
+    .src-grid { display: grid; grid-template-columns: 280px 1fr; gap: 18px; }
+    .src-panel { background: var(--deborah-semantic-color-surface-raised); border: 1px solid var(--deborah-semantic-color-border-default); border-radius: 12px; padding: 16px; }
+    .src-panel h3 { margin: 0 0 12px; font-size: 14px; letter-spacing: .04em; color: var(--deborah-semantic-color-text-muted); text-transform: uppercase; }
+    .src-pack { padding: 10px 12px; border: 1px solid var(--deborah-semantic-color-border-default); border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s; }
+    .src-pack:hover { border-color: var(--deborah-semantic-color-action-primary); }
+    .src-pack.active { border-color: var(--deborah-semantic-color-action-primary); background: color-mix(in srgb, var(--deborah-semantic-color-action-primary) 8%, transparent); }
+    .src-pack .pname { font-weight: 600; }
+    .src-pack .pmeta { font-size: 12px; color: var(--deborah-semantic-color-text-muted); }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+    .badge.draft { background: rgba(148,163,184,.15); color: #94a3b8; }
+    .badge.in_review { background: rgba(251,191,36,.15); color: #fbbf24; }
+    .badge.approved { background: rgba(0,229,160,.15); color: #00e5a0; }
+    .badge.archived { background: rgba(148,163,184,.15); color: #64748b; }
+    .badge.pending { background: rgba(251,191,36,.15); color: #fbbf24; }
+    .badge.rejected { background: rgba(248,113,113,.15); color: #f87171; }
+    .src-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--deborah-semantic-color-border-default); }
+    .src-row:last-child { border-bottom: none; }
+    .src-title { font-weight: 600; }
+    .src-sub { font-size: 12px; color: var(--deborah-semantic-color-text-muted); }
+    .btn { padding: 6px 14px; border-radius: 8px; border: 1px solid var(--deborah-semantic-color-border-default); background: var(--deborah-semantic-color-surface-raised); color: var(--deborah-semantic-color-text-primary); cursor: pointer; font-size: 13px; transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s; }
+    .btn:hover { border-color: var(--deborah-semantic-color-action-primary); }
+    .btn.primary { background: var(--deborah-semantic-color-action-primary); border-color: var(--deborah-semantic-color-action-primary); color: #fff; }
+    .btn.sm { padding: 4px 10px; font-size: 12px; }
+    .btn.danger { border-color: rgba(248,113,113,.4); color: #f87171; }
+    .input, select.input, textarea.input { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--deborah-semantic-color-border-default); background: var(--deborah-semantic-color-surface-raised); color: var(--deborah-semantic-color-text-primary); font-size: 13px; }
+    textarea.input { min-height: 90px; resize: vertical; }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 12px; color: var(--deborah-semantic-color-text-muted); margin-bottom: 4px; }
+    .toast { position: fixed; top: 16px; right: 16px; z-index: 50; padding: 10px 16px; border-radius: 10px; background: var(--deborah-semantic-color-surface-raised); border: 1px solid var(--deborah-semantic-color-border-default); box-shadow: 0 8px 24px rgba(0,0,0,.3); opacity: 0; transform: translateY(-8px); transition:color .25s,background-color .25s,border-color .25s,box-shadow .25s,transform .25s,opacity .25s; font-size: 13px; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.err { border-color: rgba(248,113,113,.5); }
+    .toast.ok { border-color: rgba(0,229,160,.5); }
+    .chunk-block { background: var(--deborah-semantic-color-surface-raised); border: 1px solid var(--deborah-semantic-color-border-default); border-radius: 8px; padding: 10px 12px; margin-top: 8px; font-size: 13px; }
+    .chunk-block .cmeta { font-size: 11px; color: var(--deborah-semantic-color-text-muted); margin-bottom: 4px; }
+    .quote-line { border-left: 3px solid var(--deborah-semantic-color-action-primary); padding-left: 10px; margin: 6px 0; font-style: italic; color: var(--deborah-semantic-color-text-muted); }
+    .muted { color: var(--deborah-semantic-color-text-muted); }
+    @media (max-width: 860px) { .src-grid { grid-template-columns: 1fr; } }
+  </style>
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body>
+  <%- include('../partials/sidebar', { active: 'sources', user }) %>
+  <main class="main">
+    <div class="topbar">
+      <h1>Source Packs &amp; RAG</h1>
+      <div class="topbar-right">
+        <button class="btn primary" onclick="openCreatePack()">+ Yangi pack</button>
+      </div>
+    </div>
+
+    <div class="src-grid">
+      <div>
+        <div class="src-panel">
+          <h3>Pack'lar</h3>
+          <div id="packList"><span class="muted">Yuklanmoqda…</span></div>
+          <div style="margin-top:14px">
+            <button class="btn" style="width:100%" onclick="loadPacks(true)">Yangilash</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="src-panel">
+          <h3 id="packTitle">Pack tanlang</h3>
+          <div id="sourceList"><span class="muted">Yuklanmoqda…</span></div>
+        </div>
+
+        <div class="src-panel" style="margin-top:14px">
+          <h3>Yangi source qo'shish</h3>
+          <div class="field">
+            <label>Sarlavha</label>
+            <input class="input" id="newTitle" placeholder="Masalan: Biologiya darsligi — 3-bob">
+          </div>
+          <div class="field">
+            <label>Tur</label>
+            <select class="input" id="newKind" onchange="toggleSourceKind()">
+              <option value="url">URL (SSRF-checked)</option>
+              <option value="text">Matn (inline)</option>
+              <option value="pdf">PDF fayl</option>
+              <option value="docx">DOCX fayl</option>
+              <option value="pptx">PPTX fayl</option>
+            </select>
+          </div>
+          <div class="field" id="urlField">
+            <label>URL</label>
+            <input class="input" id="newUrl" placeholder="https://…">
+          </div>
+          <div class="field" id="textField" style="display:none">
+            <label>Matn</label>
+            <textarea class="input" id="newText" placeholder="Source matni…"></textarea>
+          </div>
+          <div class="field" id="fileField" style="display:none">
+            <label>Fayl (max 25 MB)</label>
+            <input type="file" class="input" id="newFile">
+          </div>
+          <button class="btn primary" onclick="addSource()">Qo'shish</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <div id="createPackModal" style="display:none">
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:40" onclick="closeCreatePack()"></div>
+    <div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-default);border-radius:14px;padding:22px;width:min(420px,90vw);z-index:41">
+      <h3 style="margin:0 0 14px">Yangi source pack</h3>
+      <div class="field"><label>Nomi</label><input class="input" id="cpName" placeholder="Masalan: DTM 2026 — Matematika manbalari"></div>
+      <div class="field"><label>Izoh</label><textarea class="input" id="cpDesc" placeholder="Ixtiyoriy"></textarea></div>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn" onclick="closeCreatePack()">Bekor qilish</button>
+        <button class="btn primary" onclick="createPack()">Saqlash</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentPack = null;
+    const API = (p, m = 'GET', b) => fetch(p, { method: m, headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': window.__CSRF_TOKEN || '' }, body: b ? JSON.stringify(b) : undefined }).then(r => r.json());
+
+    function toast(msg, ok = true) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast show ' + (ok ? 'ok' : 'err');
+      setTimeout(() => t.className = 'toast', 2600);
+    }
+    function badge(s) { return '<span class="badge ' + s + '">' + s + '</span>'; }
+
+    async function loadPacks(selectFirst = false) {
+      const r = await API('/api/admin/source-packs');
+      const el = document.getElementById('packList');
+      if (!r.ok || !r.packs.length) { el.innerHTML = '<span class="muted">Pack yo&rsquo;q — yarating</span>'; return; }
+      el.innerHTML = r.packs.map(p =>
+        '<div class="src-pack' + (currentPack && currentPack.id === p.id ? ' active' : '') + '" onclick="selectPack(' + p.id + ')">' +
+        '<div class="pname">' + esc(p.name) + '</div>' +
+        '<div class="pmeta">' + badge(p.status) + ' &middot; ' + (p.source_count || 0) + ' source</div></div>'
+      ).join('');
+      if (selectFirst && !currentPack) selectPack(r.packs[0].id);
+    }
+
+    async function selectPack(id) {
+      const r = await API('/api/admin/source-packs/' + id);
+      if (!r.ok || !r.pack) return;
+      currentPack = r.pack;
+      document.getElementById('packTitle').textContent = currentPack.name + ' ' + badge(currentPack.status);
+      loadPacks();
+      loadSources();
+    }
+
+    async function loadSources() {
+      if (!currentPack) return;
+      const r = await API('/api/admin/sources?packId=' + currentPack.id);
+      const el = document.getElementById('sourceList');
+      if (!r.ok || !r.sources.length) { el.innerHTML = '<span class="muted">Source yo&rsquo;q</span>'; return; }
+      el.innerHTML = r.sources.map(s =>
+        '<div class="src-row"><div>' +
+        '<div class="src-title">' + esc(s.title) + '</div>' +
+        '<div class="src-sub">' + esc(s.kind) + ' &middot; ' + badge(s.approval_status) + ' &middot; ' + badge(s.extraction_status) + '</div>' +
+        '<div class="chunk-block" id="chunks-' + s.id + '" style="display:none"></div>' +
+        '</div><div style="display:flex;gap:6px;flex-wrap:wrap">' +
+        '<button class="btn sm" onclick="extract(' + s.id + ')">Extract</button>' +
+        '<button class="btn sm" onclick="toggleChunks(' + s.id + ')">Chunks</button>' +
+        (s.approval_status !== 'approved' ? '<button class="btn sm primary" onclick="approve(' + s.id + ',&apos;approved&apos;)">Tasdiqlash</button>' : '') +
+        (s.approval_status === 'pending' ? '<button class="btn sm danger" onclick="approve(' + s.id + ',&apos;rejected&apos;)">Rad etish</button>' : '') +
+        '</div></div>'
+      ).join('');
+    }
+
+    function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+    async function extract(id) {
+      const r = await API('/api/admin/sources/' + id + '/extract', 'POST', { rawText: '', pageIndex: 0 });
+      if (!r.ok) toast('Extract: ' + r.error, false);
+      else toast('Extract: ' + (r.chunks ? r.chunks.length + ' chunk' : 'PG kerak (dry-run)') + (r.removedElements && r.removedElements.length ? ' — ' + r.removedElements.join(',') + ' olib tashlandi' : ''));
+      loadSources();
+    }
+
+    async function toggleChunks(id) {
+      const el = document.getElementById('chunks-' + id);
+      if (el.style.display === 'none') {
+        const r = await API('/api/admin/sources/' + id + '/chunks');
+        el.innerHTML = r.ok && r.chunks.length ? r.chunks.slice(0, 8).map(c =>
+          '<div class="cmeta">page ' + c.page_index + ' · chunk ' + c.chunk_index + ' · ' + c.char_count + ' belgi · ' + (c.embedding_version || '-') + '</div>' +
+          '<div class="quote-line">' + esc(c.quote) + '</div>'
+        ).join('') : '<span class="muted">Chunk yo&rsquo;q — avval extract qiling</span>';
+        el.style.display = 'block';
+      } else el.style.display = 'none';
+    }
+
+    async function approve(id, decision) {
+      const r = await API('/api/admin/sources/' + id + '/approval', 'POST', { decision, note: 'Admin approval via UI' });
+      toast(r.ok ? 'Qaror saqlandi' : r.error, r.ok);
+      loadSources();
+    }
+
+    function openCreatePack() { document.getElementById('createPackModal').style.display = 'block'; }
+    function closeCreatePack() { document.getElementById('createPackModal').style.display = 'none'; }
+    async function createPack() {
+      const r = await API('/api/admin/source-packs', 'POST', { name: document.getElementById('cpName').value, description: document.getElementById('cpDesc').value });
+      toast(r.ok ? 'Pack yaratildi' : r.error, r.ok);
+      closeCreatePack();
+      loadPacks(true);
+    }
+
+    function toggleSourceKind() {
+      const k = document.getElementById('newKind').value;
+      document.getElementById('urlField').style.display = k === 'url' ? 'block' : 'none';
+      document.getElementById('textField').style.display = k === 'text' ? 'block' : 'none';
+      document.getElementById('fileField').style.display = ['pdf', 'docx', 'pptx'].includes(k) ? 'block' : 'none';
+    }
+
+    async function addSource() {
+      if (!currentPack) return toast('Avval pack tanlang', false);
+      const k = document.getElementById('newKind').value;
+      const title = document.getElementById('newTitle').value;
+      if (!title) return toast('Sarlavha kerak', false);
+      if (k === 'url') {
+        const r = await API('/api/admin/sources/url', 'POST', { packId: currentPack.id, title, url: document.getElementById('newUrl').value });
+        toast(r.ok ? 'URL source qo&rsquo;shildi' : r.error, r.ok);
+      } else if (k === 'text') {
+        const r = await API('/api/admin/sources/text', 'POST', { packId: currentPack.id, title, text: document.getElementById('newText').value });
+        toast(r.ok ? 'Matn source qo&rsquo;shildi' : r.error, r.ok);
+      } else {
+        const file = document.getElementById('newFile').files[0];
+        if (!file) return toast('Fayl tanlang', false);
+        // base64 JSON (scan/safe-submit naqshi) — raw body express.json tomonidan yutilardi
+        const buf = await file.arrayBuffer();
+        const bytes = new Uint8Array(buf);
+        let bin = '';
+        for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+        const fileBase64 = btoa(bin);
+        const r = await API('/api/admin/sources/upload', 'POST', {
+          packId: currentPack.id, title, kind: k, fileName: file.name,
+          mimeType: file.type || 'application/octet-stream', fileBase64,
+        });
+        toast(r.ok ? 'Fayl yuklandi' : r.error, r.ok);
+      }
+      loadSources();
+    }
+
+    loadPacks(true);
+  </script>
+</body>
+</html>

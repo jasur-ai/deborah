@@ -1,0 +1,75 @@
+{
+  "generated": "2026-08-29T12:32:29.172Z",
+  "source": "public/design/tokens",
+  "pairs": [
+    {
+      "theme": "light",
+      "pairs": [
+        {
+          "fg": "#1F2937",
+          "bg": "#F5F7FB",
+          "target": 4.5,
+          "note": "text.primary on surface"
+        },
+        {
+          "fg": "#566176",
+          "bg": "#FFFFFF",
+          "target": 4.5,
+          "note": "text.muted on raised"
+        },
+        {
+          "fg": "#1746D1",
+          "bg": "#FFFFFF",
+          "target": 3,
+          "note": "action.primary on raised (UI)"
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "pairs": [
+        {
+          "fg": "#EEF2FF",
+          "bg": "#080C1A",
+          "target": 4.5,
+          "note": "text.primary on surface"
+        },
+        {
+          "fg": "#8892B0",
+          "bg": "#0F1630",
+          "target": 4.5,
+          "note": "text.muted on raised"
+        },
+        {
+          "fg": "#7AA8FF",
+          "bg": "#0F1630",
+          "target": 3,
+          "note": "action.primary on raised (UI)"
+        }
+      ]
+    },
+    {
+      "theme": "high-contrast",
+      "pairs": [
+        {
+          "fg": "#000000",
+          "bg": "#FFFFFF",
+          "target": 4.5,
+          "note": "text.primary on surface"
+        },
+        {
+          "fg": "#333333",
+          "bg": "#FFFFFF",
+          "target": 4.5,
+          "note": "text.muted on raised"
+        },
+        {
+          "fg": "#0033A6",
+          "bg": "#FFFFFF",
+          "target": 3,
+          "note": "action.primary on raised (UI)"
+        }
+      ]
+    }
+  ]
+}

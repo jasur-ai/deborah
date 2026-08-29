@@ -1,0 +1,38 @@
+<!-- Landing demo (plan_index §3.5) — mini interactive quiz, saytdan chiqmasdan -->
+<section class="ld-demo" id="demo" aria-labelledby="ld-demo-title">
+  <div class="ld-container">
+    <!-- STEP 22 S22.05: demo data aniq label qilinadi -->
+    <div class="ld-demo-stage">
+      <div class="ld-stage-header">
+        <span class="ld-stage-label"><%= copy.stage.label %> · <%= copy.stage.participants %></span>
+        <span class="ld-stage-coverage"><%= copy.stage.coverage %></span>
+      </div>
+      <h2 class="ld-section-title" id="ld-demo-title"><%= copy.demo.title %></h2>
+      <p class="ld-demo-hint"><%= copy.demo.hint %></p>
+      <button class="ld-btn ld-btn-primary ld-btn-lg" type="button" data-demo-open data-analytics="demo_start">
+        <%= copy.demo.cta %>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Demo modal (focus trap; landing.js boshqaradi) -->
+<div class="ld-demo-modal" id="ld-demo-modal" role="dialog" aria-modal="true" aria-labelledby="ld-demo-q" hidden>
+  <div class="ld-demo-backdrop" data-demo-close></div>
+  <div class="ld-demo-panel" role="document">
+    <button class="ld-demo-close" type="button" data-demo-close aria-label="Yopish">✕</button>
+    <div class="ld-demo-step" id="ld-demo-step">
+      <p class="ld-demo-q" id="ld-demo-q">Savol: O'zbekiston poytaxti qaysi shahar?</p>
+      <div class="ld-demo-options" id="ld-demo-options">
+        <button class="ld-demo-opt" type="button" data-answer="1">Toshkent</button>
+        <button class="ld-demo-opt" type="button" data-answer="0">Samarqand</button>
+        <button class="ld-demo-opt" type="button" data-answer="0">Buxoro</button>
+        <button class="ld-demo-opt" type="button" data-answer="0">Xiva</button>
+      </div>
+      <p class="ld-demo-result" id="ld-demo-result" hidden></p>
+      <a class="ld-btn ld-btn-primary ld-demo-cta" href="<%= (path === '/' ? '' : path) + '/user/login' %>" data-analytics="demo_complete" hidden>
+        <%= copy.cta.button %>
+      </a>
+    </div>
+  </div>
+</div>

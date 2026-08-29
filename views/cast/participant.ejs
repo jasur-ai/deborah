@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Cast — Ishtirokchi</title>
+  <link rel="stylesheet" href="/css/cast-tokens.css">
+  <link rel="stylesheet" href="/css/cast-participant.css">
+  <link rel="stylesheet" href="/design/foundations/typography.css">
+  <link rel="stylesheet" href="/design/foundations/layout.css">
+  <link rel="stylesheet" href="/design/foundations/motion.css">
+  <script>
+    window.__BOOT__ = <%- JSON.stringify(boot) %>;
+  </script>
+</head>
+<body class="cast-page" data-cast-theme="focus_dark">
+  <div class="cast-live-region" aria-live="polite" id="status-live"></div>
+  <div class="cast-live-region" aria-live="assertive" id="alert-live"></div>
+
+  <!-- C4-04 (item 18/23): a11y controls -->
+  <div class="cast-a11y-bar" aria-label="Imkoniyatlar">
+    <button type="button" class="cast-icon-btn" data-a11y-toggle="theme" title="Tema / yuqori kontrast" aria-label="Tema almashtirish (yuqori kontrast)">◐</button>
+    <button type="button" class="cast-icon-btn" data-a11y-toggle="hints" title="Klaviatura yorliqlari (?)" aria-label="Klaviatura yorliqlari">⌨</button>
+  </div>
+
+  <div class="part-screen">
+    <!-- S31.08: player badge (top, safe-area aware) + network status (calm persistent) -->
+    <div class="part-topbar">
+      <div class="player-badge" id="player-badge" hidden>
+        <span class="player-badge-avatar" id="player-badge-avatar">👤</span>
+        <span class="player-badge-name" id="player-badge-name">—</span>
+      </div>
+      <div class="part-net" id="part-net" role="status">
+        <span class="part-net-dot"></span>
+        <span class="part-net-text" id="part-net-text">Ulanish…</span>
+      </div>
+    </div>
+
+    <!-- Join form -->
+    <div id="part-join" class="part-center">
+      <div class="part-card cast-surface">
+        <h1 class="part-title" data-i18n="join.title">🎬 Cast</h1>
+        <div class="part-sub" id="part-session-title">—</div>
+        <!-- S31.01: join progress — aniq qadam ko'rsatkichi -->
+        <ol class="join-steps" id="join-steps" aria-label="Qo‘shilish qadamlari">
+          <li class="join-step is-current" data-step="1"><span class="join-step-num">1</span>Kod</li>
+          <li class="join-step" data-step="2"><span class="join-step-num">2</span>Ism</li>
+          <li class="join-step" data-step="3"><span class="join-step-num">3</span>Lobbi</li>
+        </ol>
+        <form id="join-form">
+          <label class="part-field">
+            <span data-i18n="join.kod">Join kod</span>
+            <!-- S31.02: tabular monospace, unambiguous chars, mobile keyboard (inputmode) -->
+            <input class="cast-input join-code-input" id="join-code" maxlength="8" autocomplete="off" spellcheck="false" autocapitalize="characters" inputmode="text" placeholder="ABC123" required>
+          </label>
+          <label class="part-field">
+            <span data-i18n="join.name">Ismingiz</span>
+            <input class="cast-input" id="join-name" maxlength="30" autocomplete="off" data-i18n="join.namePlaceholder" placeholder="Ism" required>
+          </label>
+          <!-- C4-02 (item 2): delivery type — remote participant o'zini belgilaydi -->
+          <label class="part-field">
+            <span data-i18n="join.delivery">Qayerdan qatnashasiz?</span>
+            <select class="cast-input" id="join-delivery">
+              <option value="in_room" data-i18n="join.delivery.inRoom">🏫 Sinfda (in-room)</option>
+              <option value="remote" data-i18n="join.delivery.remote">🏠 Uzoqdan (remote)</option>
+            </select>
+          </label>
+          <!-- C4-03: paper-card mode'da karta raqami (ixtiyoriy — expected count uchun) -->
+          <label class="part-field" id="join-card-wrap" hidden>
+            <span data-i18n="join.card">Karta raqami (qog‘oz kartochka rejimi)</span>
+            <input class="cast-input" id="join-card" maxlength="9" autocomplete="off" placeholder="CARD-001">
+          </label>
+          <button class="cast-btn cast-btn-primary part-submit" type="submit" id="join-btn" data-i18n="join.btn">Qo‘shilish</button>
+          <div class="part-err" id="join-error" role="alert"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Waiting -->
+    <div id="part-waiting" class="part-center" hidden>
+      <div class="part-card cast-surface">
+        <div class="part-wait-anim">⏳</div>
+        <h2 class="part-title">Qo‘shildingiz!</h2>
+        <p class="part-sub" id="part-wait-alias">—</p>
+        <p class="part-muted">O‘qituvchi sessiyani boshlashini kuting…</p>
+      </div>
+    </div>
+
+    <!-- C3-13 Forge: floating action button (join'dan keyin ko'rinadi) -->
+    <button class="forge-fab" id="btn-forge-open" hidden aria-label="Savol taklif qilish" title="Savol taklif qilish"><%- icon('edit', 22) %></button>
+
+    <!-- C3-13 Forge form -->
+    <div id="part-forge" class="part-center" hidden>
+      <div class="part-card cast-surface part-forge-card">
+        <div class="part-forge-head">
+          <h2 class="part-title">✏️ Savol taklif qilish</h2>
+          <button class="forge-close" id="btn-forge-close" aria-label="Yopish"><%- icon('close', 16) %></button>
+        </div>
+        <p class="part-muted">Yaxshi savol yozing — o‘qituvchi tasdiqlagach sinf bilan baham ko‘riladi.</p>
+        <label class="part-field">
+          <span>Savol turi</span>
+          <select class="cast-input" id="forge-type">
+            <option value="single_choice">Bir javobli (single choice)</option>
+            <option value="true_false">To‘g‘ri / Noto‘g‘ri</option>
+            <option value="multiple_select">Ko‘p javobli (multiple select)</option>
+            <option value="short_answer">Qisqa javob</option>
+          </select>
+        </label>
+        <label class="part-field">
+          <span>Savol matni</span>            <textarea class="cast-input" id="forge-stem" rows="3" maxlength="500" data-i18n="forge.stem.placeholder" placeholder="Savolingizni yozing…"></textarea>
+          <div class="part-orb-count" id="forge-stem-chars">0 / 500</div>
+        </label>
+        <div class="forge-options" id="forge-options-wrap" hidden>
+          <span>Variantlar</span>
+          <div id="forge-options"></div>
+          <button type="button" class="cast-btn cast-btn-ghost" id="forge-add-option">+ Variant qo‘shish</button>
+        </div>
+        <div class="forge-options" id="forge-tf-wrap" hidden>
+          <span>To‘g‘ri javob</span>
+          <div class="forge-tf-rows" id="forge-tf-options"></div>
+        </div>
+        <label class="part-field">
+          <span id="forge-answer-label">To‘g‘ri javob</span>
+          <div id="forge-answer-area"></div>            <textarea class="cast-input" id="forge-answer-short" rows="2" maxlength="280" data-i18n="forge.answerShort.placeholder" placeholder="Namunaviy javob…" hidden></textarea>
+        </label>
+        <label class="part-field">
+          <span>Izoh (ixtiyoriy)</span>            <textarea class="cast-input" id="forge-explanation" rows="2" maxlength="500" data-i18n="forge.explanation.placeholder" placeholder="Nima uchun bu javob to‘g‘ri?…"></textarea>
+        </label>
+        <label class="part-field">
+          <span>Manba (ixtiyoriy)</span>            <input class="cast-input" id="forge-source" maxlength="200" data-i18n="forge.source.placeholder" placeholder="Darslik, sayt, mavzu…">
+        </label>
+        <button class="cast-btn cast-btn-primary part-submit" id="forge-submit" data-i18n="forge.submit">Yuborish</button>
+        <div class="part-err" id="forge-error"></div>
+        <div class="part-forge-status" id="forge-status" hidden></div>
+      </div>
+    </div>
+
+    <!-- Question -->
+    <div id="part-question" class="part-center" hidden>
+      <!-- S31.05: answer state banner (persistent, not toast-only) -->
+      <div class="part-state-banner" id="part-state-banner" data-state="" aria-live="polite" hidden></div>
+      <div class="part-q-meta" id="part-q-meta">—</div>
+      <div class="part-q-text" id="part-q-text">—</div>
+      <div class="part-options" id="part-options"></div>
+      <div class="part-timer" id="part-timer">—</div>
+      <button class="cast-btn cast-btn-primary part-submit" id="part-submit" data-i18n="answer.send" hidden>Javobni yuborish</button>
+
+      <!-- C3-04 Confidence Lens -->
+      <div class="part-confidence" id="part-confidence" hidden>
+        <div class="part-confidence-label">Qanchalik ishonchingiz komil?</div>
+        <div class="part-confidence-row">
+          <button type="button" class="conf-btn conf-low" data-level="low">🤔 Past</button>
+          <button type="button" class="conf-btn conf-medium" data-level="medium">😐 O‘rta</button>
+          <button type="button" class="conf-btn conf-high" data-level="high">😎 Yuqori</button>
+        </div>
+      </div>
+      <!-- C3-07 Reasoning Capture -->
+      <div class="part-reasoning" id="part-reasoning" hidden>
+        <div class="part-reasoning-label" data-i18n="reasoning.label">Javobingizni qisqacha izohlang</div>
+        <textarea class="cast-input part-reasoning-input" id="reasoning-text" rows="2" maxlength="280" data-i18n="reasoning.placeholder" placeholder="Fikringizni yozing…"></textarea>
+        <div class="part-reasoning-row">
+          <span class="part-reasoning-chars" id="reasoning-chars">0 / 280</span>
+          <button class="cast-btn cast-btn-primary" id="reasoning-submit" hidden>Izohni yuborish</button>
+          <button class="cast-btn" id="reasoning-skip">O‘tkazib yuborish</button>
+        </div>
+        <div class="part-err" id="reasoning-error"></div>
+      </div>
+
+      <!-- C3-09 Class Goal (aggregate) + Personal Best (private) -->
+      <div class="part-goal" id="part-goal" hidden>
+        <div class="part-goal-title">🎯 Sinf maqsadi</div>
+        <div class="part-goal-bar"><div class="part-goal-fill" id="part-goal-fill" style="width:0%"></div></div>
+        <div class="part-goal-meta" id="part-goal-meta">—</div>
+        <div class="part-goal-complete" id="part-goal-complete" hidden>🎉 Maqsad bajarildi!</div>
+      </div>
+      <div class="part-personal-best cast-surface" id="part-personal-best" hidden>
+        <span class="part-pb-label">👤 Shaxsiy natija</span>
+        <span class="part-pb-text" id="part-pb-text">—</span>
+      </div>
+
+      <!-- C3-10 Confusion Signal (private quick signal) -->
+      <div class="part-confusion" id="part-confusion">
+        <div class="part-confusion-label">Biror narsa tushunarsizmi?</div>
+        <div class="part-confusion-row" id="confusion-signals">
+          <button type="button" class="conf-signal-btn" data-signal="confused">🤔 Chalkashdim</button>
+          <button type="button" class="conf-signal-btn" data-signal="too_fast"><%- icon('zap', 16) %> Juda tez</button>
+          <button type="button" class="conf-signal-btn" data-signal="technical_issue">🔧 Texnik muammo</button>
+          <button type="button" class="conf-signal-btn" data-signal="need_example"><%- icon('sparkles', 16) %> Misol kerak</button>
+        </div>
+        <div class="part-confusion-ack" id="confusion-ack" hidden>👩‍🏫 O‘qituvchi ko‘rdi — davom etamiz</div>
+      </div>
+
+      <!-- C3-10 Question Wall (moderated) -->
+      <div class="part-wall" id="part-wall" hidden>
+        <div class="part-wall-label">💬 Savolingizni yozing — o‘qituvchi tasdiqlagach hammaga ko‘rinadi</div>
+        <div class="part-wall-row">
+          <input class="cast-input" id="wall-text" maxlength="280" data-i18n="wall.placeholder" placeholder="Savolingiz…" autocomplete="off">
+          <button class="cast-btn cast-btn-primary" id="wall-submit" data-i18n="wall.submit">Yuborish</button>
+        </div>
+        <div class="part-err" id="wall-error"></div>
+        <div class="part-wall-list" id="wall-list"></div>
+      </div>
+
+      <!-- C3-17 Power-ups (shaxsiy inventory; public shame EMAS) -->
+      <div class="part-powerups" id="part-powerups" hidden>
+        <div class="part-powerups-label">⚡ Power-up'lar (faqat sizga)</div>
+        <div class="part-powerups-row" id="part-powerups-row"></div>
+        <div class="part-powerups-msg" id="part-powerups-msg" role="status"></div>
+      </div>
+
+      <!-- C4-01 Team Challenge: own team badge + talk phase + reporter -->
+      <div class="part-team" id="part-team" hidden>
+        <div class="part-team-badge" id="part-team-badge"></div>
+        <div class="part-team-meta" id="part-team-meta"></div>
+        <div class="part-team-talk" id="part-team-talk" hidden role="status">
+          <span>🗣 Jamoa muhokamasi</span>
+          <span class="part-team-talk-timer" id="part-team-talk-timer"></span>
+        </div>
+        <div class="part-team-reporter" id="part-team-reporter" hidden>🎙 Bu safar siz jamoa hisobotchisisiz</div>
+      </div>
+
+      <!-- C3-16 Self-Paced Race: own progress + private rank -->
+      <div class="part-sp" id="part-sp" hidden>
+        <div class="part-sp-bar"><div class="part-sp-fill" id="part-sp-fill" style="width:0%"></div></div>
+        <div class="part-sp-row">
+          <span class="part-sp-progress" id="part-sp-progress">—</span>
+          <span class="part-sp-rank" id="part-sp-rank"></span>
+        </div>
+        <div class="part-sp-paused" id="part-sp-paused" hidden>⏸ O‘qituvchi poygani to‘xtatdi</div>
+      </div>
+
+      <!-- STYLE S32: personal leaderboard — faqat sizga (personal best > peer comparison) -->
+      <div class="part-leaderboard" id="part-leaderboard" hidden>
+        <div class="part-leaderboard-head">
+          <span class="part-leaderboard-title">Sizning reytingingiz</span>
+          <span class="part-leaderboard-badge" id="part-leaderboard-badge" hidden></span>
+        </div>
+        <div class="part-leaderboard-body" id="part-leaderboard-body"></div>
+      </div>
+
+      <!-- C4-02: offline / network status banner -->
+      <div class="part-net" id="part-net" hidden role="status">
+        <span class="part-net-dot" id="part-net-dot"></span>
+        <span id="part-net-text">Ulanish…</span>
+      </div>
+      <div class="part-status" id="part-status" aria-live="polite"></div>
+    </div>
+
+    <!-- C3-11 POE Observation -->
+    <div id="part-poe-obs" class="part-center" hidden>
+      <div class="part-card cast-surface poe-obs-card">
+        <div class="part-q-meta">👀 Kuzatuv</div>
+        <div class="part-poe-media" id="part-poe-media"></div>
+        <p class="part-muted" id="part-poe-obs-hint">Kuzatuvni ko‘rib chiqing, so‘ng tayyorligingizni belgilang.</p>
+        <button class="cast-btn cast-btn-primary" id="part-poe-ready">✅ Ko‘rdim</button>
+        <div class="part-status" id="part-poe-obs-status" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <!-- C3-11 POE Explanation (short answer) -->
+    <div id="part-poe-exp" class="part-center" hidden>
+      <div class="part-card cast-surface">
+        <div class="part-q-meta">💭 Tushuntirish</div>
+        <div class="part-q-text" id="part-poe-exp-q">—</div>
+        <textarea class="cast-input part-reasoning-input" id="part-poe-exp-text" rows="3" maxlength="280" data-i18n="poe.exp.placeholder" placeholder="Nima uchun shunday bo‘ldi? Bashoratingiz bilan solishtiring…"></textarea>
+        <button class="cast-btn cast-btn-primary" id="part-poe-exp-submit" data-i18n="poe.exp.label">Yuborish</button>
+        <div class="part-err" id="part-poe-exp-error"></div>
+      </div>
+    </div>
+
+    <!-- C3-11 POE Analysis (public aggregate) -->
+    <!-- C3-12 Open-Response Semantic Board -->
+    <div id="part-orb" class="part-center" hidden>
+      <div class="part-card cast-surface">
+        <div class="part-q-meta">🗂 Ochiq javob</div>
+        <div class="part-q-text" id="part-orb-q">—</div>
+        <textarea class="cast-input part-reasoning-input" id="part-orb-text" rows="3" maxlength="280" data-i18n="orb.placeholder" placeholder="Fikringizni yozing…"></textarea>
+        <div class="part-orb-count" id="part-orb-chars">0 / 280</div>
+        <button class="cast-btn cast-btn-primary" id="part-orb-submit" data-i18n="wall.submit">Yuborish</button>
+        <div class="part-err" id="part-orb-error"></div>
+      </div>
+    </div>
+
+    <div id="part-poe-analysis" class="part-center" hidden>
+      <div class="part-card cast-surface">
+        <div class="part-reveal-emoji">🔭</div>
+        <h2 class="part-title">POE natijasi</h2>
+        <div id="part-poe-aggregate" class="part-poe-aggregate"></div>
+        <div id="part-poe-exemplars" class="part-poe-exemplars"></div>
+        <button class="cast-btn" id="part-poe-continue" hidden>Davom etish</button>
+      </div>
+    </div>
+
+    <!-- Reveal -->
+    <div id="part-reveal" class="part-center" hidden>
+      <div class="part-card cast-surface">
+        <div class="part-reveal-emoji" id="part-reveal-emoji">✅</div>
+        <h2 class="part-title" id="part-reveal-title">—</h2>
+        <p class="part-muted" id="part-reveal-explanation"></p>
+        <button class="cast-btn" id="part-continue" hidden>Davom etish</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/cast-socket-client.js"></script>
+  <!-- C4-05: i18n bootstrap -->
+  <script src="/js/i18n.js"></script>
+  <!-- C4-04: accessibility bootstrap -->
+  <script src="/js/cast-a11y.js"></script>
+  <!-- STYLE S32: shared leaderboard renderer -->
+  <script src="/js/cast-leaderboard.js"></script>
+  <script src="/js/cast-participant.js"></script>
+</body>
+</html>

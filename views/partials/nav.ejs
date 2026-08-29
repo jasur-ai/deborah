@@ -1,0 +1,35 @@
+<%
+// S17.02 — Public nav IA (landing bo'lmagan public sahifalar):
+// Product, Teachers, Cast, Ready tests, Resources, Login + CTA.
+// Admin — footer utility (primary nav'da emas).
+// Locals: active (string), user (obj|null), copy (i18n, optional).
+const _navActive = typeof active !== 'undefined' ? active : '';
+const _navUser = typeof user !== 'undefined' ? user : null;
+const _nc = (typeof copy !== 'undefined' && copy.nav) ? copy.nav : {};
+const _t = (k, fb) => (_nc[k] || fb);
+%>
+<nav class="navbar" aria-label="<%= _t('aria', 'Asosiy navigatsiya') %>">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo" aria-label="Deborah bosh sahifa">
+      <img src="/images/logo-vintage.png" alt="Deborah" class="logo-img nav-logo-img" style="height:32px;width:auto">
+    </a>
+    <button type="button" class="nav-burger" aria-label="<%= _t('menu', 'Menyu') %>" aria-expanded="false" aria-controls="nav-links"><%- icon('menu', 18) %></button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="/#roles" class="nav-link<%= _navActive === 'product' ? ' active' : '' %>"><%= _t('product', 'Product') %></a></li>
+      <li><a href="/#teachers" class="nav-link<%= _navActive === 'teachers' ? ' active' : '' %>"><%= _t('teachers', 'Teachers') %></a></li>
+      <li><a href="/cast" class="nav-link<%= _navActive === 'cast' ? ' active' : '' %>">Cast</a></li>
+      <li><a href="/#ready" class="nav-link<%= _navActive === 'ready' ? ' active' : '' %>"><%= _t('ready', 'Ready tests') %></a></li>
+      <li><a href="/#resources" class="nav-link<%= _navActive === 'resources' ? ' active' : '' %>"><%= _t('resources', 'Resources') %></a></li>
+    </ul>
+    <div class="nav-toggle">
+      <%- include('theme-control') %>
+      <% if (_navUser) { %>
+        <a href="/user/panel" class="nav-btn"><%- icon('grid', 14) %> <%= _navUser.username %></a>
+        <a href="/user/logout" class="nav-btn"><%- icon('logOut', 14) %> <%= _t('logout', 'Chiqish') %></a>
+      <% } else { %>
+        <a href="/user/login" class="nav-btn"><%- icon('user', 14) %> <%= _t('login', 'Login') %></a>
+        <a href="/user/login?register=1" class="nav-btn nav-btn--primary"><%= _t('cta', "Ro'yxatdan o'tish") %></a>
+      <% } %>
+    </div>
+  </div>
+</nav>

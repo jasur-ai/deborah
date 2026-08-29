@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr" data-theme="dark">
+<head>
+  <%- include('../partials/head', { title, user }) %>
+  <style>
+    .pr-grid { display: grid; grid-template-columns: 320px 1fr; gap: 18px; }
+    .pr-panel { background: var(--deborah-semantic-color-surface-raised); border: 1px solid var(--deborah-semantic-color-border-default); border-radius: 12px; padding: 16px; }
+    .pr-panel h3 { margin: 0 0 12px; font-size: 14px; letter-spacing: .04em; color: var(--deborah-semantic-color-text-muted); text-transform: uppercase; }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 12px; color: var(--deborah-semantic-color-text-muted); margin-bottom: 4px; }
+    .input, textarea.input, select.input { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--deborah-semantic-color-border-default); background: var(--deborah-semantic-color-surface-raised); color: var(--deborah-semantic-color-text-primary); font-size: 13px; box-sizing: border-box; }
+    textarea.input { min-height: 60px; resize: vertical; }
+    .btn { padding: 6px 14px; border-radius: 8px; border: 1px solid var(--deborah-semantic-color-border-default); background: var(--deborah-semantic-color-surface-raised); color: var(--deborah-semantic-color-text-primary); cursor: pointer; font-size: 13px; transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s; }
+    .btn:hover { border-color: var(--deborah-semantic-color-action-primary); }
+    .btn.primary { background: var(--deborah-semantic-color-action-primary); border-color: var(--deborah-semantic-color-action-primary); color: #fff; }
+    .btn.sm { padding: 4px 10px; font-size: 12px; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+    .badge.draft { background: rgba(148,163,184,.15); color: #94a3b8; }
+    .badge.published { background: rgba(0,229,160,.15); color: #00e5a0; }
+    .badge.archived { background: rgba(248,113,113,.15); color: #f87171; }
+    .qa-ok { color: #00e5a0; }
+    .qa-fail { color: #f87171; }
+    .slide-item { padding: 10px 12px; border: 1px solid var(--deborah-semantic-color-border-default); border-radius: 8px; margin-bottom: 8px; cursor: grab; transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s; }
+    .slide-item:hover { border-color: var(--deborah-semantic-color-action-primary); }
+    .slide-item .stitle { font-weight: 600; font-size: 13px; }
+    .slide-item .smeta { font-size: 11px; color: var(--deborah-semantic-color-text-muted); }
+    .block-row { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+    .block-row select, .block-row input { flex: 1; }
+    .toast { position: fixed; top: 16px; right: 16px; z-index: 50; padding: 10px 16px; border-radius: 10px; background: var(--deborah-semantic-color-surface-raised); border: 1px solid var(--deborah-semantic-color-border-default); box-shadow: 0 8px 24px rgba(0,0,0,.3); opacity: 0; transform: translateY(-8px); transition:color .25s,background-color .25s,border-color .25s,box-shadow .25s,transform .25s,opacity .25s; font-size: 13px; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.err { border-color: rgba(248,113,113,.5); }
+    .toast.ok { border-color: rgba(0,229,160,.5); }
+    .muted { color: var(--deborah-semantic-color-text-muted); }
+    table.pr-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table.pr-table th, table.pr-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--deborah-semantic-color-border-default); }
+    table.pr-table th { color: var(--deborah-semantic-color-text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+    .deck-preview { background: var(--deborah-semantic-color-surface-raised); border: 1px solid var(--deborah-semantic-color-border-default); border-radius: 10px; padding: 18px; min-height: 140px; }
+    @media (max-width: 960px) { .pr-grid { grid-template-columns: 1fr; } }
+  </style>
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body>
+  <%- include('../partials/sidebar', { active: 'presentations', user }) %>
+  <main class="main">
+    <div class="topbar">
+      <h1>Presentation Studio — Native Editor</h1>
+      <div class="topbar-right">
+        <button class="btn" onclick="runQa()">AI Design QA</button>
+        <button class="btn" onclick="exportDeck('pptx')">PPTX Export</button>
+        <button class="btn" onclick="exportDeck('pdf')">PDF Export</button>
+        <button class="btn primary" onclick="publishDeck()">Publish</button>
+      </div>
+    </div>
+
+    <div class="pr-grid">
+      <div class="pr-panel">
+        <h3>Yangi presentation</h3>
+        <div class="field"><label>Title</label><input class="input" id="pTitle" value="Fotosintez" /></div>
+        <div class="field"><label>Audience</label><input class="input" id="pAudience" value="8-sinf" /></div>
+        <div class="field"><label>Language</label><input class="input" id="pLang" value="uz" /></div>
+        <div class="field"><label>Theme</label>
+          <select class="input" id="pTheme"><option>default</option><option>dark</option><option>light</option><option>academic</option><option>playful</option></select>
+        </div>
+        <button class="btn primary" onclick="createDeck()">Yaratish</button>
+        <div style="margin-top:16px">
+          <h3>Presentations</h3>
+          <div id="presList"><div class="muted">Yuklanmoqda...</div></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="pr-panel">
+          <h3>Editor <span id="deckInfo" class="muted"></span></h3>
+          <div class="field"><label>Slide title</label><input class="input" id="sTitle" value="Yorug'lik reaksiyalari" /></div>
+          <div class="field"><label>Layout</label>
+            <select class="input" id="sLayout"><option>title</option><option selected>title-body</option><option>title-body-image</option><option>title-image</option><option>section-header</option><option>quote</option><option>agenda</option><option>closing</option></select>
+          </div>
+          <div class="field"><label>Speaker notes</label><textarea class="input" id="sNotes" rows="2"></textarea></div>
+          <div class="field"><label>Blocks (JSON)</label><textarea class="input" id="sBlocks" rows="4">[{"type":"bullets","content":{"items":["ATP sintezi","NADPH hosil bo'lishi"]}},{"type":"image","content":{"assetId":"a1","alt":"Fotosintez diagrammasi"},"alt":"Fotosintez diagrammasi"}]</textarea></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn primary" onclick="addSlide()">+ Slide qo'shish</button>
+            <button class="btn" onclick="saveDoc()">Saqlash (version)</button>
+            <button class="btn" onclick="loadDeck()">Yuklash</button>
+          </div>
+          <div style="margin-top:14px"><h3>Slides (drag reorder)</h3><div id="slideList"><div class="muted">Deck tanlang.</div></div></div>
+          <div class="deck-preview" id="preview" style="margin-top:14px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      const CSRF = '<%- csrfToken %>';
+      let currentId = null;
+      let slides = [];
+      let version = null;
+
+      function toast(msg, type) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = 'toast show ' + (type || 'ok');
+        setTimeout(() => (t.className = 'toast'), 2600);
+      }
+      async function api(path, opts = {}) {
+        const headers = { 'content-type': 'application/json' };
+        if (opts.method && opts.method !== 'GET') headers['X-CSRF-Token'] = CSRF;
+        const res = await fetch(path, { method: opts.method || 'GET', headers, body: opts.body ? JSON.stringify(opts.body) : undefined });
+        return res.json();
+      }
+      function badge(status) { return `<span class="badge ${status}">${status}</span>`; }
+
+      async function createDeck() {
+        const body = {
+          title: document.getElementById('pTitle').value.trim(),
+          audience: document.getElementById('pAudience').value.trim() || null,
+          language: document.getElementById('pLang').value.trim() || 'uz',
+          theme: document.getElementById('pTheme').value,
+          document: { title: document.getElementById('pTitle').value.trim(), audience: document.getElementById('pAudience').value.trim(), language: document.getElementById('pLang').value.trim() || 'uz', theme: document.getElementById('pTheme').value, slides: [] },
+        };
+        const res = await api('/api/admin/presentations', { method: 'POST', body });
+        if (res.error) return toast(res.error, 'err');
+        currentId = res.presentationId;
+        toast('Presentation yaratildi');
+        loadPresList();
+      }
+
+      async function loadPresList() {
+        const res = await api('/api/admin/presentations');
+        const box = document.getElementById('presList');
+        box.innerHTML = (res.presentations || []).map((p) =>
+          `<div class="slide-item" onclick="selectDeck(${p.id})"><div class="stitle">${p.title} ${badge(p.status)}</div><div class="smeta">#${p.id} • ${p.theme}</div></div>`
+        ).join('') || '<div class="muted">Hozircha yo\'q.</div>';
+      }
+
+      async function selectDeck(id) { currentId = id; await loadDeck(); }
+
+      async function loadDeck() {
+        if (!currentId) return toast('Avval deck tanlang', 'err');
+        const res = await api(`/api/admin/presentations/${currentId}`);
+        if (res.error) return toast(res.error, 'err');
+        document.getElementById('deckInfo').textContent = `#${currentId} • v${res.latestVersion?.version_no || 1}`;
+        const doc = res.latestVersion?.document || {};
+        slides = doc.slides || [];
+        version = res.latestVersion?.version_no;
+        renderSlides();
+      }
+
+      function renderSlides() {
+        const box = document.getElementById('slideList');
+        box.innerHTML = slides.map((s, i) => `<div class="slide-item" draggable="true" data-i="${i}">
+          <div class="stitle">${i + 1}. ${s.title || '(title yo\'q)'}</div>
+          <div class="smeta">${s.layout} • ${(s.blocks || []).length} blocks</div>
+          <div style="display:flex;gap:4px;margin-top:4px">
+            <button class="btn sm" onclick="moveSlide(${i},-1)">Up</button>
+            <button class="btn sm" onclick="moveSlide(${i},1)">Down</button>
+          </div>
+        </div>`).join('') || '<div class="muted">Slide yo\'q.</div>';
+        renderPreview();
+      }
+
+      async function moveSlide(i, dir) {
+        const to = i + dir;
+        if (to < 0 || to >= slides.length) return;
+        const [m] = slides.splice(i, 1);
+        slides.splice(to, 0, m);
+        renderSlides();
+        const res = await api(`/api/admin/presentations/${currentId}/reorder`, { method: 'POST', body: { fromIndex: i, toIndex: to } });
+        if (res.error) return toast(res.error, 'err');
+        toast(`Slide ${i + 1} → ${to + 1}`);
+      }
+
+      async function addSlide() {
+        const blocks = safeParse(document.getElementById('sBlocks').value);
+        const slide = {
+          id: 's' + Date.now(),
+          layout: document.getElementById('sLayout').value,
+          title: document.getElementById('sTitle').value.trim(),
+          blocks,
+          speakerNotes: document.getElementById('sNotes').value.trim() || '',
+          citations: [],
+          quizConcepts: [],
+          order: slides.length,
+        };
+        slides.push(slide);
+        renderSlides();
+        await saveDoc('slide qo\'shildi');
+      }
+
+      function safeParse(s) { try { return JSON.parse(s); } catch (e) { return []; } }
+
+      function renderPreview() {
+        const box = document.getElementById('preview');
+        box.innerHTML = slides.slice(0, 3).map((s, i) =>
+          `<div style="border-bottom:1px solid var(--deborah-semantic-color-border-default);padding:8px 0"><b>${i + 1}. ${s.title || ''}</b><div class="muted" style="font-size:12px">${(s.blocks || []).map((b) => b.type).join(' • ')}</div></div>`
+        ).join('') || '<div class="muted">Preview bo\'sh.</div>';
+      }
+
+      async function saveDoc(comment) {
+        if (!currentId) return toast('Avval deck tanlang', 'err');
+        const doc = {
+          title: document.getElementById('pTitle').value.trim() || 'Untitled',
+          audience: document.getElementById('pAudience').value.trim() || null,
+          language: document.getElementById('pLang').value.trim() || 'uz',
+          theme: document.getElementById('pTheme').value,
+          slides,
+        };
+        const res = await api(`/api/admin/presentations/${currentId}/document`, { method: 'POST', body: { document: doc, comment: comment || 'editor save' } });
+        if (res.error) return toast(res.error, 'err');
+        version = res.version;
+        document.getElementById('deckInfo').textContent = `#${currentId} • v${version}`;
+        toast(`v${version} saqlandi${res.diff ? ' • diff: +' + res.diff.added + ' ~' + res.diff.changed : ''}`);
+      }
+
+      async function runQa() {
+        if (!currentId) return toast('Avval deck tanlang', 'err');
+        const res = await api(`/api/admin/presentations/${currentId}/qa`);
+        if (res.error) return toast(res.error, 'err');
+        const fails = (res.results || []).filter((r) => !r.ok);
+        toast(`QA: ${res.summary.passed}/${res.summary.total} passed${fails.length ? ' • ' + fails.map((f) => f.type).join(', ') + ' fail' : ''}`, fails.length ? 'err' : 'ok');
+      }
+
+      async function exportDeck(format) {
+        if (!currentId) return toast('Avval deck tanlang', 'err');
+        const res = await api(`/api/admin/presentations/${currentId}/export`, { method: 'POST', body: { format } });
+        if (res.error) return toast(res.error, 'err');
+        toast(`${format.toUpperCase()} export queued (worker)`);
+      }
+
+      async function publishDeck() {
+        if (!currentId) return toast('Avval deck tanlang', 'err');
+        const res = await api(`/api/admin/presentations/${currentId}/publish`, { method: 'POST' });
+        if (res.error) return toast(res.error, 'err');
+        toast(`v${res.version} published (immutable)`);
+        loadPresList();
+      }
+
+      loadPresList();
+    </script>
+  </main>
+</body>
+</html>

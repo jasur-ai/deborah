@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="<%= lang || 'uz' %>" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <style>
+    body{background:var(--deborah-semantic-color-surface-default);min-height:100vh;transition:background .3s;}
+    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 55% 40% at 15% 20%,rgba(37,99,235,.1) 0%,transparent 65%),radial-gradient(ellipse 45% 35% at 85% 75%,rgba(56,189,248,.07) 0%,transparent 65%);}
+    .navbar{position:sticky;top:0;z-index:100;background:var(--bg-overlay);backdrop-filter:blur(18px);border-bottom:1px solid var(--deborah-semantic-color-border-default);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;transition:background .3s,border-color .3s;}
+    .nav-logo{font-family:'Manrope',cursive;font-size:1.25rem;text-decoration:none;display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--deborah-semantic-color-action-primary),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .nav-right{display:flex;align-items:center;gap:8px;}
+    .nav-btn{padding:7px 12px;border-radius:9px;border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-muted);font-family:'Source Sans 3',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;text-decoration:none;transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s;display:flex;align-items:center;gap:5px;}
+    .nav-btn:hover{background:var(--bg-elevated);color:var(--deborah-semantic-color-text-primary);}
+    .panel{max-width:760px;margin:0 auto;padding:24px 20px 80px;position:relative;z-index:1;}
+    .greeting{font-family:'Manrope',cursive;font-size:1.5rem;display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+    .greeting-sub{font-size:.82rem;color:var(--deborah-semantic-color-text-muted);font-weight:700;margin-bottom:20px;}
+    /* ── Accordion (D-09) ── */
+    .settings-section{background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-default);border-radius:14px;margin-bottom:12px;overflow:hidden;animation:slideDown .35s ease;}
+    .settings-acc-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px;background:transparent;border:none;cursor:pointer;font-family:'Source Sans 3',sans-serif;font-size:.92rem;font-weight:700;color:var(--deborah-semantic-color-text-primary);text-align:left;transition:background-color .2s;min-height:48px;}
+    .settings-acc-head:hover{background:var(--bg-elevated);}
+    .settings-acc-head:focus-visible{outline:2px solid var(--deborah-semantic-color-action-primary);outline-offset:-2px;border-radius:14px;}
+    .settings-acc-chev{transition:transform .25s ease;color:var(--deborah-semantic-color-text-muted);flex-shrink:0;}
+    .settings-acc-head[aria-expanded="true"] .settings-acc-chev{transform:rotate(180deg);}
+    .settings-acc-body{padding:0 18px 18px;}
+    .settings-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 0;border-top:1px solid var(--deborah-semantic-color-border-default);}
+    .settings-row:first-child{border-top:none;}
+    .settings-row-label{font-size:.82rem;font-weight:700;}
+    .settings-row-desc{font-size:.72rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-top:2px;line-height:1.45;}
+    .settings-inp{background:var(--deborah-semantic-color-surface-input);border:2px solid var(--deborah-semantic-color-border-default);border-radius:10px;padding:10px 13px;color:var(--deborah-semantic-color-text-primary);font-family:'Source Sans 3',sans-serif;font-size:.82rem;font-weight:700;outline:none;transition:border-color .3s;min-width:180px;}
+    .settings-inp:focus{border-color:var(--deborah-semantic-color-action-primary);}
+    .settings-save{min-height:44px;min-width:44px;border-radius:10px;border:none;padding:11px 20px;cursor:pointer;font-family:'Source Sans 3',sans-serif;font-weight:700;font-size:.82rem;background:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#041018);display:flex;align-items:center;gap:6px;transition:transform .2s,box-shadow .2s,opacity .2s;}
+    .settings-save:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+    .settings-save:disabled{opacity:.55;cursor:not-allowed;transform:none;}
+    .settings-msg{font-size:.76rem;font-weight:700;margin-top:10px;min-height:1em;}
+    .settings-msg.ok{color:var(--green);}
+    .settings-msg.fail{color:var(--deborah-semantic-color-action-primary);}
+    /* toggle switch */
+    .settings-toggle{width:48px;height:28px;min-width:48px;min-height:28px;border-radius:999px;border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-input);position:relative;cursor:pointer;transition:background-color .25s,border-color .25s;padding:0;}
+    .settings-toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--deborah-semantic-color-text-muted);transition:transform .25s,background-color .25s;}
+    .settings-toggle[aria-checked="true"]{background:var(--deborah-semantic-color-action-primary);border-color:transparent;}
+    .settings-toggle[aria-checked="true"]::after{transform:translateX(20px);background:#fff;}
+    .settings-toggle:focus-visible{outline:2px solid var(--deborah-semantic-color-action-primary);outline-offset:2px;}
+    .settings-link{color:var(--deborah-semantic-color-action-primary);font-weight:700;text-decoration:none;min-height:44px;display:inline-flex;align-items:center;}
+    .settings-link:hover{text-decoration:underline;}
+    /* AUTH D-25: consent UI */
+    .consent-status{font-size:.68rem;font-weight:800;padding:3px 9px;border-radius:999px;letter-spacing:.3px;text-transform:uppercase;}
+    .consent-status.ok{background:rgba(34,197,94,.12);color:#16a34a;}
+    .consent-status.warn{background:rgba(245,158,11,.14);color:#d97706;}
+    .consent-status.off{background:rgba(107,114,128,.14);color:var(--deborah-semantic-color-text-muted);}
+    .consent-meta{font-size:.68rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-top:2px;}
+    .consent-btn{min-height:40px;border-radius:9px;border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-primary);font-family:'Source Sans 3',sans-serif;font-size:.76rem;font-weight:700;cursor:pointer;padding:0 14px;transition:border-color .2s,color .2s,opacity .2s;}
+    .consent-btn:hover{border-color:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-primary);}
+    .consent-btn:disabled{opacity:.5;cursor:not-allowed;}
+    .consent-btn.danger:hover{border-color:#ef4444;color:#ef4444;}
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Asosiy qismga o'tish →</a>
+  <div class="navbar">
+    <a class="nav-logo" href="/">✏️ Deborah</a>
+    <div class="nav-right">
+      <a class="nav-btn" href="/user/panel"><%= (settingsCopy.backToPanel || 'Mening panelim') %></a>
+      <a class="nav-btn" href="/user/logout"><%= (settingsCopy.logout || 'Chiqish') %></a>
+    </div>
+  </div>
+
+  <div class="panel" id="main">
+    <div class="greeting"><%= (settingsCopy.title || 'Sozlamalar') %></div>
+    <div class="greeting-sub"><%= (settingsCopy.subtitle || 'Profil, xavfsizlik, maxfiylik va bildirishnomalar') %></div>
+
+    <!-- ── 1. Profil ── -->
+    <section class="settings-section">
+      <button type="button" class="settings-acc-head" aria-expanded="true" aria-controls="acc-profile" data-acc="profile">
+        <span><%= (settingsCopy.secProfile || 'Profil') %></span>
+        <span class="settings-acc-chev" aria-hidden="true">▾</span>
+      </button>
+      <div class="settings-acc-body" id="acc-profile">
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label"><label for="set-name"><%= (settingsCopy.name || 'Ism') %></label></div>
+            <div class="settings-row-desc"><%= (settingsCopy.nameDesc || '2–60 belgi') %></div>
+          </div>
+          <input class="settings-inp" id="set-name" name="name" type="text" maxlength="60" value="<%= (profile.name || '') %>" data-profile-field="name">
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label"><label for="set-lang"><%= (settingsCopy.language || 'Til') %></label></div>
+            <div class="settings-row-desc"><%= (settingsCopy.languageDesc || 'Interfeys tili') %></div>
+          </div>
+          <select class="settings-inp" id="set-lang" name="lang" data-profile-field="lang">
+            <option value="uz" <%= profile.lang === 'uz' ? 'selected' : '' %>>O'zbek</option>
+            <option value="ru" <%= profile.lang === 'ru' ? 'selected' : '' %>>Русский</option>
+            <option value="en" <%= profile.lang === 'en' ? 'selected' : '' %>>English</option>
+            <option value="kk" <%= profile.lang === 'kk' ? 'selected' : '' %>>Қазақша</option>
+          </select>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label"><label for="set-theme"><%= (settingsCopy.theme || 'Mavzu') %></label></div>
+            <div class="settings-row-desc"><%= (settingsCopy.themeDesc || 'Yorug\u2018 / qorong\u2018u') %></div>
+          </div>
+          <select class="settings-inp" id="set-theme" name="theme" data-profile-field="theme">
+            <option value="light" <%= profile.theme === 'light' ? 'selected' : '' %>><%= (settingsCopy.themeLight || 'Yorug\u2018') %></option>
+            <option value="dark" <%= profile.theme === 'dark' ? 'selected' : '' %>><%= (settingsCopy.themeDark || 'Qorong\u2018u') %></option>
+          </select>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label"><%= (settingsCopy.email || 'Email') %></div>
+            <div class="settings-row-desc"><%= profile.email || '\u2014' %> <%= profile.emailVerified ? (settingsCopy.emailVerified || '\u2713 tasdiqlangan') : (settingsCopy.emailNotVerified || 'tasdiqlanmagan') %></div>
+          </div>
+          <a class="settings-link" href="/user/security-profile"><%= (settingsCopy.changeEmail || 'O\u2018zgartirish') %></a>
+        </div>
+        <button type="button" class="settings-save" data-profile-save><%= (settingsCopy.save || 'Saqlash') %></button>
+        <div class="settings-msg" data-profile-msg role="status" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ── 2. Xavfsizlik ── -->
+    <section class="settings-section">
+      <button type="button" class="settings-acc-head" aria-expanded="false" aria-controls="acc-security" data-acc="security">
+        <span><%= (settingsCopy.secSecurity || 'Xavfsizlik') %></span>
+        <span class="settings-acc-chev" aria-hidden="true">▾</span>
+      </button>
+      <div class="settings-acc-body" id="acc-security" hidden>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label"><%= (settingsCopy.password || 'Parol') %></div>
+            <div class="settings-row-desc"><%= (settingsCopy.passwordDesc || 'Joriy parol bilan tasdiqlab o\u2018zgartirish') %></div>
+          </div>
+          <a class="settings-link" href="/user/security-profile"><%= (settingsCopy.open || 'Ochish') %></a>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label"><%= (settingsCopy.sessions || 'Sessiyalar') %></div>
+            <div class="settings-row-desc"><%= (settingsCopy.sessionsDesc || 'Faol qurilmalar ro\u2018yxati va yakunlash') %></div>
+          </div>
+          <a class="settings-link" href="/user/sessions"><%= (settingsCopy.open || 'Ochish') %></a>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label"><%= (settingsCopy.mfa || '2FA (MFA)') %></div>
+            <div class="settings-row-desc"><%= (settingsCopy.mfaDesc || 'TOTP va zaxira kodlar') %></div>
+          </div>
+          <a class="settings-link" href="/user/security-profile"><%= (settingsCopy.open || 'Ochish') %></a>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label"><%= (settingsCopy.passkey || 'Passkey') %></div>
+            <div class="settings-row-desc"><%= (settingsCopy.passkeyDesc || 'Biometriya / qurilma kalitlari') %></div>
+          </div>
+          <a class="settings-link" href="/user/security-profile"><%= (settingsCopy.open || 'Ochish') %></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 3. Maxfiylik ── -->
+    <section class="settings-section">
+      <button type="button" class="settings-acc-head" aria-expanded="false" aria-controls="acc-privacy" data-acc="privacy">
+        <span><%= (settingsCopy.secPrivacy || 'Maxfiylik') %></span>
+        <span class="settings-acc-chev" aria-hidden="true">▾</span>
+      </button>
+      <div class="settings-acc-body" id="acc-privacy" hidden>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label"><%= (settingsCopy.myData || 'Ma\u2019lumotlarim') %></div>
+            <div class="settings-row-desc"><%= (settingsCopy.myDataDesc || 'Tizimda saqlanadigan shaxsiy ma\u2019lumotlar ro\u2018yxati') %></div>
+          </div>
+          <a class="settings-link" href="/user/security-profile"><%= (settingsCopy.open || 'Ochish') %></a>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label"><%= (settingsCopy.export || 'Eksport') %></div>
+            <div class="settings-row-desc"><%= (settingsCopy.exportDesc || 'CSV/JSON — DSAR (D-23)') %></div>
+          </div>
+          <button type="button" class="settings-save" data-dsar-export><%= (settingsCopy.exportBtn || 'Eksport qilish') %></button>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label"><%= (settingsCopy.correct || 'Ma\u2019lumotni tuzatish') %></div>
+            <div class="settings-row-desc"><%= (settingsCopy.correctDesc || 'DSAR — ismni tuzatish (reauth)') %></div>
+          </div>
+          <input type="text" class="settings-inp" data-dsar-name placeholder="<%= (profile.name || 'Ism') %>" style="min-width:130px" aria-label="<%= (settingsCopy.correct || 'Ma\u2019lumotni tuzatish') %>">
+          <button type="button" class="settings-save" data-dsar-correct><%= (settingsCopy.correctBtn || 'Tuzatish') %></button>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label"><%= (settingsCopy.restrict || 'Qayta ishlashni cheklash') %></div>
+            <div class="settings-row-desc"><%= (settingsCopy.restrictDesc || 'Legal hold — email/telegram yuborilmaydi') %></div>
+          </div>
+          <button type="button" class="settings-toggle" role="switch" aria-checked="false" data-dsar-restrict aria-label="<%= (settingsCopy.restrict || 'Qayta ishlashni cheklash') %>"></button>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label"><%= (settingsCopy.deleteAccount || 'Hisobni o\u2018chirish') %></div>
+            <div class="settings-row-desc"><%= (settingsCopy.deleteAccountDesc || 'DSAR — reauth talab qilinadi (D-23)') %></div>
+          </div>
+          <button type="button" class="settings-save" data-dsar-delete style="background:linear-gradient(135deg,#dc2626,#b91c1c)"><%= (settingsCopy.deleteBtn || 'O\u2018chirish') %></button>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label" data-dsar-status-label><%= (settingsCopy.dsarStatus || 'DSAR holati') %></div>
+            <div class="settings-row-desc" data-dsar-status>—</div>
+          </div>
+        </div>
+        <div class="settings-msg" data-dsar-msg role="status" aria-live="polite"></div>
+        <details class="settings-row" data-dsar-export-box style="display:none">
+          <summary style="cursor:pointer;font-weight:700;font-size:.78rem">Eksport JSON (ko\u2018rsatish)</summary>
+          <textarea readonly rows="10" style="width:100%;margin-top:8px;font-family:monospace;font-size:.7rem;background:var(--deborah-semantic-color-surface-input);border:1px solid var(--deborah-semantic-color-border-default);border-radius:8px;padding:8px;color:var(--deborah-semantic-color-text-primary)"></textarea>
+        </details>
+      </div>
+    </section>
+
+    <!-- ── 3b. Roziliklar (D-25 §10/§11/§12) ── -->
+    <%
+      const cL = {
+        uz: {
+          title: 'Roziliklar', desc: 'Qaysi ma\u2019lumotlarga rozilik berganingiz va bekor qilish',
+          privacy_policy_v1: 'Maxfiylik siyosati', telegram: 'Telegram xabarlari', email_marketing: 'Email marketing', mfa: 'MFA (TOTP)', camera: 'Kamera / nazorat',
+          granted: 'Berilgan', revoked: 'Bekor qilingan', stale: 'Yangilash kerak', never: 'Berilmagan',
+          revoke: 'Bekor qilish', grant: 'Rozilik berish', reauth: 'Xavfsizlik uchun parolni qayta tasdiqlang', ok: 'Saqlangan', fail: 'Xatolik — qayta urinib ko\u2018ring',
+        },
+        'uz-cyrl': {
+          title: 'Розиликлар', desc: 'Қайси маълумотларга розилик берганингиз ва бекор қилиш',
+          privacy_policy_v1: 'Махфийлик сиёсати', telegram: 'Telegram хабарлари', email_marketing: 'Email маркетинг', mfa: 'MFA (TOTP)', camera: 'Камера / назорат',
+          granted: 'Берилган', revoked: 'Бекор қилинган', stale: 'Янгилаш керак', never: 'Берилмаган',
+          revoke: 'Бекор қилиш', grant: 'Розилик бериш', reauth: 'Хавфсизлик учун паролни қайта тасдиқланг', ok: 'Сақланган', fail: 'Хатолик — қайта уриниб кўринг',
+        },
+        ru: {
+          title: 'Согласия', desc: 'На какие данные вы согласились и отзыв согласия',
+          privacy_policy_v1: 'Политика конфиденциальности', telegram: 'Сообщения Telegram', email_marketing: 'Email-маркетинг', mfa: 'MFA (TOTP)', camera: 'Камера / контроль',
+          granted: 'Дано', revoked: 'Отозвано', stale: 'Требуется обновление', never: 'Не дано',
+          revoke: 'Отозвать', grant: 'Дать согласие', reauth: 'Для безопасности подтвердите пароль заново', ok: 'Сохранено', fail: 'Ошибка — попробуйте снова',
+        },
+        en: {
+          title: 'Consents', desc: 'What you agreed to and how to revoke',
+          privacy_policy_v1: 'Privacy Policy', telegram: 'Telegram messages', email_marketing: 'Email marketing', mfa: 'MFA (TOTP)', camera: 'Camera / proctoring',
+          granted: 'Granted', revoked: 'Revoked', stale: 'Needs update', never: 'Not given',
+          revoke: 'Revoke', grant: 'Grant', reauth: 'For security, re-confirm your password', ok: 'Saved', fail: 'Error — please try again',
+        },
+      }[(profile && profile.lang) || 'uz'] || {};
+      const cPurposeKeys = ['privacy_policy_v1', 'telegram', 'email_marketing', 'mfa', 'camera'];
+      function cState(p) {
+        const c = (consents && consents[p]) || {};
+        if (!c.granted) return 'never';
+        if (c.revokedAt) return 'revoked';
+        if (consentVersion && c.version && c.version !== consentVersion) return 'stale';
+        return 'granted';
+      }
+    %>
+    <section class="settings-section">
+      <button type="button" class="settings-acc-head" aria-expanded="false" aria-controls="acc-consent" data-acc="consent">
+        <span><%= cL.title %></span>
+        <span class="settings-acc-chev" aria-hidden="true">▾</span>
+      </button>
+      <div class="settings-acc-body" id="acc-consent" hidden>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label"><%= cL.desc %></div>
+            <div class="settings-row-desc"><a class="settings-link" href="/privacy?lang=<%= (profile && profile.lang) || 'uz' %>" style="font-size:.72rem"><%= cL.privacy_policy_v1 %> →</a></div>
+          </div>
+        </div>
+        <% cPurposeKeys.forEach((p) => { const st = cState(p); const c = (consents && consents[p]) || {}; %>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label"><%= cL[p] %></div>
+            <div class="settings-row-desc">
+              <span class="consent-status <%= st === 'granted' ? 'ok' : st === 'stale' ? 'warn' : 'off' %>"><%= cL[st] %></span>
+              <% if (c.grantedAt) { %><div class="consent-meta">v<%= c.version || '?' %> · <%= new Date(c.grantedAt).toISOString().slice(0, 10) %></div><% } %>
+            </div>
+          </div>
+          <% if (st === 'granted') { %>
+            <button type="button" class="consent-btn danger" data-consent-revoke="<%= p %>" aria-label="<%= cL.revoke %>: <%= cL[p] %>"><%= cL.revoke %></button>
+          <% } else { %>
+            <button type="button" class="consent-btn" data-consent-grant="<%= p %>" aria-label="<%= cL.grant %>: <%= cL[p] %>"><%= cL.grant %></button>
+          <% } %>
+        </div>
+        <% }); %>
+        <div class="settings-msg" data-consent-msg role="status" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ── 4. Bildirishnomalar ── -->
+    <section class="settings-section">
+      <button type="button" class="settings-acc-head" aria-expanded="false" aria-controls="acc-notif" data-acc="notif">
+        <span><%= (settingsCopy.secNotif || 'Bildirishnomalar') %></span>
+        <span class="settings-acc-chev" aria-hidden="true">▾</span>
+      </button>
+      <div class="settings-acc-body" id="acc-notif" hidden>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label"><%= (settingsCopy.notifTelegram || 'Telegram') %></div>
+            <div class="settings-row-desc"><%= (settingsCopy.notifTelegramDesc || 'Telegram xabarlari (B-21)') %></div>
+          </div>
+          <button type="button" class="settings-toggle" role="switch" aria-checked="false" data-toggle-key="telegram_events" aria-label="<%= (settingsCopy.notifTelegram || 'Telegram') %>"></button>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label"><%= (settingsCopy.notifEmail || 'Email') %></div>
+            <div class="settings-row-desc"><%= (settingsCopy.notifEmailDesc || 'Email xabarlari') %></div>
+          </div>
+          <button type="button" class="settings-toggle" role="switch" aria-checked="false" data-toggle-key="email_events" aria-label="<%= (settingsCopy.notifEmail || 'Email') %>"></button>
+        </div>
+        <div class="settings-msg" data-toggle-msg role="status" aria-live="polite"></div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // D-09 kontrakt: ps `settings.js` shu ob'ektdan o'qiydi (hardcode 0).
+    window.__SETTINGS_COPY__ = <%- JSON.stringify(settingsCopy || {}) %>;
+    window.__SETTINGS_PROFILE__ = <%- JSON.stringify(profile || {}) %>;
+    // AUTH D-25 §11/§12: consent grant/revoke (CSRF — head.ejs fetch patch avtomatik)
+    (function () {
+      var msg = document.querySelector('[data-consent-msg]');
+      function say(txt, ok) {
+        if (!msg) return;
+        msg.textContent = txt;
+        msg.className = 'settings-msg ' + (ok ? 'ok' : 'fail');
+      }
+      async function act(btn, url, label) {
+        if (btn.disabled) return;
+        btn.disabled = true;
+        try {
+          var r = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ purpose: btn.getAttribute('data-consent-revoke') || btn.getAttribute('data-consent-grant') }),
+          });
+          var j = await r.json();
+          if (r.status === 403 && j.error === 'reauth_required') {
+            say(label.reauth, false);
+          } else if (j.ok) {
+            say(label.ok, true);
+            setTimeout(function () { window.location.reload(); }, 600);
+          } else {
+            say(label.fail, false);
+          }
+        } catch (e) {
+          say(label.fail, false);
+        } finally {
+          btn.disabled = false;
+        }
+      }
+      var label = <%- JSON.stringify(((profile && profile.lang) === 'ru' ? { reauth: 'Для безопасности подтвердите пароль заново', ok: 'Сохранено', fail: 'Ошибка — попробуйте снова' } : (profile && profile.lang) === 'en' ? { reauth: 'For security, re-confirm your password', ok: 'Saved', fail: 'Error — please try again' } : (profile && profile.lang) === 'uz-cyrl' ? { reauth: 'Хавфсизлик учун паролни қайта тасдиқланг', ok: 'Сақланган', fail: 'Хатолик — қайта уриниб кўринг' } : { reauth: 'Xavfsizlik uchun parolni qayta tasdiqlang', ok: 'Saqlangan', fail: 'Xatolik — qayta urinib ko\u2018ring' })) %>;
+      document.querySelectorAll('[data-consent-revoke],[data-consent-grant]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var url = btn.hasAttribute('data-consent-revoke') ? '/api/consent/revoke' : '/api/consent/grant';
+          act(btn, url, label);
+        });
+      });
+    })();
+    // AUTH D-23: DSAR UI — export/correct/restrict/delete (reauth-gated)
+    (function () {
+      var msg = document.querySelector('[data-dsar-msg]');
+      var T = {
+        uz: { ok: 'Bajarildi', fail: 'Xatolik — qayta urinib ko\u2018ring', reauth: 'Xavfsizlik uchun parolni tasdiqlang', delConfirm: 'Hisobingiz 30 kundan keyin tugatiladi. Davom etasizmi?', delDone: 'Hisob o\u2018chirishga qo\u2018yildi — 30 kun ichida bekor qilish mumkin', restricted: 'Cheklangan', active: 'Faol' },
+        ru: { ok: 'Готово', fail: 'Ошибка — попробуйте снова', reauth: 'Для безопасности подтвердите пароль', delConfirm: 'Аккаунт будет удалён через 30 дней. Продолжить?', delDone: 'Удаление запланировано — отмена возможна в течение 30 дней', restricted: 'Ограничен', active: 'Активен' },
+        en: { ok: 'Done', fail: 'Error — try again', reauth: 'Confirm your password for security', delConfirm: 'Your account will be deleted after 30 days. Continue?', delDone: 'Deletion scheduled — can be cancelled within 30 days', restricted: 'Restricted', active: 'Active' },
+      };
+      var P = window.__SETTINGS_PROFILE__ || {}; // BUG-068: 'profile' faqat EJS scope'da — JS'da ReferenceError edi
+      var t = T[(P && P.lang === 'ru') ? 'ru' : (P && P.lang === 'en') ? 'en' : 'uz'];
+      function say(txt, ok) { if (!msg) return; msg.textContent = txt; msg.className = 'settings-msg ' + (ok ? 'ok' : 'fail'); }
+      async function reauth() {
+        var pw = window.prompt(t.reauth);
+        if (!pw) return false;
+        var r = await fetch('/api/auth/reauth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pw }) });
+        var j = await r.json();
+        return !!(j.ok || j.success);
+      }
+      var exportBtn = document.querySelector('[data-dsar-export]');
+      if (exportBtn) exportBtn.addEventListener('click', async function () {
+        exportBtn.disabled = true;
+        try {
+          var r = await fetch('/api/privacy/dsar/export', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+          var j = await r.json();
+          if (j.ok) {
+            var box = document.querySelector('[data-dsar-export-box]');
+            var ta = box && box.querySelector('textarea');
+            if (box && ta) { box.style.display = 'block'; ta.value = JSON.stringify(j.data, null, 2); }
+            say(t.ok + ' (SLA ' + j.slaDays + ' kun)', true);
+          } else { say(t.fail, false); }
+        } catch (e) { say(t.fail, false); }
+        finally { exportBtn.disabled = false; }
+      });
+      var correctBtn = document.querySelector('[data-dsar-correct]');
+      if (correctBtn) correctBtn.addEventListener('click', async function () {
+        var nameInp = document.querySelector('[data-dsar-name]');
+        var name = (nameInp && nameInp.value || '').trim();
+        if (name.length < 2) { say(t.fail, false); return; }
+        if (!(await reauth())) return;
+        correctBtn.disabled = true;
+        try {
+          var r = await fetch('/api/privacy/dsar/correct', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: name }) });
+          var j = await r.json();
+          if (j.ok) { say(t.ok, true); setTimeout(function () { location.reload(); }, 600); } else { say(t.fail, false); }
+        } catch (e) { say(t.fail, false); } finally { correctBtn.disabled = false; }
+      });
+      var restrictToggle = document.querySelector('[data-dsar-restrict]');
+      if (restrictToggle) restrictToggle.addEventListener('click', async function () {
+        var next = restrictToggle.getAttribute('aria-checked') !== 'true';
+        restrictToggle.disabled = true;
+        try {
+          var r = await fetch('/api/privacy/dsar/restrict', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ restrict: next }) });
+          var j = await r.json();
+          if (j.ok) { restrictToggle.setAttribute('aria-checked', String(j.restricted)); say(j.restricted ? t.restricted : t.active, true); }
+          else { say(t.fail, false); }
+        } catch (e) { say(t.fail, false); } finally { restrictToggle.disabled = false; }
+      });
+      var delBtn = document.querySelector('[data-dsar-delete]');
+      if (delBtn) delBtn.addEventListener('click', async function () {
+        if (!window.confirm(t.delConfirm)) return;
+        if (!(await reauth())) return;
+        delBtn.disabled = true;
+        try {
+          var r = await fetch('/api/privacy/dsar/delete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ confirm: true }) });
+          var j = await r.json();
+          if (j.ok) { say(t.delDone, true); setTimeout(function () { location.href = '/user/logout'; }, 800); }
+          else { say(t.fail, false); }
+        } catch (e) { say(t.fail, false); } finally { delBtn.disabled = false; }
+      });
+      // Joriy DSAR statusi
+      (async function () {
+        try {
+          var r = await fetch('/api/privacy/dsar/status');
+          var j = await r.json();
+          if (j.ok && j.status) {
+            var st = document.querySelector('[data-dsar-status]');
+            if (st) st.textContent = j.status.restricted ? t.restricted : t.active + (j.status.deletedGraceUntil ? ' · ' + new Date(j.status.deletedGraceUntil).toISOString().slice(0, 10) : '');
+            if (restrictToggle) restrictToggle.setAttribute('aria-checked', String(!!j.status.restricted));
+          }
+        } catch (_) {}
+      })();
+    })();
+  </script>
+  <script src="/js/settings.js" defer></script>
+</body>
+</html>

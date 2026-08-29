@@ -1,0 +1,171 @@
+<%
+// ── Role-aware accessible sidebar (Prompt 68) ──
+// Local'lar: active (string), role (string|null), user (obj|null)
+// Fallback: role -> res.locals.role (setLocals orqali) -> session rol.
+// VIEW TARTIBI: <body> → include(sidebar) → view o'z <main class="main"> qismi.
+const _active = typeof active !== 'undefined' ? active : '';
+const _role = typeof role !== 'undefined' && role
+  ? role
+  : (typeof res !== 'undefined' && res.locals && res.locals.role) || 'student';
+const _user = typeof user !== 'undefined' ? user : (typeof res !== 'undefined' && res.locals && res.locals.user) || null;
+const _uname = (_user && _user.username) || '';
+const _sb = ((typeof copy !== 'undefined' && copy.sidebar) ? copy.sidebar : ((typeof fullCopy !== 'undefined' && fullCopy && fullCopy.sidebar) ? fullCopy.sidebar : null));
+const _tc = ((typeof copy !== 'undefined' && copy.header) ? copy.header : ((typeof fullCopy !== 'undefined' && fullCopy && fullCopy.header) ? fullCopy.header : null));
+// S14 (BUG-087): sidebar 4 til — copy.sidebar (AUTH_COPY[l]); copy yo'qsa uz fallback
+const _st = (k, fb) => (_sb && _sb[k]) ? _sb[k] : fb;
+const _roleLabel = (typeof roleLabel !== 'undefined' && roleLabel)
+  ? roleLabel
+  : _st('role' + String(_role || '').charAt(0).toUpperCase() + String(_role || '').slice(1), ({ admin: 'Administrator', teacher: "O'qituvchi", student: 'Talaba', proctor: 'Proktor', marker: 'Baholovchi', board: "Hay'at" })[_role] || 'Talaba');
+const _nav = (typeof navItems !== 'undefined' && navItems) ? navItems : null;
+const _isActive = (href) => {
+  if (!href || href === '/') return _active === href;
+  return _active === href || _active.indexOf(href) === 0;
+};
+%>
+<a href="#main-content" class="skip-link">Asosiy kontentga o'tish</a>
+
+<button type="button" class="shell-burger" data-shell-open aria-label="Menyu ochish" aria-expanded="false" aria-controls="shell-sidebar"><%- icon('menu', 18) %></button>
+
+<aside class="shell-sidebar" id="shell-sidebar" role="navigation" aria-label="Asosiy navigatsiya">
+  <div class="shell-side-head">
+    <a href="/" class="shell-brand" aria-label="Deborah bosh sahifa">
+      <img src="/images/logo-vintage.png" alt="Deborah" class="logo-img shell-brand-logo">
+      <span class="shell-brand-name" aria-hidden="true">DEBORAH</span>
+    </a>
+    <button type="button" class="shell-close" data-shell-close aria-label="Yopish"><%- icon('close', 16) %></button>
+  </div>
+
+  <div class="shell-role-chip" role="status">
+    <span class="shell-role-ico"><%- icon('user', 13) %></span>
+    <span class="shell-role-label"><%= (typeof isVip !== 'undefined' && isVip && _role === 'student') ? 'VIP Talaba' : _roleLabel %></span>
+    <% if (typeof isVip !== 'undefined' && isVip && _role === 'student') { %><span class="shell-role-vip">VIP</span><% } %>
+    <% if (_uname) { %><span class="shell-role-user">@<%= _uname %></span><% } %>
+  </div>
+
+  <nav class="shell-nav" aria-label="Bo'limlar">
+    <% if (_nav) { %>
+      <% _nav.forEach(item => { %>
+        <% if (item.section) { %>
+          <div class="shell-nav-sec"><%= item.section %></div>
+        <% } else { %>
+          <a href="<%= item.href %>" class="shell-nav-link<%= _isActive(item.href) ? ' active' : '' %>" aria-current="<%= _isActive(item.href) ? 'page' : 'false' %>">
+            <span class="shell-nav-ico"><%- icon(item.icon || 'chevronDown', 16) %></span>
+            <span><%= item.label %></span>
+          </a>
+        <% } %>
+      <% }); %>
+    <% } else if (_role === 'admin') { %>
+      <div class="shell-nav-sec">Boshqaruv</div>
+      <a href="/admin/dashboard" class="shell-nav-link<%= _isActive('/admin/dashboard') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('grid', 16) %></span><span>Dashboard</span></a>
+      <a href="/admin/vip" class="shell-nav-link<%= _isActive('/admin/vip') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('shield', 16) %></span><span>VIP</span></a>
+      <a href="/admin/observability" class="shell-nav-link<%= _isActive('/admin/observability') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('activity', 16) %></span><span>Observability (SLO)</span></a>
+      <a href="/admin/reliability" class="shell-nav-link<%= _isActive('/admin/reliability') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('refresh', 16) %></span><span>Reliability</span></a>
+      <a href="/admin/security-guard" class="shell-nav-link<%= _isActive('/admin/security-guard') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('shield', 16) %></span><span>Security Guard</span></a>
+      <a href="/admin/api-contracts" class="shell-nav-link<%= _isActive('/admin/api-contracts') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('file', 16) %></span><span>API Contracts</span></a>
+      <div class="shell-nav-sec">Akademik</div>
+      <a href="/admin/scheduler" class="shell-nav-link<%= _isActive('/admin/scheduler') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('calendar', 16) %></span><span>Scheduler</span></a>
+      <a href="/admin/seating" class="shell-nav-link<%= _isActive('/admin/seating') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('users', 16) %></span><span>Seating</span></a>
+      <a href="/admin/scan" class="shell-nav-link<%= _isActive('/admin/scan') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('search', 16) %></span><span>Scan & Answer Key</span></a>
+      <a href="/admin/paper" class="shell-nav-link<%= _isActive('/admin/paper') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('fileText', 16) %></span><span>Paper Packets</span></a>
+      <a href="/admin/safe-submit" class="shell-nav-link<%= _isActive('/admin/safe-submit') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('upload', 16) %></span><span>Safe Submit</span></a>
+      <a href="/admin/sources" class="shell-nav-link<%= _isActive('/admin/sources') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('folder', 16) %></span><span>Source Pack</span></a>
+      <div class="shell-nav-sec">Baholash</div>
+      <a href="/admin/grading" class="shell-nav-link<%= _isActive('/admin/grading') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('trendUp', 16) %></span><span>Grading</span></a>
+      <a href="/admin/marking" class="shell-nav-link<%= _isActive('/admin/marking') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('checkCircle', 16) %></span><span>Marking</span></a>
+      <a href="/admin/board" class="shell-nav-link<%= _isActive('/admin/board') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('award', 16) %></span><span>Board Ratification</span></a>
+      <a href="/admin/consideration" class="shell-nav-link<%= _isActive('/admin/consideration') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('alertTriangle', 16) %></span><span>Consideration</span></a>
+      <a href="/admin/ai-question-gen" class="shell-nav-link<%= _isActive('/admin/ai-question-gen') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('info', 16) %></span><span>AI Question Gen</span></a>
+      <div class="shell-nav-sec">AI</div>
+      <a href="/admin/ai-grading" class="shell-nav-link<%= _isActive('/admin/ai-grading') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('cpu', 16) %></span><span>AI Grading</span></a>
+      <a href="/admin/ai-mlops" class="shell-nav-link<%= _isActive('/admin/ai-mlops') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('layers', 16) %></span><span>AI MLOps</span></a>
+      <a href="/admin/ai-checkpoint" class="shell-nav-link<%= _isActive('/admin/ai-checkpoint') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('shieldCheck', 16) %></span><span>AI Checkpoint</span></a>
+      <a href="/admin/claude" class="shell-nav-link<%= _isActive('/admin/claude') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('sparkles', 16) %></span><span>Claude</span></a>
+      <a href="/admin/provider" class="shell-nav-link<%= _isActive('/admin/provider') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('settings', 16) %></span><span>AI Provider</span></a>
+      <a href="/admin/resource-reco" class="shell-nav-link<%= _isActive('/admin/resource-reco') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('search', 16) %></span><span>Resource Reco</span></a>
+      <div class="shell-nav-sec">Taqdimot & Eksport</div>
+      <a href="/admin/presentations" class="shell-nav-link<%= _isActive('/admin/presentations') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('play', 16) %></span><span>Presentation</span></a>
+      <a href="/admin/canva" class="shell-nav-link<%= _isActive('/admin/canva') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('gift', 16) %></span><span>Canva</span></a>
+      <a href="/admin/google-slides" class="shell-nav-link<%= _isActive('/admin/google-slides') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('play', 16) %></span><span>Google Slides</span></a>
+      <a href="/admin/deck-export" class="shell-nav-link<%= _isActive('/admin/deck-export') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('download', 16) %></span><span>Deck Export</span></a>
+      <a href="/admin/quiz-deck" class="shell-nav-link<%= _isActive('/admin/quiz-deck') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('layers', 16) %></span><span>Quiz Deck</span></a>
+      <div class="shell-nav-sec">Sifat & Boshqaruv</div>
+      <a href="/admin/acceptance" class="shell-nav-link<%= _isActive('/admin/acceptance') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('checkCircle', 16) %></span><span>Acceptance</span></a>
+      <a href="/admin/institutional" class="shell-nav-link<%= _isActive('/admin/institutional') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('briefcase', 16) %></span><span>Institutional</span></a>
+      <a href="/admin/program-quality" class="shell-nav-link<%= _isActive('/admin/program-quality') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('award', 16) %></span><span>Program Quality</span></a>
+      <a href="/admin/credentials" class="shell-nav-link<%= _isActive('/admin/credentials') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('trophy', 16) %></span><span>Credentials</span></a>
+      <a href="/admin/multilingual" class="shell-nav-link<%= _isActive('/admin/multilingual') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('globe', 16) %></span><span>Multilingual</span></a>
+      <a href="/admin/accessibility" class="shell-nav-link<%= _isActive('/admin/accessibility') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('eye', 16) %></span><span>Accessibility</span></a>
+      <a href="/admin/data-governance" class="shell-nav-link<%= _isActive('/admin/data-governance') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('database', 16) %></span><span>Data Governance</span></a>
+      <a href="/admin/external-integration" class="shell-nav-link<%= _isActive('/admin/external-integration') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('link', 16) %></span><span>External Integration</span></a>
+      <a href="/admin/interventions" class="shell-nav-link<%= _isActive('/admin/interventions') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('heart', 16) %></span><span>Intervention</span></a>
+      <a href="/admin/camera-review" class="shell-nav-link<%= _isActive('/admin/camera-review') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('camera', 16) %></span><span>Camera Review</span></a>
+      <a href="/admin/command-center" class="shell-nav-link<%= _isActive('/admin/command-center') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('zap', 16) %></span><span>Command Center</span></a>
+      <div class="shell-nav-sec">Rol workspace'lar</div>
+      <a href="/teacher" class="shell-nav-link<%= _isActive('/teacher') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('bookOpen', 16) %></span><span>O'qituvchi</span></a>
+      <a href="/proctor" class="shell-nav-link<%= _isActive('/proctor') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('monitor', 16) %></span><span>Proktor</span></a>
+      <a href="/marker" class="shell-nav-link<%= _isActive('/marker') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('clipboard', 16) %></span><span>Baholovchi</span></a>
+      <a href="/board" class="shell-nav-link<%= _isActive('/board') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('award', 16) %></span><span>Hay'at</span></a>
+      <a href="/student" class="shell-nav-link<%= _isActive('/student') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('user', 16) %></span><span>Talaba</span></a>
+    <% } else if (_role === 'teacher') { %>
+      <div class="shell-nav-sec">Ish maydoni</div>
+      <a href="/teacher" class="shell-nav-link<%= _isActive('/teacher') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('grid', 16) %></span><span>Umumiy ko'rinish</span></a>
+      <a href="/teacher?tab=courses" class="shell-nav-link<%= _active === 'courses' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('bookOpen', 16) %></span><span><%= _st('courses', 'Kurslar') %></span></a>
+      <a href="/teacher?tab=assessments" class="shell-nav-link<%= _active === 'assessments' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('target', 16) %></span><span><%= _st('assessments', 'Baholashlar') %></span></a>
+      <a href="/teacher?tab=grading" class="shell-nav-link<%= _active === 'grading' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('clipboard', 16) %></span><span><%= _st('gradingQueue', 'Baholash navbati') %></span></a>
+      <div class="shell-nav-sec"><%= _st('secTools', 'Asboblar') %></div>
+      <a href="/user/panel" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('book', 16) %></span><span><%= _st('myTests', 'Testlarim') %></span></a>
+      <a href="/user/create-test" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('plus', 16) %></span><span><%= _st('newTest', 'Yangi test') %></span></a>
+    <% } else if (_role === 'student') { %>
+      <div class="shell-nav-sec"><%= _st('roleStudent', 'Talaba') %></div>
+      <a href="/user/panel" class="shell-nav-link<%= _active === 'panel' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('grid', 16) %></span><span><%= _st('myPanel', 'Panelim') %></span></a>
+      <a href="/student" class="shell-nav-link<%= _isActive('/student') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('calendar', 16) %></span><span><%= _st('calendar', 'Kalendar') %></span></a>
+      <a href="/user/portfolio" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('award', 16) %></span><span><%= _st('portfolio', 'Portfolio') %></span></a>
+      <a href="/user/security-profile" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('shieldCheck', 16) %></span><span><%= _st('security', 'Xavfsizlik') %></span></a>
+    <% } else if (_role === 'proctor') { %>
+      <div class="shell-nav-sec"><%= _st('roleProctor', 'Proktor') %></div>
+      <a href="/proctor" class="shell-nav-link<%= _active === 'monitor' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('monitor', 16) %></span><span><%= _st('liveMonitor', 'Jonli monitoring') %></span></a>
+      <a href="/admin/camera-review" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('camera', 16) %></span><span>Camera review</span></a>
+      <a href="/admin/command-center" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('zap', 16) %></span><span>Command Center</span></a>
+    <% } else if (_role === 'marker') { %>
+      <div class="shell-nav-sec"><%= _st('roleMarker', 'Baholovchi') %></div>
+      <a href="/marker" class="shell-nav-link<%= _active === 'queue' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('clipboard', 16) %></span><span><%= _st('gradingQueue', 'Baholash navbati') %></span></a>
+      <a href="/admin/marking" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('checkCircle', 16) %></span><span>Marking</span></a>
+      <a href="/admin/consideration" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('alertTriangle', 16) %></span><span>Consideration</span></a>
+    <% } else if (_role === 'board') { %>
+      <div class="shell-nav-sec"><%= _st('roleBoard', "Hay'at") %></div>
+      <a href="/board" class="shell-nav-link<%= _active === 'ratify' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('award', 16) %></span><span><%= _st('ratification', 'Ratifikatsiya') %></span></a>
+      <a href="/admin/board" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('shield', 16) %></span><span>Board</span></a>
+      <a href="/admin/grading" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('trendUp', 16) %></span><span>Grading</span></a>
+    <% } %>
+    <div class="shell-nav-sec"><%= _st('secAccount', 'Akkaunt') %></div>
+    <a href="/user/profile" class="shell-nav-link<%= _isActive('/user/profile') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('user', 16) %></span><span><%= _st('myProfile', 'Profilim') %></span></a>
+    <% // BUG-037: doim ko'rinadigan Chiqish — POST + CSRF (BUG-032), dropdown ochilmasdan ham ├── %>
+    <form method="post" action="/user/logout" style="margin:0;display:block;width:100%">
+      <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+      <button type="submit" class="shell-nav-link shell-nav-btn">
+        <span class="shell-nav-ico"><%- icon('logOut', 16) %></span><span><%= _st('logout', 'Chiqish') %></span>
+      </button>
+    </form>
+  </nav>
+
+  <!-- S17.11: Account menu — theme + home + logout grouped (logout primary emas) -->
+  <div class="shell-account" data-shell-account>
+    <button type="button" class="shell-account-btn" aria-haspopup="true" aria-expanded="false" aria-controls="shell-account-menu">
+      <span class="shell-nav-ico"><%- icon('user', 15) %></span>
+      <span>
+        <span class="shell-account-name"><%= _uname || _roleLabel %></span>
+        <span class="shell-account-sub"><%= _roleLabel %></span>
+      </span>
+      <span class="shell-nav-ico" style="margin-left:auto;opacity:.6"><%- icon('chevronDown', 12) %></span>
+    </button>
+    <div class="shell-account-menu" id="shell-account-menu">
+      <a href="/" class="shell-account-menu-item"><span class="shell-nav-ico"><%- icon('home', 14) %></span> <%= _st('home', 'Bosh sahifa') %></a>
+      <a href="/user/panel" class="shell-account-menu-item"><span class="shell-nav-ico"><%- icon('grid', 14) %></span> <%= _st('panel', 'Panel') %></a>
+      <a href="/user/profile" class="shell-account-menu-item"><span class="shell-nav-ico"><%- icon('user', 14) %></span> <%= _st('myProfile', 'Profilim') %></a>
+      <%- include('theme-control', { headerCopy: _tc }) %>
+      <a href="/user/logout" class="shell-account-menu-item shell-account-menu-item--logout"><span class="shell-nav-ico"><%- icon('logOut', 14) %></span> <%= _st('logout', 'Chiqish') %></a>
+    </div>
+  </div>
+</aside>
+
+<div class="shell-overlay" data-shell-close aria-hidden="true"></div>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <style>
+    body{background:var(--deborah-semantic-color-surface-default);min-height:100vh;transition:background .3s;}
+    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 55% 40% at 15% 20%,rgba(37,99,235,.1) 0%,transparent 65%),radial-gradient(ellipse 45% 35% at 85% 75%,rgba(56,189,248,.07) 0%,transparent 65%);}
+    .navbar{position:sticky;top:0;z-index:100;background:var(--bg-overlay);backdrop-filter:blur(18px);border-bottom:1px solid var(--deborah-semantic-color-border-default);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;transition:background .3s,border-color .3s;}
+    .nav-logo{font-family:''Manrope'',cursive;font-size:1.25rem;text-decoration:none;display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--deborah-semantic-color-action-primary),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .nav-right{display:flex;align-items:center;gap:8px;}
+    .nav-btn{padding:7px 12px;border-radius:9px;border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-muted);font-family:'Source Sans 3',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;text-decoration:none;transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s;display:flex;align-items:center;gap:5px;}
+    .nav-btn:hover{background:var(--bg-elevated);color:var(--deborah-semantic-color-text-primary);}
+    .panel{max-width:1180px;margin:0 auto;padding:24px 20px 90px;position:relative;z-index:1;}
+    .greeting{font-family:''Manrope'',cursive;font-size:1.5rem;display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+    .greeting-sub{font-size:.82rem;color:var(--deborah-semantic-color-text-muted);font-weight:700;margin-bottom:20px;}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
+    @media(max-width:900px){.grid{grid-template-columns:1fr;}}
+    .card{background:var(--deborah-semantic-color-surface-raised);border-radius:16px;padding:18px;border:1px solid var(--deborah-semantic-color-border-default);margin-bottom:14px;animation:slideDown .3s ease;transition:background .3s,border-color .3s;}
+    .card-h{font-family:''Manrope'',cursive;font-size:.95rem;display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+    .card-h small{font-family:'Source Sans 3',sans-serif;font-size:.66rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-left:auto;}
+    .field{margin-bottom:11px;}
+    .field label{display:block;font-size:.72rem;font-weight:700;color:var(--deborah-semantic-color-text-muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px;}
+    .inp{width:100%;background:var(--deborah-semantic-color-surface-input);border:2px solid var(--deborah-semantic-color-border-default);border-radius:10px;padding:9px 12px;color:var(--deborah-semantic-color-text-primary);font-family:'Source Sans 3',sans-serif;font-size:.82rem;font-weight:600;outline:none;transition:border-color .3s;}
+    .inp:focus{border-color:var(--deborah-semantic-color-action-primary);}
+    textarea.inp{min-height:70px;resize:vertical;}
+    .btn{border-radius:10px;border:none;padding:10px 16px;cursor:pointer;transition:color .3s ease,background-color .3s ease,border-color .3s ease,box-shadow .3s ease,transform .3s ease,opacity .3s ease;font-family:'Source Sans 3',sans-serif;font-weight:700;font-size:.8rem;background:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#041018);display:inline-flex;align-items:center;gap:6px;}
+    .btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+    .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+    .btn.ghost{background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-muted);border:1px solid var(--deborah-semantic-color-border-default);}
+    .btn.ghost:hover{color:var(--deborah-semantic-color-text-primary);background:var(--bg-elevated);}
+    .btn.green{background:linear-gradient(135deg,#00e5a0,#00b37e);color:#04120c;}
+    .btn.red{background:linear-gradient(135deg,#ef4444,#b91c1c);color:#fff;}
+    .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:99px;font-size:.66rem;font-weight:700;letter-spacing:.3px;}
+    .badge.blue{background:rgba(37,99,235,.15);color:var(--deborah-semantic-color-action-primary);}
+    .badge.green{background:rgba(0,229,160,.14);color:var(--green);}
+    .badge.red{background:rgba(239,68,68,.14);color:#f87171;}
+    .badge.amber{background:rgba(251,191,36,.14);color:var(--gold);}
+    .badge.gray{background:var(--bg-elevated);color:var(--deborah-semantic-color-text-muted);}
+    table{width:100%;border-collapse:collapse;font-size:.78rem;}
+    th{text-align:left;font-size:.64rem;text-transform:uppercase;letter-spacing:.5px;color:var(--deborah-semantic-color-text-muted);padding:7px 8px;border-bottom:1px solid var(--deborah-semantic-color-border-default);font-weight:700;}
+    td{padding:7px 8px;border-bottom:1px solid var(--deborah-semantic-color-border-default);font-weight:700;}
+    tr:last-child td{border-bottom:none;}
+    .msg{padding:10px 14px;border-radius:10px;font-size:.78rem;font-weight:600;margin-bottom:12px;display:none;}
+    .msg.ok{display:block;background:rgba(0,229,160,.12);color:var(--green);border:1px solid rgba(0,229,160,.25);}
+    .msg.err{display:block;background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.25);}
+    .mono{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--deborah-semantic-color-text-muted);}
+    .row-btn{background:none;border:1px solid var(--deborah-semantic-color-border-default);color:var(--deborah-semantic-color-text-muted);border-radius:8px;padding:4px 9px;font-size:.68rem;font-weight:600;cursor:pointer;transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s;margin-right:5px;}
+    .row-btn:hover{color:var(--deborah-semantic-color-text-primary);border-color:var(--deborah-semantic-color-action-primary);}
+    .empty{text-align:center;color:var(--deborah-semantic-color-text-muted);padding:22px 0;font-size:.8rem;font-weight:700;}
+    .pre{background:var(--deborah-semantic-color-surface-input);border:1px solid var(--deborah-semantic-color-border-default);border-radius:10px;padding:10px 12px;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--deborah-semantic-color-text-muted);white-space:pre-wrap;margin-top:8px;}
+  </style>
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/admin" class="nav-logo">Deborah Admin</a>
+    <div class="nav-right">
+      <a href="/admin/dashboard" class="nav-btn">Dashboard</a>
+      <a href="/admin/safe-submit" class="nav-btn">Safe Submit</a>
+      <a href="/admin/logout" class="nav-btn">Chiqish</a>
+    </div>
+  </nav>
+
+  <main class="panel">
+    <h1 class="greeting">Grade Rules</h1>
+    <p class="greeting-sub">Weighted, hurdle, late, exempt, resit va rounding qoidalari — versionlangan DSL, deterministik hisoblash (research §18, §72)</p>
+
+    <div id="msgBox" class="msg"></div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="card-h">Yangi rule yaratish <small>versionlangan DSL</small></div>
+        <div class="field">
+          <label>Rule nomi</label>
+          <input id="ruleName" class="inp" placeholder="DTM Matematika 2026" />
+        </div>
+        <div class="field">
+          <label>Rule DSL (JSON)</label>
+          <textarea id="ruleDsl" class="inp mono" rows="14">{
+  "components": [
+    { "key": "midterm", "label": "Oraliq nazorat", "max_score": 30, "weight": 40 },
+    { "key": "final", "label": "Yakuniy", "max_score": 50, "weight": 60 }
+  ],
+  "missingPolicy": "exclude",
+  "rounding": { "method": "half_up", "scale": 2 },
+  "boundaries": [
+    { "minPercent": 90, "label": "A" },
+    { "minPercent": 80, "label": "B" },
+    { "minPercent": 70, "label": "C" },
+    { "minPercent": 60, "label": "D" },
+    { "minPercent": 0, "label": "F" }
+  ]
+}</textarea>
+        </div>
+        <button class="btn" onclick="createRule()">Rule yaratish</button>
+      </div>
+
+      <div class="card">
+        <div class="card-h">Deterministik hisoblash <small>raw→moderated→adjusted→final</small></div>
+        <div class="field">
+          <label>Rule version ID</label>
+          <input id="versionId" class="inp" type="number" placeholder="1" />
+        </div>
+        <div class="field">
+          <label>User ID</label>
+          <input id="userId" class="inp" type="number" placeholder="1" />
+        </div>
+        <div class="field">
+          <label>Input components (JSON)</label>
+          <textarea id="inputComps" class="inp mono" rows="6">[
+  { "key": "midterm", "raw_score": 27, "status": "scored" },
+  { "key": "final", "raw_score": 45, "status": "scored" }
+]</textarea>
+        </div>
+        <div class="field">
+          <label>Context (JSON) — lateMinutes, attemptNumber</label>
+          <textarea id="ctx" class="inp mono" rows="2">{"lateMinutes": 0, "attemptNumber": 1}</textarea>
+        </div>
+        <button class="btn green" onclick="calculate()">Hisoblash</button>
+        <div id="calcResult" class="pre"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h">Rules <small>versionlar + approve</small></div>
+      <div id="rulesWrap"><p class="empty">Yuklanmoqda...</p></div>
+    </div>
+
+    <div class="card">
+      <div class="card-h">Hisoblash run'lar <small>run_hash idempotent replay</small></div>
+      <div id="runsWrap"><p class="empty">Yuklanmoqda...</p></div>
+    </div>
+  </main>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const CSRF = window.__CSRF_TOKEN || '';
+
+  async function api(path, method = 'GET', body = null) {
+    const opts = { method, headers: {} };
+    if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
+    if (method !== 'GET' && CSRF) opts.headers['X-CSRF-Token'] = CSRF;
+    const r = await fetch(path, opts);
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(data.error || ('HTTP ' + r.status));
+    return data;
+  }
+
+  function showMsg(text, ok = true) {
+    const el = $('msgBox');
+    el.textContent = text;
+    el.className = 'msg ' + (ok ? 'ok' : 'err');
+    setTimeout(() => { el.className = 'msg'; }, 4000);
+  }
+
+  function badge(status) {
+    const map = { approved: 'green', published: 'green', clean: 'green', draft: 'amber', archived: 'gray' };
+    return `<span class="badge ${map[status] || 'gray'}">${status}</span>`;
+  }
+
+  async function createRule() {
+    try {
+      const dsl = JSON.parse($('ruleDsl').value);
+      const r = await api('/api/admin/grading/rules', 'POST', { name: $('ruleName').value, ruleDsl: dsl });
+      showMsg('Rule #' + r.rule.id + ' yaratildi (version ' + r.version.version_no + ', hash ' + r.version.rule_hash.slice(0, 12) + '…)');
+      loadRules();
+    } catch (e) { showMsg(e.message, false); }
+  }
+
+  async function calculate() {
+    try {
+      const comps = JSON.parse($('inputComps').value);
+      const ctx = JSON.parse($('ctx').value || '{}');
+      const r = await api('/api/admin/grading/calculate', 'POST', {
+        ruleVersionId: Number($('versionId').value),
+        userId: Number($('userId').value),
+        components: comps,
+        context: ctx,
+      });
+      if (r.blocked) { $('calcResult').textContent = 'Bloklangan: ' + r.blockedReason; return; }
+      $('calcResult').textContent = r.breakdown;
+    } catch (e) { showMsg(e.message, false); }
+  }
+
+  async function loadRules() {
+    try {
+      const d = await api('/api/admin/grading/rules');
+      const list = d.rules || [];
+      if (list.length === 0) { $('rulesWrap').innerHTML = '<p class="empty">Rule yo\'q</p>'; return; }
+      $('rulesWrap').innerHTML = '<table><thead><tr><th>ID</th><th>Nomi</th><th>Status</th><th>V</th><th></th></tr></thead><tbody>' +
+        list.map((r) => `<tr>
+          <td>${r.id}</td><td>${r.name}</td>
+          <td>${badge(r.status)}</td><td>${r.current_version}</td>
+          <td><button class="row-btn" onclick="loadRuleVersions(${r.id})">Versions</button></td>
+        </tr>`).join('') + '</tbody></table>';
+    } catch (e) { showMsg(e.message, false); }
+  }
+
+  async function loadRuleVersions(ruleId) {
+    try {
+      const d = await api('/api/admin/grading/rules/' + ruleId);
+      const versions = d.versions || [];
+      const html = versions.map((v) => `
+        <div style="padding:8px 0;border-bottom:1px solid var(--deborah-semantic-color-border-default);">
+          <strong>v${v.version_no}</strong> ${badge(v.status)}
+          <span class="mono">hash ${v.rule_hash.slice(0, 16)}…</span>
+          ${v.status === 'draft' ? `<button class="row-btn" style="color:var(--green);" onclick="approveVersion(${v.id})">Approve</button>` : ''}
+          <div class="pre">${escapeHtml(JSON.stringify(v.rule_dsl, null, 2).slice(0, 500))}</div>
+        </div>`).join('');
+      $('runsWrap').innerHTML = '<div class="card-h">Rule #' + ruleId + ' versions</div>' + html;
+    } catch (e) { showMsg(e.message, false); }
+  }
+
+  async function approveVersion(versionId) {
+    try {
+      await api('/api/admin/grading/versions/' + versionId + '/approve', 'POST', {});
+      showMsg('Version #' + versionId + ' approved (immutable)');
+      loadRules();
+    } catch (e) { showMsg(e.message, false); }
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  loadRules();
+</script>
+</body>
+</html>

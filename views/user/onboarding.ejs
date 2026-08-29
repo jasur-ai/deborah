@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="<%= lang === 'uz-cyrl' ? 'uz-Cyrl' : lang %>" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <link rel="stylesheet" href="/css/auth.css">
+  <style>
+    /* AUTH B-17 §13: mobile — bir ustun + sticky progress */
+    .onb-wrap{max-width:560px;margin:0 auto;padding:20px 16px 48px}
+    .onb-progress{position:sticky;top:0;z-index:5;background:var(--deborah-semantic-color-surface-default,#0d1220);padding:10px 0 14px}
+    .onb-steps{display:flex;align-items:center;gap:6px;list-style:none;margin:0 0 10px;padding:0}
+    .onb-step{display:flex;align-items:center;gap:6px;flex:1;font-size:.72rem;color:var(--deborah-semantic-color-text-muted,#8b93a7);font-weight:600;min-width:0}
+    .onb-step .dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--deborah-semantic-color-border-subtle,#2a3247);display:inline-flex;align-items:center;justify-content:center;font-size:.68rem;flex-shrink:0}
+    .onb-step.on .dot{background:var(--deborah-semantic-color-action-primary,#3b82f6);border-color:var(--deborah-semantic-color-action-primary,#3b82f6);color:#fff}
+    .onb-step.done .dot{background:var(--deborah-semantic-color-status-success,#00e5a0);border-color:var(--deborah-semantic-color-status-success,#00e5a0);color:#06281c}
+    .onb-step .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .onb-bar{height:4px;border-radius:99px;background:var(--deborah-semantic-color-border-subtle,#2a3247);overflow:hidden}
+    .onb-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#3b82f6,#00e5a0);transition:width .4s ease}
+    .onb-title{font-size:1.35rem;font-weight:800;margin:4px 0 6px;line-height:1.25}
+    .onb-sub{color:var(--deborah-semantic-color-text-secondary,#aab3c5);font-size:.85rem;line-height:1.55;margin:0 0 18px}
+    .onb-card{background:var(--deborah-semantic-color-surface-raised,#151c2e);border:1px solid var(--deborah-semantic-color-border-subtle,#2a3247);border-radius:14px;padding:18px;margin-bottom:14px}
+    .onb-card h2{font-size:.9rem;font-weight:700;margin:0 0 10px}
+    .onb-field{width:100%;padding:11px 13px;border-radius:10px;border:1px solid var(--deborah-semantic-color-border-default,#2a3247);background:var(--deborah-semantic-color-surface-default,#0d1220);color:inherit;font-family:inherit;font-size:.88rem;min-height:44px}
+    .onb-field:focus-visible{outline:2px solid var(--deborah-semantic-color-action-primary,#3b82f6);outline-offset:1px}
+    .onb-opt{display:flex;gap:8px;flex-wrap:wrap}
+    .onb-opt button{min-height:44px;padding:9px 14px;border-radius:10px;border:1px solid var(--deborah-semantic-color-border-default,#2a3247);background:transparent;color:inherit;font-family:inherit;font-size:.82rem;font-weight:600;cursor:pointer}
+    .onb-opt button.sel{border-color:var(--deborah-semantic-color-action-primary,#3b82f6);background:rgba(59,130,246,.12);color:var(--deborah-semantic-color-action-primary,#3b82f6)}
+    .onb-qtext{font-weight:700;font-size:.9rem;margin:0 0 12px;line-height:1.45}
+    .onb-answers{display:grid;gap:8px}
+    .onb-answer{display:flex;align-items:center;gap:9px;padding:10px 12px;border:1px solid var(--deborah-semantic-color-border-default,#2a3247);border-radius:10px;background:transparent;color:inherit;font-family:inherit;font-size:.84rem;cursor:pointer;min-height:44px;text-align:left}
+    .onb-answer.sel{border-color:var(--deborah-semantic-color-action-primary,#3b82f6);background:rgba(59,130,246,.12)}
+    .onb-feedback{font-size:.82rem;font-weight:700;margin-top:10px;min-height:18px}
+    .onb-feedback.ok{color:var(--deborah-semantic-color-status-success,#00e5a0)}
+    .onb-feedback.no{color:var(--deborah-semantic-color-status-danger,#ff5d73)}
+    .onb-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+    .onb-actions .btn{min-height:46px;flex:1 1 0}
+    .onb-skip-hint{text-align:center;color:var(--deborah-semantic-color-text-muted,#8b93a7);font-size:.74rem;margin-top:10px}
+    .onb-hint{color:var(--deborah-semantic-color-text-muted,#8b93a7);font-size:.76rem;margin:0 0 10px}
+    .onb-result-card{text-align:left}
+    .onb-aha{margin-top:12px}
+    .onb-center{justify-content:center}
+    .cl-toggle{min-width:44px;min-height:44px;border-radius:10px;border:1px solid var(--deborah-semantic-color-border-default,#2a3247);background:transparent;color:inherit;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+    .cl-toggle[disabled]{opacity:.55;cursor:default}
+    .cl-title{display:block;font-size:.9rem;font-weight:700;margin:2px 0 3px}
+    .cl-sub{color:var(--deborah-semantic-color-text-secondary,#aab3c5);font-size:.78rem;line-height:1.45;margin:0}
+    .cl-locked{color:var(--deborah-semantic-color-text-muted,#8b93a7);font-size:.72rem;margin:6px 0 0}
+    .onb-done{text-align:center;padding:34px 10px}
+    .onb-done .big{font-size:2.4rem;line-height:1;margin-bottom:10px}
+    .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+    @media (max-width:480px){.onb-step .lbl{display:none}.onb-step{justify-content:center}}
+    @media (prefers-reduced-motion:reduce){.onb-bar i{transition:none}}
+  </style>
+</head>
+<body class="auth-body">
+  <a href="#main" class="skip-link"><%= copy.continueBtn %> →</a>
+  <main class="onb-wrap" id="main">
+    <div class="auth-brand" style="text-align:center;margin-bottom:14px">
+      <img src="/images/logo-vintage.png" alt="Deborah" class="logo-img" style="height:44px;width:auto">
+    </div>
+
+    <!-- §29: stepper 3 bosqich — Orient / Activate / Reinforce -->
+    <nav class="onb-progress" aria-label="<%= copy.progressLabel %>">
+      <ol class="onb-steps">
+        <!-- B-30 §22: aria-current — joriy bosqich screen reader'ga e'lon qilinadi -->
+        <li class="onb-step <%= step === 'welcome' ? 'on' : 'done' %>" <%= step === 'welcome' ? 'aria-current="step"' : '' %>><span class="dot"><%- icon('check', 11) %></span><span class="lbl"><%= copy.stepOrient %></span></li>
+        <li class="onb-step <%= step === 'welcome' ? '' : (step === 'first_win' ? 'on' : 'done') %>" <%= step === 'first_win' ? 'aria-current="step"' : '' %>><span class="dot"><%= step === 'welcome' ? 2 : (step === 'first_win' ? 2 : '✓') %></span><span class="lbl"><%= copy.stepActivate %></span></li>
+        <li class="onb-step <%= step === 'checklist' || step === 'done' ? 'on' : '' %>" <%= step === 'checklist' || step === 'done' ? 'aria-current="step"' : '' %>><span class="dot">3</span><span class="lbl"><%= copy.stepReinforce %></span></li>
+      </ol>
+      <div class="onb-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<%= progress %>" aria-label="<%= copy.progressLabel %>"><i style="width:<%= progress %>%"></i></div>
+    </nav>
+
+    <% if (step === 'checklist' || step === 'done') { %>
+      <!-- B-19 §06/§07: Reinforce — 5 item checklist + sticky progress -->
+      <div id="cl-panel" <%= step === 'done' ? 'data-alldone="1"' : '' %>>
+        <h1 class="onb-title"><%- icon('listChecks', 18) %> <%= copy.checklist.clTitle %></h1>
+        <p class="onb-sub"><%= copy.checklist.clSub %></p>
+        <p class="onb-qtext" id="cl-progress-label" role="status" aria-live="polite"><%= copy.checklist.clProgress.replace('{done}', checklist.progress.done).replace('{total}', checklist.progress.total) %></p>
+        <div class="onb-bar" style="margin-bottom:14px"><i style="width:<%= checklist.progress.percent %>%"></i></div>
+        <div id="cl-list" role="list" aria-label="<%= copy.checklist.clTitle %>">
+          <% checklist.items.forEach(function(item){ %>
+            <div class="onb-card" role="listitem" data-item="<%= item.itemId %>" data-done="<%= item.done ? '1' : '0' %>">
+              <div style="display:flex;gap:10px;align-items:flex-start">
+                <button type="button" class="cl-toggle" role="checkbox" aria-checked="<%= item.done ? 'true' : 'false' %>" aria-label="<%= copy.checklist['clItem' + item.itemId.charAt(0).toUpperCase() + item.itemId.slice(1)] %>" <%= item.done ? 'disabled' : '' %> data-analytics="onboarding_checklist_toggle">
+                  <span class="cl-ico-done" hidden><%- icon('check', 15) %></span><span class="cl-ico-todo"><%- icon('circle', 15) %></span>
+                </button>
+                <div style="flex:1">
+                  <strong class="cl-title"><%= copy.checklist['clItem' + item.itemId.charAt(0).toUpperCase() + item.itemId.slice(1)] %></strong>
+                  <p class="cl-sub"><%= copy.checklist['clItem' + item.itemId.charAt(0).toUpperCase() + item.itemId.slice(1) + 'Sub'] %></p>
+                  <% if (item.locked) { %><p class="cl-locked"><%- icon('lock', 11) %> <%= copy.checklist.clLocked %></p><% } %>
+                </div>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+        <div class="onb-done" id="cl-done-msg" hidden>
+          <div class="big" aria-hidden="true">🎉</div>
+          <h1 class="onb-title"><%= copy.checklist.clDone %></h1>
+          <a href="<%= typeof returnUrl !== 'undefined' && returnUrl ? returnUrl : '/user/panel' %>" class="btn btn-primary" style="min-height:46px"><%- icon('arrowRight', 15) %> <%= copy.checklist.clGoPanel %></a>
+        </div>
+      </div>
+    <% } else if (step === 'first_win') { %>
+      <!-- B-18 §06: Activate — 5 savollik amaliyot + natija (Aha feedback) -->
+      <div id="fw-start">
+        <h1 class="onb-title"><%- icon('zap', 18) %> <%= copy.firstWin.fwStart %></h1>
+        <p class="onb-sub"><%= copy.firstWin.fwSub %></p>
+        <div class="onb-actions">
+          <button type="button" class="btn btn-primary" id="fw-begin" data-analytics="onboarding_first_win_start"><%- icon('play', 15) %> <%= copy.continueBtn %></button>
+        </div>
+      </div>
+
+      <div id="fw-quiz" hidden>
+        <p class="onb-qtext" id="fw-counter" role="status" aria-live="polite"></p>
+        <div class="onb-card">
+          <p class="onb-qtext" id="fw-qtext"></p>
+          <div class="onb-answers" id="fw-answers" role="radiogroup" aria-label="<%= copy.firstWin.fwStart %>"></div>
+          <div class="onb-feedback" id="fw-feedback" role="status" aria-live="polite"></div>
+          <div class="onb-actions">
+            <button type="button" class="btn btn-primary" id="fw-next" disabled style="min-height:46px"><%- icon('arrowRight', 15) %> <span id="fw-next-label"><%= copy.firstWin.fwNext %></span></button>
+          </div>
+        </div>
+      </div>
+
+      <div id="fw-result" hidden>
+        <div class="onb-done">
+          <div class="big" aria-hidden="true">🏆</div>
+          <h1 class="onb-title"><%= copy.firstWin.fwScoreTitle %></h1>
+          <p class="onb-sub" id="fw-score-sub"></p>
+          <div class="onb-card onb-result-card">
+            <h2><%- icon('list', 15) %> <%= copy.firstWin.fwSummary %></h2>
+            <div id="fw-review"></div>
+          </div>
+          <p class="onb-sub onb-aha" id="fw-aha"><%- icon('lightbulb', 14) %> <%= copy.firstWin.fwAha %></p>
+          <div class="onb-actions onb-center">
+            <a href="/user/panel" class="btn btn-primary" style="min-height:46px"><%- icon('arrowRight', 15) %> <%= copy.firstWin.fwGoPanel %></a>
+          </div>
+        </div>
+      </div>
+    <% } else if (step === 'welcome') { %>
+      <!-- §09: Orient — Xush kelibsiz + ixtiyoriy savollar + Skip -->
+      <h1 class="onb-title"><%= copy.welcome.replace('{name}', username) %></h1>
+      <p class="onb-sub"><%= copy.sub %></p>
+
+      <div class="onb-card">
+        <h2><%- icon('bookOpen', 15) %> <%= copy.subjectLabel %></h2>
+        <p class="onb-hint"><%= copy.subjectHint %></p>
+        <div class="onb-opt" id="subject-picker" role="group" aria-label="<%= copy.subjectLabel %>">
+          <% subjects.forEach(function(s){ %>
+            <button type="button" class="onb-opt-btn" data-subject="<%= s %>" aria-pressed="false"><%= subjectLabels[s][lang] || s %></button>
+          <% }); %>
+        </div>
+      </div>
+
+      <!-- §11: demo savol (answer key server'da — public DTO) -->
+      <div class="onb-card" id="demo-card" hidden>
+        <h2><%- icon('target', 15) %> <%= copy.demoTitle %></h2>
+        <p class="onb-qtext" id="demo-text"></p>
+        <div class="onb-answers" id="demo-answers" role="radiogroup" aria-label="<%= copy.demoTitle %>"></div>
+        <div class="onb-feedback" id="demo-feedback" role="status" aria-live="polite"></div>
+        <div style="display:flex;gap:10px;margin-top:12px">
+          <button type="button" class="btn btn-secondary" id="demo-check" disabled style="flex:1;min-height:44px"><%- icon('check', 14) %> <%= copy.answerBtn %></button>
+          <button type="button" class="btn btn-quiet" id="demo-retry" hidden><%- icon('refresh', 14) %> <%= copy.retryBtn %></button>
+        </div>
+      </div>
+
+      <div class="onb-card">
+        <h2><%- icon('target', 15) %> <%= copy.goalLabel %></h2>
+        <textarea id="goal-input" class="onb-field" rows="2" maxlength="120" placeholder="<%= copy.goalPlaceholder %>" aria-label="<%= copy.goalLabel %>"></textarea>
+      </div>
+
+      <div class="onb-actions">
+        <button type="button" class="btn btn-primary" id="onb-continue" data-analytics="onboarding_orient_continue"><%- icon('arrowRight', 15) %> <%= copy.continueBtn %></button>
+        <button type="button" class="btn btn-secondary" id="onb-skip" data-analytics="onboarding_skip"><%- icon('x', 14) %> <%= copy.skipBtn %></button>
+      </div>
+      <p class="onb-skip-hint"><%- icon('zap', 12) %> <%= copy.skipHint %></p>
+    <% } else { %>
+      <!-- §19: qayta kirish — half-done davom; step allaqachon o'tgan -->
+      <div class="onb-done">
+        <div class="big" aria-hidden="true">🎉</div>
+        <h1 class="onb-title"><%= copy.alreadyDone %></h1>
+        <p class="onb-sub"><%= copy.nextStepMsg %></p>
+        <a href="/user/panel" class="btn btn-primary" style="min-height:46px"><%- icon('arrowRight', 15) %> <%= copy.goPanel %></a>
+      </div>
+    <% } %>
+
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:24px">
+      <a href="/" class="btn btn-quiet"><%- icon('home', 15) %> <%= copy.home %></a>
+      <a href="/user/logout" class="btn btn-quiet"><%- icon('logOut', 15) %> <%= copy.logout %></a>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var CSRF = <%- JSON.stringify(csrfToken || '') %>;
+      var LANG = <%- JSON.stringify(lang) %>;
+      var COPY = {
+        demoTitle: <%- JSON.stringify(copy.demoTitle) %>,
+        answerBtn: <%- JSON.stringify(copy.answerBtn) %>,
+        retryBtn: <%- JSON.stringify(copy.retryBtn) %>,
+        correctMsg: <%- JSON.stringify(copy.correctMsg) %>,
+        wrongMsg: <%- JSON.stringify(copy.wrongMsg) %>,
+        continueBtn: <%- JSON.stringify(copy.continueBtn) %>,
+        skipBtn: <%- JSON.stringify(copy.skipBtn) %>,
+        fwQCounter: <%- JSON.stringify(copy.firstWin.fwQCounter) %>,
+        fwNext: <%- JSON.stringify(copy.firstWin.fwNext) %>,
+        fwFinish: <%- JSON.stringify(copy.firstWin.fwFinish) %>,
+        fwCorrect: <%- JSON.stringify(copy.firstWin.fwCorrect) %>,
+        fwWrong: <%- JSON.stringify(copy.firstWin.fwWrong) %>,
+        fwScoreSub: <%- JSON.stringify(copy.firstWin.fwScoreSub) %>,
+        clProgress: <%- JSON.stringify(copy.checklist.clProgress) %>
+      };
+      var subjects = <%- JSON.stringify(subjects) %>;
+      var STEP = <%- JSON.stringify(step) %>;
+      var FW = {
+        questions: [],
+        index: 0,
+        selected: null,
+        done: false
+      };
+      var currentSubject = null;
+      var currentQ = null;
+      var selectedAnswer = null;
+
+      function post(url, body) {
+        return fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': CSRF,
+          },
+          body: JSON.stringify(body || {}),
+        }).then(function (r) { return r.json().catch(function () { return { ok: false }; }); });
+      }
+
+      function loadDemo(subject) {
+        currentSubject = subject;
+        var card = document.getElementById('demo-card');
+        card.hidden = false;
+        fetch('/api/onboarding/demo?subject=' + encodeURIComponent(subject) + '&lang=' + encodeURIComponent(LANG))
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            if (!data.ok || !data.question) return;
+            currentQ = data.question;
+            selectedAnswer = null;
+            document.getElementById('demo-text').textContent = data.question.text;
+            var wrap = document.getElementById('demo-answers');
+            wrap.innerHTML = '';
+            data.question.options.forEach(function (opt, i) {
+              var b = document.createElement('button');
+              b.type = 'button';
+              b.className = 'onb-answer';
+              b.setAttribute('role', 'radio');
+              b.setAttribute('aria-checked', 'false');
+              b.textContent = String.fromCharCode(65 + i) + ') ' + opt;
+              b.addEventListener('click', function () {
+                selectedAnswer = i;
+                Array.prototype.forEach.call(wrap.children, function (c) {
+                  c.classList.remove('sel');
+                  c.setAttribute('aria-checked', 'false');
+                });
+                b.classList.add('sel');
+                b.setAttribute('aria-checked', 'true');
+                document.getElementById('demo-check').disabled = false;
+                document.getElementById('demo-feedback').textContent = '';
+              });
+              wrap.appendChild(b);
+            });
+            document.getElementById('demo-check').disabled = true;
+            document.getElementById('demo-feedback').textContent = '';
+            document.getElementById('demo-retry').hidden = true;
+          });
+      }
+
+      document.getElementById('subject-picker').addEventListener('click', function (e) {
+        var btn = e.target.closest('.onb-opt-btn');
+        if (!btn) return;
+        Array.prototype.forEach.call(this.children, function (c) {
+          c.classList.remove('sel');
+          c.setAttribute('aria-pressed', 'false');
+        });
+        btn.classList.add('sel');
+        btn.setAttribute('aria-pressed', 'true');
+        loadDemo(btn.getAttribute('data-subject'));
+      });
+
+      document.getElementById('demo-check').addEventListener('click', function () {
+        if (!currentQ || selectedAnswer === null) return;
+        post('/api/onboarding/demo/answer', {
+          subject: currentSubject,
+          questionId: currentQ.id,
+          answer: selectedAnswer,
+        }).then(function (r) {
+          var fb = document.getElementById('demo-feedback');
+          if (r.ok && r.correct) {
+            fb.textContent = COPY.correctMsg;
+            fb.className = 'onb-feedback ok';
+            document.getElementById('demo-check').disabled = true;
+          } else {
+            fb.textContent = COPY.wrongMsg;
+            fb.className = 'onb-feedback no';
+            document.getElementById('demo-retry').hidden = false;
+          }
+        });
+      });
+
+      document.getElementById('demo-retry').addEventListener('click', function () {
+        if (currentSubject) loadDemo(currentSubject);
+      });
+
+      // §10: orient → first_win
+      document.getElementById('onb-continue').addEventListener('click', function () {
+        var goal = document.getElementById('goal-input').value.trim();
+        var btn = this;
+        btn.disabled = true;
+        post('/api/onboarding/orient', { subject: currentSubject, goal: goal }).then(function (r) {
+          if (r.ok) window.location.href = '/user/panel';
+          else { btn.disabled = false; alert('Error'); }
+        });
+      });
+
+      // §09: skip → first_win (skip bonus)
+      var skipBtn = document.getElementById('onb-skip');
+      if (skipBtn) skipBtn.addEventListener('click', function () {
+        var btn = this;
+        btn.disabled = true;
+        post('/api/onboarding/skip', {}).then(function (r) {
+          if (r.ok) window.location.href = '/user/panel';
+          else { btn.disabled = false; alert('Error'); }
+        });
+      });
+
+      // ────────────── B-19: checklist (Reinforce) ──────────────
+      var clList = document.getElementById('cl-list');
+      if (clList) {
+        clList.addEventListener('click', function (e) {
+          var btn = e.target.closest('.cl-toggle');
+          if (!btn || btn.disabled) return;
+          var card = btn.closest('[data-item]');
+          if (!card) return;
+          var itemId = card.getAttribute('data-item');
+          var done = card.getAttribute('data-done') === '1' ? false : true;
+          btn.disabled = true;
+          post('/api/onboarding/checklist', { itemId: itemId, done: done }).then(function (r) {
+            if (!r.ok) { btn.disabled = false; return; }
+            card.setAttribute('data-done', done ? '1' : '0');
+            btn.setAttribute('aria-checked', done ? 'true' : 'false');
+            btn.disabled = done;
+            btn.querySelector('.cl-ico-done').hidden = !done;
+            btn.querySelector('.cl-ico-todo').hidden = done;
+            // progress yangilash
+            var prog = r.progress || {};
+            var lbl = document.getElementById('cl-progress-label');
+            if (lbl && COPY.clProgress) {
+              lbl.textContent = COPY.clProgress.replace('{done}', prog.done).replace('{total}', prog.total);
+            }
+            if (r.step === 'done' || (prog.done === prog.total && prog.total > 0)) {
+              document.getElementById('cl-done-msg').hidden = false;
+              document.getElementById('cl-panel').setAttribute('data-alldone', '1');
+            }
+          });
+        });
+        // All-done holatda ekranni ko'rsatish
+        var panel = document.getElementById('cl-panel');
+        if (panel && panel.getAttribute('data-alldone') === '1') {
+          document.getElementById('cl-done-msg').hidden = false;
+        }
+      }
+
+      // ────────────── B-18: first-win (Activate) ──────────────
+      var fwBegin = document.getElementById('fw-begin');
+      if (fwBegin) {
+        fwBegin.addEventListener('click', function () {
+          var btn = this;
+          btn.disabled = true;
+          post('/api/onboarding/first-win/start', {}).then(function (r) {
+            if (!r.ok) { btn.disabled = false; alert('Error'); return; }
+            FW.questions = r.questions || [];
+            FW.index = 0;
+            FW.done = false;
+            document.getElementById('fw-start').hidden = true;
+            document.getElementById('fw-quiz').hidden = false;
+            renderFWQuestion();
+          });
+        });
+      }
+
+      function renderFWQuestion() {
+        var q = FW.questions[FW.index];
+        var fwd = document.getElementById('fw-feedback');
+        fwd.textContent = '';
+        fwd.className = 'onb-feedback';
+        document.getElementById('fw-counter').textContent = COPY.fwQCounter.replace('{current}', FW.index + 1).replace('{total}', FW.questions.length);
+        document.getElementById('fw-qtext').textContent = q.text;
+        FW.selected = null;
+        var wrap = document.getElementById('fw-answers');
+        wrap.innerHTML = '';
+        q.options.forEach(function (opt, i) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'onb-answer';
+          b.setAttribute('role', 'radio');
+          b.setAttribute('aria-checked', 'false');
+          b.textContent = String.fromCharCode(65 + i) + ') ' + opt;
+          b.addEventListener('click', function () {
+            FW.selected = i;
+            Array.prototype.forEach.call(wrap.children, function (c) {
+              c.classList.remove('sel');
+              c.setAttribute('aria-checked', 'false');
+            });
+            b.classList.add('sel');
+            b.setAttribute('aria-checked', 'true');
+            document.getElementById('fw-next').disabled = false;
+          });
+          wrap.appendChild(b);
+        });
+        document.getElementById('fw-next').disabled = true;
+        document.getElementById('fw-next-label').textContent =
+          FW.index === FW.questions.length - 1 ? COPY.fwFinish : COPY.fwNext;
+      }
+
+      var fwNext = document.getElementById('fw-next');
+      if (fwNext) {
+        fwNext.addEventListener('click', function () {
+          if (FW.selected === null) return;
+          var btn = this;
+          btn.disabled = true;
+          post('/api/onboarding/first-win/answer', {
+            itemId: FW.questions[FW.index].id,
+            answer: FW.selected,
+          }).then(function (r) {
+            if (!r.ok) { btn.disabled = false; return; }
+            var fwd = document.getElementById('fw-feedback');
+            if (r.correct) {
+              fwd.textContent = COPY.fwCorrect;
+              fwd.className = 'onb-feedback ok';
+            } else {
+              fwd.textContent = COPY.fwWrong + ' — ' + (r.explain || '');
+              fwd.className = 'onb-feedback no';
+            }
+            // Kichik pauza — feedback ko'rinadi, keyin keyingi savol
+            window.setTimeout(function () {
+              if (FW.index < FW.questions.length - 1) {
+                FW.index += 1;
+                renderFWQuestion();
+              } else {
+                completeFW();
+              }
+            }, 900);
+          });
+        });
+      }
+
+      function completeFW() {
+        post('/api/onboarding/first-win/complete', {}).then(function (r) {
+          if (!r.ok || !r.summary) return;
+          document.getElementById('fw-quiz').hidden = true;
+          document.getElementById('fw-result').hidden = false;
+          document.getElementById('fw-score-sub').textContent =
+            COPY.fwScoreSub
+              .replace('{subject}', r.summary.subject || '')
+              .replace('{percent}', r.summary.percent)
+              .replace('{score}', r.summary.score)
+              .replace('{total}', r.summary.total);
+          var review = document.getElementById('fw-review');
+          review.innerHTML = '';
+          r.summary.answers.forEach(function (a, i) {
+            var row = document.createElement('div');
+            row.style.cssText = 'display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--deborah-semantic-color-border-subtle,#2a3247);font-size:.82rem';
+            var badge = document.createElement('span');
+            badge.textContent = a.correct ? '✓' : '✗';
+            badge.style.cssText = 'color:' + (a.correct ? 'var(--deborah-semantic-color-status-success,#00e5a0)' : 'var(--deborah-semantic-color-status-danger,#ff5d73)') + ';font-weight:700;flex-shrink:0';
+            var txt = document.createElement('span');
+            txt.textContent = (i + 1) + '. ' + (a.explain || '');
+            row.appendChild(badge);
+            row.appendChild(txt);
+            review.appendChild(row);
+          });
+          document.getElementById('fw-aha').hidden = false;
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <link rel="stylesheet" href="/css/admin.css">
+  <style>
+    .sg-gate{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:14px;margin-top:16px;font-weight:600;font-size:.84rem;border:1px solid;}
+    .sg-gate.pass{background:rgba(0,229,160,.08);border-color:rgba(0,229,160,.35);color:var(--green);}
+    .sg-gate.fail{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.4);color:#ef4444;}
+    .sg-gate .g-blocks{font-size:.72rem;font-weight:700;margin-top:2px;color:var(--deborah-semantic-color-text-muted);}
+    .sg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:16px;}
+    .sg-card{background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:14px;padding:15px;box-shadow:var(--shadow-sm);}
+    .sg-card h3{margin:0 0 4px;font-size:.9rem;display:flex;align-items:center;gap:8px;}
+    .sg-card .desc{font-size:.7rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-bottom:10px;}
+    .sg-bar{height:6px;background:var(--bg-elevated);border-radius:3px;overflow:hidden;margin:6px 0;}
+    .sg-bar > span{display:block;height:100%;border-radius:3px;background:var(--green);}
+    .sg-bar.ok > span{background:var(--green);}
+    .sg-bar.warn > span{background:var(--gold);}
+    .sg-bar.bad > span{background:#ef4444;}
+    .sg-tag{font-size:.64rem;font-weight:700;padding:2px 9px;border-radius:12px;letter-spacing:.3px;text-transform:uppercase;}
+    .sg-tag.green{background:rgba(0,229,160,.12);color:var(--green);}
+    .sg-tag.red{background:rgba(239,68,68,.14);color:#ef4444;}
+    .sg-tag.amber{background:rgba(245,158,11,.14);color:var(--gold);}
+    .sg-tag.blue{background:rgba(37,99,235,.12);color:var(--deborah-semantic-color-action-primary);}
+    .sg-table{width:100%;border-collapse:collapse;margin-top:8px;font-size:.74rem;}
+    .sg-table th{text-align:left;font-size:.66rem;text-transform:uppercase;letter-spacing:.5px;color:var(--deborah-semantic-color-text-muted);padding:6px 8px;border-bottom:1px solid var(--deborah-semantic-color-border-subtle);font-weight:700;}
+    .sg-table td{padding:6px 8px;border-bottom:1px dashed var(--deborah-semantic-color-border-subtle);font-weight:600;color:var(--deborah-semantic-color-text-primary);}
+    .sg-table td.muted{color:var(--deborah-semantic-color-text-muted);font-size:.68rem;}
+    .sg-finding{border-left:3px solid;border-radius:8px;padding:9px 12px;margin-bottom:8px;background:var(--bg-elevated);}
+    .sg-finding.critical{border-color:#ef4444;}
+    .sg-finding.high{border-color:#f97316;}
+    .sg-finding.medium{border-color:var(--gold);}
+    .sg-finding.low{border-color:var(--blue);}
+    .sg-finding .f-title{font-weight:700;font-size:.78rem;color:var(--deborah-semantic-color-text-primary);}
+    .sg-finding .f-meta{font-size:.66rem;color:var(--deborah-semantic-color-text-muted);font-weight:700;margin-top:2px;}
+    .sg-empty{color:var(--deborah-semantic-color-text-muted);font-size:.74rem;font-weight:700;padding:14px;text-align:center;border:1px dashed var(--deborah-semantic-color-border-subtle);border-radius:10px;}
+    .sg-section-h{display:flex;align-items:center;justify-content:space-between;margin-top:22px;}
+    .sg-section-h h2{font-size:1rem;margin:0;}
+    .sg-btn{font-size:.68rem;font-weight:600;padding:5px 12px;border-radius:8px;border:1px solid var(--deborah-semantic-color-border-subtle);background:var(--bg-elevated);color:var(--deborah-semantic-color-text-primary);cursor:pointer;transition:color .18s,background-color .18s,border-color .18s,box-shadow .18s,transform .18s,opacity .18s;}
+    .sg-btn:hover{border-color:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-primary);}
+    .sg-mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.68rem;}
+    .sg-rt-row{display:flex;justify-content:space-between;font-size:.72rem;font-weight:700;padding:3px 0;border-bottom:1px dashed var(--deborah-semantic-color-border-subtle);}
+    .sg-rt-row b{color:var(--deborah-semantic-color-text-primary);}
+  </style>
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body>
+  <div class="adm-shell">
+    <%- include('../partials/sidebar', { active: '/admin/security-guard', role: 'admin', user }) %>
+    <main class="main" id="main-content" tabindex="-1">
+      <div class="topbar">
+        <h1><%- icon('shield', 18) %> Security Guard</h1>
+        <div class="topbar-right">
+          <button type="button" class="admin-nav-btn" onclick="location.reload()"><%- icon('refresh', 14) %> Yangilash</button>
+          <button type="button" class="admin-nav-btn" data-theme-toggle title="Toggle theme"><%- icon('moon', 16) %></button>
+        </div>
+      </div>
+
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="sg-gate fail"><%- icon('alertTriangle', 16) %> Xatolik: <%= error %></div>
+      <% } else if (posture) { %>
+        <!-- ═══ Release gate ═══ -->
+        <div class="sg-gate <%= posture.gate.pass ? 'pass' : 'fail' %>">
+          <%- icon(posture.gate.pass ? 'checkCircle' : 'alertTriangle', 18) %>
+          <div>
+            <div>Production release gate: <%= posture.gate.pass ? 'OCHIQ (release allowed)' : 'YOPIQ (release blocked)' %></div>
+            <% if (!posture.gate.pass && posture.gate.blocks.length) { %>
+              <div class="g-blocks"><%= posture.gate.blocks.join(' • ') %></div>
+            <% } %>
+          </div>
+        </div>
+
+        <!-- ═══ Threat model ═══ -->
+        <div class="sg-section-h">
+          <h2><%- icon('shield', 15) %> Threat model — trust boundaries (STRIDE)</h2>
+          <span class="sg-tag <%= posture.threat.summary.acceptable ? 'green' : 'red' %>">
+            <%= posture.threat.summary.unresolvedThreats %> unresolved
+          </span>
+        </div>
+        <div class="sg-grid">
+          <% posture.threat.boundaries.forEach((b) => { %>
+            <div class="sg-card">
+              <h3>
+                <span class="sg-tag <%= b.covered === 1 ? 'green' : (b.covered >= 0.5 ? 'amber' : 'red') %>">
+                  <%= Math.round(b.covered * 100) %>%
+                </span>
+                <%= b.label %>
+              </h3>
+              <div class="desc"><%= b.description %></div>
+              <div class="sg-bar <%= b.covered === 1 ? 'ok' : (b.covered >= 0.5 ? 'warn' : 'bad') %>">
+                <span style="width:<%= Math.round(b.covered * 100) %>%"></span>
+              </div>
+              <div class="sg-rt-row"><span>Nazoratlar</span><b><%= b.controls.implemented %>/<%= b.controls.required %></b></div>
+              <div class="sg-rt-row"><span>Tahdidlar</span><b><%= b.threats %> (<%= b.unresolved.length %> ochiq)</b></div>
+              <% if (b.controls.missing.length) { %>
+                <div class="sg-mono" style="margin-top:6px;color:var(--deborah-semantic-color-text-muted)">missing: <%= b.controls.missing.join(', ') %></div>
+              <% } %>
+            </div>
+          <% }) %>
+        </div>
+
+        <!-- ═══ ASVS matrix ═══ -->
+        <div class="sg-section-h">
+          <h2><%- icon('checkCircle', 15) %> ASVS 5.0 target matrix</h2>
+          <span class="sg-tag <%= posture.asvs.gate.pass ? 'green' : 'red' %>">
+            <%= posture.asvs.summary.chaptersComplete %>/<%= posture.asvs.summary.chaptersTotal %> bo'lim
+          </span>
+        </div>
+        <div class="sg-card" style="margin-top:14px">
+          <table class="sg-table">
+            <thead>
+              <tr><th>Bo'lim</th><th>Talab</th><th>Maqsad</th><th>Holat</th><th>Egas</th></tr>
+            </thead>
+            <tbody>
+              <% posture.asvs.chapters.forEach((c) => { %>
+                <tr>
+                  <td><b><%= c.chapter %></b></td>
+                  <td><%= c.targetLevel %></td>
+                  <td><%= c.required %> talab</td>
+                  <td><span class="sg-tag <%= c.complete ? 'green' : 'amber' %>"><%= c.green %>/<%= c.required %></span></td>
+                  <td class="muted"><%= c.complete ? 'tayyor' : (c.pending + ' kutmoqda') %></td>
+                </tr>
+              <% }) %>
+              <% posture.asvs.rows.filter((r) => !r.green).slice(0, 12).forEach((r) => { %>
+                <tr>
+                  <td class="muted"><%= r.req %></td>
+                  <td><%= r.name %></td>
+                  <td><%= r.target %></td>
+                  <td><span class="sg-tag <%= r.status === 'not_started' ? 'red' : 'amber' %>"><%= r.status.replace('_', ' ') %></span></td>
+                  <td class="muted"><%= r.owner || '—' %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ═══ Findings ═══ -->
+        <div class="sg-section-h">
+          <h2><%- icon('alertTriangle', 15) %> Topilmalar (findings)</h2>
+          <span class="sg-tag blue"><%= posture.findings.length %> ta</span>
+        </div>
+        <div style="margin-top:14px">
+          <% if (posture.findings.length === 0) { %>
+            <div class="sg-empty"><%- icon('checkCircle', 14) %> Topilma yo'q — finding registry bo'sh</div>
+          <% } else { %>
+            <% posture.findings.forEach((f) => { %>
+              <div class="sg-finding <%= f.severity %>">
+                <div class="f-title">
+                  <span class="sg-tag <%= ['critical','high'].includes(f.severity) ? 'red' : (f.severity === 'medium' ? 'amber' : 'blue') %>"><%= f.severity %></span>
+                  <%= f.id %> — <%= f.title %>
+                </div>
+                <div class="f-meta">
+                  Holat: <%= f.state %> • Egas: <%= f.owner || '—' %>
+                  <%= f.sla ? ` • SLA: ${f.sla.overdue ? '⚠ kechikkan' : (f.sla.hoursRemaining + ' soat qoldi')}` : '' %>
+                  <%= f.acceptance ? ` • Qabul: ${f.acceptance.ok ? 'haqiqiy' : 'YAROQSIZ'}` : '' %>
+                </div>
+                <% if (f.state === 'accepted' && f.acceptance && !f.acceptance.ok) { %>
+                  <div class="f-meta" style="color:#ef4444"><%- icon('alertTriangle', 11) %> <%= f.acceptance.reason %></div>
+                <% } %>
+              </div>
+            <% }) %>
+          <% } %>
+        </div>
+
+        <!-- ═══ Red-team ═══ -->
+        <div class="sg-section-h">
+          <h2><%- icon('target', 15) %> AI red-team corpus</h2>
+          <span class="sg-tag <%= posture.redTeam.gate.pass ? 'green' : 'red' %>">
+            corpus v<%= posture.redTeam.corpusVersion %> • <%= posture.redTeam.summary.detected %>/<%= posture.redTeam.summary.total %>
+          </span>
+        </div>
+        <div class="sg-grid" style="margin-top:14px">
+          <% ['direct_prompt_injection','indirect_prompt_injection','pii_extraction','jailbreak','tool_abuse','denial_of_wallet','output_xss_csv'].forEach((cls) => { %>
+            <div class="sg-card">
+              <h3><span class="sg-tag blue"><%= cls.replace(/_/g, ' ') %></span></h3>
+              <div class="sg-rt-row"><span>Payloadlar</span><b><%= posture.redTeam.tests.filter((t) => t.cls === cls).length %></b></div>
+              <div class="sg-rt-row"><span>Aniqlangan</span><b><%= posture.redTeam.tests.filter((t) => t.cls === cls && t.detected).length %></b></div>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </main>
+  </div>
+</body>
+</html>

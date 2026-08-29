@@ -1,0 +1,23 @@
+<!-- Cast Setup Studio (STEP 28) — professional mode/privacy/summary dialog -->
+<div class="cast-studio-overlay" id="cast-studio-overlay" role="dialog" aria-modal="true" aria-labelledby="cast-studio-title" aria-describedby="cast-studio-desc" data-studio-dialog>
+  <div class="cast-studio-dialog cast-surface">
+    <div class="cast-studio-header">
+      <div class="cast-studio-heading">
+        <span class="cast-studio-heading-icon" aria-hidden="true"><%- icon('gamepad', 20) %></span>
+        <div>
+          <h2 id="cast-studio-title">Cast Setup</h2>
+          <p class="cast-studio-meta" id="cast-studio-desc">Test: —</p>
+        </div>
+      </div>
+      <button type="button" class="cast-studio-close icon-btn" id="cast-studio-close" aria-label="Yopish (Esc)"><%- icon('x', 16) %></button>
+    </div>
+    <div class="cast-studio-body" id="cast-studio-body" tabindex="-1"></div>
+    <div class="cast-studio-footer">
+      <div class="cast-studio-footer-status" id="cast-studio-footer-status" role="status" aria-live="polite"></div>
+      <div class="cast-studio-footer-actions">
+        <button type="button" class="cast-studio-cancel btn btn-quiet" id="cast-studio-cancel">Bekor qilish</button>
+        <button type="button" class="cast-studio-launch btn btn-primary" id="cast-studio-launch" disabled>Lobbi ochish</button>
+      </div>
+    </div>
+  </div>
+</div>

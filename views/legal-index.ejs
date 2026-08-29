@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="<%= lang === 'uz-cyrl' ? 'uz-Cyrl' : lang %>" dir="ltr">
+<head>
+  <%- include('partials/head') %>
+  <style>
+    .legal-page{min-height:100vh;background:var(--deborah-semantic-color-surface-default);padding:34px 20px 60px;}
+    .legal-wrap{max-width:620px;margin:0 auto;}
+    .legal-title{font-family:var(--font-display);font-size:1.5rem;margin:6px 0 18px;}
+    .legal-card{display:block;background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:14px;padding:18px 22px;margin-bottom:12px;color:var(--deborah-semantic-color-text-primary);text-decoration:none;font-weight:800;font-size:.95rem;}
+    .legal-card:hover{border-color:var(--deborah-semantic-color-action-primary);}
+    .legal-card small{display:block;font-weight:600;color:var(--deborah-semantic-color-text-muted);margin-top:3px;font-size:.78rem;}
+  </style>
+</head>
+<body>
+  <main class="legal-page" id="main">
+    <div class="legal-wrap">
+      <h1 class="legal-title"><%= lang === 'uz' || lang === 'uz-cyrl' ? 'Hujjatlar' : lang === 'ru' ? '\u0414\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u044b' : 'Documents' %></h1>
+      <a class="legal-card" href="/privacy?lang=<%= lang %>"><%= lang === 'uz' || lang === 'uz-cyrl' ? 'Maxfiylik siyosati' : lang === 'ru' ? '\u041f\u043e\u043b\u0438\u0442\u0438\u043a\u0430 \u043a\u043e\u043d\u0444\u0438\u0434\u0435\u043d\u0446\u0438\u0430\u043b\u044c\u043d\u043e\u0441\u0442\u0438' : 'Privacy Policy' %><small>v<%= legalMeta.version %> · <%= legalMeta.lastReviewed %></small></a>
+      <a class="legal-card" href="/terms?lang=<%= lang %>"><%= lang === 'uz' || lang === 'uz-cyrl' ? 'Foydalanish shartlari' : lang === 'ru' ? '\u0423\u0441\u043b\u043e\u0432\u0438\u044f \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u043d\u0438\u044f' : 'Terms of Service' %><small>v<%= legalMeta.version %> · <%= legalMeta.lastReviewed %></small></a>
+      <a class="legal-card" href="/cookies?lang=<%= lang %>"><%= lang === 'uz' || lang === 'uz-cyrl' ? 'Cookie siyosati' : lang === 'ru' ? '\u041f\u043e\u043b\u0438\u0442\u0438\u043a\u0430 cookie' : 'Cookie Policy' %><small>v<%= legalMeta.version %> · <%= legalMeta.lastReviewed %></small></a>
+    </div>
+  </main>
+</body>
+</html>

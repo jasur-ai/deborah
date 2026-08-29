@@ -1,0 +1,32 @@
+/* ═══════════════════════════════════════════════════════════
+   S15 — Tooltip (supplemental text only)
+   S15.08: tooltip faqat supplemental text uchun — interactive yoki
+   required content (link, button, form field) tooltip ichida BO'LMAYDI;
+   bunday holatda popover yoki inline help ishlatiladi.
+   ═══════════════════════════════════════════════════════════ */
+
+.tooltip {
+  position: absolute;
+  z-index: var(--z-tooltip, 940);
+  max-width: min(72vw, 260px);
+  padding: 6px 10px;
+  border-radius: var(--deborah-radius-sm, 8px);
+  background: var(--deborah-semantic-color-text-primary, #141a26);
+  color: var(--deborah-semantic-color-surface, #ffffff);
+  font-size: 0.78rem;
+  line-height: 1.4;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(2px);
+  transition: opacity 120ms ease-out, transform 120ms ease-out;
+}
+.tooltip.is-in { opacity: 1; transform: none; }
+.tooltip--top { transform: translateY(2px); }
+.tooltip--bottom { transform: translateY(-2px); }
+.tooltip--left { transform: translateX(2px); }
+.tooltip--right { transform: translateX(-2px); }
+.tooltip.is-in { transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tooltip, .tooltip.is-in { transition: none; }
+}

@@ -1,0 +1,69 @@
+{
+  "title": "Cast — Live Health & Performance (C5-08)",
+  "description": "Cast realtime monitoring: connections, ACK p50/p95/p99, event drops, Redis lag, DB queue, projector stale, moderation age, teacher health.",
+  "panels": [
+    {
+      "title": "Teacher health status",
+      "type": "stat",
+      "targets": ["cast.health.teacher"],
+      "states": { "Barqaror": "green", "Kechikish yuqori": "red", "Tiklanmoqda": "yellow" }
+    },
+    {
+      "title": "Active connections",
+      "type": "timeseries",
+      "targets": ["cast.counters.connections"]
+    },
+    {
+      "title": "ACK latency — answer (p50/p95/p99 ms)",
+      "type": "timeseries",
+      "targets": ["cast.ack.answer.p50", "cast.ack.answer.p95", "cast.ack.answer.p99"]
+    },
+    {
+      "title": "ACK latency — host (p50/p95/p99 ms)",
+      "type": "timeseries",
+      "targets": ["cast.ack.host.p50", "cast.ack.host.p95", "cast.ack.host.p99"]
+    },
+    {
+      "title": "Event drops (P3 backpressure)",
+      "type": "timeseries",
+      "targets": ["cast.counters.eventDrops"]
+    },
+    {
+      "title": "Redis lag (p50/p99 ms)",
+      "type": "timeseries",
+      "targets": ["cast.gauges.redisLagMs.p50", "cast.gauges.redisLagMs.p99"]
+    },
+    {
+      "title": "DB queue depth",
+      "type": "timeseries",
+      "targets": ["cast.gauges.dbQueueDepth.p50"]
+    },
+    {
+      "title": "Projector stale (ms)",
+      "type": "timeseries",
+      "targets": ["cast.gauges.projectorStaleMs.p50"]
+    },
+    {
+      "title": "Moderation age (ms)",
+      "type": "timeseries",
+      "targets": ["cast.gauges.moderationAgeMs.p50"]
+    },
+    {
+      "title": "Revision drift / duplicates",
+      "type": "timeseries",
+      "targets": ["cast.counters.revisionDrifts", "cast.counters.duplicates"]
+    },
+    {
+      "title": "ACK errors",
+      "type": "timeseries",
+      "targets": ["cast.counters.ackErrors"]
+    }
+  ],
+  "alertRules": {
+    "ack_p99_high": { "target": "cast.ack.answer.p99", "op": ">", "value": 1000, "duration": "5m", "sev": "SEV-2" },
+    "redis_lag_high": { "target": "cast.gauges.redisLagMs.p99", "op": ">", "value": 200, "duration": "5m", "sev": "SEV-2" },
+    "db_queue_high": { "target": "cast.gauges.dbQueueDepth.p50", "op": ">", "value": 100, "duration": "5m", "sev": "SEV-2" },
+    "connections_zero": { "target": "cast.counters.connections", "op": "==", "value": 0, "duration": "2m", "sev": "SEV-1" },
+    "teacher_high_latency": { "target": "cast.health.teacher", "op": "==", "value": "Kechikish yuqori", "duration": "10m", "sev": "SEV-2" }
+  }
+}

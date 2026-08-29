@@ -1,0 +1,1785 @@
+{
+  "rawColors": [
+    {
+      "file": "public/css/admin.css",
+      "colors": [
+        "#c0c0c0",
+        "#cd7f32",
+        "rgba(6,8,20,.9)",
+        "rgba(240,242,248,.88)",
+        "rgba(15,22,48,.08)",
+        "rgba(59,130,246,.12)",
+        "rgba(59,130,246,.25)",
+        "rgba(255,255,255,.08)",
+        "rgba(59,130,246,.05)",
+        "rgba(59,130,246,.2)",
+        "rgba(59,130,246,.06)",
+        "rgba(96,165,250,.3)",
+        "rgba(192,192,192,.25)",
+        "rgba(205,127,50,.25)",
+        "rgba(59,130,246,.03)",
+        "rgba(59,130,246,.08)",
+        "rgba(59,130,246,.18)",
+        "rgba(59,130,246,.3)",
+        "rgba(129,140,248,.08)",
+        "rgba(129,140,248,.18)",
+        "rgba(129,140,248,.3)",
+        "rgba(59,130,246,.02)",
+        "rgba(96,165,250,.08)",
+        "rgba(96,165,250,.2)"
+      ],
+      "count": 24
+    },
+    {
+      "file": "public/css/cast-director.css",
+      "colors": [
+        "#a78bfa",
+        "#e5e7eb",
+        "#34d399",
+        "#22c55e",
+        "#9ca3af",
+        "#fbbf24",
+        "#f87171",
+        "#f3f4f6",
+        "#fb923c",
+        "#fdba74",
+        "#eab308",
+        "#ef4444",
+        "#fca5a5",
+        "#86efac",
+        "#6366f1",
+        "#8b5cf6",
+        "#000",
+        "rgba(0, 0, 0, 0.6)",
+        "rgba(167, 139, 250, 0.12)",
+        "rgba(167, 139, 250, 0.3)",
+        "rgba(255, 255, 255, 0.05)",
+        "rgba(255, 255, 255, 0.12)",
+        "rgba(255, 255, 255, 0.06)",
+        "rgba(167, 139, 250, 0.35)",
+        "rgba(167, 139, 250, 0.08)",
+        "rgba(56, 189, 248, 0.05)",
+        "rgba(251, 191, 36, 0.12)",
+        "rgba(251, 191, 36, 0.3)",
+        "rgba(255, 255, 255, 0.15)",
+        "rgba(52, 211, 153, 0.4)",
+        "rgba(148, 163, 184, 0.4)",
+        "rgba(251, 191, 36, 0.4)",
+        "rgba(56, 189, 248, 0.3)",
+        "rgba(56, 189, 248, 0.06)",
+        "rgba(167, 139, 250, 0.05)",
+        "rgba(255, 255, 255, 0.1)",
+        "rgba(248, 113, 113, 0.4)",
+        "rgba(56, 189, 248, 0.4)",
+        "rgba(0, 0, 0, 0.55)",
+        "rgba(255,255,255,0.15)"
+      ],
+      "count": 56
+    },
+    {
+      "file": "public/css/cast-participant.css",
+      "colors": [
+        "#9ca3af",
+        "#e5e7eb",
+        "#f87171",
+        "#fbbf24",
+        "#34d399",
+        "#38bdf8",
+        "#a78bfa",
+        "#1e2330",
+        "#f3f4f6",
+        "#6366f1",
+        "#8b5cf6",
+        "#86efac",
+        "#fca5a5",
+        "#c4b5fd",
+        "#7dd3fc",
+        "rgba(0, 255, 170, 0.1)",
+        "rgba(255,255,255,0.04)",
+        "rgba(255,255,255,0.1)",
+        "rgba(255,255,255,0.12)",
+        "rgba(255,255,255,0.05)",
+        "rgba(248,113,113,0.15)",
+        "rgba(251,191,36,0.12)",
+        "rgba(52,211,153,0.12)",
+        "rgba(255,255,255,0.06)",
+        "rgba(255,255,255,0.15)",
+        "rgba(255,255,255,0.18)",
+        "rgba(52, 211, 153, 0.15)",
+        "rgba(255,255,255,0.14)",
+        "rgba(99, 102, 241, 0.45)",
+        "rgba(99, 102, 241, 0.6)",
+        "rgba(255,255,255,0.08)",
+        "rgba(255,255,255,0.16)",
+        "rgba(255,255,255,0.3)",
+        "rgba(255,255,255,0.55)",
+        "rgba(34,197,94,0.15)",
+        "rgba(239,68,68,0.15)",
+        "rgba(251,191,36,0.15)",
+        "rgba(139,92,246,0.10)",
+        "rgba(139,92,246,0.25)",
+        "rgba(56,189,248,0.10)"
+      ],
+      "count": 42
+    },
+    {
+      "file": "public/css/cast-projector.css",
+      "colors": [
+        "#00241a",
+        "#ff4466",
+        "#38bdf8",
+        "#ffd60a",
+        "#00ffaa",
+        "#c084fc",
+        "#9ca3af",
+        "#6366f1",
+        "#cbd5e1",
+        "rgba(0, 255, 170, 0.12)",
+        "rgba(255, 68, 102, 0.2)",
+        "rgba(56, 189, 248, 0.2)",
+        "rgba(255, 214, 10, 0.2)",
+        "rgba(0, 255, 170, 0.2)",
+        "rgba(192, 132, 252, 0.2)",
+        "rgba(20, 22, 30, 0.85)",
+        "rgba(248, 113, 113, 0.16)",
+        "rgba(248, 113, 113, 0.35)",
+        "rgba(255,255,255,0.06)",
+        "rgba(20, 22, 30, 0.9)",
+        "rgba(255,255,255,0.14)"
+      ],
+      "count": 21
+    },
+    {
+      "file": "public/css/cast-quality.css",
+      "colors": [
+        "#fbbf24",
+        "#f97316",
+        "#e5e7eb",
+        "#fde047",
+        "#9ca3af",
+        "#fde68a",
+        "#f59e0b",
+        "#fca5a5",
+        "#60a5fa",
+        "#ef4444",
+        "#fcd34d",
+        "#93c5fd",
+        "rgba(255, 255, 255, 0.03)",
+        "rgba(255, 255, 255, 0.1)",
+        "rgba(250, 204, 21, 0.15)",
+        "rgba(250, 204, 21, 0.35)",
+        "rgba(250, 204, 21, 0.08)",
+        "rgba(255, 255, 255, 0.06)",
+        "rgba(255, 255, 255, 0.15)",
+        "rgba(245, 158, 11, 0.2)",
+        "rgba(255, 255, 255, 0.04)",
+        "rgba(239, 68, 68, 0.2)",
+        "rgba(96, 165, 250, 0.2)",
+        "rgba(255, 255, 255, 0.08)"
+      ],
+      "count": 24
+    },
+    {
+      "file": "public/css/cast-replay.css",
+      "colors": [
+        "#0f1220",
+        "#eef0ff",
+        "#181c30",
+        "#2a3050",
+        "#46dc8c",
+        "#5aa7ff",
+        "#8b5cf6",
+        "#98a0c0",
+        "#0d101f",
+        "rgba(70, 220, 140, 0.15)",
+        "rgba(120, 130, 170, 0.15)",
+        "rgba(90, 167, 255, 0.12)"
+      ],
+      "count": 12
+    },
+    {
+      "file": "public/css/cast-results.css",
+      "colors": [
+        "#0f1220",
+        "#eef0ff",
+        "#181c30",
+        "#2a3050",
+        "#ffc83c",
+        "#46dc8c",
+        "#5aa7ff",
+        "#8b5cf6",
+        "#98a0c0",
+        "#ff5d6c",
+        "#0d101f",
+        "rgba(255, 200, 60, 0.15)",
+        "rgba(70, 220, 140, 0.15)",
+        "rgba(120, 130, 170, 0.18)",
+        "rgba(120, 130, 170, 0.15)",
+        "rgba(255, 93, 108, 0.15)",
+        "rgba(8, 10, 20, 0.7)"
+      ],
+      "count": 17
+    },
+    {
+      "file": "public/css/cast-studio.css",
+      "colors": [
+        "#0d1b2a",
+        "#94a3b8",
+        "#16283f",
+        "#00ffaa",
+        "#ff4466",
+        "#102033",
+        "#38bdf8",
+        "#ffd60a",
+        "#1d9bcf",
+        "#00241a",
+        "rgba(4, 10, 20, 0.72)",
+        "rgba(255,255,255,0.12)",
+        "rgba(0, 0, 0, 0.5)",
+        "rgba(255,255,255,0.1)",
+        "rgba(0, 229, 160, 0.08)",
+        "rgba(0, 229, 160, 0.15)",
+        "rgba(0, 229, 160, 0.12)",
+        "rgba(255, 68, 102, 0.1)",
+        "rgba(255, 68, 102, 0.3)",
+        "rgba(255, 214, 10, 0.08)",
+        "rgba(255, 214, 10, 0.25)",
+        "rgba(0, 229, 160, 0.25)"
+      ],
+      "count": 22
+    },
+    {
+      "file": "public/css/cast-tokens.css",
+      "colors": [
+        "#07111f",
+        "#102033",
+        "#16283f",
+        "#c5d2e0",
+        "#ffd60a",
+        "#00ffaa",
+        "#ff4466",
+        "#38bdf8",
+        "#c084fc",
+        "#f4f7fb",
+        "#eef2f8",
+        "#0d1b2a",
+        "#4a5a6e",
+        "#e6a700",
+        "#000000",
+        "#0a0a0a",
+        "#1a1a1a",
+        "#ffff66",
+        "#f0f0f0",
+        "#0055cc",
+        "#00241a",
+        "#1a1400",
+        "#1e1e2e",
+        "#f3f4f6",
+        "#2a2a3e",
+        "rgba(255, 255, 255, 0.12)",
+        "rgba(0, 0, 0, 0.35)",
+        "rgba(13, 27, 42, 0.15)",
+        "rgba(13, 27, 42, 0.12)",
+        "rgba(255, 255, 255, 0.1)",
+        "rgba(0, 0, 0, 0.5)",
+        "rgba(255,255,255,0.2)",
+        "rgba(0,0,0,0.3)"
+      ],
+      "count": 33
+    },
+    {
+      "file": "public/css/landing.css",
+      "colors": [
+        "#080c1a",
+        "#0e1428",
+        "#e8ecf7",
+        "#9aa3bd",
+        "#4f46e5",
+        "#6366f1",
+        "#22c55e",
+        "#7c3aed",
+        "#ef4444",
+        "#f87171",
+        "rgba(255, 255, 255, 0.04)",
+        "rgba(255, 255, 255, 0.09)",
+        "rgba(79, 70, 229, 0.35)",
+        "rgba(8, 12, 26, 0.82)",
+        "rgba(99, 102, 241, 0.5)",
+        "rgba(99, 102, 241, 0.45)",
+        "rgba(4, 6, 14, 0.72)",
+        "rgba(0, 0, 0, 0.5)",
+        "rgba(34, 197, 94, 0.12)",
+        "rgba(239, 68, 68, 0.1)",
+        "rgba(79, 70, 229, 0.12)",
+        "rgba(124, 58, 237, 0.05)",
+        "rgba(99, 102, 241, 0.35)"
+      ],
+      "count": 23
+    },
+    {
+      "file": "public/css/style.css",
+      "colors": [
+        "#050914",
+        "#080C1A",
+        "#0C1124",
+        "#0F1630",
+        "#131B3A",
+        "#182244",
+        "#3B82F6",
+        "#2563EB",
+        "#1D4ED8",
+        "#60A5FA",
+        "#93C5FD",
+        "#818CF8",
+        "#FBBF24",
+        "#FF4466",
+        "#34D399",
+        "#A78BFA",
+        "#22C55E",
+        "#EF4444",
+        "#F59E0B",
+        "#EEF2FF",
+        "#B8C1DC",
+        "#8892B0",
+        "#5D6785",
+        "#16A34A",
+        "#B8BCCF",
+        "#C0C4D5",
+        "#B4B8CB",
+        "#D0D4E3",
+        "#C8CCDD",
+        "#D8DCEA",
+        "#1E40AF",
+        "#7C3AED",
+        "#D97706",
+        "#DC2626",
+        "#059669",
+        "#0E1326",
+        "#47516E",
+        "#B8BED4",
+        "#f59e0b",
+        "#38bdf8"
+      ],
+      "count": 113
+    },
+    {
+      "file": "views/admin/acceptance.ejs",
+      "colors": [
+        "#ef4444",
+        "rgba(0,229,160,.08)",
+        "rgba(0,229,160,.35)",
+        "rgba(239,68,68,.08)",
+        "rgba(239,68,68,.4)",
+        "rgba(0,229,160,.12)",
+        "rgba(239,68,68,.14)",
+        "rgba(245,158,11,.14)",
+        "rgba(37,99,235,.12)"
+      ],
+      "count": 9
+    },
+    {
+      "file": "views/admin/accessibility.ejs",
+      "colors": [
+        "#333",
+        "#f87171",
+        "#fbbf24",
+        "#8b96b3"
+      ],
+      "count": 4
+    },
+    {
+      "file": "views/admin/ai-grading.ejs",
+      "colors": [
+        "#94a3b8",
+        "#00e5a0",
+        "#f87171",
+        "#fbbf24",
+        "rgba(148,163,184,.15)",
+        "rgba(0,229,160,.15)",
+        "rgba(248,113,113,.15)",
+        "rgba(251,191,36,.15)",
+        "rgba(0,0,0,.3)",
+        "rgba(248,113,113,.5)",
+        "rgba(0,229,160,.5)",
+        "rgba(0,0,0,.55)"
+      ],
+      "count": 12
+    },
+    {
+      "file": "views/admin/ai-mlops.ejs",
+      "colors": [
+        "#94a3b8",
+        "#00e5a0",
+        "#f87171",
+        "#64748b",
+        "#fbbf24",
+        "rgba(148,163,184,.15)",
+        "rgba(0,229,160,.15)",
+        "rgba(248,113,113,.15)",
+        "rgba(148,163,184,.25)",
+        "rgba(251,191,36,.15)",
+        "rgba(248,113,113,.12)",
+        "rgba(248,113,113,.5)",
+        "rgba(0,0,0,.3)",
+        "rgba(0,229,160,.5)"
+      ],
+      "count": 14
+    },
+    {
+      "file": "views/admin/board.ejs",
+      "colors": [
+        "#1d4ed8",
+        "#00e5a0",
+        "#00b37e",
+        "#04120c",
+        "#ef4444",
+        "#b91c1c",
+        "#f87171",
+        "#a78bfa",
+        "rgba(37,99,235,.1)",
+        "rgba(56,189,248,.07)",
+        "rgba(37,99,235,.15)",
+        "rgba(0,229,160,.14)",
+        "rgba(239,68,68,.14)",
+        "rgba(251,191,36,.14)",
+        "rgba(139,92,246,.14)",
+        "rgba(0,229,160,.12)",
+        "rgba(0,229,160,.25)",
+        "rgba(239,68,68,.12)",
+        "rgba(239,68,68,.25)"
+      ],
+      "count": 19
+    },
+    {
+      "file": "views/admin/camera-review.ejs",
+      "colors": [
+        "#1d4ed8",
+        "rgba(37,99,235,.1)",
+        "rgba(56,189,248,.07)",
+        "rgba(248,113,113,.8)",
+        "rgba(0,229,160,.3)",
+        "rgba(251,191,36,.12)",
+        "rgba(251,191,36,.3)",
+        "rgba(0,229,160,.1)",
+        "rgba(248,113,113,.1)",
+        "rgba(248,113,113,.3)",
+        "rgba(255,255,255,.05)",
+        "rgba(0,229,160,.4)",
+        "rgba(248,113,113,.4)",
+        "rgba(255,255,255,.3)"
+      ],
+      "count": 14
+    },
+    {
+      "file": "views/admin/command-center.ejs",
+      "colors": [
+        "#1d4ed8",
+        "#00e5a0",
+        "#00b37e",
+        "#04120c",
+        "#fbbf24",
+        "#f59e0b",
+        "#1a1204",
+        "#f87171",
+        "#dc2626",
+        "#38bdf8",
+        "rgba(37,99,235,.1)",
+        "rgba(56,189,248,.07)",
+        "rgba(248,113,113,.12)",
+        "rgba(248,113,113,.35)",
+        "rgba(251,191,36,.12)",
+        "rgba(251,191,36,.3)",
+        "rgba(56,189,248,.12)",
+        "rgba(56,189,248,.3)",
+        "rgba(0,229,160,.1)",
+        "rgba(0,229,160,.3)",
+        "rgba(0,0,0,.55)"
+      ],
+      "count": 21
+    },
+    {
+      "file": "views/admin/consideration.ejs",
+      "colors": [
+        "#1d4ed8",
+        "#00e5a0",
+        "#00b37e",
+        "#04120c",
+        "#ef4444",
+        "#b91c1c",
+        "#f87171",
+        "#a78bfa",
+        "rgba(37,99,235,.1)",
+        "rgba(56,189,248,.07)",
+        "rgba(37,99,235,.15)",
+        "rgba(0,229,160,.14)",
+        "rgba(239,68,68,.14)",
+        "rgba(251,191,36,.14)",
+        "rgba(139,92,246,.14)",
+        "rgba(0,229,160,.12)",
+        "rgba(0,229,160,.25)",
+        "rgba(239,68,68,.12)",
+        "rgba(239,68,68,.25)"
+      ],
+      "count": 19
+    },
+    {
+      "file": "views/admin/dashboard.ejs",
+      "colors": [
+        "#f59e0b",
+        "#10b981",
+        "#7c3aed",
+        "#d97706",
+        "#000",
+        "#059669",
+        "#38bdf8",
+        "#ef4444",
+        "rgba(37,99,235,.14)",
+        "rgba(56,189,248,.14)",
+        "rgba(100,116,139,.14)",
+        "rgba(245,158,11,.14)",
+        "rgba(16,185,129,.14)",
+        "rgba(0,229,160,.1)",
+        "rgba(56,189,248,.12)",
+        "rgba(100,116,139,.12)",
+        "rgba(56,189,248,.08)",
+        "rgba(56,189,248,.15)",
+        "rgba(56,189,248,.3)",
+        "rgba(56,189,248,.04)",
+        "rgba(255,255,255,.05)",
+        "rgba(100,116,139,.3)",
+        "rgba(100,116,139,.04)",
+        "rgba(100,116,139,.07)",
+        "rgba(100,116,139,.2)",
+        "rgba(255,255,255,.07)",
+        "rgba(0,229,160,.08)",
+        "rgba(0,229,160,.25)",
+        "rgba(239,68,68,.15)",
+        "rgba(56,189,248,.1)",
+        "rgba(255,255,255,.04)",
+        "rgba(100,116,139,.28)",
+        "rgba(56,189,248,.2)",
+        "rgba(37,99,235,.12)"
+      ],
+      "count": 34
+    },
+    {
+      "file": "views/admin/grading.ejs",
+      "colors": [
+        "#1d4ed8",
+        "#00e5a0",
+        "#00b37e",
+        "#04120c",
+        "#ef4444",
+        "#b91c1c",
+        "#f87171",
+        "rgba(37,99,235,.1)",
+        "rgba(56,189,248,.07)",
+        "rgba(37,99,235,.15)",
+        "rgba(0,229,160,.14)",
+        "rgba(239,68,68,.14)",
+        "rgba(251,191,36,.14)",
+        "rgba(0,229,160,.12)",
+        "rgba(0,229,160,.25)",
+        "rgba(239,68,68,.12)",
+        "rgba(239,68,68,.25)"
+      ],
+      "count": 17
+    },
+    {
+      "file": "views/admin/institutional.ejs",
+      "colors": [
+        "#ef4444",
+        "rgba(0,229,160,.08)",
+        "rgba(0,229,160,.35)",
+        "rgba(239,68,68,.08)",
+        "rgba(239,68,68,.4)",
+        "rgba(0,229,160,.12)",
+        "rgba(239,68,68,.14)",
+        "rgba(245,158,11,.14)",
+        "rgba(37,99,235,.12)"
+      ],
+      "count": 9
+    },
+    {
+      "file": "views/admin/intervention.ejs",
+      "colors": [
+        "#94a3b8",
+        "#00e5a0",
+        "#60a5fa",
+        "#f87171",
+        "#fbbf24",
+        "rgba(148,163,184,.15)",
+        "rgba(0,229,160,.15)",
+        "rgba(37,99,235,.15)",
+        "rgba(248,113,113,.15)",
+        "rgba(251,191,36,.15)",
+        "rgba(0,0,0,.3)",
+        "rgba(248,113,113,.5)",
+        "rgba(0,229,160,.5)"
+      ],
+      "count": 13
+    },
+    {
+      "file": "views/admin/login.ejs",
+      "colors": [
+        "#ef4444",
+        "rgba(59,130,246,.15)",
+        "rgba(100,116,139,.06)",
+        "rgba(100,116,139,.15)",
+        "rgba(37,99,235,.1)",
+        "rgba(100,116,139,.2)",
+        "rgba(255,255,255,.04)",
+        "rgba(255,255,255,.07)",
+        "rgba(59,130,246,.35)",
+        "rgba(239,68,68,.1)",
+        "rgba(239,68,68,.2)"
+      ],
+      "count": 11
+    },
+    {
+      "file": "views/admin/marking.ejs",
+      "colors": [
+        "#1d4ed8",
+        "#00e5a0",
+        "#00b37e",
+        "#04120c",
+        "#ef4444",
+        "#b91c1c",
+        "#f87171",
+        "#a78bfa",
+        "rgba(37,99,235,.1)",
+        "rgba(56,189,248,.07)",
+        "rgba(37,99,235,.15)",
+        "rgba(0,229,160,.14)",
+        "rgba(239,68,68,.14)",
+        "rgba(251,191,36,.14)",
+        "rgba(139,92,246,.14)",
+        "rgba(0,229,160,.12)",
+        "rgba(0,229,160,.25)",
+        "rgba(239,68,68,.12)",
+        "rgba(239,68,68,.25)"
+      ],
+      "count": 19
+    },
+    {
+      "file": "views/admin/observability.ejs",
+      "colors": [
+        "#ef4444",
+        "rgba(0,229,160,.12)",
+        "rgba(245,158,11,.14)",
+        "rgba(239,68,68,.14)",
+        "rgba(37,99,235,.12)"
+      ],
+      "count": 5
+    },
+    {
+      "file": "views/admin/paper.ejs",
+      "colors": [
+        "#1d4ed8",
+        "#00e5a0",
+        "#00b37e",
+        "#04120c",
+        "#fbbf24",
+        "#f59e0b",
+        "#1a1204",
+        "#38bdf8",
+        "#f87171",
+        "#dc2626",
+        "rgba(37,99,235,.1)",
+        "rgba(56,189,248,.07)",
+        "rgba(56,189,248,.12)",
+        "rgba(56,189,248,.3)",
+        "rgba(0,229,160,.1)",
+        "rgba(0,229,160,.3)",
+        "rgba(251,191,36,.12)",
+        "rgba(251,191,36,.3)",
+        "rgba(248,113,113,.12)",
+        "rgba(248,113,113,.35)"
+      ],
+      "count": 20
+    },
+    {
+      "file": "views/admin/presentation.ejs",
+      "colors": [
+        "#94a3b8",
+        "#00e5a0",
+        "#f87171",
+        "rgba(148,163,184,.15)",
+        "rgba(0,229,160,.15)",
+        "rgba(248,113,113,.15)",
+        "rgba(0,0,0,.3)",
+        "rgba(248,113,113,.5)",
+        "rgba(0,229,160,.5)"
+      ],
+      "count": 9
+    },
+    {
+      "file": "views/admin/question-gen.ejs",
+      "colors": [
+        "#94a3b8",
+        "#fbbf24",
+        "#00e5a0",
+        "#60a5fa",
+        "#f87171",
+        "#64748b",
+        "rgba(148,163,184,.15)",
+        "rgba(251,191,36,.15)",
+        "rgba(0,229,160,.15)",
+        "rgba(37,99,235,.15)",
+        "rgba(248,113,113,.15)",
+        "rgba(148,163,184,.25)",
+        "rgba(248,113,113,.12)",
+        "rgba(248,113,113,.5)",
+        "rgba(0,0,0,.3)",
+        "rgba(0,229,160,.5)"
+      ],
+      "count": 16
+    },
+    {
+      "file": "views/admin/reliability.ejs",
+      "colors": [
+        "#ef4444",
+        "rgba(0,229,160,.08)",
+        "rgba(0,229,160,.35)",
+        "rgba(239,68,68,.08)",
+        "rgba(239,68,68,.4)",
+        "rgba(0,229,160,.12)",
+        "rgba(239,68,68,.14)",
+        "rgba(245,158,11,.14)",
+        "rgba(37,99,235,.12)"
+      ],
+      "count": 9
+    },
+    {
+      "file": "views/admin/resource-reco.ejs",
+      "colors": [
+        "#00e5a0",
+        "#60a5fa",
+        "#fbbf24",
+        "#94a3b8",
+        "#64748b",
+        "rgba(0,229,160,.15)",
+        "rgba(37,99,235,.15)",
+        "rgba(251,191,36,.15)",
+        "rgba(148,163,184,.15)",
+        "rgba(0,0,0,.3)",
+        "rgba(248,113,113,.5)",
+        "rgba(0,229,160,.5)"
+      ],
+      "count": 12
+    },
+    {
+      "file": "views/admin/safe-submit.ejs",
+      "colors": [
+        "#1d4ed8",
+        "#00e5a0",
+        "#00b37e",
+        "#04120c",
+        "#ef4444",
+        "#b91c1c",
+        "#f87171",
+        "rgba(37,99,235,.1)",
+        "rgba(56,189,248,.07)",
+        "rgba(37,99,235,.15)",
+        "rgba(0,229,160,.14)",
+        "rgba(239,68,68,.14)",
+        "rgba(251,191,36,.14)",
+        "rgba(0,229,160,.12)",
+        "rgba(0,229,160,.25)",
+        "rgba(239,68,68,.12)",
+        "rgba(239,68,68,.25)",
+        "rgba(0,0,0,.55)"
+      ],
+      "count": 18
+    },
+    {
+      "file": "views/admin/scan.ejs",
+      "colors": [
+        "#1d4ed8",
+        "#00e5a0",
+        "#00b37e",
+        "#04120c",
+        "#ef4444",
+        "#b91c1c",
+        "#f87171",
+        "rgba(37,99,235,.1)",
+        "rgba(56,189,248,.07)",
+        "rgba(37,99,235,.15)",
+        "rgba(0,229,160,.14)",
+        "rgba(239,68,68,.14)",
+        "rgba(251,191,36,.14)",
+        "rgba(0,229,160,.12)",
+        "rgba(0,229,160,.25)",
+        "rgba(239,68,68,.12)",
+        "rgba(239,68,68,.25)"
+      ],
+      "count": 17
+    },
+    {
+      "file": "views/admin/scheduler.ejs",
+      "colors": [
+        "#1d4ed8",
+        "#00e5a0",
+        "#00b37e",
+        "#04120c",
+        "#fbbf24",
+        "#f59e0b",
+        "#1a1204",
+        "rgba(37,99,235,.1)",
+        "rgba(56,189,248,.07)",
+        "rgba(0,229,160,.3)",
+        "rgba(248,113,113,.3)",
+        "rgba(255,255,255,.06)",
+        "rgba(251,191,36,.12)",
+        "rgba(251,191,36,.3)",
+        "rgba(0,229,160,.1)",
+        "rgba(255,255,255,.04)",
+        "rgba(248,113,113,.08)",
+        "rgba(248,113,113,.25)"
+      ],
+      "count": 18
+    },
+    {
+      "file": "views/admin/seating.ejs",
+      "colors": [
+        "#1d4ed8",
+        "#00e5a0",
+        "#00b37e",
+        "#04120c",
+        "#fbbf24",
+        "#f59e0b",
+        "#1a1204",
+        "#38bdf8",
+        "rgba(37,99,235,.1)",
+        "rgba(56,189,248,.07)",
+        "rgba(0,229,160,.3)",
+        "rgba(248,113,113,.3)",
+        "rgba(0,229,160,.1)",
+        "rgba(56,189,248,.12)",
+        "rgba(56,189,248,.3)",
+        "rgba(248,113,113,.1)",
+        "rgba(251,191,36,.12)",
+        "rgba(251,191,36,.3)"
+      ],
+      "count": 18
+    },
+    {
+      "file": "views/admin/security-guard.ejs",
+      "colors": [
+        "#ef4444",
+        "#f97316",
+        "rgba(0,229,160,.08)",
+        "rgba(0,229,160,.35)",
+        "rgba(239,68,68,.08)",
+        "rgba(239,68,68,.4)",
+        "rgba(0,229,160,.12)",
+        "rgba(239,68,68,.14)",
+        "rgba(245,158,11,.14)",
+        "rgba(37,99,235,.12)"
+      ],
+      "count": 10
+    },
+    {
+      "file": "views/admin/sources.ejs",
+      "colors": [
+        "#94a3b8",
+        "#fbbf24",
+        "#00e5a0",
+        "#64748b",
+        "#f87171",
+        "rgba(148,163,184,.15)",
+        "rgba(251,191,36,.15)",
+        "rgba(0,229,160,.15)",
+        "rgba(248,113,113,.15)",
+        "rgba(248,113,113,.4)",
+        "rgba(0,0,0,.3)",
+        "rgba(248,113,113,.5)",
+        "rgba(0,229,160,.5)",
+        "rgba(0,0,0,.55)"
+      ],
+      "count": 14
+    },
+    {
+      "file": "views/admin/vip.ejs",
+      "colors": [
+        "#000",
+        "rgba(37,99,235,.14)",
+        "rgba(56,189,248,.14)",
+        "rgba(100,116,139,.14)",
+        "rgba(0,229,160,.1)",
+        "rgba(0,229,160,.08)",
+        "rgba(0,229,160,.25)",
+        "rgba(56,189,248,.1)",
+        "rgba(56,189,248,.2)"
+      ],
+      "count": 9
+    },
+    {
+      "file": "views/error.ejs",
+      "colors": [
+        "#1d4ed8",
+        "rgba(37,99,235,.4)"
+      ],
+      "count": 2
+    },
+    {
+      "file": "views/game/enter.ejs",
+      "colors": [
+        "#e84040",
+        "#2d9cdb",
+        "#f2a827",
+        "#27ae60",
+        "#9b59b6",
+        "#1d4ed8",
+        "#1d9bcf",
+        "#000",
+        "#0a0a20",
+        "#180a2a",
+        "#101a2e",
+        "#142036",
+        "#ff4466",
+        "#38bdf8",
+        "#ffd60a",
+        "#00ffaa",
+        "#c084fc",
+        "#2563eb",
+        "rgba(255,255,255,.06)",
+        "rgba(255,255,255,.12)",
+        "rgba(255,255,255,.07)",
+        "rgba(0,0,0,.4)",
+        "rgba(255,255,255,.05)",
+        "rgba(255,255,255,.1)",
+        "rgba(255,255,255,.08)",
+        "rgba(37,99,235,.1)",
+        "rgba(37,99,235,.3)",
+        "rgba(56,189,248,.1)",
+        "rgba(56,189,248,.25)",
+        "rgba(255,255,255,.04)",
+        "rgba(37,99,235,.08)",
+        "rgba(37,99,235,.15)",
+        "rgba(56,189,248,.3)",
+        "rgba(56,189,248,.7)",
+        "rgba(56,189,248,.18)",
+        "rgba(56,189,248,.4)",
+        "rgba(255,255,255,.15)",
+        "rgba(255,255,255,0)",
+        "rgba(6,6,15,.85)",
+        "rgba(56,189,248,.12)"
+      ],
+      "count": 50
+    },
+    {
+      "file": "views/game/host.ejs",
+      "colors": [
+        "#0a0f1f",
+        "#111a35",
+        "#2563eb",
+        "#FBBF24",
+        "#38bdf8",
+        "#64748b",
+        "#e8edf7",
+        "#8b96b3",
+        "#f0f0f8",
+        "#0a0a1a",
+        "#7070a0",
+        "#1d9bcf",
+        "#000",
+        "#0a0a20",
+        "#180a2a",
+        "#101a2e",
+        "#1d4ed8",
+        "#c0c0c0",
+        "#cd7f32",
+        "#1a6599",
+        "#ff4466",
+        "#ffd60a",
+        "#00ffaa",
+        "#c084fc",
+        "#0a1628",
+        "#0d2240",
+        "#1a3a5c",
+        "#1a0020",
+        "#2d003a",
+        "#0a1a10",
+        "#f2a827",
+        "rgba(255,255,255,.07)",
+        "rgba(0,0,0,.09)",
+        "rgba(37,99,235,.18)",
+        "rgba(56,189,248,.12)",
+        "rgba(6,6,15,.8)",
+        "rgba(240,240,248,.85)",
+        "rgba(255,255,255,.12)",
+        "rgba(37,99,235,.12)",
+        "rgba(37,99,235,.25)"
+      ],
+      "count": 73
+    },
+    {
+      "file": "views/partials/head.ejs",
+      "colors": [
+        "#080C1A",
+        "#DEE1ED"
+      ],
+      "count": 2
+    },
+    {
+      "file": "views/role/board.ejs",
+      "colors": [
+        "rgba(245,158,11,.14)",
+        "rgba(0,229,160,.12)"
+      ],
+      "count": 2
+    },
+    {
+      "file": "views/role/marker.ejs",
+      "colors": [
+        "rgba(100,116,139,.16)",
+        "rgba(248,113,113,.12)"
+      ],
+      "count": 2
+    },
+    {
+      "file": "views/role/proctor.ejs",
+      "colors": [
+        "rgba(0,229,160,.6)",
+        "rgba(0,229,160,0)",
+        "rgba(37,99,235,.14)",
+        "rgba(0,229,160,.12)",
+        "rgba(245,158,11,.14)"
+      ],
+      "count": 5
+    },
+    {
+      "file": "views/role/student.ejs",
+      "colors": [
+        "rgba(0,229,160,.12)",
+        "rgba(37,99,235,.14)",
+        "rgba(245,158,11,.14)"
+      ],
+      "count": 3
+    },
+    {
+      "file": "views/role/teacher.ejs",
+      "colors": [
+        "rgba(37,99,235,.14)",
+        "rgba(56,189,248,.14)",
+        "rgba(0,229,160,.12)",
+        "rgba(245,158,11,.14)"
+      ],
+      "count": 4
+    },
+    {
+      "file": "views/user/assignments.ejs",
+      "colors": [
+        "#1d4ed8",
+        "#1d9bcf",
+        "#000",
+        "rgba(37,99,235,.1)",
+        "rgba(56,189,248,.07)",
+        "rgba(37,99,235,.15)",
+        "rgba(37,99,235,.3)",
+        "rgba(56,189,248,.12)",
+        "rgba(56,189,248,.25)",
+        "rgba(0,229,160,.1)",
+        "rgba(0,229,160,.25)",
+        "rgba(255,255,255,.05)",
+        "rgba(0,229,160,.3)",
+        "rgba(0,229,160,.08)",
+        "rgba(251,191,36,.3)",
+        "rgba(251,191,36,.08)",
+        "rgba(248,113,113,.3)",
+        "rgba(248,113,113,.08)",
+        "rgba(255,255,255,.3)"
+      ],
+      "count": 19
+    },
+    {
+      "file": "views/user/camera-pilot.ejs",
+      "colors": [
+        "#1d4ed8",
+        "#000",
+        "rgba(37,99,235,.1)",
+        "rgba(56,189,248,.07)",
+        "rgba(56,189,248,.28)",
+        "rgba(0,229,160,.3)",
+        "rgba(0,229,160,.07)",
+        "rgba(248,113,113,.3)",
+        "rgba(248,113,113,.06)",
+        "rgba(248,113,113,.12)",
+        "rgba(248,113,113,.2)",
+        "rgba(0,229,160,.6)",
+        "rgba(0,0,0,.6)",
+        "rgba(248,113,113,.85)",
+        "rgba(255,255,255,.3)",
+        "rgba(0,229,160,.4)",
+        "rgba(248,113,113,.4)"
+      ],
+      "count": 17
+    },
+    {
+      "file": "views/user/create-test.ejs",
+      "colors": [
+        "#1d9bcf",
+        "#000",
+        "#ff4466",
+        "#38bdf8",
+        "#ffd60a",
+        "#00ffaa",
+        "rgba(255,255,255,.06)",
+        "rgba(255,255,255,.1)",
+        "rgba(255,255,255,.05)",
+        "rgba(37,99,235,.3)",
+        "rgba(37,99,235,.04)",
+        "rgba(37,99,235,.08)",
+        "rgba(56,189,248,.08)",
+        "rgba(37,99,235,.2)",
+        "rgba(37,99,235,.1)",
+        "rgba(255,255,255,.04)",
+        "rgba(56,189,248,.1)",
+        "rgba(56,189,248,.3)",
+        "rgba(255,255,255,.02)",
+        "rgba(255,255,255,.08)",
+        "rgba(56,189,248,.25)"
+      ],
+      "count": 21
+    },
+    {
+      "file": "views/user/forgot.ejs",
+      "colors": [
+        "#ef4444",
+        "#22c55e",
+        "#3b82f6",
+        "rgba(37,99,235,.08)",
+        "rgba(56,189,248,.05)",
+        "rgba(255,255,255,.05)",
+        "rgba(255,255,255,.04)",
+        "rgba(255,255,255,.07)",
+        "rgba(59,130,246,.15)",
+        "rgba(59,130,246,.35)",
+        "rgba(239,68,68,.1)",
+        "rgba(239,68,68,.2)",
+        "rgba(34,197,94,.1)",
+        "rgba(34,197,94,.2)"
+      ],
+      "count": 14
+    },
+    {
+      "file": "views/user/login.ejs",
+      "colors": [
+        "#1f2937",
+        "#ef4444",
+        "#3b82f6",
+        "#1a6599",
+        "#22c55e",
+        "#4285F4",
+        "#34A853",
+        "#FBBC05",
+        "#EA4335",
+        "rgba(37,99,235,.08)",
+        "rgba(56,189,248,.05)",
+        "rgba(255,255,255,.05)",
+        "rgba(0,0,0,.12)",
+        "rgba(0,0,0,.18)",
+        "rgba(255,255,255,.04)",
+        "rgba(255,255,255,.07)",
+        "rgba(59,130,246,.15)",
+        "rgba(239,68,68,.6)",
+        "rgba(59,130,246,.35)",
+        "rgba(239,68,68,.1)",
+        "rgba(239,68,68,.2)",
+        "rgba(34,197,94,.1)",
+        "rgba(34,197,94,.2)",
+        "rgba(255,255,255,.08)"
+      ],
+      "count": 24
+    },
+    {
+      "file": "views/user/panel.ejs",
+      "colors": [
+        "#1d4ed8",
+        "rgba(37,99,235,.1)",
+        "rgba(56,189,248,.07)",
+        "rgba(37,99,235,.15)",
+        "rgba(37,99,235,.3)",
+        "rgba(0,229,160,.1)",
+        "rgba(0,229,160,.25)",
+        "rgba(0,229,160,.18)",
+        "rgba(0,229,160,.4)",
+        "rgba(255,255,255,.04)",
+        "rgba(255,255,255,.08)",
+        "rgba(37,99,235,.2)",
+        "rgba(56,189,248,.1)",
+        "rgba(56,189,248,.12)",
+        "rgba(56,189,248,.2)",
+        "rgba(100,116,139,.12)",
+        "rgba(0,0,0,.4)",
+        "rgba(255,255,255,.06)",
+        "rgba(56,189,248,.3)"
+      ],
+      "count": 19
+    },
+    {
+      "file": "views/user/reset.ejs",
+      "colors": [
+        "#1a6599",
+        "#ef4444",
+        "#22c55e",
+        "#3b82f6",
+        "rgba(37,99,235,.08)",
+        "rgba(56,189,248,.05)",
+        "rgba(255,255,255,.04)",
+        "rgba(255,255,255,.07)",
+        "rgba(59,130,246,.15)",
+        "rgba(239,68,68,.6)",
+        "rgba(59,130,246,.35)",
+        "rgba(239,68,68,.1)",
+        "rgba(239,68,68,.2)",
+        "rgba(34,197,94,.1)",
+        "rgba(34,197,94,.2)",
+        "rgba(255,255,255,.08)"
+      ],
+      "count": 16
+    },
+    {
+      "file": "views/user/security-profile.ejs",
+      "colors": [
+        "#1d4ed8",
+        "rgba(37,99,235,.1)",
+        "rgba(56,189,248,.07)",
+        "rgba(251,191,36,.08)",
+        "rgba(251,191,36,.25)",
+        "rgba(248,113,113,.4)",
+        "rgba(248,113,113,.05)",
+        "rgba(0,229,160,.3)",
+        "rgba(248,113,113,.15)",
+        "rgba(0,229,160,.12)",
+        "rgba(255,255,255,.06)",
+        "rgba(248,113,113,.3)",
+        "rgba(248,113,113,.06)",
+        "rgba(0,229,160,.07)",
+        "rgba(248,113,113,.07)",
+        "rgba(255,255,255,.3)"
+      ],
+      "count": 16
+    },
+    {
+      "file": "views/user/test-arena.ejs",
+      "colors": [
+        "#06080f",
+        "#0b0e1a",
+        "#0f1525",
+        "#2563eb",
+        "#FBBF24",
+        "#00e5a0",
+        "#f87171",
+        "#e8edf7",
+        "#8b96b3",
+        "#1d4ed8",
+        "#059669",
+        "#000",
+        "#07090f",
+        "#a78bfa",
+        "#08080f",
+        "#06060f",
+        "rgba(255,255,255,.07)",
+        "rgba(4,6,18,.98)",
+        "rgba(255,255,255,.1)",
+        "rgba(239,68,68,.15)",
+        "rgba(239,68,68,.3)",
+        "rgba(239,68,68,.2)",
+        "rgba(255,255,255,.08)",
+        "rgba(255,255,255,.06)",
+        "rgba(0,229,160,.12)",
+        "rgba(0,229,160,.25)",
+        "rgba(255,255,255,.05)",
+        "rgba(255,255,255,.03)",
+        "rgba(37,99,235,.07)",
+        "rgba(255,255,255,.14)",
+        "rgba(0,0,0,.9)",
+        "rgba(37,99,235,.1)",
+        "rgba(0,0,0,.8)",
+        "rgba(255,255,255,.04)",
+        "rgba(255,255,255,.2)"
+      ],
+      "count": 35
+    },
+    {
+      "file": "views/verify.ejs",
+      "colors": [
+        "#ef4444"
+      ],
+      "count": 1
+    }
+  ],
+  "transitionAll": [
+    {
+      "file": "public/css/admin.css",
+      "count": 12
+    },
+    {
+      "file": "public/css/cast-director.css",
+      "count": 1
+    },
+    {
+      "file": "public/css/cast-participant.css",
+      "count": 1
+    },
+    {
+      "file": "public/css/cast-studio.css",
+      "count": 2
+    },
+    {
+      "file": "public/css/style.css",
+      "count": 5
+    },
+    {
+      "file": "views/admin/ai-grading.ejs",
+      "count": 3
+    },
+    {
+      "file": "views/admin/ai-mlops.ejs",
+      "count": 3
+    },
+    {
+      "file": "views/admin/board.ejs",
+      "count": 3
+    },
+    {
+      "file": "views/admin/camera-review.ejs",
+      "count": 4
+    },
+    {
+      "file": "views/admin/command-center.ejs",
+      "count": 6
+    },
+    {
+      "file": "views/admin/consideration.ejs",
+      "count": 3
+    },
+    {
+      "file": "views/admin/dashboard.ejs",
+      "count": 3
+    },
+    {
+      "file": "views/admin/grading.ejs",
+      "count": 3
+    },
+    {
+      "file": "views/admin/intervention.ejs",
+      "count": 2
+    },
+    {
+      "file": "views/admin/login.ejs",
+      "count": 2
+    },
+    {
+      "file": "views/admin/marking.ejs",
+      "count": 3
+    },
+    {
+      "file": "views/admin/paper.ejs",
+      "count": 6
+    },
+    {
+      "file": "views/admin/presentation.ejs",
+      "count": 3
+    },
+    {
+      "file": "views/admin/question-gen.ejs",
+      "count": 3
+    },
+    {
+      "file": "views/admin/resource-reco.ejs",
+      "count": 4
+    },
+    {
+      "file": "views/admin/safe-submit.ejs",
+      "count": 3
+    },
+    {
+      "file": "views/admin/scan.ejs",
+      "count": 2
+    },
+    {
+      "file": "views/admin/scheduler.ejs",
+      "count": 5
+    },
+    {
+      "file": "views/admin/seating.ejs",
+      "count": 5
+    },
+    {
+      "file": "views/admin/security-guard.ejs",
+      "count": 1
+    },
+    {
+      "file": "views/admin/sources.ejs",
+      "count": 3
+    },
+    {
+      "file": "views/error.ejs",
+      "count": 1
+    },
+    {
+      "file": "views/game/enter.ejs",
+      "count": 3
+    },
+    {
+      "file": "views/game/host.ejs",
+      "count": 7
+    },
+    {
+      "file": "views/role/student.ejs",
+      "count": 1
+    },
+    {
+      "file": "views/role/teacher.ejs",
+      "count": 1
+    },
+    {
+      "file": "views/user/assignments.ejs",
+      "count": 3
+    },
+    {
+      "file": "views/user/camera-pilot.ejs",
+      "count": 3
+    },
+    {
+      "file": "views/user/create-test.ejs",
+      "count": 6
+    },
+    {
+      "file": "views/user/forgot.ejs",
+      "count": 3
+    },
+    {
+      "file": "views/user/login.ejs",
+      "count": 5
+    },
+    {
+      "file": "views/user/panel.ejs",
+      "count": 13
+    },
+    {
+      "file": "views/user/reset.ejs",
+      "count": 2
+    },
+    {
+      "file": "views/user/security-profile.ejs",
+      "count": 2
+    },
+    {
+      "file": "views/user/test-arena.ejs",
+      "count": 1
+    }
+  ],
+  "infiniteAnim": [
+    {
+      "file": "public/css/cast-projector.css",
+      "count": 1
+    },
+    {
+      "file": "public/css/cast-studio.css",
+      "count": 1
+    },
+    {
+      "file": "public/css/style.css",
+      "count": 1
+    },
+    {
+      "file": "views/admin/camera-review.ejs",
+      "count": 1
+    },
+    {
+      "file": "views/game/enter.ejs",
+      "count": 9
+    },
+    {
+      "file": "views/game/host.ejs",
+      "count": 5
+    },
+    {
+      "file": "views/role/proctor.ejs",
+      "count": 1
+    },
+    {
+      "file": "views/user/assignments.ejs",
+      "count": 1
+    },
+    {
+      "file": "views/user/camera-pilot.ejs",
+      "count": 1
+    },
+    {
+      "file": "views/user/security-profile.ejs",
+      "count": 1
+    }
+  ],
+  "tinyFont": [
+    {
+      "file": "public/css/admin.css",
+      "count": 4,
+      "examples": [
+        "font-size: .62rem",
+        "font-size: .7rem"
+      ]
+    },
+    {
+      "file": "public/css/style.css",
+      "count": 7,
+      "examples": [
+        "font-size: .7rem",
+        "font-size: .68rem",
+        "font-size: .58rem",
+        "font-size: .62rem"
+      ]
+    },
+    {
+      "file": "views/admin/acceptance.ejs",
+      "count": 3,
+      "examples": [
+        "font-size:.7rem",
+        "font-size:.64rem",
+        "font-size:.68rem"
+      ]
+    },
+    {
+      "file": "views/admin/board.ejs",
+      "count": 8,
+      "examples": [
+        "font-size:.66rem",
+        "font-size:.64rem",
+        "font-size:.7rem",
+        "font-size:.68rem"
+      ]
+    },
+    {
+      "file": "views/admin/camera-review.ejs",
+      "count": 3,
+      "examples": [
+        "font-size:.66rem",
+        "font-size:.7rem"
+      ]
+    },
+    {
+      "file": "views/admin/command-center.ejs",
+      "count": 11,
+      "examples": [
+        "font-size:.68rem",
+        "font-size:.66rem",
+        "font-size:.7rem"
+      ]
+    },
+    {
+      "file": "views/admin/consideration.ejs",
+      "count": 6,
+      "examples": [
+        "font-size:.66rem",
+        "font-size:.64rem",
+        "font-size:.7rem",
+        "font-size:.68rem"
+      ]
+    },
+    {
+      "file": "views/admin/dashboard.ejs",
+      "count": 1,
+      "examples": [
+        "font-size:.7rem"
+      ]
+    },
+    {
+      "file": "views/admin/grading.ejs",
+      "count": 6,
+      "examples": [
+        "font-size:.66rem",
+        "font-size:.64rem",
+        "font-size:.7rem",
+        "font-size:.68rem"
+      ]
+    },
+    {
+      "file": "views/admin/institutional.ejs",
+      "count": 3,
+      "examples": [
+        "font-size:.7rem",
+        "font-size:.64rem",
+        "font-size:.68rem"
+      ]
+    },
+    {
+      "file": "views/admin/marking.ejs",
+      "count": 7,
+      "examples": [
+        "font-size:.66rem",
+        "font-size:.64rem",
+        "font-size:.7rem",
+        "font-size:.68rem"
+      ]
+    },
+    {
+      "file": "views/admin/observability.ejs",
+      "count": 4,
+      "examples": [
+        "font-size:.68rem",
+        "font-size:.66rem"
+      ]
+    },
+    {
+      "file": "views/admin/paper.ejs",
+      "count": 7,
+      "examples": [
+        "font-size:.66rem",
+        "font-size:.68rem"
+      ]
+    },
+    {
+      "file": "views/admin/reliability.ejs",
+      "count": 4,
+      "examples": [
+        "font-size:.7rem",
+        "font-size:.64rem",
+        "font-size:.68rem"
+      ]
+    },
+    {
+      "file": "views/admin/safe-submit.ejs",
+      "count": 6,
+      "examples": [
+        "font-size:.66rem",
+        "font-size:.64rem",
+        "font-size:.7rem",
+        "font-size:.68rem"
+      ]
+    },
+    {
+      "file": "views/admin/scan.ejs",
+      "count": 6,
+      "examples": [
+        "font-size:.66rem",
+        "font-size:.64rem",
+        "font-size:.7rem",
+        "font-size:.68rem"
+      ]
+    },
+    {
+      "file": "views/admin/scheduler.ejs",
+      "count": 7,
+      "examples": [
+        "font-size:.66rem",
+        "font-size:.68rem"
+      ]
+    },
+    {
+      "file": "views/admin/seating.ejs",
+      "count": 6,
+      "examples": [
+        "font-size:.66rem",
+        "font-size:.68rem",
+        "font-size:.7rem"
+      ]
+    },
+    {
+      "file": "views/admin/security-guard.ejs",
+      "count": 7,
+      "examples": [
+        "font-size:.7rem",
+        "font-size:.64rem",
+        "font-size:.66rem",
+        "font-size:.68rem"
+      ]
+    },
+    {
+      "file": "views/game/enter.ejs",
+      "count": 3,
+      "examples": [
+        "font-size:.6rem",
+        "font-size:.55rem",
+        "font-size:.65rem"
+      ]
+    },
+    {
+      "file": "views/game/host.ejs",
+      "count": 2,
+      "examples": [
+        "font-size:.65rem"
+      ]
+    },
+    {
+      "file": "views/user/assignments.ejs",
+      "count": 3,
+      "examples": [
+        "font-size:.65rem",
+        "font-size:.62rem",
+        "font-size:.68rem"
+      ]
+    },
+    {
+      "file": "views/user/camera-pilot.ejs",
+      "count": 6,
+      "examples": [
+        "font-size:.7rem",
+        "font-size:.66rem",
+        "font-size:.68rem",
+        "font-size:.64rem"
+      ]
+    },
+    {
+      "file": "views/user/create-test.ejs",
+      "count": 1,
+      "examples": [
+        "font-size:.7rem"
+      ]
+    },
+    {
+      "file": "views/user/login.ejs",
+      "count": 1,
+      "examples": [
+        "font-size:.7rem"
+      ]
+    },
+    {
+      "file": "views/user/panel.ejs",
+      "count": 8,
+      "examples": [
+        "font-size:.68rem",
+        "font-size:.65rem",
+        "font-size:.7rem",
+        "font-size:.62rem",
+        "font-size:.6rem"
+      ]
+    },
+    {
+      "file": "views/user/reset.ejs",
+      "count": 1,
+      "examples": [
+        "font-size:.7rem"
+      ]
+    },
+    {
+      "file": "views/user/test-arena.ejs",
+      "count": 3,
+      "examples": [
+        "font-size:.65rem",
+        "font-size:.68rem"
+      ]
+    }
+  ],
+  "fixedHeight": [
+    {
+      "file": "public/css/cast-director.css",
+      "count": 1
+    },
+    {
+      "file": "public/css/cast-participant.css",
+      "count": 1
+    },
+    {
+      "file": "public/css/cast-projector.css",
+      "count": 1
+    },
+    {
+      "file": "public/css/cast-tokens.css",
+      "count": 1
+    }
+  ]
+}

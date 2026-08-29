@@ -1,0 +1,193 @@
+/* ═══════════════════════════════════════════════════════════════
+   STEP 17 — Navigation / wayfinding component styles
+   S17.05 active state (soft fill + text weight + indicator),
+   S17.06/07 mobile drawer (focus trap, overlay, safe-area),
+   S17.08 sticky header tokens + scroll-margin-top,
+   S17.09 breadcrumb (deep hierarchy only),
+   S17.11 account menu (theme/language/accessibility/logout grouped).
+   Layered on top of the app-shell styles in style.css.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── S17.05: Active nav = soft fill + text weight + indicator ──
+   Hover (translateX + elevated bg) ACTIVE-dan farq qiladi. */
+.shell-nav-link {
+  position: relative;
+  font-weight: 600;
+}
+.shell-nav-link:hover {
+  font-weight: 600; /* hover active'dan ajralib turadi */
+}
+.shell-nav-link.active {
+  background: var(--accent-alpha, rgba(37,99,235,.14));
+  color: var(--deborah-semantic-color-action-primary);
+  font-weight: 700;
+  box-shadow: inset 3px 0 0 var(--deborah-semantic-color-action-primary);
+}
+.shell-nav-link.active .shell-nav-ico { opacity: 1; }
+
+/* Focus-visible — keyboard tab order vizual tartibga mos (S17.10) */
+.shell-nav-link:focus-visible,
+.shell-burger:focus-visible,
+.shell-foot-link:focus-visible,
+.shell-account-btn:focus-visible,
+.shell-top-btn:focus-visible,
+.crumb-link:focus-visible {
+  outline: 3px solid var(--deborah-semantic-color-focus-ring, #255EDB);
+  outline-offset: 2px;
+}
+
+/* ── S17.08: Sticky header / anchor offset tokens ── */
+#main-content,
+.shell-main,
+.main {
+  scroll-margin-top: calc(var(--deborah-shell-header-h, 64px) + 12px);
+}
+.shell-topbar { --deborah-shell-header-h: 64px; }
+body { --deborah-shell-header-h: 64px; }
+
+/* Safe-area — iOS home indicator (S17.08) */
+.shell-sidebar {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.shell-side-foot {
+  padding-bottom: calc(var(--deborah-spacing-3, 12px) + env(safe-area-inset-bottom, 0px));
+}
+
+/* ── S17.06/07: Mobile drawer — overlay & focus management ── */
+.shell-overlay { cursor: pointer; }
+body.shell-open { overflow: hidden; }
+
+/* ── S17.09: Breadcrumb (deep hierarchy only — landing/shallow'ga emas) ── */
+.crumb {
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: 6px; font-size: .74rem; font-weight: 600; color: var(--deborah-semantic-color-text-muted);
+  margin-bottom: 10px; min-height: 20px;
+}
+.crumb-list {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+  list-style: none; margin: 0; padding: 0;
+}
+.crumb-item { display: inline-flex; align-items: center; gap: 6px; }
+.crumb-link {
+  color: var(--deborah-semantic-color-text-muted); text-decoration: none;
+  border-radius: var(--deborah-radius-sm, 8px);
+  padding: 2px 4px; transition: color .2s ease;
+}
+.crumb-link:hover { color: var(--deborah-semantic-color-action-primary); text-decoration: underline; }
+.crumb-link[aria-current="page"] { color: var(--deborah-semantic-color-text-primary); font-weight: 700; }
+.crumb-sep { color: var(--deborah-semantic-color-text-muted); opacity: .5; display: inline-flex; }
+.crumb-sep svg { display: block; }
+
+/* ── S17.11: Account menu (shell foot) — grouped utilities ── */
+.shell-account {
+  position: relative;
+  display: flex; flex-direction: column; gap: 2px;
+  border-top: 1px solid var(--deborah-semantic-color-border-default);
+  padding: var(--deborah-spacing-2, 8px) var(--deborah-spacing-3, 12px);
+}
+.shell-account-btn {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  padding: 9px 10px; border-radius: var(--deborah-radius-md, 12px);
+  background: none; border: none; color: var(--deborah-semantic-color-text-primary);
+  font-family: 'Source Sans 3', sans-serif; font-size: .8rem; font-weight: 600;
+  cursor: pointer; text-align: left; transition: background .2s ease;
+}
+.shell-account-btn:hover { background: var(--bg-elevated); }
+.shell-account-btn .shell-nav-ico { color: var(--deborah-semantic-color-action-primary); }
+.shell-account-name { font-weight: 700; font-size: .78rem; }
+.shell-account-sub { font-size: .66rem; color: var(--deborah-semantic-color-text-muted); font-weight: 600; }
+
+.shell-account-menu {
+  display: none;
+  margin: 2px 0 4px; padding: 4px;
+  background: var(--deborah-semantic-color-surface-input, var(--deborah-semantic-color-surface-raised));
+  border: 1px solid var(--deborah-semantic-color-border-default);
+  border-radius: var(--deborah-radius-md, 12px);
+  box-shadow: var(--shadow-md, 0 8px 24px rgba(0,0,0,.3));
+}
+.shell-account.open .shell-account-menu { display: block; }
+.shell-account-menu-item {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  padding: 8px 10px; border-radius: var(--deborah-radius-sm, 8px);
+  background: none; border: none; color: var(--deborah-semantic-color-text-muted);
+  font-family: 'Source Sans 3', sans-serif; font-size: .76rem; font-weight: 600;
+  cursor: pointer; text-align: left; text-decoration: none;
+  transition: background .2s ease, color .2s ease;
+}
+.shell-account-menu-item:hover { background: var(--bg-elevated); color: var(--deborah-semantic-color-text-primary); }
+.shell-account-menu-item .shell-nav-ico { color: var(--deborah-semantic-color-text-muted); }
+.shell-account-menu-item:hover .shell-nav-ico { color: var(--deborah-semantic-color-action-primary); }
+.shell-account-menu-item--logout { color: var(--deborah-semantic-color-text-muted); }
+.shell-account-menu-item--logout .shell-nav-ico { color: var(--deborah-semantic-color-text-muted); }
+.shell-account-menu-item--logout:hover { color: var(--deborah-semantic-color-action-primary); background: var(--accent-alpha, rgba(37,99,235,.08)); }
+.shell-account-menu-item--logout:hover .shell-nav-ico { color: var(--deborah-semantic-color-action-primary); }
+
+/* Account menu qisqa ekranda scroll qilmaydi (faqat nav scroll qiladi) */
+.shell-account-menu .theme-segmented {
+  flex-wrap: wrap; gap: 4px; margin: 0; padding: 2px 10px 8px;
+  border-bottom: 1px solid var(--deborah-semantic-color-border-default);
+}
+
+/* ── Public nav (nav.ejs — landing bo'lmagan public sahifalar) ── */
+.navbar {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg-overlay, rgba(10,14,28,.85));
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--deborah-semantic-color-border-default);
+  padding: var(--deborah-spacing-2, 8px) var(--deborah-spacing-5, 20px);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; max-width: 1200px; margin: 0 auto; }
+.nav-logo { display: flex; align-items: center; text-decoration: none; }
+.nav-links {
+  display: flex; align-items: center; gap: 4px; list-style: none; margin: 0; padding: 0;
+}
+.nav-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 11px; border-radius: var(--deborah-radius-sm, 8px);
+  color: var(--deborah-semantic-color-text-muted); text-decoration: none;
+  font-family: 'Source Sans 3', sans-serif; font-size: .78rem; font-weight: 600;
+  transition: background .2s ease, color .2s ease;
+}
+.nav-link:hover { background: var(--bg-elevated); color: var(--deborah-semantic-color-text-primary); }
+.nav-link.active { color: var(--deborah-semantic-color-action-primary); font-weight: 700; background: var(--accent-alpha, rgba(37,99,235,.1)); }
+.nav-toggle { display: flex; align-items: center; gap: 6px; }
+.nav-btn {
+  padding: 7px 12px; border-radius: var(--deborah-radius-sm, 8px);
+  border: 1px solid var(--deborah-semantic-color-border-default); background: var(--deborah-semantic-color-surface-input, var(--deborah-semantic-color-surface-raised));
+  color: var(--deborah-semantic-color-text-muted); font-family: 'Source Sans 3', sans-serif; font-size: .78rem; font-weight: 600;
+  cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
+  transition: color .2s ease, background-color .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.nav-btn:hover { background: var(--bg-elevated); color: var(--deborah-semantic-color-text-primary); border-color: var(--deborah-semantic-color-action-primary); }
+.nav-btn--primary { background: var(--deborah-semantic-color-action-primary); border-color: var(--deborah-semantic-color-action-primary); color: var(--deborah-semantic-color-action-on-action, #fff); }
+/* S36.02: dark --accent #3B82F6 white text 3.68:1 — blue-600 5.2:1 (boshqa primary button'lar bilan mos) */
+/* S37: color ham aniq oq — dark on-action token #0C1426 (dark-ink, light accentlar uchun) #2563EB da 3.55:1 bo'lib qoladi */
+[data-theme='dark'] .nav-btn--primary { background: #2563EB; border-color: #2563EB; color: #FFFFFF; }
+/* S36.02: hover ham --accent ga qaytib ketardi (axe hover'ni skanlamaydi — statik renderda 3.68:1) */
+[data-theme='dark'] .nav-btn--primary:hover { background: #1D4ED8; border-color: #1D4ED8; color: #FFFFFF; }
+.nav-btn--primary:hover { background: var(--deborah-semantic-color-action-primary); color: var(--deborah-semantic-color-action-on-action, #fff); box-shadow: 0 4px 14px rgba(37,99,235,.35); }
+
+/* ── Mobile: nav-links drawer (S17.06) ── */
+@media (max-width: 768px) {
+  .nav-links {
+    position: fixed; top: 0; right: 0; bottom: 0; z-index: 320;
+    width: min(280px, 84vw);
+    flex-direction: column; align-items: stretch; gap: 2px;
+    background: var(--deborah-semantic-color-surface-input, var(--deborah-semantic-color-surface-raised));
+    border-left: 1px solid var(--deborah-semantic-color-border-default);
+    padding: calc(var(--deborah-spacing-4, 16px) + env(safe-area-inset-top, 0px))
+             var(--deborah-spacing-3, 12px) calc(var(--deborah-spacing-4, 16px) + env(safe-area-inset-bottom, 0px));
+    transform: translateX(100%); transition: transform .3s ease;
+  }
+  body.nav-open .nav-links { transform: translateX(0); }
+  .nav-links .nav-link { padding: 11px 10px; font-size: .84rem; }
+  .nav-toggle .nav-burger { display: inline-flex; }
+}
+.nav-burger { display: none; }
+
+/* Reduced motion — drawer/a11y (S17.07) */
+@media (prefers-reduced-motion: reduce) {
+  .shell-sidebar, .nav-links { transition: none !important; }
+  .shell-overlay { transition: none !important; }
+}

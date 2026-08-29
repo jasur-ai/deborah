@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content →</a>
+  <nav class="admin-navbar">
+    <div class="admin-nav-left">
+      <button type="button" class="admin-nav-hamburger" aria-label="Menyu" aria-expanded="false" aria-controls="admin-sidebar" onclick="toggleAdminDrawer()"><span></span><span></span><span></span></button>
+      <a href="/" class="admin-nav-brand">
+        <span class="admin-nav-logo"><img src="/images/logo-vintage.png" alt="Deborah" class="logo-img" style="height:34px;width:auto"></span>
+        <span class="admin-nav-badge">ADMIN</span>
+      </a>
+    </div>
+    <div class="flex items-center gap-8">
+      <a href="/admin/dashboard" class="admin-nav-btn"><%- icon('arrowLeft', 14) %> Dashboard</a>
+      <%- include('../partials/theme-control') %>
+      <a href="/admin/logout" class="admin-nav-btn"><%- icon('logOut', 14) %> Chiqish</a>
+    </div>
+  </nav>
+
+  <div class="admin-layout">
+    <div class="admin-drawer-overlay" id="admin-drawer-overlay" onclick="toggleAdminDrawer()"></div>
+    <div class="admin-sidebar" id="admin-sidebar">
+      <div class="admin-side-label">Bo'limlar</div>
+      <a href="/admin/users" class="admin-side-btn"><span class="admin-side-ico"><%- icon('users', 16) %></span>Foydalanuvchilar</a>
+      <a href="/admin/audit" class="admin-side-btn active" style="--c:var(--deborah-semantic-color-action-primary);--cbg:rgba(37,99,235,.14)"><span class="admin-side-ico"><%- icon('shield', 16) %></span>Audit jurnali</a>
+      <a href="/admin/dashboard#pane-fans" class="admin-side-btn"><span class="admin-side-ico"><%- icon('book', 16) %></span>Mock Fanlar</a>
+      <a href="/admin/dashboard#pane-pre" class="admin-side-btn" style="--c:var(--accent-glow);--cbg:rgba(100,116,139,.14)"><span class="admin-side-ico"><%- icon('layers', 16) %></span>PRE Testlar</a>
+      <a href="/admin/dashboard#pane-results" class="admin-side-btn"><span class="admin-side-ico"><%- icon('trophy', 16) %></span>Natijalar</a>
+      <a href="/admin/vip" class="admin-side-btn" style="--c:#f59e0b;--cbg:rgba(245,158,11,.14)"><span class="admin-side-ico"><%- icon('shield', 16) %></span>VIP</a>
+    </div>
+
+    <main class="admin-main" id="main">
+      <div class="admin-page-head">
+        <div>
+          <h1 class="admin-page-title"><%- icon('shield', 20) %> Audit jurnali</h1>
+          <p class="admin-page-sub">Xavfsizlik hodisalari va authentication jurnali</p>
+        </div>
+        <a href="/admin/api/audit/export" class="btn btn-primary" style="min-height:44px"><%- icon('download', 14) %> Eksport CSV (30 kun)</a>
+      </div>
+
+      <!-- Aggregate kartalar -->
+      <div class="admin-stat-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px">
+        <div class="stat-card"><div class="stat-num" id="agg-login-success">—</div><div class="stat-lbl">Login success</div></div>
+        <div class="stat-card"><div class="stat-num" id="agg-login-fail">—</div><div class="stat-lbl">Login fail</div></div>
+        <div class="stat-card"><div class="stat-num" id="agg-fail-rate">—</div><div class="stat-lbl">Fail rate (%)</div></div>
+        <div class="stat-card"><div class="stat-num" id="agg-lockout">—</div><div class="stat-lbl">Lockout</div></div>
+        <div class="stat-card"><div class="stat-num" id="agg-teacher">—</div><div class="stat-lbl">Teacher arizalar</div></div>
+        <div class="stat-card"><div class="stat-num" id="agg-risk">—</div><div class="stat-lbl">Risk blok</div></div>
+        <div class="stat-card"><div class="stat-num" id="agg-hibp">—</div><div class="stat-lbl">HIBP hit</div></div>
+        <div class="stat-card"><div class="stat-num" id="agg-abuse">—</div><div class="stat-lbl">Abuse</div></div>
+      </div>
+
+      <!-- Filter -->
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px">
+        <select id="audit-range" class="inp" aria-label="Vaqt oraligi" style="min-width:140px">
+          <option value="24h">24 soat</option>
+          <option value="7d">7 kun</option>
+          <option value="30d">30 kun</option>
+        </select>
+        <select id="audit-action" class="inp" aria-label="Action filtri" style="min-width:180px">
+          <option value="">Barcha actionlar</option>
+          <option value="auth.login.success">login success</option>
+          <option value="auth.login.failed">login failed</option>
+          <option value="auth.account.blocked">account blocked</option>
+          <option value="auth.risk.impossible_travel">impossible travel</option>
+          <option value="auth.abuse.stuffing">stuffing</option>
+        </select>
+        <select id="audit-outcome" class="inp" aria-label="Outcome filtri" style="min-width:140px">
+          <option value="">Barcha natijalar</option>
+          <option value="success">success</option>
+          <option value="failed">failed</option>
+          <option value="blocked">blocked</option>
+          <option value="flagged">flagged</option>
+        </select>
+        <input type="search" id="audit-q" class="inp" placeholder="Actor ID..." autocomplete="off" style="min-width:180px" aria-label="Actor ID qidirish">
+        <button type="button" class="btn btn-primary" onclick="loadAudit(1)" style="min-height:44px"><%- icon('filter', 14) %> Filtrlash</button>
+      </div>
+
+      <div class="table-wrap dt-wrap is-reflow"><table class="dt" data-density="default">
+        <thead><tr>
+          <th scope="col">Vaqt</th>
+          <th scope="col">Action</th>
+          <th scope="col">Natija</th>
+          <th scope="col">Metod</th>
+          <th scope="col">Actor</th>
+          <th scope="col">IP hash</th>
+        </tr></thead>
+        <tbody id="audit-tbody">
+          <tr><td colspan="6"><div class="admin-empty">Yuklanmoqda...</div></td></tr>
+        </tbody>
+      </table></div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;flex-wrap:wrap">
+        <div class="text-muted" id="audit-total" style="font-size:.8rem">—</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button type="button" class="btn" id="audit-prev" onclick="loadAudit(currentPage - 1)" style="min-height:44px" aria-label="Oldingi sahifa"><%- icon('chevronLeft', 14) %> Oldingi</button>
+          <span id="audit-page" class="badge badge-accent" style="font-size:.78rem">1</span>
+          <button type="button" class="btn" id="audit-next" onclick="loadAudit(currentPage + 1)" style="min-height:44px" aria-label="Keyingi sahifa">Keyingi <%- icon('chevronRight', 14) %></button>
+        </div>
+      </div>
+
+      <!-- Charts — accessible matn alternativ (C-09 §12) -->
+      <section aria-label="Vaqt bo'yicha xavfsizlik trendlari" style="margin-top:20px">
+        <h2 class="admin-page-title" style="font-size:1rem"><%- icon('barChart', 16) %> Trendlar (so'nggi 24 soat)</h2>
+        <div id="audit-chart" class="admin-empty" role="img" aria-label="Login success/fail, lockout va block hodisalari soni matn ko'rinishida">
+          Yuklanmoqda...
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <input type="hidden" id="csrf-token" value="<%= csrfToken %>">
+  <script>
+    // AUTH D-10 §13: 4 til admin copy — audit.js shu yerдан o'qiydi (fallback bilan)
+    window.__ADMIN_COPY__ = <%- JSON.stringify(adminCopy || {}) %>;
+  </script>
+  <script src="/js/admin/audit.js" defer></script>
+</body>
+</html>

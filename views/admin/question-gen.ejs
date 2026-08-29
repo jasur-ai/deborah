@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr" data-theme="dark">
+<head>
+  <%- include('../partials/head', { title, user }) %>
+  <style>
+    .qg-grid { display: grid; grid-template-columns: 340px 1fr; gap: 18px; }
+    .qg-panel { background: var(--deborah-semantic-color-surface-raised); border: 1px solid var(--deborah-semantic-color-border-default); border-radius: 12px; padding: 16px; }
+    .qg-panel h3 { margin: 0 0 12px; font-size: 14px; letter-spacing: .04em; color: var(--deborah-semantic-color-text-muted); text-transform: uppercase; }
+    .qg-item { padding: 10px 12px; border: 1px solid var(--deborah-semantic-color-border-default); border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s; }
+    .qg-item:hover { border-color: var(--deborah-semantic-color-action-primary); }
+    .qg-item.active { border-color: var(--deborah-semantic-color-action-primary); background: color-mix(in srgb, var(--deborah-semantic-color-action-primary) 8%, transparent); }
+    .qg-item .qname { font-weight: 600; }
+    .qg-item .qmeta { font-size: 12px; color: var(--deborah-semantic-color-text-muted); }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+    .badge.ai_draft { background: rgba(148,163,184,.15); color: #94a3b8; }
+    .badge.reviewed { background: rgba(251,191,36,.15); color: #fbbf24; }
+    .badge.approved { background: rgba(0,229,160,.15); color: #00e5a0; }
+    .badge.published { background: rgba(37,99,235,.15); color: #60a5fa; }
+    .badge.rejected { background: rgba(248,113,113,.15); color: #f87171; }
+    .badge.retired { background: rgba(148,163,184,.25); color: #64748b; }
+    .btn { padding: 6px 14px; border-radius: 8px; border: 1px solid var(--deborah-semantic-color-border-default); background: var(--deborah-semantic-color-surface-raised); color: var(--deborah-semantic-color-text-primary); cursor: pointer; font-size: 13px; transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s; }
+    .btn:hover { border-color: var(--deborah-semantic-color-action-primary); }
+    .btn.primary { background: var(--deborah-semantic-color-action-primary); border-color: var(--deborah-semantic-color-action-primary); color: #fff; }
+    .btn.danger { background: rgba(248,113,113,.12); border-color: rgba(248,113,113,.5); color: #f87171; }
+    .btn.sm { padding: 4px 10px; font-size: 12px; }
+    .input, textarea.input { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--deborah-semantic-color-border-default); background: var(--deborah-semantic-color-surface-raised); color: var(--deborah-semantic-color-text-primary); font-size: 13px; box-sizing: border-box; }
+    textarea.input { min-height: 80px; resize: vertical; }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 12px; color: var(--deborah-semantic-color-text-muted); margin-bottom: 4px; }
+    .toast { position: fixed; top: 16px; right: 16px; z-index: 50; padding: 10px 16px; border-radius: 10px; background: var(--deborah-semantic-color-surface-raised); border: 1px solid var(--deborah-semantic-color-border-default); box-shadow: 0 8px 24px rgba(0,0,0,.3); opacity: 0; transform: translateY(-8px); transition:color .25s,background-color .25s,border-color .25s,box-shadow .25s,transform .25s,opacity .25s; font-size: 13px; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.err { border-color: rgba(248,113,113,.5); }
+    .toast.ok { border-color: rgba(0,229,160,.5); }
+    .valid { font-size: 11px; margin: 2px 0; }
+    .valid.ok { color: #00e5a0; }
+    .valid.no { color: #f87171; }
+    .muted { color: var(--deborah-semantic-color-text-muted); }
+    table.qg-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table.qg-table th, table.qg-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--deborah-semantic-color-border-default); }
+    table.qg-table th { color: var(--deborah-semantic-color-text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+    @media (max-width: 960px) { .qg-grid { grid-template-columns: 1fr; } }
+  </style>
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body>
+  <%- include('../partials/sidebar', { active: 'ai-question-gen', user }) %>
+  <main class="main">
+    <div class="topbar">
+      <h1>AI Question Generator — 50/30/20</h1>
+      <div class="topbar-right">
+        <button class="btn primary" onclick="openBlueprint()">+ Blueprint yaratish</button>
+      </div>
+    </div>
+
+    <div class="qg-grid">
+      <div>
+        <div class="qg-panel">
+          <h3>Blueprint'lar</h3>
+          <div id="bpList"><span class="muted">Yuklanmoqda…</span></div>
+          <div style="margin-top:14px">
+            <button class="btn" style="width:100%" onclick="loadDashboard()">Yangilash</button>
+          </div>
+        </div>
+
+        <div class="qg-panel" style="margin-top:14px">
+          <h3>Candidate sinovi (dry-run)</h3>
+          <div class="field"><label>Job ID</label><input class="input" id="cdJobId" placeholder="1"></div>
+          <div class="field"><label>Stem</label><textarea class="input" id="cdStem" placeholder="Fotosintezda CO2 qaysi bosqichda sarflanadi?"></textarea></div>
+          <div class="field"><label>Options (JSON)</label><textarea class="input" id="cdOptions">[{"key":"A","text":"Kalvin sikli","isCorrect":true},{"key":"B","text":"Yorug'lik bosqichi","isCorrect":false},{"key":"C","text":"Glikoliz","isCorrect":false}]</textarea></div>
+          <div class="field"><label>To'g'ri javob (verifier uchun)</label><input class="input" id="cdAnswer" value="Kalvin sikli"></div>
+          <div class="field"><label>Source refs (JSON)</label><textarea class="input" id="cdRefs">[{"chunkId":1,"quote":"Kalvin sikli CO2 ni sarflaydi"}]</textarea></div>
+          <div class="field"><label>Approved chunks (JSON)</label><textarea class="input" id="cdChunks">[{"id":1,"quote":"Fotosintezda CO2 Kalvin sikli bosqichida sarflanadi"}]</textarea></div>
+          <button class="btn primary" onclick="submitCandidate()">Candidate jo'natish</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="qg-panel">
+          <h3 id="bpTitle">Blueprint tanlang</h3>
+          <div id="bpDetail"><span class="muted">Yuklanmoqda…</span></div>
+        </div>
+
+        <div class="qg-panel" style="margin-top:14px">
+          <h3>Candidate'lar</h3>
+          <table class="qg-table">
+            <thead><tr><th>ID</th><th>Stem</th><th>Diff</th><th>Holat</th><th>Valid</th></tr></thead>
+            <tbody id="candTable"><tr><td colspan="5" class="muted">Yuklanmoqda…</td></tr></tbody>
+          </table>
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap" id="candActions"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+  const CSRF = '<%- csrfToken %>';
+  let dash = null;
+  let selectedCand = null;
+  function toast(msg, ok) {
+    let el = document.querySelector('.toast');
+    if (!el) { el = document.createElement('div'); el.className = 'toast'; document.body.appendChild(el); }
+    el.textContent = msg;
+    el.className = 'toast show ' + (ok ? 'ok' : 'err');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => (el.className = 'toast'), 2600);
+  }
+  function esc(s) {
+    return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  function badge(v) { return '<span class="badge ' + esc(v) + '">' + esc(v) + '</span>'; }
+  async function api(path, opts = {}) {
+    const headers = { 'Content-Type': 'application/json', ...(opts.headers || {}) };
+    if (opts.method && opts.method !== 'GET') headers['X-CSRF-Token'] = CSRF;
+    const res = await fetch(path, { method: opts.method || 'GET', headers, body: opts.body ? JSON.stringify(opts.body) : undefined });
+    return res.json();
+  }
+  async function loadDashboard() {
+    try {
+      dash = await api('/api/admin/ai-question-gen/dashboard');
+      renderBlueprints();
+      renderCandidates();
+    } catch (e) { toast('Xato: ' + e.message, false); }
+  }
+  function renderBlueprints() {
+    const list = document.getElementById('bpList');
+    if (!dash || !dash.blueprints || dash.blueprints.length === 0) { list.innerHTML = '<span class="muted">Blueprint yo\'q</span>'; return; }
+    list.innerHTML = dash.blueprints.map((b) =>
+      '<div class="qg-item" data-id="' + b.id + '" onclick="selectBlueprint(' + b.id + ')">' +
+        '<div class="qname">' + esc(b.name) + '</div>' +
+        '<div class="qmeta">N=' + b.target_count + ' · ' + badge(b.status) + ' · ' + esc(b.model) + '</div>' +
+      '</div>'
+    ).join('');
+  }
+  async function selectBlueprint(id) {
+    const b = await api('/api/admin/ai-question-gen/blueprints/' + id);
+    if (!b.ok) return;
+    document.querySelectorAll('.qg-item').forEach((el) => el.classList.remove('active'));
+    const el = document.querySelector('.qg-item[data-id="' + id + '"]');
+    if (el) el.classList.add('active');
+    document.getElementById('bpTitle').textContent = 'Blueprint #' + b.blueprint.id + ' — ' + b.blueprint.name;
+    const jobs = (b.blueprint.jobs || []).map((j) => esc(j.slot) + '×' + j.requested_count + ' (overgen ' + j.overgenerate_factor + ')').join(' · ');
+    document.getElementById('bpDetail').innerHTML =
+      '<div class="metric">N <b>' + b.blueprint.target_count + '</b></div>' +
+      '<div class="metric">Taqlsimot <b>50/30/20</b></div>' +
+      '<div class="metric">Language <b>' + esc(b.blueprint.language) + '</b></div>' +
+      '<div style="margin-top:8px;font-size:13px">Jobs: ' + jobs + '</div>';
+  }
+  function renderCandidates() {
+    const tb = document.getElementById('candTable');
+    const actions = document.getElementById('candActions');
+    if (!dash) return;
+    const cands = dash.candidates || [];
+    if (cands.length === 0) { tb.innerHTML = '<tr><td colspan="5" class="muted">Candidate yo\'q</td></tr>'; actions.innerHTML = ''; return; }
+    tb.innerHTML = cands.slice(0, 20).map((c) =>
+      '<tr style="cursor:pointer" onclick="selectCandidate(' + c.id + ')">' +
+        '<td>' + c.id + '</td><td>' + esc((c.stem || '').slice(0, 50)) + '</td>' +
+        '<td>' + esc(c.difficulty) + '</td><td>' + badge(c.status) + '</td>' +
+        '<td>' + (c.validation_summary && c.validation_summary.allOk ? '<span class="valid ok">✓</span>' : '<span class="valid no">✗</span>') + '</td>' +
+      '</tr>'
+    ).join('');
+    actions.innerHTML = '';
+  }
+  async function selectCandidate(id) {
+    const r = await api('/api/admin/ai-question-gen/candidates/' + id);
+    if (!r.ok) return;
+    selectedCand = r.candidate;
+    const actions = document.getElementById('candActions');
+    const vs = (r.candidate.validations || []).map((v) => '<div class="valid ' + (v.ok ? 'ok' : 'no') + '">' + esc(v.validator) + ': ' + esc(v.note) + '</div>').join('');
+    actions.innerHTML =
+      '<div style="width:100%"><b>#' + r.candidate.id + '</b> ' + badge(r.candidate.status) + ' · ' + esc(r.candidate.difficulty) + ' · ' + esc(r.candidate.cognitive_level || '') + '</div>' +
+      '<div style="width:100%;font-size:13px;margin:6px 0">' + esc(r.candidate.stem) + '</div>' + vs +
+      '<button class="btn sm" onclick="reviewCand(\'approve\')">Approve</button> ' +
+      '<button class="btn sm" onclick="reviewCand(\'reject\')">Reject</button> ' +
+      '<button class="btn sm primary" onclick="reviewCand(\'publish\')">Publish (item-bank)</button>';
+  }
+  async function reviewCand(decision) {
+    if (!selectedCand) return;
+    let bankId = null;
+    if (decision === 'publish') {
+      bankId = prompt('Item bank ID:');
+      if (!bankId) return;
+    }
+    const r = await api('/api/admin/ai-question-gen/candidates/' + selectedCand.id + '/review', {
+      method: 'POST', body: { decision, bankId: bankId ? Number(bankId) : undefined, note: 'teacher review' },
+    });
+    if (r.ok) { toast('Candidate: ' + decision, true); loadDashboard(); }
+    else toast(r.error || 'Xato', false);
+  }
+  async function submitCandidate() {
+    let options, refs, chunks;
+    try { options = JSON.parse(document.getElementById('cdOptions').value); } catch (_) { toast('Options JSON emas', false); return; }
+    try { refs = JSON.parse(document.getElementById('cdRefs').value); } catch (_) { refs = []; }
+    try { chunks = JSON.parse(document.getElementById('cdChunks').value); } catch (_) { chunks = []; }
+    const r = await api('/api/admin/ai-question-gen/candidates', {
+      method: 'POST',
+      body: {
+        jobId: Number(document.getElementById('cdJobId').value),
+        approvedChunks: chunks,
+        candidate: {
+          stem: document.getElementById('cdStem').value,
+          correctAnswer: document.getElementById('cdAnswer').value,
+          options, correctKey: 'A', questionType: 'single_choice',
+          difficulty: 'medium', cognitiveLevel: 'apply',
+          sourceRefs: refs, rationale: 'source-grounded',
+        },
+      },
+    });
+    if (r.ok) {
+      const summary = (r.validation.validations || []).map((v) => v.name + (v.ok ? '✓' : '✗')).join(' ');
+      toast('Accepted: ' + r.accepted + ' · ' + summary, r.accepted);
+      loadDashboard();
+    } else toast(r.error || 'Xato', false);
+  }
+  function openBlueprint() {
+    const name = prompt('Blueprint nomi (masalan DTM Biologiya):');
+    if (!name) return;
+    const target = Number(prompt('Savollar soni N (masalan 20):'));
+    if (!target) return;
+    api('/api/admin/ai-question-gen/blueprints', {
+      method: 'POST',
+      body: { name, targetCount: target, sourcePackId: 1, model: 'claude-sonnet', modelVersion: '2026-07-01', itemTypes: ['single_choice'], language: 'uz' },
+    }).then((r) => {
+      if (r.ok) { toast('Blueprint yaratildi: ' + r.jobs.map((j) => j.slot + '×' + j.requested).join(' '), true); loadDashboard(); }
+      else toast(r.error || 'Xato', false);
+    });
+  }
+  loadDashboard();
+  </script>
+</body>
+</html>

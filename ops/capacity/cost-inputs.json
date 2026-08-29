@@ -1,0 +1,49 @@
+{
+  "description": "Cast cost model inputlari (C5-10, item 13). Narxlar kodda emas — shu faylda. Provider narxlari o'zgarsa shu yerdan yangilanadi.",
+  "defaults": {
+    "durationMinutes": 60,
+    "nodeHourPrice": 0,
+    "egressPricePerGb": 0,
+    "storagePricePerGbMonth": 0,
+    "observabilityPricePerGb": 0,
+    "supportHourlyCost": 0,
+    "realtimeRate": 0
+  },
+  "traffic": {
+    "avgAnswerBytes": 256,
+    "answersPerSession": 20,
+    "avgAckBytes": 128,
+    "eventsPerAnswer": 2,
+    "eventRecipientsFactor": 0.5,
+    "storageBytesPerAnswer": 512,
+    "telemetryBytesPerAnswer": 384,
+    "retentionDays": 90
+  },
+  "tiers": {
+    "S": {
+      "nodeCount": 1,
+      "supportHours": 0,
+      "comment": "1-30 concurrent, single node"
+    },
+    "M": {
+      "nodeCount": 1,
+      "supportHours": 0,
+      "comment": "31-100 concurrent, single node"
+    },
+    "L": {
+      "nodeCount": 2,
+      "supportHours": 1,
+      "comment": "101-500 concurrent, 2 node"
+    },
+    "XL": {
+      "nodeCount": 3,
+      "supportHours": 2,
+      "comment": "501-1000 concurrent, 3 node"
+    },
+    "XXL": {
+      "nodeCount": 6,
+      "supportHours": 4,
+      "comment": "1001-10000 concurrent, 6 node, Redis"
+    }
+  }
+}

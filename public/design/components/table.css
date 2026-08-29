@@ -1,0 +1,152 @@
+/* ═══════════════════════════════════════════════════════════════
+   STEP 18 — Table, filter, search va density components
+   S18.01-05: semantic table anatomy, sortable th, alignment,
+   density modes, row states.
+   S18.09-11: mobile reflow, overflow affordance, loading/empty/error.
+   Layered on top of design-system tables (style.css/admin.css).
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── S18.01/02: Semantic table shell + sortable headers ── */
+.dt {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: .8rem;
+}
+.dt th, .dt td {
+  padding: var(--dt-row-pad-y, 10px) var(--dt-cell-pad-x, 14px);
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--deborah-semantic-color-border-default, var(--deborah-semantic-color-border-subtle));
+  white-space: nowrap;
+}
+.dt thead th {
+  position: relative;
+  font-size: .68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--deborah-semantic-color-text-muted, var(--deborah-semantic-color-text-muted));
+  background: var(--bg-elevated, var(--deborah-semantic-color-surface-raised));
+  border-bottom: 2px solid var(--deborah-semantic-color-border-default, var(--deborah-semantic-color-border-subtle));
+}
+/* Sortable header = button, focus-visible ring */
+.dt-sort {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: none; border: none; padding: 2px 0;
+  color: inherit; font: inherit; font-weight: 700; letter-spacing: inherit;
+  text-transform: inherit; cursor: pointer;
+}
+.dt-sort:hover { color: var(--deborah-semantic-color-action-primary); }
+.dt-sort:focus-visible {
+  outline: 3px solid var(--deborah-semantic-color-focus-ring, #255EDB);
+  outline-offset: 2px; border-radius: 4px;
+}
+.dt-sort .dt-sort-ico { opacity: .4; display: inline-flex; }
+.dt-sort[aria-sort="ascending"] .dt-sort-ico,
+.dt-sort[aria-sort="descending"] .dt-sort-ico { opacity: 1; color: var(--deborah-semantic-color-action-primary); }
+.dt th[aria-sort] .dt-sort-ico { opacity: .6; }
+
+/* ── S18.03: Alignment — names left, numbers right, actions last ── */
+.dt .dt-num { text-align: right; font-variant-numeric: tabular-nums; }
+.dt th.dt-num .dt-sort { justify-content: flex-end; }
+.dt .dt-actions { text-align: right; }
+.dt th.dt-actions .dt-sort { justify-content: flex-end; }
+.dt .dt-ts { font-size: .74rem; color: var(--deborah-semantic-color-text-muted, var(--deborah-semantic-color-text-muted)); white-space: nowrap; }
+
+/* ── S18.04: Density modes ── */
+.dt[data-density="default"] { --dt-row-pad-y: 11px; --dt-row-h: 46px; }
+.dt[data-density="compact"] { --dt-row-pad-y: 6px; --dt-row-h: 38px; }
+.dt[data-density="default"] .dt-row { min-height: var(--dt-row-h); }
+.dt[data-density="compact"] .dt-row { min-height: var(--dt-row-h); }
+/* Density switcher */
+.dt-toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.dt-density {
+  display: inline-flex; border: 1px solid var(--deborah-semantic-color-border-default, var(--deborah-semantic-color-border-subtle));
+  border-radius: var(--deborah-radius-sm, 8px); overflow: hidden;
+}
+.dt-density button {
+  background: none; border: none; padding: 6px 10px;
+  color: var(--deborah-semantic-color-text-muted, var(--deborah-semantic-color-text-muted));
+  font-family: 'Source Sans 3', sans-serif; font-size: .72rem; font-weight: 600;
+  cursor: pointer; display: inline-flex; align-items: center; gap: 4px;
+}
+.dt-density button[aria-pressed="true"] {
+  background: var(--deborah-semantic-color-action-primary); color: var(--deborah-semantic-color-action-on-action, #fff);
+}
+.dt-density button:hover:not([aria-pressed="true"]) { background: var(--bg-elevated); color: var(--deborah-semantic-color-text-primary); }
+
+/* ── S18.05: Row states ── */
+.dt .dt-row:hover { background: var(--bg-elevated, rgba(255,255,255,.04)); }
+.dt .dt-row:focus-within { background: var(--bg-elevated, rgba(255,255,255,.04)); }
+.dt .dt-row.is-selected { background: var(--accent-alpha, rgba(37,99,235,.1)); }
+.dt .dt-row.is-selected td:first-child { box-shadow: inset 3px 0 0 var(--deborah-semantic-color-action-primary); }
+.dt .dt-row.is-pending { opacity: .65; }
+.dt .dt-row.is-error td { background: var(--deborah-semantic-color-status-danger-soft, rgba(239,68,68,.06)); }
+.dt .dt-row.is-error .dt-cell-main { color: var(--deborah-semantic-color-status-danger, #ef4444); }
+
+/* ── S18.10: Overflow affordance + sticky header ── */
+.dt-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--deborah-semantic-color-border-default, var(--deborah-semantic-color-border-subtle));
+  border-radius: var(--deborah-radius-md, 12px);
+  background: var(--deborah-semantic-color-surface-raised, var(--deborah-semantic-color-surface-raised));
+  -webkit-overflow-scrolling: touch;
+}
+.dt-wrap::after {
+  content: ''; display: block; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--deborah-semantic-color-action-primary), transparent);
+  opacity: 0; transition: opacity .2s ease;
+}
+.dt-wrap.is-scrollable::after { opacity: .5; }
+.dt thead th { position: sticky; top: 0; z-index: 2; }
+
+/* ── S18.11: Loading/empty/error rows — valid table semantics ── */
+.dt-row-status td {
+  text-align: center; padding: 22px 14px; white-space: normal;
+  color: var(--deborah-semantic-color-text-muted, var(--deborah-semantic-color-text-muted)); font-size: .78rem;
+}
+.dt-row-status .inline-status { justify-content: center; }
+.dt-empty-ico { display: flex; justify-content: center; margin-bottom: 6px; opacity: .6; }
+
+/* ── S18.09: Mobile reflow — priority columns → card-like rows ──
+   Desktop table 320px ga siqilmaydi: < 640px da list/card reflow. */
+@media (max-width: 640px) {
+  .dt-wrap.is-reflow { border: none; border-radius: 0; background: transparent; overflow: visible; }
+  .dt-wrap.is-reflow .dt thead { display: none; }
+  .dt-wrap.is-reflow .dt, .dt-wrap.is-reflow .dt tbody { display: block; width: 100%; }
+  .dt-wrap.is-reflow .dt .dt-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2px 12px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border: 1px solid var(--deborah-semantic-color-border-default, var(--deborah-semantic-color-border-subtle));
+    border-radius: var(--deborah-radius-md, 12px);
+    background: var(--deborah-semantic-color-surface-raised, var(--deborah-semantic-color-surface-raised));
+    white-space: normal;
+  }
+  .dt-wrap.is-reflow .dt .dt-row td {
+    display: block; border: none; padding: 0; white-space: normal;
+    text-align: left !important;
+  }
+  /* Priority: 1-2-col primary row, qolgani meta */
+  .dt-wrap.is-reflow .dt .dt-cell-main {
+    grid-column: 1; font-weight: 700; font-size: .84rem;
+  }
+  .dt-wrap.is-reflow .dt .dt-cell-actions {
+    grid-column: 2; grid-row: 1; display: flex; align-items: center; gap: 4px;
+  }
+  .dt-wrap.is-reflow .dt .dt-cell-meta {
+    grid-column: 1 / -1; font-size: .72rem; color: var(--deborah-semantic-color-text-muted, var(--deborah-semantic-color-text-muted));
+    display: flex; flex-wrap: wrap; gap: 4px 12px;
+  }
+  .dt-wrap.is-reflow .dt .dt-cell-meta span::before {
+    content: attr(data-label) ': '; font-weight: 700; color: var(--deborah-semantic-color-text-muted, var(--deborah-semantic-color-text-muted));
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .dt-row, .dt th, .dt td { transition: none !important; }
+}

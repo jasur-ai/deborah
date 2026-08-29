@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="<%= lang || 'uz' %>" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <style>
+    body{background:var(--deborah-semantic-color-surface-default);min-height:100vh;transition:background .3s;font-family:'Source Sans 3',sans-serif;}
+    .navbar{position:sticky;top:0;z-index:100;background:var(--bg-overlay);backdrop-filter:blur(18px);border-bottom:1px solid var(--deborah-semantic-color-border-default);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+    .nav-logo{font-family:'Manrope',cursive;font-size:1.25rem;text-decoration:none;display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--deborah-semantic-color-action-primary),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .nav-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+    .nav-btn{padding:7px 12px;border-radius:9px;border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-muted);font-family:'Source Sans 3',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:5px;}
+    .panel{max-width:620px;margin:0 auto;padding:24px 20px 80px;}
+    .greeting{font-family:'Manrope',cursive;font-size:1.5rem;display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+    .greeting-sub{font-size:.82rem;color:var(--deborah-semantic-color-text-muted);font-weight:700;margin-bottom:20px;}
+    .tg-card{background:var(--deborah-semantic-color-surface-raised);border-radius:16px;padding:20px;border:1px solid var(--deborah-semantic-color-border-default);}
+    .tg-status{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+    .tg-badge{display:inline-flex;align-items:center;gap:6px;font-size:.76rem;font-weight:700;border-radius:999px;padding:5px 12px;}
+    .tg-badge.ok{color:var(--green);background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.3);}
+    .tg-badge.off{color:var(--deborah-semantic-color-text-muted);background:var(--deborah-semantic-color-surface-input);border:1px solid var(--deborah-semantic-color-border-default);}
+    .tg-hint{font-size:.78rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;line-height:1.5;margin-bottom:16px;}
+    .tg-link-box{display:flex;gap:8px;align-items:center;margin-top:14px;flex-wrap:wrap;}
+    .tg-link{flex:1;min-width:200px;background:var(--deborah-semantic-color-surface-input);border:2px solid var(--deborah-semantic-color-border-default);border-radius:10px;padding:10px 13px;color:var(--deborah-semantic-color-text-primary);font-size:.78rem;font-weight:600;word-break:break-all;}
+    .tg-btn{border-radius:10px;border:none;padding:11px 16px;cursor:pointer;font-family:'Source Sans 3',sans-serif;font-weight:700;font-size:.8rem;background:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#041018);display:flex;align-items:center;gap:6px;}
+    .tg-btn:disabled{opacity:.55;cursor:not-allowed;}
+    .tg-btn.ghost{background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-muted);border:1px solid var(--deborah-semantic-color-border-default);}
+    .tg-meta{font-size:.74rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-top:10px;}
+    .status-msg{font-size:.78rem;font-weight:700;margin-top:12px;}
+    .status-msg.ok{color:var(--green);}
+    .status-msg.fail{color:var(--deborah-semantic-color-action-primary);}
+    .tg-disabled{color:var(--deborah-semantic-color-text-muted);font-size:.82rem;font-weight:600;padding:10px 0;}
+    @media(max-width:600px){.tg-link-box{flex-direction:column;}.tg-btn{width:100%;justify-content:center;}}
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="nav-logo"><img src="/images/logo-vintage.png" alt="Deborah" class="logo-img" style="height:34px;width:auto"></a>
+    <div class="nav-right">
+      <a href="/user/panel" class="nav-btn" style="text-decoration:none"><%- icon('book', 14) %> Panel</a>
+      <a href="/user/notifications" class="nav-btn" style="text-decoration:none"><%- icon('bell', 14) %> Bildirishnomalar</a>
+      <button type="button" class="nav-btn" data-theme-toggle title="Light mode"><%- icon('moon', 16) %></button>
+      <a href="/user/logout" class="nav-btn" style="text-decoration:none"><%- icon('logOut', 14) %> Chiqish</a>
+    </div>
+  </nav>
+
+  <div class="panel">
+    <div class="greeting"><img src="/images/logo-vintage.png" alt="Deborah" class="logo-img" style="height:30px;width:auto"> <%= telegramCopy.title || 'Telegram' %></div>
+    <div class="greeting-sub"><%= telegramCopy.subtitle || '' %></div>
+
+    <div class="tg-card">
+      <% if (!enabled) { %>
+        <div class="tg-disabled"><%- icon('info', 14) %> <%= telegramCopy.disabled || 'Telegram hozircha o\u2018chirilgan' %></div>
+      <% } else if (linked) { %>
+        <div class="tg-status">
+          <span class="tg-badge ok"><%- icon('checkCircle', 13) %> <%= telegramCopy.linked || 'Telegram ulangan' %></span>
+          <span class="tg-meta"><%= telegramCopy.linkedDesc || '' %> <%= telegramId || '' %></span>
+        </div>
+        <button type="button" id="unlink-btn" class="tg-btn ghost"><%- icon('logOut', 13) %> <%= telegramCopy.unlink || "O'chirish" %></button>
+      <% } else { %>
+        <div class="tg-status">
+          <span class="tg-badge off"><%- icon('send', 13) %> <%= telegramCopy.unlinked || 'Hozircha ulanmagan' %></span>
+        </div>
+        <div class="tg-hint"><%= telegramCopy.linkHint || '' %></div>
+        <button type="button" id="gen-btn" class="tg-btn"><%- icon('send', 13) %> <%= telegramCopy.generate || 'Havolani yaratish' %></button>
+        <div class="tg-link-box" id="link-box" hidden>
+          <input type="text" id="tg-url" class="tg-link" readonly>
+          <button type="button" id="copy-btn" class="tg-btn"><%- icon('copy', 13) %> Copy</button>
+        </div>
+      <% } %>
+      <div id="status" class="status-msg" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <script>
+    window.__CSRF__ = <%- JSON.stringify(csrf || '') %>;
+    document.addEventListener('DOMContentLoaded', function () {
+      var status = document.getElementById('status');
+      var show = function (cls, txt) {
+        status.className = 'status-msg ' + cls;
+        status.textContent = txt;
+      };
+      var genBtn = document.getElementById('gen-btn');
+      if (genBtn) {
+        genBtn.addEventListener('click', async function () {
+          genBtn.disabled = true;
+          show('', '');
+          try {
+            var res = await fetch('/api/telegram/link', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': window.__CSRF__ || '' },
+            });
+            var data = await res.json();
+            if (data.ok) {
+              var box = document.getElementById('link-box');
+              var url = document.getElementById('tg-url');
+              url.value = data.url;
+              box.hidden = false;
+              show('ok', '');
+            } else {
+              show('fail', data.error || 'error');
+            }
+          } catch (e) {
+            show('fail', 'error');
+          } finally {
+            genBtn.disabled = false;
+          }
+        });
+      }
+      var copyBtn = document.getElementById('copy-btn');
+      if (copyBtn) {
+        copyBtn.addEventListener('click', function () {
+          var url = document.getElementById('tg-url');
+          url.select();
+          try { navigator.clipboard.writeText(url.value); } catch (e) {}
+          show('ok', 'Copied');
+        });
+      }
+      var unlinkBtn = document.getElementById('unlink-btn');
+      if (unlinkBtn) {
+        unlinkBtn.addEventListener('click', async function () {
+          unlinkBtn.disabled = true;
+          try {
+            var res = await fetch('/api/telegram/unlink', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': window.__CSRF__ || '' },
+            });
+            var data = await res.json();
+            if (data.ok) window.location.reload();
+            else show('fail', data.error || 'error');
+          } catch (e) {
+            show('fail', 'error');
+          } finally {
+            unlinkBtn.disabled = false;
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

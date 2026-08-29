@@ -1,0 +1,60 @@
+<% const current = user || {}; %>
+<!DOCTYPE html>
+<html lang="uz" dir="ltr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title><%= title %> — Deborah</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="app-body">
+  <main class="page-wrap" style="max-width:720px;margin:0 auto;padding:32px 16px">
+    <div class="card">
+      <% if (ok) { %>
+        <h1 style="margin:0 0 6px"><%= item.title %></h1>
+        <div style="font-size:13px;color:var(--deborah-semantic-color-text-muted);margin-bottom:16px">
+          <%= item.kind %> · Shared via Deborah portfolio
+          <% if (grant && grant.viewerEmail) { %> · cheklangan (viewer)<% } %>
+        </div>
+        <% if (item.evidence && (item.kind === 'result' || item.kind === 'certificate')) { %>
+          <table style="width:100%;border-collapse:collapse;font-size:14px">
+            <tbody>
+              <tr>
+                <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--deborah-semantic-color-border-default)">Fan</th>
+                <td style="padding:6px 8px;border-bottom:1px solid var(--deborah-semantic-color-border-default)"><%= item.evidence.subject %></td>
+              </tr>
+              <% if (item.evidence.semester) { %>
+                <tr>
+                  <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--deborah-semantic-color-border-default)">Semestr</th>
+                  <td style="padding:6px 8px;border-bottom:1px solid var(--deborah-semantic-color-border-default)"><%= item.evidence.semester %></td>
+                </tr>
+              <% } %>
+              <% if (item.evidence.grade) { %>
+                <tr>
+                  <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--deborah-semantic-color-border-default)">Baho</th>
+                  <td style="padding:6px 8px;border-bottom:1px solid var(--deborah-semantic-color-border-default)"><%= item.evidence.grade %></td>
+                </tr>
+              <% } %>
+              <% if (item.evidence.credit) { %>
+                <tr>
+                  <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--deborah-semantic-color-border-default)">Kredit</th>
+                  <td style="padding:6px 8px;border-bottom:1px solid var(--deborah-semantic-color-border-default)"><%= item.evidence.credit %></td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        <% } else if (item.evidence && item.evidence.summary) { %>
+          <p style="white-space:pre-wrap;margin:0"><%= item.evidence.summary %></p>
+        <% } %>
+      <% } else { %>
+        <h1 style="margin:0 0 8px">Share not available</h1>
+        <p style="margin:0;color:var(--deborah-semantic-color-text-muted)"><%= error %></p>
+      <% } %>
+      <div style="margin-top:20px;font-size:12px;color:var(--deborah-semantic-color-text-muted)">
+        Deborah — evidence portfolio · default-private share
+      </div>
+    </div>
+  </main>
+</body>
+</html>

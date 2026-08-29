@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <link rel="stylesheet" href="/css/admin.css">
+  <style>
+    .acc-gate{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:14px;margin-top:16px;font-weight:600;font-size:.84rem;border:1px solid;}
+    .acc-gate.pass{background:rgba(0,229,160,.08);border-color:rgba(0,229,160,.35);color:var(--green);}
+    .acc-gate.fail{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.4);color:#ef4444;}
+    .acc-gate .g-blocks{font-size:.72rem;font-weight:700;margin-top:2px;color:var(--deborah-semantic-color-text-muted);}
+    .acc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:16px;}
+    .acc-card{background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:14px;padding:15px;box-shadow:var(--shadow-sm);}
+    .acc-card h3{margin:0 0 4px;font-size:.9rem;display:flex;align-items:center;gap:8px;}
+    .acc-card .desc{font-size:.7rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-bottom:10px;}
+    .acc-tag{font-size:.64rem;font-weight:700;padding:2px 9px;border-radius:12px;letter-spacing:.3px;text-transform:uppercase;}
+    .acc-tag.green{background:rgba(0,229,160,.12);color:var(--green);}
+    .acc-tag.red{background:rgba(239,68,68,.14);color:#ef4444;}
+    .acc-tag.amber{background:rgba(245,158,11,.14);color:var(--gold);}
+    .acc-tag.blue{background:rgba(37,99,235,.12);color:var(--deborah-semantic-color-action-primary);}
+    .acc-row{display:flex;justify-content:space-between;font-size:.72rem;font-weight:700;padding:3px 0;border-bottom:1px dashed var(--deborah-semantic-color-border-subtle);}
+    .acc-row b{color:var(--deborah-semantic-color-text-primary);}
+    .acc-empty{color:var(--deborah-semantic-color-text-muted);font-size:.74rem;font-weight:700;padding:14px;text-align:center;border:1px dashed var(--deborah-semantic-color-border-subtle);border-radius:10px;}
+    .acc-section-h{display:flex;align-items:center;justify-content:space-between;margin-top:22px;}
+    .acc-section-h h2{font-size:1rem;margin:0;}
+    .acc-mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.68rem;}
+  </style>
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body>
+  <div class="adm-shell">
+    <%- include('../partials/sidebar', { active: '/admin/acceptance', role: 'admin', user }) %>
+    <main class="main" id="main-content" tabindex="-1">
+      <div class="topbar">
+        <h1><%- icon('checkCircle', 18) %> Release Acceptance — Final Handover</h1>
+        <div class="topbar-right">
+          <button type="button" class="admin-nav-btn" onclick="location.reload()"><%- icon('refresh', 14) %> Yangilash</button>
+          <button type="button" class="admin-nav-btn" data-theme-toggle title="Toggle theme"><%- icon('moon', 16) %></button>
+        </div>
+      </div>
+
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="acc-gate fail"><%- icon('alertTriangle', 16) %> Xatolik: <%= error %></div>
+      <% } else if (report) { %>
+        <!-- ═══ Release gate ═══ -->
+        <div class="acc-gate <%= report.release.ok ? 'pass' : 'fail' %>">
+          <%- icon(report.release.ok ? 'checkCircle' : 'alertTriangle', 18) %>
+          <div>
+            <div>Release: <%= report.release.ok ? 'SIGNED OFF — READY' : 'BLOCKED (evidence talab qilinadi)' %></div>
+            <div class="g-blocks"><%= report.release.domainsSigned %>/<%= report.release.domainsTotal %> domain sign-off</div>
+            <% if (!report.release.ok && report.release.blocks.length) { %>
+              <div class="g-blocks"><%= report.release.blocks.join(' • ') %></div>
+            <% } %>
+          </div>
+        </div>
+
+        <!-- ═══ Sign-off domains ═══ -->
+        <div class="acc-section-h">
+          <h2><%- icon('layers', 15) %> Acceptance domains (research.md §21/§34/§39/§63)</h2>
+          <span class="acc-tag <%= report.release.ok ? 'green' : 'amber' %>">
+            <%= report.release.domainsSigned %>/<%= report.release.domainsTotal %> signed
+          </span>
+        </div>
+        <div class="acc-grid">
+          <% domains.forEach((d) => { %>
+            <% const rec = report.domains.find((r) => r.domainId === d.id); %>
+            <div class="acc-card">
+              <h3>
+                <span class="acc-tag <%= rec ? (rec.status === 'signed-off' ? 'green' : (rec.status === 'blocked' ? 'red' : 'amber')) : 'blue' %>">
+                  <%= rec ? rec.status : 'evidence yo‘q' %>
+                </span>
+                <%= d.label %>
+              </h3>
+              <div class="desc"><%= d.evidence.join(' • ') %></div>
+              <div class="acc-row"><span>Owner</span><b><%= rec ? rec.owner : '—' %></b></div>
+              <div class="acc-row"><span>Reviewer</span><b><%= rec && rec.reviewer ? rec.reviewer : '—' %></b></div>
+              <div class="acc-row"><span>Signer</span><b><%= rec && rec.signer ? rec.signer : '—' %></b></div>
+              <% if (rec && rec.criticalRiskOwner) { %>
+                <div class="acc-mono" style="margin-top:6px;color:var(--deborah-semantic-color-text-muted)">Risk owner: <%= rec.criticalRiskOwner %></div>
+              <% } %>
+            </div>
+          <% }) %>
+        </div>
+
+        <!-- ═══ Deferred + backlog ═══ -->
+        <div class="acc-section-h">
+          <h2><%- icon('list', 15) %> Deferred & next-version backlog</h2>
+        </div>
+        <div class="acc-grid">
+          <div class="acc-card">
+            <h3>
+              <span class="acc-tag <%= report.deferredGuard.ok ? 'green' : 'red' %>">
+                <%= report.deferredGuard.ok ? 'OK' : 'XAVF' %>
+              </span>
+              Deferred high-risk
+            </h3>
+            <div class="desc">Deferred feature release'da enabled bo'lmasligi kerak (item 15)</div>
+            <div class="acc-row"><span>Deferred</span><b><%= report.deferred.length ? report.deferred.join(', ') : '—' %></b></div>
+            <% if (!report.deferredGuard.ok) { %>
+              <div class="acc-mono" style="margin-top:6px;color:#ef4444"><%= report.deferredGuard.reason %></div>
+            <% } %>
+          </div>
+          <div class="acc-card">
+            <h3>
+              <span class="acc-tag blue"><%= report.backlog.length %> items</span>
+              Next-version backlog
+            </h3>
+            <div class="desc">Release sign-off'da kelishilgan deferral'lar (item 14)</div>
+            <% if (report.backlog.length) { %>
+              <% report.backlog.forEach((b) => { %>
+                <div class="acc-row"><span><%= b.priority %> • <%= b.title %></span><b><%= b.owner %></b></div>
+              <% }) %>
+            <% } else { %>
+              <div class="acc-empty">Backlog bo‘sh</div>
+            <% } %>
+          </div>
+        </div>
+      <% } %>
+    </main>
+  </div>
+</body>
+</html>

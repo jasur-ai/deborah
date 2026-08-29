@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr" data-theme="dark">
+<head>
+  <%- include('../partials/head', { title, user }) %>
+  <style>
+    .ml-grid { display: grid; grid-template-columns: 320px 1fr; gap: 18px; }
+    .ml-panel { background: var(--deborah-semantic-color-surface-raised); border: 1px solid var(--deborah-semantic-color-border-default); border-radius: 12px; padding: 16px; }
+    .ml-panel h3 { margin: 0 0 12px; font-size: 14px; letter-spacing: .04em; color: var(--deborah-semantic-color-text-muted); text-transform: uppercase; }
+    .ml-model { padding: 10px 12px; border: 1px solid var(--deborah-semantic-color-border-default); border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s; }
+    .ml-model:hover { border-color: var(--deborah-semantic-color-action-primary); }
+    .ml-model.active { border-color: var(--deborah-semantic-color-action-primary); background: color-mix(in srgb, var(--deborah-semantic-color-action-primary) 8%, transparent); }
+    .ml-model .mname { font-weight: 600; }
+    .ml-model .mmeta { font-size: 12px; color: var(--deborah-semantic-color-text-muted); }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+    .badge.draft { background: rgba(148,163,184,.15); color: #94a3b8; }
+    .badge.active { background: rgba(0,229,160,.15); color: #00e5a0; }
+    .badge.disabled { background: rgba(248,113,113,.15); color: #f87171; }
+    .badge.retired { background: rgba(148,163,184,.25); color: #64748b; }
+    .badge.approved { background: rgba(0,229,160,.15); color: #00e5a0; }
+    .badge.rejected { background: rgba(248,113,113,.15); color: #f87171; }
+    .badge.pending { background: rgba(251,191,36,.15); color: #fbbf24; }
+    .badge.low { background: rgba(148,163,184,.15); color: #94a3b8; }
+    .badge.medium { background: rgba(251,191,36,.15); color: #fbbf24; }
+    .badge.high { background: rgba(248,113,113,.15); color: #f87171; }
+    .btn { padding: 6px 14px; border-radius: 8px; border: 1px solid var(--deborah-semantic-color-border-default); background: var(--deborah-semantic-color-surface-raised); color: var(--deborah-semantic-color-text-primary); cursor: pointer; font-size: 13px; transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s; }
+    .btn:hover { border-color: var(--deborah-semantic-color-action-primary); }
+    .btn.primary { background: var(--deborah-semantic-color-action-primary); border-color: var(--deborah-semantic-color-action-primary); color: #fff; }
+    .btn.danger { background: rgba(248,113,113,.12); border-color: rgba(248,113,113,.5); color: #f87171; }
+    .btn.sm { padding: 4px 10px; font-size: 12px; }
+    .input, textarea.input { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--deborah-semantic-color-border-default); background: var(--deborah-semantic-color-surface-raised); color: var(--deborah-semantic-color-text-primary); font-size: 13px; box-sizing: border-box; }
+    textarea.input { min-height: 80px; resize: vertical; }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 12px; color: var(--deborah-semantic-color-text-muted); margin-bottom: 4px; }
+    .toast { position: fixed; top: 16px; right: 16px; z-index: 50; padding: 10px 16px; border-radius: 10px; background: var(--deborah-semantic-color-surface-raised); border: 1px solid var(--deborah-semantic-color-border-default); box-shadow: 0 8px 24px rgba(0,0,0,.3); opacity: 0; transform: translateY(-8px); transition:color .25s,background-color .25s,border-color .25s,box-shadow .25s,transform .25s,opacity .25s; font-size: 13px; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.err { border-color: rgba(248,113,113,.5); }
+    .toast.ok { border-color: rgba(0,229,160,.5); }
+    .metric { display: inline-block; margin-right: 16px; font-size: 13px; }
+    .metric b { font-size: 18px; }
+    .muted { color: var(--deborah-semantic-color-text-muted); }
+    table.ml-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table.ml-table th, table.ml-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--deborah-semantic-color-border-default); }
+    table.ml-table th { color: var(--deborah-semantic-color-text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+    .checks { margin-top: 8px; font-size: 12px; }
+    .checks .ok { color: #00e5a0; }
+    .checks .no { color: #f87171; }
+    @media (max-width: 960px) { .ml-grid { grid-template-columns: 1fr; } }
+  </style>
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body>
+  <%- include('../partials/sidebar', { active: 'ai-mlops', user }) %>
+  <main class="main">
+    <div class="topbar">
+      <h1>AI Evaluation & MLOps</h1>
+      <div class="topbar-right">
+        <button class="btn primary" onclick="openRegister()">+ Model ro'yxatga olish</button>
+        <button class="btn" onclick="openDataset()">+ Dataset yaratish</button>
+      </div>
+    </div>
+
+    <div class="ml-grid">
+      <div>
+        <div class="ml-panel">
+          <h3>Model registry</h3>
+          <div id="modelList"><span class="muted">Yuklanmoqda…</span></div>
+          <div style="margin-top:14px">
+            <button class="btn" style="width:100%" onclick="loadDashboard()">Yangilash</button>
+          </div>
+        </div>
+
+        <div class="ml-panel" style="margin-top:14px">
+          <h3>Kill switch / Rollback</h3>
+          <div class="field"><label>Model ID</label><input class="input" id="rbModelId" placeholder="1"></div>
+          <div class="field">
+            <label>Harakat</label>
+            <select class="input" id="rbAction">
+              <option value="disable">Disable (RUNBOOK-DISABLE-V1)</option>
+              <option value="rollback">Rollback (RUNBOOK-ROLLBACK-V1)</option>
+              <option value="retire">Retire</option>
+            </select>
+          </div>
+          <div class="field"><label>Sabab</label><textarea class="input" id="rbReason" placeholder="Drift: QWK 0.80 → 0.61…"></textarea></div>
+          <button class="btn danger" onclick="execRollback()">Kill switch ishga tushirish</button>
+          <p class="muted" style="font-size:11px;margin-top:8px">Rollback faqat model status'ni o'zgartiradi — mavjud final baholar qayta yozilmaydi (immutable final).</p>
+        </div>
+      </div>
+
+      <div>
+        <div class="ml-panel">
+          <h3 id="modelTitle">Model tanlang</h3>
+          <div id="modelDetail"><span class="muted">Yuklanmoqda…</span></div>
+        </div>
+
+        <div class="ml-panel" style="margin-top:14px">
+          <h3>Golden set bilan baholash (deployment gate)</h3>
+          <div class="field"><label>Dataset ID</label><input class="input" id="evDataset" placeholder="1 (golden, holdout)"></div>
+          <div class="field"><label>Stage</label>
+            <select class="input" id="evStage">
+              <option value="offline">OFFLINE → SHADOW (QWK≥0.70, ECE≤0.15)</option>
+              <option value="shadow" selected>SHADOW → ASSIST (QWK≥0.80, ECE≤0.12, override≤0.20)</option>
+              <option value="assist">ASSIST (QWK≥0.85, ECE≤0.10, override≤0.15)</option>
+            </select>
+          </div>
+          <div class="field"><label>Items (JSON: [{"ai":4,"gold":4,"subgroup":"uz","confidence":0.93}, …])</label><textarea class="input" id="evItems" style="min-height:120px">[{"ai":4,"gold":4,"subgroup":"uz","confidence":0.93},{"ai":3,"gold":3,"subgroup":"uz","confidence":0.88},{"ai":2,"gold":3,"subgroup":"ru","confidence":0.7},{"ai":4,"gold":4,"subgroup":"en","confidence":0.95},{"ai":1,"gold":4,"subgroup":"en","confidence":0.5}]</textarea></div>
+          <div class="field"><label>Override soni</label><input class="input" id="evOverrides" type="number" value="1"></div>
+          <button class="btn primary" onclick="runEval()">Baholash + gate</button>
+        </div>
+
+        <div class="ml-panel" style="margin-top:14px">
+          <h3>Metrikalar</h3>
+          <div id="evalResult"><span class="muted">Hali baholanmagan</span></div>
+        </div>
+
+        <div class="ml-panel" style="margin-top:14px">
+          <h3>Drift & rollback tarixi</h3>
+          <table class="ml-table">
+            <thead><tr><th>Turi</th><th>Model</th><th>Detal</th><th>Holat</th></tr></thead>
+            <tbody id="driftTable"><tr><td colspan="4" class="muted">Yuklanmoqda…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+  const CSRF = '<%- csrfToken %>';
+  function toast(msg, ok) {
+    let el = document.querySelector('.toast');
+    if (!el) { el = document.createElement('div'); el.className = 'toast'; document.body.appendChild(el); }
+    el.textContent = msg;
+    el.className = 'toast show ' + (ok ? 'ok' : 'err');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => (el.className = 'toast'), 2600);
+  }
+  function esc(s) {
+    return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  function badge(v) {
+    return '<span class="badge ' + esc(v) + '">' + esc(v) + '</span>';
+  }
+  async function api(path, opts = {}) {
+    const headers = { 'Content-Type': 'application/json', ...(opts.headers || {}) };
+    if (opts.method && opts.method !== 'GET') headers['X-CSRF-Token'] = CSRF;
+    const res = await fetch(path, { method: opts.method || 'GET', headers, body: opts.body ? JSON.stringify(opts.body) : undefined });
+    return res.json();
+  }
+
+  let dash = null;
+  async function loadDashboard() {
+    try {
+      dash = await api('/api/admin/ai-mlops/dashboard');
+      renderModels();
+      renderDrift();
+    } catch (e) { toast('Xato: ' + e.message, false); }
+  }
+  function renderModels() {
+    const list = document.getElementById('modelList');
+    if (!dash || !dash.models || dash.models.length === 0) {
+      list.innerHTML = '<span class="muted">Model yo\'q</span>';
+      return;
+    }
+    list.innerHTML = dash.models.map((m) =>
+      '<div class="ml-model" data-id="' + m.id + '" onclick="selectModel(' + m.id + ')">' +
+        '<div class="mname">' + esc(m.name) + ' <span class="muted">v' + esc(m.version) + '</span></div>' +
+        '<div class="mmeta">' + esc(m.provider) + ' · ' + badge(m.status) + (m.allowlisted ? ' · allowlisted' : '') + '</div>' +
+      '</div>'
+    ).join('');
+  }
+  function renderDrift() {
+    const tb = document.getElementById('driftTable');
+    if (!dash) return;
+    const rows = [];
+    (dash.drift || []).slice(0, 8).forEach((d) => {
+      rows.push('<tr><td>Drift</td><td>#' + d.model_id + '</td><td>' + esc(d.metric) + ' ' + esc(d.baseline) + ' → ' + esc(d.current) + '</td><td>' + badge(d.severity) + '</td></tr>');
+    });
+    (dash.rollbacks || []).slice(0, 8).forEach((r) => {
+      rows.push('<tr><td>Rollback</td><td>#' + r.model_id + '</td><td>' + esc(r.action) + ' · ' + esc(r.reason || '') + '</td><td>' + esc(r.from_status) + '→' + esc(r.to_status) + '</td></tr>');
+    });
+    tb.innerHTML = rows.length ? rows.join('') : '<tr><td colspan="4" class="muted">Tarix yo\'q</td></tr>';
+  }
+  async function selectModel(id) {
+    const m = dash.models.find((x) => x.id === id);
+    if (!m) return;
+    document.querySelectorAll('.ml-model').forEach((el) => el.classList.remove('active'));
+    const el = document.querySelector('.ml-model[data-id="' + id + '"]');
+    if (el) el.classList.add('active');
+    document.getElementById('rbModelId').value = id;
+    document.getElementById('modelTitle').textContent = 'Model #' + id + ' — ' + m.name + ' v' + m.version;
+    const det = document.getElementById('modelDetail');
+    det.innerHTML =
+      '<div class="metric">Holat <b>' + esc(m.status) + '</b></div>' +
+      '<div class="metric">Allowlist <b>' + (m.allowlisted ? 'Ha' : 'Yo\'q') + '</b></div>' +
+      '<div class="metric">Eval <b>' + esc(m.eval_metric || 'qwk') + ' ≥ ' + esc(m.eval_threshold) + '</b></div>' +
+      '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">' +
+        (m.allowlisted
+          ? '<button class="btn sm" onclick="toggleAllowlist(' + id + ',false)">Allowlistdan olib tashlash</button>'
+          : '<button class="btn sm" onclick="toggleAllowlist(' + id + ',true)">Allowlist qilish</button>') +
+        '<button class="btn sm" onclick="activateModel(' + id + ')">Aktiv qilish</button>' +
+        '<button class="btn sm" onclick="pinModel(' + id + ')">Versiyani pin qilish</button>' +
+      '</div>';
+  }
+  async function toggleAllowlist(id, v) {
+    const r = await api('/api/admin/ai-mlops/models/' + id + '/allowlist', { method: 'POST', body: { allowlisted: v } });
+    if (r.ok) { toast('Allowlist yangilandi', true); loadDashboard(); } else toast(r.error || 'Xato', false);
+  }
+  async function activateModel(id) {
+    const r = await api('/api/admin/ai-mlops/models/' + id + '/status', { method: 'POST', body: { status: 'active' } });
+    if (r.ok) { toast('Model aktiv', true); loadDashboard(); } else toast(r.error || 'Xato', false);
+  }
+  async function pinModel(id) {
+    const version = prompt('Pin qilinadigan version (masalan 2026-07-01):');
+    if (!version) return;
+    const r = await api('/api/admin/ai-mlops/models/' + id + '/pin', { method: 'POST', body: { modelVersion: version } });
+    if (r.ok) toast('Pin saqlandi: ' + version, true); else toast(r.error || 'Xato', false);
+  }
+  async function runEval() {
+    const modelId = Number(document.getElementById('rbModelId').value);
+    const datasetId = Number(document.getElementById('evDataset').value);
+    let items;
+    try { items = JSON.parse(document.getElementById('evItems').value); } catch (_) { toast('Items JSON emas', false); return; }
+    const overrides = Number(document.getElementById('evOverrides').value || 0);
+    const stage = document.getElementById('evStage').value;
+    const r = await api('/api/admin/ai-mlops/evaluations', { method: 'POST', body: { modelId, datasetId, items, overrides, stage } });
+    if (!r.ok) { toast(r.error || 'Xato', false); return; }
+    const m = r.metrics || {};
+    const gate = r.gate || {};
+    const g = (gate.checks || []).map((c) => '<span class="' + (c.ok ? 'ok' : 'no') + '">' + esc(c.name) + ': ' + esc(c.actual) + ' vs ' + esc(c.threshold) + (c.ok ? ' ✓' : ' ✗') + '</span>').join(' ');
+    document.getElementById('evalResult').innerHTML =
+      '<div class="metric">QWK <b>' + esc(m.qwk) + '</b></div>' +
+      '<div class="metric">MAE <b>' + esc(m.mae) + '</b></div>' +
+      '<div class="metric">F1 <b>' + esc(m.f1) + '</b></div>' +
+      '<div class="metric">ECE <b>' + esc(m.ece) + '</b></div>' +
+      '<div class="metric">Override <b>' + esc(m.overrideRate) + '</b></div>' +
+      '<div class="metric">Gate: ' + badge(gate.decision) + '</div>' +
+      (r.drift && r.drift.drifted ? '<div class="metric">Drift: ' + badge(r.drift.severity) + ' (' + esc(r.drift.delta) + ')</div>' : '') +
+      '<div class="checks">' + g + '</div>' +
+      '<div style="margin-top:8px;font-size:12px">' + (r.subgroups || []).map((s) => esc(s.subgroup) + ' (n=' + s.n + ') QWK ' + esc(s.qwk) + ' MAE ' + esc(s.mae)).join(' · ') + '</div>' +
+      (r.dryRun ? '<div class="muted" style="margin-top:6px">dry-run (PG yo\'q) — ma\'lumot saqlanmadi</div>' : '');
+    toast('Baholash: ' + gate.decision, gate.decision === 'approved');
+    loadDashboard();
+  }
+  async function execRollback() {
+    const modelId = Number(document.getElementById('rbModelId').value);
+    const action = document.getElementById('rbAction').value;
+    const reason = document.getElementById('rbReason').value;
+    const r = await api('/api/admin/ai-mlops/rollback', { method: 'POST', body: { modelId, action, reason } });
+    if (r.ok) { toast('Kill switch: ' + r.event.action + ' → ' + r.event.to_status + ' (immutable final)', true); loadDashboard(); }
+    else toast(r.error || 'Xato', false);
+  }
+  function openRegister() {
+    const name = prompt('Model nomi (masalan claude-sonnet):');
+    if (!name) return;
+    const version = prompt('Version (masalan 2026-07-01):');
+    if (!version) return;
+    api('/api/admin/ai-mlops/models', { method: 'POST', body: { name, version, provider: 'anthropic' } })
+      .then((r) => { if (r.ok) { toast('Model ro\'yxatga olindi', true); loadDashboard(); } else toast(r.error || 'Xato', false); });
+  }
+  function openDataset() {
+    const name = prompt('Dataset nomi (masalan Golden Bio 2026):');
+    if (!name) return;
+    api('/api/admin/ai-mlops/datasets', { method: 'POST', body: { name, kind: 'golden', version: 'v1', holdout: true } })
+      .then((r) => { if (r.ok) { toast('Dataset yaratildi #' + r.dataset.id + ' (holdout)', true); loadDashboard(); } else toast(r.error || 'Xato', false); });
+  }
+  loadDashboard();
+  </script>
+</body>
+</html>

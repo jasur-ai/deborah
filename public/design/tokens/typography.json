@@ -1,0 +1,73 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "deborah": {
+    "typography": {
+      "$description": "STEP 08 — Professional type stack: Source Sans 3 (UI/body), Manrope (display/marketing), IBM Plex Mono (code/timer/numeric). Nunito + Righteous operational ishlatilmaydi (S08.12). Self-hosted (public/fonts, SIL OFL 1.1).",
+      "font-family": {
+        "$type": "fontFamily",
+        "ui": { "$value": ["Source Sans 3", "system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"] },
+        "display": { "$value": ["Manrope", "system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"] },
+        "mono": { "$value": ["IBM Plex Mono", "ui-monospace", "SFMono-Regular", "Consolas", "monospace"] }
+      },
+      "font-size": {
+        "$type": "fontSize",
+        "xs": { "$value": "0.75rem" },
+        "sm": { "$value": "0.875rem" },
+        "base": { "$value": "1rem" },
+        "md": { "$value": "1.0625rem" },
+        "lg": { "$value": "1.125rem" },
+        "xl": { "$value": "1.25rem" },
+        "2xl": { "$value": "1.5rem" },
+        "3xl": { "$value": "1.875rem" },
+        "4xl": { "$value": "2.25rem" },
+        "5xl": { "$value": "3rem" },
+        "6xl": { "$value": "3.75rem" }
+      },
+      "font-weight": {
+        "$type": "fontWeight",
+        "regular": { "$value": "400" },
+        "medium": { "$value": "500" },
+        "semi": { "$value": "600" },
+        "bold": { "$value": "700" }
+      },
+      "line-height": {
+        "$type": "number",
+        "tight": { "$value": "1.15" },
+        "snug": { "$value": "1.35" },
+        "normal": { "$value": "1.55" },
+        "loose": { "$value": "1.7" }
+      },
+      "letter-spacing": {
+        "$type": "number",
+        "tight": { "$value": "-0.01em" },
+        "normal": { "$value": "0em" },
+        "wide": { "$value": "0.02em" },
+        "wider": { "$value": "0.06em" }
+      },
+      "feature": {
+        "$type": "string",
+        "tabular": { "$value": "\"tnum\" 1, \"lnum\" 1" }
+      },
+      "measure": {
+        "$type": "string",
+        "body": { "$value": "60ch" },
+        "min": { "$value": "50ch" },
+        "max": { "$value": "75ch" }
+      },
+      "role": {
+        "$description": "Semantic type roles (S08.06) — qiymatlar foundations/typography.css dagi .type-* klasslarida.",
+        "hero": { "size": "3rem", "weight": "700", "line": "1.15", "family": "display" },
+        "page-title": { "size": "2.25rem", "weight": "700", "line": "1.2", "family": "display" },
+        "section-title": { "size": "1.5rem", "weight": "700", "line": "1.3", "family": "display" },
+        "card-title": { "size": "1.125rem", "weight": "600", "line": "1.4", "family": "ui" },
+        "body": { "size": "1rem", "weight": "400", "line": "1.55", "family": "ui" },
+        "body-large": { "size": "1.125rem", "weight": "400", "line": "1.6", "family": "ui" },
+        "label": { "size": "0.875rem", "weight": "600", "line": "1.4", "family": "ui", "tracking": "0.02em" },
+        "metadata": { "size": "0.875rem", "weight": "400", "line": "1.45", "family": "ui" },
+        "badge": { "size": "0.75rem", "weight": "700", "line": "1.3", "family": "ui", "tracking": "0.06em" },
+        "projector-question": { "size": "3rem", "weight": "700", "line": "1.2", "family": "display" },
+        "projector-option": { "size": "1.5rem", "weight": "600", "line": "1.4", "family": "display" }
+      }
+    }
+  }
+}

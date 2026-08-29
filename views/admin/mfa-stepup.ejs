@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <style>
+    body{background:var(--deborah-semantic-color-surface-default);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;font-family:'Source Sans 3',sans-serif;}
+    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 55% 40% at 15% 20%,rgba(2,132,199,.08) 0%,transparent 65%);}
+    .mfa-card{position:relative;z-index:1;width:100%;max-width:420px;background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-default);border-radius:20px;padding:32px;box-shadow:var(--shadow-lg);animation:slideUp .4s ease;}
+    .mfa-flag{display:inline-flex;align-items:center;gap:6px;font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--deborah-semantic-color-brand-cobalt);padding:5px 12px;border-radius:999px;margin-bottom:18px;}
+    .mfa-icon{width:56px;height:56px;border-radius:16px;background:var(--deborah-semantic-color-action-primary);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;color:var(--deborah-semantic-color-action-on-action,#041018);box-shadow:var(--shadow-md);}
+    .mfa-title{font-family:'Manrope',cursive;font-size:1.4rem;text-align:center;margin-bottom:6px;}
+    .mfa-sub{text-align:center;font-size:.84rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-bottom:24px;}
+    .code-inp{width:100%;text-align:center;font-size:1.5rem;letter-spacing:.5em;font-family:'Manrope',cursive;background:var(--deborah-semantic-color-surface-input);border:2px solid var(--deborah-semantic-color-border-default);border-radius:12px;padding:14px;color:var(--deborah-semantic-color-text-primary);outline:none;transition:border-color .3s;font-variant-numeric:tabular-nums;}
+    .code-inp:focus{border-color:var(--deborah-semantic-color-action-primary);}
+    .verify-btn{width:100%;margin-top:16px;border:none;border-radius:12px;padding:14px;background:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#041018);font-family:'Source Sans 3',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .2s,box-shadow .2s,opacity .2s;}
+    .verify-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+    .verify-btn:disabled{opacity:.55;cursor:not-allowed;transform:none;}
+    .err{display:none;margin-top:14px;border-radius:10px;padding:11px 14px;font-size:.78rem;font-weight:700;color:var(--deborah-semantic-color-danger);background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.3);}
+    .err.show{display:block;}
+    .hint{margin-top:18px;font-size:.72rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;text-align:center;line-height:1.6;}
+    .spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;display:none;animation:spin .7s linear infinite;}
+    .spinner.show{display:inline-block;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body>
+  <div class="mfa-card">
+    <span class="mfa-flag">Admin 2FA — Xavfsiz amal</span>
+    <div class="mfa-icon">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div class="mfa-title">Xavfsizlik uchun qayta tasdiqlang</div>
+    <div class="mfa-sub">Ushbu amal muhim — 2FA kodingizni kiriting (30 daqiqa amal qiladi)</div>
+    <input class="code-inp" id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="••••••" autofocus aria-label="6 xonali kod">
+    <button class="verify-btn" id="btn">
+      <span class="spinner" id="spinner"></span>
+      <span id="btn-label">Tasdiqlash</span>
+    </button>
+    <div class="err" id="err" role="alert"></div>
+    <div class="hint">Kod 90 soniya davomida amal qiladi.</div>
+  </div>
+
+  <script>
+    (function () {
+      var btn = document.getElementById('btn');
+      var codeInp = document.getElementById('code');
+      var err = document.getElementById('err');
+      var spinner = document.getElementById('spinner');
+      var btnLabel = document.getElementById('btn-label');
+
+      btn.addEventListener('click', submit);
+      codeInp.addEventListener('keydown', function (e) { if (e.key === 'Enter') submit(); });
+
+      async function submit() {
+        var code = codeInp.value.trim();
+        if (code.length < 6) { showErr('Kodni to\u2019liq kiriting'); return; }
+        btn.disabled = true;
+        spinner.classList.add('show');
+        btnLabel.textContent = 'Tekshirilmoqda...';
+        err.classList.remove('show');
+        try {
+          var res = await fetch('/api/admin/mfa/stepup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': window.__CSRF_TOKEN || '' },
+            body: JSON.stringify({ code: code }),
+          });
+          var data = await res.json();
+          if (res.ok && data.ok) {
+            // Oldingi sahifaga qaytish (returnUrl) yoki dashboard
+            var ret = new URLSearchParams(window.location.search).get('returnUrl');
+            window.location.href = ret || '/admin/dashboard';
+            return;
+          }
+          var msg = data.error === 'locked'
+            ? 'Juda ko\u2019p urinish. ' + Math.ceil((data.retryAfterSeconds || 0) / 60) + ' daqiqadan so\u2019ng qayta urinib ko\u2019ring.'
+            : 'Kod noto\u2019g\u2019ri. Qayta urinib ko\u2019ring.';
+          showErr(msg);
+        } catch (e) {
+          showErr('Server bilan bog\u2019lanishda xatolik.');
+        } finally {
+          btn.disabled = false;
+          spinner.classList.remove('show');
+          btnLabel.textContent = 'Tasdiqlash';
+        }
+      }
+
+      function showErr(msg) {
+        err.textContent = msg;
+        err.classList.add('show');
+      }
+    })();
+  </script>
+</body>
+</html>

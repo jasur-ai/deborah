@@ -1,0 +1,55 @@
+/**
+ * Deborah — Native Select (STYLE STEP 13, S13.11)
+ * -------------------------------------------------
+ * Native select simple case'da saqlanadi (S13.11). Custom combobox faqat
+ * typeahead/complex requirement bo'lsa APG pattern bilan yaratiladi.
+ * Styling: token border, 44/48px, custom chevron (appearance:none + SVG bg).
+ */
+@layer components {
+
+.form-select {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: var(--deborah-spacing-2, 8px) 36px var(--deborah-spacing-2, 8px) var(--deborah-spacing-3, 12px);
+  font-size: var(--deborah-typography-font-size-md, 16px);
+  font-family: inherit;
+  line-height: 1.4;
+  color: var(--deborah-semantic-color-text-primary);
+  background-color: var(--deborah-semantic-color-surface-control, var(--deborah-semantic-color-surface-elevated));
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  border: 2px solid var(--deborah-semantic-color-border-default);
+  border-radius: var(--deborah-radius-sm, 8px);
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.form-select:hover:not(:disabled):not(:focus) { border-color: var(--deborah-semantic-color-border-strong); }
+
+.form-select:focus {
+  outline: 3px solid var(--deborah-semantic-color-focus, oklch(55% 0.2 264));
+  outline-offset: 2px;
+  border-color: var(--deborah-semantic-color-action-primary);
+  box-shadow: 0 0 0 1px var(--deborah-semantic-color-action-primary);
+}
+
+.form-select:disabled {
+  background-color: var(--deborah-semantic-color-surface-sunken, oklch(0.93 0 0));
+  color: var(--deborah-semantic-color-text-disabled, var(--deborah-semantic-color-text-tertiary));
+  cursor: not-allowed;
+}
+
+.form-select[aria-invalid='true'] {
+  border-color: var(--deborah-semantic-color-status-danger);
+}
+.form-select[aria-invalid='true']:focus {
+  outline-color: var(--deborah-semantic-color-status-danger);
+  box-shadow: 0 0 0 1px var(--deborah-semantic-color-status-danger);
+}
+
+@media (max-width: 640px) {
+  .form-select { min-height: 48px; font-size: 16px; }
+}

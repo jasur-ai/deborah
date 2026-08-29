@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <link rel="stylesheet" href="/css/admin.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content →</a>
+  <nav class="admin-navbar">
+    <div class="admin-nav-left">
+      <button type="button" class="admin-nav-hamburger" aria-label="Menyu" aria-expanded="false" aria-controls="admin-sidebar" onclick="toggleAdminDrawer()"><span></span><span></span><span></span></button>
+      <a href="/" class="admin-nav-brand">
+        <span class="admin-nav-logo"><img src="/images/logo-vintage.png" alt="Deborah" class="logo-img" style="height:34px;width:auto"></span>
+        <span class="admin-nav-badge">ADMIN</span>
+      </a>
+    </div>
+    <div class="flex items-center gap-8">
+      <button type="button" class="admin-nav-btn" onclick="refreshActiveTab()"><%- icon('refresh', 14) %> Yangilash</button>
+      <%- include('../partials/theme-control') %>
+      <a href="/admin/logout" class="admin-nav-btn"><%- icon('logOut', 14) %> <%= (adminCopy.logout || 'Chiqish') %></a>
+    </div>
+  </nav>
+
+  <div class="admin-layout">
+    <div class="admin-drawer-overlay" id="admin-drawer-overlay" onclick="toggleAdminDrawer()"></div>
+    <!-- Sidebar -->
+    <div class="admin-sidebar" id="admin-sidebar">
+      <div class="admin-side-label"><%= (adminCopy.navSections || 'Bo\'limlar') %></div>
+      <a href="/admin/index" class="admin-side-btn"><span class="admin-side-ico"><%- icon('grid', 16) %></span>Barcha funksiyalar</a> <!-- BUG-029: bir ko'rinish indeks -->
+      <button class="admin-side-btn <%= activeTab === 'danger' ? 'active' : '' %>" onclick="switchTab('danger')" style="--c:var(--deborah-semantic-color-action-primary);--cbg:rgba(37,99,235,.14)"><span class="admin-side-ico"><%- icon('alertTriangle', 16) %></span><%= (adminCopy.navUsers || 'Foydalanuvchilar') %></button>
+      <button class="admin-side-btn <%= activeTab === 'fans' ? 'active' : '' %>" onclick="switchTab('fans')"><span class="admin-side-ico"><%- icon('book', 16) %></span><%= (adminCopy.navFans || 'Namuna fanlar') %></button>
+      <button class="admin-side-btn <%= activeTab === 'pre' ? 'active' : '' %>" onclick="switchTab('pre')" style="--c:var(--accent-purple);--cbg:rgba(100,116,139,.14)"><span class="admin-side-ico"><%- icon('layers', 16) %></span><%= (adminCopy.navPre || 'Tayyor testlar') %></button>
+      <button class="admin-side-btn <%= activeTab === 'results' ? 'active' : '' %>" onclick="switchTab('results')"><span class="admin-side-ico"><%- icon('trophy', 16) %></span><%= (adminCopy.navResults || 'Natijalar') %></button>
+      <button class="admin-side-btn <%= activeTab === 'stats' ? 'active' : '' %>" onclick="switchTab('stats')"><span class="admin-side-ico"><%- icon('barChart', 16) %></span><%= (adminCopy.navStats || 'Statistika') %></button>
+      <button class="admin-side-btn <%= activeTab === 'vip' ? 'active' : '' %>" onclick="switchTab('vip')" style="--c:#f59e0b;--cbg:rgba(245,158,11,.14)"><span class="admin-side-ico"><%- icon('shield', 16) %></span>VIP</button>
+      <button class="admin-side-btn <%= activeTab === 'governance' ? 'active' : '' %>" onclick="switchTab('governance')" style="--c:#10b981;--cbg:rgba(16,185,129,.14)"><span class="admin-side-ico"><%- icon('shield', 16) %></span>Cast Governance</button>
+      <div class="admin-side-label" style="margin-top:8px"><%= (adminCopy.navTools || 'Asboblar') %></div>
+      <a href="/arena" target="_blank" class="admin-side-btn" style="--c:var(--green);--cbg:rgba(0,229,160,.1)"><span class="admin-side-ico"><%- icon('monitor', 16) %></span><%= (adminCopy.navArena || 'Test Arena') %></a>
+
+      <div class="admin-side-label" style="margin-top:14px"><%= (adminCopy.navMonitoring || 'Monitoring') %></div>
+      <a href="/admin/observability" class="admin-side-btn"><span class="admin-side-ico"><%- icon('activity', 16) %></span>Observability (SLO)</a>
+      <a href="/admin/reliability" class="admin-side-btn"><span class="admin-side-ico"><%- icon('refresh', 16) %></span>Reliability</a>
+      <a href="/admin/security-guard" class="admin-side-btn"><span class="admin-side-ico"><%- icon('shield', 16) %></span>Security Guard</a>
+      <a href="/admin/command-center" class="admin-side-btn"><span class="admin-side-ico"><%- icon('zap', 16) %></span>Command Center</a>
+      <a href="/admin/camera-review" class="admin-side-btn"><span class="admin-side-ico"><%- icon('camera', 16) %></span>Camera Review</a>
+
+      <div class="admin-side-label" style="margin-top:14px">Akademik</div>
+      <a href="/admin/scheduler" class="admin-side-btn"><span class="admin-side-ico"><%- icon('calendar', 16) %></span>Scheduler</a>
+      <a href="/admin/seating" class="admin-side-btn"><span class="admin-side-ico"><%- icon('users', 16) %></span>Seating</a>
+      <a href="/admin/scan" class="admin-side-btn"><span class="admin-side-ico"><%- icon('search', 16) %></span>Scan &amp; Answer Key</a>
+      <a href="/admin/paper" class="admin-side-btn"><span class="admin-side-ico"><%- icon('fileText', 16) %></span>Paper Packets</a>
+      <a href="/admin/safe-submit" class="admin-side-btn"><span class="admin-side-ico"><%- icon('upload', 16) %></span>Safe Submit</a>
+      <a href="/admin/sources" class="admin-side-btn"><span class="admin-side-ico"><%- icon('folder', 16) %></span>Source Pack</a>
+
+      <div class="admin-side-label" style="margin-top:14px">Baholash</div>
+      <a href="/admin/grading" class="admin-side-btn"><span class="admin-side-ico"><%- icon('trendUp', 16) %></span>Grading</a>
+      <a href="/admin/marking" class="admin-side-btn"><span class="admin-side-ico"><%- icon('checkCircle', 16) %></span>Marking</a>
+      <a href="/admin/board" class="admin-side-btn"><span class="admin-side-ico"><%- icon('award', 16) %></span>Board Ratification</a>
+      <a href="/admin/consideration" class="admin-side-btn"><span class="admin-side-ico"><%- icon('alertTriangle', 16) %></span>Consideration</a>
+      <a href="/admin/ai-question-gen" class="admin-side-btn"><span class="admin-side-ico"><%- icon('info', 16) %></span>AI Question Gen</a>
+
+      <div class="admin-side-label" style="margin-top:14px">AI</div>
+      <a href="/admin/ai-grading" class="admin-side-btn"><span class="admin-side-ico"><%- icon('cpu', 16) %></span>AI Grading</a>
+      <a href="/admin/ai-mlops" class="admin-side-btn"><span class="admin-side-ico"><%- icon('layers', 16) %></span>AI MLOps</a>
+      <a href="/admin/ai-checkpoint" class="admin-side-btn"><span class="admin-side-ico"><%- icon('shieldCheck', 16) %></span>AI Checkpoint</a>
+      <a href="/admin/claude" class="admin-side-btn"><span class="admin-side-ico"><%- icon('sparkles', 16) %></span>Claude</a>
+      <a href="/admin/provider" class="admin-side-btn"><span class="admin-side-ico"><%- icon('settings', 16) %></span>AI Provider</a>
+      <a href="/admin/resource-reco" class="admin-side-btn"><span class="admin-side-ico"><%- icon('search', 16) %></span>Resource Reco</a>
+
+      <div class="admin-side-label" style="margin-top:14px">Taqdimot &amp; Eksport</div>
+      <a href="/admin/presentations" class="admin-side-btn"><span class="admin-side-ico"><%- icon('play', 16) %></span>Presentation</a>
+      <a href="/admin/canva" class="admin-side-btn"><span class="admin-side-ico"><%- icon('gift', 16) %></span>Canva</a>
+      <a href="/user/profile" class="admin-side-btn"><span class="admin-side-ico"><%- icon('user', 16) %></span>Profilim</a>
+      <a href="/admin/google-slides" class="admin-side-btn"><span class="admin-side-ico"><%- icon('play', 16) %></span>Google Slides</a>
+      <a href="/admin/deck-export" class="admin-side-btn"><span class="admin-side-ico"><%- icon('download', 16) %></span>Deck Export</a>
+      <a href="/admin/quiz-deck" class="admin-side-btn"><span class="admin-side-ico"><%- icon('layers', 16) %></span>Quiz Deck</a>
+
+      <div class="admin-side-label" style="margin-top:14px">Sifat &amp; Boshqaruv</div>
+      <a href="/admin/acceptance" class="admin-side-btn"><span class="admin-side-ico"><%- icon('checkCircle', 16) %></span>Acceptance</a>
+      <a href="/admin/institutional" class="admin-side-btn"><span class="admin-side-ico"><%- icon('briefcase', 16) %></span>Institutional</a>
+      <a href="/admin/program-quality" class="admin-side-btn"><span class="admin-side-ico"><%- icon('award', 16) %></span>Program Quality</a>
+      <a href="/admin/credentials" class="admin-side-btn"><span class="admin-side-ico"><%- icon('trophy', 16) %></span>Credentials</a>
+      <a href="/admin/multilingual" class="admin-side-btn"><span class="admin-side-ico"><%- icon('globe', 16) %></span>Multilingual</a>
+      <a href="/admin/accessibility" class="admin-side-btn"><span class="admin-side-ico"><%- icon('eye', 16) %></span>Accessibility</a>
+      <a href="/admin/data-governance" class="admin-side-btn"><span class="admin-side-ico"><%- icon('database', 16) %></span>Data Governance</a>
+      <a href="/admin/interventions" class="admin-side-btn"><span class="admin-side-ico"><%- icon('heart', 16) %></span>Intervention</a>
+      <a href="/admin/api-contracts" class="admin-side-btn"><span class="admin-side-ico"><%- icon('file', 16) %></span>API Contracts</a>
+    </div>
+
+    <!-- Panel -->
+    <main class="admin-panel" id="main">
+      <h1 class="sr-only">Admin panel</h1>
+      <!-- Stats Row — S33.07: actionable (click'da tegishli bo'lim ochiladi) -->
+      <div class="admin-stats-row" id="stats-row">
+        <button type="button" class="stat-card" data-go="danger"><div class="stat-ico"><%- icon('users', 20) %></div><div><div class="stat-num" id="s-users" ><%= stats.usersCount %></div><div class="stat-lbl"><%= (adminCopy.kpiUsers || 'Foydalanuvchilar') %></div></div></button>
+        <button type="button" class="stat-card" data-go="results"><div class="stat-ico"><%- icon('gamepad', 20) %></div><div><div class="stat-num" id="s-games" ><%= stats.gamesCount %></div><div class="stat-lbl"><%= (adminCopy.kpiGames || 'O\'yinlar') %></div></div></button>
+        <button type="button" class="stat-card" data-go="fans"><div class="stat-ico"><%- icon('edit', 20) %></div><div><div class="stat-num" id="s-tests" ><%= stats.testsCount %></div><div class="stat-lbl"><%= (adminCopy.kpiTests || 'Testlar') %></div></div></button>
+        <button type="button" class="stat-card" data-go="fans" style="--c:var(--accent-purple);--cbg:rgba(100,116,139,.12)"><div class="stat-ico"><%- icon('book', 20) %></div><div><div class="stat-num" id="s-fans" style="color:var(--accent-purple)"><%= stats.fansCount %></div><div class="stat-lbl"><%= (adminCopy.kpiFans || 'Namuna fanlar') %></div></div></button>
+      </div>
+
+      <!-- TAB: Users -->
+      <div class="admin-tab-pane <%= activeTab === 'danger' ? 'active' : '' %>" id="pane-danger">
+        <div class="admin-sec-hd"><div class="admin-sec-title"><%- icon('alertTriangle', 18) %> Foydalanuvchilar <span class="badge badge-danger">DANGER ZONE</span></div><button type="button" class="admin-refresh-btn" onclick="loadUsers()"><%- icon('refresh', 12) %></button></div>
+        <div class="table-wrap dt-wrap is-reflow"><table class="dt" data-density="default"><thead><tr>
+          <th scope="col">#</th>
+          <th scope="col" data-sort="name">Login</th>
+          <th scope="col" class="dt-ts" data-sort="created">Ro'yxatdan o'tgan</th>
+          <th scope="col" class="dt-num" data-sort="tests">Testlar</th>
+          <th scope="col">VIP</th>
+          <th scope="col" class="dt-actions">O'chirish</th>
+        </tr></thead><tbody id="users-tbody">
+          <% if (users.length === 0) { %><tr><td colspan="6"><div class="admin-empty">Foydalanuvchilar yo'q</div></td></tr><% } else { %>
+            <% users.forEach((u, i) => { %>                <tr class="dt-row" data-name="<%= String(u.username||'').toLowerCase() %>" data-created="<%= u.created_at || 0 %>" data-tests="<%= u.tests || 0 %>">
+                <td><%= i + 1 %></td>
+                <td class="dt-cell-main"><span class="font-bold"><%= u.username %></span></td>
+                <td class="text-muted dt-ts" style="font-size:.76rem"><%= u.created_at ? new Date(u.created_at).toLocaleString('uz-UZ') : '—' %></td>
+                <td class="dt-num"><span class="badge badge-accent"><%= u.tests %> ta test</span></td>
+                <td>
+                  <% if (u.isVip) { %>
+                    <span class="badge badge-success" style="cursor:pointer" onclick="quickRevokeVip('<%= u.username.replace(/'/g, "\\'") %>')" title="VIP ni olib tashlash">VIP</span>
+                  <% } else { %>
+                    <button class="admin-edit-btn" onclick="quickGrantVip('<%= u.username.replace(/'/g, "\\'") %>')" style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.15);border-radius:7px;padding:4px 9px;color:var(--blue);font-size:.7rem;font-weight:600;cursor:pointer"><%- icon('shield', 11) %> VIP</button>
+                  <% } %>
+                </td>
+                <td><button class="admin-del-btn" onclick="deleteUser('<%= u.key %>','<%= u.username.replace(/'/g, "\\'") %>')"><%- icon('trash', 12) %> O'chirish</button></td>
+              </tr>
+            <% }); %>
+          <% } %>
+        </tbody></table></div>
+      </div>
+
+      <!-- TAB: Mock Fans -->
+      <div class="admin-tab-pane <%= activeTab === 'fans' ? 'active' : '' %>" id="pane-fans">
+        <div class="admin-sec-hd"><div class="admin-sec-title"><%- icon('book', 18) %> Namuna fanlar <span class="badge badge-success">RANDOM 25</span></div>
+          <button type="button" class="admin-refresh-btn" onclick="loadFans()"><%- icon('refresh', 12) %></button>
+        </div>
+        <!-- Inline Excel upload for Fans -->
+        <div style="background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:14px;padding:16px;margin-bottom:14px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+            <input class="inp" id="fan-name" placeholder="Fan nomi (masalan: Matematika)" style="flex:1;min-width:140px;margin-bottom:0">
+            <div id="fan-drop-zone" onclick="document.getElementById('fan-excel-inp').click()" style="flex:1;min-width:140px;border:2px dashed rgba(56,189,248,.3);border-radius:10px;padding:10px;text-align:center;cursor:pointer;background:rgba(56,189,248,.04);transition:color .2s">,background-color .2s">,border-color .2s">,box-shadow .2s">,transform .2s">,opacity .2s">
+              <p id="fan-excel-lbl" style="color:var(--deborah-semantic-color-text-muted);font-size:.8rem;font-weight:700"><%- icon('upload', 14) %> Excel faylni yuklang</p>
+            </div>
+            <button type="button" id="save-fan-btn" onclick="saveFanFromExcel()" style="background:linear-gradient(135deg,var(--deborah-semantic-color-action-primary),var(--deborah-semantic-color-action-primary-hover));border:none;border-radius:9px;padding:9px 18px;color:#fff;font-family:var(--font-body);font-size:.85rem;font-weight:700;cursor:pointer;white-space:nowrap"><%- icon('save', 14) %> Saqlash</button>
+          </div>
+          <button type="button" onclick="downloadFanTemplate()" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:9px;padding:8px 14px;color:var(--deborah-semantic-color-text-muted);font-family:var(--font-body);font-size:.78rem;font-weight:600;cursor:pointer"><%- icon('download', 12) %> Excel shablon yuklab olish</button>
+        </div>
+        <input type="file" id="fan-excel-inp" accept=".xlsx,.xls" style="display:none">
+        <div id="fans-list"><div class="admin-empty">Yuklanmoqda...</div></div>
+        <div class="admin-msg" id="fan-msg"></div>
+      </div>
+
+      <!-- TAB: PRE Tests -->
+      <div class="admin-tab-pane <%= activeTab === 'pre' ? 'active' : '' %>" id="pane-pre">
+        <div class="admin-sec-hd"><div class="admin-sec-title"><%- icon('layers', 18) %> Tayyor testlar <span class="badge badge-purple">SUBTESTLAR</span></div>
+          <button type="button" class="admin-refresh-btn" onclick="loadPreGroups()"><%- icon('refresh', 12) %></button>
+        </div>
+        <!-- Inline Excel upload for PRE -->
+        <div style="background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:14px;padding:16px;margin-bottom:14px">
+          <input class="inp" id="pre-title" placeholder="Guruh sarlavhasi (masalan: Fizika 2024)" style="margin-bottom:9px">
+          <div id="pre-drop-zone" onclick="document.getElementById('pre-excel-inp').click()" style="border:2px dashed rgba(100,116,139,.3);border-radius:10px;padding:12px;text-align:center;cursor:pointer;background:rgba(100,116,139,.04);transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s;margin-bottom:9px">
+            <p id="pre-excel-lbl" style="color:var(--deborah-semantic-color-text-muted);font-size:.8rem;font-weight:700"><%- icon('upload', 14) %> Excel faylni yuklang (25 savol = 1 subtest)</p>
+          </div>
+          <button type="button" onclick="downloadFanTemplate()" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:9px;padding:8px 14px;color:var(--deborah-semantic-color-text-muted);font-family:var(--font-body);font-size:.78rem;font-weight:600;cursor:pointer;margin-bottom:8px"><%- icon('download', 12) %> Excel shablon yuklab olish</button>
+          <div id="pre-preview" style="display:none;background:rgba(100,116,139,.07);border:1px solid rgba(100,116,139,.2);border-radius:10px;padding:11px 13px;margin-bottom:9px">
+            <div id="pre-preview-title" style="font-size:.78rem;font-weight:600;color:var(--accent-purple);margin-bottom:7px"></div>
+            <div id="pre-chunk-list"></div>
+          </div>
+          <div id="pre-saving" style="display:none;align-items:center;gap:8px;font-size:.8rem;font-weight:700;color:var(--deborah-semantic-color-text-muted);margin-top:8px"><div class="spin-sm"></div><span>Saqlanmoqda...</span></div>
+          <div id="pre-prog-bar" style="display:none;background:rgba(255,255,255,.07);border-radius:50px;height:7px;margin-top:8px;overflow:hidden"><div id="pre-prog-fill" style="background:linear-gradient(90deg,var(--accent-purple),var(--accent-glow));height:100%;border-radius:50px;transition:width .3s;width:0%"></div></div>
+          <button type="button" id="save-pre-btn" onclick="savePreFromExcel()" style="width:100%;background:linear-gradient(135deg,var(--accent-purple),#7c3aed);border:none;border-radius:9px;padding:10px;color:#fff;font-family:var(--font-body);font-size:.88rem;font-weight:700;cursor:pointer"><%- icon('layers', 14) %> Barcha subtestlarni saqlash</button>
+          <div class="admin-msg" id="pre-msg"></div>
+        </div>
+        <input type="file" id="pre-excel-inp" accept=".xlsx,.xls" style="display:none">
+        <div id="pre-list"><div class="admin-empty">Yuklanmoqda...</div></div>
+      </div>
+
+      <!-- TAB: Results -->
+      <div class="admin-tab-pane <%= activeTab === 'results' ? 'active' : '' %>" id="pane-results">
+        <div class="admin-sec-hd"><div class="admin-sec-title"><%- icon('trophy', 18) %> O'yin Natijalari <span class="badge badge-gold">SHOXSUPA</span></div><button type="button" class="admin-refresh-btn" onclick="loadResults()"><%- icon('refresh', 12) %></button></div>
+        <div id="results-wrap"><div class="admin-empty">Yuklanmoqda...</div></div>
+      </div>
+
+      <!-- TAB: Stats -->
+      <div class="admin-tab-pane <%= activeTab === 'stats' ? 'active' : '' %>" id="pane-stats">
+        <div class="admin-sec-hd"><div class="admin-sec-title"><%- icon('barChart', 18) %> Statistika</div><button type="button" class="admin-refresh-btn" onclick="loadStats()"><%- icon('refresh', 12) %></button></div>
+        <div id="stats-content"><div class="admin-empty">Yuklanmoqda...</div></div>
+      </div>
+
+      <!-- TAB: VIP -->
+      <div class="admin-tab-pane <%= activeTab === 'vip' ? 'active' : '' %>" id="pane-vip">
+        <div class="admin-sec-hd">
+          <div class="admin-sec-title"><%- icon('shield', 18) %> VIP Foydalanuvchilar <span class="badge badge-gold">MAXFIY</span></div>
+          <button type="button" class="admin-refresh-btn" onclick="loadVip()"><%- icon('refresh', 12) %></button>
+        </div>
+
+        <!-- Grant Form -->
+        <div style="background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:14px;padding:16px;margin-bottom:14px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+          <div style="flex:1;min-width:200px">
+            <label class="lbl" for="vip-username">Foydalanuvchi nomi</label>
+            <!-- S33.09: searchable picker (datalist) -->
+            <input class="inp" id="vip-username" list="vip-user-list" placeholder="Username izlash..." autocomplete="off" style="margin-bottom:0">
+            <datalist id="vip-user-list">
+              <% users.forEach(u => { %><option value="<%= u.username %>"><% }); %>
+            </datalist>
+          </div>
+          <button type="button" id="grant-vip-btn" onclick="grantVip()" class="btn btn-warning"><%- icon('shield', 14) %> VIP qilish</button>
+          </div>
+          <div class="admin-msg" id="vip-msg"></div>
+          <div id="vip-result" style="display:none;margin-top:10px;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.25);border-radius:10px;padding:12px 15px">
+            <div style="font-size:.82rem;font-weight:600;color:var(--green);margin-bottom:4px">✅ VIP berildi!</div>
+            <div id="vip-result-detail" style="font-size:.78rem;color:var(--deborah-semantic-color-text-secondary)"></div>
+          </div>
+        </div>
+
+        <!-- Search filter -->
+        <input class="inp" id="vip-search" placeholder="Qidirish..." oninput="filterVip()" style="margin-bottom:12px">
+
+        <!-- VIP Users Table (dynamic) -->
+        <div id="vip-table-wrap"><div class="admin-empty">Yuklanmoqda...</div></div>
+      </div>
+
+      <!-- TAB: Cast Governance -->
+      <div class="admin-tab-pane <%= activeTab === 'governance' ? 'active' : '' %>" id="pane-governance">
+        <div class="admin-sec-hd">
+          <div class="admin-sec-title"><%- icon('shield', 18) %> Cast Governance <span class="badge badge-success">Institution</span></div>
+          <button type="button" class="admin-refresh-btn" onclick="loadGovernance()"><%- icon('refresh', 12) %></button>
+        </div>
+
+        <!-- Create policy form -->
+        <div style="background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:14px;padding:16px;margin-bottom:14px">
+          <div style="font-size:.85rem;font-weight:600;margin-bottom:10px">Yangi policy draft</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+            <div style="flex:2;min-width:220px">
+              <label class="lbl">Nom</label>
+              <input class="inp" id="gov-name" placeholder="school_12_cast_policy" style="margin-bottom:0">
+            </div>
+            <div style="flex:1;min-width:200px">
+              <label class="lbl">Approved presets (vergul bilan)</label>
+              <input class="inp" id="gov-presets" placeholder="responsive_accuracy, formative_check" style="margin-bottom:0">
+            </div>
+            <button type="button" onclick="createGovernance()" style="background:linear-gradient(135deg,#10b981,#059669);border:none;border-radius:9px;padding:11px 22px;color:#fff;font-family:var(--font-body);font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px"><%- icon('shield', 14) %> Yaratish</button>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+            <div style="flex:1;min-width:260px">
+              <label class="lbl">Locked fields (JSON) — masalan: {"moderation.publicChat":false}</label>
+              <textarea class="inp" id="gov-locked" rows="2" style="font-family:monospace;font-size:.75rem;resize:vertical">{}</textarea>
+            </div>
+            <div style="flex:1;min-width:260px">
+              <label class="lbl">Limits (JSON) — masalan: {"join.maxPlayers":500}</label>
+              <textarea class="inp" id="gov-limits" rows="2" style="font-family:monospace;font-size:.75rem;resize:vertical">{}</textarea>
+            </div>
+          </div>
+          <div class="admin-msg" id="gov-msg"></div>
+        </div>
+
+        <!-- Policy list (dynamic) -->
+        <div id="gov-list-wrap"><div class="admin-empty">Yuklanmoqda...</div></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Hidden file inputs for Excel import -->
+  <input type="file" id="fan-reset-inp" accept=".xlsx,.xls" style="display:none">
+
+  <script>
+    // AUTH D-10 §13: 4 til admin copy (AUTH_COPY[lang].admin) — fallback bilan
+    window.__ADMIN_COPY__ = <%- JSON.stringify(adminCopy || {}) %>;
+    let currentTab = '<%= activeTab %>';
+
+    // S33.02: mobile drawer toggle — sidebar functionality yo'qolmaydi
+    function toggleAdminDrawer() {
+      const open = document.body.classList.toggle('admin-nav-open');
+      const btn = document.querySelector('.admin-nav-hamburger');
+      if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+
+    // S33.07: stats card'lar actionable — click'da tegishli bo'lim ochiladi
+    document.querySelectorAll('.stat-card[data-go]').forEach(card => {
+      card.addEventListener('click', () => {
+        const tab = card.getAttribute('data-go');
+        if (document.getElementById('pane-' + tab)) switchTab(tab);
+      });
+    });
+
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.admin-side-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.admin-tab-pane').forEach(p => p.classList.remove('active'));
+      document.getElementById('pane-' + tab).classList.add('active');
+      document.querySelector(`.admin-side-btn[onclick*="${tab}"]`)?.classList.add('active');
+      // S33.02: mobil drawer bo'lim tanlanganda yopiladi
+      document.body.classList.remove('admin-nav-open');
+      const hb = document.querySelector('.admin-nav-hamburger');
+      if (hb) hb.setAttribute('aria-expanded', 'false');
+      refreshActiveTab();
+    }
+
+    function refreshActiveTab() {
+      if (currentTab === 'fans') loadFans();
+      else if (currentTab === 'pre') loadPreGroups();
+      else if (currentTab === 'results') loadResults();
+      else if (currentTab === 'stats') loadStats();
+      else if (currentTab === 'vip') loadVip();
+      else if (currentTab === 'governance') loadGovernance();
+    }
+
+    // ── Cast Governance (C4-08) ──
+    function escHtml(v) {
+      return String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    function parseGovJson(id, def) {
+      try { return JSON.parse(document.getElementById(id).value || def || '{}'); }
+      catch { return null; }
+    }
+
+    async function createGovernance() {
+      const msg = document.getElementById('gov-msg');
+      msg.textContent = '';
+      const name = document.getElementById('gov-name').value.trim();
+      const presets = document.getElementById('gov-presets').value.split(',').map(s => s.trim()).filter(Boolean);
+      const locked = parseGovJson('gov-locked');
+      const limits = parseGovJson('gov-limits');
+      if (locked === null || limits === null) { msg.textContent = '⚠️ JSON noto\'g\'ri'; return; }
+      try {
+        const r = await fetch('/admin/api/cast/policies', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, approvedPresets: presets, lockedFields: locked, limits }),
+        });
+        const d = await r.json();
+        if (!r.ok) { msg.textContent = '⚠️ ' + (d.error || 'xato'); return; }
+        msg.style.color = 'var(--green)'; msg.textContent = '✅ ' + d.policy.policyId + ' yaratildi (v' + d.policy.version + ')';
+        document.getElementById('gov-name').value = '';
+        document.getElementById('gov-presets').value = '';
+        document.getElementById('gov-locked').value = '{}';
+        document.getElementById('gov-limits').value = '{}';
+        loadGovernance();
+      } catch (e) { msg.textContent = '⚠️ ' + e.message; }
+    }
+
+    async function loadGovernance() {
+      const wrap = document.getElementById('gov-list-wrap');
+      wrap.innerHTML = '<div class="admin-empty">Yuklanmoqda...</div>';
+      try {
+        const r = await fetch('/admin/api/cast/policies');
+        const d = await r.json();
+        if (!r.ok) { wrap.innerHTML = '<div class="admin-empty" style="color:var(--deborah-semantic-color-action-primary)">' + escHtml(d.error || 'Xato') + '</div>'; return; }
+        if (!d.policies.length) {
+          wrap.innerHTML = '<div class="admin-empty">Hozircha policy yo\'q — yuqoridan yarating</div>';
+          return;
+        }
+        const badge = (s) => s === 'PUBLISHED' ? '<span class="badge badge-success">PUBLISHED</span>' : s === 'DEPRECATED' ? '<span class="badge">DEPRECATED</span>' : '<span class="badge badge-warning">DRAFT</span>';
+        const rows = d.policies.map(p => {
+          const locked = Object.entries(p.lockedFields).map(([k, v]) => k + '=' + JSON.stringify(v)).join(', ') || '—';
+          const lims = Object.entries(p.limits).map(([k, v]) => k + '=' + v).join(', ') || '—';
+          const pres = p.approvedPresets.length ? p.approvedPresets.join(', ') : 'hamma';
+          return `
+            <div style="background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:14px;padding:14px 16px;margin-bottom:10px">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+                <div style="font-size:.86rem;font-weight:600">${escHtml(p.policyId)} ${badge(p.status)} ${p.isEffective ? '<span class="badge badge-info" style="background:rgba(56,189,248,.15);color:#38bdf8">● Faol</span>' : ''}</div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                  ${p.status === 'DRAFT' ? `<button type="button" class="admin-mini-btn" onclick="publishGovernance('${p.policyId}')" style="background:linear-gradient(135deg,#10b981,#059669)">Publish</button>` : ''}
+                  ${p.status === 'PUBLISHED' ? `<button type="button" class="admin-mini-btn" onclick="deprecateGovernance('${p.policyId}')" style="background:rgba(239,68,68,.15);color:#ef4444">Deprecate</button>` : ''}
+                  <button type="button" class="admin-mini-btn" onclick="auditGovernance('${p.policyId}')">Audit</button>
+                </div>
+              </div>
+              <div style="font-size:.75rem;color:var(--deborah-semantic-color-text-secondary);margin-top:6px;line-height:1.7">
+                <div>🛡 Locked: ${escHtml(locked)}</div>
+                <div>⛔ Limits: ${escHtml(lims)}</div>
+                <div>✅ Approved presets: ${escHtml(pres)}</div>
+                <div>📅 Effective: ${p.effectiveDate ? new Date(p.effectiveDate).toLocaleString() : 'hozir'}</div>
+              </div>
+            </div>`;
+        }).join('');
+        wrap.innerHTML = rows + (d.effective ? `<div class="admin-msg" style="color:var(--green)">Faol policy: ${escHtml(d.effective.policyId)} v${d.effective.version}</div>` : '<div class="admin-msg">Faol policy yo\'q — yaratib publish qiling</div>');
+      } catch (e) { wrap.innerHTML = '<div class="admin-empty" style="color:var(--deborah-semantic-color-action-primary)">' + escHtml(e.message) + '</div>'; }
+    }
+
+    async function publishGovernance(policyId) {
+      if (!confirm('Bu policy\'ni PUBLISH qilishni tasdiqlaysizmi? (High-risk fieldlar darhol majburiy bo\'ladi)')) return;
+      try {
+        const r = await fetch('/admin/api/cast/policies/' + policyId + '/publish', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ confirm: true }),
+        });
+        const d = await r.json();
+        if (!r.ok) { alert('⚠️ ' + (d.error || 'xato')); return; }
+        loadGovernance();
+      } catch (e) { alert('⚠️ ' + e.message); }
+    }
+
+    async function deprecateGovernance(policyId) {
+      if (!confirm('Bu policy\'ni DEPRECATE qilishni tasdiqlaysizmi?')) return;
+      try {
+        const r = await fetch('/admin/api/cast/policies/' + policyId + '/deprecate', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+        });
+        const d = await r.json();
+        if (!r.ok) { alert('⚠️ ' + (d.error || 'xato')); return; }
+        loadGovernance();
+      } catch (e) { alert('⚠️ ' + e.message); }
+    }
+
+    async function auditGovernance(policyId) {
+      try {
+        const r = await fetch('/admin/api/cast/policies/' + policyId + '/audit');
+        const d = await r.json();
+        if (!r.ok) { alert('⚠️ ' + (d.error || 'xato')); return; }
+        const lines = d.audit.audit.map(a => a.at + ' — ' + (a.by || '?') + ' — ' + a.action + ' (v' + a.version + ')').join('\n') || 'audit bo\'sh';
+        alert('📜 Audit: ' + d.audit.policyId + ' v' + d.audit.version + ' [' + d.audit.status + ']\n\n' + lines);
+      } catch (e) { alert('⚠️ ' + e.message); }
+    }
+
+    // ── EXCEL IMPORT FUNCTIONS ──
+    let fanPendingQs = null;
+    let preChunks = [];
+    let editPreKey = null;
+    
+    function setMsg(id, text, type) {
+      const el = document.getElementById(id);
+      if (el) {
+        // S33.08: status ranglar — info cyan / warn amber / danger red
+        const tone = type === 'err' ? 'admin-status--danger' : type === 'warn' ? 'admin-status--warn' : 'admin-status--info';
+        el.textContent = text;
+        el.className = 'admin-msg active ' + tone;
+      }
+    }
+    
+    function setZoneLoaded(zone, label, text) {
+      zone.style.borderColor = 'var(--green)';
+      zone.style.borderStyle = 'solid';
+      zone.style.background = 'rgba(56,189,248,.1)';
+      label.innerHTML = svgIcon('check', 14) + ' ' + text;
+    }
+    function setZoneIdle(zone, label, text) {
+      zone.style.borderColor = '';
+      zone.style.borderStyle = 'dashed';
+      zone.style.background = '';
+      label.innerHTML = svgIcon('upload', 14) + ' ' + text;
+    }
+    
+    // ── Drag & Drop Support ──
+    function setupDropZone(zoneId, inputId, fileHandler) {
+      const zone = document.getElementById(zoneId);
+      const inp = document.getElementById(inputId);
+      if (!zone || !inp) return;
+      // S33.10: keyboard access — zone focus'da bo'lsa Enter/Space file picker ochadi
+      zone.setAttribute('role', 'button');
+      zone.setAttribute('tabindex', '0');
+      zone.setAttribute('aria-label', 'Excel fayl yuklash');
+      zone.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); inp.click(); }
+      });
+      zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.borderColor = 'var(--accent-glow)'; zone.style.background = 'rgba(56,189,248,.14)'; zone.style.transform = 'scale(1.01)'; });
+      zone.addEventListener('dragleave', () => { zone.style.borderColor = ''; zone.style.background = ''; zone.style.transform = 'none'; });
+      zone.addEventListener('drop', e => {
+        e.preventDefault();
+        zone.style.borderColor = ''; zone.style.background = ''; zone.style.transform = 'none';
+        if (e.dataTransfer.files.length) {
+          const dt = new DataTransfer();
+          dt.items.add(e.dataTransfer.files[0]);
+          inp.files = dt.files;
+          const evt = new Event('change', { bubbles: true });
+          inp.dispatchEvent(evt);
+        }
+      });
+    }
+    setupDropZone('fan-drop-zone', 'fan-excel-inp');
+    setupDropZone('pre-drop-zone', 'pre-excel-inp');
+
+    // ── Fan Excel Import ──
+    document.getElementById('fan-excel-inp').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const zone = document.getElementById('fan-drop-zone');
+      const label = document.getElementById('fan-excel-lbl');
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        try {
+          const wb = XLSX.read(ev.target.result, { type: 'binary' });
+          const qs = parseQuestionsFromWB(wb);
+          if (!qs || !qs.length) { setMsg('fan-msg', 'Savollar topilmadi!', 'err'); fanPendingQs = null; setZoneIdle(zone, label, 'Excel faylni yuklang'); if(e.target.value) e.target.value = ''; return; }
+          fanPendingQs = qs;
+          setZoneLoaded(zone, label, qs.length + ' ta savol yuklandi');
+          setMsg('fan-msg', qs.length + ' ta savol tayyor — Saqlash tugmasini bosing', 'ok');
+        } catch(err) { setMsg('fan-msg', 'Xato: ' + err.message, 'err'); }
+        if(e.target.value) e.target.value = '';
+      };
+      reader.readAsBinaryString(file);
+    });
+    
+    async function saveFanFromExcel() {
+      const name = document.getElementById('fan-name').value.trim();
+      if (!name) { setMsg('fan-msg', 'Fan nomini kiriting!', 'err'); return; }
+      if (!fanPendingQs || !fanPendingQs.length) { setMsg('fan-msg', 'Avval Excel faylni yuklang!', 'err'); return; }
+      const btn = document.getElementById('save-fan-btn');
+      btn.disabled = true; btn.textContent = 'Saqlanmoqda...';
+      try {
+        const slim = fanPendingQs.map(q => ({ num: q.num, text: q.text, correctLetter: q.correctLetter, correctText: q.correctText, options: q.options.map(o => ({ text: o.text, letter: o.letter, isCorrect: o.isCorrect })) }));
+        const res = await fetch('/admin/api/fans/save', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, questions: slim })
+        });
+        const data = await res.json();
+        if (data.success) {
+          setMsg('fan-msg', '"' + name + '" — ' + slim.length + ' ta savol saqlandi!', 'ok');
+          document.getElementById('fan-name').value = '';
+          setZoneIdle(document.getElementById('fan-drop-zone'), document.getElementById('fan-excel-lbl'), 'Excel faylni yuklang');
+          fanPendingQs = null;
+          loadFans();
+        } else setMsg('fan-msg', 'Xato: ' + (data.error || ''), 'err');
+      } catch(e) { setMsg('fan-msg', 'Saqlashda xatolik: ' + e.message, 'err'); }
+      btn.disabled = false; btn.textContent = svgIcon('save', 14) + ' Saqlash';
+    }
+    
+    function downloadFanTemplate() {
+      const wb = XLSX.utils.book_new();
+      const data = [
+        ['Savol', 'A) To\'g\'ri javob', 'B) Variant', 'C) Variant', 'D) Variant', 'To\'g\'ri harf (A/B/C/D)'],
+        ['Nyutonning 1-qonuni?', 'Inersiya', 'Dinamika', 'Ta`sir', 'Aks ta`sir', 'A'],
+        ['2+2 nechiga teng?', '3', '4', '5', '6', 'B'],
+      ];
+      const ws = XLSX.utils.aoa_to_sheet(data);
+      XLSX.utils.book_append_sheet(wb, ws, 'Savollar');
+      XLSX.writeFile(wb, 'deborah-fan-template.xlsx');
+    }
+    
+    function parseQuestionsFromWB(wb) {
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const arr = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+      const qs = [];
+      for (let i = 0; i < arr.length; i++) {
+        const r = arr[i];
+        const text = String(r[0] || '').trim();
+        if (!text) continue;
+        if (i === 0) {
+          const t = text.toLowerCase();
+          const opt1 = String(r[1] || '').trim().toLowerCase();
+          if ((t.includes('savol') || t.includes('question')) && (opt1.includes('variant') || opt1.includes('javob') || opt1.includes('to\'g\'ri'))) continue;
+        }
+        const options = [
+          { text: String(r[1] || '').trim(), letter: 'A', isCorrect: false },
+          { text: String(r[2] || '').trim(), letter: 'B', isCorrect: false },
+          { text: String(r[3] || '').trim(), letter: 'C', isCorrect: false },
+          { text: String(r[4] || '').trim(), letter: 'D', isCorrect: false },
+        ].filter(o => o.text);
+        if (options.length < 2) continue;
+        const correctLetter = String(r[5] || 'A').trim().toUpperCase();
+        const correctIdx = options.findIndex(o => o.letter === correctLetter);
+        if (correctIdx >= 0) options[correctIdx].isCorrect = true;
+        if (options.every(o => !o.isCorrect)) options[0].isCorrect = true;
+        qs.push({ num: qs.length + 1, text, correctLetter, correctText: options.find(o => o.isCorrect)?.text || options[0].text, options });
+      }
+      return qs;
+    }
+    
+    // ── PRE Excel Import ──
+    document.getElementById('pre-excel-inp').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const zone = document.getElementById('pre-drop-zone');
+      const label = document.getElementById('pre-excel-lbl');
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        try {
+          const wb = XLSX.read(ev.target.result, { type: 'binary' });
+          const qs = parseQuestionsFromWB(wb);
+          if (!qs || !qs.length) { setMsg('pre-msg', 'Savollar topilmadi!', 'err'); setZoneIdle(zone, label, 'Excel faylni yuklang (25 savol = 1 subtest)'); if(e.target.value) e.target.value = ''; return; }
+          // Split into chunks of 25
+          preChunks = [];
+          const CHUNK_SIZE = 25;
+          for (let ci = 0; ci < qs.length; ci += CHUNK_SIZE) {
+            const chunk = qs.slice(ci, ci + CHUNK_SIZE);
+            preChunks.push({ name: (ci / CHUNK_SIZE + 1) + '-subtest', questions: chunk, id: Date.now().toString(36) + ci });
+          }
+          setZoneLoaded(zone, label, qs.length + ' ta savol, ' + preChunks.length + ' ta subtest');
+          showPrePreview();
+        } catch(err) { setMsg('pre-msg', 'Xato: ' + err.message, 'err'); }
+        if(e.target.value) e.target.value = '';
+      };
+      reader.readAsBinaryString(file);
+    });
+    
+    function showPrePreview() {
+      if (!preChunks.length) return;
+      document.getElementById('pre-preview').style.display = 'block';
+      document.getElementById('pre-preview-title').textContent = preChunks.length + ' ta subtest: ' + preChunks.reduce((s, c) => s + c.questions.length, 0) + ' ta savol';
+      document.getElementById('pre-chunk-list').innerHTML = preChunks.map((c, i) => 
+        '<div style="display:flex;justify-content:space-between;font-size:.78rem;font-weight:700;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)">' +
+        '<span>' + c.name + '</span><span >' + c.questions.length + ' ta savol</span></div>'
+      ).join('');
+    }
+    
+    async function savePreFromExcel() {
+      const title = document.getElementById('pre-title').value.trim();
+      if (!title) { setMsg('pre-msg', 'Guruh sarlavhasini kiriting!', 'err'); return; }
+      if (!preChunks.length) { setMsg('pre-msg', 'Avval Excel faylni yuklang!', 'err'); return; }
+      const btn = document.getElementById('save-pre-btn');
+      btn.disabled = true; btn.textContent = 'Saqlanmoqda...';
+      document.getElementById('pre-prog-bar').style.display = 'block';
+      document.getElementById('pre-saving').style.display = 'flex';
+      try {
+        const res = await fetch('/admin/api/pre-groups/save', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, chunks: preChunks, editKey: editPreKey })
+        });
+        const data = await res.json();
+        if (data.success) {
+          setMsg('pre-msg', 'Tayyor test saqlandi!', 'ok');
+          document.getElementById('pre-title').value = '';
+          preChunks = []; editPreKey = null;
+          document.getElementById('pre-preview').style.display = 'none';
+          setZoneIdle(document.getElementById('pre-drop-zone'), document.getElementById('pre-excel-lbl'), 'Excel faylni yuklang (25 savol = 1 subtest)');
+          loadPreGroups();
+        } else setMsg('pre-msg', 'Xato: ' + (data.error || ''), 'err');
+      } catch(e) { setMsg('pre-msg', 'Xato: ' + e.message, 'err'); }
+      document.getElementById('pre-prog-bar').style.display = 'none';
+      document.getElementById('pre-saving').style.display = 'none';
+      btn.disabled = false; btn.innerHTML = svgIcon('layers', 14) + ' Barcha subtestlarni saqlash';
+    }
+
+    async function deleteUser(key, name) {
+      if (!(await showConfirm('O\'chirish', name + ' foydalanuvchisini o\'chirishni tasdiqlaysizmi?'))) return;
+      await fetch('/admin/api/users/delete', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key })
+      });
+      location.reload();
+    }
+
+    async function loadFans() {
+      const wrap = document.getElementById('fans-list');
+      try {
+        const res = await fetch('/admin/api/fans');
+        const data = await res.json();
+        if (!data.fans?.length) {
+          wrap.innerHTML = '<div class="admin-empty">Hali fan qo\'shilmagan</div>';
+          return;
+        }
+        wrap.innerHTML = data.fans.map(f => {
+          const safeName = f.name.replace(/'/g,"\\'");
+          return `
+          <div class="admin-fan-item">
+            <div><div class="admin-fan-item-name">${svgIcon('book', 16)} ${f.name}</div><div class="admin-fan-item-meta">${f.count} ta savol</div></div>
+            <div class="admin-fan-btns">
+              <button class="fan-mock-btn" onclick="startFanMockup('${f.key}','${safeName}')" style="background:rgba(100,116,139,.14);border:1px solid rgba(100,116,139,.28);border-radius:7px;padding:5px 10px;color:var(--accent-purple);font-size:.72rem;font-weight:600;cursor:pointer">${svgIcon('zap', 11)} Namuna</button>
+              <button class="fan-cast-btn" onclick="startFanCast('${f.key}','${safeName}')" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);border-radius:7px;padding:5px 10px;color:var(--green);font-size:.72rem;font-weight:600;cursor:pointer">${svgIcon('gamepad', 11)} Cast</button>
+              <button onclick="window.open('/arena','_blank')" style="background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);border-radius:7px;padding:5px 10px;color:var(--green);font-size:.72rem;font-weight:600;cursor:pointer">${svgIcon('monitor', 11)} Arena</button>
+              <button class="fan-reset-btn" onclick="resetFan('${f.key}','${safeName}')" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);border-radius:7px;padding:5px 10px;color:var(--accent-glow);font-size:.72rem;font-weight:600;cursor:pointer">${svgIcon('refresh', 11)} Yangilash</button>
+              <button class="admin-del-btn" onclick="deleteFan('${f.key}','${safeName}')">${svgIcon('trash', 12)}</button>
+            </div>
+          </div>`;
+        }).join('');
+      } catch(e) {
+        wrap.innerHTML = '<div class="admin-empty" style="color:var(--deborah-semantic-color-action-primary)">Yuklab bo\'lmadi</div>';
+      }
+    }
+    
+    function startFanMockup(key, name) {
+      window.location.href = '/host?source=mock&key=' + key + '&testName=' + encodeURIComponent('Namuna: ' + name);
+    }
+    
+    function startFanCast(key, name) {
+      window.location.href = '/host?source=mock&key=' + key + '&testName=' + encodeURIComponent('Namuna: ' + name);
+    }
+    
+    let resetFanKey = null;
+    async function resetFan(key, name) {
+      if (!(await showConfirm('Almashtirish', name + ' savollarini yangi Excel bilan almashtirasizmi?'))) return;
+      resetFanKey = key;
+      document.getElementById('fan-reset-inp').click();
+    }
+    
+    document.getElementById('fan-reset-inp').addEventListener('change', async function(e) {
+      const file = e.target.files[0];
+      if (!file || !resetFanKey) return;
+      const reader = new FileReader();
+      reader.onload = async function(ev) {
+        try {
+          const wb = XLSX.read(ev.target.result, { type: 'binary' });
+          const qs = parseQuestionsFromWB(wb);
+          if (!qs || !qs.length) { showToast('Savollar topilmadi!', 'err'); e.target.value = ''; return; }
+          const slim = qs.map(q => ({ num: q.num, text: q.text, correctLetter: q.correctLetter, correctText: q.correctText, options: q.options.map(o => ({ text: o.text, letter: o.letter, isCorrect: o.isCorrect })) }));
+          await fetch('/admin/api/fans/update', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ key: resetFanKey, questions: slim })
+          });
+          showToast(slim.length + ' ta savol yangilandi!', 'ok');
+          loadFans();
+        } catch(err) { showToast('Xato: ' + err.message, 'err'); }
+        e.target.value = '';
+      };
+      reader.readAsBinaryString(file);
+    });
+
+    async function deleteFan(key, name) {
+      if (!(await showConfirm('O\'chirish', name + ' fanini o\'chirishni tasdiqlaysizmi?'))) return;
+      await fetch('/admin/api/fans/delete', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key })
+      });
+      loadFans();
+    }
+
+    async function loadPreGroups() {
+      const wrap = document.getElementById('pre-list');
+      try {
+        const res = await fetch('/admin/api/pre-groups');
+        const data = await res.json();
+        if (!data.groups?.length) {
+          wrap.innerHTML = '<div class="admin-empty">Hali PRE testlar yo\'q</div>';
+          return;
+        }
+        wrap.innerHTML = data.groups.map(g => `
+          <div class="admin-pre-item">
+            <div><div class="admin-pre-item-name">${svgIcon('layers', 16)} ${g.title}</div><div class="admin-pre-item-meta">${g.count} ta subtest &bull; ${g.total} ta savol</div></div>
+            <div class="admin-pre-btns">
+              <button class="admin-edit-btn" onclick="editPreGroup('${g.key}','${g.title.replace(/'/g,"\\'")}')" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);border-radius:7px;padding:5px 10px;color:var(--blue);font-size:.72rem;font-weight:600;cursor:pointer;transition:color .18s,background-color .18s,border-color .18s,box-shadow .18s,transform .18s,opacity .18s;">${svgIcon('edit', 12)} Tahrirlash</button>
+              <button class="admin-del-btn" onclick="deletePreGroup('${g.key}','${g.title.replace(/'/g,"\\'")}')">${svgIcon('trash', 12)} O'chirish</button>
+            </div>
+          </div>
+        `).join('');
+      } catch(e) {
+        wrap.innerHTML = '<div class="admin-empty" style="color:var(--deborah-semantic-color-action-primary)">Yuklab bo\'lmadi</div>';
+      }
+    }
+
+    function editPreGroup(key, title) {
+      editPreKey = key;
+      document.getElementById('pre-title').value = title;
+      document.getElementById('pre-title').focus();
+      document.getElementById('pre-title').scrollIntoView({ behavior: 'smooth' });
+      setMsg('pre-msg', 'Tahrirlash: ' + title + ' — yangi Excel yuklang va saqlang', 'ok');
+    }
+
+    async function deletePreGroup(key, title) {
+      if (!(await showConfirm('O\'chirish', title + ' guruhini o\'chirishni tasdiqlaysizmi?'))) return;
+      await fetch('/admin/api/pre-groups/delete', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key })
+      });
+      loadPreGroups();
+    }
+
+    // ── VIP Management ──
+    async function loadVip() {
+      const wrap = document.getElementById('vip-table-wrap');
+      try {
+        const res = await fetch('/admin/api/users');
+        const data = await res.json();
+        if (!data.users?.length) {
+          wrap.innerHTML = '<div class="admin-empty">Foydalanuvchilar yo\'q</div>';
+          return;
+        }
+        wrap.innerHTML = `
+          <div class="table-wrap"><table><thead><tr>
+            <th>#</th><th>Username</th><th>VIP</th><th>Ro\'yxatdan o\'tgan</th><th>VIP berilgan</th><th>Admin</th><th>Amallar</th>
+          </tr></thead><tbody>
+            ${data.users.map((u, i) => `
+              <tr class="vip-row">
+                <td>${i + 1}</td>
+                <td><span class="font-bold">${esc(u.username)}</span></td>
+                <td><span class="badge ${u.isVip ? 'badge-success' : 'badge-accent'}">${u.isVip ? 'VIP' : 'Oddiy'}</span></td>
+                <td class="text-muted" style="font-size:.76rem">${u.created_at ? new Date(u.created_at).toLocaleString('uz-UZ') : '—'}</td>
+                <td style="font-size:.76rem">${u.vipGrantedAt ? new Date(u.vipGrantedAt).toLocaleString('uz-UZ') : '—'}</td>
+                <td style="font-size:.76rem">${esc(u.vipGrantedBy || '—')}</td>
+                <td>
+                  <div class="admin-fan-btns" style="gap:4px">
+                    ${u.isVip
+                      ? `<button class="admin-del-btn" onclick="quickRevokeVip('${esc(u.username)}')">${svgIcon('shield', 12)} Olib tashlash</button>`
+                      : `<button class="admin-edit-btn" onclick="quickGrantVip('${esc(u.username)}')" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);border-radius:7px;padding:5px 10px;color:var(--blue);font-size:.72rem;font-weight:600;cursor:pointer">${svgIcon('shield', 12)} VIP qilish</button>`
+                    }
+                  </div>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody></table></div>`;
+      } catch(e) {
+        wrap.innerHTML = '<div class="admin-empty" style="color:var(--deborah-semantic-color-action-primary)">Yuklab bo\'lmadi</div>';
+      }
+    }
+
+    function filterVip() {
+      const q = document.getElementById('vip-search').value.toLowerCase();
+      document.querySelectorAll('#pane-vip .vip-row').forEach(row => {
+        const name = row.querySelector('.font-bold')?.textContent?.toLowerCase() || '';
+        row.style.display = name.includes(q) ? '' : 'none';
+      });
+    }
+
+    function setVipMsg(text, type) {
+      const el = document.getElementById('vip-msg');
+      // S33.08: status ranglar — err danger, ok info
+      const tone = type === 'err' ? 'admin-status--danger' : 'admin-status--info';
+      el.textContent = text;
+      el.className = 'admin-msg active ' + tone;
+    }
+
+    async function grantVip() {
+      const username = document.getElementById('vip-username').value.trim();
+      if (!username) { setVipMsg('Username kiriting!', 'err'); return; }
+      // S33.09: confirmation + pending state
+      if (!(await showConfirm('VIP berish', username + ' foydalanuvchisiga VIP huquqi berilsinmi?'))) return;
+      const btn = document.getElementById('grant-vip-btn');
+      if (btn) { btn.disabled = true; btn.setAttribute('aria-busy', 'true'); btn.textContent = 'Berilmoqda…'; }
+      setVipMsg('VIP berilmoqda...', 'ok');
+      document.getElementById('vip-result').style.display = 'none';
+      try {
+        const res = await fetch('/admin/api/vip/grant', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username })
+        });
+        const data = await res.json();
+        if (data.success) {
+          setVipMsg('', '');
+          // STYLE S33.03: plain password UI'da ko'rsatilmaydi
+          const detail = document.getElementById('vip-result-detail');
+          detail.innerHTML = 'Foydalanuvchi: <strong>' + esc(data.username) + '</strong> — VIP huquqi berildi';
+          document.getElementById('vip-result').style.display = 'block';
+          document.getElementById('vip-username').value = '';
+          setTimeout(() => loadVip(), 2000);
+        } else {
+          setVipMsg('Xato: ' + (data.error || ''), 'err');
+        }
+      } catch(e) {
+        setVipMsg('Xato: ' + e.message, 'err');
+      } finally {
+        if (btn) { btn.disabled = false; btn.removeAttribute('aria-busy'); btn.innerHTML = '<%- icon('shield', 14) %> VIP qilish'; }
+      }
+    }
+
+    async function quickGrantVip(username) {
+      if (!(await showConfirm('VIP berish', username + ' foydalanuvchisiga VIP berilsinmi?'))) return;
+      try {
+        const res = await fetch('/admin/api/vip/grant', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username })
+        });
+        const data = await res.json();
+        if (data.success) {
+          // STYLE S33.03: parol toast'da ko'rsatilmaydi
+          showToast('VIP berildi!', 'ok', 3000);
+          if (currentTab === 'vip') { loadVip(); } else { location.reload(); }
+        } else {
+          showToast('Xato: ' + (data.error || ''), 'err');
+        }
+      } catch(e) {
+        showToast('Xato: ' + e.message, 'err');
+      }
+    }
+
+    async function quickRevokeVip(username) {
+      if (!(await showConfirm('VIP olib tashlash', username + ' foydalanuvchisidan VIP huquqini olib tashlashni tasdiqlaysizmi?'))) return;
+      try {
+        const res = await fetch('/admin/api/vip/revoke', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('VIP olib tashlandi', 'ok');
+          if (currentTab === 'vip') { loadVip(); } else { location.reload(); }
+        } else {
+          showToast('Xato: ' + (data.error || ''), 'err');
+        }
+      } catch(e) {
+        showToast('Xato: ' + e.message, 'err');
+      }
+    }
+
+    const MEDAL_ICONS = ['award', 'award', 'award'];
+
+    async function loadResults() {
+      const wrap = document.getElementById('results-wrap');
+      try {
+        const res = await fetch('/admin/api/results');
+        const data = await res.json();
+        if (!data.results?.length) {
+          wrap.innerHTML = '<div class="admin-empty">Hali o\'yin natijalari yo\'q</div>';
+          return;
+        }
+        wrap.innerHTML = data.results.map(r => `
+          <div class="admin-res-card">
+            <div class="admin-res-head">
+              <div>
+                <div class="admin-res-title">${svgIcon('trophy', 16)} ${r.testName}</div>
+                <div class="admin-res-meta">${new Date(r.date).toLocaleString('uz-UZ')} &bull; ${r.totalPlayers} o'yinchi &bull; Kod: <a href="/arena?code=${r.code}&auto=1" target="_blank" class="arena-code-link" style="color:var(--green);font-weight:700;text-decoration:none;border-bottom:2px solid rgba(0,229,160,.25)">${r.code}</a></div>
+              </div>
+              <button class="admin-del-btn" onclick="deleteResult('${r.code}')">${svgIcon('trash', 12)}</button>
+            </div>
+            <div class="admin-top3">
+              ${(r.leaderboard || []).slice(0,3).map((p,i) => `
+                <span class="admin-top-chip"><span class="admin-rank-medal">${svgIcon(MEDAL_ICONS[i] || 'award', 14)} ${p.name} — ${p.score} ball</span></span>
+              `).join('')}
+            </div>
+          </div>
+        `).join('');
+      } catch(e) {
+        wrap.innerHTML = '<div class="admin-empty" style="color:var(--deborah-semantic-color-action-primary)">Yuklab bo\'lmadi</div>';
+      }
+    }
+
+    async function deleteResult(code) {
+      if (!(await showConfirm('O\'chirish', 'Natijani o\'chirishni tasdiqlaysizmi?'))) return;
+      await fetch('/admin/api/results/delete', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code })
+      });
+      loadResults();
+    }
+
+    async function loadStats() {
+      const wrap = document.getElementById('stats-content');
+      try {
+        const res = await fetch('/admin/api/stats');
+        const data = await res.json();
+        wrap.innerHTML = `
+          <div class="admin-stats-row">
+            <div class="stat-card"><div class="stat-ico">${svgIcon('users', 20)}</div><div><div class="stat-num" >${data.userCount}</div><div class="stat-lbl">Foydalanuvchilar</div></div></div>
+            <div class="stat-card"><div class="stat-ico">${svgIcon('edit', 20)}</div><div><div class="stat-num" >${data.totalTests}</div><div class="stat-lbl">Testlar</div></div></div>
+            <div class="stat-card"><div class="stat-ico">${svgIcon('gamepad', 20)}</div><div><div class="stat-num" >${data.activeGames}</div><div class="stat-lbl">Faol o'yinlar</div></div></div>
+            <div class="stat-card"><div class="stat-ico">${svgIcon('trophy', 20)}</div><div><div class="stat-num">${data.resultsCount}</div><div class="stat-lbl">Natijalar</div></div></div>
+            <div class="stat-card"><div class="stat-ico">${svgIcon('user', 20)}</div><div><div class="stat-num">${data.totalPlayers}</div><div class="stat-lbl">Jami o'yinchilar</div></div></div>
+          </div>
+          ${(data.fanStats || []).map(f => `
+            <div class="admin-fan-item">
+              <div><div class="admin-fan-item-name">${svgIcon('book', 16)} ${f.name}</div><div class="admin-fan-item-meta">${f.count} ta savol</div></div>
+            </div>
+          `).join('')}
+        `;
+      } catch(e) {
+        wrap.innerHTML = '<div class="admin-empty" style="color:var(--deborah-semantic-color-action-primary);">Yuklab bo\'lmadi</div>';
+      }
+    }
+
+    refreshActiveTab();
+
+    // S18: users jadvali — semantic sortable + search + density
+    if (window.DataTable && document.getElementById('users-tbody')) {
+      const wrap = document.querySelector('#pane-danger .dt-wrap');
+      if (wrap) new window.DataTable(wrap.parentElement, {
+        sortable: true, search: true, density: true, key: 'users'
+      });
+    }
+  </script>
+</body>
+</html>

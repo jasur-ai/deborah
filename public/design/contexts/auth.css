@@ -1,0 +1,707 @@
+/**
+ * Deborah — Auth Context (STYLE STEP 24)
+ * --------------------------------------
+ * S24.01 — centered endless void → compact official shell (product proof + 440px form split)
+ * S24.02 — login/register tabs proper semantics (tablist/tab + keyboard)
+ * S24.03 — visible labels / hint / error anatomy (reuse input.css form-field)
+ * S24.04 — light theme contrast semantic surface/border tokens (no raw white alpha)
+ * S24.05 — password show/hide + caps-lock (auth.js)
+ * S24.06 — submit pending label + duplicate-submit lock (auth.js)
+ * S24.08 — admin link low-emphasis footer utility
+ * S24.09 — theme control 44px accessible menu (no floating 40px circle)
+ * S24.10 — mobile keyboard: 100dvh + overflow scroll, no vertical center overflow
+ * S24.12 — user/admin same visual family; admin distinct badge/title
+ *
+ * DIQQAT: @layer ishlatilmaydi — style.css un-layered, shuning uchun
+ * layered qoidalar undan yuqori priority'ga ega bo'lardi. Bu fayl
+ * auth view'larida head.ejs'dan KEYIN yuklanadi (cascade ustun).
+ */
+
+/* ── Shell: split layout (S24.01) ── */
+.auth-page {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(20px, 4vw, 48px) 16px;
+  background:
+    radial-gradient(ellipse 60% 45% at 12% 18%, color-mix(in srgb, var(--deborah-semantic-color-brand-cobalt) 9%, transparent) 0%, transparent 65%),
+    radial-gradient(ellipse 45% 40% at 88% 80%, color-mix(in srgb, var(--deborah-semantic-color-brand-insight) 7%, transparent) 0%, transparent 60%),
+    var(--deborah-semantic-color-surface-sunken, var(--deborah-semantic-color-surface-default));
+  overflow-y: auto;
+}
+.auth-page.auth-page--top { align-items: flex-start; }
+
+.auth-shell {
+  width: 100%;
+  max-width: 960px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 440px;
+  gap: clamp(24px, 5vw, 64px);
+  align-items: center;
+  margin: auto;
+}
+
+/* ── Product proof panel (S24.01) ── */
+.auth-proof {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+.auth-proof-brand { display: flex; align-items: center; gap: 12px; }
+.auth-proof-logo { height: 40px; width: auto; }
+.auth-proof-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--deborah-semantic-color-text-secondary);
+  background: var(--deborah-semantic-color-surface-nested);
+  border: 1px solid var(--deborah-semantic-color-border-subtle);
+}
+.auth-proof h1 {
+  font-family: var(--deborah-typography-font-display, var(--font-display));
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  line-height: 1.18;
+  margin: 0;
+  color: var(--deborah-semantic-color-text-primary);
+}
+.auth-proof-sub {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--deborah-semantic-color-text-secondary);
+  max-width: 46ch;
+}
+.auth-proof-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.auth-proof-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--deborah-semantic-color-text-secondary);
+}
+.auth-proof-list .auth-proof-ico {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  color: var(--deborah-semantic-color-action-primary);
+  background: var(--deborah-semantic-color-action-primary-soft);
+}
+
+/* ── Form card (440px) ── */
+.auth-box {
+  background: var(--deborah-semantic-color-surface-raised, var(--deborah-semantic-color-surface-raised));
+  border: 1px solid var(--deborah-semantic-color-border-subtle, var(--deborah-semantic-color-border-subtle));
+  border-radius: var(--deborah-radius-lg, 20px);
+  padding: clamp(20px, 3vw, 28px);
+  box-shadow: 0 18px 50px -20px color-mix(in srgb, var(--deborah-semantic-color-text-primary) 28%, transparent);
+  width: 100%;
+}
+.auth-header { margin-bottom: 18px; }
+.auth-header--split { display: none; }
+.auth-title {
+  font-family: var(--deborah-typography-font-display, var(--font-display));
+  font-size: 1.35rem;
+  margin: 0 0 4px;
+  color: var(--deborah-semantic-color-text-primary);
+}
+.auth-sub {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--deborah-semantic-color-text-muted);
+}
+
+/* ── Admin distinct family (S24.12) ── */
+.auth-admin-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--deborah-semantic-color-text-inverse, #fff);
+  background: var(--deborah-semantic-color-brand-cobalt);
+}
+
+/* ── Lang switcher ── */
+.lang-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 2px;
+  margin-bottom: 14px;
+}
+.lang-link {
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--deborah-semantic-color-text-muted);
+  text-decoration: none;
+  transition: color 120ms ease, background-color 120ms ease;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+}
+.lang-link:hover { color: var(--deborah-semantic-color-text-primary); background: var(--deborah-semantic-color-surface-nested); }
+.lang-link.on {
+  background: var(--deborah-semantic-color-action-primary);
+  color: var(--deborah-semantic-color-action-on-action, #fff);
+}
+
+/* ── Tabs — proper tablist (S24.02) ── */
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-bottom: 20px;
+  padding: 4px;
+  border-radius: var(--deborah-radius-sm, 10px);
+  background: var(--deborah-semantic-color-surface-nested);
+  border: 1px solid var(--deborah-semantic-color-border-subtle);
+}
+.auth-tab {
+  appearance: none;
+  border: none;
+  border-radius: calc(var(--deborah-radius-sm, 10px) - 3px);
+  padding: 10px;
+  min-height: 44px;
+  font-family: var(--deborah-typography-font-body, var(--font-body));
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--deborah-semantic-color-text-muted);
+  background: transparent;
+  transition: color 120ms ease, background-color 120ms ease;
+}
+.auth-tab:hover { color: var(--deborah-semantic-color-text-primary); }
+.auth-tab[aria-selected="true"] {
+  background: var(--deborah-semantic-color-surface-raised);
+  color: var(--deborah-semantic-color-text-primary);
+  box-shadow: 0 1px 4px color-mix(in srgb, var(--deborah-semantic-color-text-primary) 12%, transparent);
+}
+.auth-tab:focus-visible {
+  outline: 2px solid var(--deborah-semantic-color-focus);
+  outline-offset: 2px;
+}
+
+/* ── Form stack (S24.03) ── */
+.auth-form { display: none; }
+.auth-form.is-active { display: block; }
+.auth-form .lbl {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--deborah-semantic-color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  display: block;
+}
+.auth-form .inp { margin-bottom: 6px; width: 100%; }
+/* AUTH D-24 §10: qonuniy rozilik checkbox */
+.consent-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 10px 0 4px;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: var(--deborah-semantic-color-text-secondary);
+  cursor: pointer;
+}
+.consent-row input[type="checkbox"] {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  accent-color: var(--deborah-semantic-color-action-primary, #2563eb);
+}
+/* AUTH D-24: legal havolalar (auth sahifalari footer) */
+.auth-legal {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 18px 0 26px;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+.auth-legal a {
+  color: var(--deborah-semantic-color-text-muted);
+  text-decoration: none;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+}
+.auth-legal a:hover {
+  color: var(--deborah-semantic-color-action-primary, #2563eb);
+  text-decoration: underline;
+}
+.pw-wrap { position: relative; }
+.pw-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--deborah-semantic-color-text-muted);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  transition: color 120ms ease;
+}
+.pw-toggle:hover { color: var(--deborah-semantic-color-text-primary); }
+.caps-hint {
+  position: absolute;
+  right: 52px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem; /* S37.04: 0.66rem → 0.72rem (0.75rem dan past — faqat badge/legal istisnosi) */
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: var(--deborah-semantic-color-status-warning);
+  pointer-events: none;
+  white-space: nowrap;
+}
+.caps-hint[hidden] { display: none; }
+.field-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2px 0 14px;
+}
+.forgot-link {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--deborah-semantic-color-action-primary);
+  text-decoration: none;
+}
+.forgot-link:hover { text-decoration: underline; }
+/* AUTH A-01: remember checkbox (TTL 30 kun / 8 soat) */
+.auth-remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--deborah-semantic-color-text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+.auth-remember input {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--deborah-semantic-color-action-primary);
+  cursor: pointer;
+}
+.auth-remember:hover { color: var(--deborah-semantic-color-text-primary); }
+.err-text {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--deborah-semantic-color-status-danger);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.err-text svg { flex: 0 0 auto; }
+
+/* ── Submit pending (S24.06) ── */
+.auth-submit { position: relative; }
+.auth-submit .auth-spinner {
+  display: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--deborah-semantic-color-action-on-action, #fff) 35%, transparent);
+  border-top-color: var(--deborah-semantic-color-action-on-action, #fff);
+  animation: deborah-spin 0.7s linear infinite;
+  flex: 0 0 auto;
+}
+.auth-submit.is-pending .auth-spinner { display: inline-block; }
+@keyframes deborah-spin { to { transform: rotate(360deg); } }
+
+/* ── Trust + footer utility (S24.08) ── */
+.trust {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--deborah-semantic-color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.bottom-cta {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--deborah-semantic-color-text-secondary);
+}
+/* B-26 checkpoint: matn bloki ichidagi link faqat rangga tayanmasligi kerak
+   (WCAG 2.2 link-in-text-block — kontrast 1.18:1 emas, underline yetarli). */
+.bottom-cta a { color: var(--deborah-semantic-color-action-primary); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+.bottom-cta a:hover { text-decoration: underline; }
+.footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+.footer-link {
+  color: var(--deborah-semantic-color-text-muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+.footer-link:hover { color: var(--deborah-semantic-color-text-primary); }
+.footer-link--admin { opacity: 0.75; font-weight: 600; }
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  background: var(--deborah-semantic-color-action-primary);
+  color: var(--deborah-semantic-color-action-on-action, #fff);
+  padding: 10px 16px;
+  border-radius: 0 0 10px 0;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-decoration: none;
+  z-index: 1000;
+}
+.skip-link:focus { left: 0; }
+
+/* ── Google (S24.04: light theme safe, token-based surface) ── */
+.btn-google {
+  background: var(--deborah-semantic-color-surface-raised);
+  color: var(--deborah-semantic-color-text-primary);
+  width: 100%;
+  border: 1px solid var(--deborah-semantic-color-border-default);
+  border-radius: var(--deborah-radius-md, 12px);
+  padding: 13px;
+  font-family: var(--deborah-typography-font-body, var(--font-body));
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-decoration: none;
+  min-height: 48px;
+}
+.btn-google:hover {
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--deborah-semantic-color-text-primary) 18%, transparent);
+  transform: translateY(-1px);
+  background: var(--deborah-semantic-color-surface-default);
+}
+.btn-google:active { transform: translateY(0); }
+.btn-google.is-pending {
+  opacity: .65;
+  pointer-events: none;
+  cursor: progress;
+}
+
+/* AUTH A-27: Passkey bilan kirish tugmasi (Conditional UI + modal) */
+.passkey-login { margin-top: 4px; }
+.passkey-btn {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--deborah-semantic-color-action-primary) 14%, transparent), color-mix(in srgb, var(--gold, #fbbf24) 10%, transparent));
+  color: var(--deborah-semantic-color-text-primary);
+  width: 100%;
+  border: 1px dashed color-mix(in srgb, var(--deborah-semantic-color-action-primary) 55%, var(--deborah-semantic-color-border-default));
+  border-radius: var(--deborah-radius-md, 12px);
+  padding: 12px;
+  font-family: var(--deborah-typography-font-body, var(--font-body));
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px; /* a11y: 44px+ */
+}
+.passkey-btn:hover {
+  border-color: var(--deborah-semantic-color-action-primary);
+  border-style: solid;
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--deborah-semantic-color-action-primary) 22%, transparent);
+  transform: translateY(-1px);
+}
+.passkey-btn:active { transform: translateY(0); }
+.passkey-btn:disabled { opacity: .6; pointer-events: none; }
+.passkey-btn svg { color: var(--deborah-semantic-color-action-primary); }
+.passkey-hint {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  color: var(--deborah-semantic-color-text-muted);
+  font-weight: 600;
+  text-align: center;
+  min-height: 0;
+}
+
+.oidc-divider {
+  text-align: center;
+  margin: 18px 0;
+  position: relative;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--deborah-semantic-color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.oidc-divider span { background: var(--deborah-semantic-color-surface-raised); padding: 0 12px; position: relative; z-index: 1; }
+.oidc-divider::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--deborah-semantic-color-divider); }
+.oidc-divider span:empty { background: transparent; }
+
+/* ── Strength meter ── */
+.strength { display: none; }
+.strength.on { display: block; margin-bottom: 14px; }
+.strength-bar {
+  height: 4px;
+  border-radius: 99px;
+  background: var(--deborah-semantic-color-surface-nested);
+  overflow: hidden;
+}
+.strength-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 99px;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+.strength-hint { font-size: 0.7rem; font-weight: 700; color: var(--deborah-semantic-color-text-muted); margin-top: 4px; display: block; }
+
+/* ── Message (alert) ── */
+.msg {
+  border-radius: var(--deborah-radius-sm, 10px);
+  padding: 10px 14px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+  display: none;
+}
+.msg.err {
+  background: var(--deborah-semantic-color-status-danger-soft);
+  border: 1px solid var(--deborah-semantic-color-status-danger);
+  color: var(--deborah-semantic-color-status-danger);
+  display: block;
+}
+.msg.ok {
+  background: var(--deborah-semantic-color-status-success-soft);
+  border: 1px solid var(--deborah-semantic-color-status-success);
+  color: var(--deborah-semantic-color-status-success);
+  display: block;
+}
+
+/* ── Register: rol tanlovi kartalari (B-03) ── */
+.role-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  border: none;
+  padding: 0;
+  margin: 0 0 6px;
+}
+.role-legend {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--deborah-semantic-color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  padding: 0;
+}
+.role-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--deborah-semantic-color-border-subtle);
+  border-radius: var(--deborah-radius-md, 12px);
+  background: var(--deborah-semantic-color-surface-raised);
+  cursor: pointer;
+  transition: border-color 120ms ease, background-color 120ms ease, box-shadow 120ms ease;
+}
+.role-card:hover {
+  border-color: var(--deborah-semantic-color-action-primary);
+}
+.role-card input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.role-card:has(input:checked) {
+  border-color: var(--deborah-semantic-color-action-primary);
+  background: var(--deborah-semantic-color-action-primary-soft, color-mix(in srgb, var(--deborah-semantic-color-action-primary) 10%, transparent));
+  box-shadow: 0 0 0 1px var(--deborah-semantic-color-action-primary) inset;
+}
+.role-card:has(input:focus-visible) {
+  outline: 2px solid var(--deborah-semantic-color-focus);
+  outline-offset: 2px;
+}
+.role-ico {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--deborah-semantic-color-text-secondary);
+  background: var(--deborah-semantic-color-surface-nested);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.role-card:has(input:checked) .role-ico {
+  background: var(--deborah-semantic-color-action-primary);
+  color: var(--deborah-semantic-color-action-on-action, #fff);
+}
+.role-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.role-txt strong {
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: var(--deborah-semantic-color-text-primary);
+}
+.role-txt small {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--deborah-semantic-color-text-muted);
+}
+.role-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 4px 0 14px;
+  padding: 8px 10px;
+  border-radius: var(--deborah-radius-sm, 10px);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--deborah-semantic-color-text-secondary);
+  background: var(--deborah-semantic-color-surface-nested);
+  border: 1px solid var(--deborah-semantic-color-border-subtle);
+}
+.role-note svg { flex: 0 0 auto; margin-top: 1px; color: var(--deborah-semantic-color-status-warning); }
+.role-note[hidden] { display: none; }
+
+/* ── Register: invite kod (B-03, yig'iladigan) ── */
+.invite-row { margin: 2px 0 12px; }
+.invite-toggle {
+  appearance: none;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 4px;
+  border-radius: 8px;
+  min-height: 32px;
+  font-family: var(--deborah-typography-font-body, var(--font-body));
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--deborah-semantic-color-action-primary);
+  transition: color 120ms ease;
+}
+.invite-toggle:hover { text-decoration: underline; }
+.invite-toggle svg:last-child { transition: transform 120ms ease; }
+.invite-toggle[aria-expanded="true"] svg:last-child { transform: rotate(180deg); }
+.invite-fields { margin-bottom: 4px; }
+.invite-fields[hidden] { display: none; }
+
+/* ── Register: email typo suggestion (B-05) ── */
+.email-suggest { margin: -2px 0 12px; }
+.email-suggest[hidden] { display: none; }
+.email-suggest-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  min-height: 32px;
+  font-family: var(--deborah-typography-font-body, var(--font-body));
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--deborah-semantic-color-action-primary);
+  background: var(--deborah-semantic-color-action-primary-soft, color-mix(in srgb, var(--deborah-semantic-color-action-primary) 10%, transparent));
+  transition: background-color 120ms ease;
+}
+.email-suggest-btn:hover { text-decoration: underline; }
+.email-suggest-btn svg { flex: 0 0 auto; }
+
+/* ── Register: trust (B-03, uch elementli) ── */
+.trust--multi {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.trust--multi span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* ── Mobile: single column, proof compact, 100dvh scroll (S24.10) ── */
+@media (max-width: 860px) {
+  .auth-shell { grid-template-columns: 1fr; gap: 20px; }
+  .auth-proof { display: none; }
+  .auth-header--split { display: block; }
+  .auth-page { align-items: flex-start; }
+}
+@media (max-height: 560px) {
+  .auth-page { align-items: flex-start; padding-top: 20px; }
+}

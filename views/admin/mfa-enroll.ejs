@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <style>
+    body{background:var(--deborah-semantic-color-surface-default);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;font-family:'Source Sans 3',sans-serif;}
+    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 55% 40% at 15% 20%,rgba(2,132,199,.08) 0%,transparent 65%);}
+    .card{position:relative;z-index:1;width:100%;max-width:440px;background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-default);border-radius:20px;padding:32px;box-shadow:var(--shadow-lg);animation:slideUp .4s ease;}
+    .mfa-flag{display:inline-flex;align-items:center;gap:6px;font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--deborah-semantic-color-brand-cobalt);padding:5px 12px;border-radius:999px;margin-bottom:18px;}
+    .title{font-family:'Manrope',cursive;font-size:1.35rem;margin-bottom:6px;}
+    .sub{font-size:.84rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-bottom:20px;}
+    .qr-wrap{display:flex;justify-content:center;margin-bottom:16px;}
+    .qr-wrap img{width:200px;height:200px;border-radius:14px;background:#fff;padding:10px;border:1px solid var(--deborah-semantic-color-border-default);}
+    .secret-box{display:flex;align-items:center;gap:8px;background:var(--deborah-semantic-color-surface-input);border:1px solid var(--deborah-semantic-color-border-default);border-radius:12px;padding:10px 14px;margin-bottom:6px;}
+    .secret-box code{flex:1;font-size:.82rem;letter-spacing:.12em;font-weight:700;color:var(--deborah-semantic-color-text-primary);word-break:break-all;}
+    .copy-btn{border:none;background:transparent;color:var(--deborah-semantic-color-action-primary);cursor:pointer;font-weight:700;font-size:.75rem;padding:4px 8px;border-radius:8px;}
+    .copy-btn:hover{background:rgba(37,99,235,.08);}
+    .manual-hint{font-size:.7rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-bottom:18px;}
+    .code-inp{width:100%;text-align:center;font-size:1.5rem;letter-spacing:.5em;font-family:'Manrope',cursive;background:var(--deborah-semantic-color-surface-input);border:2px solid var(--deborah-semantic-color-border-default);border-radius:12px;padding:14px;color:var(--deborah-semantic-color-text-primary);outline:none;transition:border-color .3s;font-variant-numeric:tabular-nums;}
+    .code-inp:focus{border-color:var(--deborah-semantic-color-action-primary);}
+    .btn{width:100%;margin-top:16px;border:none;border-radius:12px;padding:14px;background:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#041018);font-family:'Source Sans 3',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .2s,box-shadow .2s,opacity .2s;}
+    .btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+    .btn:disabled{opacity:.55;cursor:not-allowed;transform:none;}
+    .err{display:none;margin-top:14px;border-radius:10px;padding:11px 14px;font-size:.78rem;font-weight:700;color:var(--deborah-semantic-color-danger);background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.3);}
+    .err.show{display:block;}
+    .backup{display:none;margin-top:16px;border:1px solid rgba(34,197,94,.4);background:rgba(34,197,94,.07);border-radius:12px;padding:14px;}
+    .backup.show{display:block;}
+    .backup h4{margin:0 0 8px;font-size:.82rem;color:var(--deborah-semantic-color-success);}
+    .backup code{display:inline-block;font-size:.74rem;font-weight:700;background:var(--deborah-semantic-color-surface-input);padding:3px 8px;border-radius:6px;margin:2px;}
+    .spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;display:none;animation:spin .7s linear infinite;}
+    .spinner.show{display:inline-block;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body>
+  <div class="card">
+    <span class="mfa-flag">Admin 2FA — Majburiy</span>
+    <div class="title">Ikki bosqichli tekshiruvni sozlash</div>
+    <div class="sub">Admin hisobi uchun 2FA majburiy. Autentifikator ilovasiga quyidagi QR kodni skanerlang.</div>
+
+    <div class="qr-wrap">
+      <% if (typeof qr !== 'undefined' && qr) { %>
+        <img src="<%= qr %>" alt="QR kod">
+      <% } else { %>
+        <div class="manual-hint">QR yuklanmadi — kalitni qo\u2019lda kiriting</div>
+      <% } %>
+    </div>
+
+    <div class="secret-box">
+      <code id="secret"><%= typeof secret !== 'undefined' ? secret : '' %></code>
+      <button type="button" class="copy-btn" id="copy-btn" aria-label="Kalitni nusxalash">Nusxalash</button>
+    </div>
+    <div class="manual-hint">Google Authenticator / 1Password kabi ilovada "Manual entry" orqali kalitni kiriting</div>
+
+    <input class="code-inp" id="token" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••" autofocus aria-label="6 xonali kod">
+    <button class="btn" id="btn">
+      <span class="spinner" id="spinner"></span>
+      <span id="btn-label">Tasdiqlash va davom etish</span>
+    </button>
+    <div class="err" id="err" role="alert"></div>
+
+    <div class="backup" id="backup">
+      <h4>Zaxira kodlari — ularni xavfsiz joyda saqlang!</h4>
+      <div id="backup-codes"></div>
+      <button class="btn" id="done-btn" style="margin-top:12px">Admin panelga kirish</button>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var btn = document.getElementById('btn');
+      var doneBtn = document.getElementById('done-btn');
+      var tokenInp = document.getElementById('token');
+      var err = document.getElementById('err');
+      var spinner = document.getElementById('spinner');
+      var btnLabel = document.getElementById('btn-label');
+      var backupEl = document.getElementById('backup');
+      var copyBtn = document.getElementById('copy-btn');
+
+      copyBtn.addEventListener('click', function () {
+        var secret = document.getElementById('secret').textContent;
+        if (navigator.clipboard && secret) {
+          navigator.clipboard.writeText(secret).then(function () {
+            copyBtn.textContent = 'Nusxalandi!';
+            setTimeout(function () { copyBtn.textContent = 'Nusxalash'; }, 1500);
+          });
+        }
+      });
+
+      btn.addEventListener('click', submit);
+      tokenInp.addEventListener('keydown', function (e) { if (e.key === 'Enter') submit(); });
+
+      async function submit() {
+        var token = tokenInp.value.trim();
+        if (token.length !== 6) { showErr('6 xonali kod kiriting'); return; }
+        btn.disabled = true;
+        spinner.classList.add('show');
+        btnLabel.textContent = 'Tekshirilmoqda...';
+        err.classList.remove('show');
+        try {
+          var res = await fetch('/api/admin/mfa/enable', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': window.__CSRF_TOKEN || '' },
+            body: JSON.stringify({ token: token }),
+          });
+          var data = await res.json();
+          if (res.ok && data.ok) {
+            if (data.backupCodes && data.backupCodes.length) {
+              var html = data.backupCodes.map(function (c) { return '<code>' + c + '</code>'; }).join('');
+              document.getElementById('backup-codes').innerHTML = html;
+              backupEl.classList.add('show');
+              btn.style.display = 'none';
+              tokenInp.style.display = 'none';
+              return;
+            }
+            window.location.href = '/admin/dashboard';
+            return;
+          }
+          showErr(data.error === 'invalid_code' ? 'Kod noto\u2019g\u2019ri. Qayta urinib ko\u2019ring.' : 'Xatolik: ' + (data.error || 'server'));
+        } catch (e) {
+          showErr('Server bilan bog\u2019lanishda xatolik.');
+        } finally {
+          btn.disabled = false;
+          spinner.classList.remove('show');
+          btnLabel.textContent = 'Tasdiqlash va davom etish';
+        }
+      }
+
+      doneBtn.addEventListener('click', function () { window.location.href = '/admin/dashboard'; });
+
+      function showErr(msg) {
+        err.textContent = msg;
+        err.classList.add('show');
+      }
+    })();
+  </script>
+</body>
+</html>

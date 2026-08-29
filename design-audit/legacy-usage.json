@@ -1,0 +1,70 @@
+{
+  "current": {
+    "date": "2026-08-27",
+    "total": 341,
+    "cssSum": 67,
+    "viewInline": 274
+  },
+  "history": [
+    {
+      "date": "2026-08-09",
+      "total": 1375,
+      "cssSum": 328,
+      "viewInline": 1047
+    },
+    {
+      "date": "2026-08-09",
+      "total": 1375,
+      "cssSum": 328,
+      "viewInline": 1047
+    },
+    {
+      "date": "2026-08-09",
+      "total": 301,
+      "cssSum": 59,
+      "viewInline": 242
+    },
+    {
+      "date": "2026-08-18",
+      "total": 332,
+      "cssSum": 60,
+      "viewInline": 272
+    },
+    {
+      "date": "2026-08-18",
+      "total": 332,
+      "cssSum": 60,
+      "viewInline": 272
+    },
+    {
+      "date": "2026-08-25",
+      "total": 373,
+      "cssSum": 98,
+      "viewInline": 275
+    },
+    {
+      "date": "2026-08-25",
+      "total": 373,
+      "cssSum": 98,
+      "viewInline": 275
+    },
+    {
+      "date": "2026-08-25",
+      "total": 340,
+      "cssSum": 68,
+      "viewInline": 272
+    },
+    {
+      "date": "2026-08-27",
+      "total": 341,
+      "cssSum": 67,
+      "viewInline": 274
+    },
+    {
+      "date": "2026-08-27",
+      "total": 341,
+      "cssSum": 67,
+      "viewInline": 274
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "targets": [
+    {
+      "id": "semantic.mature",
+      "label": "Semantic: mature",
+      "value": null,
+      "target": 5.8,
+      "ok": null
+    },
+    {
+      "id": "semantic.official",
+      "label": "Semantic: official",
+      "value": null,
+      "target": 5.8,
+      "ok": null
+    },
+    {
+      "id": "semantic.distinctive",
+      "label": "Semantic: distinctive",
+      "value": null,
+      "target": 5.2,
+      "ok": null
+    },
+    {
+      "id": "semantic.clear",
+      "label": "Semantic: clear",
+      "value": null,
+      "target": 6,
+      "ok": null
+    },
+    {
+      "id": "semantic.competent",
+      "label": "Semantic: competent",
+      "value": null,
+      "target": 6,
+      "ok": null
+    },
+    {
+      "id": "semantic.trustworthy",
+      "label": "Semantic: trustworthy",
+      "value": null,
+      "target": 5.8,
+      "ok": null
+    },
+    {
+      "id": "fiveSecond.category",
+      "label": "5-sec category recall %",
+      "value": null,
+      "target": 80,
+      "ok": null
+    },
+    {
+      "id": "firstClick.primaryCta",
+      "label": "Primary CTA first-click %",
+      "value": null,
+      "target": 80,
+      "ok": null
+    },
+    {
+      "id": "nasaTlx.director",
+      "label": "NASA-TLX load index (director)",
+      "value": null,
+      "target": 11,
+      "ok": null
+    },
+    {
+      "id": "sus",
+      "label": "SUS score",
+      "value": null,
+      "target": 70,
+      "ok": null
+    },
+    {
+      "id": "ueq.pragmatic",
+      "label": "UEQ pragmatic",
+      "value": null,
+      "target": 1.5,
+      "ok": null
+    },
+    {
+      "id": "ueq.hedonic",
+      "label": "UEQ hedonic",
+      "value": null,
+      "target": 1.5,
+      "ok": null
+    },
+    {
+      "id": "fame.nameRecall",
+      "label": "Fame name recall %",
+      "value": null,
+      "target": 60,
+      "ok": null
+    },
+    {
+      "id": "fame.uniqueness",
+      "label": "Fame uniqueness",
+      "value": null,
+      "target": 5,
+      "ok": null
+    },
+    {
+      "id": "motion.gap",
+      "label": "Motion success gap pp",
+      "value": null,
+      "target": 10,
+      "ok": null
+    },
+    {
+      "id": "gamification.fairness",
+      "label": "Gamification fairness",
+      "value": null,
+      "target": 5,
+      "ok": null
+    }
+  ]
+}

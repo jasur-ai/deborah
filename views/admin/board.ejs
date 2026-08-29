@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <style>
+    body{background:var(--deborah-semantic-color-surface-default);min-height:100vh;transition:background .3s;}
+    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 55% 40% at 15% 20%,rgba(37,99,235,.1) 0%,transparent 65%),radial-gradient(ellipse 45% 35% at 85% 75%,rgba(56,189,248,.07) 0%,transparent 65%);}
+    .navbar{position:sticky;top:0;z-index:100;background:var(--bg-overlay);backdrop-filter:blur(18px);border-bottom:1px solid var(--deborah-semantic-color-border-default);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;transition:background .3s,border-color .3s;}
+    .nav-logo{font-family:''Manrope'',cursive;font-size:1.25rem;text-decoration:none;display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--deborah-semantic-color-action-primary),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .nav-right{display:flex;align-items:center;gap:8px;}
+    .nav-btn{padding:7px 12px;border-radius:9px;border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-muted);font-family:'Source Sans 3',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;text-decoration:none;transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s;display:flex;align-items:center;gap:5px;}
+    .nav-btn:hover{background:var(--bg-elevated);color:var(--deborah-semantic-color-text-primary);}
+    .panel{max-width:1180px;margin:0 auto;padding:24px 20px 90px;position:relative;z-index:1;}
+    .greeting{font-family:''Manrope'',cursive;font-size:1.5rem;display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+    .greeting-sub{font-size:.82rem;color:var(--deborah-semantic-color-text-muted);font-weight:700;margin-bottom:20px;}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
+    @media(max-width:900px){.grid{grid-template-columns:1fr;}}
+    .card{background:var(--deborah-semantic-color-surface-raised);border-radius:16px;padding:18px;border:1px solid var(--deborah-semantic-color-border-default);margin-bottom:14px;animation:slideDown .3s ease;transition:background .3s,border-color .3s;}
+    .card-h{font-family:''Manrope'',cursive;font-size:.95rem;display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+    .card-h small{font-family:'Source Sans 3',sans-serif;font-size:.66rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-left:auto;}
+    .field{margin-bottom:11px;}
+    .field label{display:block;font-size:.72rem;font-weight:700;color:var(--deborah-semantic-color-text-muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px;}
+    .inp{width:100%;background:var(--deborah-semantic-color-surface-input);border:2px solid var(--deborah-semantic-color-border-default);border-radius:10px;padding:9px 12px;color:var(--deborah-semantic-color-text-primary);font-family:'Source Sans 3',sans-serif;font-size:.82rem;font-weight:600;outline:none;transition:border-color .3s;}
+    .inp:focus{border-color:var(--deborah-semantic-color-action-primary);}
+    textarea.inp{min-height:60px;resize:vertical;}
+    .btn{border-radius:10px;border:none;padding:10px 16px;cursor:pointer;transition:color .3s ease,background-color .3s ease,border-color .3s ease,box-shadow .3s ease,transform .3s ease,opacity .3s ease;font-family:'Source Sans 3',sans-serif;font-weight:700;font-size:.8rem;background:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#041018);display:inline-flex;align-items:center;gap:6px;}
+    .btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+    .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+    .btn.ghost{background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-muted);border:1px solid var(--deborah-semantic-color-border-default);}
+    .btn.ghost:hover{color:var(--deborah-semantic-color-text-primary);background:var(--bg-elevated);}
+    .btn.green{background:linear-gradient(135deg,#00e5a0,#00b37e);color:#04120c;}
+    .btn.red{background:linear-gradient(135deg,#ef4444,#b91c1c);color:#fff;}
+    .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:99px;font-size:.66rem;font-weight:700;letter-spacing:.3px;}
+    .badge.blue{background:rgba(37,99,235,.15);color:var(--deborah-semantic-color-action-primary);}
+    .badge.green{background:rgba(0,229,160,.14);color:var(--green);}
+    .badge.red{background:rgba(239,68,68,.14);color:#f87171;}
+    .badge.amber{background:rgba(251,191,36,.14);color:var(--gold);}
+    .badge.gray{background:var(--bg-elevated);color:var(--deborah-semantic-color-text-muted);}
+    .badge.violet{background:rgba(139,92,246,.14);color:#a78bfa;}
+    table{width:100%;border-collapse:collapse;font-size:.78rem;}
+    th{text-align:left;font-size:.64rem;text-transform:uppercase;letter-spacing:.5px;color:var(--deborah-semantic-color-text-muted);padding:7px 8px;border-bottom:1px solid var(--deborah-semantic-color-border-default);font-weight:700;}
+    td{padding:7px 8px;border-bottom:1px solid var(--deborah-semantic-color-border-default);font-weight:700;}
+    tr:last-child td{border-bottom:none;}
+    .msg{padding:10px 14px;border-radius:10px;font-size:.78rem;font-weight:600;margin-bottom:12px;display:none;}
+    .msg.ok{display:block;background:rgba(0,229,160,.12);color:var(--green);border:1px solid rgba(0,229,160,.25);}
+    .msg.err{display:block;background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.25);}
+    .mono{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--deborah-semantic-color-text-muted);}
+    .row-btn{background:none;border:1px solid var(--deborah-semantic-color-border-default);color:var(--deborah-semantic-color-text-muted);border-radius:8px;padding:4px 9px;font-size:.68rem;font-weight:600;cursor:pointer;transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s;margin-right:5px;}
+    .row-btn:hover{color:var(--deborah-semantic-color-text-primary);border-color:var(--deborah-semantic-color-action-primary);}
+    .empty{text-align:center;color:var(--deborah-semantic-color-text-muted);padding:22px 0;font-size:.8rem;font-weight:700;}
+    .pre{background:var(--deborah-semantic-color-surface-input);border:1px solid var(--deborah-semantic-color-border-default);border-radius:10px;padding:10px 12px;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--deborah-semantic-color-text-muted);white-space:pre-wrap;margin-top:8px;}
+    .mini-stat{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;}
+    .mini-stat div{background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-default);border-radius:12px;padding:10px 16px;flex:1;min-width:120px;text-align:center;transition:background .3s,border-color .3s;}
+    .mini-stat b{display:block;font-family:''Manrope'',cursive;font-size:1.25rem;color:var(--deborah-semantic-color-action-primary);}
+    .mini-stat span{font-size:.66rem;font-weight:700;color:var(--deborah-semantic-color-text-muted);text-transform:uppercase;letter-spacing:.4px;}
+    .ledger{font-family:'JetBrains Mono',monospace;font-size:.7rem;line-height:1.7;}
+    .ledger b{color:var(--deborah-semantic-color-action-primary);}
+  </style>
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/admin" class="nav-logo">Deborah Admin</a>
+    <div class="nav-right">
+      <a href="/admin/dashboard" class="nav-btn">Dashboard</a>
+      <a href="/admin/grading" class="nav-btn">Grading</a>
+      <a href="/admin/marking" class="nav-btn">Marking</a>
+      <a href="/admin/logout" class="nav-btn">Chiqish</a>
+    </div>
+  </nav>
+
+  <div class="panel">
+    <h1 class="greeting">Board &amp; Ratification</h1>
+    <p class="greeting-sub">Provisional → ratified final (immutable), release va append-only grade ledger</p>
+
+    <div id="msg" class="msg"></div>
+
+    <div class="grid">
+      <!-- LEFT: meeting creation + readiness + ratify/release -->
+      <div>
+        <div class="card">
+          <div class="card-h">Yangi board meeting <small>quorum policy</small></div>
+          <div class="field">
+            <label>Title</label>
+            <input type="text" id="mTitle" class="inp" placeholder="Masalan: 2026-yozgi yakuniy baholash" />
+          </div>
+          <div class="field">
+            <label>Assessment ID</label>
+            <input type="number" id="mAssessmentId" class="inp" />
+          </div>
+          <div class="field">
+            <label>Required quorum</label>
+            <input type="number" id="mQuorum" class="inp" value="3" />
+          </div>
+          <div class="field">
+            <label>Required approval ratio (0.0 – 1.0)</label>
+            <input type="number" id="mRatio" class="inp" value="0.6" step="0.05" />
+          </div>
+          <button class="btn" onclick="createMeeting()">Meeting yaratish</button>
+        </div>
+
+        <div class="card">
+          <div class="card-h">Board-ready blocker check <small>fail-closed</small></div>
+          <div class="field">
+            <label>Grade calculation run ID</label>
+            <input type="number" id="rRunId" class="inp" />
+          </div>
+          <button class="btn green" onclick="checkReadiness()">Blocker'larni tekshirish</button>
+          <div id="readinessResult" class="pre" style="display:none;"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h">Ratify &amp; release <small>immutable</small></div>
+          <div class="field">
+            <label>Meeting ID</label>
+            <input type="number" id="rMeetingId" class="inp" />
+          </div>
+          <div class="field">
+            <label>Run ID</label>
+            <input type="number" id="rRunId2" class="inp" />
+          </div>
+          <div class="field">
+            <label>Student user ID</label>
+            <input type="number" id="rUserId" class="inp" />
+          </div>
+          <button class="btn" onclick="ratify()">Ratify (immutable)</button>
+          <button class="btn green" style="margin-left:6px;" onclick="release()">Release to SIS</button>
+        </div>
+
+        <div class="card">
+          <div class="card-h">Amendment ledger <small>append-only</small></div>
+          <div class="field">
+            <label>Run ID</label>
+            <input type="number" id="aRunId" class="inp" />
+          </div>
+          <div class="field">
+            <label>New final grade</label>
+            <input type="number" id="aNewFinal" class="inp" step="0.01" />
+          </div>
+          <div class="field">
+            <label>Sabab</label>
+            <input type="text" id="aReason" class="inp" placeholder="Masalan: xato hisoblash tuzatildi" />
+          </div>
+          <button class="btn" onclick="amend()">Ledger'ga qo'shish</button>
+        </div>
+      </div>
+
+      <!-- RIGHT: meetings, ledger -->
+      <div>
+        <div class="card">
+          <div class="card-h">Meetings <small><span class="badge blue" id="meetingCount">0</span></small></div>
+          <div id="meetingList"><div class="empty">Yuklanmoqda…</div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h">Grade amendment ledger <small><span class="badge amber" id="ledgerCount">0</span></small></div>
+          <div id="ledgerList"><div class="empty">Hozircha amendment yo'q</div></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+<script>
+  window.__CSRF_TOKEN = '<%= csrfToken %>';
+
+  async function api(url, method, body) {
+    const opts = { method: method || 'GET', headers: { 'Content-Type': 'application/json' } };
+    if (method && method !== 'GET') opts.headers['X-CSRF-Token'] = window.__CSRF_TOKEN || '';
+    if (body !== undefined) opts.body = JSON.stringify(body);
+    const r = await fetch(url, opts);
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error || j.reason || ('HTTP ' + r.status));
+    return j;
+  }
+
+  function showMsg(text, isErr) {
+    const m = document.getElementById('msg');
+    m.className = 'msg ' + (isErr ? 'err' : 'ok');
+    m.textContent = text;
+    setTimeout(() => { m.style.opacity = '0'; }, 4000);
+    setTimeout(() => { m.className = 'msg'; m.style.opacity = ''; }, 4400);
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  async function createMeeting() {
+    try {
+      const r = await api('/api/admin/board/meetings', 'POST', {
+        title: document.getElementById('mTitle').value,
+        assessmentId: Number(document.getElementById('mAssessmentId').value) || null,
+        requiredQuorum: Number(document.getElementById('mQuorum').value) || 3,
+        requiredApprovalRatio: Number(document.getElementById('mRatio').value) || 0.6,
+      });
+      showMsg('Meeting #' + r.id + ' yaratildi (' + r.meeting.status + ')');
+      loadMeetings();
+    } catch (e) { showMsg(e.message, true); }
+  }
+
+  async function checkReadiness() {
+    try {
+      const runId = Number(document.getElementById('rRunId').value);
+      if (!runId) throw new Error('Run ID kiriting');
+      const r = await api('/api/admin/board/readiness?runId=' + runId);
+      const el = document.getElementById('readinessResult');
+      el.style.display = 'block';
+      el.textContent = r.ready
+        ? 'READY — boardga kiritish mumkin'
+        : 'BLOCKED:\n' + (r.blockers || []).map((b) => ' • ' + b).join('\n');
+      el.style.color = r.ready ? 'var(--green)' : '#f87171';
+    } catch (e) { showMsg(e.message, true); }
+  }
+
+  async function ratify() {
+    try {
+      const r = await api('/api/admin/board/ratify', 'POST', {
+        meetingId: Number(document.getElementById('rMeetingId').value),
+        runId: Number(document.getElementById('rRunId2').value),
+        userId: Number(document.getElementById('rUserId').value),
+      });
+      if (r.blocked) showMsg('Blocked: ' + (r.blockers || []).join('; '), true);
+      else if (r.quorumError) showMsg(r.quorumError, true);
+      else {
+        showMsg('Ratified #' + r.decision.id + ' — snapshot ' + (r.snapshotHash || '').slice(0, 12) + '…');
+        loadMeetings();
+        loadLedger();
+      }
+    } catch (e) { showMsg(e.message, true); }
+  }
+
+  async function release() {
+    try {
+      const r = await api('/api/admin/board/release', 'POST', {
+        runId: Number(document.getElementById('rRunId2').value),
+      });
+      showMsg('Yakuniy baho chiqarildi — navbat #' + r.outbox.id + ' (' + r.outbox.status + ')');
+    } catch (e) { showMsg(e.message, true); }
+  }
+
+  async function amend() {
+    try {
+      const r = await api('/api/admin/board/amendments', 'POST', {
+        runId: Number(document.getElementById('aRunId').value),
+        newFinal: Number(document.getElementById('aNewFinal').value),
+        reason: document.getElementById('aReason').value,
+      });
+      showMsg('Amendment #' + r.amendment.amendment_no + ' yozildi');
+      loadLedger();
+      loadMeetings();
+    } catch (e) { showMsg(e.message, true); }
+  }
+
+  async function loadMeetings() {
+    try {
+      const r = await api('/api/admin/board/meetings');
+      document.getElementById('meetingCount').textContent = r.rows.length;
+      const el = document.getElementById('meetingList');
+      if (!r.rows.length) { el.innerHTML = '<div class="empty">Hozircha meeting yo\'q</div>'; return; }
+      el.innerHTML = '<table><tr><th>ID</th><th>Title</th><th>Status</th><th>Quorum</th></tr>' +
+        r.rows.map(m => '<tr><td>' + m.id + '</td><td>' + esc(m.title) + '</td><td><span class="badge ' + (m.status === 'ratified' ? 'green' : m.status === 'rejected' ? 'red' : m.status === 'open' ? 'amber' : 'gray') + '">' + esc(m.status) + '</span></td><td>' + m.required_quorum + '</td></tr>').join('') + '</table>';
+    } catch (e) { document.getElementById('meetingList').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; }
+  }
+
+  async function loadLedger() {
+    try {
+      const r = await api('/api/admin/board/amendments');
+      document.getElementById('ledgerCount').textContent = r.rows.length;
+      const el = document.getElementById('ledgerList');
+      if (!r.rows.length) { el.innerHTML = '<div class="empty">Hozircha amendment yo\'q</div>'; return; }
+      el.innerHTML = '<table><tr><th>#</th><th>Run</th><th>From</th><th>To</th><th>Sabab</th></tr>' +
+        r.rows.map(a => '<tr><td class="mono">' + a.amendment_no + '</td><td>' + a.run_id + '</td><td>' + a.old_final + '</td><td><b style="color:var(--green)">' + a.new_final + '</b></td><td>' + esc(a.reason) + '</td></tr>').join('') + '</table>';
+    } catch (e) { document.getElementById('ledgerList').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; }
+  }
+
+
+  loadMeetings();
+  loadLedger();
+</script>
+</body>
+</html>

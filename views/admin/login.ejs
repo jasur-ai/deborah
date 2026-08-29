@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <link rel="stylesheet" href="/design/contexts/auth.css">
+  <style>
+    /* S24.12 — admin: same family, no neon, distinct cobalt flag */
+    .auth-admin-flag{background:var(--deborah-semantic-color-brand-cobalt,#7dd3fc);color:#041018;} /* BUG-057: token yuklanmasa badge dark'da ko'rinmasdi (1.05:1) */
+    .auth-box{max-width:440px;margin:0 auto;}
+    .admin-topbar{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 20px;gap:12px;
+      border-bottom:1px solid var(--deborah-semantic-color-divider);
+      background:var(--deborah-semantic-color-surface-raised);
+    }
+    .admin-topbar .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:.9rem;}
+    .admin-topbar .brand img{height:26px;width:auto;}
+    .theme-segmented{transform:none;}
+  </style>
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body>
+  <a href="#main" class="skip-link">Kirish →</a>
+  <div class="admin-topbar">
+    <span class="brand"><img src="/images/logo-vintage.png" alt="Deborah"> Deborah</span>
+    <%- include('../partials/theme-control') %>
+  </div>
+  <main id="main" class="auth-page auth-page--top" style="padding-top:clamp(28px,6vh,64px)">
+    <div class="auth-wrap" style="width:100%;max-width:440px;margin:0 auto">
+      <div class="auth-box">
+        <span class="auth-admin-flag"><%- icon('shield', 12) %> Admin</span>
+        <div class="auth-header">
+          <div class="auth-title">Admin Panel</div>
+          <div class="auth-sub">Faqat administratorlar uchun</div>
+          <% if (typeof mfaRequired !== 'undefined' && mfaRequired) { %>
+          <div class="auth-mfa-note" style="margin-top:12px;padding:10px 12px;border-radius:10px;background:rgba(2,132,199,.08);border:1px solid rgba(2,132,199,.25);font-size:.76rem;font-weight:700;color:var(--deborah-semantic-color-text-muted);display:flex;gap:8px;align-items:center">
+            <span style="flex-shrink:0;color:var(--deborah-semantic-color-action-primary)"><%- icon('shield', 14) %></span>
+            <span>Xavfsizlik uchun admin hisobi ikki bosqichli tekshiruv (2FA) bilan himoyalangan — kirishda tasdiqlash talab qilinadi.</span>
+          </div>
+          <% } %>
+        </div>
+        <form method="POST" action="/admin/login" class="auth-form is-active">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div id="auth-alert" class="msg <%= typeof error !== 'undefined' && error ? 'err' : '' %>" role="alert" aria-live="assertive"><%= typeof error !== 'undefined' && error ? error : '' %></div>
+
+          <% if (typeof turnstileSiteKey !== 'undefined' && turnstileSiteKey) { %>
+          <div class="turnstile-row" id="turnstile-row" style="margin-bottom:14px">
+            <div class="cf-turnstile" data-sitekey="<%= turnstileSiteKey %>" data-theme="auto" data-size="flexible" data-callback="onAdminTurnstileSuccess" data-expired-callback="onAdminTurnstileExpired" data-error-callback="onAdminTurnstileExpired"></div>
+            <div class="err-text" id="err-admin-turnstile" style="display:none" role="alert"><span>Bot tekshiruvini yakunlang</span></div>
+          </div>
+          <% } %>
+          <input type="hidden" name="cf-turnstile-response" id="cf-turnstile-response">
+
+          <label class="lbl" for="admin-username">Login</label>
+          <input type="text" class="inp" id="admin-username" name="username" placeholder="admin" autocomplete="username" autocapitalize="off" spellcheck="false" inputmode="text" required aria-required="true" value="<%= typeof prevUsername !== 'undefined' && prevUsername ? prevUsername : '' %>">
+
+          <label class="lbl" for="admin-password">Parol</label>
+          <div class="pw-wrap">
+            <input type="password" class="inp" id="admin-password" name="password" placeholder="••••••••" autocomplete="current-password" required aria-required="true" aria-describedby="caps-hint-admin" style="padding-right:52px">
+            <div class="caps-hint" id="caps-hint-admin" hidden><%- icon('alertTriangle', 12) %> <span>CAPS LOCK</span></div>
+            <button type="button" class="pw-toggle" data-pw-toggle="admin-password" data-label-show="Ko'rsatish" data-label-hide="Yashirish" aria-label="Parolni ko'rsatish" aria-pressed="false">
+              <span data-pw-toggle-label><%- icon('eye', 16) %></span>
+            </button>
+          </div>
+
+          <button type="submit" class="btn btn-primary auth-submit" style="margin-top:14px"><span class="auth-spinner" aria-hidden="true"></span><%- icon('logIn', 14) %> Kirish</button>
+        </form>
+      </div>
+      <div class="footer-links">
+        <a href="/" class="footer-link">← Bosh sahifaga qaytish</a>
+      </div>
+    </div>
+  </main>
+  <% if (typeof turnstileSiteKey !== 'undefined' && turnstileSiteKey) { %>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onAdminTurnstileLoad" async defer></script>
+  <script>
+    window.onAdminTurnstileLoad = function () {
+      if (window.turnstile) window.turnstile.render('.cf-turnstile');
+    };
+    window.onAdminTurnstileSuccess = function (token) {
+      document.getElementById('cf-turnstile-response').value = token;
+      var e = document.getElementById('err-admin-turnstile');
+      if (e) e.style.display = 'none';
+    };
+    window.onAdminTurnstileExpired = function () {
+      document.getElementById('cf-turnstile-response').value = '';
+      var e = document.getElementById('err-admin-turnstile');
+      if (e) e.style.display = 'block';
+    };
+  </script>
+  <% } %>
+  <script src="/js/auth.js" defer></script>
+</body>
+</html>

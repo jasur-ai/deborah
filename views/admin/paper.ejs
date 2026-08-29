@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <style>
+    body{background:var(--deborah-semantic-color-surface-default);min-height:100vh;transition:background .3s;}
+    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 55% 40% at 15% 20%,rgba(37,99,235,.1) 0%,transparent 65%),radial-gradient(ellipse 45% 35% at 85% 75%,rgba(56,189,248,.07) 0%,transparent 65%);}
+    .navbar{position:sticky;top:0;z-index:100;background:var(--bg-overlay);backdrop-filter:blur(18px);border-bottom:1px solid var(--deborah-semantic-color-border-default);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;transition:background .3s,border-color .3s;}
+    .nav-logo{font-family:''Manrope'',cursive;font-size:1.25rem;text-decoration:none;display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--deborah-semantic-color-action-primary),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .nav-right{display:flex;align-items:center;gap:8px;}
+    .nav-btn{padding:7px 12px;border-radius:9px;border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-muted);font-family:'Source Sans 3',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;text-decoration:none;transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s;display:flex;align-items:center;gap:5px;}
+    .nav-btn:hover{background:var(--bg-elevated);color:var(--deborah-semantic-color-text-primary);}
+    .panel{max-width:1180px;margin:0 auto;padding:24px 20px 90px;position:relative;z-index:1;}
+    .greeting{font-family:''Manrope'',cursive;font-size:1.5rem;display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+    .greeting-sub{font-size:.82rem;color:var(--deborah-semantic-color-text-muted);font-weight:700;margin-bottom:20px;}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
+    @media(max-width:900px){.grid{grid-template-columns:1fr;}}
+    .card{background:var(--deborah-semantic-color-surface-raised);border-radius:16px;padding:18px;border:1px solid var(--deborah-semantic-color-border-default);margin-bottom:14px;animation:slideDown .3s ease;transition:background .3s,border-color .3s;}
+    .card-h{font-family:''Manrope'',cursive;font-size:.95rem;display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+    .card-h small{font-family:'Source Sans 3',sans-serif;font-size:.66rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-left:auto;}
+    .field{margin-bottom:11px;}
+    .field label{display:block;font-size:.72rem;font-weight:700;color:var(--deborah-semantic-color-text-muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px;}
+    .inp{width:100%;background:var(--deborah-semantic-color-surface-input);border:2px solid var(--deborah-semantic-color-border-default);border-radius:10px;padding:9px 12px;color:var(--deborah-semantic-color-text-primary);font-family:'Source Sans 3',sans-serif;font-size:.82rem;font-weight:600;outline:none;transition:border-color .3s;}
+    .inp:focus{border-color:var(--deborah-semantic-color-action-primary);}
+    .btn{border-radius:10px;border:none;padding:10px 16px;cursor:pointer;transition:color .3s ease,background-color .3s ease,border-color .3s ease,box-shadow .3s ease,transform .3s ease,opacity .3s ease;font-family:'Source Sans 3',sans-serif;font-weight:700;font-size:.8rem;background:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#041018);display:inline-flex;align-items:center;gap:6px;}
+    .btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+    .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+    .btn.ghost{background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-muted);border:1px solid var(--deborah-semantic-color-border-default);}
+    .btn.ghost:hover{color:var(--deborah-semantic-color-text-primary);background:var(--bg-elevated);}
+    .btn.green{background:linear-gradient(135deg,#00e5a0,#00b37e);color:#04120c;}
+    .btn.warn{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1a1204;}
+    .table{width:100%;border-collapse:collapse;font-size:.76rem;}
+    .table th{text-align:left;font-size:.66rem;text-transform:uppercase;letter-spacing:.4px;color:var(--deborah-semantic-color-text-muted);padding:7px 9px;border-bottom:1px solid var(--deborah-semantic-color-border-default);font-weight:700;}
+    .table td{padding:8px 9px;border-bottom:1px solid var(--deborah-semantic-color-border-default);color:var(--deborah-semantic-color-text-primary);font-weight:700;}
+    .table tr:hover td{background:var(--deborah-semantic-color-surface-input);}
+    .chip{display:inline-flex;align-items:center;gap:5px;font-size:.66rem;font-weight:700;border-radius:7px;padding:3px 9px;text-transform:uppercase;letter-spacing:.3px;}
+    .chip.st-generated,.chip.st-downloaded{background:rgba(56,189,248,.12);color:var(--cyan,#38bdf8);border:1px solid rgba(56,189,248,.3);}
+    .chip.st-received,.chip.st-reconciled{background:rgba(0,229,160,.1);color:var(--green);border:1px solid rgba(0,229,160,.3);}
+    .chip.st-archived{background:rgba(251,191,36,.12);color:var(--gold);border:1px solid rgba(251,191,36,.3);}
+    .chip.st-destroyed{background:rgba(248,113,113,.12);color:var(--deborah-semantic-color-action-primary);border:1px solid rgba(248,113,113,.35);}
+    .mini-btn{font-size:.68rem;font-weight:700;border-radius:8px;padding:5px 10px;border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-muted);cursor:pointer;transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s;font-family:'Source Sans 3',sans-serif;margin-right:5px;}
+    .mini-btn:hover{color:var(--deborah-semantic-color-text-primary);background:var(--bg-elevated);transform:translateY(-1px);}
+    .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-default);border-radius:12px;padding:11px 18px;font-size:.8rem;font-weight:600;z-index:999;opacity:0;pointer-events:none;transition:color .35s ease,background-color .35s ease,border-color .35s ease,box-shadow .35s ease,transform .35s ease,opacity .35s ease;box-shadow:var(--shadow-lg);}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+    .empty{text-align:center;padding:24px;color:var(--deborah-semantic-color-text-muted);font-weight:700;font-size:.78rem;background:var(--deborah-semantic-color-surface-input);border-radius:12px;border:1px dashed var(--deborah-semantic-color-border-default);}
+    .loading{text-align:center;padding:26px;color:var(--deborah-semantic-color-text-muted);font-weight:600;font-size:.8rem;}
+    .kv{display:flex;justify-content:space-between;font-size:.72rem;font-weight:700;color:var(--deborah-semantic-color-text-muted);padding:4px 0;border-bottom:1px dashed var(--deborah-semantic-color-border-default);}
+    .kv b{color:var(--deborah-semantic-color-text-primary);font-weight:700;}
+    .tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+    .tab{padding:7px 14px;border-radius:9px;font-size:.74rem;font-weight:700;cursor:pointer;background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-muted);border:1px solid var(--deborah-semantic-color-border-default);transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s;font-family:'Source Sans 3',sans-serif;}
+    .tab.active{background:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#041018);border-color:transparent;}
+    .tab-view{display:none;}
+    .tab-view.active{display:block;animation:slideDown .25s ease;}
+    .mono{font-family:monospace;font-size:.68rem;color:var(--deborah-semantic-color-text-muted);background:var(--deborah-semantic-color-surface-default);border:1px solid var(--deborah-semantic-color-border-default);border-radius:10px;padding:10px;white-space:pre-wrap;overflow:auto;max-height:180px;line-height:1.5;}
+    .batch-row{background:var(--deborah-semantic-color-surface-input);border:1px solid var(--deborah-semantic-color-border-default);border-radius:12px;padding:12px 14px;margin-bottom:10px;transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s;}
+    .batch-row:hover{border-color:var(--deborah-semantic-color-action-primary);}
+    .batch-row b{font-size:.84rem;}
+    .batch-row .sub{font-size:.68rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-top:3px;}
+  </style>
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="nav-logo">Deborah</a>
+    <div class="nav-right">
+      <a href="/admin/dashboard" class="nav-btn">Panel</a>
+      <a href="/admin/logout" class="nav-btn">Chiqish</a>
+    </div>
+  </nav>
+
+  <div class="panel">
+    <div class="greeting">Qog'oz paketlar va custody</div>
+    <div class="greeting-sub">Paper packet + signed QR + chain of custody (Prompt 42)</div>
+
+    <div class="tabs" id="tabs">
+      <div class="tab active" data-tab="batches">Paketlar</div>
+      <div class="tab" data-tab="generate">Yangi batch</div>
+      <div class="tab" data-tab="custody">Custody zanjiri</div>
+    </div>
+
+    <!-- Batches view -->
+    <div class="tab-view active" id="view-batches">
+      <div class="card">
+        <div class="card-h">Batchlar <small id="batchCount"></small></div>
+        <div id="batchList"><div class="loading">Yuklanmoqda...</div></div>
+      </div>
+    </div>
+
+    <!-- Generate view -->
+    <div class="tab-view" id="view-generate">
+      <div class="grid">
+        <div class="card">
+          <div class="card-h">Yangi paper batch yaratish</div>
+          <div class="field"><label>batchKey (idempotency)</label><input class="inp" id="gen-batchkey" placeholder="masalan paper:assign12:run5" /></div>
+          <div class="field"><label>Assignment ID</label><input class="inp" id="gen-assign" type="number" /></div>
+          <div class="field"><label>Run ID</label><input class="inp" id="gen-run" type="number" placeholder="ixtiyoriy" /></div>
+          <div class="field"><label>Talabalar (JSON: [{userId, variant, pageCount, accommodation}])</label><textarea class="inp" id="gen-students" rows="5" style="font-family:monospace;font-size:.72rem;">[{"userId":1,"variant":"A","pageCount":3},{"userId":2,"variant":"B","pageCount":3}]</textarea></div>
+          <button class="btn" id="btn-gen">Batch yaratish</button>
+          <div class="mono" id="genResult" style="margin-top:10px;display:none;"></div>
+        </div>
+        <div class="card">
+          <div class="card-h">QR tekshirish</div>
+          <div class="field"><label>QR token (JSON)</label><textarea class="inp" id="qr-token" rows="4" style="font-family:monospace;font-size:.72rem;"></textarea></div>
+          <button class="btn ghost" id="btn-verify-qr">Tekshirish</button>
+          <div class="mono" id="qrResult" style="margin-top:10px;display:none;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custody view -->
+    <div class="tab-view" id="view-custody">
+      <div class="card">
+        <div class="card-h">Custody hodisasi yozish</div>
+        <div class="field"><label>Batch ID</label><input class="inp" id="cust-batch" type="number" /></div>
+        <div class="field"><label>Hodisa turi</label><select class="inp" id="cust-event"></select></div>
+        <div class="field"><label>Count</label><input class="inp" id="cust-count" type="number" value="0" /></div>
+        <div class="field"><label>Discrepancy</label><input class="inp" id="cust-disc" type="number" value="0" /></div>
+        <div class="field"><label>Izoh</label><input class="inp" id="cust-note" /></div>
+        <button class="btn" id="btn-cust">Yozish</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const CSRF = window.__CSRF_TOKEN || '';
+    const $ = (id) => document.getElementById(id);
+
+    function toast(msg, ok = true) {
+      const t = $('toast');
+      t.textContent = msg;
+      t.style.background = ok ? 'var(--deborah-semantic-color-surface-raised)' : 'linear-gradient(135deg,#f87171,#dc2626)';
+      t.style.color = ok ? 'var(--deborah-semantic-color-text-primary)' : '#fff';
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2600);
+    }
+
+    async function api(path, opts = {}) {
+      const headers = { 'Content-Type': 'application/json' };
+      if (CSRF) headers['X-CSRF-Token'] = CSRF;
+      const r = await fetch(path, { ...opts, headers });
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(data.error || ('HTTP ' + r.status));
+      return data;
+    }
+
+    function chip(text, cls) {
+      return `<span class="chip ${cls}">${text}</span>`;
+    }
+
+    async function loadMeta() {
+      const d = await api('/api/admin/paper/meta');
+      $('cust-event').innerHTML = d.custodyEventTypes.map((x) => `<option value="${x}">${x}</option>`).join('');
+    }
+
+    async function loadBatches() {
+      try {
+        const d = await api('/api/admin/paper/batches');
+        const list = d.batches || [];
+        $('batchCount').textContent = list.length + ' ta';
+        if (!list.length) {
+          $('batchList').innerHTML = `<div class="empty">Batch yo'q (PostgreSQL kerak)</div>`;
+          return;
+        }
+        $('batchList').innerHTML = list.map((b) => `
+          <div class="batch-row">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+              ${chip(b.status, 'st-' + b.status)}
+              <b>#${b.id} · ${b.batch_key}</b>
+              <span style="font-size:.68rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-left:auto;">${b.packet_count} paket · ${b.manifest_hash ? b.manifest_hash.slice(0,12) + '…' : ''}</span>
+            </div>
+            <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">
+              <button class="mini-btn" onclick="viewBatch(${b.id})">Tafsilot</button>
+              <button class="mini-btn" onclick="transitionBatch(${b.id},'downloaded')">Download</button>
+              <button class="mini-btn" onclick="transitionBatch(${b.id},'reconciled')">Reconciled</button>
+              <button class="mini-btn" onclick="transitionBatch(${b.id},'archived')">Archive</button>
+              <button class="mini-btn" onclick="downloadToken(${b.id})">Download token</button>
+            </div>
+          </div>`).join('');
+      } catch (e) {
+        $('batchList').innerHTML = `<div class="empty">${e.message}</div>`;
+      }
+    }
+
+    async function viewBatch(id) {
+      try {
+        const d = await api('/api/admin/paper/batches/' + id);
+        const custody = d.custody || [];
+        const packets = d.packets || [];
+        toast('Batch #' + id + ': ' + packets.length + ' paket, ' + custody.length + ' custody hodisa');
+      } catch (e) { toast(e.message, false); }
+    }
+
+    async function transitionBatch(id, to) {
+      try {
+        await api('/api/admin/paper/batches/' + id + '/transition', {
+          method: 'POST', body: JSON.stringify({ to }),
+        });
+        toast('Status → ' + to);
+        loadBatches();
+      } catch (e) { toast(e.message, false); }
+    }
+
+    async function downloadToken(id) {
+      try {
+        const d = await api('/api/admin/paper/batches/' + id + '/download-token', {
+          method: 'POST', body: JSON.stringify({ expiresInMinutes: 15 }),
+        });
+        toast('Token yaratildi (15 daqiqa): ' + d.token.slice(0, 24) + '…');
+      } catch (e) { toast(e.message, false); }
+    }
+
+    $('btn-gen').addEventListener('click', async () => {
+      try {
+        let students;
+        try {
+          students = JSON.parse($('gen-students').value);
+        } catch (_) {
+          toast('Students JSON noto\'g\'ri', false);
+          return;
+        }
+        const d = await api('/api/admin/paper/batches', {
+          method: 'POST',
+          body: JSON.stringify({
+            batchKey: $('gen-batchkey').value,
+            assignmentId: Number($('gen-assign').value),
+            runId: $('gen-run').value ? Number($('gen-run').value) : null,
+            students,
+          }),
+        });
+        $('genResult').style.display = 'block';
+        $('genResult').textContent = JSON.stringify(d, null, 2);
+        toast('Batch yaratildi (id=' + d.batchId + ', idempotent=' + !!d.idempotent + ')');
+        loadBatches();
+      } catch (e) { toast(e.message, false); }
+    });
+
+    $('btn-verify-qr').addEventListener('click', async () => {
+      try {
+        const d = await api('/api/admin/paper/qr/verify', {
+          method: 'POST', body: JSON.stringify({ token: $('qr-token').value }),
+        });
+        $('qrResult').style.display = 'block';
+        $('qrResult').textContent = JSON.stringify(d, null, 2);
+        toast(d.ok ? 'QR tasdiqlandi' : ('QR rad etildi: ' + (d.error || '')), !!d.ok);
+      } catch (e) { toast(e.message, false); }
+    });
+
+    $('btn-cust').addEventListener('click', async () => {
+      try {
+        const d = await api('/api/admin/paper/batches/' + Number($('cust-batch').value) + '/custody', {
+          method: 'POST',
+          body: JSON.stringify({
+            eventType: $('cust-event').value,
+            count: Number($('cust-count').value) || 0,
+            discrepancy: Number($('cust-disc').value) || 0,
+            note: $('cust-note').value || null,
+          }),
+        });
+        toast('Custody hodisasi yozildi (#' + d.id + ')');
+      } catch (e) { toast(e.message, false); }
+    });
+
+    // Tabs
+    document.querySelectorAll('#tabs .tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('#tabs .tab').forEach((t) => t.classList.remove('active'));
+        tab.classList.add('active');
+        document.querySelectorAll('.tab-view').forEach((v) => v.classList.remove('active'));
+        $('view-' + tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Init
+    (async () => {
+      try {
+        await loadMeta();
+        await loadBatches();
+      } catch (e) { console.error(e); }
+    })();
+  </script>
+</body>
+</html>

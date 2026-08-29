@@ -1,0 +1,702 @@
+/* ═══════════════════════════════════════════════════════════════
+   Deborah — Premium Admin Panel v3.0
+   Refined layout, premium glassmorphism, smooth transitions
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Admin Navbar ── */
+.admin-navbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-navbar);
+  background: rgba(6,8,20,.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--deborah-semantic-color-border-subtle);
+  height: 64px; /* S33.01: 64px top bar */
+  padding: 0 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  transition: background var(--time-theme) var(--ease-smooth), border-color var(--time-theme) var(--ease-smooth);
+}
+
+[data-theme="light"] .admin-navbar,
+body.theme-light .admin-navbar {
+  background: rgba(240,242,248,.88);
+  border-bottom-color: rgba(15,22,48,.08);
+}
+
+.admin-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+}
+
+.admin-nav-logo {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.admin-nav-badge {
+  background: rgba(59,130,246,.12);
+  border: 1px solid rgba(59,130,246,.25);
+  color: var(--accent-glow);
+  font-size: .62rem;
+  font-weight: var(--w-black);
+  border-radius: var(--radius-full);
+  padding: 3px 10px;
+  letter-spacing: .5px;
+}
+
+.admin-nav-btn {
+  padding: 7px 12px;
+  border-radius: var(--deborah-radius-sm, 8px);
+  border: 1px solid var(--deborah-semantic-color-border-subtle);
+  background: var(--gradient-glass);
+  color: var(--deborah-semantic-color-text-muted);
+  font-size: .75rem;
+  font-weight: var(--w-extrabold);
+  cursor: pointer;
+  text-decoration: none;
+  transition: color, background-color, border-color, box-shadow, transform, opacity, filter var(--time-normal) var(--ease-out);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-body);
+  backdrop-filter: blur(4px);
+}
+
+.admin-nav-btn:hover {
+  color: var(--deborah-semantic-color-text-primary);
+  background: rgba(255,255,255,.08);
+  border-color: var(--deborah-semantic-color-border-default);
+}
+
+/* ── Layout Grid ── */
+.admin-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  max-width: 1440px; /* S33.01: main max 1440px */
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Sidebar ── Premium glass */
+.admin-sidebar {
+  width: 220px; /* S33.01: 220px desktop sidebar */
+  flex-shrink: 0;
+  background: var(--deborah-semantic-color-surface-raised);
+  border: 1px solid var(--deborah-semantic-color-border-subtle);
+  border-radius: var(--radius-2xl);
+  padding: 12px;
+  position: sticky;
+  top: 72px;
+  max-height: calc(100vh - 92px);
+  overflow-y: auto;
+  transition: color, background-color, border-color, box-shadow, transform, opacity, filter var(--time-theme) var(--ease-smooth);
+}
+
+.admin-side-label {
+  font-size: .62rem;
+  font-weight: var(--w-extrabold);
+  color: var(--deborah-semantic-color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  padding: 8px 11px 6px;
+}
+
+.admin-side-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: var(--deborah-radius-md, 12px);
+  padding: 9px 11px;
+  font-family: var(--font-body);
+  font-size: .8rem;
+  font-weight: var(--w-extrabold);
+  color: var(--deborah-semantic-color-text-muted);
+  cursor: pointer;
+  transition: color, background-color, border-color, box-shadow, transform, opacity, filter .2s var(--ease-out);
+  text-align: left;
+  text-decoration: none; /* S33.06: a linklar uchun inline style o'rniga */
+  /* S33.06: default tone — takrorlanuvchi inline --c/--cbg o'rniga */
+  --c: var(--accent-glow);
+  --cbg: rgba(56, 189, 248, .14);
+}
+
+.admin-side-btn:hover {
+  background: rgba(59,130,246,.05);
+  color: var(--deborah-semantic-color-text-primary);
+}
+
+.admin-side-btn.active {
+  background: var(--cbg, rgba(59,130,246,.12));
+  color: var(--c, var(--accent-glow));
+  border-color: rgba(59,130,246,.2);
+}
+
+.admin-side-ico {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(59,130,246,.06);
+  transition: color, background-color, border-color, box-shadow, transform, opacity, filter var(--time-normal) var(--ease-out);
+}
+
+.admin-side-btn:hover .admin-side-ico {
+  background: rgba(59,130,246,.12);
+}
+
+.admin-side-ico svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ── Panel Content ── */
+.admin-panel {
+  flex: 1;
+  min-width: 0;
+  padding: 0 8px 40px;
+}
+
+/* ── Stats Row ── Premium cards */
+.admin-stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* ── Stats Cards (S33.07: actionable — button base, hover/focus) ── */
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: var(--deborah-semantic-color-surface-raised);
+  border: 1px solid var(--deborah-semantic-color-border-subtle);
+  border-radius: var(--radius-xl);
+  font-family: var(--font-body);
+  text-align: left;
+  cursor: pointer;
+  /* S33.06/07: default tone — takrorlanuvchi inline o'rniga */
+  --c: var(--accent-glow);
+  --cbg: rgba(56, 189, 248, .12);
+  transition: color, background-color, border-color, box-shadow, transform, opacity, filter 140ms var(--ease-out);
+}
+
+button.stat-card {
+  color: inherit;
+}
+
+.stat-card:hover,
+.stat-card:focus-visible {
+  border-color: rgba(59,130,246,.35);
+  box-shadow: 0 6px 22px rgba(59,130,246,.14);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.stat-ico {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--deborah-radius-sm, 8px);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cbg, rgba(59,130,246,.1));
+  color: var(--c, var(--accent-glow));
+}
+
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: var(--w-black);
+  line-height: 1.1;
+  color: var(--c, var(--accent-glow));
+}
+
+.stat-lbl {
+  font-size: .72rem;
+  color: var(--deborah-semantic-color-text-muted);
+  font-weight: var(--w-bold);
+  margin-top: 2px;
+}
+
+/* S33.09: VIP grant warning button (inline style o'rniga token; solid — S12.10) */
+.btn-warning {
+  background: var(--warn, #f59e0b);
+  color: #000;
+  min-height: 44px;
+  padding: 10px 20px;
+}
+
+.btn-warning:hover {
+  filter: brightness(1.06);
+}
+
+.btn-warning[aria-busy="true"] {
+  opacity: .7;
+  cursor: progress;
+}
+
+/* S33.08: status ranglar — signal cyan / warning amber / danger (brand bilan aralashmaydi) */
+.admin-status--info   { --c: #38bdf8; --cbg: rgba(56,189,248,.12); }
+.admin-status--warn   { --c: #f59e0b; --cbg: rgba(245,158,11,.14); }
+.admin-status--danger { --c: #ef4444; --cbg: rgba(239,68,68,.14); }
+
+/* ── Tab Panes ── */
+.admin-tab-pane {
+  display: none;
+  animation: fadeInUp .4s var(--ease-out);
+}
+
+.admin-tab-pane.active {
+  display: block;
+}
+
+/* ── Section Header ── */
+.admin-sec-hd {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.admin-sec-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.admin-sec-title svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── Refresh Button ── */
+.admin-refresh-btn {
+  margin-left: auto;
+  background: var(--gradient-glass);
+  border: 1px solid var(--deborah-semantic-color-border-subtle);
+  border-radius: var(--deborah-radius-sm, 8px);
+  padding: var(--deborah-spacing-2, 8px) var(--deborah-spacing-3, 12px)
+  font-family: var(--font-body);
+  font-size: .73rem;
+  font-weight: var(--w-extrabold);
+  cursor: pointer;
+  color: var(--deborah-semantic-color-text-muted);
+  transition: color, background-color, border-color, box-shadow, transform, opacity, filter var(--time-normal) var(--ease-out);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.admin-refresh-btn:hover {
+  color: var(--deborah-semantic-color-text-primary);
+  background: rgba(255,255,255,.08);
+}
+
+/* ── Result Cards ── Premium */
+.admin-res-card {
+  background: var(--deborah-semantic-color-surface-raised);
+  border-radius: var(--radius-lg);
+  padding: var(--deborah-spacing-4, 16px) var(--deborah-spacing-4, 16px)
+  border: 1px solid var(--deborah-semantic-color-border-subtle);
+  margin-bottom: 8px;
+  transition: color, background-color, border-color, box-shadow, transform, opacity, filter var(--time-normal) var(--ease-out);
+}
+
+.admin-res-card:hover {
+  border-color: var(--deborah-semantic-color-border-strong);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-res-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.admin-res-title {
+  font-weight: var(--w-extrabold);
+  font-size: .85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-res-title svg {
+  width: 14px;
+  height: 14px;
+}
+
+.admin-res-meta {
+  font-size: .72rem;
+  font-weight: var(--w-bold);
+  color: var(--deborah-semantic-color-text-muted);
+  margin-top: 2px;
+}
+
+/* ── Top 3 Chips ── Premium */
+.admin-top3 {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.admin-top-chip {
+  border-radius: var(--radius-full);
+  padding: 4px 12px;
+  font-size: .72rem;
+  font-weight: var(--w-extrabold);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--deborah-semantic-color-border-subtle);
+  background: var(--gradient-glass);
+  transition: color, background-color, border-color, box-shadow, transform, opacity, filter var(--time-fast) var(--ease-out);
+}
+
+.admin-top-chip:nth-child(1) {
+  border-color: rgba(96,165,250,.3);
+  color: var(--accent-glow);
+}
+
+.admin-top-chip:nth-child(2) {
+  border-color: rgba(192,192,192,.25);
+  color: #c0c0c0;
+}
+
+.admin-top-chip:nth-child(3) {
+  border-color: rgba(205,127,50,.25);
+  color: #cd7f32;
+}
+
+/* ── Fan & PRE Items ── */
+.admin-fan-item,
+.admin-pre-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(59,130,246,.03);
+  border-radius: var(--radius-sm);
+  padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-4, 16px)
+  margin-bottom: 6px;
+  border: 1px solid var(--deborah-semantic-color-border-subtle);
+  transition: color, background-color, border-color, box-shadow, transform, opacity, filter var(--time-normal) var(--ease-out);
+}
+
+.admin-fan-item:hover,
+.admin-pre-item:hover {
+  border-color: var(--deborah-semantic-color-border-default);
+  background: rgba(59,130,246,.06);
+}
+
+.admin-fan-item-name,
+.admin-pre-item-name {
+  font-weight: var(--w-extrabold);
+  font-size: .85rem;
+}
+
+.admin-fan-item-meta,
+.admin-pre-item-meta {
+  font-size: .72rem;
+  color: var(--deborah-semantic-color-text-muted);
+  font-weight: var(--w-bold);
+  margin-top: 2px;
+}
+
+.admin-fan-btns,
+.admin-pre-btns {
+  display: flex;
+  gap: 5px;
+}
+
+/* ── Delete/Edit Button ── Premium */
+.admin-del-btn {
+  background: rgba(59,130,246,.08);
+  border: 1px solid rgba(59,130,246,.18);
+  border-radius: var(--deborah-radius-sm, 8px);
+  padding: 4px 9px;
+  color: var(--accent-glow);
+  font-size: .7rem;
+  font-weight: var(--w-extrabold);
+  cursor: pointer;
+  transition: color, background-color, border-color, box-shadow, transform, opacity, filter .2s var(--ease-out);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-body);
+}
+
+.admin-del-btn:hover {
+  background: rgba(59,130,246,.18);
+  border-color: rgba(59,130,246,.3);
+  transform: translateY(-1px);
+}
+
+.admin-del-btn svg {
+  width: 12px;
+  height: 12px;
+}
+
+.admin-edit-btn {
+  background: rgba(129,140,248,.08);
+  border: 1px solid rgba(129,140,248,.18);
+  border-radius: var(--deborah-radius-sm, 8px);
+  padding: 4px 9px;
+  color: var(--accent-purple);
+  font-size: .7rem;
+  font-weight: var(--w-extrabold);
+  cursor: pointer;
+  transition: color, background-color, border-color, box-shadow, transform, opacity, filter .2s var(--ease-out);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-body);
+}
+
+.admin-edit-btn:hover {
+  background: rgba(129,140,248,.18);
+  border-color: rgba(129,140,248,.3);
+  transform: translateY(-1px);
+}
+
+/* ── Empty State ── Premium */
+.admin-empty {
+  text-align: center;
+  padding: 32px 20px;
+  color: var(--deborah-semantic-color-text-muted);
+  font-size: .8rem;
+  font-weight: var(--w-bold);
+  background: rgba(59,130,246,.02);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--deborah-semantic-color-border-subtle);
+}
+
+/* ── Admin Msg ── */
+.admin-msg {
+  display: none;
+  border-radius: var(--deborah-radius-sm, 8px);
+  padding: 9px 12px;
+  font-size: .78rem;
+  font-weight: var(--w-bold);
+  margin-top: 9px;
+  transition: color, background-color, border-color, box-shadow, transform, opacity, filter var(--time-normal) var(--ease-out);
+}
+
+.admin-msg.active {
+  display: block;
+  animation: fadeIn .3s var(--ease-out);
+}
+
+/* S33.08: status ranglar — signal cyan / warning amber / danger (brand bilan aralashmaydi) */
+.admin-msg.admin-status--info {
+  background: rgba(56, 189, 248, .1);
+  border: 1px solid rgba(56, 189, 248, .25);
+  color: var(--deborah-semantic-color-text-primary);
+}
+.admin-msg.admin-status--warn {
+  background: rgba(245, 158, 11, .12);
+  border: 1px solid rgba(245, 158, 11, .3);
+  color: var(--deborah-semantic-color-text-primary);
+}
+.admin-msg.admin-status--danger {
+  background: rgba(239, 68, 68, .12);
+  border: 1px solid rgba(239, 68, 68, .3);
+  color: var(--deborah-semantic-color-text-primary);
+}
+
+.admin-msg.err {
+  background: rgba(59,130,246,.08);
+  border: 1px solid rgba(59,130,246,.25);
+  color: var(--accent-glow);
+}
+
+.admin-msg.ok {
+  background: rgba(96,165,250,.08);
+  border: 1px solid rgba(96,165,250,.2);
+  color: var(--accent-glow);
+}
+
+/* ── Rank Medal ── */
+.admin-rank-medal {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.admin-rank-medal svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ── Modal overlay (admin-specific) ── Premium */
+.admin-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  background: var(--bg-overlay);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  transition: color, background-color, border-color, box-shadow, transform, opacity, filter var(--time-normal) var(--ease-out);
+}
+
+.admin-modal-overlay.active {
+  display: flex;
+  animation: fadeIn .25s var(--ease-out);
+}
+
+/* ── Responsive ── */
+/* S33.02: hamburger + drawer — faqat mobil */
+.admin-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.admin-nav-hamburger {
+  display: none;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--deborah-radius-sm, 8px);
+  border: 1px solid var(--deborah-semantic-color-border-subtle);
+  background: var(--gradient-glass);
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0;
+}
+
+.admin-nav-hamburger span {
+  display: block;
+  width: 16px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--deborah-semantic-color-text-muted);
+  transition: transform var(--time-normal) var(--ease-out), opacity var(--time-normal) var(--ease-out);
+}
+
+body.admin-nav-open .admin-nav-hamburger span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+body.admin-nav-open .admin-nav-hamburger span:nth-child(2) { opacity: 0; }
+body.admin-nav-open .admin-nav-hamburger span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+.admin-drawer-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .admin-nav-hamburger {
+    display: flex;
+  }
+
+  .admin-layout {
+    flex-direction: column;
+    padding-top: 12px;
+  }
+
+  /* Drawer: desktop vertical nav mobil'da off-canvas */
+  .admin-sidebar {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    bottom: 0;
+    width: min(300px, 84vw);
+    border-radius: 0 var(--radius-2xl) var(--radius-2xl) 0;
+    border-left: none;
+    flex-direction: column;
+    overflow-y: auto;
+    transform: translateX(-104%);
+    box-shadow: 0 18px 50px rgba(0,0,0,.4);
+    z-index: var(--z-navbar);
+    padding: 14px 12px 40px;
+  }
+
+  body.admin-nav-open .admin-sidebar {
+    transform: none;
+  }
+
+  body.admin-nav-open .admin-drawer-overlay {
+    display: block;
+    position: fixed;
+    inset: 64px 0 0 0;
+    background: rgba(3,5,12,.55);
+    z-index: calc(var(--z-navbar) - 1);
+  }
+
+  .admin-side-label { display: block; }
+
+  .admin-side-btn {
+    white-space: normal;
+    width: 100%;
+    flex-shrink: 0;
+    padding: 9px 11px;
+    gap: 8px;
+  }
+
+  .admin-stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-stats-row { grid-template-columns: 1fr; }
+  .admin-navbar { padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-4, 16px); gap: 8px; }
+  .admin-nav-brand { font-size: .85rem; }
+}
+
+/* ── S13 mobil qatlam (BUG-080/081/082) — admin viewlar responsive.css yuklamaydi,
+   o'z head'lari orqali admin.css oladi ── */
+@media (max-width: 640px) {
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='submit']):not([type='button']):not([type='file']):not([type='image']):not([type='color']),
+  select,
+  textarea {
+    font-size: max(16px, 1em) !important;
+  }
+  input[type='checkbox'],
+  input[type='radio'] {
+    min-width: 24px;
+    min-height: 24px;
+  }
+  button,
+  select {
+    min-height: 24px;
+  }
+  button,
+  [role='button'] {
+    min-width: 24px;
+  }
+}

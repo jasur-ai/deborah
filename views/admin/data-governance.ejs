@@ -1,0 +1,281 @@
+<% const current = user || {}; %>
+<!DOCTYPE html>
+<html lang="uz" dir="ltr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — Deborah Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body class="adm-body">
+  <div class="adm-shell">
+    <aside class="adm-sidebar">
+      <div class="adm-brand">
+        <img src="/images/logo-vintage.png" alt="Deborah" class="logo-img" style="height:34px;width:auto">
+        <span>Deborah</span>
+      </div>
+      <nav class="adm-nav">
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/data-governance" class="active">Data Governance</a>
+        <a href="/admin/accessibility">Accessibility</a>
+        <a href="/admin/multilingual">Multilingual</a>
+        <a href="/admin/program-quality">Program Quality</a>
+        <a href="/admin/credentials">Credentials</a>
+        <a href="/admin/ai-checkpoint">AI Checkpoint</a>
+        <a href="/admin/ai-grading">AI Grading</a>
+        <a href="/admin/ai-mlops">AI MLOps</a>
+        <a href="/admin/source-pack">Source Packs</a>
+        <a href="/admin/vip">VIP</a>
+      </nav>
+      <div class="adm-side-foot">
+        <a href="/admin/logout">Chiqish</a>
+      </div>
+    </aside>
+
+    <main class="adm-main">
+      <header class="adm-topbar">
+        <h1>Data Classification, Privacy, Retention &amp; Purge</h1>
+        <span class="adm-chip" id="mStatus">Yuklanmoqda…</span>
+      </header>
+
+      <section class="adm-card">
+        <h2>Summary</h2>
+        <div id="summary" class="adm-grid">Yuklanmoqda…</div>
+      </section>
+
+      <div class="adm-grid-2">
+        <section class="adm-card">
+          <h2>Data asset inventory</h2>
+          <div class="adm-row">
+            <input type="text" id="asName" placeholder="Asset name (masalan: students)" class="adm-input">
+            <select id="asType">
+              <option value="table">Table</option>
+              <option value="object">Object</option>
+              <option value="vector">Vector</option>
+              <option value="cache">Cache</option>
+              <option value="provider">Provider</option>
+            </select>
+            <input type="text" id="asStore" placeholder="Store (postgres/s3/redis)" class="adm-input" value="postgres">
+            <input type="number" id="asRetention" placeholder="Retention days" class="adm-input">
+            <label class="adm-check"><input type="checkbox" id="asPii"> PII</label>
+            <label class="adm-check"><input type="checkbox" id="asRegulatory"> Regulatory</label>
+            <button class="adm-btn" onclick="registerAsset()">Register</button>
+          </div>
+          <div id="assetsList">Yuklanmoqda…</div>
+        </section>
+
+        <section class="adm-card">
+          <h2>Legal holds</h2>
+          <div class="adm-row">
+            <input type="text" id="lhSubject" placeholder="Subject key" class="adm-input">
+            <input type="text" id="lhReason" placeholder="Reason" class="adm-input">
+            <select id="lhSource">
+              <option value="court">Court</option>
+              <option value="regulatory">Regulatory</option>
+              <option value="internal">Internal</option>
+            </select>
+            <button class="adm-btn" onclick="placeHold()">Place hold</button>
+          </div>
+          <div id="holdsList">Yuklanmoqda…</div>
+        </section>
+      </div>
+
+      <section class="adm-card">
+        <h2>DSAR requests</h2>
+        <div class="adm-row">
+          <input type="text" id="dsSubject" placeholder="Subject key" class="adm-input">
+          <select id="dsType">
+            <option value="access">Access</option>
+            <option value="correct">Correct</option>
+            <option value="export">Export</option>
+            <option value="delete">Delete</option>
+          </select>
+          <button class="adm-btn" onclick="createDsar()">Create DSAR</button>
+        </div>
+        <div id="dsarList">Yuklanmoqda…</div>
+      </section>
+
+      <section class="adm-card">
+        <h2>Purge worker</h2>
+        <div class="adm-row">
+          <input type="number" id="pwAssetId" placeholder="Asset ID" class="adm-input">
+          <input type="text" id="pwStores" placeholder="Stores (vergul bilan, bo'sh = barchasi)" class="adm-input">
+          <input type="text" id="pwSubject" placeholder="Subject key (legal hold tekshiruvi)" class="adm-input">
+          <button class="adm-btn" onclick="runPurge()">Run purge</button>
+        </div>
+        <div id="receiptsList">Yuklanmoqda…</div>
+      </section>
+    </main>
+  </div>
+
+<script>
+// ── Helpers ──
+async function api(url, opts = {}) {
+  const r = await fetch(url, { headers: { 'Content-Type': 'application/json' }, ...opts });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || ('HTTP ' + r.status));
+  return j;
+}
+
+function el(tag, text, cls) {
+  const e = document.createElement(tag);
+  if (text) e.textContent = text;
+  if (cls) e.className = cls;
+  return e;
+}
+
+// ── Summary ──
+async function loadSummary() {
+  const s = await api('/api/admin/data-governance/summary');
+  const box = document.getElementById('summary');
+  box.innerHTML = '';
+  box.appendChild(el('div', `Assets: ${s.assets}`, 'adm-stat'));
+  box.appendChild(el('div', 'By class: ' + JSON.stringify(s.byClass || {}), 'adm-stat'));
+  box.appendChild(el('div', `Active holds: ${s.activeHolds}`, 'adm-stat'));
+  box.appendChild(el('div', `DSAR: ${s.dsarRequests} (open ${s.dsarOpen})`, 'adm-stat'));
+  box.appendChild(el('div', `Receipts: purged ${s.purgedReceipts}, scheduled ${s.scheduledReceipts}`, 'adm-stat'));
+}
+
+// ── Assets ──
+async function registerAsset() {
+  const r = await api('/api/admin/data-governance/assets', {
+    method: 'POST',
+    body: JSON.stringify({
+      assetName: document.getElementById('asName').value,
+      assetType: document.getElementById('asType').value,
+      storeName: document.getElementById('asStore').value || 'postgres',
+      retentionDays: Number(document.getElementById('asRetention').value) || 0,
+      containsPii: document.getElementById('asPii').checked,
+      regulatory: document.getElementById('asRegulatory').checked,
+    }),
+  });
+  setStatus('Asset registered — class ' + r.dataClass + (r.updated ? ' (updated)' : ''));
+  loadAssets();
+}
+
+async function loadAssets() {
+  const { assets } = await api('/api/admin/data-governance/assets');
+  const box = document.getElementById('assetsList');
+  box.innerHTML = '';
+  (assets || []).forEach((a) => {
+    const row = el('div', `[${a.data_class}] ${a.asset_name} @ ${a.store_name} (${a.asset_type}) — region ${a.region}, retention ${a.retention_days || 0}d${a.uz_boundary ? ' ⛔UZ' : ''}`, 'adm-row');
+    box.appendChild(row);
+  });
+}
+
+// ── Legal holds ──
+async function placeHold() {
+  const r = await api('/api/admin/data-governance/holds', {
+    method: 'POST',
+    body: JSON.stringify({
+      subjectKey: document.getElementById('lhSubject').value,
+      reason: document.getElementById('lhReason').value,
+      source: document.getElementById('lhSource').value,
+    }),
+  });
+  setStatus('Hold placed (id ' + r.holdId + ')');
+  loadHolds();
+}
+
+async function loadHolds() {
+  const { holds } = await api('/api/admin/data-governance/holds');
+  const box = document.getElementById('holdsList');
+  box.innerHTML = '';
+  (holds || []).forEach((h) => {
+    const row = el('div', `[${h.status}] ${h.subject_key} — ${h.reason} (${h.source})`, 'adm-row');
+    if (h.status === 'active') {
+      const btn = el('button', 'Release', 'adm-btn');
+      btn.onclick = async () => { await api('/api/admin/data-governance/holds/' + h.id + '/release', { method: 'POST' }); setStatus('Hold released'); loadHolds(); };
+      row.appendChild(btn);
+    }
+    box.appendChild(row);
+  });
+}
+
+// ── DSAR ──
+async function createDsar() {
+  const r = await api('/api/admin/data-governance/dsar', {
+    method: 'POST',
+    body: JSON.stringify({ subjectKey: document.getElementById('dsSubject').value, requestType: document.getElementById('dsType').value }),
+  });
+  setStatus('DSAR #' + r.dsarId + ' created (' + r.status + ')');
+  loadDsars();
+}
+
+async function loadDsars() {
+  const { dsars } = await api('/api/admin/data-governance/dsar');
+  const box = document.getElementById('dsarList');
+  box.innerHTML = '';
+  (dsars || []).forEach((d) => {
+    const row = el('div', `#${d.id} [${d.request_type}] ${d.subject_key} — ${d.status}`, 'adm-row');
+    if (d.status === 'received') {
+      const btn = el('button', 'Boshlash', 'adm-btn');
+      btn.onclick = async () => { await api('/api/admin/data-governance/dsar/' + d.id + '/status', { method: 'POST', body: JSON.stringify({ to: 'in_progress' }) }); loadDsars(); };
+      row.appendChild(btn);
+    } else if (d.status === 'in_progress') {
+      const btn = el('button', d.request_type === 'delete' ? 'Fulfill (purged stores kerak)' : 'Fulfill', 'adm-btn');
+      btn.onclick = async () => {
+        // Delete-type: purge all derived stores first via worker
+        if (d.request_type === 'delete') {
+          setStatus('Delete DSAR: avval purge worker'ni ishga tushiring, keyin Fulfill');
+          return;
+        }
+        await api('/api/admin/data-governance/dsar/' + d.id + '/status', { method: 'POST', body: JSON.stringify({ to: 'fulfilled' }) });
+        setStatus('DSAR fulfilled');
+        loadDsars();
+      };
+      row.appendChild(btn);
+    }
+    box.appendChild(row);
+  });
+}
+
+// ── Purge ──
+async function runPurge() {
+  const stores = document.getElementById('pwStores').value.split(',').map((s) => s.trim()).filter(Boolean);
+  try {
+    const r = await api('/api/admin/data-governance/purge', {
+      method: 'POST',
+      body: JSON.stringify({
+        assetId: Number(document.getElementById('pwAssetId').value) || 0,
+        storeNames: stores,
+        subjectKey: document.getElementById('pwSubject').value || null,
+      }),
+    });
+    setStatus('Purge: ' + (r.ok ? 'ALL PURGED' : 'PARTIAL') + ' — ' + JSON.stringify(r.receipts));
+  } catch (e) {
+    setStatus('Purge blocked: ' + e.message);
+  }
+  loadReceipts();
+}
+
+async function loadReceipts() {
+  const { receipts } = await api('/api/admin/data-governance/receipts');
+  const box = document.getElementById('receiptsList');
+  box.innerHTML = '';
+  (receipts || []).forEach((rec) => {
+    box.appendChild(el('div', `[${rec.status}] asset #${rec.asset_id} @ ${rec.store_name} — hash ${rec.receipt_hash || '-'}`, 'adm-row'));
+  });
+}
+
+// ── Status ──
+function setStatus(msg) {
+  const s = document.getElementById('mStatus');
+  s.textContent = msg;
+  s.style.opacity = 1;
+}
+
+// ── Init ──
+(async function init() {
+  try {
+    await Promise.all([loadSummary(), loadAssets(), loadHolds(), loadDsars(), loadReceipts()]);
+    setStatus('Yuklandi');
+  } catch (e) {
+    setStatus('Xato: ' + e.message);
+  }
+})();
+</script>
+</body>
+</html>

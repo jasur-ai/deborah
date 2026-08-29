@@ -1,0 +1,371 @@
+<% const current = user || {}; %>
+<!DOCTYPE html>
+<html lang="uz" dir="ltr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — Deborah Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body class="adm-body">
+  <div class="adm-shell">
+    <aside class="adm-sidebar">
+      <div class="adm-brand">
+        <img src="/images/logo-vintage.png" alt="Deborah" class="logo-img" style="height:34px;width:auto">
+        <span>Deborah</span>
+      </div>
+      <nav class="adm-nav">
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/external-integration" class="active">External Integration</a>
+        <a href="/admin/data-governance">Data Governance</a>
+        <a href="/admin/accessibility">Accessibility</a>
+        <a href="/admin/multilingual">Multilingual</a>
+        <a href="/admin/program-quality">Program Quality</a>
+        <a href="/admin/credentials">Credentials</a>
+        <a href="/admin/ai-checkpoint">AI Checkpoint</a>
+        <a href="/admin/ai-grading">AI Grading</a>
+        <a href="/admin/ai-mlops">AI MLOps</a>
+        <a href="/admin/source-pack">Source Packs</a>
+        <a href="/admin/vip">VIP</a>
+      </nav>
+      <div class="adm-side-foot">
+        <a href="/admin/logout">Chiqish</a>
+      </div>
+    </aside>
+
+    <main class="adm-main">
+      <header class="adm-topbar">
+        <h1>External Integration — HEMIS &amp; OneID</h1>
+        <span class="adm-chip" id="mStatus">Yuklanmoqda…</span>
+      </header>
+
+      <section class="adm-card">
+        <h2>Summary</h2>
+        <div id="summary" class="adm-grid">Yuklanmoqda…</div>
+      </section>
+
+      <div class="adm-grid-2">
+        <section class="adm-card">
+          <h2>Connections</h2>
+          <div class="adm-row">
+            <select id="connProvider">
+              <option value="hemis">HEMIS</option>
+              <option value="oneid">OneID</option>
+            </select>
+            <select id="connMode">
+              <option value="sandbox">Sandbox (offline)</option>
+              <option value="live">Live (official)</option>
+            </select>
+            <input type="text" id="connBase" placeholder="Base URL" class="adm-input">
+            <input type="text" id="connClient" placeholder="Client ID" class="adm-input">
+            <input type="text" id="connScopes" placeholder="Scopes (space-separated)" class="adm-input">
+            <button class="adm-btn" onclick="registerConn()">Register</button>
+          </div>
+          <div id="connsList">Yuklanmoqda…</div>
+        </section>
+
+        <section class="adm-card">
+          <h2>Adapter status</h2>
+          <div class="adm-row">
+            <select id="stProvider">
+              <option value="hemis">HEMIS</option>
+              <option value="oneid">OneID</option>
+            </select>
+            <button class="adm-btn" onclick="loadStatus()">Check status</button>
+          </div>
+          <div id="statusBox" class="adm-box">—</div>
+        </section>
+      </div>
+
+      <div class="adm-grid-2">
+        <section class="adm-card">
+          <h2>HEMIS pull → staging → diff</h2>
+          <div class="adm-row">
+            <input type="number" id="pullConn" placeholder="Connection ID" class="adm-input">
+            <button class="adm-btn" onclick="hemisPull()">Pull roster</button>
+          </div>
+          <div id="pullResult" class="adm-box">—</div>
+        </section>
+
+        <section class="adm-card">
+          <h2>Ratified-only grade push (§15)</h2>
+          <div class="adm-row">
+            <input type="number" id="pushConn" placeholder="Connection ID" class="adm-input">
+            <input type="text" id="pushDecision" placeholder="decision (ratified)" class="adm-input" value="ratified">
+          </div>
+          <textarea id="pushGrades" rows="4" class="adm-input" placeholder='[{"externalId":"HEM-2026-001","finalGrade":88}]'></textarea>
+          <button class="adm-btn" onclick="gradePush()">Push grades</button>
+          <div id="pushResult" class="adm-box">—</div>
+        </section>
+      </div>
+
+      <div class="adm-grid-2">
+        <section class="adm-card">
+          <h2>Pull-back reconciliation</h2>
+          <div class="adm-row">
+            <input type="number" id="reconConn" placeholder="Connection ID" class="adm-input">
+            <button class="adm-btn" onclick="reconcile()">Reconcile</button>
+          </div>
+          <div id="reconResult" class="adm-box">—</div>
+        </section>
+
+        <section class="adm-card">
+          <h2>Sync jobs</h2>
+          <div class="adm-row">
+            <select id="jobStatus">
+              <option value="">All</option>
+              <option value="pending">Pending</option>
+              <option value="running">Running</option>
+              <option value="success">Success</option>
+              <option value="failed">Failed</option>
+              <option value="dead_letter">Dead letter</option>
+            </select>
+            <button class="adm-btn" onclick="loadJobs()">List jobs</button>
+          </div>
+          <div id="jobsList">Yuklanmoqda…</div>
+        </section>
+      </div>
+
+      <div class="adm-grid-2">
+        <section class="adm-card">
+          <h2>OneID identity link</h2>
+          <div class="adm-row">
+            <input type="number" id="oidConn" placeholder="Connection ID" class="adm-input">
+            <input type="number" id="oidUser" placeholder="User ID" class="adm-input">
+            <input type="text" id="oidPinfl" placeholder="PINFL (14 raqam)" class="adm-input">
+            <button class="adm-btn" onclick="oneidLink()">Link account</button>
+          </div>
+          <div id="oneidResult" class="adm-box">—</div>
+          <h3>Identity links</h3>
+          <div id="identitiesList">Yuklanmoqda…</div>
+        </section>
+
+        <section class="adm-card">
+          <h2>Token vault</h2>
+          <div class="adm-row">
+            <input type="number" id="tokConn" placeholder="Connection ID" class="adm-input">
+            <select id="tokType">
+              <option value="access">Access</option>
+              <option value="refresh">Refresh</option>
+              <option value="id">ID</option>
+            </select>
+            <input type="text" id="tokValue" placeholder="Token (vault'da shifrlanadi)" class="adm-input">
+            <input type="text" id="tokScopes" placeholder="Scopes (space-separated)" class="adm-input">
+            <button class="adm-btn" onclick="storeToken()">Store token</button>
+          </div>
+          <div id="tokResult" class="adm-box">—</div>
+          <h3>Vault tokens (metadata only)</h3>
+          <div id="tokensList">Yuklanmoqda…</div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+<script>
+const api = (path, opts) => fetch(path, {
+  headers: { 'Content-Type': 'application/json' },
+  ...opts,
+}).then(async (r) => {
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
+  return d;
+});
+const $ = (id) => document.getElementById(id);
+
+function el(tag, cls, html) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (html !== undefined) e.innerHTML = html;
+  return e;
+}
+
+async function refreshSummary() {
+  try {
+    const s = await api('/api/admin/external-integration/summary');
+    $('mStatus').textContent = s.liveMode ? 'Live mode' : 'Sandbox mode';
+    $('summary').innerHTML = [
+      ['Connections', s.connections],
+      ['Sync jobs', s.jobs],
+      ['Failed', s.jobsFailed],
+      ['Dead letter', s.jobsDeadLetter],
+      ['OneID linked', s.identitiesLinked],
+      ['Active tokens', s.tokensActive],
+    ].map(([k, v]) => `<div class="adm-stat"><div class="adm-stat-v">${v}</div><div class="adm-stat-k">${k}</div></div>`).join('');
+  } catch (e) { $('summary').textContent = 'Xato: ' + e.message; }
+}
+
+async function refreshConns() {
+  try {
+    const d = await api('/api/admin/external-integration/connections');
+    $('connsList').innerHTML = '';
+    (d.connections || []).forEach((c) => {
+      $('connsList').appendChild(el('div', 'adm-row-item',
+        `<b>${c.provider}</b> · ${c.mode} · ${c.status} · base: ${c.base_url || '—'} · rps: ${c.rate_limit_rps}`));
+    });
+  } catch (e) { $('connsList').textContent = 'Xato: ' + e.message; }
+}
+
+async function registerConn() {
+  try {
+    const d = await api('/api/admin/external-integration/connections', {
+      method: 'POST',
+      body: JSON.stringify({
+        provider: $('connProvider').value, mode: $('connMode').value,
+        baseUrl: $('connBase').value, clientId: $('connClient').value, scopes: $('connScopes').value,
+      }),
+    });
+    $('connsList').textContent = 'OK — ' + JSON.stringify(d.connection || d);
+    refreshConns(); refreshSummary();
+  } catch (e) { $('connsList').textContent = 'Xato: ' + e.message; }
+}
+
+async function loadStatus() {
+  try {
+    const s = await api('/api/admin/external-integration/status?provider=' + $('stProvider').value);
+    $('statusBox').innerHTML = `
+      <div>Provider: <b>${s.provider}</b></div>
+      <div>Mode: <b>${s.mode}</b>${s.liveMode ? ' (rasmiy contract)' : ' (offline sandbox)'}</div>
+      <div>Configured: <b>${s.configured}</b> · Status: ${s.status}</div>
+      <div>Rate limit: ${s.rateLimitRps} rps</div>
+      ${s.health ? `<div>Health: ${s.health.healthy ? 'OK' : 'FAIL'}</div>` : ''}`;
+  } catch (e) { $('statusBox').textContent = 'Xato: ' + e.message; }
+}
+
+async function hemisPull() {
+  try {
+    const d = await api('/api/admin/external-integration/hemis/pull', {
+      method: 'POST', body: JSON.stringify({ connectionId: Number($('pullConn').value) }),
+    });
+    $('pullResult').innerHTML = `<div>Job #${d.job.id} · ${d.job.status}${d.idempotent ? ' (idempotent)' : ''} · mode: ${d.mode}</div>` +
+      (d.rows || []).map((r) => `<div class="adm-row-item">${r.studentId} — ${r.firstName} ${r.lastName} (${r.pinfl})</div>`).join('');
+    refreshSummary();
+  } catch (e) { $('pullResult').textContent = 'Xato: ' + e.message; }
+}
+
+async function gradePush() {
+  try {
+    let grades;
+    try { grades = JSON.parse($('pushGrades').value); } catch { grades = []; }
+    const d = await api('/api/admin/external-integration/grade/push', {
+      method: 'POST',
+      body: JSON.stringify({ connectionId: Number($('pushConn').value), grades, decision: $('pushDecision').value }),
+    });
+    $('pushResult').textContent = 'OK — job #' + d.job.id + ' · ' + d.job.status + (d.idempotent ? ' (idempotent)' : '') + (d.externalRefs ? ' · refs: ' + d.externalRefs.join(',') : '');
+    refreshSummary();
+  } catch (e) { $('pushResult').textContent = 'Xato: ' + e.message; }
+}
+
+async function reconcile() {
+  try {
+    const d = await api('/api/admin/external-integration/reconcile', {
+      method: 'POST', body: JSON.stringify({ connectionId: Number($('reconConn').value) }),
+    });
+    const df = d.diff || {};
+    $('reconResult').innerHTML = `<div>Added: <b>${df.addedCount}</b> · Removed: <b>${df.removedCount}</b> · Changed: <b>${df.changedCount}</b> (job #${d.job.id})</div>` +
+      (df.added || []).slice(0, 5).map((r) => `<div class="adm-row-item">+ ${r.studentId} ${r.firstName} ${r.lastName}</div>`).join('');
+    refreshSummary();
+  } catch (e) { $('reconResult').textContent = 'Xato: ' + e.message; }
+}
+
+async function loadJobs() {
+  try {
+    const d = await api('/api/admin/external-integration/jobs?status=' + $('jobStatus').value);
+    $('jobsList').innerHTML = '';
+    (d.jobs || []).forEach((j) => {
+      const row = el('div', 'adm-row-item', `#${j.id} · ${j.direction} ${j.entity} · <b>${j.status}</b> · attempts ${j.attempts}/${j.max_attempts} · ${j.external_ref || ''}`);
+      if (j.status === 'failed' || j.status === 'dead_letter') {
+        const b = el('button', 'adm-btn adm-btn-sm', 'Retry');
+        b.onclick = () => retryJob(j.id, row);
+        row.appendChild(b);
+      }
+      $('jobsList').appendChild(row);
+    });
+  } catch (e) { $('jobsList').textContent = 'Xato: ' + e.message; }
+}
+
+async function retryJob(id, rowEl) {
+  try {
+    const d = await api('/api/admin/external-integration/jobs/' + id + '/retry', { method: 'POST' });
+    rowEl.innerHTML = `#${id} · retry → <b>${d.job.status}</b> · attempts ${d.job.attempts}`;
+    refreshSummary();
+  } catch (e) { rowEl.innerHTML = `#${id} — Xato: ${e.message}`; }
+}
+
+async function oneidLink() {
+  try {
+    const d = await api('/api/admin/external-integration/oneid/link', {
+      method: 'POST',
+      body: JSON.stringify({ connectionId: Number($('oidConn').value), userId: Number($('oidUser').value), pinfl: $('oidPinfl').value }),
+    });
+    $('oneidResult').textContent = 'OK — identity #' + d.identity.id + ' · ' + d.identity.status;
+    refreshIdentities(); refreshSummary();
+  } catch (e) { $('oneidResult').textContent = 'Xato: ' + e.message; }
+}
+
+async function refreshIdentities() {
+  try {
+    const d = await api('/api/admin/external-integration/identities');
+    $('identitiesList').innerHTML = '';
+    (d.identities || []).forEach((i) => {
+      const row = el('div', 'adm-row-item', `#${i.id} · user ${i.user_id} · ${i.provider_subject} · <b>${i.status}</b> · ${i.assurance_level}`);
+      if (i.status === 'linked') {
+        const b = el('button', 'adm-btn adm-btn-sm', 'Revoke');
+        b.onclick = () => revokeIdentity(i.id, row);
+        row.appendChild(b);
+      }
+      $('identitiesList').appendChild(row);
+    });
+  } catch (e) { $('identitiesList').textContent = 'Xato: ' + e.message; }
+}
+
+async function revokeIdentity(id, rowEl) {
+  try {
+    await api('/api/admin/external-integration/oneid/' + id + '/revoke', { method: 'POST' });
+    rowEl.innerHTML = `#${id} — revoked`;
+    refreshSummary();
+  } catch (e) { rowEl.innerHTML = 'Xato: ' + e.message; }
+}
+
+async function storeToken() {
+  try {
+    const d = await api('/api/admin/external-integration/tokens', {
+      method: 'POST',
+      body: JSON.stringify({
+        connectionId: Number($('tokConn').value), tokenType: $('tokType').value,
+        token: $('tokValue').value, scopes: $('tokScopes').value.split(' ').filter(Boolean),
+      }),
+    });
+    $('tokResult').textContent = 'OK — token #' + d.tokenId + ' (envelope-encrypted)';
+    refreshTokens();
+  } catch (e) { $('tokResult').textContent = 'Xato: ' + e.message; }
+}
+
+async function refreshTokens() {
+  try {
+    const d = await api('/api/admin/external-integration/tokens');
+    $('tokensList').innerHTML = '';
+    (d.tokens || []).forEach((t) => {
+      const row = el('div', 'adm-row-item', `#${t.id} · ${t.provider} · ${t.tokenType} · scopes: ${t.scope || '—'} · ${t.revokedAt ? 'REVOKED' : 'active'}`);
+      if (!t.revokedAt) {
+        const b = el('button', 'adm-btn adm-btn-sm', 'Revoke');
+        b.onclick = () => revokeToken(t.id, row);
+        row.appendChild(b);
+      }
+      $('tokensList').appendChild(row);
+    });
+  } catch (e) { $('tokensList').textContent = 'Xato: ' + e.message; }
+}
+
+async function revokeToken(id, rowEl) {
+  try {
+    await api('/api/admin/external-integration/tokens/' + id + '/revoke', { method: 'POST' });
+    rowEl.innerHTML = `#${id} — revoked`;
+  } catch (e) { rowEl.innerHTML = 'Xato: ' + e.message; }
+}
+
+refreshSummary(); refreshConns(); loadJobs(); refreshIdentities(); refreshTokens();
+</script>
+</body>
+</html>

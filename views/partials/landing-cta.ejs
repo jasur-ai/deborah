@@ -1,0 +1,12 @@
+<!-- Landing final CTA (plan_index §3.8) -->
+<section class="ld-cta" aria-labelledby="ld-cta-title">
+  <div class="ld-container">
+    <div class="ld-cta-box">
+      <h2 class="ld-cta-title" id="ld-cta-title"><%= copy.cta.title %></h2>
+      <p class="ld-cta-desc"><%= copy.cta.desc %></p>
+      <a class="ld-btn ld-btn-primary ld-btn-lg" href="<%= (path === '/' ? '' : path) + '/user/login' %>" data-analytics="final_cta_click">
+        <%= copy.cta.button %>
+      </a>
+    </div>
+  </div>
+</section>

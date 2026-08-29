@@ -1,0 +1,420 @@
+<% const current = user || {}; %>
+<!DOCTYPE html>
+<html lang="uz" dir="ltr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — Deborah Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body class="adm-body">
+  <div class="adm-shell">
+    <aside class="adm-sidebar">
+      <div class="adm-brand">
+        <img src="/images/logo-vintage.png" alt="Deborah" class="logo-img" style="height:34px;width:auto">
+        <span>Deborah</span>
+      </div>
+      <nav class="adm-nav">
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/program-quality" class="active">Program Quality</a>
+        <a href="/admin/credentials">Credentials</a>
+        <a href="/admin/ai-checkpoint">AI Checkpoint</a>
+        <a href="/admin/ai-grading">AI Grading</a>
+        <a href="/admin/ai-mlops">AI MLOps</a>
+        <a href="/admin/source-pack">Source Packs</a>
+        <a href="/admin/presentations">Presentation Studio</a>
+        <a href="/admin/provider">Provider Adapters</a>
+        <a href="/admin/vip">VIP</a>
+      </nav>
+      <div class="adm-side-foot">
+        <a href="/admin/logout">Chiqish</a>
+      </div>
+    </aside>
+
+    <main class="adm-main">
+      <header class="adm-topbar">
+        <h1>Program Quality & Accreditation</h1>
+        <span class="adm-chip" id="mapStatus">Yuklanmoqda…</span>
+      </header>
+
+      <section class="adm-card">
+        <h2>Curriculum Map</h2>
+        <p class="adm-hint">Institution outcomes → program outcomes → course outcomes → I/R/M/A (Introduced / Reinforced / Mastered / Assessed) → assessment points. Gap report unmapped / missing assessment / over-assessed hujumlarni topadi (Prompt 62, research.md §56).</p>
+        <div class="adm-form">
+          <div class="adm-row">
+            <div class="field"><label>Map nomi</label><input class="input" id="fMapName" placeholder="BSc Matematika 2026"></div>
+            <div class="field"><label>Term</label><input class="input" id="fMapTerm" placeholder="2026-spring"></div>
+            <div class="field"><label>Version</label><input class="input" id="fMapVersion" value="v1"></div>
+            <button class="btn btn-primary" id="btnCreateMap">Create Map</button>
+          </div>
+          <div class="adm-row" style="margin-top:10px">
+            <div class="field"><label>Map</label>
+              <select class="input" id="fMapSelect"></select>
+            </div>
+            <div class="field"><label>Status</label>
+              <select class="input" id="fMapStatus">
+                <option value="review">review</option>
+                <option value="published">published</option>
+                <option value="archived">archived</option>
+              </select>
+            </div>
+            <button class="btn" id="btnMapStatus">Transition</button>
+            <button class="btn" id="btnRefreshMap">Refresh</button>
+          </div>
+          <div class="adm-row" style="margin-top:10px;align-items:flex-end">
+            <div class="field"><label>Course ID</label><input class="input" id="fCourseId" type="number" value="1"></div>
+            <div class="field"><label>Course kodi</label><input class="input" id="fCourseCode" placeholder="MATH-201"></div>
+            <div class="field"><label>Course nomi</label><input class="input" id="fCourseName" placeholder="Algebra"></div>
+            <div class="field"><label>Outcome ID</label><input class="input" id="fOutcomeId" type="number" value="1"></div>
+            <div class="field"><label>Outcome kodi</label><input class="input" id="fOutcomeCode" placeholder="PLO-4"></div>
+            <div class="field"><label>Outcome nomi</label><input class="input" id="fOutcomeName" placeholder="Analitik fikrlash"></div>
+            <div class="field"><label>I/R/M/A</label>
+              <select class="input" id="fIrma">
+                <option value="introduced">introduced</option>
+                <option value="reinforced">reinforced</option>
+                <option value="mastered">mastered</option>
+                <option value="assessed">assessed</option>
+              </select>
+            </div>
+            <div class="field"><label>Assessment points</label><input class="input" id="fAssessPoints" type="number" value="1"></div>
+            <button class="btn" id="btnMapEntry">Add Entry</button>
+          </div>
+        </div>
+        <div class="adm-table-wrap" style="margin-top:12px">
+          <table class="adm-table">
+            <thead><tr><th>Entry</th><th>Course</th><th>Outcome</th><th>I/R/M/A</th><th>Points</th></tr></thead>
+            <tbody id="entriesBody"><tr><td colspan="5" class="adm-muted">Map tanlang</td></tr></tbody>
+          </table>
+        </div>
+        <div id="gapBox" style="margin-top:12px"></div>
+      </section>
+
+      <section class="adm-card">
+        <h2>Aggregate Evidence</h2>
+        <p class="adm-hint">Direct/indirect evidence per outcome-cell. <b>Minimum cell suppression</b>: sample_size &lt; min_cell_size bo'lsa observed_pct null ko'rsatiladi. Teacher leaderboard yo'q; raw PII aggregate'ga chiqmaydi (§56.5).</p>
+        <div class="adm-form">
+          <div class="adm-row">
+            <div class="field"><label>Outcome ID</label><input class="input" id="fEvOutcomeId" type="number" value="1"></div>
+            <div class="field"><label>Outcome kodi</label><input class="input" id="fEvOutcomeCode" placeholder="PLO-4"></div>
+            <div class="field"><label>Type</label>
+              <select class="input" id="fEvType"><option value="direct">direct</option><option value="indirect">indirect</option></select>
+            </div>
+            <div class="field"><label>Method</label><input class="input" id="fEvMethod" placeholder="anchor rubric, stratified sample"></div>
+            <div class="field"><label>Sample</label><input class="input" id="fEvSample" type="number" value="8"></div>
+            <div class="field"><label>Min cell</label><input class="input" id="fEvMinCell" type="number" value="5"></div>
+            <div class="field"><label>Observed %</label><input class="input" id="fEvObserved" type="number" value="58"></div>
+            <div class="field"><label>Target %</label><input class="input" id="fEvTarget" type="number" value="75"></div>
+            <button class="btn" id="btnAddEvidence">Add Evidence</button>
+          </div>
+        </div>
+        <div class="adm-table-wrap" style="margin-top:12px">
+          <table class="adm-table">
+            <thead><tr><th>Outcome</th><th>Type</th><th>Sample</th><th>Observed %</th><th>Target %</th><th>Suppressed</th></tr></thead>
+            <tbody id="evidenceBody"><tr><td colspan="6" class="adm-muted">Map tanlang</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="adm-card">
+        <h2>Finding → Improvement Action → Follow-up</h2>
+        <p class="adm-hint">Finding: outcome target vs observed gap. Action: owner/deadline. <b>Close blocker</b>: action faqat follow-up evidence + decision bilan close bo'ladi (§56.3).</p>
+        <div class="adm-form">
+          <div class="adm-row">
+            <div class="field"><label>Finding title</label><input class="input" id="fFindingTitle" placeholder="PLO-4 target 75%, observed 58%"></div>
+            <div class="field"><label>Outcome ID</label><input class="input" id="fFindingOutcomeId" type="number" value="1"></div>
+            <div class="field"><label>Outcome kodi</label><input class="input" id="fFindingCode" placeholder="PLO-4"></div>
+            <div class="field"><label>Target %</label><input class="input" id="fFindingTarget" type="number" value="75"></div>
+            <div class="field"><label>Observed %</label><input class="input" id="fFindingObserved" type="number" value="58"></div>
+            <button class="btn" id="btnCreateFinding">Create Finding</button>
+          </div>
+          <div class="adm-row" style="margin-top:10px">
+            <div class="field"><label>Finding ID</label><input class="input" id="fActionFindingId" type="number"></div>
+            <div class="field"><label>Action title</label><input class="input" id="fActionTitle" placeholder="Course B'da new scaffold"></div>
+            <div class="field"><label>Owner</label><input class="input" id="fActionOwner" placeholder="program lead"></div>
+            <div class="field"><label>Deadline</label><input class="input" id="fActionDeadline" type="date"></div>
+            <button class="btn" id="btnCreateAction">Create Action</button>
+          </div>
+          <div class="adm-row" style="margin-top:10px">
+            <div class="field"><label>Action ID</label><input class="input" id="fFuActionId" type="number"></div>
+            <div class="field"><label>Cycle</label><input class="input" id="fFuCycle" placeholder="next-term-week-4"></div>
+            <div class="field"><label>Evidence ref</label><input class="input" id="fFuEvidenceRef" placeholder="anchor-sample-rubric"></div>
+            <div class="field"><label>Decision</label>
+              <select class="input" id="fFuDecision">
+                <option value="effective">effective</option>
+                <option value="insufficient">insufficient</option>
+                <option value="confounded">confounded</option>
+              </select>
+            </div>
+            <button class="btn" id="btnAddFollowUp">Add Follow-up</button>
+            <button class="btn" id="btnCloseAction">Close Action</button>
+          </div>
+        </div>
+        <div id="actionBox" style="margin-top:12px"></div>
+      </section>
+
+      <section class="adm-card">
+        <h2>Accreditation Export</h2>
+        <p class="adm-hint">Export bundle — reproducible manifest/hash (sha256). Bir xil content => bir xil hash; verify'da qayta hisoblanib solishtiriladi.</p>
+        <div class="adm-form">
+          <div class="adm-row">
+            <div class="field"><label>Standard</label><input class="input" id="fStandard" placeholder="UZWQAA-2026"></div>
+            <div class="field"><label>Standard version</label><input class="input" id="fStandardVersion" placeholder="v1"></div>
+            <button class="btn btn-primary" id="btnCreateExport">Create Export</button>
+          </div>
+        </div>
+        <div class="adm-table-wrap" style="margin-top:12px">
+          <table class="adm-table">
+            <thead><tr><th>ID</th><th>Standard</th><th>Manifest hash</th><th>Exported by</th><th>Created</th><th></th></tr></thead>
+            <tbody id="exportsBody"><tr><td colspan="6" class="adm-muted">Map tanlang</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+<script>
+(function () {
+  const CSRF = '<%= csrfToken || "" %>';
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  async function api(path, opts = {}) {
+    const res = await fetch(path, {
+      method: opts.method || 'GET',
+      headers: { 'content-type': 'application/json', 'X-CSRF-Token': CSRF },
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    return data;
+  }
+
+  function currentMapId() {
+    const v = $('fMapSelect').value;
+    return v ? Number(v) : 0;
+  }
+
+  // ── Maps ──
+  async function loadMaps() {
+    try {
+      const { maps } = await api('/api/admin/program-quality/maps');
+      const sel = $('fMapSelect');
+      const prev = sel.value;
+      sel.innerHTML = maps.map((m) => `<option value="${m.id}">${esc(m.name)}@${esc(m.version)} — ${esc(m.status)}</option>`).join('') || '<option value="">(map yo&rsquo;q — create qiling)</option>';
+      if (prev && maps.some((m) => String(m.id) === prev)) sel.value = prev;
+      $('mapStatus').textContent = maps.length ? `${maps.length} map` : "Map yo'q";
+      if (maps.length) await loadMapDetail();
+    } catch (e) {
+      $('mapStatus').textContent = '✗ ' + e.message;
+    }
+  }
+
+  async function loadMapDetail() {
+    const id = currentMapId();
+    if (!id) return;
+    try {
+      const { map } = await api(`/api/admin/program-quality/maps/${id}`);
+      $('entriesBody').innerHTML = map.entries.map((e) => `<tr>
+        <td>#${e.id}</td><td>${esc(e.course_code || e.course_name)}</td>
+        <td>${esc(e.outcome_code || e.outcome_name)}</td>
+        <td><span class="chip chip-${e.irma_level === 'assessed' ? 'ok' : 'warn'}">${esc(e.irma_level)}</span></td>
+        <td>${e.assessment_points}</td></tr>`).join('') || '<tr><td colspan="5" class="adm-muted">Entry yo&rsquo;q</td></tr>';
+      const g = map.gaps || {};
+      const gs = g.gaps || [];
+      $('gapBox').innerHTML = `<div class="adm-stats">
+          <span><b>Outcomes</b> ${g.summary?.totalOutcomes ?? 0}</span>
+          <span><b>Unmapped</b> ${g.summary?.unmapped ?? 0}</span>
+          <span><b>No intro</b> ${g.summary?.missingIntroduction ?? 0}</span>
+          <span><b>No assessment</b> ${g.summary?.missingAssessment ?? 0}</span>
+          <span><b>Over-assessed</b> ${g.summary?.overAssessed ?? 0}</span>
+        </div>` + (gs.length ? gs.map((x) => `<div class="adm-row" style="border:1px solid var(--deborah-semantic-color-border-default);border-radius:8px;padding:8px;margin:4px 0;font-size:12px">
+          <b>${esc(x.kind)}</b> — ${esc(x.code)}: ${esc(x.detail)}</div>`).join('') : '<p class="adm-muted">Gap yo&rsquo;q</p>');
+      await loadEvidence();
+      await loadFindings();
+      await loadExports();
+    } catch (e) { /* silent */ }
+  }
+
+  // ── Evidence ──
+  async function loadEvidence() {
+    const id = currentMapId();
+    if (!id) return;
+    try {
+      const { items } = await api(`/api/admin/program-quality/evidence?mapId=${id}`);
+      $('evidenceBody').innerHTML = items.map((e) => `<tr>
+        <td>${esc(e.outcome_code || e.outcome_id)}</td>
+        <td>${esc(e.evidence_type)}</td>
+        <td>${e.sample_size}</td>
+        <td>${e.observed_pct === null ? '<span class="chip chip-err">suppressed</span>' : esc(String(e.observed_pct))}</td>
+        <td>${esc(String(e.benchmark_target_pct ?? '-'))}</td>
+        <td>${e.is_suppressed ? '✓' : '-'}</td></tr>`).join('') || '<tr><td colspan="6" class="adm-muted">Evidence yo&rsquo;q</td></tr>';
+    } catch (e) { /* silent */ }
+  }
+
+  // ── Findings + actions ──
+  async function loadFindings() {
+    const id = currentMapId();
+    if (!id) return;
+    try {
+      const { findings } = await api(`/api/admin/program-quality/findings?mapId=${id}`);
+      $('actionBox').innerHTML = findings.map((f) => `
+        <div style="border:1px solid var(--deborah-semantic-color-border-default);border-radius:10px;padding:10px;margin:8px 0">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <b>#${f.id}</b> <span>${esc(f.title)}</span>
+            <span class="chip chip-${f.status === 'resolved' ? 'ok' : 'warn'}">${esc(f.status)}</span>
+            <span style="font-size:12px;color:var(--deborah-semantic-color-text-muted)">target ${f.target_pct}% · observed ${f.observed_pct ?? 'n/a'}%</span>
+          </div>
+          <div id="actions-${f.id}" style="margin-top:6px;font-size:13px"></div>
+        </div>`).join('') || '<p class="adm-muted">Finding yo&rsquo;q</p>';
+      const { actions } = await api('/api/admin/program-quality/actions');
+      for (const f of findings) {
+        const fa = actions.filter((a) => a.finding_id === f.id);
+        const el = $('actions-' + f.id);
+        if (el) el.innerHTML = fa.map((a) => `
+          <div style="border-left:3px solid var(--deborah-semantic-color-border-default);padding:6px 10px;margin:4px 0">
+            <b>${esc(a.title)}</b> — owner: <i>${esc(a.owner)}</i> · deadline: ${esc((a.deadline || '').slice(0, 10))}
+            <span class="chip chip-${a.status === 'closed' ? 'ok' : 'warn'}">${esc(a.status)}</span>
+            <span style="font-size:12px;color:var(--deborah-semantic-color-text-muted)">follow-ups: ${a.followUpCount ?? 0}</span>
+          </div>`).join('') || 'Action yo&rsquo;q';
+      }
+    } catch (e) { /* silent */ }
+  }
+
+  // ── Exports ──
+  async function loadExports() {
+    const id = currentMapId();
+    if (!id) return;
+    try {
+      const { exports: list } = await api(`/api/admin/program-quality/exports?mapId=${id}`);
+      $('exportsBody').innerHTML = list.map((x) => `<tr>
+        <td>#${x.id}</td><td>${esc(x.standard)} ${esc(x.standard_version || '')}</td>
+        <td><code style="font-size:11px">${esc((x.manifest_hash || '').slice(0, 16))}…</code></td>
+        <td>${esc(x.exported_by || '-')}</td>
+        <td>${esc((x.created_at || '').slice(0, 19))}</td>
+        <td><button class="btn btn-sm" onclick="verifyExport(${x.id})">Verify</button></td></tr>`).join('') || '<tr><td colspan="6" class="adm-muted">Export yo&rsquo;q</td></tr>';
+    } catch (e) { /* silent */ }
+  }
+
+  window.verifyExport = async function (id) {
+    try {
+      const r = await api(`/api/admin/program-quality/exports/${id}/verify`, { method: 'POST' });
+      $('mapStatus').textContent = r.matches ? `Export #${id}: manifest ✓ reproducible` : `Export #${id}: HASH MISMATCH`;
+      $('mapStatus').className = 'adm-chip ' + (r.matches ? 'chip-ok' : 'chip-warn');
+    } catch (e) {
+      $('mapStatus').textContent = '✗ ' + e.message;
+    }
+  };
+
+  // ── Buttons ──
+  $('btnCreateMap').addEventListener('click', async () => {
+    try {
+      await api('/api/admin/program-quality/maps', { method: 'POST', body: { name: $('fMapName').value, term: $('fMapTerm').value, version: $('fMapVersion').value } });
+      $('mapStatus').textContent = 'Map created ✓';
+      await loadMaps();
+    } catch (e) { $('mapStatus').textContent = '✗ ' + e.message; }
+  });
+
+  $('btnMapStatus').addEventListener('click', async () => {
+    try {
+      const r = await api(`/api/admin/program-quality/maps/${currentMapId()}/status`, { method: 'POST', body: { status: $('fMapStatus').value } });
+      $('mapStatus').textContent = 'Status → ' + r.status;
+      await loadMaps();
+    } catch (e) { $('mapStatus').textContent = '✗ ' + e.message; }
+  });
+
+  $('btnRefreshMap').addEventListener('click', loadMaps);
+
+  $('btnMapEntry').addEventListener('click', async () => {
+    try {
+      await api(`/api/admin/program-quality/maps/${currentMapId()}/entries`, {
+        method: 'POST',
+        body: {
+          courseId: Number($('fCourseId').value), courseCode: $('fCourseCode').value, courseName: $('fCourseName').value,
+          outcomeId: Number($('fOutcomeId').value), outcomeCode: $('fOutcomeCode').value, outcomeName: $('fOutcomeName').value,
+          irmaLevel: $('fIrma').value, assessmentPoints: Number($('fAssessPoints').value),
+        },
+      });
+      $('mapStatus').textContent = 'Entry added ✓';
+      await loadMapDetail();
+    } catch (e) { $('mapStatus').textContent = '✗ ' + e.message; }
+  });
+
+  $('btnAddEvidence').addEventListener('click', async () => {
+    try {
+      const r = await api('/api/admin/program-quality/evidence', {
+        method: 'POST',
+        body: {
+          mapId: currentMapId(), outcomeId: Number($('fEvOutcomeId').value), outcomeCode: $('fEvOutcomeCode').value,
+          evidenceType: $('fEvType').value, method: $('fEvMethod').value,
+          sampleSize: Number($('fEvSample').value), minCellSize: Number($('fEvMinCell').value),
+          observedPct: Number($('fEvObserved').value), benchmarkTargetPct: Number($('fEvTarget').value),
+        },
+      });
+      $('mapStatus').textContent = r.suppressed ? `Evidence #${r.aggregationId} — SUPPRESSED (min cell)` : `Evidence #${r.aggregationId} added ✓`;
+      await loadEvidence();
+    } catch (e) { $('mapStatus').textContent = '✗ ' + e.message; }
+  });
+
+  $('btnCreateFinding').addEventListener('click', async () => {
+    try {
+      const r = await api('/api/admin/program-quality/findings', {
+        method: 'POST',
+        body: {
+          mapId: currentMapId(), outcomeId: Number($('fFindingOutcomeId').value), outcomeCode: $('fFindingCode').value,
+          title: $('fFindingTitle').value, targetPct: Number($('fFindingTarget').value), observedPct: Number($('fFindingObserved').value),
+        },
+      });
+      $('mapStatus').textContent = `Finding #${r.findingId} — verdict: ${r.verdict} (gap ${r.gap ?? 'n/a'}%)`;
+      await loadFindings();
+    } catch (e) { $('mapStatus').textContent = '✗ ' + e.message; }
+  });
+
+  $('btnCreateAction').addEventListener('click', async () => {
+    try {
+      const r = await api('/api/admin/program-quality/actions', {
+        method: 'POST',
+        body: { findingId: Number($('fActionFindingId').value), title: $('fActionTitle').value, owner: $('fActionOwner').value, deadline: $('fActionDeadline').value || null },
+      });
+      $('mapStatus').textContent = 'Action #' + r.actionId + ' created ✓';
+      await loadFindings();
+    } catch (e) { $('mapStatus').textContent = '✗ ' + e.message; }
+  });
+
+  $('btnAddFollowUp').addEventListener('click', async () => {
+    try {
+      const r = await api(`/api/admin/program-quality/actions/${Number($('fFuActionId').value)}/follow-up`, {
+        method: 'POST',
+        body: { cycle: $('fFuCycle').value, evidenceRef: $('fFuEvidenceRef').value, decision: $('fFuDecision').value },
+      });
+      $('mapStatus').textContent = 'Follow-up #' + r.evidenceId + ' added ✓';
+      await loadFindings();
+    } catch (e) { $('mapStatus').textContent = '✗ ' + e.message; }
+  });
+
+  $('btnCloseAction').addEventListener('click', async () => {
+    try {
+      const r = await api(`/api/admin/program-quality/actions/${Number($('fFuActionId').value)}/status`, { method: 'POST', body: { status: 'closed' } });
+      $('mapStatus').textContent = 'Action closed ✓ (evidence bilan)';
+      await loadFindings();
+    } catch (e) { $('mapStatus').textContent = '✗ ' + e.message; }
+  });
+
+  $('btnCreateExport').addEventListener('click', async () => {
+    try {
+      const r = await api('/api/admin/program-quality/exports', {
+        method: 'POST',
+        body: { mapId: currentMapId(), standard: $('fStandard').value, standardVersion: $('fStandardVersion').value },
+      });
+      $('mapStatus').textContent = 'Export #' + r.exportId + ' — hash ' + r.manifestHash.slice(0, 12) + '…';
+      await loadExports();
+    } catch (e) { $('mapStatus').textContent = '✗ ' + e.message; }
+  });
+
+  $('fMapSelect').addEventListener('change', loadMapDetail);
+  loadMaps();
+})();
+</script>
+</body>
+</html>

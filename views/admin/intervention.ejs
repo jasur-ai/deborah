@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr" data-theme="dark">
+<head>
+  <%- include('../partials/head', { title, user }) %>
+  <style>
+    .iv-grid { display: grid; grid-template-columns: 340px 1fr; gap: 18px; }
+    .iv-panel { background: var(--deborah-semantic-color-surface-raised); border: 1px solid var(--deborah-semantic-color-border-default); border-radius: 12px; padding: 16px; }
+    .iv-panel h3 { margin: 0 0 12px; font-size: 14px; letter-spacing: .04em; color: var(--deborah-semantic-color-text-muted); text-transform: uppercase; }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 12px; color: var(--deborah-semantic-color-text-muted); margin-bottom: 4px; }
+    .input, textarea.input, select.input { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--deborah-semantic-color-border-default); background: var(--deborah-semantic-color-surface-raised); color: var(--deborah-semantic-color-text-primary); font-size: 13px; box-sizing: border-box; }
+    textarea.input { min-height: 60px; resize: vertical; }
+    .btn { padding: 6px 14px; border-radius: 8px; border: 1px solid var(--deborah-semantic-color-border-default); background: var(--deborah-semantic-color-surface-raised); color: var(--deborah-semantic-color-text-primary); cursor: pointer; font-size: 13px; transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s; }
+    .btn:hover { border-color: var(--deborah-semantic-color-action-primary); }
+    .btn.primary { background: var(--deborah-semantic-color-action-primary); border-color: var(--deborah-semantic-color-action-primary); color: #fff; }
+    .btn.sm { padding: 4px 10px; font-size: 12px; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+    .badge.pending { background: rgba(148,163,184,.15); color: #94a3b8; }
+    .badge.approved { background: rgba(0,229,160,.15); color: #00e5a0; }
+    .badge.assigned { background: rgba(37,99,235,.15); color: #60a5fa; }
+    .badge.dismissed { background: rgba(248,113,113,.15); color: #f87171; }
+    .badge.below { background: rgba(248,113,113,.15); color: #f87171; }
+    .badge.approaching { background: rgba(251,191,36,.15); color: #fbbf24; }
+    .badge.at { background: rgba(0,229,160,.15); color: #00e5a0; }
+    .badge.above { background: rgba(37,99,235,.15); color: #60a5fa; }
+    .card-item { padding: 10px 12px; border: 1px solid var(--deborah-semantic-color-border-default); border-radius: 8px; margin-bottom: 8px; }
+    .card-item .ctitle { font-weight: 600; font-size: 13px; }
+    .card-item .cmeta { font-size: 12px; color: var(--deborah-semantic-color-text-muted); margin: 3px 0; }
+    .card-item .cactions { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+    .privacy-note { font-size: 11px; color: var(--deborah-semantic-color-text-muted); border: 1px dashed var(--deborah-semantic-color-border-default); border-radius: 8px; padding: 8px; margin-bottom: 12px; }
+    .toast { position: fixed; top: 16px; right: 16px; z-index: 50; padding: 10px 16px; border-radius: 10px; background: var(--deborah-semantic-color-surface-raised); border: 1px solid var(--deborah-semantic-color-border-default); box-shadow: 0 8px 24px rgba(0,0,0,.3); opacity: 0; transform: translateY(-8px); transition:color .25s,background-color .25s,border-color .25s,box-shadow .25s,transform .25s,opacity .25s; font-size: 13px; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.err { border-color: rgba(248,113,113,.5); }
+    .toast.ok { border-color: rgba(0,229,160,.5); }
+    .muted { color: var(--deborah-semantic-color-text-muted); }
+    table.iv-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table.iv-table th, table.iv-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--deborah-semantic-color-border-default); }
+    table.iv-table th { color: var(--deborah-semantic-color-text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+    @media (max-width: 960px) { .iv-grid { grid-template-columns: 1fr; } }
+  </style>
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body>
+  <%- include('../partials/sidebar', { active: 'interventions', user }) %>
+  <main class="main">
+    <div class="topbar">
+      <h1>Intervention Loop — Assessment to Action</h1>
+      <div class="topbar-right">
+        <button class="btn" onclick="loadDashboard()">Dashboard</button>
+      </div>
+    </div>
+
+    <div class="privacy-note">
+      Ethical guard: hech qanday permanent label yoki auto penalty yo'q. AI
+      intervention assign qilmaydi — faqat recommendation. Student contest
+      (appeal) har doim ochiq.
+    </div>
+
+    <div class="iv-grid">
+      <div class="iv-panel">
+        <h3>Yangi next-action card</h3>
+        <div class="field">
+          <label>Student ID</label>
+          <input class="input" id="studentId" type="number" placeholder="1" />
+        </div>
+        <div class="field">
+          <label>Competency ID</label>
+          <input class="input" id="competencyId" type="number" placeholder="5" />
+        </div>
+        <div class="field">
+          <label>Score (0..1)</label>
+          <input class="input" id="score" type="number" min="0" max="1" step="0.01" value="0.4" />
+        </div>
+        <div class="field">
+          <label>Attempt ID (ixtiyoriy)</label>
+          <input class="input" id="attemptId" type="number" placeholder="—" />
+        </div>
+        <button class="btn primary" onclick="generateCard()">Card yaratish</button>
+        <div style="margin-top:14px">
+          <h3>Mastery update (rule)</h3>
+          <div class="field"><label>Responses (1=to'g'ri, 0=xato — vergul bilan)</label>
+            <input class="input" id="responses" value="1,0,1,1" /></div>
+          <button class="btn" onclick="updateMastery()">Rule mastery</button>
+          <button class="btn" onclick="updateMastery('bkt')">BKT mastery</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="iv-panel">
+          <h3>Next-action cards</h3>
+          <div id="cards"><div class="muted">Yuklanmoqda...</div></div>
+        </div>
+        <div class="iv-panel" style="margin-top:18px">
+          <h3>Mastery estimates</h3>
+          <div id="mastery"><div class="muted">Yuklanmoqda...</div></div>
+        </div>
+        <div class="iv-panel" style="margin-top:18px">
+          <h3>Support cases (privacy-guarded)</h3>
+          <div id="support"><div class="muted">Yuklanmoqda...</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      const CSRF = '<%- csrfToken %>';
+      function toast(msg, type) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = 'toast show ' + (type || 'ok');
+        setTimeout(() => (t.className = 'toast'), 2600);
+      }
+      async function api(path, opts = {}) {
+        const headers = { 'content-type': 'application/json' };
+        if (opts.method && opts.method !== 'GET') headers['X-CSRF-Token'] = CSRF;
+        const res = await fetch(path, { method: opts.method || 'GET', headers, body: opts.body ? JSON.stringify(opts.body) : undefined });
+        return res.json();
+      }
+
+      function badge(status) {
+        return `<span class="badge ${status}">${status}</span>`;
+      }
+
+      async function generateCard() {
+        const body = {
+          evidence: {
+            studentId: parseInt(document.getElementById('studentId').value || '0', 10),
+            competencyId: parseInt(document.getElementById('competencyId').value || '0', 10),
+            score: parseFloat(document.getElementById('score').value || '0.4'),
+            attemptId: document.getElementById('attemptId').value ? parseInt(document.getElementById('attemptId').value, 10) : null,
+            misconception: { label: 'generic weakness', severity: parseFloat(document.getElementById('score').value || '0.4') < 0.5 ? 'high' : 'medium' },
+          },
+        };
+        const res = await api('/api/admin/interventions/cards', { method: 'POST', body });
+        if (res.error) return toast(res.error, 'err');
+        toast('Card yaratildi (teacher approval kutilmoqda)');
+        loadDashboard();
+      }
+
+      async function decide(id, decision) {
+        const res = await api(`/api/admin/interventions/cards/${id}/decision`, { method: 'POST', body: { decision } });
+        if (res.error) return toast(res.error, 'err');
+        toast(`Decision: ${decision}`);
+        loadDashboard();
+      }
+
+      async function updateMastery(method = 'rule') {
+        const raw = document.getElementById('responses').value.split(',').map((x) => (x.trim() === '1' ? 1 : 0));
+        const res = await api('/api/admin/interventions/mastery', {
+          method: 'POST',
+          body: {
+            studentId: parseInt(document.getElementById('studentId').value || '1', 10),
+            competencyId: parseInt(document.getElementById('competencyId').value || '5', 10),
+            method,
+            responses: raw,
+          },
+        });
+        if (res.error) return toast(res.error, 'err');
+        toast(`${method.toUpperCase()} mastery: ${res.est} (${res.level})`);
+        loadDashboard();
+      }
+
+      async function loadDashboard() {
+        const res = await api('/api/admin/interventions/dashboard');
+        if (res.error) return toast(res.error, 'err');
+        renderCards(res.cards || []);
+        renderMastery(res.mastery || []);
+        renderSupport(res.supportCases || []);
+      }
+
+      function renderCards(cards) {
+        const box = document.getElementById('cards');
+        if (!cards.length) { box.innerHTML = '<div class="muted">Hozircha card yo\'q.</div>'; return; }
+        box.innerHTML = cards.map((c) => `<div class="card-item">
+          <div class="ctitle">Student #${c.student_id} • Competency #${c.competency_id} ${badge(c.status)} <span class="badge ${c.priority}">${c.priority}</span></div>
+          <div class="cmeta">${c.rationale || '—'}</div>
+          <div class="cactions">
+            <button class="btn sm" onclick="decide(${c.id},'approve')">Approve</button>
+            <button class="btn sm" onclick="decide(${c.id},'assign')">Assign</button>
+            <button class="btn sm" onclick="decide(${c.id},'dismiss')">Dismiss</button>
+          </div>
+        </div>`).join('');
+      }
+
+      function renderMastery(rows) {
+        const box = document.getElementById('mastery');
+        if (!rows.length) { box.innerHTML = '<div class="muted">Mastery ma\'lumoti yo\'q.</div>'; return; }
+        box.innerHTML = `<table class="iv-table"><thead><tr><th>Student</th><th>Comp</th><th>Method</th><th>Est</th><th>Level</th></tr></thead><tbody>` +
+          rows.map((r) => `<tr><td>#${r.student_id}</td><td>#${r.competency_id}</td><td>${r.method}</td><td>${Number(r.mastery_est).toFixed(3)}</td><td>${badge(r.level)}</td></tr>`).join('') +
+          `</tbody></table>`;
+      }
+
+      function renderSupport(rows) {
+        const box = document.getElementById('support');
+        if (!rows.length) { box.innerHTML = '<div class="muted">Support case yo\'q.</div>'; return; }
+        box.innerHTML = rows.map((c) => `<div class="card-item">
+          <div class="ctitle">Student #${c.student_id} • ${c.signal_type} ${badge(c.case_status)}</div>
+          <div class="cmeta">${c.notes || '—'} • temporary: ${c.is_temporary} • auto_penalty: ${c.auto_penalty}</div>
+        </div>`).join('');
+      }
+
+      loadDashboard();
+    </script>
+  </main>
+</body>
+</html>

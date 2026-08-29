@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <link rel="stylesheet" href="/css/cast-studio.css">
+  <link rel="stylesheet" href="/design/contexts/workspace.css">
+  <style>
+    /* S25.05: shell qismi navigation.css/style.css'dan — sahifaga xos faqat tor override'lar */
+    .ws-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+    /* ── AUTH A-18: email verify banner + modal ── */
+    .email-verify-banner{display:flex;align-items:center;gap:12px;padding:12px 16px;margin-bottom:16px;border:1px solid var(--deborah-semantic-color-border-default,rgba(99,102,241,.35));border-radius:var(--deborah-radius-md,14px);background:var(--deborah-semantic-color-action-primary-soft,rgba(99,102,241,.09));}
+    .email-verify-banner .evb-icon{flex-shrink:0;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:var(--deborah-semantic-color-action-primary,rgba(99,102,241,.16));color:var(--deborah-semantic-color-action-primary,#6366f1);}
+    .email-verify-banner .evb-text{flex:1;display:flex;flex-direction:column;gap:2px;font-size:.86rem;color:var(--deborah-semantic-color-text-secondary);}
+    .email-verify-banner .evb-text strong{color:var(--deborah-semantic-color-text-primary);font-size:.92rem;}
+    .email-verify-banner .evb-btn{flex-shrink:0;min-height:40px;}
+    .evm-err{color:var(--deborah-semantic-color-text-danger,#e5484d);font-size:.84rem;font-weight:600;margin-bottom:8px;}
+    .evm-resend{margin-top:12px;font-size:.82rem;font-weight:600;color:var(--deborah-semantic-color-action-primary,#6366f1);background:none;border:none;cursor:pointer;min-height:44px;}
+    .evm-resend:disabled{opacity:.5;cursor:not-allowed;}
+    .evm-resend:not(:disabled):hover{text-decoration:underline;}
+    .evm-resend:focus-visible{outline:2px solid var(--deborah-semantic-color-action-primary,#6366f1);outline-offset:2px;border-radius:8px;}
+    .evm-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--deborah-semantic-color-action-primary,#6366f1);color:#fff;padding:12px 20px;border-radius:12px;font-weight:700;font-size:.9rem;opacity:0;transition:opacity 200ms ease,transform 200ms ease;z-index:600;box-shadow:0 8px 24px rgba(0,0,0,.25);}
+    .evm-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+    .evm-foot{margin-top:12px;text-align:center;}
+    .evm-update-email{font-size:.8rem;font-weight:600;color:var(--deborah-semantic-color-text-muted);text-decoration:underline;text-underline-offset:3px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0 4px;}
+    .evm-update-email:hover{color:var(--deborah-semantic-color-action-primary,#6366f1);}
+    .evm-update-email:focus-visible{outline:2px solid var(--deborah-semantic-color-action-primary,#6366f1);outline-offset:2px;border-radius:8px;}
+    @media (max-width:640px){.email-verify-banner{flex-wrap:wrap;}.email-verify-banner .evb-btn{width:100%;}}
+
+    /* ── Modals (saqlangan — start + cast studio) ── */
+    .modal-overlay{position:fixed;inset:0;z-index:500;display:none;align-items:center;justify-content:center;padding:20px;background:var(--deborah-semantic-color-surface-scrim, rgba(2,6,16,.6));backdrop-filter:blur(8px);}
+
+    /* ── Demo 1:1: topbar til + tema boshqaruvi ── */
+    .ws-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .tb-lang{display:flex;gap:2px;background:var(--deborah-semantic-color-surface-nested,rgba(127,137,161,.12));border:1px solid var(--deborah-semantic-color-border-subtle,rgba(127,137,161,.22));border-radius:9px;padding:2px;}
+    .tb-lang button{background:transparent;border:none;border-radius:7px;color:var(--deborah-semantic-color-text-secondary,#9aa3b8);font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.62rem;letter-spacing:.08em;padding:6px 9px;cursor:pointer;transition:all .15s;min-height:0;}
+    .tb-lang button:hover{color:var(--deborah-semantic-color-text-primary,#e8ebf5);}
+    .tb-lang button.on{background:var(--deborah-semantic-color-action-primary,#c9a45c);color:var(--deborah-semantic-color-action-on-action,#1a1305);font-weight:700;}
+    .tb-theme-btn{width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;border-radius:9px;border:1px solid var(--deborah-semantic-color-border-subtle,rgba(127,137,161,.22));background:var(--deborah-semantic-color-surface-nested,rgba(127,137,161,.12));color:var(--deborah-semantic-color-text-secondary,#9aa3b8);cursor:pointer;transition:all .15s;}
+    .tb-theme-btn:hover{color:var(--deborah-semantic-color-text-primary,#e8ebf5);border-color:var(--deborah-semantic-color-border-default,rgba(127,137,161,.4));}
+    .tb-theme-btn svg{width:16px;height:16px;}
+    html[data-resolved-theme="light"] .tb-theme-btn .ico-moon{display:none;}
+    html:not([data-resolved-theme="light"]) .tb-theme-btn .ico-sun{display:none;}
+    html[data-resolved-theme="light"] .tb-theme-btn .ico-sun{display:block;}
+    html:not([data-resolved-theme="light"]) .tb-theme-btn .ico-moon{display:block;}
+
+    .modal-overlay.open{display:flex;}
+    .modal-box{background:var(--deborah-semantic-color-surface-raised);border-radius:var(--deborah-radius-lg,20px);padding:24px;width:100%;max-width:480px;border:1px solid var(--deborah-semantic-color-border-subtle);box-shadow:var(--shadow-xl);max-height:90vh;overflow-y:auto;}
+    .modal-title{font-family:var(--deborah-typography-font-display,var(--font-display));font-size:1.2rem;margin-bottom:4px;display:flex;align-items:center;gap:8px;color:var(--deborah-semantic-color-text-primary);}
+    .modal-sub{color:var(--deborah-semantic-color-text-muted);font-size:.88rem;margin-bottom:16px;font-weight:600;}
+    .modal-actions{display:flex;gap:8px;margin-top:16px;}
+    .modal-btn{flex:1;border:none;border-radius:var(--deborah-radius-sm,10px);padding:12px;font-family:var(--deborah-typography-font-body,var(--font-body));font-size:.9rem;font-weight:700;cursor:pointer;min-height:44px;}
+    .modal-btn-primary{background:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#fff);}
+    .modal-btn-primary:hover{background:var(--deborah-semantic-color-action-primary-hover);}
+    .modal-btn-secondary{background:var(--deborah-semantic-color-surface-nested);color:var(--deborah-semantic-color-text-secondary);}
+    .modal-btn-secondary:hover{background:var(--deborah-semantic-color-surface-default);}
+    .modal-divider{border:none;border-top:1px solid var(--deborah-semantic-color-divider);margin:14px 0;}
+    .modal-time-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px;}
+    .modal-time-opt{border:2px solid var(--deborah-semantic-color-border-subtle);background:var(--deborah-semantic-color-surface-nested);border-radius:var(--deborah-radius-sm,10px);padding:8px 4px;text-align:center;cursor:pointer;min-height:44px;transition:border-color 120ms ease,background-color 120ms ease;}
+    .modal-time-opt:hover{border-color:var(--deborah-semantic-color-border-default);}
+    .modal-time-opt.selected{border-color:var(--deborah-semantic-color-action-primary);background:var(--deborah-semantic-color-action-primary-soft);}
+    .modal-time-opt .tv{font-size:.88rem;font-weight:700;color:var(--deborah-semantic-color-text-primary);}
+    .modal-time-opt .tl{font-size:.74rem;font-weight:700;color:var(--deborah-semantic-color-text-muted);margin-top:2px;}
+    .modal-section-label{font-size:.8rem;font-weight:700;color:var(--deborah-semantic-color-text-secondary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+    .modal-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;}
+    .modal-type-opt{border:2px solid var(--deborah-semantic-color-border-subtle);background:var(--deborah-semantic-color-surface-nested);border-radius:var(--deborah-radius-sm,10px);padding:10px 8px;text-align:center;cursor:pointer;min-height:44px;transition:border-color 120ms ease;}
+    .modal-type-opt:hover{border-color:var(--deborah-semantic-color-border-default);}
+    .modal-type-opt.selected{border-color:var(--deborah-semantic-color-action-primary);background:var(--deborah-semantic-color-action-primary-soft);}
+    .modal-type-opt .tic{font-size:1.2rem;margin-bottom:3px;}
+    .modal-type-opt .tl{font-size:.76rem;font-weight:600;color:var(--deborah-semantic-color-text-muted);}
+
+    /* ── Search (S25.02: header ichida) ── */
+    .ws-search{display:flex;gap:8px;min-width:240px;}
+    .ws-search-inp{flex:1;background:var(--deborah-semantic-color-surface-input);border:1px solid var(--deborah-semantic-color-border-default);border-radius:var(--deborah-radius-sm,10px);padding:10px 14px;color:var(--deborah-semantic-color-text-primary);font-family:var(--deborah-typography-font-body,var(--font-body));font-size:.92rem;font-weight:600;outline:none;min-height:44px;transition:border-color 120ms ease,box-shadow 120ms ease;}
+    .ws-search-inp:focus{border-color:var(--deborah-semantic-color-action-primary);box-shadow:0 0 0 3px var(--deborah-semantic-color-focus);}
+    .ws-search-inp::placeholder{color:var(--deborah-semantic-color-text-muted);}
+    .ws-search-btn{background:var(--deborah-semantic-color-surface-nested);border:1px solid var(--deborah-semantic-color-border-default);border-radius:var(--deborah-radius-sm,10px);padding:0 16px;color:var(--deborah-semantic-color-text-secondary);font-family:var(--deborah-typography-font-body,var(--font-body));font-size:.9rem;font-weight:700;cursor:pointer;min-height:44px;display:inline-flex;align-items:center;gap:6px;transition:background-color 120ms ease,color 120ms ease;}
+    .ws-search-btn:hover{background:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#fff);}
+
+
+    /* ── Search result cards ── */
+    .search-result-card{display:flex;align-items:center;gap:12px;background:var(--deborah-semantic-color-surface-raised);border-radius:var(--deborah-radius-sm,12px);padding:12px 15px;margin-bottom:7px;border:1px solid var(--deborah-semantic-color-border-subtle);}
+    .sr-name{font-weight:700;font-size:.9rem;display:flex;align-items:center;gap:6px;color:var(--deborah-semantic-color-text-primary);}
+    .sr-meta{font-size:.875rem;font-weight:600;color:var(--deborah-semantic-color-text-muted);}
+    .sr-start{border-radius:var(--deborah-radius-sm,9px);border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-raised);color:var(--deborah-semantic-color-status-success);padding:8px 13px;font-family:var(--deborah-typography-font-body,var(--font-body));font-size:.875rem;font-weight:700;cursor:pointer;min-height:38px;flex-shrink:0;display:inline-flex;align-items:center;gap:5px;}
+    .sr-start:hover{background:var(--deborah-semantic-color-status-success);border-color:var(--deborah-semantic-color-status-success);color:#fff;}
+
+    @media(max-width:600px){.tc-actions{flex-wrap:wrap;}}
+  </style>
+</head>
+<body>
+  <!-- Skip-link sidebar'da (shell) -->
+  <%- include('../partials/sidebar', { active: 'panel', user: { username }, role: 'student', isVip: (typeof isVip !== 'undefined' && isVip) === true }) %>
+
+  <main class="main" id="main-content" tabindex="-1">
+
+    <!-- AUTH A-27: passkey nudge — passkey yo'q va WebAuthn qo'llansa ko'rinadi (dismissible) -->
+    <div class="email-verify-banner" id="passkey-nudge" role="region" aria-live="polite" data-testid="passkey-nudge" style="display:none">
+      <div class="evb-icon"><%- icon('key', 16) %></div>
+      <div class="evb-text">
+        <strong>Tezroq kirish uchun passkey qo&#39;shing</strong>
+        <span>Barmoq izi yoki Face ID bilan bir bosishda kiring — phishing&#39;ga chidamli va paroldan tezroq.</span>
+      </div>
+      <div class="evb-actions">
+        <a class="btn btn-primary evb-btn" href="/user/security-profile" style="text-decoration:none"><%- icon('shieldCheck', 14) %> Qo&#39;shish</a>
+        <button type="button" class="btn evb-btn evb-ghost" id="passkey-nudge-close" aria-label="Yopish"><%- icon('x', 14) %></button>
+      </div>
+    </div>
+
+    <!-- AUTH A-28: risk banner — step-up (device trust) yoki mid-session mismatch -->
+    <div class="email-verify-banner" id="risk-banner" role="region" aria-live="polite" data-testid="risk-banner" style="display:none">
+      <div class="evb-icon"><%- icon('shieldCheck', 16) %></div>
+      <div class="evb-text">
+        <strong id="risk-banner-title"></strong>
+        <span id="risk-banner-msg"></span>
+      </div>
+      <div class="evb-actions">
+        <button type="button" class="btn btn-primary evb-btn" id="risk-banner-trust" style="display:none"><%- icon('check', 14) %> <span id="risk-banner-trust-label"></span></button>
+        <button type="button" class="btn evb-btn" id="risk-banner-reauth" style="display:none"><span id="risk-banner-reauth-label"></span></button>
+        <button type="button" class="btn evb-btn evb-ghost" id="risk-banner-logout" style="display:none"><span id="risk-banner-logout-label"></span></button>
+        <button type="button" class="btn evb-btn evb-ghost" id="risk-banner-close" aria-label="Yopish"><%- icon('x', 14) %></button>
+      </div>
+    </div>
+
+    <!-- AUTH A-29: breach banner — parol ma'lum breach'da topilgan (HIBP P1) -->
+    <% if (typeof breachFlagged !== 'undefined' && breachFlagged) { %>
+    <div class="email-verify-banner banner-danger" role="region" aria-live="polite" data-testid="breach-banner">
+      <div class="evb-icon"><%- icon('alertTriangle', 16) %></div>
+      <div class="evb-text">
+        <strong><%= accountCopy.breachTitle || 'Parolingiz xavfsiz emas' %></strong>
+        <span><%= accountCopy.breachMsg || 'Parolingiz ma\'lum ma\'lumot sizdirilishlarida topilgan — xavfsizlik uchun uni o\'zgartiring.' %></span>
+      </div>
+      <a class="btn btn-primary evb-btn" href="/user/security-profile" style="text-decoration:none" data-analytics="breach_change_password"><%- icon('shieldCheck', 14) %> <%= accountCopy.changeNow || 'Hozir o\'zgartirish' %></a>
+    </div>
+    <% } %>
+
+    <!-- AUTH D-25 §12: re-consent banner — privacy policy yangilangan/berilmagan -->
+    <% if (typeof consentStale !== 'undefined' && consentStale) { %>
+    <div class="email-verify-banner banner-warning" role="region" aria-live="polite" data-testid="consent-banner">
+      <div class="evb-icon"><%- icon('shieldCheck', 16) %></div>
+      <div class="evb-text">
+        <strong>Maxfiylik siyosati yangilandi</strong>
+        <span>Davom etish uchun yangilangan <a href="/privacy" style="color:inherit">Maxfiylik siyosati</a> va <a href="/terms" style="color:inherit">Foydalanish shartlari</a>ga qayta rozilik bering.</span>
+      </div>
+      <div class="evb-actions">
+        <button type="button" class="btn btn-primary evb-btn" id="btn-consent-grant" data-analytics="consent_regrant"><%- icon('check', 14) %> Rozilik berish</button>
+        <button type="button" class="btn evb-btn evb-ghost" id="btn-consent-dismiss" aria-label="Yopish"><%- icon('x', 14) %></button>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- AUTH A-18/B-06: limited mode banner — email verify'siz summative blok -->
+    <% if (typeof emailVerified !== 'undefined' && !emailVerified) { %>
+    <div class="email-verify-banner" role="region" aria-live="polite" data-testid="email-verify-banner">
+      <div class="evb-icon"><%- icon('mail', 16) %></div>
+      <div class="evb-text">
+        <strong><%= verifyCopy.bannerTitle || 'Emailingizni tasdiqlang' %></strong>
+        <span><%= userEmail ? (verifyCopy.modalSub || 'Kod ' + userEmail + ' manziliga yuborildi').replace('{email}', userEmail) : (verifyCopy.modalSubNoEmail || 'Emailingizga yuborilgan kodni kiriting') %> — <%= verifyCopy.bannerMsg || 'nazorat topshiriqlari va parol tiklash uchun shart' %>.</span>
+      </div>
+      <button type="button" class="btn btn-primary evb-btn" id="btn-verify-email" data-analytics="email_verify_open"><%- icon('check', 14) %> <%= verifyCopy.submit || 'Tasdiqlash' %></button>
+    </div>
+    <% } %>
+
+    <div class="topbar">
+      <div>
+        <h1>Ish maydonim</h1>
+        <div class="ws-header-sub">Salom, <%= username %> — testlaringizni yarating, Cast qiling va natijalarni kuzating.</div>
+      </div>
+      <div class="ws-actions">
+        <% /* Demo 1:1: topbar'da til (UZ/RU/EN) + tema tugmasi */ %>
+        <div class="tb-lang" role="group" aria-label="Til" id="panelLangGroup">
+          <button type="button" data-plang="uz" class="<%= (typeof panelLang !== 'undefined' && panelLang === 'uz') || typeof panelLang === 'undefined' ? 'on' : '' %>">UZ</button>
+          <button type="button" data-plang="ru" class="<%= typeof panelLang !== 'undefined' && panelLang === 'ru' ? 'on' : '' %>">RU</button>
+          <button type="button" data-plang="en" class="<%= typeof panelLang !== 'undefined' && panelLang === 'en' ? 'on' : '' %>">EN</button>
+        </div>
+        <button class="tb-theme-btn" id="panelThemeBtn" type="button" aria-label="Tema (light/dark)">
+          <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+          <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5 5l1.6 1.6M17.4 17.4 19 19M19 5l-1.6 1.6M6.6 17.4 5 19"/></svg>
+        </button>
+        <a href="/user/create-test" class="btn btn-primary" data-analytics="ws_new_test"><%- icon('plus', 15) %> Yangi test</a>
+        <a href="/user/create-test?quick=1" class="btn btn-quiet" data-analytics="ws_quick_prompt"><%- icon('sparkles', 15) %> Quick Prompt</a>
+        <a href="/user/profile" class="btn btn-quiet" data-analytics="ws_profile"><%- icon('user', 15) %> Profilim</a>
+      </div>
+    </div>
+
+    <div class="ws-live" role="status" aria-live="polite" id="ws-live"></div>
+
+    <!-- First fold (S25.03) -->
+    <% if (tests.length > 0) { %>
+      <div class="ws-resume">
+        <div class="ws-resume-ico"><%- icon('gamepad', 22) %></div>
+        <div class="ws-resume-body">
+          <h2 class="ws-resume-title"><%= tests[0].name %></h2>
+          <p class="ws-resume-meta"><%= tests[0].count %> ta savol · oxirgi yaratilgan</p>
+        </div>
+        <div class="ws-resume-actions">
+          <button type="button" class="btn btn-primary" data-source="user" data-key="<%= tests[0].key %>"><%- icon('gamepad', 15) %> Cast qilish</button>
+          <button type="button" class="btn btn-quiet" onclick="openStartModal('<%= tests[0].name.replace(/'/g, "\\'") %>', <%= tests[0].count %>, '/user/test-arena?source=user&key=<%= tests[0].key %>')"><%- icon('zap', 15) %> Sinov</button>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="ws-resume">
+        <div class="ws-resume-ico"><%- icon('plus', 22) %></div>
+        <div class="ws-resume-body">
+          <h2 class="ws-resume-title">Birinchi testingizni yarating</h2>
+          <p class="ws-resume-meta">Bir necha daqiqada boshlang — savollarni kiriting yoki Quick Prompt bilan tez yarating.</p>
+        </div>
+        <div class="ws-resume-actions">
+          <a href="/user/create-test" class="btn btn-primary"><%- icon('plus', 15) %> Yangi test</a>
+          <a href="/user/create-test?quick=1" class="btn btn-quiet"><%- icon('sparkles', 15) %> Quick Prompt</a>
+        </div>
+      </div>
+    <% } %>
+
+    <!-- Actionable metrics (S25.04) -->
+    <div class="ws-metrics">
+      <a class="ws-metric" href="/user/create-test" data-analytics="ws_metric_new">
+        <span class="ws-metric-ico ws-metric-ico--draft"><%- icon('edit', 17) %></span>
+        <span class="ws-metric-body">
+          <span class="ws-metric-label">Testlarim</span>
+          <span class="ws-metric-value"><%= tests.length %></span>
+          <span class="ws-metric-hint">Yangi test yaratish</span>
+        </span>
+      </a>
+      <a class="ws-metric" href="/user/test-arena?source=user" data-analytics="ws_metric_practice">
+        <span class="ws-metric-ico ws-metric-ico--evidence"><%- icon('zap', 17) %></span>
+        <span class="ws-metric-body">
+          <span class="ws-metric-label">Sinov rejimi</span>
+          <span class="ws-metric-value"><%= tests.filter(t => t.isPublic).length %></span>
+          <span class="ws-metric-hint">Ommaviy testlar sinov uchun</span>
+        </span>
+      </a>
+      <% if (typeof isVip !== 'undefined' && isVip) { %>
+        <a class="ws-metric" href="/user/test-arena?source=mock" data-analytics="ws_metric_mock">
+          <span class="ws-metric-ico ws-metric-ico--attention"><%- icon('bookOpen', 17) %></span>
+          <span class="ws-metric-body">
+            <span class="ws-metric-label">Mock to'plamlar</span>
+            <span class="ws-metric-value"><%= fans.length %></span>
+            <span class="ws-metric-hint">Tayyor mock testlar</span>
+          </span>
+        </a>
+      <% } %>
+    </div>
+
+    <!-- Search (S25.07: skeleton + error + empty) -->
+    <div class="ws-sec-hd">
+      <h2 class="ws-sec-title">Qidirish</h2>
+    </div>
+    <div class="ws-search" style="margin-bottom:14px">
+      <input class="ws-search-inp" id="search-inp" placeholder="Test nomi bo'yicha qidirish..." aria-label="Test qidirish">
+      <button type="button" class="ws-search-btn" onclick="doSearch()"><%- icon('search', 14) %> Qidirish</button>
+    </div>
+    <div id="search-results"></div>
+
+    <!-- ════ Test Library (S26) ════ -->
+    <div class="ws-sec-hd" style="margin-top:28px">
+      <h2 class="ws-sec-title">Testlar kutubxonasi</h2>
+      <a href="/user/create-test" class="ws-sec-action"><%- icon('plus', 13) %> Yangi test</a>
+    </div>
+
+    <!-- S26.06: Filter toolbar (STEP 18 filter-bar asosida) -->
+    <div class="ws-lib-filters" role="search" aria-label="Testlar filtri">
+      <label class="ws-lib-search ws-lib-filter">
+        <span class="ws-lib-filter-label" id="lib-search-label">Qidirish</span>
+        <input type="search" id="lib-search" class="inp" placeholder="Test nomi, fan..." aria-labelledby="lib-search-label" autocomplete="off">
+      </label>
+      <label class="ws-lib-filter">
+        <span class="ws-lib-filter-label" id="lib-subject-label">Fan</span>
+        <select id="lib-subject" class="sel" aria-labelledby="lib-subject-label">
+          <option value="">Barchasi</option>
+          <% const libSubjects = [...new Set(tests.map(t => t.subject).filter(Boolean))].sort(); %>
+          <% libSubjects.forEach(s => { %><option value="<%= s %>"><%= s %></option><% }); %>
+        </select>
+      </label>
+      <label class="ws-lib-filter">
+        <span class="ws-lib-filter-label" id="lib-type-label">Turi</span>
+        <select id="lib-type" class="sel" aria-labelledby="lib-type-label">
+          <option value="">Barchasi</option>
+          <option value="variant">Variantli</option>
+        </select>
+      </label>
+      <label class="ws-lib-filter">
+        <span class="ws-lib-filter-label" id="lib-sort-label">Saralash</span>
+        <select id="lib-sort" class="sel" aria-labelledby="lib-sort-label">
+          <option value="new">Eng yangi</option>
+          <option value="old">Eng eski</option>
+          <option value="name">Nomi (A-Z)</option>
+          <option value="count">Savollar soni</option>
+        </select>
+      </label>
+      <span class="ws-lib-count" id="lib-count" aria-live="polite"><b><%= tests.length %></b> ta test</span>
+    </div>
+
+    <!-- S26.06: active filter chips -->
+    <div class="ws-lib-active" id="lib-active" hidden></div>
+
+    <!-- S26.10: empty / filtered-none / rows -->
+    <div id="lib-empty" class="ws-lib-empty" hidden>
+      <div class="ws-lib-empty-title">Hali testlar yo'q</div>
+      <div class="ws-lib-empty-sub">Birinchi testingizni yarating — 5 soniyada boshlang.</div>
+      <a href="/user/create-test" class="ws-state-action" style="margin-top:12px"><%- icon('plus', 14) %> Birinchi testni yaratish</a>
+    </div>
+    <div id="lib-none" class="ws-lib-empty" hidden>
+      <div class="ws-lib-empty-title">Hech narsa topilmadi</div>
+      <div class="ws-lib-empty-sub">Filtr yoki qidiruv so'rovini o'zgartirib ko'ring.</div>
+      <button type="button" class="ws-state-action" id="lib-clear-none" style="margin-top:12px"><%- icon('x', 13) %> Filtrlarni tozalash</button>
+    </div>
+
+    <div id="lib-list" class="ws-lib-list">
+      <% tests.forEach(t => { %>
+        <div class="ws-lib-row<%= t.archived ? ' is-archived' : '' %>" data-key="<%= t.key %>" data-name="<%= t.name.toLowerCase() %>" data-subject="<%= t.subject || '' %>" data-type="<%= t.type || '' %>" data-public="<%= t.isPublic ? '1' : '0' %>" data-archived="<%= t.archived ? '1' : '0' %>" data-created="<%= t.createdAt %>">
+          <div class="ws-lib-ico"><%- icon(t.archived ? 'archive' : 'edit', 20) %></div>
+          <div class="ws-lib-main">
+            <div class="ws-lib-name"><%= t.name %></div>
+            <div class="ws-lib-meta">
+              <span class="ws-lib-chip-small"><%= t.count %> ta savol</span>
+              <% if (t.type) { %><span class="ws-lib-chip-small"><%= t.type === 'variant' ? 'Variantli' : 'Ochiq' %></span><% } %>
+              <% if (t.subject) { %><span class="ws-lib-chip-small ws-lib-subject"><%= t.subject %></span><% } %>
+              <span class="ws-lib-date"><%= new Date(t.updatedAt || t.createdAt).toLocaleDateString('uz-UZ') %></span>
+              <% if (t.lastUse) { %><span class="ws-lib-chip-small">Oxirgi: <%= new Date(t.lastUse).toLocaleDateString('uz-UZ') %></span><% } %>
+              <% if (t.archived) { %><span class="ws-lib-chip-small">Arxivlangan</span><% } %>
+            </div>
+          </div>
+          <div class="ws-lib-actions">
+            <span class="ws-vis ws-vis--<%= t.isPublic ? 'public' : 'private' %>" title="<%= t.isPublic ? 'Barcha ko\'ra oladi' : 'Faqat siz ko\'rasiz' %>">
+              <%- icon(t.isPublic ? 'globe' : 'shield', 12) %> <%= t.isPublic ? 'Ommaviy' : 'Shaxsiy' %>
+            </span>
+            <button type="button" class="btn btn-primary btn-sm" data-source="user" data-key="<%= t.key %>"><%- icon('gamepad', 14) %> Cast</button>
+            <div class="ws-lib-overflow-wrap">
+              <button type="button" class="ws-lib-overflow-btn" aria-haspopup="menu" aria-expanded="false" aria-label="<%= t.name %> uchun amallar" data-overflow="<%= t.key %>"><%- icon('more', 18) %></button>
+              <div class="ws-lib-menu" role="menu" data-menu="<%= t.key %>">
+                <button type="button" role="menuitem" data-act="edit" data-key="<%= t.key %>"><%- icon('edit', 15) %> Tahrirlash</button>
+                <button type="button" role="menuitem" data-act="practice" data-key="<%= t.key %>" data-name="<%= t.name %>" data-count="<%= t.count %>"><%- icon('zap', 15) %> Sinov</button>
+                <button type="button" role="menuitem" data-act="duplicate" data-key="<%= t.key %>"><%- icon('copy', 15) %> Nusxalash</button>
+                <button type="button" role="menuitem" data-act="visibility" data-key="<%= t.key %>"><%- icon(t.isPublic ? 'shield' : 'globe', 15) %> <%= t.isPublic ? 'Shaxsiy qilish' : 'Ommaviy qilish' %></button>
+                <button type="button" role="menuitem" data-act="export" data-key="<%= t.key %>"><%- icon('download', 15) %> Eksport (JSON)</button>
+                <button type="button" role="menuitem" data-act="archive" data-key="<%= t.key %>"><%- icon('archive', 15) %> <%= t.archived ? 'Arxivdan qaytarish' : 'Arxivlash' %></button>
+                <div class="ws-lib-menu-sep" role="separator"></div>
+                <button type="button" role="menuitem" class="ws-lib-menu-danger" data-act="delete" data-key="<%= t.key %>" data-name="<%= t.name %>"><%- icon('trash', 15) %> O'chirish</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+
+    <!-- S26.07/08: Ready sets — user-facing taxonomy, honest copy -->
+    <div class="ws-tax-hd">
+      <h2 class="ws-tax-title"><%- icon('book', 18) %> Tayyor to'plamlar</h2>
+      <span class="ws-tax-sub">O'qituvchilar uchun tayyorlangan mashq to'plamlari (VIP)</span>
+    </div>
+
+    <% if (typeof isVip === 'undefined' || !isVip) { %>
+      <!-- S26.08: permission/upgrade state — honest copy, hidden emas -->
+      <div class="ws-upgrade">
+        <div class="ws-upgrade-ico"><%- icon('lock', 18) %></div>
+        <div class="ws-upgrade-body">
+          <div class="ws-upgrade-title">Tayyor to'plamlar VIP imkoniyati</div>
+          <div class="ws-upgrade-desc">Fanlar bo'yicha tayyor testlar va subtestlar to'plami VIP a'zolar uchun ochiq. Sizda hozircha bu imkoniyat yo'q.</div>
+        </div>
+      </div>
+    <% } else if (fans.length === 0 && preGroups.length === 0) { %>
+      <div class="ws-lib-empty">
+        <div class="ws-lib-empty-title">Tayyor to'plamlar hozircha yo'q</div>
+        <div class="ws-lib-empty-sub">Yaqinda qo'shiladi — o'z testlaringiz bilan boshlang.</div>
+      </div>
+    <% } else { %>
+      <% if (fans.length > 0) { %>
+        <div class="ws-tax-hd" style="margin-top:8px">
+          <h3 class="ws-tax-title" style="font-size:.95rem">Fanlar bo'yicha to'plamlar</h3>
+          <span class="ws-tax-sub"><%= fans.length %> ta to'plam</span>
+        </div>
+        <div class="ws-ready-grid">
+          <% fans.forEach(f => { %>
+            <div class="ws-ready-card">
+              <div class="ws-ready-head">
+                <div class="ws-ready-ico"><%- icon('book', 18) %></div>
+                <div class="ws-ready-name"><%= f.name %></div>
+              </div>
+              <div class="ws-ready-meta"><span class="ws-lib-chip-small"><%= f.count %> ta savol</span></div>
+              <div class="ws-ready-desc">Fanga oid tayyor mashq testi.</div>
+              <div class="ws-ready-actions">
+                <button type="button" class="btn btn-quiet btn-sm" onclick="openStartModal('<%= f.name.replace(/'/g, "\\'") %>', <%= f.count %>, '/user/test-arena?source=mock&key=<%= f.key %>')"><%- icon('zap', 13) %> Sinov</button>
+                <button type="button" class="btn btn-primary btn-sm" data-source="mock" data-key="<%= f.key %>"><%- icon('gamepad', 13) %> Cast</button>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      <% } %>
+
+      <% if (preGroups.length > 0) { %>
+        <div class="ws-tax-hd" style="margin-top:20px">
+          <h3 class="ws-tax-title" style="font-size:.95rem">Bosqichli to'plamlar (PRE)</h3>
+          <span class="ws-tax-sub">Subtestlar — bilimni bosqichma-bosqich tekshiradi</span>
+        </div>
+        <div class="ws-ready-grid">
+          <% preGroups.forEach(g => { %>
+            <% (g.chunks || []).forEach(c => { %>
+              <div class="ws-ready-card">
+                <div class="ws-ready-head">
+                  <div class="ws-ready-ico"><%- icon('layers', 18) %></div>
+                  <div class="ws-ready-name"><%= g.title %> — <%= c.name %></div>
+                </div>
+                <div class="ws-ready-meta"><span class="ws-lib-chip-small"><%= c.count %> ta savol</span></div>
+                <div class="ws-ready-desc">Bosqichli to'plam subtestsi.</div>
+                <div class="ws-ready-actions">
+                  <button type="button" class="btn btn-quiet btn-sm" onclick="openStartModal('<%= (g.title + ' - ' + c.name).replace(/'/g, "\\'") %>', <%= c.count %>, '/user/test-arena?source=pre&key=<%= g.key %>&chunk=<%= c.id %>')"><%- icon('zap', 13) %> Sinov</button>
+                  <button type="button" class="btn btn-primary btn-sm" data-source="pre" data-key="<%= g.key %>" data-chunk="<%= c.id %>"><%- icon('gamepad', 13) %> Cast</button>
+                </div>
+              </div>
+            <% }); %>
+          <% }); %>
+        </div>
+      <% } %>
+    <% } %>
+  </main>
+
+  <!-- AUTH B-23: kontekstual opt-in banner (2-3 sessiyadan keyin so'raladi) -->
+  <div id="push-optin" class="push-optin" role="dialog" aria-live="polite" hidden>
+    <div class="push-optin-box">
+      <div class="push-optin-txt">
+        <div class="push-optin-title"><%- icon('bell', 14) %> <span data-i18n="pushOptin">Bildirishnomalarni yoqishni xohlaysizmi?</span></div>
+        <div class="push-optin-sub" data-i18n="pushOptinSub">Natijalar va eslatmalar haqida bildirishnoma oling</div>
+      </div>
+      <div class="push-optin-actions">
+        <button type="button" id="push-optin-yes" class="btn btn-primary btn-sm">Ha, yoqish</button>
+        <button type="button" id="push-optin-no" class="btn btn-ghost btn-sm">Hozir emas</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Start Modal -->
+  <div class="modal-overlay" id="start-modal" onclick="if(event.target===this)closeStartModal()">
+    <div class="modal-box">
+      <div class="modal-title"><%- icon('zap', 20) %> <span id="start-modal-title">Test</span></div>
+      <div class="modal-sub" id="start-modal-sub">5 ta savol &bull; Sinov rejimi</div>
+      <hr class="modal-divider">
+      <div id="start-modal-settings">
+        <div class="modal-section-label">⏱️ Savol vaqti (soniya)</div>
+        <div class="modal-time-grid" id="start-time-grid"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-secondary" onclick="closeStartModal()">Bekor qilish</button>
+        <button class="modal-btn modal-btn-primary" onclick="confirmStartQuiz()">Boshlash</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cast Setup Studio (STEP 28 — partial + cast-studio.css) -->
+  <%- include('../partials/cast-studio') %>
+
+  <script>
+    // AUTH A-27: passkey nudge — faqat WebAuthn qo'llab-quvvatlansa va passkey bo'lmasa
+    (function () {
+      'use strict';
+      if (!window.PublicKeyCredential) return;
+      var nudge = document.getElementById('passkey-nudge');
+      var close = document.getElementById('passkey-nudge-close');
+      if (!nudge) return;
+      try {
+        if (localStorage.getItem('passkeyNudgeDismissed')) return;
+      } catch (_) {}
+      fetch('/api/passkey/status').then(function (r) { return r.json(); }).then(function (d) {
+        if (d.ok && d.count === 0) nudge.style.display = 'flex';
+      }).catch(function () {});
+      if (close) close.addEventListener('click', function () {
+        nudge.style.display = 'none';
+        try { localStorage.setItem('passkeyNudgeDismissed', '1'); } catch (_) {}
+      });
+    })();
+  </script>
+  <script src="/js/cast-api.js"></script>
+  <script src="/js/cast-studio.js"></script>
+  <script src="/js/device-fingerprint.js" defer></script>
+  <script src="/js/workspace.js" defer></script>
+  <script src="/js/workspace-library.js" defer></script>
+  <script src="/js/push.js" defer></script>
+  <script defer>
+  /* ── Demo 1:1: topbar til + tema (real API bilan) ── */
+  (function(){
+    var group=document.getElementById('panelLangGroup');
+    if(group){
+      group.querySelectorAll('button').forEach(function(b){
+        b.addEventListener('click',function(){
+          var l=b.getAttribute('data-plang');
+          if(b.classList.contains('on'))return;
+          fetch('/user/api/settings/profile',{method:'PATCH',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({lang:l})})
+            .then(function(r){if(r.ok){location.reload();}else{console.warn('lang save failed');}})
+            .catch(function(){});
+        });
+      });
+    }
+    var tbtn=document.getElementById('panelThemeBtn');
+    if(tbtn){
+      tbtn.addEventListener('click',function(){
+        var T=window.DeborahTheme;
+        var next=(T&&T.isLight&&T.isLight())?'dark':'light';
+        if(T&&T.setState){T.setState(next);}else if(T&&T.apply){T.apply(next);}
+        fetch('/user/api/settings/profile',{method:'PATCH',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({theme:next})}).catch(function(){});
+      });
+    }
+  })();
+  </script>
+  <script>
+    // AUTH A-28: risk banner — device trust (step-up) + mid-session mismatch
+    (function () {
+      'use strict';
+      var banner = document.getElementById('risk-banner');
+      if (!banner || !window.DeborahDeviceFingerprint) return;
+      var copy = window.__RISK_COPY__ || {};
+      var fp = window.DeborahDeviceFingerprint.compute();
+      var closed = false;
+      function show(title, msg, opts) {
+        if (closed) return;
+        document.getElementById('risk-banner-title').textContent = title || '';
+        document.getElementById('risk-banner-msg').textContent = msg || '';
+        document.getElementById('risk-banner-trust').style.display = opts.trust ? '' : 'none';
+        document.getElementById('risk-banner-reauth').style.display = opts.reauth ? '' : 'none';
+        document.getElementById('risk-banner-logout').style.display = opts.logout ? '' : 'none';
+        if (opts.trust) document.getElementById('risk-banner-trust-label').textContent = copy.trustBtn || '';
+        if (opts.reauth) document.getElementById('risk-banner-reauth-label').textContent = copy.reauthBtn || '';
+        if (opts.logout) document.getElementById('risk-banner-logout-label').textContent = copy.logoutBtn || '';
+        banner.style.display = 'flex';
+      }
+      function hide() { closed = true; banner.style.display = 'none'; }
+      document.getElementById('risk-banner-close').addEventListener('click', hide);
+      document.getElementById('risk-banner-trust').addEventListener('click', function () {
+        fetch('/api/auth/device/trust', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+        }).then(function (r) { return r.json(); }).then(function (j) {
+          if (j.ok) {
+            document.getElementById('risk-banner-msg').textContent = copy.done || '';
+            document.getElementById('risk-banner-trust').style.display = 'none';
+            document.getElementById('risk-banner-close').style.display = 'none';
+          }
+        }).catch(function () {});
+      });
+      document.getElementById('risk-banner-reauth').addEventListener('click', function () {
+        var pwd = window.prompt(copy.reauthBtn || 'Parolni kiriting');
+        if (!pwd) return;
+        fetch('/api/auth/reauth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ password: pwd }),
+        }).then(function (r) { return r.json(); }).then(function (j) {
+          if (j.ok) { hide(); } else { window.alert(copy.mismatchMsg || 'Tekshiruv muvaffaqiyatsiz'); }
+        }).catch(function () {});
+      });
+      document.getElementById('risk-banner-logout').addEventListener('click', function () {
+        window.location.href = '/logout';
+      });
+      if (!fp) return;
+      // 1) Mid-session mismatch (server-side audit bilan)
+      fetch('/api/auth/device/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ fingerprint: fp }),
+      }).then(function (r) { return r.json(); }).then(function (j) {
+        if (j.mismatch) show(copy.mismatchTitle, copy.mismatchMsg, { reauth: true, logout: true });
+      }).catch(function () {});
+      // 2) Step-up (unknown tier) → device trust
+      fetch('/api/auth/device/status', { credentials: 'same-origin' })
+        .then(function (r) { return r.json(); }).then(function (j) {
+          if (closed) return;
+          if (j.riskStepup && !j.riskFlagged) {
+            show(copy.deviceTrust, copy.deviceTrustMsg, { trust: true, close: true });
+          } else if (j.riskFlagged) {
+            show(copy.mismatchTitle, copy.mismatchMsg, { reauth: true, logout: true });
+          }
+        }).catch(function () {});
+    })();
+  </script>
+  <script>
+    // S26: API POST'lar uchun CSRF token (X-CSRF-Token header)
+    window.__CSRF_TOKEN = <%- JSON.stringify(csrfToken || '') %>;
+    // AUTH A-28: risk banner copy (i18n)
+    window.__RISK_COPY__ = <%- JSON.stringify(riskCopy || {}) %>;
+    // AUTH A-29: account copy (i18n)
+    window.__ACCOUNT_COPY__ = <%- JSON.stringify(accountCopy || {}) %>;
+  </script>
+  <script>
+    // AUTH D-25 §12: re-consent banner — grant → banner yopiladi
+    (function () {
+      var banner = document.querySelector('[data-testid="consent-banner"]');
+      if (!banner) return;
+      var grantBtn = document.getElementById('btn-consent-grant');
+      var dismissBtn = document.getElementById('btn-consent-dismiss');
+      function hide() { banner.style.display = 'none'; }
+      if (dismissBtn) dismissBtn.addEventListener('click', hide);
+      if (grantBtn) grantBtn.addEventListener('click', async function () {
+        grantBtn.disabled = true;
+        try {
+          var r = await fetch('/api/consent/grant', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ purpose: 'privacy_policy_v1' }),
+          });
+          var j = await r.json();
+          if (j.ok) { hide(); return; }
+        } catch (_) {}
+        grantBtn.disabled = false;
+      });
+    })();
+  </script>
+  <script>
+    // ── Search (S25.07: skeleton + inline retry + contextual empty) ──
+    // S35.05: apostrophe normalizatsiya — o' / o‘ / oʼ bir xil topiladi
+    async function doSearch() {
+      const raw = document.getElementById('search-inp').value;
+      const q = (window.DeborahTerms ? window.DeborahTerms.searchNormalize(raw) : String(raw).trim());
+      const wrap = document.getElementById('search-results');
+      const live = document.getElementById('ws-live');
+      if (!q) { wrap.innerHTML = ''; return; }
+      // Skeleton
+      wrap.innerHTML = '<div class="ws-skeleton-card skeleton" aria-hidden="true"></div>';
+      try {
+        const res = await fetch('/user/api/tests/search?q=' + encodeURIComponent(q));
+        if (!res.ok) throw new Error('Server ' + res.status);
+        const data = await res.json();
+        if (!data.results || !data.results.length) {
+          wrap.innerHTML = '<div class="ws-state"><div class="ws-state-title">Hech narsa topilmadi</div><div class="ws-state-sub">Boshqa kalit so\'z bilan urinib ko\'ring.</div><button class="ws-state-action" onclick="doSearch()">Qayta urinish</button></div>';
+          return;
+        }
+        wrap.innerHTML = data.results.map(r => `
+          <div class="search-result-card">
+            <div style="flex:1;min-width:0">
+              <div class="sr-name">${svgIcon('edit', 14)} ${esc(r.testName)}</div>
+              <div class="sr-meta">${esc(r.userName)} &bull; ${r.count} ta savol</div>
+            </div>
+            <button class="sr-start" onclick="location.href='/host?source=user&key=${encodeURIComponent(esc(r.testKey))}&testName=${encodeURIComponent(esc(r.testName))}'">${svgIcon('zap', 12)} Sinov</button>
+          </div>
+        `).join('');
+        if (live) live.textContent = data.results.length + ' ta natija topildi';
+      } catch(e) {
+        wrap.innerHTML = '<div class="ws-state ws-state--error"><div class="ws-state-title">Yuklab bo\'lmadi</div><div class="ws-state-sub">' + esc(e.message) + '</div><button class="ws-state-action" onclick="doSearch()">Qayta urinish</button></div>';
+      }
+    }
+
+    // ── Start Modal ──
+    let startModalData = null;
+    const TIME_OPTS = [5, 10, 15, 30, 45, 60, 90, 120];
+
+    function renderTimeGrid(containerId, selected) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      el.innerHTML = TIME_OPTS.map(t =>
+        '<button type="button" class="modal-time-opt' + (t === selected ? ' selected' : '') + '" onclick="selTime(\'' + containerId + '\',' + t + ')">' +
+        '<div class="tv">' + t + '</div><div class="tl">soniya</div></button>'
+      ).join('');
+    }
+
+    let selectedTimes = {};
+    function selTime(containerId, val) {
+      selectedTimes[containerId] = val;
+      document.querySelectorAll('#' + containerId + ' .modal-time-opt').forEach(el => {
+        const tv = parseInt(el.querySelector('.tv').textContent);
+        el.classList.toggle('selected', tv === val);
+      });
+    }
+
+    function openStartModal(name, count, url) {
+      startModalData = { url };
+      document.getElementById('start-modal-title').textContent = name;
+      document.getElementById('start-modal-sub').textContent = count + ' ta savol &bull; Sinov rejimi';
+      if (!selectedTimes['start-time-grid']) selectedTimes['start-time-grid'] = 15;
+      renderTimeGrid('start-time-grid', selectedTimes['start-time-grid']);
+      document.getElementById('start-modal').classList.add('open');
+    }
+
+    function closeStartModal() {
+      document.getElementById('start-modal').classList.remove('open');
+      startModalData = null;
+    }
+
+    function confirmStartQuiz() {
+      if (startModalData && startModalData.url) {
+        window.location.href = startModalData.url;
+      }
+      closeStartModal();
+    }
+
+    // ── Cast Setup Studio ──
+    document.addEventListener('click', function (e) {
+      const btn = e.target.closest('[data-source]');
+      if (!btn || !btn.dataset.source) return;
+      const reference = {
+        source: btn.dataset.source,
+        key: btn.dataset.key,
+        chunk: btn.dataset.chunk || null,
+      };
+      const nameEl = btn.closest('.ws-test-card, .ws-resume, .fan-btn, .pre-sub-btn');
+      const meta = document.getElementById('cast-studio-desc');
+      if (meta && nameEl) {
+        const name = nameEl.querySelector('.ws-test-name, .ws-resume-title, .fan-btn-name, .pre-sub-name');
+        if (name) meta.textContent = 'Test: ' + name.textContent.trim();
+      }
+      if (window.CastStudio) {
+        window.CastStudio.open(reference);
+      }
+    });
+
+    document.getElementById('search-inp').addEventListener('keydown', e => {
+      if (e.key === 'Enter') doSearch();
+    });
+  </script>
+
+  <% if (typeof emailVerified !== 'undefined' && !emailVerified) { %>
+  <!-- AUTH A-18/B-06: Email verify modal -->
+  <div class="modal-overlay" id="email-verify-modal" role="dialog" aria-modal="true" aria-labelledby="evm-title">
+    <div class="modal-box">
+      <div class="modal-title" id="evm-title"><%- icon('mail', 18) %> <%= verifyCopy.modalTitle || 'Emailni tasdiqlash' %></div>
+      <div class="modal-sub"><%= userEmail ? (verifyCopy.modalSub || 'Kod ' + userEmail + ' manziliga yuborildi').replace('{email}', userEmail) : (verifyCopy.modalSubNoEmail || 'Emailingizga yuborilgan kodni kiriting') %></div>
+      <div class="evm-err" id="evm-err" style="display:none" role="alert"></div>
+      <label class="lbl" for="evm-code"><%= verifyCopy.codeLabel || 'Tasdiqlash kodi' %></label>
+      <input class="inp" id="evm-code" name="code" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="••••••" required aria-required="true">
+      <div class="modal-actions">
+        <button type="button" class="modal-btn modal-btn-secondary" id="evm-cancel"><%= verifyCopy.cancel || 'Yopish' %></button>
+        <button type="button" class="modal-btn modal-btn-primary" id="evm-submit"><%= verifyCopy.submit || 'Tasdiqlash' %></button>
+      </div>
+      <button type="button" class="resend-btn evm-resend" id="evm-resend" disabled data-count="60"><%= verifyCopy.resend || 'Qayta yuborish' %> (60s)</button>
+      <!-- B-06 §12: email noto'g'ri — yangilash (B-39 email change bilan bog'lanadi) -->
+      <div class="evm-foot"><a href="/user/security-profile" class="evm-update-email"><%= verifyCopy.emailWrong || 'Email noto\'g\'ri? Yangilash' %></a></div>
+    </div>
+  </div>
+  <script>
+  (function () {
+    'use strict';
+    var overlay = document.getElementById('email-verify-modal');
+    if (!overlay) return;
+    var btnOpen = document.getElementById('btn-verify-email');
+    var btnCancel = document.getElementById('evm-cancel');
+    var btnSubmit = document.getElementById('evm-submit');
+    var btnResend = document.getElementById('evm-resend');
+    var input = document.getElementById('evm-code');
+    var err = document.getElementById('evm-err');
+    var csrf = '<%= typeof csrfToken !== "undefined" ? csrfToken : "" %>';
+    var timer = 0;
+    // B-06 §17: i18n stringlar — JSON.stringify + raw EJS — apostroflar
+    // HTML-escape'ga tushmaydi (buzilmagan); script breakout yo'q.
+    var t = <%- JSON.stringify({
+      resend: verifyCopy.resend || 'Qayta yuborish',
+      resendCountdown: verifyCopy.resendCountdown || 'Qayta yuborish ({s}s)',
+      errInvalidFormat: verifyCopy.errInvalidFormat || '6 xonali kod kiriting',
+      errNetwork: verifyCopy.errNetwork || "Ulanishda muammo — qayta urinib ko'ring",
+      errInvalidCode: verifyCopy.errInvalidCode || "Kod noto'g'ri yoki eskirgan",
+      errAlreadyUsed: verifyCopy.errInvalidCode || "Kod noto'g'ri yoki eskirgan",
+      errExpired: verifyCopy.errExpired || "Kod muddati o'tgan",
+      errTooManyAttempts: verifyCopy.errTooManyAttempts || "Juda ko'p urinish — birozdan keyin qayta urining",
+      errResend: verifyCopy.errResend || "Qayta yuborishda xatolik — birozdan keyin urining",
+      errGeneric: 'Xatolik yuz berdi',
+      success: verifyCopy.success || 'Email tasdiqlandi',
+      // B-28 §08/§10: expiry UX + resend limit UX
+      expiredCta: verifyCopy.expiredCta || 'Yangi kod yuborish',
+      limitReached: verifyCopy.limitReached || "Kunlik limit tugadi — keyinroq urinib ko'ring",
+    }) %>;
+
+    function startResendTimer() {
+      var left = 60;
+      btnResend.disabled = true;
+      btnResend.textContent = t.resendCountdown.replace('{s}', left);
+      clearInterval(timer);
+      timer = setInterval(function () {
+        left -= 1;
+        btnResend.textContent = t.resendCountdown.replace('{s}', left);
+        if (left <= 0) { clearInterval(timer); btnResend.disabled = false; btnResend.textContent = t.resend; }
+      }, 1000);
+    }
+
+    function showErr(msg) {
+      err.textContent = msg;
+      err.style.display = 'block';
+    }
+
+    if (btnOpen) btnOpen.addEventListener('click', function () {
+      overlay.classList.add('open');
+      startResendTimer();
+      input.focus();
+    });
+    if (btnCancel) btnCancel.addEventListener('click', function () { overlay.classList.remove('open'); });
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) overlay.classList.remove('open'); });
+
+    function postVerify(path, body, cb) {
+      fetch(path, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
+        body: JSON.stringify(body),
+      })
+        .then(function (r) { return r.json().then(function (j) { return { status: r.status, j: j }; }); })
+        .then(cb)
+        .catch(function () { showErr(t.errNetwork); });
+    }
+
+    btnSubmit.addEventListener('click', function () {
+      var code = input.value.trim();
+      if (!/^\d{6}$/.test(code)) { showErr(t.errInvalidFormat); return; }
+      err.style.display = 'none';
+      postVerify('/api/auth/verify/complete', { code: code }, function (r) {
+        if (r.status === 200 && r.j.ok) {
+          overlay.classList.remove('open');
+          var banner = document.querySelector('.email-verify-banner');
+          if (banner) banner.remove();
+          // B-07 §11: success UX — "Email tasdiqlandi ✓" toast
+          var toast = document.createElement('div');
+          toast.className = 'evm-toast';
+          toast.setAttribute('role', 'status');
+          toast.setAttribute('aria-live', 'polite');
+          toast.textContent = t.success + ' \u2713';
+          document.body.appendChild(toast);
+          setTimeout(function () { toast.classList.add('show'); }, 10);
+          // B-07 §11: toast o'qilishi uchun yetarli vaqt (1500ms) — keyin reload
+          setTimeout(function () { window.location.reload(); }, 1500);
+        } else {
+          // B-07 §08: barcha yomon kod holatlari → otp_invalid (422) yagona xabar;
+          // B-28 §08: expired → alohida xabar + "Yangi kod yuborish" CTA (resend).
+          // B-28 §10: resend limiti (429 too_many_requests) → limit banner (takrorlanmaydi).
+          var m = { otp_invalid: t.errInvalidCode, invalid_code: t.errInvalidCode, already_used: t.errAlreadyUsed, expired: t.errExpired, too_many_attempts: t.errTooManyAttempts };
+          var e = r.j && r.j.error;
+          if (e === 'expired') {
+            showErr(t.errExpired + ' — ' + t.expiredCta);
+            btnResend.disabled = false;
+            btnResend.textContent = t.expiredCta;
+          } else if (e === 'too_many_requests' || e === 'too_many_attempts') {
+            showErr(t.limitReached);
+            btnResend.disabled = true;
+          } else {
+            showErr(m[e] || t.errGeneric);
+          }
+        }
+      });
+    });
+
+    btnResend.addEventListener('click', function () {
+      err.style.display = 'none';
+      postVerify('/api/auth/verify/send', {}, function (r) {
+        if (r.status === 200 && r.j.ok) { startResendTimer(); }
+        else if (r.status === 429) showErr(t.limitReached); // B-28 §10
+        else showErr(t.errResend);
+      });
+    });
+
+    // Native OTP autofill (A-18 §19)
+    if (input) input.addEventListener('input', function () {
+      if (/^\d{6}$/.test(input.value.trim())) btnSubmit.click();
+    });
+  })();
+  </script>
+  <% } %>
+</body>
+</html>

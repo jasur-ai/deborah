@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/cast-tokens.css">
+  <link rel="stylesheet" href="/design/contexts/projector.css">
+  <link rel="stylesheet" href="/css/cast-projector.css">
+  <link rel="stylesheet" href="/design/foundations/typography.css">
+  <link rel="stylesheet" href="/design/foundations/layout.css">
+  <link rel="stylesheet" href="/design/foundations/motion.css">
+  <link rel="stylesheet" href="/design/components/charts.css">
+  <script>
+    window.__BOOT__ = <%- JSON.stringify(boot) %>;
+  </script>
+</head>
+<body class="cast-page" data-cast-theme="focus_dark" data-proj-mode="<%= boot.config.presentation?.profile || 'classroom_dark' %>">
+  <div class="cast-live-region" aria-live="polite" id="status-live"></div>
+
+  <div class="proj-screen" id="proj-screen">
+    <!-- S30.02: QR + join code + short link — large type, back-row readable -->
+    <div id="proj-lobby" class="proj-center">
+      <div class="proj-code-card cast-surface">
+        <div class="proj-label" data-i18n="proj.join">SAVOLGA QO‘SHILING</div>
+        <div class="proj-qr-row">
+          <img class="proj-qr" id="proj-qr" alt="Qo‘shilish QR kodi" width="240" height="240" hidden>
+        </div>
+        <div class="proj-code" id="proj-code">—</div>
+        <div class="proj-link" id="proj-link"></div>
+      </div>
+      <div class="proj-count" id="proj-count">0 ishtirokchi</div>
+    </div>
+
+    <!-- S30.03: kod minimize chip — lobby'dan keyin kichik, teacher command bilan qayta katta -->
+    <button class="proj-code-chip" id="proj-code-chip" hidden aria-label="Qo‘shilish kodi"><%- icon('qrcode', 18) %> <span id="proj-code-chip-val">—</span></button>
+
+    <!-- Question -->
+    <div id="proj-question" class="proj-question" hidden>
+      <div class="proj-q-meta" id="proj-q-meta">—</div>
+      <div class="proj-q-text" id="proj-q-text">—</div>
+      <div class="proj-options" id="proj-options"></div>
+      <div class="proj-timer" id="proj-timer" role="timer"><span class="proj-timer-num" id="proj-timer-num">—</span><span class="proj-timer-label" id="proj-timer-label"></span><span class="proj-timer-ring" id="proj-timer-ring" aria-hidden="true"></span></div>
+      <div class="proj-count" id="proj-answered"></div>
+    </div>
+
+    <!-- Class Goal (aggregate only — no participant blame) -->
+    <div class="proj-goal cast-surface" id="proj-goal" hidden>
+      <div class="proj-goal-title">🎯 Sinf maqsadi</div>
+      <div class="proj-goal-bar" id="proj-goal-bar">
+        <div class="proj-goal-fill" id="proj-goal-fill" style="width:0%"></div>
+      </div>
+      <div class="proj-goal-meta" id="proj-goal-meta">—</div>
+      <div class="proj-goal-complete" id="proj-goal-complete" hidden>🎉 Maqsad bajarildi!</div>
+    </div>
+
+    <!-- C3-10 Confusion aggregate (anonim, identity yo'q) -->
+    <div class="proj-confusion cast-surface" id="proj-confusion" hidden>
+      <div class="proj-confusion-title">🚦 Sinf holati</div>
+      <div class="proj-confusion-chips" id="proj-confusion-chips"></div>
+    </div>
+
+    <!-- C3-10 Question Wall (faqat tasdiqlangan) -->
+    <div class="proj-wall cast-surface" id="proj-wall" hidden>
+      <div class="proj-wall-title">💬 Savollar</div>
+      <div class="proj-wall-list" id="proj-wall-list"></div>
+    </div>
+
+    <!-- C3-11 POE Observation media -->
+    <div class="proj-poe cast-surface" id="proj-poe-media-card" hidden>
+      <div class="proj-poe-title">👀 Kuzatuv</div>
+      <div class="proj-poe-media" id="proj-poe-media"></div>
+    </div>
+
+    <!-- C3-11 POE Analysis (aggregate + exemplars) -->
+    <div class="proj-poe cast-surface" id="proj-poe-analysis-card" hidden>
+      <div class="proj-poe-title">🔭 POE natijasi</div>
+      <div class="proj-poe-agg" id="proj-poe-agg"></div>
+      <div class="proj-poe-exemplars" id="proj-poe-exemplars"></div>
+    </div>
+
+    <!-- C3-12 Open-Response Semantic Board (faqat confirmed cluster'lar) -->
+    <div class="proj-orb cast-surface" id="proj-orb" hidden>
+      <div class="proj-orb-title">🗂 Fikrlar xaritasi</div>
+      <div class="proj-orb-status" id="proj-orb-status"></div>
+      <div class="proj-orb-grid" id="proj-orb-grid"></div>
+    </div>
+
+    <!-- Reveal -->
+    <div id="proj-reveal" hidden>
+      <div class="proj-q-text" id="proj-reveal-text">—</div>
+      <div class="proj-options" id="proj-reveal-options"></div>
+      <!-- S30.07: public distribution — max 5 bar, count+percent+shape, teacher reveal'dan keyin -->
+      <div class="proj-dist cast-surface" id="proj-dist" hidden>
+        <div class="proj-dist-title">Javoblar taqsimoti</div>
+        <div class="proj-dist-bars" id="proj-dist-bars"></div>
+      </div>
+      <div class="proj-explanation cast-surface" id="proj-explanation" hidden></div>
+      <!-- S32: public Top-N leaderboard — neutral list, max 5, low ranks yashirin -->
+      <div class="proj-leaderboard cast-surface" id="proj-leaderboard" hidden>
+        <div class="proj-leaderboard-title">Reyting</div>
+        <ol class="lb-list" id="proj-leaderboard-list"></ol>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/cast-socket-client.js"></script>
+  <!-- C4-05: i18n bootstrap -->
+  <script src="/js/i18n.js"></script>
+  <!-- C4-04: accessibility bootstrap -->
+  <script src="/js/cast-a11y.js"></script>
+  <script src="/js/components/charts.js"></script>
+  <!-- STYLE S32: shared leaderboard renderer -->
+  <script src="/js/cast-leaderboard.js"></script>
+  <script src="/js/cast-projector.js"></script>
+</body>
+</html>

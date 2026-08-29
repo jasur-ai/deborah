@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deborah CVD Test Matrix</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/design/brand.css">
+  <style>
+    body { font-family: 'Nunito', system-ui, sans-serif; background: #F6F8FC; color: #1F2937; margin: 0; padding: 32px 24px; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .sub { font-size: 12px; color: #657187; margin-bottom: 28px; }
+    .section { margin-bottom: 28px; }
+    .section h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: #566176; margin-bottom: 12px; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; }
+    /* Status: color + icon + text (redundant encoding — S06.09) */
+    .status { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; font-size: 14px; font-weight: 700; border: 2px solid currentColor; }
+    .status .ico { font-size: 15px; line-height: 1; }
+    .status--success { color: #137A43; background: #E8F7EF; }
+    .status--warning { color: #9A5B00; background: #FFF4D6; }
+    .status--danger  { color: #C93434; background: #FDECEC; }
+    .status--signal  { color: #007C91; background: #E0F3F6; }
+    .status--primary { color: #1746D1; background: #E9EFFF; }
+    /* Answer options: color + shape + letter (S06.09) */
+    .option { display: inline-flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 10px; border: 2px solid; font-weight: 700; background: #FFFFFF; }
+    .opt-letter { display: inline-flex; width: 24px; height: 24px; border-radius: 50%; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; color: #FFFFFF; }
+    .opt--correct   { border-color: #137A43; color: #137A43; }
+    .opt--incorrect { border-color: #C93434; color: #C93434; }
+    .opt--selected  { border-color: #1746D1; color: #1746D1; }
+    .opt--pending   { border-color: #8A95A8; color: #657187; }
+    .opt--correct .opt-letter   { background: #137A43; }
+    .opt--incorrect .opt-letter { background: #C93434; }
+    .opt--selected .opt-letter  { background: #1746D1; }
+    .opt--pending .opt-letter   { background: #8A95A8; }
+    /* Focus state: ring (not color-only) */
+    .focus-demo { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 10px; border: 2px solid #1746D1; background: #FFFFFF; font-weight: 700; color: #1746D1; outline: 3px solid #7AA8FF; outline-offset: 2px; }
+    /* CVD filter container — sahifa'ga filter qo'llash uchun id */
+    #cvd-root { filter: none; }
+  </style>
+</head>
+<body>
+  <div id="cvd-root">
+    <h1>CVD Test Matrix</h1>
+    <p class="sub">Status va answer'lar redundant encoding bilan (color + icon/text + shape/letter) — grayscale va CVD simulation'da ham ma'no saqlanadi.</p>
+
+    <div class="section">
+      <h2>Status (color + icon + text)</h2>
+      <div class="row">
+        <span class="status status--success"><span class="ico" aria-hidden="true">✓</span> To'g'ri</span>
+        <span class="status status--warning"><span class="ico" aria-hidden="true">!</span> Diqqat</span>
+        <span class="status status--danger"><span class="ico" aria-hidden="true">✕</span> Xato</span>
+        <span class="status status--signal"><span class="ico" aria-hidden="true">●</span> Jonli</span>
+        <span class="status status--primary"><span class="ico" aria-hidden="true">→</span> Davom</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Answer options (color + shape + letter)</h2>
+      <div class="row">
+        <span class="option opt--correct"><span class="opt-letter" aria-hidden="true">A</span> To'g'ri javob</span>
+        <span class="option opt--incorrect"><span class="opt-letter" aria-hidden="true">B</span> Xato javob</span>
+        <span class="option opt--selected"><span class="opt-letter" aria-hidden="true">C</span> Tanlangan</span>
+        <span class="option opt--pending"><span class="opt-letter" aria-hidden="true">D</span> Kutilmoqda</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Focus state (ring + color)</h2>
+      <div class="row">
+        <span class="focus-demo" tabindex="0">Fokuslangan tugma</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SVG CVD filters — #cvd-root TASHQARISIDA (filter'ga bo'ysunadigan
+       element ichida bo'lsa circular ref xavfi; S06.08) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <filter id="cvd-protanopia" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values="0.56667 0.43333 0 0 0  0.55833 0.44167 0 0 0  0 0.24167 0.75833 0 0  0 0 0 1 0"/>
+      </filter>
+      <filter id="cvd-deuteranopia" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values="0.625 0.375 0 0 0  0.7 0.3 0 0 0  0 0.3 0.7 0 0  0 0 0 1 0"/>
+      </filter>
+      <filter id="cvd-tritanopia" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values="0.95 0.05 0 0 0  0 0.43333 0.56667 0 0  0 0.475 0.525 0 0  0 0 0 1 0"/>
+      </filter>
+      <filter id="cvd-grayscale" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0 0 0 1 0"/>
+      </filter>
+    </defs>
+  </svg>
+</body>
+</html>

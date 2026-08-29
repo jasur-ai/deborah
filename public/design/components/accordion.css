@@ -1,0 +1,88 @@
+/**
+ * Deborah — Accordion (STYLE STEP 14, S14.09-10)
+ * ------------------------------------------------
+ * S14.09 — header BUTTON + aria-expanded + aria-controls
+ * S14.10 — motion: grid-template-rows + opacity, 180-220ms;
+ *          reduced-motion'da instant
+ */
+@layer components {
+
+.accordion {
+  border: 2px solid var(--deborah-semantic-color-border-subtle, var(--deborah-semantic-color-border-default));
+  border-radius: var(--deborah-radius-md, 12px);
+  overflow: hidden;
+  background: var(--deborah-semantic-color-surface-card, var(--deborah-semantic-color-surface-elevated));
+}
+
+.accordion + .accordion {
+  margin-block-start: var(--deborah-spacing-2, 8px);
+}
+
+.accordion__header {
+  margin: 0;
+}
+
+.accordion__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--deborah-spacing-3, 12px);
+  width: 100%;
+  min-height: 48px;
+  padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-4, 16px);
+  font-family: inherit;
+  font-size: var(--deborah-typography-font-size-md, 16px);
+  font-weight: 700;
+  color: var(--deborah-semantic-color-text-primary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 140ms ease;
+}
+
+.accordion__trigger:hover { background: oklch(0 0 0 / 0.04); }
+
+.accordion__trigger:focus-visible {
+  outline: 3px solid var(--deborah-semantic-color-focus, oklch(55% 0.2 264));
+  outline-offset: -3px;
+}
+
+.accordion__icon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--deborah-semantic-color-text-secondary);
+  transition: transform 200ms ease;
+}
+.accordion__trigger[aria-expanded='true'] .accordion__icon {
+  transform: rotate(180deg);
+}
+
+/* S14.10: grid-rows motion — 200ms, reduced-motion instant */
+.accordion__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 200ms ease;
+}
+.accordion__panel-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+.accordion__trigger[aria-expanded='true'] + .accordion__panel {
+  grid-template-rows: 1fr;
+}
+
+.accordion__panel-content {
+  padding: 0 var(--deborah-spacing-4, 16px) var(--deborah-spacing-4, 16px);
+  color: var(--deborah-semantic-color-text-secondary);
+  font-size: var(--deborah-typography-font-size-md, 16px);
+  line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accordion__panel { transition: none; }
+  .accordion__icon { transition: none; }
+}
+}

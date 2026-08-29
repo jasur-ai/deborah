@@ -1,0 +1,63 @@
+/* ═══════════════════════════════════════════════════════════════
+   Deborah Badge Component (STYLE STEP 12, S12.09)
+   ---------------------------------------------------------------
+   S12.09 — Variantlar faqat: neutral, info, success, warning, danger.
+            Badge text 1-2 so'z bo'ladi (UI qoidasi — to'liq jumla
+            emas). Semantic tokenlardan foydalanadi.
+   Cascade layer: components
+   ═══════════════════════════════════════════════════════════════ */
+
+@layer components {
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+    border-radius: 999px; /* S09.05 pill */
+    white-space: nowrap;
+    border: 1px solid transparent;
+  }
+  .badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+
+  .badge-neutral {
+    background: var(--deborah-semantic-color-surface-nested, #F7F9FC);
+    color: var(--deborah-semantic-color-text-secondary, #566176);
+    border-color: var(--deborah-semantic-color-border-subtle, #E2E8F0);
+  }
+  .badge-info {
+    background: var(--deborah-semantic-color-action-signal-soft, #E0F4FA);
+    color: var(--deborah-semantic-color-action-signal, #007C91);
+  }
+  .badge-success {
+    background: var(--deborah-semantic-color-status-success-soft, #E8F7EF);
+    color: var(--deborah-semantic-color-status-success, #137A43);
+  }
+  .badge-warning {
+    background: var(--deborah-semantic-color-status-warning-soft, #FFF4D6);
+    color: var(--deborah-semantic-color-status-warning, #9A5B00);
+  }
+  .badge-danger {
+    background: var(--deborah-semantic-color-status-danger-soft, #FDECEC);
+    color: var(--deborah-semantic-color-status-danger, #C93434);
+  }
+
+  @media (forced-colors: active) {
+    .badge {
+      border: 1px solid CanvasText;
+    }
+    .badge::before {
+      background: currentColor;
+    }
+  }
+}
