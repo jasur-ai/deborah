@@ -66,6 +66,8 @@
       <button type="button" class="st-tab active" data-pane="q" role="tab" aria-selected="true">🧠 AI savol generator</button>
       <button type="button" class="st-tab" data-pane="s" role="tab" aria-selected="false">🖼️ AI slide generator</button>
       <button type="button" class="st-tab" data-pane="o" role="tab" aria-selected="false">📄 Fayldan (OCR)</button>
+      <button type="button" class="st-tab" data-pane="p" role="tab" aria-selected="false">📘 Dars reja</button>
+      <button type="button" class="st-tab" data-pane="m" role="tab" aria-selected="false">📚 Material tavsiya</button>
       <button type="button" class="st-tab" data-pane="e" role="tab" aria-selected="false">🧰 Tashqi vositalar</button>
     </div>
 
@@ -129,6 +131,49 @@
       <div id="o-out"></div>
     </section>
 
+    <!-- ═══ Dars reja ═══ -->
+    <section class="st-pane" data-pane="p">
+      <div class="st-card">
+        <h2>Dars rejasi tayyorlash</h2>
+        <p class="st-sub">Fan, mavzu va vaqtni bering — AI to'liq dars rejasini tuzadi (maqsadlar, bosqichlar, uy vazifasi, baholash). PDF/Word yuklab oling.</p>
+        <div class="st-row">
+          <input class="inp" id="p-subject" placeholder="Fan (masalan: Algebra)">
+          <input class="inp" id="p-topic" placeholder="Mavzu (masalan: Kvadrat tenglamalar)">
+        </div>
+        <div class="st-row">
+          <input class="inp" id="p-grade" placeholder="Sinf / kurs (masalan: 8-sinf)">
+          <select id="p-dur" aria-label="Davomiylik"><option value="45" selected>45 daqiqa</option><option value="60">60 daqiqa</option><option value="80">80 daqiqa (2 dars)</option><option value="90">90 daqiqa</option></select>
+          <select id="p-lang" aria-label="Til"><option value="uz">O'zbek</option><option value="ru">Русский</option><option value="en">English</option></select>
+        </div>
+        <div class="st-actions" style="display:flex;gap:10px;flex-wrap:wrap">
+          <button type="button" class="btn btn-primary" id="p-go">📘 Reja tuzish</button>
+        </div>
+        <div class="st-msg" id="p-msg" role="status"></div>
+      </div>
+      <div id="p-out"></div>
+    </section>
+
+    <!-- ═══ Material tavsiya ═══ -->
+    <section class="st-pane" data-pane="m">
+      <div class="st-card">
+        <h2>Maqola / material tavsiyalari</h2>
+        <p class="st-sub">AI mavzu bo'yicha o'qish ro'yxati tuzadi + har biriga real qidiruv havolalari (Scholar / Google / YouTube) yasaydi.</p>
+        <div class="st-row">
+          <input class="inp" id="m-subject" placeholder="Fan">
+          <input class="inp" id="m-topic" placeholder="Mavzu">
+        </div>
+        <div class="st-row">
+          <input class="inp" id="m-level" placeholder="Daraja (ixtiyoriy: boshlang'ich / o'rta / yuqori)">
+          <select id="m-lang" aria-label="Til"><option value="uz">O'zbek</option><option value="ru">Русский</option><option value="en">English</option></select>
+        </div>
+        <div class="st-actions" style="display:flex;gap:10px;flex-wrap:wrap">
+          <button type="button" class="btn btn-primary" id="m-go">📚 Tavsiya ber</button>
+        </div>
+        <div class="st-msg" id="m-msg" role="status"></div>
+      </div>
+      <div id="m-out"></div>
+    </section>
+
     <!-- ═══ Tashqi vositalar ═══ -->
     <section class="st-pane" data-pane="e">
       <div class="st-card">
@@ -139,6 +184,8 @@
           <a class="ext-card" href="https://manus.im" target="_blank" rel="noopener noreferrer"><div class="ext-ico">🤖</div><div class="ext-name">Manus</div><div class="ext-desc">AI agent — murakkab vazifalarni bajaradi</div></a>
           <a class="ext-card" href="https://gamma.app" target="_blank" rel="noopener noreferrer"><div class="ext-ico">🌀</div><div class="ext-name">Gamma</div><div class="ext-desc">Matndan chiroyli taqdimotlar bir zumda</div></a>
           <a class="ext-card" href="https://canva.com" target="_blank" rel="noopener noreferrer"><div class="ext-ico">🎨</div><div class="ext-name">Canva</div><div class="ext-desc">Dizayn, poster, taqdimot shablonlari</div></a>
+          <a class="ext-card" href="https://claude.ai" target="_blank" rel="noopener noreferrer"><div class="ext-ico">🤝</div><div class="ext-name">Claude</div><div class="ext-desc">AI yordamchi — matn, tahlil, g'oyalar</div></a>
+          <a class="ext-card" href="https://docs.google.com/document/u/0/" target="_blank" rel="noopener noreferrer"><div class="ext-ico">📝</div><div class="ext-name">Google Docs</div><div class="ext-desc">Hujjatlar bilan birga ishlash</div></a>
         </div>
       </div>
     </section>
@@ -150,14 +197,19 @@
     const msg = (id, text, cls) => { const el = $('#' + id + '-msg'); el.textContent = text || ''; el.className = 'st-msg ' + (cls || ''); };
 
     // Tabs
-    document.querySelectorAll('.st-tab').forEach((tab) => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.st-tab').forEach((t) => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
-        document.querySelectorAll('.st-pane').forEach((p) => p.classList.remove('active'));
-        tab.classList.add('active'); tab.setAttribute('aria-selected', 'true');
-        document.querySelector('.st-pane[data-pane="' + tab.dataset.pane + '"]').classList.add('active');
+    function showPane(pane) {
+      document.querySelectorAll('.st-tab').forEach((t2) => {
+        const on = t2.dataset.pane === pane;
+        t2.classList.toggle('active', on); t2.setAttribute('aria-selected', on ? 'true' : 'false');
       });
-    });
+      document.querySelectorAll('.st-pane').forEach((p) => p.classList.remove('active'));
+      const el = document.querySelector('.st-pane[data-pane="' + pane + '"]');
+      if (el) el.classList.add('active');
+    }
+    document.querySelectorAll('.st-tab').forEach((tab) => tab.addEventListener('click', () => showPane(tab.dataset.pane)));
+    // S26: chuqur havola /user/ai-studio?tab=plan|materials|q|s|o|e
+    const WANTED = new URLSearchParams(location.search).get('tab');
+    if (WANTED && document.querySelector('.st-pane[data-pane="' + WANTED + '"]')) showPane(WANTED);
 
     const esc = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -301,6 +353,88 @@
       } catch (e) { msg('o', '⚠️ Tarmoq xatosi', 'err'); }
       finally { btn.disabled = false; btn.textContent = '🔍 OCR + generatsiya'; }
     });
+    // ── S26: Dars reja ──
+    $('#p-go').addEventListener('click', async () => {
+      const btn = $('#p-go'); btn.disabled = true; btn.textContent = '⏳ Tuzilmoqda…';
+      msg('p', 'Dars rejasi tuzilmoqda (10–20 soniya)…');
+      try {
+        const { res, data } = await post('/api/ai/lesson-plan', {
+          subject: $('#p-subject').value.trim(), topic: $('#p-topic').value.trim(),
+          grade: $('#p-grade').value.trim(), duration: +$('#p-dur').value, lang: $('#p-lang').value,
+        });
+        if (!res.ok || !data.ok) { msg('p', '⚠️ ' + (data.message || data.error || res.status), 'err'); return; }
+        renderPlan(data.plan);
+        msg('p', '✅ Dars rejasi tayyor', 'ok');
+      } catch (e) { msg('p', '⚠️ Tarmoq xatosi', 'err'); }
+      finally { btn.disabled = false; btn.textContent = '📘 Reja tuzish'; }
+    });
+
+    let lastPlan = null;
+    function renderPlan(plan) {
+      lastPlan = plan;
+      const totalMin = (plan.stages || []).reduce((a, s) => a + (+s.minutes || 0), 0);
+      $('#p-out').innerHTML = `
+        <div class="st-card">
+          <h2>${esc(plan.title)}</h2>
+          <div class="st-sub">${totalMin} daqiqa · ${plan.stages.length} bosqich</div>
+          <div style="font-weight:800;font-size:.85rem;margin-bottom:4px">🎯 Maqsadlar</div>
+          ${(plan.objectives || []).map((o) => `<div class="q-opt">• ${esc(o)}</div>`).join('')}
+          ${(plan.materials || []).length ? `<div style="font-weight:800;font-size:.85rem;margin:10px 0 4px">🧰 Jihozlar</div>${plan.materials.map((m) => `<div class="q-opt">• ${esc(m)}</div>`).join('')}` : ''}
+          <div style="font-weight:800;font-size:.85rem;margin:12px 0 6px">📋 Dars kechishi</div>
+          ${plan.stages.map((s, i) => `
+            <div class="q-item">
+              <div class="q-text">${i + 1}. ${esc(s.name)} <span style="color:#64748b;font-weight:600">· ${s.minutes} daq</span></div>
+              ${s.teacher ? `<div class="q-opt">🧑‍🏫 ${esc(s.teacher)}</div>` : ''}
+              ${s.students ? `<div class="q-opt">🙋 ${esc(s.students)}</div>` : ''}
+            </div>`).join('')}
+          ${plan.homework ? `<div style="font-weight:800;font-size:.85rem;margin:10px 0 4px">🏠 Uy vazifasi</div><div class="q-opt">${esc(plan.homework)}</div>` : ''}
+          ${plan.assessment ? `<div style="font-weight:800;font-size:.85rem;margin:10px 0 4px">✅ Baholash</div><div class="q-opt">${esc(plan.assessment)}</div>` : ''}
+          <div class="st-actions st-no-print" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+            <button type="button" class="btn btn-ok" id="plan-pdf">📄 PDF</button>
+            <button type="button" class="btn btn-quiet" id="plan-docx">📝 Word</button>
+            <button type="button" class="btn btn-quiet" onclick="window.print()">🖨️ Chop etish</button>
+          </div>
+        </div>`;
+      $('#plan-pdf').addEventListener('click', () => exportFile({ format: 'pdf', kind: 'plan', plan, name: 'dars-rejasi' }));
+      $('#plan-docx').addEventListener('click', () => exportFile({ format: 'docx', kind: 'plan', plan, name: 'dars-rejasi' }));
+    }
+
+    // ── S26: Material tavsiya ──
+    $('#m-go').addEventListener('click', async () => {
+      const btn = $('#m-go'); btn.disabled = true; btn.textContent = '⏳ Tanlanmoqda…';
+      msg('m', 'Tavsiyalar tayyorlanmoqda…');
+      try {
+        const { res, data } = await post('/api/ai/recommend-materials', {
+          subject: $('#m-subject').value.trim(), topic: $('#m-topic').value.trim(),
+          level: $('#m-level').value.trim(), lang: $('#m-lang').value,
+        });
+        if (!res.ok || !data.ok) { msg('m', '⚠️ ' + (data.message || data.error || res.status), 'err'); return; }
+        renderRec(data.rec);
+        msg('m', '✅ ' + data.rec.items.length + ' ta tavsiya tayyor', 'ok');
+      } catch (e) { msg('m', '⚠️ Tarmoq xatosi', 'err'); }
+      finally { btn.disabled = false; btn.textContent = '📚 Tavsiya ber'; }
+    });
+
+    function renderRec(rec) {
+      $('#m-out').innerHTML = `
+        <div class="st-card">
+          ${(rec.keywords || []).length ? `<div class="st-sub">🔑 Kalitlar: ${rec.keywords.map(esc).join(' · ')}</div>` : ''}
+          ${rec.items.map((it, i) => `
+            <div class="q-item">
+              <div class="q-text">${i + 1}. ${esc(it.title)}</div>
+              <div class="q-opt"><b>${esc(it.type)}</b>${it.level ? ' · ' + esc(it.level) : ''}</div>
+              ${it.why ? `<div class="q-exp">💡 ${esc(it.why)}</div>` : ''}
+            </div>`).join('')}
+          <div style="font-weight:800;font-size:.85rem;margin:14px 0 6px">🔗 Qidiruv havolalari (real)</div>
+          ${(rec.links || []).map((l) => `
+            <div class="q-item">
+              <div class="q-text" style="font-size:.85rem">“${esc(l.q)}”</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+                ${l.engines.map((e) => `<a class="btn btn-quiet" style="text-decoration:none;font-size:.78rem" href="${e.url}" target="_blank" rel="noopener noreferrer">${e.label}</a>`).join('')}
+              </div>
+            </div>`).join('')}
+        </div>`;
+    }
   </script>
 </body>
 </html>

@@ -771,3 +771,24 @@ Kod o'zgarishi NOLTA. Da'vo qilingan lekin TURLIGAN topilmalar (repository'da ha
     api vip=true → [s25_vip] faqat ✓; excludeStaff ✓; role=teacher → faqat teacher ✓;
     teachers approved/pending tablar ✓; grant→teacher 400 ✓, grant→talaba 200 ✓.
     Regress: 118 view ✓, design:check 6/6 ✓, admin vitest 9/9 ✓.
+
+── ✅ S26 (AI-A, 2026-08-29): TEACHER FEATURE TO'LIQLIGI — dars reja + material tavsiya + Claude ──
+ Audit: savol/slide/OCR/PDF/DOCX/XLSX/PPTX eksport/Gamma/Canva/Manus/Google Slides/
+ monitoring (Muhitlarim) teacher'da BOR edi; YO'Q: dars reja, material tavsiya, Claude
+ (resource-reco va /api/admin/claude faqat admin ekan).
+ 1) POST /api/ai/lesson-plan (VIP+teacher, rate-limited): fan/mavzu/sinf/davomiylik →
+    Gemini JSON {title, objectives[], materials[], stages[{name,minutes,teacher,students}],
+    homework, assessment} — sanitizePlan clamp bilan. AI Studiyada 📘 Dars reja tab:
+    forma → render → PDF/DOCX eksport (kind=plan, planToPdfBlocks/planToDocxBlocks;
+    footer'da jami daqiqa). Probe: PDF'da bosqichlar+daqiqa+uy vazifasi+baholash ✓.
+ 2) POST /api/ai/recommend-materials: AI kalitlar/ro'yxat/qidiruv so'rovlarini beradi,
+    havolalarni SERVER yasaydi (Scholar/Google/YouTube encodeURIComponent deep-link —
+    AI URL o'ylamaydi, soxta link yo'q). AI Studiyada 📚 Material tavsiya tab.
+ 3) Tashqi vositalarga Claude (claude.ai) + Google Docs kartalari qo'shildi.
+ 4) /user/ai-studio?tab=plan|materials|e|q|s|o chuqur havola (showPane + URLSearchParams).
+    teacher.ejs AI tab'ga "Dars reja tayyorlash" va "Maqola/material tavsiya" kartalari.
+ 5) Kontrakt: validation 400 ENDI not_configured'dan OLDIN (lesson-plan/recommend).
+    Probe (4642): studio 200 (2 yangi tab + Claude + deep-link JS) ✓, bo'sh mavzu 400 ✓,
+    to'liq so'rov 503 not_configured (sandboxda kalit yo'q — prod'da ishlaydi) ✓,
+    student 403/403 ✓, kind=plan eksport PDF(%PDF)+DOCX(PK, 3.5K) disposition ✓.
+    Regress: 118 view ✓, design:check 6/6 ✓, vitest ai+cast 28/28 ✓.
