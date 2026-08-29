@@ -147,3 +147,4 @@
 - ✅ STEP 96 — yakunlandi: BUG-230hz111 🔴 RE-CONFIRM (share token 200 lekin guest 404 — item BOR edi ham! BUG-230hz63 QAYTA YOZILDI) + BUG-230hz114 ✅ (CRUD E2E)
 - ✅ STEP 97 — yakunlandi: BUG-230hz122 🔴 (email change submit form action yo'q — API POST qilinmaydi) + BUG-230hz123 ✅ (password input yo'q — reauth flow uzilgan) + BUG-230hz124/125 ✅ (landing RU/EN matn server render) + BUG-230hz130 (BUG-230ka82 qayta baholandi)
 - ✅ STEP 98 — yakunlandi: BUG-230hz141 ✅ (portfolio xlsx import E2E 200, items 18) + BUG-230hz143 🔴 (admin MFA barcha invalid)
+- ✅ STEP 99 — yakunlandi: BUG-230ka301-310 📊 99-STEP XULOSA: ~1250 yozuv, 85🔴/52🟠/148🟡/38⚪/118ℹ️/250✅, TOP-20 Critical ro'yxat, 100 PNG, 101 commit
