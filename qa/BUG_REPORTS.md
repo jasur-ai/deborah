@@ -3136,6 +3136,31 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230hz130: 📌 Landing RU/EN server render bilan mos (BUG-230ka82 QAYTA BAHOLANDI — faqat title uz qoladi, matnlar o'zgaradi)
 
+### STEP 98 YAKUNIY — PORTFOLIO IMPORT RE-VERIFY (10 topilma)
+
+### BUG-230hz141: ✅ PORTFOLIO XLSX IMPORT E2E TO'LIQ: 200 POST, 0 pageerror, items 18 ta
+- **Dalil:** Fizika + Kimyo fayli import qilindi, items 13->18 (5 qo'shildi) — xlsx import ISHlaydi
+
+### BUG-230hz142: ✅ BUG-230hz101 (Portfolio share token 404) bilan bog'liq: item bor — share alohida
+
+### BUG-230hz143: 🔴 ADMIN MFA BARCHA BACKUP KODLAR ISHLATILDI (f75fd9a5f3 ham invalid)
+- Yangi kodlar YO'Q — admin hisobga kirish MUMKIN EMAS
+
+### BUG-230hz144: ✅ Student bilan portfolio sahifa to'liq ishlaydi (import + items)
+- pageerror 0, sahifa toza
+
+### BUG-230hz145: ℹ️ 18 ta item — ko'p QA artefakt bilan
+
+### BUG-230hz146: ✅ Dalillar: avvalgi portfolio PNG bilan bir xil holat
+
+### BUG-230hz147: ℹ️ Jami 98 stepda ~1210 yozuv
+
+### BUG-230hz148: ℹ️ MFA backup: teacher 0, admin 0
+
+### BUG-230hz149: ✅ IJOBIY — Portfolio sahifa xlsx import real ishlaydi (BUG-230hz41 re-confirm)
+
+### BUG-230hz150: ✅ YAKUNIY: 98 stepda 100+ sahifa, 110+ endpoint, 20+ E2E test
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
