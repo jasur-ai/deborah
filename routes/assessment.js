@@ -12,6 +12,7 @@
  */
 
 import { Router } from 'express';
+import { requireAuth } from '../middleware/auth.js';
 import {
   createAssessmentTemplate,
   getAssessmentTemplate,
@@ -51,11 +52,53 @@ import {
 
 const router = Router();
 
-// Helper: resolve who is acting (user id or admin flag)
+// ── S20 BUG-123/129: identity — deborah user obyektida `.id` YO'Q (safeKey/
+// username), admin'da esa username. Eski kod req.session?.user?.id o'qib doim
+// undefined olar edi: created_by=NULl, mualliflik/author-preview doim buziq.
 function actingIdentity(req) {
-  if (req.session?.admin?.id) return { userId: req.session.admin.id, isAdmin: true };
-  if (req.session?.user?.id) return { userId: req.session.user.id, isAdmin: false };
+  if (req.session?.admin) {
+    return { userId: String(req.session.admin.username || req.session.admin.id || 'admin'), isAdmin: true };
+  }
+  if (req.session?.user) {
+    const u = req.session.user;
+    return { userId: String(u.safeKey || u.username || ''), isAdmin: false };
+  }
   return { userId: null, isAdmin: false };
+}
+
+// S20 BUG-122/128: butun assessment API'da auth/rol yo'q edi — anonim
+// yaratish/o'chirish/publish, studentlar draft+item bank (javob kalitlari)
+// o'qiy olardi. Yozish va draft o'qish = faqat teacher/admin/board.
+function requireAssessmentStaff(req, res, next) {
+  if (req.session?.admin) return next();
+  const role = req.session?.user?.role;
+  if (['teacher', 'admin', 'board'].includes(role)) return next();
+  return res.status(403).json({ error: "Faqat o'qituvchi/admin" });
+}
+
+// S20 BUG-124: mutate oqimlarda ownership — faqat muallif (yoki admin).
+// PG bo'lmasa (lokal) xatoni 400 bilan qaytaramiz, emas 500.
+async function assertAssessmentOwner(req, res, id) {
+  const { userId, isAdmin } = actingIdentity(req);
+  if (isAdmin) return true;
+  try {
+    const a = await getAssessment(id);
+    if (!a) { res.status(404).json({ error: 'Assessment not found' }); return false; }
+    if (a.created_by !== userId) { res.status(403).json({ error: 'Faqat muallif tahrirlay oladi' }); return false; }
+    return true;
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+    return false;
+  }
+}
+
+// S20 BUG-126: ...req.body mass-assignment (created_by/tenant/status spoof).
+const TEMPLATE_FIELDS = ['name', 'assessment_type', 'description', 'blueprint_template', 'is_public', 'schema_version'];
+const ASSESSMENT_FIELDS = ['template_id', 'course_id', 'title', 'description', 'assessment_type', 'total_score', 'time_limit_minutes', 'instructions'];
+function pick(obj = {}, fields) {
+  const out = {};
+  for (const f of fields) if (obj[f] !== undefined) out[f] = obj[f];
+  return out;
 }
 
 // Helper: is this actor the assessment author (or a platform admin)?
@@ -63,10 +106,25 @@ async function isAuthorizedAuthor(req, assessmentId) {
   const { userId, isAdmin } = actingIdentity(req);
   if (!userId) return false;
   if (isAdmin) return true;
-  // Ownership check — only the assessment author (created_by) can preview the answer key
-  const assessment = await getAssessment(assessmentId);
-  return Boolean(assessment && assessment.created_by === userId);
+  // Ownership check — only the assessment author (created_by) can preview the answer key.
+  // S20: PG yo'q bo'lsa xato deb emas, 'huquq yo'q' deb qaytaramiz (fail-closed).
+  try {
+    const assessment = await getAssessment(assessmentId);
+    return Boolean(assessment && assessment.created_by === userId);
+  } catch (_) {
+    return false;
+  }
 }
+
+// ── S20 BUG-122: auth gate — templates + assessments namespace (preview mustasno) ──
+router.use(['/api/assessment-templates', '/api/assessments'], (req, res, next) => {
+  requireAuth(req, res, () => {
+    // Student preview (public items, javob kalitsiz) — har qanday login'li user
+    const isStudentPreview = req.method === 'GET' && /\/preview$/.test(req.path);
+    if (isStudentPreview) return next();
+    return requireAssessmentStaff(req, res, next);
+  });
+});
 
 // ═══════════════════════════════════════════════════════════════════
 // PURE HELPERS
@@ -128,8 +186,8 @@ router.post('/api/assessment/pool/select', (req, res) => {
 router.post('/api/assessment-templates', async (req, res) => {
   try {
     const result = await createAssessmentTemplate({
-      ...req.body,
-      created_by: req.session?.user?.id || req.session?.admin?.id,
+      ...pick(req.body, TEMPLATE_FIELDS), // S20 BUG-126: whitelist
+      created_by: actingIdentity(req).userId,
     });
     res.status(201).json(result);
   } catch (err) {
@@ -142,8 +200,8 @@ router.get('/api/assessment-templates', async (req, res) => {
     res.json(await listAssessmentTemplates({
       assessment_type: req.query.assessment_type,
       is_public: req.query.is_public !== undefined ? req.query.is_public === 'true' : undefined,
-      limit: parseInt(req.query.limit || '50', 10),
-      offset: parseInt(req.query.offset || '0', 10),
+      limit: Math.min(200, Math.max(1, parseInt(req.query.limit || '50', 10) || 50)), // S20 BUG-125
+      offset: Math.min(10000, Math.max(0, parseInt(req.query.offset || '0', 10) || 0)),
     }));
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -162,9 +220,16 @@ router.get('/api/assessment-templates/:id', async (req, res) => {
 
 router.patch('/api/assessment-templates/:id', async (req, res) => {
   try {
+    // S20 BUG-124: template ownership (muallif yoki admin)
+    const { userId, isAdmin } = actingIdentity(req);
+    if (!isAdmin) {
+      const tpl = await getAssessmentTemplate(parseInt(req.params.id, 10));
+      if (!tpl) return res.status(404).json({ error: 'Template not found' });
+      if (tpl.created_by !== userId) return res.status(403).json({ error: 'Faqat muallif tahrirlay oladi' });
+    }
     res.json(await updateAssessmentTemplate(parseInt(req.params.id, 10), {
-      ...req.body,
-      updated_by: req.session?.user?.id || req.session?.admin?.id,
+      ...pick(req.body, TEMPLATE_FIELDS), // S20 BUG-126
+      updated_by: actingIdentity(req).userId,
     }));
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -173,9 +238,16 @@ router.patch('/api/assessment-templates/:id', async (req, res) => {
 
 router.delete('/api/assessment-templates/:id', async (req, res) => {
   try {
+    // S20 BUG-124: template ownership
+    const { userId, isAdmin } = actingIdentity(req);
+    if (!isAdmin) {
+      const tpl = await getAssessmentTemplate(parseInt(req.params.id, 10));
+      if (!tpl) return res.status(404).json({ error: 'Template not found' });
+      if (tpl.created_by !== userId) return res.status(403).json({ error: "Faqat muallif o'chira oladi" });
+    }
     res.json(await deleteAssessmentTemplate(
       parseInt(req.params.id, 10),
-      req.session?.user?.id || req.session?.admin?.id
+      actingIdentity(req).userId
     ));
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -189,8 +261,8 @@ router.delete('/api/assessment-templates/:id', async (req, res) => {
 router.post('/api/assessments', async (req, res) => {
   try {
     const result = await createAssessment({
-      ...req.body,
-      created_by: req.session?.user?.id || req.session?.admin?.id,
+      ...pick(req.body, ASSESSMENT_FIELDS), // S20 BUG-126
+      created_by: actingIdentity(req).userId,
     });
     res.status(201).json(result);
   } catch (err) {
@@ -204,8 +276,8 @@ router.get('/api/assessments', async (req, res) => {
       status: req.query.status,
       assessment_type: req.query.assessment_type,
       course_id: req.query.course_id ? parseInt(req.query.course_id, 10) : undefined,
-      limit: parseInt(req.query.limit || '50', 10),
-      offset: parseInt(req.query.offset || '0', 10),
+      limit: Math.min(200, Math.max(1, parseInt(req.query.limit || '50', 10) || 50)), // S20 BUG-125
+      offset: Math.min(10000, Math.max(0, parseInt(req.query.offset || '0', 10) || 0)),
     }));
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -233,9 +305,10 @@ router.get('/api/assessments/:id', async (req, res) => {
 /** PATCH — draft mutable only; published is immutable (silent edits rejected). */
 router.patch('/api/assessments/:id', async (req, res) => {
   try {
+    if (!(await assertAssessmentOwner(req, res, parseInt(req.params.id, 10)))) return; // S20 BUG-124
     res.json(await updateAssessment(parseInt(req.params.id, 10), {
-      ...req.body,
-      updated_by: req.session?.user?.id || req.session?.admin?.id,
+      ...pick(req.body, ASSESSMENT_FIELDS), // S20 BUG-126
+      updated_by: actingIdentity(req).userId,
     }));
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -244,9 +317,10 @@ router.patch('/api/assessments/:id', async (req, res) => {
 
 router.delete('/api/assessments/:id', async (req, res) => {
   try {
+    if (!(await assertAssessmentOwner(req, res, parseInt(req.params.id, 10)))) return; // S20 BUG-124
     res.json(await deleteAssessment(
       parseInt(req.params.id, 10),
-      req.session?.user?.id || req.session?.admin?.id
+      actingIdentity(req).userId
     ));
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -259,8 +333,9 @@ router.delete('/api/assessments/:id', async (req, res) => {
 
 router.put('/api/assessments/:id/blueprint', async (req, res) => {
   try {
+    if (!(await assertAssessmentOwner(req, res, parseInt(req.params.id, 10)))) return; // S20 BUG-124
     res.json(await setBlueprint(parseInt(req.params.id, 10), req.body.blueprint || {}, {
-      userId: req.session?.user?.id || req.session?.admin?.id,
+      userId: actingIdentity(req).userId,
       itemCount: req.body.item_count,
     }));
   } catch (err) {
@@ -270,8 +345,9 @@ router.put('/api/assessments/:id/blueprint', async (req, res) => {
 
 router.put('/api/assessments/:id/randomization', async (req, res) => {
   try {
+    if (!(await assertAssessmentOwner(req, res, parseInt(req.params.id, 10)))) return; // S20 BUG-124
     res.json(await setRandomizationConfig(parseInt(req.params.id, 10), req.body || {}, {
-      userId: req.session?.user?.id || req.session?.admin?.id,
+      userId: actingIdentity(req).userId,
     }));
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -284,6 +360,7 @@ router.put('/api/assessments/:id/randomization', async (req, res) => {
 
 router.post('/api/assessments/:id/sections', async (req, res) => {
   try {
+    if (!(await assertAssessmentOwner(req, res, parseInt(req.params.id, 10)))) return; // S20 BUG-124
     const result = await addSection(parseInt(req.params.id, 10), req.body);
     res.status(201).json(result);
   } catch (err) {
@@ -299,9 +376,29 @@ router.get('/api/assessments/:id/sections', async (req, res) => {
   }
 });
 
+// S20 BUG-127: nested resurs (section/item) OTASIGA tegishlimi? Patch/delete
+// faqat :sid/:iid bo'yicha ishlar edi — boshqa assessment'ning section'idini
+// ko'chirib o'zgartirish mumkin edi.
+async function assertChildBelongsTo(req, res, listFn, assessmentId, childId, label) {
+  try {
+    const rows = await listFn(assessmentId);
+    if (!Array.isArray(rows) || !rows.some((r) => r.id === childId)) {
+      res.status(404).json({ error: `${label} bu assessmentga tegishli emas` });
+      return false;
+    }
+    return true;
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+    return false;
+  }
+}
+
 router.patch('/api/assessments/:id/sections/:sid', async (req, res) => {
   try {
-    res.json(await updateSection(parseInt(req.params.sid, 10), req.body));
+    const aid = parseInt(req.params.id, 10), sid = parseInt(req.params.sid, 10);
+    if (!(await assertAssessmentOwner(req, res, aid))) return; // S20 BUG-124
+    if (!(await assertChildBelongsTo(req, res, listSections, aid, sid, 'Section'))) return; // S20 BUG-127
+    res.json(await updateSection(sid, req.body));
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -309,7 +406,10 @@ router.patch('/api/assessments/:id/sections/:sid', async (req, res) => {
 
 router.delete('/api/assessments/:id/sections/:sid', async (req, res) => {
   try {
-    res.json(await removeSection(parseInt(req.params.sid, 10)));
+    const aid = parseInt(req.params.id, 10), sid = parseInt(req.params.sid, 10);
+    if (!(await assertAssessmentOwner(req, res, aid))) return; // S20 BUG-124
+    if (!(await assertChildBelongsTo(req, res, listSections, aid, sid, 'Section'))) return; // S20 BUG-127
+    res.json(await removeSection(sid));
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -321,9 +421,10 @@ router.delete('/api/assessments/:id/sections/:sid', async (req, res) => {
 
 router.post('/api/assessments/:id/items', async (req, res) => {
   try {
+    if (!(await assertAssessmentOwner(req, res, parseInt(req.params.id, 10)))) return; // S20 BUG-124
     const result = await addAssessmentItem(parseInt(req.params.id, 10), {
       ...req.body,
-      added_by: req.session?.user?.id || req.session?.admin?.id,
+      added_by: actingIdentity(req).userId,
     });
     res.status(201).json(result);
   } catch (err) {
@@ -341,7 +442,10 @@ router.get('/api/assessments/:id/items', async (req, res) => {
 
 router.patch('/api/assessments/:id/items/:iid', async (req, res) => {
   try {
-    res.json(await updateAssessmentItem(parseInt(req.params.iid, 10), req.body));
+    const aid = parseInt(req.params.id, 10), iid = parseInt(req.params.iid, 10);
+    if (!(await assertAssessmentOwner(req, res, aid))) return; // S20 BUG-124
+    if (!(await assertChildBelongsTo(req, res, listItems, aid, iid, 'Item'))) return; // S20 BUG-127
+    res.json(await updateAssessmentItem(iid, req.body));
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -349,7 +453,10 @@ router.patch('/api/assessments/:id/items/:iid', async (req, res) => {
 
 router.delete('/api/assessments/:id/items/:iid', async (req, res) => {
   try {
-    res.json(await removeAssessmentItem(parseInt(req.params.iid, 10)));
+    const aid = parseInt(req.params.id, 10), iid = parseInt(req.params.iid, 10);
+    if (!(await assertAssessmentOwner(req, res, aid))) return; // S20 BUG-124
+    if (!(await assertChildBelongsTo(req, res, listItems, aid, iid, 'Item'))) return; // S20 BUG-127
+    res.json(await removeAssessmentItem(iid));
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -361,8 +468,9 @@ router.delete('/api/assessments/:id/items/:iid', async (req, res) => {
 
 router.post('/api/assessments/:id/versions', async (req, res) => {
   try {
+    if (!(await assertAssessmentOwner(req, res, parseInt(req.params.id, 10)))) return; // S20 BUG-124
     const result = await createAssessmentVersion(parseInt(req.params.id, 10), {
-      userId: req.session?.user?.id || req.session?.admin?.id,
+      userId: actingIdentity(req).userId,
       changeSummary: req.body.change_summary,
     });
     res.status(201).json(result);
@@ -393,8 +501,9 @@ router.get('/api/assessments/:id/versions/diff', async (req, res) => {
 /** POST /api/assessments/:id/publish — validates arithmetic then freezes. */
 router.post('/api/assessments/:id/publish', async (req, res) => {
   try {
+    if (!(await assertAssessmentOwner(req, res, parseInt(req.params.id, 10)))) return; // S20 BUG-124
     res.json(await publishAssessment(parseInt(req.params.id, 10), {
-      userId: req.session?.user?.id || req.session?.admin?.id,
+      userId: actingIdentity(req).userId,
     }));
   } catch (err) {
     res.status(400).json({ error: err.message });

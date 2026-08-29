@@ -542,6 +542,44 @@ legal-hold clamp, baxtli yo'llar — o'z testi preflight 200 + rehearsal sessiya
 realtime) + 11/11 (e2e setup/lobby/join/director/projector + session-create/roles/projections);
 design-lint PASS ✓; **full vitest 7099/7108 — 9 ma'lum pre-existing (baseline aynan), 0 S18 regress**.
 
+## STEP 20 — 🟠 Assessment builder qatlami (AI-A, koordinatsiya 3-step) — ✅
+**Buglar:** BUG-122/123/124/125/126/127/128/129 (jami 8; 1 tasi KRITIK)
+**Qanday (qaysi+qanday):**
+- **BUG-122 (KRITIK — auth umuman yo'q)**: `routes/assessment.js` — 27 endpointning
+  HAMMASIDA auth yo'q edi: anonim POST /api/assessments (yaratish), DELETE (ixtiyoriy
+  draft o'chirish), publish, PATCH/PUT/blueprint/sections/items/versions — hammasi
+  guest 200/400 bilan handlerga yetardi. Fix: `router.use([templates, assessments])` —
+  requireAuth + staff gate (teacher/admin/board); student preview (GET .../preview)
+  mustasno — javob kalitsiz public ko'rinish.
+- **BUG-123 (+129)**: identity `req.session?.user?.id` — deborah user obyektida `.id`
+  YO'Q (safeKey/username) → created_by doim NULL, mualliflik/author-preview doim buziq;
+  admin'da ham `.id` emas `.username`. Fix: `actingIdentity()` — user: safeKey||username,
+  admin: username; `isAuthorizedAuthor` endi fail-closed (PG xatosi = huquq yo'q).
+- **BUG-124 (ownership)**: mutate oqimlarida (PATCH/DELETE/blueprint/randomization/
+  sections/items/versions/publish/template PATCH+DELETE) mualliflik tekshiruvi YO'Q —
+  istalgan teacher boshqa teacher draftini o'zgartirib/o'chirib yuborardi (service faqat
+  tenant bo'yicha). Fix: `assertAssessmentOwner()` (muallif yoki admin) ×12 + template
+  ownership alohida.
+- **BUG-125**: list limit/offset xom parseInt (99999/-5). Fix: clamp [1..200]/[0..10000].
+- **BUG-126 (mass-assignment)**: create/update `...req.body` yoyilardi — created_by/
+  tenant_id/status spoof mumkin edi. Fix: `pick()` whitelist (TEMPLATE_FIELDS/
+  ASSESSMENT_FIELDS).
+- **BUG-127 (nested integrity)**: section/item PATCH/DELETE faqat `:sid`/`:iid` bo'yicha
+  ishlar, ota `:id` tekshirilmasdi — boshqa assessment'ning section'ini ko'chirib
+  o'zgartirish mumkin edi. Fix: `assertChildBelongsTo()` (listSections/listItems a'zoligi).
+- **BUG-128 (leak)**: GET list/items/sections/versions — studentlar uchun ham ochiq:
+  draftlar + item bank (javob kalitlari bilan) o'qilar edi. Fix: staff gate (student faqat
+  preview).
+**Tool:** `scripts/repro-step20-assess.mjs` (PORT 4624; 17 tekshiruv: anonim ×5 blok,
+student ×3 blok, teacher o'tishi ×2, preview mustasno, include_private fail-closed ×2,
+ownership/nested gate ×2, sof-helper regression).
+**Eslatma:** assessment moduli PostgreSQL talab qiladi (lokal yo'q) — service darajadagi
+yozuvlar PG bilan ishlaydi; auth/rol/ownership GATE'lari lokalda to'liq isbotlandi
+(401/403/404 tartibi). intervention.js/consideration.js auditi: toza (barcha endpointlar
+requireAdmin) — o'zgartirilmagan.
+**Verify:** repro **17/17 HAMMASI OK**; ta'sirli 96/96 (assessment + api-contracts);
+design-lint PASS ✓; **full vitest 7099/7108 — 9 ma'lum pre-existing (baseline aynan), 0 S20 regress**.
+
 ## ✅ YAKUNLANGANLAR
 - **STEP 1** (2026-08-27): BUG-009/010/012/044 + 2 yangi topilma — 6 fayl; brauzer 13/13 PASS, vitest 45/45.
 - **STEP 2** (2026-08-27): BUG-011/016/041 — 5 fayl + 3 test sinxron; brauzer 10/10 PASS, auth 491/491, integration 104/104.
@@ -560,6 +598,10 @@ design-lint PASS ✓; **full vitest 7099/7108 — 9 ma'lum pre-existing (baselin
 - **STEP 15** (2026-08-29): PUSH (S11–S14 → origin) + BUG-093..099 (KRITIK test-API path-traversal IDOR ×8 endpoint, rename ghost/bounds, correct clamp, explanation/option/tags bounds, edit arxiv yo'qolishi, test-builder 8×EJS-chiqindi, xlsx CDN→self-host) — repro 26/26, 146/146 ta'sirli, full 7098/7108 (0 regress).
 - **STEP 16** (2026-08-29): BUG-100..106 (arena check-session oracle, socket code traversal ×13, botAnswer playerName arb-yozish KRITIK, optionIndex bounds, normalizeQuestion buxoro, host:create caps, /host/:code regex) — repro 25/25 (baxtli yo'l bilan), 175/175 ta'sirli, full 7098/7108 (0 regress).
 - **STEP 17** (2026-08-29): BUG-107..113 (roster staging traversal ×14 KRITIK, student PII/privilege KRITIK, limit clamp, accept rate-limit, admin audit attributsiya, invite token audit leak, mapping sxema) — repro 18/18, ta'sirli 49/49+19/19, full 7099/7108 (0 regress).
+- **STEP 18** (2026-08-29, AI-A): BUG-114..121 (cast test-loader traversal KRITIK, /meta joinCode leak, sessionId whitelist ×25, invite expiry/nonce, QR DoS, preflight receipts, legal-hold clamp) — repro 18/18, full 7099/7108 (0 regress). Push: 3b892ec.
+- **STEP 19** (2026-08-29, AI-B): ⚠️ commit 5855290 FAQAT status.md (3 qator) — kod YO'Q (quyida audit).
+- **STEP 20** (2026-08-29, AI-A): BUG-122..129 (assessment auth YO'Q KRITIK ×27 endpoint, identity .id buzilgan, ownership ×12, clamp, mass-assignment, nested integrity, item-bank leak) — repro 17/17, 96/96 ta'sirli.
+- **STEP 21** (2026-08-29, AI-B): ⚠️ commit e510a2d FAQAT status.md (3 qator) — kod YO'Q (quyida audit).
 
 ## 📋 MANBA HAVOLALAR
 - BUG hisobotlari: `workspace` branch → `qa/BUG_REPORTS.md`
@@ -624,5 +666,14 @@ NAVBAT: AI-A S18 → AI-B S19 → AI-A S20 → AI-B S21.
  • AI: GEMINI_API_KEY tokens.env'da; model gemini-3.6-flash (x-goog-api-key header).
  • Hajm ≤100MB: katta artefakt (screenshot/db dump) commit QILMANG; /tmp ishlatiling.
 
-AI-A HOLATI: S18 (CAST REST) YAKUNLANDI va main'ga PUSH QILINDI (BUG-114..121). Keyingi: S20 (assessment/intervention/consideration) — AI-Bning fix(s19-admin) commiti kelgandan keyin.
-AI-B HOLATI: kutishda — S19'dan boshlaydi.
+AI-A HOLATI: S20 (assessment) KOD+REPRO TAYYOR — push navbatda. 4-step rejaning o'z qismi TUGADI (S18+S20).
+AI-B HOLATI: S19+S21 commitlari PUSH QILINGAN, lekin 5-bo'sh — quyidagi AUDITGA qarang.
+
+── ⚠️ AI-A AUDIT QAYDI (2026-08-29): AI-B'ning S19/S21 pushlari BO'SH ──
+Dalillar: `git show 5855290 --stat` = status.md | 3 qator; `git show e510a2d --stat` = status.md | 3 qator.
+Kod o'zgarishi NOLTA. Da'vo qilingan lekin TURLIGAN topilmalar (repository'da hali ochiq):
+  • S19: "13/21 admin write MFA step-up YO'Q", "fb.remove key validation YOQ" (BUG-130/131)
+  • S21: "QTI packages API AUTH YOQ (guest 200)" — routes/qti.js'da requireAuth/requireAdmin 0 ta,
+    POST /api/qti/upload ham PUBLIC (AI-A tekshirdi, 2026-08-29).
+➡ AI-B: haqiqiy kodni qayta push qiling (da'vo qilingan topilmalar ro'yxati tayyor — yaxshi
+  boshlanish). BUG ID diapazoni sizniki: 130..149. Yoki user AI-Aga topshiradi.
