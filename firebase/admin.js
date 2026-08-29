@@ -80,13 +80,34 @@ async function initFirebase() {
       _db = getDatabase(_app);
       USE_REAL_FIREBASE = true;
 
+      // S28.1: haqiqiy ulanish probe'i — SDK init'i ulanishni kafolatlamaydi
+      // (getDatabase tarmoqqa chiqmaydi, eski banner yolg'on "CONNECTED"
+      // chiqarardi). 5s ichida .info/serverTimeOffset o'qiladi; muvaffaqiyatsiz
+      // bo'lsa CRITICAL log — rejim o'zgarmaydi (ma'lumot butunligi: ovoz bilan
+      // lokal DB'ga tushib qolmaymiz), op'lar timeout'da fast-fail qiladi va
+      // panel cheksiz spinner o'rniga aniq xato ko'rsatadi.
+      let probeOk = false;
+      let probeErr = null;
+      try {
+        await withFBTimeout(_db.ref('.info/serverTimeOffset').once('value'), 'probe');
+        probeOk = true;
+      } catch (err) {
+        probeErr = err;
+      }
       console.log('   ╔══════════════════════════════════════════════════╗');
       console.log('   ║  🔥  FIREBASE MODE                              ║');
       console.log('   ║──────────────────────────────────────────────────║');
       console.log(`   ║  Project: ${PROJECT_ID.padEnd(40)}║`);
-      console.log('   ║  Status:  CONNECTED                              ║');
+      console.log(probeOk
+        ? '   ║  Status:  CONNECTED (probe OK)                   ║'
+        : '   ║  Status:  ⛔ PROBE FAILED — DB ELECT!             ║');
       console.log('   ╚══════════════════════════════════════════════════╝');
-      console.log('');
+      if (!probeOk) {
+        console.log(`   ⛔ Firebase ulanmadi: ${String(probeErr?.message || probeErr).slice(0, 140)}`);
+        console.log('   ⛔ .env kredensiallari / tarmoq / Firebase quota (free-tier) tekshirilsin.');
+        console.log(`   ⛔ DB op'lari ${FB_TIMEOUT_MS}ms timeout'da fast-fail (cheksiz yuklanish emas).`);
+        console.error('CRITICAL: Firebase probe failed —', probeErr?.message || probeErr);
+      }
       return true;
     }
   } catch (err) {
@@ -96,6 +117,24 @@ async function initFirebase() {
 }
 
 // ── Firebase Realtime Database wrapper (Admin SDK API) ──
+// S28.1: Firebase SDK init muvaffaqiyati ULANISHNI kafolatlamaydi (getDatabase
+// tarmoqqa chiqmaydi) va admin-sdk read/write'larda inherent timeout yo'q —
+// DB elec bo'lsa (kredensial bekor qilingan/tarmoq/free-tier) har bir so'rov
+// cheksiz osilib, admin panel "yuklanmoqda" holatida qolib ketadi. Barcha op'lar
+// endi FIREBASE_TIMEOUT_MS (default 8000) ichida fast-fail qiladi.
+const FB_TIMEOUT_MS = Math.max(2000, parseInt(process.env.FIREBASE_TIMEOUT_MS || '8000', 10));
+function withFBTimeout(promise, label) {
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => {
+      const err = new Error(`Firebase ${label} timeout (${FB_TIMEOUT_MS}ms) — DB ulanishini tekshiring (.env / tarmoq / quota)`);
+      err.code = 'firebase-timeout';
+      reject(err);
+    }, FB_TIMEOUT_MS);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
+
 class FirebaseWrapper {
   constructor(realDb, localDb) {
     this._realDb = realDb;
@@ -112,7 +151,7 @@ class FirebaseWrapper {
 
   async get(path) {
     if (this._useReal) {
-      const snap = await this._realDb.ref(path).once('value');
+      const snap = await withFBTimeout(this._realDb.ref(path).once('value'), `get(${path})`);
       return {
         exists: () => snap.exists(),
         val: () => snap.val(),
@@ -124,7 +163,7 @@ class FirebaseWrapper {
 
   async set(path, value) {
     if (this._useReal) {
-      await this._realDb.ref(path).set(value);
+      await withFBTimeout(this._realDb.ref(path).set(value), `set(${path})`);
       return true;
     }
     return this._localDb.set(path, value);
@@ -132,7 +171,7 @@ class FirebaseWrapper {
 
   async update(path, value) {
     if (this._useReal) {
-      await this._realDb.ref(path).update(value);
+      await withFBTimeout(this._realDb.ref(path).update(value), `update(${path})`);
       return true;
     }
     return this._localDb.update(path, value);
@@ -140,7 +179,7 @@ class FirebaseWrapper {
 
   async remove(path) {
     if (this._useReal) {
-      await this._realDb.ref(path).remove();
+      await withFBTimeout(this._realDb.ref(path).remove(), `remove(${path})`);
       return true;
     }
     return this._localDb.remove(path);
@@ -159,7 +198,7 @@ class FirebaseWrapper {
   async transaction(path, updater) {
     if (this._useReal) {
       const ref = this._realDb.ref(path);
-      return new Promise((resolve, reject) => {
+      return withFBTimeout(new Promise((resolve, reject) => {
         ref.transaction((current) => {
           // RTDB transaction abort uchun updater null/undefined qaytarishi kerak
           return updater(current === null || current === undefined ? null : current);
@@ -171,7 +210,7 @@ class FirebaseWrapper {
             previous: null,
           });
         });
-      });
+      }), `transaction(${path})`);
     }
     return this._localDb.transaction(path, updater);
   }
