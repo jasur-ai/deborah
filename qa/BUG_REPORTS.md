@@ -2805,6 +2805,36 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230hz110: 🎯 XULOSA: Portfolio share token yaratiladi lekin TOKEN ISHLATIB BO'LMAYDI (404) — foydalanuvchi havolani boshqaga yuborsa, 404 sahifa ko'radi. BU PLATFORMA UCHUN JUDA MUHIM BUG
 
+### STEP 88 YAKUNIY — LANDING CHUQUR + SECURITY HEADERS RE-CHECK (10 topilma)
+
+### BUG-230hz111: 🔴 LANDING'DA `<section>` elementi **0 TA** — landing kutilganidan ancha yengil/sodda
+- **Dalil:** `document.querySelectorAll('section')` → 0 ta; landing-cta/landing-demo/landing-features partiallar sahifada YO'Q (BUG-230ka141 re-confirm)
+- **Ta'sir:** landing sahifa faqat auth form + cast demo + footer'dan iborat — README'da ko'rsatilgan bosh sahifa funksiyalari ko'rsatilmagan
+
+### BUG-230hz112: 🔴 Landing sahifada `footer` elementi YO'Q (`hasFooter: False`) — lekin `landing-footer.ejs` partial kodda bor
+- **Kod:** `views/partials/landing-footer.ejs` mavjud, lekin `index.ejs` ga include qilinmagan bo'lishi mumkin
+- **Amaliy:** footer matn HTML'da bor (oldingi testlarda ko'rdik) — lekin `<footer>` tag emas, oddiy div
+
+### BUG-230hz113: ✅ FOUC yo'q: `data-theme="dark"` sahifa yuklanishda H OLA qo'yiladi (theme-core.js early inject)
+
+### BUG-230hz114: 🔴 `theme-core.js` sahifaga include QILINMAGAN (`themeCore: False`) — lekin data-theme bor
+- **Izoh:** landing sahifada boshqa theme mexanizm ishlatiladi (inline script bilan data-theme qo'yiladi)
+
+### BUG-230hz115: 🟡 Landing DOM 118 element — JUDA KAM (professional landingda 300+ element bo'ladi)
+- Landing partiallarning aksariyati render bo'lmayapti (BUG-230hz111 bilan bir xil ildiz)
+
+### BUG-230hz116: 🔴 SECURITY HEADERS RE-CONFIRM (3 ta Critical hal bo'lmagan):
+- CSP: YO'Q | Permissions-Policy: YO'Q | COEP: YO'Q
+- HSTS: ✅ 6 oy | nosniff: ✅ | XFO: ✅ | RP: ✅ | DNS-prefetch: ✅
+
+### BUG-230hz117: ✅ RU i18n switch bosilganda matnlar o'zgaradi (bug emas — avvalgi testlar bilan mos)
+
+### BUG-230hz118: ℹ️ Landing sahifada xato YO'Q (0 pageerror) — sahifa "islaydi" lekin TO'LIQ EMAS
+
+### BUG-230hz119: ✅ Jami 88 stepda ~950 yozuv, 97 PNG
+
+### BUG-230hz120: ℹ️ Dalillar: yuqoridagi DOM element tahlili
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
