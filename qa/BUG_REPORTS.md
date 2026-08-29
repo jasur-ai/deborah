@@ -2835,6 +2835,45 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230hz120: ℹ️ Dalillar: yuqoridagi DOM element tahlili
 
+### STEP 89 YAKUNIY — REGISTER.EJS NANOMETRGA (10 topilma)
+
+### BUG-230hz141: ✅ FORM-REG TO'LIQ ANALIZ (13 input):
+| Maydon | ID | Type | Vis | Req | Min | Izoh |
+|--------|-----|------|-----|-----|-----|------|
+| website (honeypot) | - | text | ✅ | ❌ | - | tabindex=-1 ✅ |
+| role student | - | radio | ✅ | ❌ | - | default checked |
+| role teacher | - | radio | ✅ | ❌ | - | tanlanmagan |
+| university | reg-university | text | ❌ (shartli) | ❌ | - | teacher tanlanganda ochiladi |
+| subject | reg-subject | text | ❌ (shartli) | ❌ | - | — |
+| experience | reg-experience | number | ❌ (shartli) | ❌ | - | — |
+| reason | reg-reason | textarea | ❌ (shartli) | ❌ | - | — |
+| name | reg-name | text | ✅ | ❌ | - | — |
+| email | reg-email | email | ✅ | ✅ | - | ✅ |
+| username | reg-username | text | ✅ | ✅ | - | ✅ |
+| password | reg-password | password | ✅ | ✅ | **15** | 🔴 minlength 15! |
+| invite | reg-invite | text | ❌ (hidden) | ❌ | - | ixtiyoriy |
+| consent | reg-consent | checkbox | ✅ | ✅ | - | ✅ |
+
+### BUG-230hz142: ✅ HONEYPOT (website) to'g'ri sozlangan: tabindex=-1 (klaviatura fokus olmaydi), ko'rinadi lekin xavfsiz
+
+### BUG-230hz143: 🔴 PAROL minlength=15 TASDIQLANDI (register.ejs:159)
+- Landing fReg'da parol minlength yo'q (8 default HTML5)
+- /user/register'da esa 15 belgi — IKKI XIL QOIDA
+
+### BUG-230hz144: ✅ ROLE STUDENT default CHECKED (foydalanuvchi tanlamesa student)
+
+### BUG-230hz145: ✅ CONSENT CHECKBOX required+checked=false (foydalanuvchi o'zi belgilashi kerak)
+
+### BUG-230hz146: ✅ Teacher maydonlar role=teacher tanlanmaganda yashirin (to'g'ri UX)
+
+### BUG-230hz147: ✅ Invite maydoni hidden (ixtiyoriy, toggle orqali ochiladi)
+
+### BUG-230hz148: ✅ Password autocomplete="new-password" (to'g'ri — brauzer parol saqlamaydi)
+
+### BUG-230hz149: ✅ University/subject/experience/reason teacher tanlanmaganda vis=False
+
+### BUG-230hz150: ✅ IJOBIY — Reg sahifa 13 maydon, 2 radio, honeypot, consent — to'liq funksional forma (minlength muammosidan tashqari)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI

@@ -137,3 +137,4 @@
 - ✅ STEP 86 — yakunlandi: BUG-230hz91 🔴 (camera-pilot 500 re-confirm) + BUG-230hz92 🔴 (CSP/PP/COEP YO'Q re-confirm)
 - ✅ STEP 87 — yakunlandi: BUG-230hz101 🔴 (Portfolio share E2E YANGI DEPLOYDA BUZILGAN — guest 404!) + BUG-230hz102 🔴 (revoke grant not found) + BUG-230hz103-110 (landing nano)
 - ✅ STEP 88 — yakunlandi: BUG-230hz111 🔴 (landing 0 section) + BUG-230hz112 🔴 (footer tag YO'Q) + BUG-230hz114 🔴 (theme-core include YO'Q) + BUG-230hz115 🟡 (118 element juda kam) + BUG-230hz116 🔴 (CSP/PP/COEP re-confirm) + 113/117/118 ✅
+- ✅ STEP 89 — yakunlandi: BUG-230hz143 🔴 (parol minlength=15 TASDIQLANDI DOM'da) + BUG-230hz141-150 (13 input to'liq jadval: honeypot/role/consent/teacher shartli maydonlar hammasi to'g'ri)
