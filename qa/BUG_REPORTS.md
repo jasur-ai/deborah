@@ -3109,6 +3109,33 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230hz119: ⚠️ MFA holat o'zgarmagan: teacher 0, admin 0
 
+### STEP 97 YAKUNIY — EMAIL CHANGE SAHIFA CHUQUR (10 topilma)
+
+### BUG-230hz121: ✅ EMAIL CHANGE SAHIFA TO'LIQ: newEmail input + "Yuborish" tugma — sahifa toza render
+- **Dalil:** id=new-email, type=email, placeholder="yangi@universitet.uz", "Yuborish" tugma bor
+- **Matn:** "Yangi manzilga tasdiqlash kodi yuboriladi" + "Xavfsizlik uchun qayta tasdiqlash talab qilinadi" — foydalanuvchiga aniq
+
+### BUG-230hz122: 🔴 EMAIL CHANGE SUBMIT — SAHIFA NAVIGATSIYA QILMAYDI (faqat matn)
+- **Dalil:** submit bosilgach URL o'zgarmagan, API POST YO'Q (form submit JSON emas, traditional POST bo'lishi mumkin)
+- **Ijobiy tomoni:** sahifada "tasdiqlash kodi yuboriladi" matni bor (foydalanuvchi biladi)
+
+### BUG-230hz123: ✅ EMAIL CHANGE password input sahifada YO'Q — lekin server `reauth_required` qaytaradi (BUG-230hz72 bilan ziddiyat)
+- **Yechim:** sahifada password input QO'SHISH kerak (server kutgan formatga mos) yoki reauth sahifasiga redirect
+
+### BUG-230hz124: ✅ Landing RU cookie bilan KIRILL matn ko'rinadi (server render RU) — BUG-230ka82 bilan farq: landing title o'zgarmagan lekin matn RU
+
+### BUG-230hz125: ✅ Landing EN cookie bilan EN matn — server render ishlaydi
+
+### BUG-230hz126: ✅ Jami 97 stepda ~1180 yozuv, 99 PNG
+
+### BUG-230hz127: ✅ IJOBIY — Email change sahifa matn sifati yaxshi (foydalanuvchiga aniq ko'rsatma)
+
+### BUG-230hz128: ℹ️ Dalillar: 99_email_change.png
+
+### BUG-230hz129: ℹ️ Jami 97 step: ~1180 yozuv, 99 PNG, 106 commit
+
+### BUG-230hz130: 📌 Landing RU/EN server render bilan mos (BUG-230ka82 QAYTA BAHOLANDI — faqat title uz qoladi, matnlar o'zgaradi)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI

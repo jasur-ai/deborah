@@ -145,3 +145,4 @@
 - ✅ STEP 94 — yakunlandi: BUG-230ka251 ⚠️ (MFA BARCHA kodlar ishlatilgan/invalid/locked — yangi SHART) + BUG-230ka254 🔴 (notifications pageerror re-confirm) + BUG-230ka252/253/256 ✅ (security-profile, notifications 9 toggle, empty OK)
 - ✅ STEP 95 — 95-STEP XULOSA: ~1100 yozuv, 86🔴/50🟠/145🟡/38⚪/116ℹ️/260✅, TOP-15 dev fix, 96 PNG, 98 commit
 - ✅ STEP 96 — yakunlandi: BUG-230hz111 🔴 RE-CONFIRM (share token 200 lekin guest 404 — item BOR edi ham! BUG-230hz63 QAYTA YOZILDI) + BUG-230hz114 ✅ (CRUD E2E)
+- ✅ STEP 97 — yakunlandi: BUG-230hz122 🔴 (email change submit form action yo'q — API POST qilinmaydi) + BUG-230hz123 ✅ (password input yo'q — reauth flow uzilgan) + BUG-230hz124/125 ✅ (landing RU/EN matn server render) + BUG-230hz130 (BUG-230ka82 qayta baholandi)
