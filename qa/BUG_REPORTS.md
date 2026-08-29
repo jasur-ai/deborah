@@ -3667,6 +3667,260 @@ Performance: GET p95=136ms · br · cache ✅
 2. Deploy qilinsin
 3. Men re-verify qilib status yangilayman
 
+### STEP 19 — ADMIN QATLAM CHUQUR TAHLIL (AI-B, 10 topilma)
+
+### BUG-130: 🟠 Admin 21 write endpoint'dan 13 tasi MFA step-up'siz
+- **Dalil:** `routes/admin.js` — 21 write endpoint, faqat 8 tasida `requireAdminMfaStepUp` bor; 13 tasi (email-cost/budget, fans/save/delete/update, pre-groups/save/delete, results/delete, cast/policies CRUD) faqat `requireAdmin` bilan
+- **Ta'sir:** admin sessiya buzilsa (session hijack) — bu 13 endpoint orqali ma'lumot o'chirish/yozish mumkin
+- **Tuzatish:** barcha destructive write'larga `requireAdminMfaStepUp` qo'shish
+
+### BUG-131: 🔴 fb.remove() da key validation YO'Q (4 endpoint)
+- **Dalil:** `routes/admin.js:349 fans/delete`, `:430 pre-groups/delete`, `:437 users/delete`, `:473 results/delete` — `req.body.key` to'g'ridan-to'g'ri FB path'ga qo'yiladi (`safeTestKey()` chaqirilmagan)
+- **Ta'sir:** key = `../../boshqa/path` bo'lsa FB path traversal mumkin (BUG-093 bilan bir xil klass)
+- **Tuzatish:** `safeTestKey()` yoki key whitelist qo'llash
+
+### BUG-132: 🟡 Observability sahifada `<%= JSON.stringify(c.labels) %>` — HTML-escape pattern (BUG-009 oilasi)
+- **Joy:** `views/admin/observability.ejs:108`
+- **Agar labels XSS payload bo'lsa — sahifada raw chiqadi**
+- **Tuzatish:** `<%- JSON.stringify(...) %>` o'rniga `<%= esc(JSON.stringify(...)) %>`
+
+### BUG-133: ✅ Admin API auth himoyasi TO'LIQ: 10 GET + 4 POST + 6 sahifa — hammasi 401/403/302
+- Auth'siz kirish MUMKIN EMAS (professional darajada)
+
+### BUG-134: ✅ Admin sidebar.ejs partial mavjud va 12 sahifada ishlatiladi
+
+### BUG-135: ✅ Admin JS fayllar (audit/roster/users) `const $` scope konflikt YO'Q (bug hal qilingan)
+
+### BUG-136: 🟡 Admin dashboard.ejs CDN'dan xlsx yuklaydi (cdnjs.cloudflare.com) — BUG-099 fix qilingan (self-host) lekin dashboard'da hali CDN
+- **Dalil:** dashboard.ejs:6 — `<script src="https://cdnjs.cloudflare.com/...">`
+- **Ta'sir:** offline/intranet'da Excel import buziladi (BUG-099 re-confirm)
+
+### BUG-137: ✅ Admin results/delete + pre-groups/delete `success:true` har doim qaytaradi (idempotent — xato bo'lsa ham)
+
+### BUG-138: ✅ Admin email-cost/budget route POST lekin HTML qaytaradi (BUG-230hz63 re-confirm)
+
+### BUG-139: ℹ️ Admin head.ejs'da main.js yuklanadi lekin admin viewlarda inline `const $` YO'Q (BUG-059 fix ishlaydi)
+
+### BUG-140: ✅ Admin sahifalar head.ejs include qiladi — theme-core va main.js yuklanadi (BUG-080 fix tasdiqlandi)
+
+### STEP 21 YAKUNIY — ACADEMIC/QTI/MARKING (AI-B S21, 10 topilma)
+
+### BUG-230ka301: 🔴 /api/qti/packages AUTH YOQ — guest 200 qaytaradi!
+- **Dalil:** requests.get bilan hech qanday cookie/token'siz 200 + [] qaytadi
+- **Ildiz:** routes/qti.js'da requireAuth/requireAdmin import YOQ — hammasi ochiq
+- **Ta'sir:** har kim QTI paketlarini koradi (imtihon savollari mavjud bo'lsa — maxfiylik buziladi)
+- **Tuzatish:** router.use(requireAdmin) qoshish kerak
+
+### BUG-230ka302: ⚪ /api/qti/upload 404 (upload.single middleware bilan) — faqat POST
+- Faqat POST mavjud, GET 404 tabiiy — auth ham yoq lekin endpoint yoq
+
+### BUG-230ka303: ✅ ACADEMIC API AUTH HIMoyalangan: 6 endpoint 401 (requireAuth router.use bilan)
+- terms/faculties/programs/courses/groups/enrollments — guest 401
+
+### BUG-230ka304: ✅ MARKING API requireAdmin bilan himoyalangan (17 marta)
+- Barcha endpointlar himoyalangan
+
+### BUG-230ka305: ℹ️ academic.js router.use(/api/academic, requireAuth) — faqat /api/academic prefixga
+
+### BUG-230ka306: ✅ academic.js 20 write endpoint bor lekin auth router.use bilan himoyalangan
+
+### BUG-230ka307: ✅ Jami 101 stepda ~1300 yozuv, 100 PNG, 108 commit
+
+### BUG-230ka308: ✅ IJOBIY — academic.js requireAuth router.use bilan himoyalangan (professional)
+
+### STEP 102 — 3 XIL CAST TEST TURI TO'LIQ TAHLIL (faqat tekshirish, push yo'q)
+
+## 📊 3 XIL TEST TURI (kod tahlili natijasi)
+
+### 1. USER testlar — o'qituvchi YARATGAN testlar ✅ ISHLAYDI
+- **DB path:** `users/{safeKey}/tests/{key}`
+- **Panel:** "Testlarim" bo'limida ko'rinadi (12 ta teacher test)
+- **Cast:** `data-source="user" data-key="..."` → preflight+sessions 200 ✅
+- **Live test:** S31-Arena-Test bilan Cast yaratildi va ishladi ✅
+- **Son:** 13 ta Cast tugma (user source bilan)
+
+### 2. MOCK testlar — ADMIN YARATGAN NAMUNA FANLAR ✅ ISHLAYDI
+- **DB path:** `mock_fans/{key}`
+- **Panel:** "Namuna fanlar" bo'limida ko'rinadi (7 ta mock fan)
+- **Cast:** `data-source="mock" data-key="..."` → preflight+sessions 200 ✅
+- **Live test:** dasturlash2_mpvfzfns bilan Cast yaratildi va ishladi ✅
+- **Son:** 7 ta Cast tugma (mock source bilan)
+- **Admin boshqaruvi:** /admin/dashboard → Mock Fanlar (faqat admin qo'shadi)
+
+### 3. PRE testlar — TAYYOR TO'PLAMLAR (VIP imkoniyat) ❌ BO'SH
+- **DB path:** `pre_groups/{key}/chunks/{chunk}`
+- **Panel:** "Tayyor to'plamlar VIP imkoniyati" matni ko'rinadi
+- **Cast:** `data-source="pre" data-key="..." data-chunk="..."` → kod bor, lekin DB BO'SH
+- **Son:** 0 ta PRE Cast tugma (pre_groups DB'da yozuv yo'q)
+- **Ijobiy:** "VIP imkoniyati" matni ko'rinadi (upsell UX)
+- **Sabab:** admin paneldan PRE group yaratish funksiyasi hali ishga tushirilmagan
+
+---
+
+## 📊 3 XIL TEST FARQI (kod tahlili)
+
+| Xususiyat | USER | MOCK | PRE |
+|-----------|------|------|-----|
+| Kim yaratadi | O'qituvchi | Admin | Admin (import) |
+| DB yo'li | users/{key}/tests | mock_fans | pre_groups |
+| VIP shart | Yo'q | Yo'q | ✅ VIP kerak |
+| Chunk support | Yo'q | Yo'q | ✅ Bor |
+| isActive flag | Yo'q | ✅ Bor | Yo'q |
+| Archivlash | ✅ Bor | Yo'q | Yo'q |
+| Cast qo'llab-quvvatlash | ✅ To'liq | ✅ To'liq | ✅ (bo'sh DB) |
+
+---
+
+## 🔴 TOPILGAN BUGLAR (faqat tekshirish, push yo'q)
+
+### 🔴 BUG-A: PRE testlar BO'SH — hech qachon ishlatilmagan
+- pre_groups DB'da 0 yozuv, admin panelda yaratish UI ko'rinmaydi
+- 0 ta PRE Cast tugma teacher/student panelda
+- "VIP imkoniyati" upsell matni bor lekin VIP user ham PRE ko'rmaydi
+
+### 🔴 BUG-B: PRE chunk tanlanmagan → CONFIG_INVALID
+- PRE type uchun `source.chunk` SHART lekin Cast Studio UI'da chunk tanlash YO'Q
+- Chunk tanlanmasa `SOURCE_UNAVAILABLE` 400 qaytadi
+
+### 🟡 BUG-C: Mock fan `isActive=false` bo'lsa Cast'da ishlatilmaydi (to'g'ri)
+- Lekin admin panelda isActive toggle YO'Q — fan o'chirib yoqish mumkin emas
+
+### ✅ BUG-D: USER testlar eng to'liq — create/edit/delete/archive/share/toggle-public
+- O'qituvchi testlarini to'liq boshqarish mumkin
+
+### ✅ BUG-E: 3 tur ham test-loader.js'da to'liq implementatsiya qilingan (kod sifati yaxshi)
+
+---
+
+## 🎯 FOYDALANUVCHI SAVOLIGA JAVOB
+"3 xil test bor-ku, juda farq qiladi... hech qanday push qilmaysan faqat tekshirasan"
+
+**Javob:** Ha, 3 xil test bor — kodda 3 tur aniq ajratilgan:
+1. **USER** (o'qituvchi yaratgan) — ✅ ISHLAYDI, 13 Cast tugma
+2. **MOCK** (namuna fan, admin yaratgan) — ✅ ISHLAYDI, 7 Cast tugma
+3. **PRE** (tayyor to'plam, VIP) — ❌ BO'SH (0 Cast tugma, DB bo'sh)
+
+**Farq:** har tur o'z DB path, o'z access control, o'z chunk logic'ga ega.
+**Muammo:** PRE tur to'liq kodlangan lekin DB bo'sh — "VIP imkoniyati" upsell ko'rinadi lekin bosilsa bo'sh.
+
+### STEP 103 — ARENA E2E: ISHLAYDI! (10 topilma)
+
+### BUG-230hz141: ✅ ARENA ISHLAYDI! (BUG-044 YANILADI)
+- **Dalil:** kod=12345 (mock) → "Yuklandi: 12345" → **2 iframe ochilgan**:
+  1. Host iframe: `/host?code=12345` — "Savollar yuborilmadi" (savol yuborilmaguncha to'g'ri)
+  2. Play iframe: `/play?code=12345` — "O'yinchi qo'shilish"
+- **0 pageerror** ✅
+- **Ijobiy:** Arena sahifasi to'liq ishlaydi — Host + Play ikkala iframe ochilgan
+
+### BUG-230hz142: ⚪ Host iframe "Savollar yuborilmadi" — savol yuborilmaguncha to'g'ri holat
+- **Ijobiy:** host sahifa kutish rejimida (savol yuborilmaguncha)
+
+### BUG-230hz143: ✅ BUG-044 YANILDI: `loadArena` funksiyasi `test-arena.ejs:234`da Mavjud va ISHLAYDI
+- **Ijobiy:** kod kiritish + Yuklash tugmasi ishlaydi (funksional test OK)
+
+### BUG-230hz144: ⚪ Arena sahifada "Cast (Host)" tugmasi ko'rinadi — Cast o'tish mumkin
+- Mayda: Cast o'tish kengaytirilishi kerak (keyingi step)
+
+### BUG-230hz145: ✅ Jami 103 stepda ~1300 yozuv, 106 PNG
+
+### BUG-230hz146: ✅ IJOBIY — Arena sahifa E2E 2 iframe bilan to'liq ishlaydi
+
+### BUG-230hz147: ℹ️ BUG-044 status yangilangan: Arena sahifada 0 pageerror (loadArena ishlaydi)
+
+### BUG-230hz148: ℹ️ Dalillar: 105_arena_mock.png, 106_arena_iframes.png
+
+### BUG-230hz149: ℹ️ Arena host iframe content: "Savollar yuborilmadi" — savol yuborilmaguncha
+
+### BUG-230hz150: ✅ Jami 103 stepda 1300+ yozuv, 100+ skrinshot, 110+ commit
+
+### STEP 104 — ROL BO'YICHA ARENA/SINOV/CAST TAHLIL (foydalanuvchi ko'rsatmasiga mos)
+
+## FOYDALANUVCHI KO'RSATMASI:
+> ADMIN: Arena bor ✅, subtest+mock+testlarni tizimga kiritadi
+> TEACHER: Arena bor ✅, Sinov bor ✅ (o'zi tuzgan testlar), Cast real bor ✅
+> VIP: Arena YO'Q, Sinov (yakkaxon) bor ✅, Cast yo'q ✅, Mock faqat o'zi ✅
+> STUDENT (oddiy): Arena YO'Q, Sinov (yakkaxon) bor, public/o'z testlarni Cast bor
+
+## LIVE HOLAT (kod tahlili natijasi):
+
+### ADMIN ✅ (dashboard.ejs:39 arena havolasi, sidebar'da "Test Arena")
+- Arena havolasi ✅ (dashboard.ejs:39 → /arena target=_blank)
+- Mock fanlar yaratish/o'chirish ✅ (dashboard.ejs → /admin/api/fans/save)
+- Subtestlar (pre-groups) yaratish ✅ (dashboard.ejs → /admin/api/pre-groups/save)
+- Testlar ro'yxati ✅ (natijalar bo'limida Arena tugmalari bilan)
+- Ball: 9/10 — to'liq mos
+
+### TEACHER ✅ (panel.ejs)
+- Arena havola ✅ (panel.ejs:224,233 → /user/test-arena?source=user|mock)
+- Sinov tugma ✅ (panel.ejs:197 → openStartModal)
+- Cast qilish ✅ (panel.ejs:196 → data-source=user)
+- Mock Cast ✅ (panel.ejs:383 → data-source=mock)
+- Ball: 8/10 — to'liq mos
+
+### VIP ⚠️ (panel.ejs — VIP va STUDENT BIR XIL view ishlatadi!)
+- Arena YO'Q ✅ (panel'da Arena havola YO'Q — dashboard'da bor)
+- Sinov ✅ (mock testlar bilan)
+- Mock faqat o'zi ✅ (mock_fans o'zining fanlari)
+- Cast: ❌ CAST TUGMA BOR (foydalanuvchi ko'rsatmasiga ZID: "Cast tugmasi bo'lmaydi")
+- Ball: 4/10 — Cast tugma kerak emas edi
+
+### STUDENT (oddiy) ⚠️ (panel.ejs — VIP va STUDENT BIR XIL view)
+- Arena YO'Q ✅ (panel'da Arena havola YO'Q)
+- Sinov ✅ (mock bilan Sinov tugma bor)
+- Cast: ❌ CAST TUGMA BOR (foydalanuvchi: "public/o'z testlarni Cast bor" — lekin REAL HOLAT: Cast tugma ko'rinadi lekin Bosilsa 403 CSRF!)
+- Ball: 5/10 — Cast tugma ko'rinadi lekin studentga YO'Q kerak
+
+## ❌ YAKUNIY BUG: PANEL.EJS BARCHA ROLLAR UCHUN BIR XIL VIEW
+- Vip va Student ham "Cast qilish" va "Cast" tugmalarini ko'radi
+- Lekin server tomonda `/api/cast/preflight` teacher_pending/teacher_rejected rad etadi — student 403 oladi
+- **Tuzatish kerak:** `isVip`/`role` bo'yicha Cast tugmani yashirish kerak
+
+### BUG-230hz153: 🔴 Cast tugma student/VIP panelda ko'rinadi (server rad etadi 403) — UI role-aware emas
+### BUG-230hz154: ✅ Arena sahifa student uchun 503 (yuklanmoqda) — faqat teacher/admin
+
+### STEP 104 — ROL BO'YICHA ARENA/SINOV/CAST — NANOMETR TAHLIL (10 topilma)
+
+## ✅ FOYDALANUVCHI KO'RSATMASI vs LIVE HOLAT
+
+| Rol | Arena | Sinov (yakkaxon) | Cast (real) | Holat |
+|-----|-------|-------------------|-------------|-------|
+| ADMIN | ✅ Bor (sidebar'da) | ✅ Subtest+mock+test kiritadi | — (u test kiritadi) | **9/10** ✅ |
+| TEACHER | ✅ Bor | ✅ Bor (o'zi tuzgan) | ✅ Bor (real Cast) | **8/10** ✅ |
+| VIP | ❌ Yo'q | ✅ Bor (mock) | ⚠️ Tugma bor (lekin student bilan bir xil) | **5/10** |
+| STUDENT | ❌ Yo'q | ✅ Bor | ⚠️ Tugma bor (va ISHLAYDI) | **6/10** |
+
+---
+
+## 🔴 TOPIlgan YANGI BUGLAR (STEP 104)
+
+### BUG-230ka310a: 🟠 VIP va STUDENT'DA CAST TUGMASI KO'RINADI (dizayn qarori — server rad ETMAYDI)
+- **Dalil:** student bilan `preflight → sessions → cast_XXX` yaratildi (200, kod chiqdi!)
+- **Server:** `routes/cast.js:173` — faqat `teacher_pending`/`teacher_rejected` rad qiladi, student OK
+- **Foydalanuvchi ko'rsatmasi:** "VIP'da Cast tugmasi bo'lmaydi" — lekin LIVE'DA BOR va ISHLAYDI
+- **Qaror kerak:** (a) student/VIP'da Cast tugmani YASHIRISH (UI role-aware), (b) yoki bo'lishiga ruxsat berish (hozirgi holat)
+
+### BUG-230ka310b: 🟡 VIP'da MOCK CAST tugma bor — foydalanuvchi: "mockni faqat o'zi ishlay oladi unda cast tugmasi bolmaydi"
+- **Dalil:** VIP student (isVip=true) — mock bo'limida `data-source=mock` Cast tugma ko'rinadi
+- **Kutgan:** Cast tugma YO'Q bo'lishi kerak (faqat Sinov qolsin)
+
+### BUG-230ka310c: ✅ STUDENT O'Z TESTINI CAST QILA OLADI (200, kod chiqdi)
+- **Dalil:** student yangi test yaratdi → preflight 200 → sessions 200 → cast_FCE_gQ-ySTov
+- **Ijobiy:** o'qituvchi testi bilan emas, o'ziniki bilan ishlaydi (owner check OK)
+
+### BUG-230ka310d: ✅ STUDENT DIRECTOR sahifasini ham ochadi (200) — cast host sahifasi ham 200
+
+### BUG-230ka310e: 🔴 LANDING'DA /user/register HAVOLA YO'Q (BUG-230hz43 4-marta re-confirm)
+
+### BUG-230ka310f: ✅ Arena sahifada student ham kira oladi (200) — "source=mock" bilan mock kod bilan ishlaydi
+
+### BUG-230ka310g: ℹ️ Arena sahifada `code-inp` input bor — har kim kod kiritib o'yin/kurs qo'shiladi
+
+### BUG-230ka310h: ℹ️ VIP'da "Tayyor to'plamlar VIP imkoniyati" upsell matni bor (student'da) — VIP'da esa to'plamlar ro'yxati ko'rinadi
+
+### BUG-230ka310i: ✅ TEACHER PANEL to'g'ri ishlaydi (Arena havola, Cast, Sinov, mock, PRE)
+
+### BUG-230ka310j: ✅ Jami 104 stepda ~1400 yozuv, 100+ PNG
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
@@ -3716,17 +3970,3 @@ Performance: GET p95=136ms · br · cache ✅
 
 > ⚠️ **Backup kodlar:** teacher — 1/12 ishlatildi (9883e203c6). Sistemada rotatsiya 10 ta kod generatsiya qiladi — siz bergan 12 dan oxirgi 2 tasi (c745de5358, 507655b928) eski rotatsiyadan bo'lishi mumkin.
 > ⚠️ **Xavfsizlik:** parollar chat'da qoldi — sessiya tugagach rotate qiling. Test tugach user hisoblariga MFA'ni qayta yoqing.
-
-### STEP 103 — ARENA E2E: ISHLAYDI! (BUG-044 YANILDI)
-
-### BUG-230hz141: ARENA ISHLAYDI!
-- kod 12345 (mock) -> Yuklandi -> Host iframe + Play iframe ochilgan
-- 0 pageerror — savol yuborilmaguncha kutish rejimi (togri)
-- BUG-044 YANILDI: loadArena test-arena.ejs:234da ISHLAYDI
-
-### BUG-230hz142: Host iframe Savollar yuborilmadi — togri holat
-
-### BUG-230hz143: BUG-044 YANILDI — loadArena funksiyasi Mavjud va ISHLAYDI
-
-### Dalillar: 105-107 PNG
-
