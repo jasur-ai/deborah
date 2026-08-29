@@ -23,7 +23,11 @@
     th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--deborah-semantic-color-border-default, #e2e8f0); }
     th { font-size: .7rem; text-transform: uppercase; color: var(--deborah-semantic-color-text-secondary, #64748b); }
     @media (max-width: 600px) { .prof-grid { grid-template-columns: 1fr; } }
-  </style>
+  /* S24 S37.05: inline → class */
+.prof-badge--dash{text-decoration:none;padding:8px 14px;background:rgba(37,99,235,.1);color:var(--deborah-semantic-color-action-primary,#2563eb);}
+.prof-back{text-align:center;}
+.prof-back-link{color:var(--deborah-semantic-color-action-primary,#2563eb);font-weight:700;font-size:.85rem;}
+</style>
 </head>
 <body>
   <%
@@ -67,7 +71,7 @@
       </div>
       <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
         <a href="/admin/mfa" class="prof-badge prof-badge--ok" style="text-decoration:none;padding:8px 14px">MFA sozlamalari</a>
-        <a href="/admin/dashboard" class="prof-badge" style="text-decoration:none;padding:8px 14px;background:rgba(37,99,235,.1);color:var(--deborah-semantic-color-action-primary,#2563eb)">Boshqaruv paneli</a>
+        <a href="/admin/dashboard" class="prof-badge prof-badge--dash">Boshqaruv paneli</a>
         <a href="/admin/logout" class="prof-badge prof-badge--warn" style="text-decoration:none;padding:8px 14px">Chiqish</a>
       </div>
     </div>
@@ -91,7 +95,7 @@
         </table></div>
       <% } %>
     </div>
-    <p style="text-align:center"><a href="/admin/dashboard" style="color:var(--deborah-semantic-color-action-primary,#2563eb);font-weight:700;font-size:.85rem">← Panelga qaytish</a></p>
+    <p class="prof-back"><a href="/admin/dashboard" class="prof-back-link">← Panelga qaytish</a></p>
   </main>
 </body>
 </html>

@@ -123,6 +123,9 @@ async function loadInstitutionPolicies(tenantId) {
 // ── Preflight: POST /api/cast/preflight ──
 router.post('/api/cast/preflight', requireAuth, async (req, res) => {
   try {
+    if (await castHostDeniedFor(req)) {
+      return res.status(403).json({ ok: false, error: { code: 'NOT_AUTHORIZED', message: "VIP talaba uchun Cast yopiq — yakkaxon tayyorlanish (Mashq/Sinov) ishlating" } });
+    }
     const { source, draftConfig = {} } = req.body || {};
     if (!source || !source.type || !source.key) {
       return res.status(400).json({ ok: false, error: { code: 'CAST_CONFIG_INVALID', message: 'Manba ko‘rsatilmagan' } });
@@ -205,12 +208,33 @@ router.post('/api/cast/preflight', requireAuth, async (req, res) => {
   }
 });
 
+// ── S24 (QA STEP 104, BUG-230ka310a/hz153): VIP talaba Cast HOST qila olmaydi ──
+// User qarori: VIP = yakkaxon tayyorlanish (mock/pre/AI); oddiy student o'zi
+// yaratgan / ommaviy testiga Cast qiladi; teacher/admin boshqaradi.
+// Server-side majburiy — UI yashirishning o'zi yetarli emas.
+async function castHostDeniedFor(req) {
+  const u = req.session?.user;
+  if (!u) return true;
+  if (u.role === 'student') {
+    try {
+      const { fb } = await import('../firebase/admin.js');
+      const snap = await fb.get(`users/${u.safeKey}/isVip`);
+      if (snap.exists() && snap.val() === true) return true;
+    } catch (_) { /* fb xatosi — sessiya rolini bloklamaymiz */ }
+  }
+  return false;
+}
+
 // ── Session create: POST /api/cast/sessions ──
 // AUTH A-19 §08/§14: pending/rejected teacher cast session YARATA OLMAYDI.
 router.post('/api/cast/sessions', requireAuth, async (req, res) => {
   const _sRole = req.session?.user?.role;
   if (_sRole === 'teacher_pending' || _sRole === 'teacher_rejected') {
     return res.status(403).json({ error: 'Ruxsat etilmagan rol' });
+  }
+  // S24 (BUG-230ka310a): VIP talaba ham Cast session yarata olmaydi
+  if (await castHostDeniedFor(req)) {
+    return res.status(403).json({ error: 'VIP talaba uchun Cast yopiq' });
   }
   try {
     const { requestId, preflightId, source, presetId, overrides = {}, choreographyTemplateId, environment = 'production', tier } = req.body || {};

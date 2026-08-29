@@ -733,3 +733,22 @@ Kod o'zgarishi NOLTA. Da'vo qilingan lekin TURLIGAN topilmalar (repository'da ha
      Fix: git remote add origin <token'li URL> (token status'da emas — 1-marta
      `git remote -v` o'qilgan holda qayta qo'shish kerak). npm ci + playwright
      chromium (faqat vizual testlar uchun; PDF endi chromium'siz) resetdan keyin.
+
+── ✅ S24 (AI-A, 2026-08-29): QA STEP 104 BUGLARI (workspace branch, qa/BUG_REPORTS.md) ──
+ Manba: user "buglar bolimiga qara" → qa/BUG_REPORTS.md STEP 104 (aabce78, 15:11).
+ 1) BUG-230ka310a 🟠 + BUG-230hz153 🔴 — VIP talabada Cast YO'Q (user qarori):
+    panel.ejs'da isVip bo'lsa Cast tugmalar yashirin (hero + o'z-test qatori);
+    SERVER-side ham: cast.js castHostDeniedFor() — /api/cast/preflight VA /api/cast/sessions
+    VIP studentga 403 (NOT_AUTHORIZED, izohli xabar). Oddiy student o'z/public testiga
+    Cast QILADI (preflight 200 probe'da), teacher/admin bemalol.
+ 2) BUG-230ka310b 🟡 — mock/pre kartalaridan Cast tugma OLIB TASHLANDI
+    ("mockni faqat o'zi ishlay oladi — cast tugmasi bo'lmaydi"): endi faqat Sinov + Mashq.
+ 3) BUG-230ka310e 🔴 — landing nav'ga "Ro'yxatdan o'tish" CTA (/user/register, nav-cta
+    gold pill) + landing.js 4 tilga nav.register (uz/uz-Cyrl/ru/en). /user/register 200.
+ 4) BONUS (design gate qizil edi S22/S23'dan): 8 ta S37.05 inline-style hard error
+    (teacher.ejs ×5, profile.ejs ×2, ai-studio.ejs ×1) → classlarga ko'chirildi;
+    legacy usage regression (+1, teacher.ejs var(--green)) → tuzatildi.
+    design:check enda 6/6 PASS (tokens/contrast/lint/perf/legacy/ejs).
+ 5) Probe (4638): landing link ✓, VIP 0 Cast tugma + preflight/sessions 403 ✓,
+    student o'z testiga Cast 200 ✓, teacher Cast ✓. Regress: cast+landing vitest
+    242+37 ✓, visual critical-pages update+verify 70/70 ✓, 118 view compile ✓.

@@ -194,7 +194,9 @@
           <p class="ws-resume-meta"><%= tests[0].count %> ta savol · oxirgi yaratilgan</p>
         </div>
         <div class="ws-resume-actions">
+          <% if (!isVip) { %>
           <button type="button" class="btn btn-primary" data-source="user" data-key="<%= tests[0].key %>"><%- icon('gamepad', 15) %> Cast qilish</button>
+          <% } %>
           <button type="button" class="btn btn-quiet" onclick="openStartModal('<%= tests[0].name.replace(/'/g, "\\'") %>', <%= tests[0].count %>, '/user/test-arena?source=user&key=<%= tests[0].key %>')"><%- icon('zap', 15) %> Sinov</button>
         </div>
       </div>
@@ -327,7 +329,9 @@
             <span class="ws-vis ws-vis--<%= t.isPublic ? 'public' : 'private' %>" title="<%= t.isPublic ? 'Barcha ko\'ra oladi' : 'Faqat siz ko\'rasiz' %>">
               <%- icon(t.isPublic ? 'globe' : 'shield', 12) %> <%= t.isPublic ? 'Ommaviy' : 'Shaxsiy' %>
             </span>
+            <% if (!isVip) { %>
             <button type="button" class="btn btn-primary btn-sm" data-source="user" data-key="<%= t.key %>"><%- icon('gamepad', 14) %> Cast</button>
+            <% } %>
             <div class="ws-lib-overflow-wrap">
               <button type="button" class="ws-lib-overflow-btn" aria-haspopup="menu" aria-expanded="false" aria-label="<%= t.name %> uchun amallar" data-overflow="<%= t.key %>"><%- icon('more', 18) %></button>
               <div class="ws-lib-menu" role="menu" data-menu="<%= t.key %>">
@@ -385,7 +389,7 @@
               <div class="ws-ready-actions">
                 <button type="button" class="btn btn-quiet btn-sm" onclick="openStartModal('<%= f.name.replace(/'/g, "\\'") %>', <%= f.count %>, '/user/test-arena?source=mock&key=<%= f.key %>')"><%- icon('zap', 13) %> Sinov</button>
                 <a class="btn btn-quiet btn-sm" style="text-decoration:none" href="/user/practice?source=mock&key=<%= f.key %>"><%- icon('book', 13) %> Mashq</a>
-                <button type="button" class="btn btn-primary btn-sm" data-source="mock" data-key="<%= f.key %>"><%- icon('gamepad', 13) %> Cast</button>
+
               </div>
             </div>
           <% }); %>
@@ -410,7 +414,7 @@
                 <div class="ws-ready-actions">
                   <button type="button" class="btn btn-quiet btn-sm" onclick="openStartModal('<%= (g.title + ' - ' + c.name).replace(/'/g, "\\'") %>', <%= c.count %>, '/user/test-arena?source=pre&key=<%= g.key %>&chunk=<%= c.id %>')"><%- icon('zap', 13) %> Sinov</button>
                   <a class="btn btn-quiet btn-sm" style="text-decoration:none" href="/user/practice?source=pre&key=<%= g.key %>&chunk=<%= c.id %>"><%- icon('book', 13) %> Mashq</a>
-                  <button type="button" class="btn btn-primary btn-sm" data-source="pre" data-key="<%= g.key %>" data-chunk="<%= c.id %>"><%- icon('gamepad', 13) %> Cast</button>
+  
                 </div>
               </div>
             <% }); %>

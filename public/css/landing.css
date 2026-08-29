@@ -249,3 +249,8 @@ h1 em{font-style:italic;color:var(--ld-gold2)}
 .fld-hint.err{color:#c98a5c}
 input#rUser.ok{border-color:#7ca86b}
 input#rUser.err{border-color:#c98a5c}
+
+/* S24 (BUG-230ka310e): landing nav — ro'yxatdan o'tish CTA */
+.nav a.nav-cta{border:1px solid var(--ld-gold);border-radius:999px;padding:6px 14px;margin-left:6px;color:var(--ld-gold);font-weight:700}
+.nav a.nav-cta::after{display:none}
+.nav a.nav-cta:hover{background:var(--ld-gold);color:#15130d}
