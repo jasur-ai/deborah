@@ -837,3 +837,11 @@ Kod o'zgarishi NOLTA. Da'vo qilingan lekin TURLIGAN topilmalar (repository'da ha
      ko'rinmaydi; havola /ustoz saqlanadi.
   4) Regress: auth 491/491 ✓ logout-csrf+3 journey+security ✓ integration
      (a09/a20/a26/landing/landing-copy) 58/58 ✓ 119 view compile ✓.
+  5) FOLLOW-UP (4ec0bfe): Auth CI Stage 4 E2E 2 spec /user/logout kontraktiga
+     moslashtirildi (click #logout-confirm-btn 90s osilgan edi) → auth-e2e 5/5 ✓.
+     CI holati (4ec0bfe): Auth CI Stage 1-3/5 ✓ Stage 6 ✓; Deborah CI'da FAQAT
+     2 PRE-EXISTING qolgan: auth-a30 §06 (admin login MFA'siz 401 kutgan, 302
+     keladi) + telegram-b22 (anonim /user/telegram/link 200 — guard yo'q,
+     redirect kutadi). Ikkalasi 0922e9a'da HAM qizil edi (meniki emas) — tegishli
+     AI (B-22 telegram / A-30 admin MFA) tuzatsin. Design Gate S12 components
+     visual drift — 13:49'dan beri hamma commitda qizil (QARZ, keyingi step).
