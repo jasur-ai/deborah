@@ -53,8 +53,8 @@ test.describe('MFA — student uchun yo\u2018q (yangi spec)', () => {
     await expect(page.getByText(/kerak emas/i).first()).toBeVisible({ timeout: 10000 });
 
     // 4) Logout → parol bilan kirish MFA challengesiz panelga
+    // S28: GET /user/logout — darhol chiqish (D-17 §06), confirm tugmasi yo'q
     await page.goto('/user/logout');
-      await page.locator('#logout-confirm-btn').click().catch(() => {}); // BUG-032: POST tasdiq
     await page.goto('/user/login');
     await page.fill('#login-username', username);
     await page.fill('#login-password', password);

@@ -27,8 +27,9 @@ test.describe('AUTH D-14 — critical journey', () => {
     await page.waitForURL(/\/(user\/(login|panel)|panel)/, { timeout: 20000 });
     // Agar panelga tushgan bo'lsak, logout qilamiz (login oqimini ham tekshiramiz)
     if (page.url().includes('/panel')) {
+      // S28: GET /user/logout endi D-17 §06 kontrakti — darhol chiqaradi (302 → /),
+      // tasdiq tugmasi yo'q (UI'da logout POST bilan ishlaydi, BUG-037 sidebar).
       await page.goto('/user/logout'); // logout → bosh sahifa (sessiya tozalanadi)
-      await page.locator('#logout-confirm-btn').click().catch(() => {}); // BUG-032: POST tasdiq
     }
 
     // Login
