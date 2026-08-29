@@ -82,6 +82,37 @@ function resolveWithGovernance(presetId, overrides) {
 
 const router = Router();
 
+// ── S18 BUG-116: sessionId whitelist — barcha :id/:sessionId route'larda ──
+// generateSessionId() = 'cast_' + base64url(9 bayt) = 12 belgi. Lokal fb adapter
+// '..' resolve qiladi (S15 BUG-093 oilasi): traversal sessionId bilan meta/invite/
+// replay path'lari orqali mavjudlik-orakli va arb. yo‘l o‘qish mumkin edi.
+const CAST_SESSION_ID_RE = /^cast_[A-Za-z0-9_-]{12}$/;
+function castSessionParam(req, res, next, value, name) {
+  if (typeof value === 'string' && CAST_SESSION_ID_RE.test(value)) return next();
+  // API JSON, view route'lari redirect qiladi — status kodini route hal qiladi
+  req.castBadSessionId = true;
+  if (req.path.startsWith('/api/')) return res.status(404).json({ ok: false, error: { code: 'SESSION_NOT_FOUND', message: 'Sessiya topilmadi' } });
+  return res.redirect(req.session?.user ? '/user/panel' : '/play');
+}
+router.param('id', castSessionParam);
+router.param('sessionId', castSessionParam);
+
+// ── S18 BUG-119: /cast/qr public — per-IP rate limit (CPU DoS oldini olish) ──
+const QR_LIMIT = 30; // 1 daqiqa
+const QR_WINDOW = 60_000;
+const qrHits = new Map();
+function qrLimited(ip) {
+  const now = Date.now();
+  const key = String(ip || 'unknown');
+  const arr = (qrHits.get(key) || []).filter((ts) => now - ts < QR_WINDOW);
+  if (arr.length >= QR_LIMIT) return true;
+  arr.push(now);
+  qrHits.set(key, arr);
+  if (qrHits.size > 5000) qrHits.delete(qrHits.keys().next().value);
+  return false;
+}
+
+
 // C4-08: institution policy yuklash (dynamic import — test izolyatsiyasi)
 async function loadInstitutionPolicies(tenantId) {
   const { fb } = await import('../firebase/admin.js');
@@ -111,7 +142,15 @@ router.post('/api/cast/preflight', requireAuth, async (req, res) => {
     const expiresAt = Date.now() + 10 * 60 * 1000; // 10 min
 
     // Preflight receipt (server-side, in-memory + hash check on create)
+    // S18 BUG-120: receiptlar hech qachon tozalanmasdi — har preflight sessiya
+    // obyektini shishirardi (eski TTL o'tganlarini olib tashla + cap 10)
     const receipts = req.session.castPreflight = req.session.castPreflight || {};
+    const nowMs = Date.now();
+    for (const k of Object.keys(receipts)) {
+      if (receipts[k]?.expiresAt < nowMs) delete receipts[k];
+    }
+    const receiptKeys = Object.keys(receipts);
+    if (receiptKeys.length >= 10) delete receipts[receiptKeys[0]];
     receipts[preflightId] = {
       source: loaded.testId ? { type: source.type, key: source.key, chunk: source.chunk || null } : source,
       testId: loaded.testId,
@@ -723,6 +762,12 @@ router.get('/cast/:sessionId/quality-lab', requireAuth, async (req, res) => {
 router.get('/api/cast/sessions/:id/meta', requireAuth, async (req, res) => {
   try {
     const sessionId = req.params.id;
+    // S18 BUG-115: role tekshiruvi YO'Q edi — har qanday auth user HAR QANDAY
+    // sessiyaning joinCode'ini olib, begona live sessiyaga qo'shila olardi.
+    // /meta faqat director (staff) ishlatadi (cast-director.js:187).
+    const actorIdM = `user:${req.session?.user?.safeKey || req.session?.user?.username}`;
+    const roleM = await getRole(sessionId, actorIdM);
+    if (!roleM) return res.status(403).json({ ok: false, error: { code: 'NOT_AUTHORIZED', message: 'Siz bu sessiyaga tegishli emassiz' } });
     const { getSessionMeta, getState } = await import('../services/cast/session-store.js');
     const meta = await getSessionMeta(sessionId);
     if (!meta) return res.status(404).json({ ok: false, error: 'not_found' });
@@ -803,6 +848,8 @@ router.get('/cast/:sessionId/director', requireAuth, async (req, res) => {
 // ── S30.02: QR endpoint — GET /cast/qr?d=<url> (SVG) ──
 router.get('/cast/qr', async (req, res) => {
   try {
+    // S18 BUG-119: public endpoint — cheksiz QR generatsiya (CPU) DoS og'ri
+    if (qrLimited(req.ip)) return res.status(429).json({ error: 'rate_limited' });
     const data = String(req.query.d || '').slice(0, 200);
     if (!data || !/^[a-z0-9:/.?&=_%#-]+$/i.test(data)) {
       return res.status(400).json({ error: 'invalid qr data' });
@@ -859,10 +906,13 @@ router.post('/api/cast/sessions/:id/invites', requireAuth, async (req, res) => {
     if (!role || role.role !== 'owner') {
       return res.status(403).json({ ok: false, error: { code: 'NOT_OWNER', message: 'Faqat egasi taklif yarata oladi' } });
     }
-    const { role: targetRole = CAST_ROLES.CO_HOST, expiresInSeconds = 900 } = req.body || {};
+    const { role: targetRole = CAST_ROLES.CO_HOST } = req.body || {};
     if (![CAST_ROLES.CO_HOST, CAST_ROLES.MODERATOR].includes(targetRole)) {
       return res.status(400).json({ ok: false, error: { code: 'CAST_CONFIG_INVALID', message: 'Noma’lum rol' } });
     }
+    // S18 BUG-117: expiresInSeconds clamp yo'q edi — manfiy (darhol o'lik) yoki
+    // 1e9 (31 yil) qiymatlar qabul qilinardi
+    const expiresInSeconds = Math.max(60, Math.min(86400, Number(req.body?.expiresInSeconds) || 900));
     const nonce = crypto.randomBytes(16).toString('hex');
     const invite = {
       nonce,
@@ -897,6 +947,11 @@ router.post('/api/cast/sessions/:id/invites/redeem', requireAuth, async (req, re
 router.post('/api/cast/sessions/:id/invites/:nonce/revoke', requireAuth, async (req, res) => {
   try {
     const { id: sessionId, nonce } = req.params;
+    // S18 BUG-118: nonce fb path'ga tushadi (invites/{nonce}) — traversal bilan
+    // (nonce='../..') ixtiyoriy fb node remove chaqirilishi mumkin edi
+    if (!/^[a-f0-9]{32}$/.test(String(nonce || ''))) {
+      return res.status(400).json({ ok: false, error: { code: 'CAST_CONFIG_INVALID', message: 'Noto‘g‘ri nonce' } });
+    }
     const actorId = `user:${req.session?.user?.safeKey || req.session?.user?.username}`;
     const role = await getRole(sessionId, actorId);
     if (!role || role.role !== 'owner') {
@@ -990,7 +1045,12 @@ router.post('/api/cast/sessions/:id/legal-hold', requireAuth, async (req, res) =
     if (!role || !['owner', 'co_host'].includes(role.role)) {
       return res.status(403).json({ ok: false, error: { code: 'NOT_AUTHORIZED' } });
     }
-    const { scope = 'session', reason = '', expiresInDays = null } = req.body || {};
+    // S18 BUG-121: scope/reason clamp yo'q + holds array cheksiz o'sadi
+    const scopeRaw = req.body?.scope || 'session';
+    const scope = ['session', 'data'].includes(scopeRaw) ? scopeRaw : 'session';
+    const reason = String(req.body?.reason || '').slice(0, 500);
+    const expiresInDaysRaw = Number(req.body?.expiresInDays);
+    const expiresInDays = Number.isFinite(expiresInDaysRaw) ? Math.max(1, Math.min(3650, Math.floor(expiresInDaysRaw))) : null;
     const { buildLegalHold } = await import('../services/cast/data-policy.js');
     const { fb } = await import('../firebase/admin.js');
     const hold = buildLegalHold({ actor: actorId, scope, reason, expiresInDays });
@@ -999,6 +1059,9 @@ router.post('/api/cast/sessions/:id/legal-hold', requireAuth, async (req, res) =
     const holds = snap.exists() ? snap.val() : [];
     if (!Array.isArray(holds)) {
       return res.status(400).json({ ok: false, error: { code: 'CAST_CONFIG_INVALID', message: 'Legal hold ro‘yxati buzilgan' } });
+    }
+    if (holds.length >= 50) {
+      return res.status(400).json({ ok: false, error: { code: 'CAST_CONFIG_INVALID', message: 'Legal hold limiti (50)' } });
     }
     holds.push(hold);
     await fb.set(holdsPath, holds);

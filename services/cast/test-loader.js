@@ -27,9 +27,19 @@ export function validateSourceReference(source) {
   if (!source.key || typeof source.key !== 'string' || source.key.length > 120) {
     throw new CastError(CAST_ERROR_CODES.CONFIG_INVALID, 'Manba kaliti noto‘g‘ri');
   }
+  // S18 BUG-114 (KRITIK): kalit fb path'ga to‘g‘ridan-to‘g‘ri tushadi (user/mock/pre
+  // — 3 yo‘l). lokal fb adapter '..' resolve QILADI: source.key='../../users/VIKTIM/tests/x'
+  // bilan boshqa userning testi o‘qilar (preflight title/savollar + rehearsal’da
+  // ishlatish) edi. Path belgilarini butunlay bloklash:
+  if (!/^[A-Za-z0-9_.-]{1,120}$/.test(source.key) || source.key.includes('..') || source.key.startsWith('.')) {
+    throw new CastError(CAST_ERROR_CODES.CONFIG_INVALID, 'Manba kaliti noto‘g‘ri formatda');
+  }
   if (source.type === 'pre') {
     if (!source.chunk || typeof source.chunk !== 'string') {
       throw new CastError(CAST_ERROR_CODES.CONFIG_INVALID, 'PRE manbasi uchun chunk ko‘rsatilishi shart');
+    }
+    if (!/^[A-Za-z0-9_.-]{1,64}$/.test(source.chunk) || source.chunk.includes('..') || source.chunk.startsWith('.')) {
+      throw new CastError(CAST_ERROR_CODES.CONFIG_INVALID, 'PRE chunk kaliti noto‘g‘ri formatda');
     }
   }
   return {

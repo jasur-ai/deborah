@@ -508,6 +508,40 @@ teacher baxtli yo'l, limit clamp, accept 429, mapping 3 vektor, audit token-toza
 gate-0) + cast-a11y 19/19 (env: playwright chromium qayta o'rnatildi — sandbox reset .cache
 o'chirgan); **full vitest 7099/7108 — 9 ma'lum pre-existing, 0 S17 regress**; design-lint PASS ✓.
 
+## STEP 18 — 🟠 CAST REST qatlami (AI-A, koordinatsiya 1-step) — ✅
+**Buglar:** BUG-114/115/116/117/118/119/120/121 (jami 8; 2 tasi KRITIK)
+**Qanday (qaysi+qanday):**
+- **BUG-114 (KRITIK — IDOR/arb. o'qish)**: `services/cast/test-loader.js` `validateSourceReference`
+  — `source.key` faqat uzunlik bo'yicha tekshirilardi, fb path'ga to'g'ridan-to'g'ri tushardi
+  (user/mock/pre — 3 yo'l). `source.key='../../users/VIKTIM/tests/x'` bilan boshqa userning
+  MAXFIY testi o'qilar (preflight title/savollar leak) va rehearsal'da HATTO ISHLATILAR edi.
+  Fix: path-belgilar butunlay blok (`/^[A-Za-z0-9_.-]{1,120}$/` + '..'/boshlang'ich '.' yo'q),
+  PRE chunk ham xuddi shunday.
+- **BUG-115 (joinCode leak)**: `GET /api/cast/sessions/:id/meta` — role tekshiruvi YO'Q: har
+  qanday auth user HAR QANDAY sessiyaning joinCode'ini olib, begona live sessiyaga
+  qo'shila olardi. /meta faqat director (staff) ishlatadi (cast-director.js:187). Fix: getRole
+  bor bo'lishi shart (yo'q → 403).
+- **BUG-116 (traversal ×~25 route)**: `:id`/`:sessionId` whitelist'siz — meta (arb. node
+  mavjudlik-orakli + o'qish), invites, replay, quality path'lari fb'ga xom tushardi (S15
+  BUG-093 oilasi). Fix: `router.param('id'/'sessionId')` — `/^cast_[A-Za-z0-9_-]{12}$/`
+  (generateSessionId formati), API → 404 JSON, view → redirect.
+- **BUG-117**: invites `expiresInSeconds` clamp yo'q (manfiy → darhol o'lik, 1e9 → 31 yil).
+  Fix: clamp [60..86400].
+- **BUG-118**: invites revoke `:nonce` fb path'ga xom (`invites/{nonce}`) — traversal nonce
+  bilan arb. fb remove chaqirilishi mumkin edi. Fix: `/^[a-f0-9]{32}$/` (randomBytes(16) hex).
+- **BUG-119**: `/cast/qr` PUBLIC, rate limitsiz — cheksiz QR generatsiya (CPU DoS).
+  Fix: per-IP 30/daqiqa in-memory limit.
+- **BUG-120**: preflight receiptlari `req.session.castPreflight` hech tozalanmasdi — har
+  preflight sessiya obyektini shishirardi. Fix: TTL sweep + cap 10.
+- **BUG-121**: legal-hold `scope`/`reason`/`expiresInDays` clamp yo'q + holds array cheksiz.
+  Fix: scope whitelist ['session','data'], reason ≤500, days ≤3650, holds ≤50.
+**Tool:** `scripts/repro-step18-cast.mjs` (PORT 4620; 18 tekshiruv: 3 traversal manba vektor,
+4 sessionId vektor, begona/egasi meta, expiry clamp, nonce traversal, QR 429, receipts cap,
+legal-hold clamp, baxtli yo'llar — o'z testi preflight 200 + rehearsal sessiya yaratish).
+**Verify:** repro **18/18 HAMMASI OK**; ta'sirli 91/91 (cast-security/retention/governance/
+realtime) + 11/11 (e2e setup/lobby/join/director/projector + session-create/roles/projections);
+design-lint PASS ✓; **full vitest 7099/7108 — 9 ma'lum pre-existing (baseline aynan), 0 S18 regress**.
+
 ## ✅ YAKUNLANGANLAR
 - **STEP 1** (2026-08-27): BUG-009/010/012/044 + 2 yangi topilma — 6 fayl; brauzer 13/13 PASS, vitest 45/45.
 - **STEP 2** (2026-08-27): BUG-011/016/041 — 5 fayl + 3 test sinxron; brauzer 10/10 PASS, auth 491/491, integration 104/104.
@@ -588,5 +622,5 @@ NAVBAT: AI-A S18 → AI-B S19 → AI-A S20 → AI-B S21.
  • AI: GEMINI_API_KEY tokens.env'da; model gemini-3.6-flash (x-goog-api-key header).
  • Hajm ≤100MB: katta artefakt (screenshot/db dump) commit QILMANG; /tmp ishlatiling.
 
-AI-A HOLATI: setup davomida — S16+S17+S18-cleanup endi main'ga push qilinadi. S18 (cast) keyingi navbat.
+AI-A HOLATI: S18 (CAST REST) YAKUNLANDI va main'ga PUSH QILINDI (BUG-114..121). Keyingi: S20 (assessment/intervention/consideration) — AI-Bning fix(s19-admin) commiti kelgandan keyin.
 AI-B HOLATI: kutishda — S19'dan boshlaydi.
