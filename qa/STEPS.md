@@ -155,4 +155,5 @@
 - ✅ STEP 103 — ARENA E2E ISHLAYDI: kod 12345 -> host+play iframe -> 0 pageerror (BUG-044 YANILDI)
 - ✅ STEP 104 — ROL BO'YICHA TAHLIL: ADMIN 9/10, TEACHER 8/10, VIP 5/10 (Cast tugma ortiqcha), STUDENT 6/10 (Cast ISHLAYDI lekin yashirish kerakmi?) + BUG-230hz153
 - ✅ STEP 105 — STUDENT E2E 5/5 PASS: Test yaratish+Cast+Arena+Portfolio+Sessions hammasi ISHLAYDI (yangi deployda BUG-049/044 hal bo'lgan ko'rinadi!)
+- ✅ STEP 106 — TEACHER E2E: 4/6 PASS (panel/test/portfolio OK, cast/director hali buzilgan — BUG-049/052 re-confirm)
 - ✅ STEP 104 — ROL BO'YICHA TAHLIL: ADMIN 9/10 (arena bor), TEACHER 8/10 (arena+cast+sinov), VIP ⚠️ (Cast tugma ko'rinadi lekin kerak emas), STUDENT ⚠️ (Cast tugma ko'rinadi lekin 403)

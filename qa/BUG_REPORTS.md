@@ -3953,6 +3953,18 @@ Performance: GET p95=136ms · br · cache ✅
 
 ### BUG-230hz160: ✅ YAKUNIY — Student oqim to'liq PASS
 
+### STEP 106 — TEACHER E2E RE-VERIFY (6 test, 4 PASS, 2 FAIL)
+
+### BUG-230ka321: ✅ Test saqlash E2E PASS (yangi deployda ham)
+### BUG-230ka322: ✅ Teacher 4 tab PASS (overview/assessments/courses/grading)
+### BUG-230ka323: ✅ Portfolio xlsx import PASS
+### BUG-230ka324: ❌ CAST YARATISH — dialog ochiladi lekin preset click TypeError (BUG-230hz101 re-confirm: cast-studio dialog'da element havolalari noto'g'ri)
+### BUG-230ka325: ❌ Director sahifada kod "—" (BUG-049 re-confirm — cast-director.js:1203 null addEventListener)
+
+### BUG-230ka326: ℹ️ XULOSA: Teacher panel/create-test/portfolio OK (yangi deployda fix ishlaydi), lekin CAST modulida hali 2 Critical bug bor (BUG-049/052)
+
+### BUG-230ka327: ✅ IJOBIY — Teacher E2E 4/6 PASS (67%) — asosiy oqimlar ishlaydi, faqat Cast darajasida muammo
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
