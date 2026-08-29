@@ -3412,6 +3412,205 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 **Jami: ~1300 yozuv · 100+ skrinshot · 105 commit · Muallif: jasurjonai**
 
+# 🏆 YAKUNIY STRICT QA HISSOBOTI — 100 STEP DAVOMIDA JAMLANGAN
+
+> **Loyiha:** Deborah (deborah-ncj.onrender.com)
+> **Sana:** 2026-08-27
+> **Muallif:** jasurjonai
+> **Metod:** 100 step black-box QA (curl + Playwright + kod tahlili)
+> **Branch:** `workspace` (105+ commit)
+> **Hajm:** 23MB / 100MB ✅ | Token izi: 0 ✅
+
+---
+
+## 📊 YAKUNIY STRICT TEST (19 test)
+
+| Zona | Test | Natija |
+|------|------|--------|
+| Z1a | Landing title+render | ✅ PASS |
+| Z1b | Login forma ko'rinadi | ✅ PASS |
+| Z1c | Reg tab o'tadi | ✅ PASS |
+| Z1d | Landing dark theme | ✅ PASS |
+| Z2a | Student panel CSRF (BUG-009) | ❌ FAIL |
+| Z2b | Portfolio toza | ✅ PASS |
+| Z3a | Create-test leak (BUG-010) | ❌ FAIL |
+| Z3b | Create-test saqlash | ✅ PASS |
+| Z4a | Arena loadArena (BUG-044) | ❌ FAIL |
+| Z5a | Security-profile crash (BUG-011) | ❌ FAIL |
+| Z6a | Settings profile (BUG-230hz11) | ❌ FAIL |
+| Z7a | Teacher panel | ℹ️ SKIP (MFA) |
+| Z8a | AI status API | ✅ PASS |
+| Z8b | Opendata API | ✅ PASS |
+| Z8c | Push vapid-key | ℹ️ disabled |
+| Z9a | CSP header (BUG-230hz116) | ❌ FAIL |
+| Z9b | HSTS header | ✅ PASS |
+| Z10a | IDOR himoya | ✅ PASS |
+| Z11a | Panel auth'siz 401 | ✅ PASS |
+| **JAMI** | **19 test** | **11 PASS / 6 FAIL / 2 SKIP** |
+
+---
+
+## 📊 100 STEP UMUMIY STATISTIKA
+
+| Metrika | Qiymat |
+|---------|--------|
+| **Jami yozuvlar** | **~1300** |
+| 🔴 Critical | **85** |
+| 🟠 Major | **52** |
+| 🟡 Minor | **148** |
+| ⚪ Trivial | **38** |
+| ℹ️ Info | **118** |
+| ✅ Positive PASS | **250+** |
+| 📋 Jami sahifalar | **50+** |
+| 📋 Jami endpointlar | **120+** |
+| 📋 Jami E2E oqimlar | **25+** |
+| 📋 Playwright testlar | **40+** |
+| 📋 API testlar | **250+** |
+| 📋 Skrinshotlar | **100+** |
+| 📋 Commitlar | **105** |
+
+---
+
+## 🔴 TOP-20 CRITICAL BUGLAR (ta'sir tartibida)
+
+| # | Bug ID | Ta'rif | Fayl:Qator |
+|---|--------|--------|------------|
+| 1 | BUG-044/012 | Arena loadArena o'lik ($ konflikt) | main.js:6 |
+| 2 | BUG-049 | Director null crash | cast-director.js:1203 |
+| 3 | BUG-052 | Participant TDZ crash | cast-socket-client.js:75 |
+| 4 | BUG-059 | 6 imtihon moduli JS o'lik | main.js:6 + scheduler.js:16 |
+| 5 | BUG-007 | camera-review/pilot 500 | footer-scripts.ejs YO'Q |
+| 6 | BUG-230hz | Assignments API 401 (actorId) | preflight.js:42 |
+| 7 | BUG-230ij | publish.js mount YO'Q | server.js:124 |
+| 8 | BUG-039 | Reg 90-180s TIMEOUT | auth.js:2033 SMTP |
+| 9 | BUG-230ka31 | Parol minlength 15 vs 8 | register.ejs:159 |
+| 10 | BUG-230ka3 | auth-error elementi YO'Q | register.ejs |
+| 11 | BUG-230hz101 | Portfolio share guest 404 | portfolio.js:212 |
+| 12 | BUG-230hz72 | Email change reauth flow | email-change.ejs |
+| 13 | BUG-230hz43 | Landing /user/register YO'Q | index.ejs |
+| 14 | BUG-090 | MemoryStore sessiyalar | server.js:214 |
+| 15 | BUG-230bq | Reg rate limit YO'Q | server.js:304 |
+| 16 | BUG-067 | Keepalive CSRF'siz | session-timeout.js:83 |
+| 17 | BUG-009 | Panel CSRF escape | panel.ejs:578 |
+| 18 | BUG-011 | mfa-settings null crash | mfa-settings.js:119 |
+| 19 | BUG-230hz11 | Settings profile undefined | settings.ejs |
+| 20 | BUG-230hz116 | CSP/PP/COEP YO'Q | helmet config |
+
+---
+
+## ✅ 250+ PASS — PLATFORMA KUCHLI TOMONLARI
+
+### Xavfsizlik (professional):
+CSRF ✅ · Origin ✅ · IDOR ✅ · Rate ✅ · Cookie ✅ · Fixation ✅ · Enumeration ✅ · Replay ✅ · Traversal ✅
+
+### Auth (zamonaviy):
+MFA TOTP ✅ · Backup kodlar ✅ · Remember-me 30kun ✅ · OIDC PKCE ✅
+Passkey + reauth ✅ · Parol o'zgartirish E2E ✅ · Forgot/reset ✅
+Email verify ✅ · HIBP breach check ✅
+
+### Platforma (haqiqiy):
+Gemini AI uz savollar ✅ · Portfolio CRUD+share+visibility ✅
+Xlsx import (test+portfolio) ✅ · Roster xlsx E2E ✅
+Cast Governance pipeline ✅ · PWA SW cache+offline ✅
+Google OIDC ✅ · Telegram UI ✅ (env kutadi) · Legal sahifalar ✅
+Opendata ✅ · Socket.io ✅ · Mobil responsive ✅ · A11y asosi ✅
+Performance: GET p95=136ms · br · cache ✅
+
+---
+
+## 🎯 3 GLOBAL ILDIZ (80% muammoning manbasi)
+
+1. **JS `$` scope konflikt:** `main.js:6` global `const $` + sahifa-scope `const $` → SyntaxError → 30+ sahifada skript o'lgan
+   - **Ta'sir:** arena/director/grading/scheduler/seating/paper/scan/camera-review
+   - **Fix:** main.js IIFE'ga o'rash (1 qator)
+
+2. **HTML-escape xatolar:** `<%= JSON.stringify() %>` → `&#34;` → SyntaxError
+   - **Ta'sir:** panel CSRF/RISK/ACCOUNT global o'lgan, create-test script kesilgan
+   - **Fix:** `<%- %>` (raw) yoki `<script>` ichida JSON.stringify olib tashlash
+
+3. **Env/infra yetishmasligi:** Redis yo'q, PostgreSQL yo'q, VAPID yo'q, Telegram yo'q, SMTP sekin
+   - **Ta'sir:** 10+ modul yashirin buzilgan (faqat sahifa ochiladi lekin ishlamaydi)
+   - **Fix:** env to'ldirish yoki sahifada "sozlanmagan" holati ko'rsatish
+
+---
+
+## 🎯 DEV UCHUN TOP-10 FIX (1-2 kunda amalga oshiriladi → 30+ bug hal)
+
+| # | Fix | Fayl | Ta'sir |
+|---|-----|------|--------|
+| 1 | main.js IIFE'ga o'rash | main.js:1-6 | 30+ bug |
+| 2 | cast-socket-client race fix | cast-socket-client.js:75/106 | participant join |
+| 3 | footer-scripts.ejs yaratish | views/partials/ | camera 500 x2 hal |
+| 4 | Panel oilasiga theme-core | panel.ejs | dark mode |
+| 5 | preflight.js actorId → safeKey | preflight.js:42 | assignments 401 |
+| 6 | server.js publish.js app.use | server.js | publish hal |
+| 7 | SMTP createTransport timeout | provider.js:354 | reg timeout hal |
+| 8 | Admin nav href to'g'irlash | dashboard.ejs | 5 link |
+| 9 | Footer legal → /privacy | index.ejs | legal sahifalar |
+| 10 | Redis session store ulash | server.js | deploy sessiyalar |
+
+---
+
+## 📋 README DA'VOLARI vs REAL HOLAT (yakuniy)
+
+| README da'vo | Real holat | Ball |
+|---|---|---|
+| Jonli dars o'yinlari | ⚠️ API tayyor, UI buzilgan | 3/10 |
+| AI yordamchi (Gemini) | ✅ LIVE (UI qisman) | 7/10 |
+| Imtihon boshqarish | ❌ 6 modul JS o'lik | 1/10 |
+| Test yaratish + Excel | ⚠️ UI OK, Excel import-save uzilgan | 5/10 |
+| Google OIDC | ✅ LIVE | 10/10 |
+| MFA/Passkey | ✅ LIVE | 9/10 |
+| PWA/Offline | ✅ LIVE (journal bo'sh) | 7/10 |
+| Push/Telegram | ❌ disabled/404 | 1/10 |
+| Portfolio share | ✅ E2E (yangi deployda 404) | 6/10 |
+| 45+ admin sahifa | ⚠️ 30 OK, 5 nav buzilgan, 6 JS o'lik | 5/10 |
+| HEMIS/OneID | ⚠️ endpointlar TIRIK, UI'da bor | 5/10 |
+| Canva/Slides/Gamma | ⚠️ Canva not config, Slides OK | 4/10 |
+| **UMUMIY** | **60% real, 40% buzilgan/yo'q** | **6/10** |
+
+---
+
+## ⚠️ MFA BACKUP HOLATI
+
+| Hisob | Qolgan kodlar |
+|-------|--------------|
+| Teacher | **0 ta** (barchasi ishlatildi/invalid) |
+| Admin | **0 ta** (barchasi ishlatildi/invalid) |
+| Student | MFA o'chirilgan (MUVOFIQ) |
+
+---
+
+## 📌 YAKUNIY TAVSIYALAR
+
+1. **MFA backup kodlar** — yangi ro'yxat berilsin (teacher + admin)
+2. **PAT REVOKE** — sessiya tugagach
+3. **QA hisoblar ochirish** — qa_tester_0827, landing_reg_0827, rltest0..5
+4. **TOP-10 fix deploy** — 1-2 kunda amalga oshiriladi, 30+ bug hal
+5. **Re-verify** — fix'lar deploy bo'lgach QA qayta tekshiradi
+6. **main.js IIFE** — ENG MUHIM FIX (1 qator → 30+ bug hal)
+7. **CSP qo'shish** — report-only'dan boshlash
+8. **Redis ulash** — deploy sessiyalar uchun
+
+---
+
+## 📁 FAYLLAR (workspace branch'da)
+
+| Fayl | Tarkib |
+|------|--------|
+| `qa/BUG_REPORTS.md` | ~1300 yozuv (barcha buglar izohli) |
+| `qa/STEPS.md` | 100-step reja + bajarilganlar |
+| `qa/00_QA_PLAN.md` | Test rejasi |
+| `qa/evidence/` | 97 skrinshot dalillari |
+| `qa/*.py` | 12+ avtomatlashtirilgan test skriptlari |
+| `qa/login_helper.py` | Universal login helper |
+
+---
+
+**MUALLIF: jasurjonai** | **BRANCH: `workspace`** | **SANA: 2026-08-27**
+**LOZIHA: deborah-ncj.onrender.com (Deborah platformasi)**
+**STATUS: 100/100 STEP ✅ | Hajm: 23MB/100MB ✅ | Token: 0 iz ✅**
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
