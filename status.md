@@ -718,3 +718,18 @@ Kod o'zgarishi NOLTA. Da'vo qilingan lekin TURLIGAN topilmalar (repository'da ha
 6) Probe (4632): 6 eksport yo'li 200 (xlsx/pptx/pdf-deck/pdf-savollar/docx-savollar/docx-deck),
    server PDF round-trip: 'қайси' ✓ '1991' ✓ '»' ✓ 'Izoh' ✓. Regress: 118 view ✓, vitest 18/18 ✓.
    Eslatma: Noto latin-greek-cyrillic buildida ✓(U+2713) yo'q → PDFda » ishlatiladi (docx'da ✓).
+
+── ✅ S23 MUSTAQIL VERIFIKATSIYA (AI-A, 2026-08-29, 4de3831 ustida) ──
+ Parallel holat: user PDF+DOC so'rovini ikki AI'ga bergan; ikkinchi implementatsiya
+ (minipdf TTF-embed, NotoSans repo'da — runtime chromium TALAB QILMAYDI) 14:40'da
+ main'ga tushdi. Menning playwright-variantim (2b35732, LOCAL, push QILINMADI)
+ dublikat — tashlab etildi; chromium'siz yechim deployment uchun to'g'ri tanlov.
+ Mustaqil probe (PORT 4636, yangi seed): 6/6 eksport 200 — xlsx(16.9K) /
+ pdf-savollar(%PDF, » to'g'ri-javob marker, footer) / docx-savollar(✓ yashil-bold) /
+ pdf-deck / docx-deck / pptx(minizip refactoridan keyin ham valid).
+ PDF round-trip: lotin ✓ 1991 ✓ қ ✓ ў/ғ ✓ ʻ(U+02BB) ✓ Izoh ✓. docx zip 8 qism ✓.
+ Regress: node --check 4 fayl ✓, 118 view compile ✓, vitest ai 18/18 ✓.
+ ⚠️ MUHIT: sandbox reset .git/config'ni yuvadi (snapshot chiqarilgan) → remote yo'qoladi.
+     Fix: git remote add origin <token'li URL> (token status'da emas — 1-marta
+     `git remote -v` o'qilgan holda qayta qo'shish kerak). npm ci + playwright
+     chromium (faqat vizual testlar uchun; PDF endi chromium'siz) resetdan keyin.
