@@ -446,6 +446,38 @@ rename 404/400, clamp, bounds, archived/updated_at, UI chiqindi-siz save oqimi, 
 ishtirokchilari); **full vitest 7098/7108 — 9 fail ma'lum pre-existing + 1 flake (hemis
 register-burst, izolyatsiyada 6/6 o'tadi), 0 S15 regress**; design-lint PASS ✓.
 
+## STEP 16 — 🟠 O'yin/arena qatlami (socket + game routes) — ✅
+**Buglar:** BUG-100/101/102/103/104/105/106 (jami 7; traversal oilasi davomi)
+**Qanday (qaysi+qandan):**
+- **BUG-100 (public HTTP)**: `/arena/api/check-session?code=../users` — kod whitelist'siz fb
+  path'ga tushardi → IXTIYORIY fb node mavjudligini tekshirish ORAKLI (auth'siz!).
+  add-bots/cleanup-bots ham xuddi shunday. Fix: `/^\d{5}$/` (game kodlari 10000–99999).
+- **BUG-101 (socket ×13 handler)**: `code` parametri hamma handler'da xom — fb lokal adapter
+  `..` resolve qiladi (S15 BUG-093): checkCode/rejoin/watch oraqali mavjudlik-orakli va arb.
+  yo'l o'qish. Fix: `validGameCode()` — host:create'dan tashqari barcha handlerlarda.
+- **BUG-102 (KRITIK — arb. yozish)**: `arena:botAnswer` `playerName` SANITIZE QILINMAGAN
+  (player:join'dan farqli) — host `playerName='../../../../users/X'` yuborsa fb.set
+  IXTIYORIY node'ni (masalan user'ni butunlay) {option, server_time_ms, accepted_at} ga
+  yozib tashlaydi. Har qanday auth'li user o'z o'yinini yaratab botAnswer sleta oladi.
+  Fix: `validPlayerName()` (join regex'i bilan bir xil: ≤30 belgi, `[.$#\[\]/]` blok).
+- **BUG-103**: `player:answer`/`arena:botAnswer` — `optionIndex` faqat ≥0 tekshirilardi:
+  999 kabi 'javoblar' qabul qilinib, answer:count/noto'g'ri auto-advance buzardi.
+  Fix: savol variantlari sonidan oshsa `rejected_invalid`.
+- **BUG-104**: `normalizeQuestion` buxoroni o'tkazardi: PRE-formatda `isCorrect` bo'lmasa
+  `correct:-1` (hech kim to'g'ri javob bera olmaydi), matnsiz/1-variantli savollar,
+  `correct` chiroqdan tashqari (99). Fix: null/clamp + matn trim/≤2000, variantlar ≤12.
+- **BUG-105**: `host:create` payload chegarasiz — megabaytlab savol/matn (socket orqali),
+  `timePerQ`/`type`/`bg` ixtiyoriy qiymatlar. Fix: nomlar ≤300/≤60, ≤300 savol, TIME_OPTIONS
+  whitelist, type/bg whitelist.
+- **BUG-106**: `/host/:code` (game.js) — kod regex'siz fb.get + render (URL-paramda '/'
+  Express bloklaydi, ammo 5-raqamli bo'lmagan kod xom path'ga tushardi). Fix: regex → redirect.
+**Tool:** `scripts/repro-step16.mjs` (PORT 4616, socket.io-client; 25 tekshiruv: normalize
+birliklari, HTTP+socket traversal vektorlar, bounds, to'liq baxtli yo'l — create→join→start→
+answer→idempotency→leaderboard(100 ball)→end, victim-saqlanishi, host sahifa).
+**Verify:** repro **25/25 HAMMASI OK**; ta'sirli 175/175 (helpers/api-contracts/legacy/
+rate-limiter/socket/gate-0/cast-security); **full vitest 7098/7108 — 9 ma'lum pre-existing +
+1 flake (createRoleInvite, izolyatsiyada 13/13), 0 S16 regress**; design-lint PASS ✓.
+
 ## ✅ YAKUNLANGANLAR
 - **STEP 1** (2026-08-27): BUG-009/010/012/044 + 2 yangi topilma — 6 fayl; brauzer 13/13 PASS, vitest 45/45.
 - **STEP 2** (2026-08-27): BUG-011/016/041 — 5 fayl + 3 test sinxron; brauzer 10/10 PASS, auth 491/491, integration 104/104.
@@ -462,6 +494,7 @@ register-burst, izolyatsiyada 6/6 o'tadi), 0 S15 regress**; design-lint PASS ✓
 - **STEP 13** (2026-08-28): BUG-078…083 (participant [hidden] +733px overflow, director topbar +315px, iOS input-zoom <16px, touch-target <24px) — scan 36 sahifa 0 buzilish, repro 24/24, cast e2e 21+5, design-lint PASS.
 - **STEP 14** (2026-08-29): BUG-084…092 (cookie-parser yo'q, resolveAuthLang(req) ×2, /locales 404 — cast i18n o'lik, AUTH_COPY nav/sidebar/settings 4 til ≈200 tarjima, theme-control EN fallback, uz-cyrl lotin qoldiqlar, hreflang, landing klient tili serverni bosardi) — repro 23/23, full 7099/7108 (9 pre-existing), design-lint PASS.
 - **STEP 15** (2026-08-29): PUSH (S11–S14 → origin) + BUG-093..099 (KRITIK test-API path-traversal IDOR ×8 endpoint, rename ghost/bounds, correct clamp, explanation/option/tags bounds, edit arxiv yo'qolishi, test-builder 8×EJS-chiqindi, xlsx CDN→self-host) — repro 26/26, 146/146 ta'sirli, full 7098/7108 (0 regress).
+- **STEP 16** (2026-08-29): BUG-100..106 (arena check-session oracle, socket code traversal ×13, botAnswer playerName arb-yozish KRITIK, optionIndex bounds, normalizeQuestion buxoro, host:create caps, /host/:code regex) — repro 25/25 (baxtli yo'l bilan), 175/175 ta'sirli, full 7098/7108 (0 regress).
 
 ## 📋 MANBA HAVOLALAR
 - BUG hisobotlari: `workspace` branch → `qa/BUG_REPORTS.md`

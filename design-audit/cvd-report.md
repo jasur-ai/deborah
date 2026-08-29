@@ -1,6 +1,6 @@
 # Deborah CVD Report (S06.08-09)
 
-Generated: 2026-08-29T10:25:43.325Z
+Generated: 2026-08-29T10:52:06.999Z
 Distinctness checks: 67 | PASS: 46 | INFO (grayscale, qonuniy): 13 | Warnings: 8 | Hard FAIL: 0
 
 ## CVD simulation — status/answer distinctness (min Δ ≥ 30)

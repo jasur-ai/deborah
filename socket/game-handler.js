@@ -21,6 +21,20 @@ import { GAME_SETTINGS, CARTOON_CHARS } from '../utils/constants.js';
 // ── Valid character images (for XSS prevention) ──
 const VALID_CHAR_PATHS = new Set(CARTOON_CHARS.map(c => c.image));
 
+// ── S16 BUG-100/101/102: kirish validatsiyasi ──
+// fb lokal adapter '..' segmentlarni resolve QILADI (S15 BUG-093'dan ma'lum):
+// socket 'code' parametri whitelist'siz fb path'ga tushardi — mavjudlik orakli
+// (check-session/checkCode), arb. yo'l o'qish (rejoin/watch) va botAnswer'da
+// playerName traversal bilan IXTIYORIY node'ga yozish mumkin edi.
+const GAME_CODE_RE = /^\d{5}$/; // generateGameCode: 10000..99999
+function validGameCode(code) {
+  return typeof code === 'string' && GAME_CODE_RE.test(code) ? code : null;
+}
+function validPlayerName(name) {
+  const s = typeof name === 'string' ? name.trim().slice(0, 30) : '';
+  return (s && !/[.$#\[\]\/]/.test(s)) ? s : null;
+}
+
 const activeTimers = new Map();
 
 export function setupSocketHandlers(io, socket, rateLimiter, identity) {
@@ -47,7 +61,18 @@ export function setupSocketHandlers(io, socket, rateLimiter, identity) {
   // ── HOST: Create game session ──
   socket.on('host:create', wrap('host:create', async (data) => {
     try {
-      const { testName, questions, settings, hostName } = data;
+      const { settings } = data;
+      // S16 BUG-105: socket orqali kelgan payload chegaralanmagan edi —
+      // megabaytlab savol/matn saqlash (resurs). BUG-014 siyosati bilan izchil.
+      const testName = String(data.testName || 'Test').trim().slice(0, 300) || 'Test';
+      const hostName = String(data.hostName || 'Host').trim().slice(0, 60) || 'Host';
+      const questions = Array.isArray(data.questions) ? data.questions : null;
+      if (!questions || !questions.length) {
+        return socket.emit('error', { message: 'Savollar yuborilmadi' });
+      }
+      if (questions.length > 300) {
+        return socket.emit('error', { message: 'Test juda katta (≤300 savol)' });
+      }
       let code = generateGameCode();
       
       let exists = await fb.get(`game_sessions/${code}`);
@@ -56,17 +81,22 @@ export function setupSocketHandlers(io, socket, rateLimiter, identity) {
         exists = await fb.get(`game_sessions/${code}`);
       }
 
-      const normalizedQuestions = (questions || []).map(normalizeQuestion).filter(Boolean);
+      // S16 BUG-104: normalizeQuestion endi buxoro savollarni tashlaydi
+      const normalizedQuestions = questions.map(normalizeQuestion).filter(Boolean);
+      if (!normalizedQuestions.length) {
+        return socket.emit('error', { message: "Savollar formati yaroqsiz (matn + kamida 2 variant + to'g'ri javob shart)" });
+      }
 
       const sessionData = {
         host: hostName || 'Host',
         test_name: testName || 'Test',
         questions: normalizedQuestions,
         settings: {
-          time_per_q: settings?.timePerQ || GAME_SETTINGS.DEFAULT_TIME,
-          type: settings?.type || 'score',
+          // S16 BUG-105: faqat ruxsat etilgan vaqt/tur qiymatlari
+          time_per_q: GAME_SETTINGS.TIME_OPTIONS.includes(Number(settings?.timePerQ)) ? Number(settings.timePerQ) : GAME_SETTINGS.DEFAULT_TIME,
+          type: ['score', 'speed'].includes(settings?.type) ? settings.type : 'score',
           auto: settings?.auto !== false,
-          bg: settings?.bg || 0,
+          bg: Number.isInteger(+settings?.bg) ? Math.max(0, Math.min(8, +settings.bg)) : 0,
         },
         players: {},
         state: { status: 'waiting', q_index: 0, q_started_at: 0 },
@@ -97,7 +127,8 @@ export function setupSocketHandlers(io, socket, rateLimiter, identity) {
   // ── PLAYER: Check if code exists ──
   socket.on('player:checkCode', wrap('player:checkCode', async (data) => {
     try {
-      const { code } = data;
+      const code = validGameCode(data.code); // S16 BUG-101
+      if (!code) return socket.emit('code:checked', { exists: false });
       const snap = await fb.get(`game_sessions/${code}`);
       if (snap.exists()) {
         const session = snap.val();
@@ -114,7 +145,9 @@ export function setupSocketHandlers(io, socket, rateLimiter, identity) {
   // ── PLAYER: Check if name is available ──
   socket.on('player:checkName', wrap('player:checkName', async (data) => {
     try {
-      const { code, name } = data;
+      const code = validGameCode(data.code); // S16 BUG-101
+      const name = validPlayerName(data.name);
+      if (!code || !name) return socket.emit('name:checked', { available: false });
       const snap = await fb.get(`game_sessions/${code}/players/${name}`);
       socket.emit('name:checked', { available: !snap.exists() });
     } catch (err) {
@@ -125,7 +158,8 @@ export function setupSocketHandlers(io, socket, rateLimiter, identity) {
   // ── PLAYER: Rejoin session ──
   socket.on('player:rejoin', wrap('player:rejoin', async (data) => {
     try {
-      const { code } = data;
+      const code = validGameCode(data.code); // S16 BUG-101
+      if (!code) return socket.emit('rejoin:state', { status: 'expired' });
       const snap = await fb.get(`game_sessions/${code}`);
       if (!snap.exists()) {
         socket.emit('rejoin:state', { status: 'expired' });
@@ -154,7 +188,11 @@ export function setupSocketHandlers(io, socket, rateLimiter, identity) {
   // ── PLAYER: Join game (atomic name check) ──
   socket.on('player:join', wrap('player:join', async (data) => {
     try {
-      const { code, playerName, emoji } = data;
+      const code = validGameCode(data.code); // S16 BUG-101
+      if (!code) {
+        return socket.emit('error', { message: "Noto'g'ri o'yin kodi" });
+      }
+      const { emoji } = data;
       const snap = await fb.get(`game_sessions/${code}`);
       
       if (!snap.exists()) {
@@ -166,8 +204,8 @@ export function setupSocketHandlers(io, socket, rateLimiter, identity) {
         return socket.emit('error', { message: 'O\'yin allaqachon boshlangan' });
       }
 
-      const safeName = playerName.trim().slice(0, 30);
-      if (!safeName || /[.$#\[\]\/]/.test(safeName)) {
+      const safeName = validPlayerName(data.playerName);
+      if (!safeName) { // S16: validPlayerName regex bilan (traversal '.' ham yopilgan)
         return socket.emit('error', { message: 'Noto\'g\'ri ism formati' });
       }
 
@@ -211,7 +249,8 @@ export function setupSocketHandlers(io, socket, rateLimiter, identity) {
   // ── HOST: Start game (ownership check) ──
   socket.on('host:start', wrap('host:start', async (data) => {
     try {
-      const { code } = data;
+      const code = validGameCode(data.code); // S16 BUG-101
+      if (!code) return;
       // ABAC ownership check
       const isOwner = await requireOwnership(code);
       if (!isOwner) return;
@@ -235,7 +274,9 @@ export function setupSocketHandlers(io, socket, rateLimiter, identity) {
   // ── HOST: Next question (ownership check) ──
   socket.on('host:next', wrap('host:next', async (data) => {
     try {
-      const { code, currentIndex } = data;
+      const code = validGameCode(data.code); // S16 BUG-101
+      if (!code) return;
+      const currentIndex = Number.isInteger(data.currentIndex) ? data.currentIndex : -1;
       // ABAC ownership check
       const isOwner = await requireOwnership(code);
       if (!isOwner) return;
@@ -265,9 +306,11 @@ export function setupSocketHandlers(io, socket, rateLimiter, identity) {
   //   - Every answer gets a deterministic ACK
   socket.on('player:answer', wrap('player:answer', async (data) => {
     try {
-      const { code, qIndex, optionIndex, idempotencyKey } = data;
+      const code = validGameCode(data.code); // S16 BUG-101
+      const { optionIndex, idempotencyKey } = data;
+      const qIndex = Number.isInteger(data.qIndex) ? data.qIndex : -1;
       const playerName = socket.data.playerName;
-      if (!playerName || !code) return;
+      if (!playerName || !code || qIndex < 0) return;
 
       // 1. Validate answer format
       if (typeof optionIndex !== 'number' || optionIndex < 0) {
@@ -309,6 +352,17 @@ export function setupSocketHandlers(io, socket, rateLimiter, identity) {
           status: 'rejected_late', qIndex,
           serverTimeMs,
           reason: 'Vaqt tugagan',
+        });
+      }
+
+      // S16 BUG-103: variant indeksi savol variantlari sonidan oshmasin —
+      // 999 kabi 'javoblar' qabul qilinib, answer:count/auto-advance buzilardi
+      const curQ = (session.questions || [])[qIndex];
+      if (!curQ || optionIndex >= (curQ.options || []).length) {
+        return socket.emit('answer:ack', {
+          status: 'rejected_invalid', qIndex,
+          serverTimeMs: 0,
+          reason: 'Bunday variant mavjud emas',
         });
       }
 
@@ -402,7 +456,8 @@ export function setupSocketHandlers(io, socket, rateLimiter, identity) {
   // ── HOST: Force next (ownership check) ──
   socket.on('host:forceNext', wrap('host:forceNext', async (data) => {
     try {
-      const { code } = data;
+      const code = validGameCode(data.code); // S16 BUG-101
+      if (!code) return;
       // ABAC ownership check
       const isOwner = await requireOwnership(code);
       if (!isOwner) return;
@@ -412,7 +467,7 @@ export function setupSocketHandlers(io, socket, rateLimiter, identity) {
         Object.values(timers).forEach(t => clearTimeout(t));
         activeTimers.delete(code);
       }
-      await computeScoresAndShowLB(io, fb, code, data.currentIndex);
+      await computeScoresAndShowLB(io, fb, code, Number.isInteger(data.currentIndex) ? data.currentIndex : 0);
     } catch (err) {
       log('Error force next:', err.message);
     }
@@ -421,7 +476,8 @@ export function setupSocketHandlers(io, socket, rateLimiter, identity) {
   // ── HOST: End game (ownership check) ──
   socket.on('host:end', wrap('host:end', async (data) => {
     try {
-      const { code } = data;
+      const code = validGameCode(data.code); // S16 BUG-101
+      if (!code) return;
       // ABAC ownership check
       const isOwner = await requireOwnership(code);
       if (!isOwner) return;
@@ -448,9 +504,9 @@ export function setupSocketHandlers(io, socket, rateLimiter, identity) {
   // ── ARENA: Watch game state ──
   socket.on('arena:watch', wrap('arena:watch', async (data) => {
     try {
-      const { code } = data;
+      const code = validGameCode(data.code); // S16 BUG-101
       if (!code) return;
-      
+
       // Mark socket as watcher (read-only)
       socket.data.role = 'watcher';
       
@@ -490,8 +546,16 @@ export function setupSocketHandlers(io, socket, rateLimiter, identity) {
   // SECURITY: Same invariants as player:answer — epoch, duplicate, late checks
   socket.on('arena:botAnswer', wrap('arena:botAnswer', async (data) => {
     try {
-      const { code, qIndex, playerName, optionIndex } = data;
-      if (!code || !playerName) return;
+      const code = validGameCode(data.code); // S16 BUG-101
+      // S16 BUG-102: playerName sanitize QILINMAGAN edi — traversal bilan
+      // (playerName='../../../users/X') fb.set IXTIYORIY node'ni yozib olardi
+      const playerName = validPlayerName(data.playerName);
+      const { optionIndex } = data;
+      const qIndex = Number.isInteger(data.qIndex) ? data.qIndex : -1;
+      if (!code || qIndex < 0) return;
+      if (!playerName) {
+        return socket.emit('arena:botAck', { status: 'rejected_invalid', qIndex, playerName: String(data.playerName || '').slice(0, 40), reason: "Noto'g'ri bot ismi" });
+      }
       // Owner-only: only the host can add bot answers
       const isOwner = await requireOwnership(code);
       if (!isOwner) return;
@@ -533,6 +597,15 @@ export function setupSocketHandlers(io, socket, rateLimiter, identity) {
           status: 'rejected_late', qIndex, playerName,
           serverTimeMs,
           reason: 'Vaqt tugagan',
+        });
+      }
+
+      // S16 BUG-103: variant indeksi chegarasi (player:answer bilan izchil)
+      const curQ = (session.questions || [])[qIndex];
+      if (!curQ || optionIndex >= (curQ.options || []).length) {
+        return socket.emit('arena:botAck', {
+          status: 'rejected_invalid', qIndex, playerName,
+          reason: 'Bunday variant mavjud emas',
         });
       }
 
@@ -601,7 +674,7 @@ export function setupSocketHandlers(io, socket, rateLimiter, identity) {
 
   // ── ARENA: Leave ──
   socket.on('arena:leave', (data) => {
-    const { code } = data;
+    const code = validGameCode(data?.code); // S16 BUG-101
     if (code) {
       socket.leave(`game:${code}`);
       socket.leave(`watch:${code}`);

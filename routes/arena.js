@@ -25,8 +25,10 @@ router.get('/', (req, res) => {
 // ── API: Check if session exists (public — anyone can check) ──
 router.get('/api/check-session', async (req, res) => {
   try {
-    const { code } = req.query;
-    if (!code) return res.json({ exists: false });
+    // S16 BUG-100: kod whitelist'siz fb path'ga tushardi — '?code=../users'
+    // bilan IXTIYORIY fb node mavjudligini tekshirish orakli (public endpoint!)
+    const code = req.query.code;
+    if (typeof code !== 'string' || !/^\d{5}$/.test(code)) return res.json({ exists: false });
     const snap = await fb.get(`game_sessions/${code}`);
     res.json({ exists: snap.exists() });
   } catch (err) {
@@ -37,8 +39,10 @@ router.get('/api/check-session', async (req, res) => {
 // ── API: Add bots to session (admin only — modifies game state) ──
 router.post('/api/add-bots', requireAdmin, async (req, res) => {
   try {
-    const { code, count, prefix } = req.body;
-    if (!code || !count) return res.status(400).json({ error: 'Invalid params' });
+    const { count, prefix } = req.body;
+    const code = req.body?.code;
+    if (typeof code !== 'string' || !/^\d{5}$/.test(code)) return res.status(400).json({ error: 'Invalid params' }); // S16 BUG-100
+    if (!count) return res.status(400).json({ error: 'Invalid params' });
 
     const stSnap = await fb.get(`game_sessions/${code}/state`);
     if (!stSnap.exists()) return res.status(404).json({ error: 'Sessiya topilmadi' });
@@ -69,8 +73,9 @@ router.post('/api/add-bots', requireAdmin, async (req, res) => {
 // ── API: Cleanup bots from session (admin only) ──
 router.post('/api/cleanup-bots', requireAdmin, async (req, res) => {
   try {
-    const { code, prefix } = req.body;
-    if (!code) return res.status(400).json({ error: 'Invalid params' });
+    const { prefix } = req.body;
+    const code = req.body?.code;
+    if (typeof code !== 'string' || !/^\d{5}$/.test(code)) return res.status(400).json({ error: 'Invalid params' }); // S16 BUG-100
 
     const botPrefix = prefix || 'Bot';
     const removes = [];

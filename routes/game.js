@@ -190,7 +190,10 @@ router.get('/play', async (req, res) => {
 
 // ── Host Game (via direct link with existing code) ──
 router.get('/host/:code', requireAuth, async (req, res) => {
-  const { code } = req.params;
+  // S16 BUG-106: :code whitelist'siz fb path'ga tushardi — traversal bilan
+  // boshqa node'ni 'sessiya' sifatida host sahifasiga oqizish mumkin edi
+  const code = req.params.code;
+  if (!/^\d{5}$/.test(code)) return res.redirect('/user/panel');
   try {
     const snap = await fb.get(`game_sessions/${code}`);
     if (!snap.exists()) return res.redirect('/user/panel');

@@ -156,22 +156,38 @@ export function normalizeQuestion(q) {
   const rawOpts = q.options || [];
   const isObjArr = rawOpts.length > 0 && typeof rawOpts[0] === 'object';
 
+  // S16 BUG-104: buxoro savollar endi o'tmaydi — matnsiz / <2 variant /
+  // to'g'ri javobi belgilanmagan yoki chiroqdan tashqaridagi correct bilan
+  // sessiya yaratilsa, o'yin jarayoni buzilardi (hech kim to'g'ri javob
+  // bera olmaydi, reveal'da correctText undefined)
+  const text = String(q.text || '').trim().slice(0, 2000);
+  if (!text) return null;
+
   if (isObjArr) {
     // PRE/Mock format: options are {text, letter, isCorrect}
-    const strings = rawOpts.map(o => o.text || '');
+    const strings = rawOpts.map(o => String(o?.text || '')).slice(0, 12);
     const correctIdx = rawOpts.findIndex(o => o.isCorrect);
+    if (correctIdx < 0) return null; // to'g'ri javob belgilanmagan
+    if (strings.filter(Boolean).length < 2) return null;
     return {
-      text: q.text || '',
+      text,
       options: strings,
-      correct: correctIdx >= 0 ? correctIdx : -1,
+      correct: correctIdx,
       is_double: !!q.is_double
     };
   }
   // User-created format: options are strings, correct is index
+  const options = rawOpts.map(o => String(o || '')).slice(0, 12);
+  if (options.filter(Boolean).length < 2) return null;
+  // correct — int + [0..options-1] clamp (S15 BUG-095 bilan izchil)
+  const correct = Math.max(0, Math.min(
+    Number.isFinite(+q?.correct) ? Math.floor(+q.correct) : 0,
+    options.length - 1,
+  ));
   return {
-    text: q.text || '',
-    options: rawOpts.map(o => String(o || '')),
-    correct: typeof q.correct === 'number' ? q.correct : 0,
+    text,
+    options,
+    correct,
     is_double: !!q.is_double
   };
 }
