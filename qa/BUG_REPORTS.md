@@ -3611,6 +3611,62 @@ Performance: GET p95=136ms · br · cache ✅
 **LOZIHA: deborah-ncj.onrender.com (Deborah platformasi)**
 **STATUS: 100/100 STEP ✅ | Hajm: 23MB/100MB ✅ | Token: 0 iz ✅**
 
+# 🔍 DEBUGGING BRANCH RE-VERIFY NATIJASI
+# Sana: 2026-08-28
+# Sessiya: debugging branch'dagi fix'lar live saytda tekshirildi
+
+## 📊 XULOSA: 6/12 TUZATILGAN (50%) — 6 ta hali bor
+
+### ✅ TO'GRILANGAN (6 ta)
+| Bug | Tavsif | Live dalil |
+|-----|--------|-----------|
+| BUG-009 | Panel CSRF escape | raw &#34; YO'Q, 0 pageerror |
+| BUG-010 | create-test </script> leak | breakout text sahifada YO'Q |
+| BUG-011 | mfa-settings null crash | 0 addEventListener error |
+| BUG-012 | Arena $ konflikt | 0 $ has already been declared |
+| BUG-044 | Arena loadArena o'lik | loadArena xatosi YO'Q |
+| BUG-230hz11 | Settings profile undefined | 0 'profile is not defined' |
+
+### ❌ HALI TUZATILMAGAN (6 ta)
+| Bug | Tavsif | Live dalil |
+|-----|--------|-----------|
+| BUG-008/032 | Logout GET | /user/logout hali ishlaydi (POST talab qilinmaydi) |
+| BUG-230ka31 | Parol minlength=15 | register.ejs'da hali 15 (landing'da 8) |
+| BUG-230hz116 | CSP header YO'Q | helmet'da CSP yoqilmagan |
+| BUG-071/230hz104 | Footer 9x '#' | legal sahifalar havolasiz |
+| BUG-230hz43/84 | Landing /user/register YO'Q | teacher reg'ga chiqa olmaydi |
+| BUG-230hz72 | Email change reauth flow | sahifada parol input YO'Q |
+
+### ℹ️ QISMAN (1 ta)
+| Bug | Tavsif | Holat |
+|-----|--------|-------|
+| BUG-230hz52 | camera-pilot 500 | 401 (login kerak — 500 emas, lekin sahifa ochilmaydi) |
+
+---
+
+## 📌 YAKUNIY XULOSA
+
+**6 ta eng kritik bug (BUG-009/010/011/012/044/230hz11) TO'LIQ TUZATILGAN ✅**
+- Bu buglar saytdagi eng katta buzilishlarni keltirib chiqarar edi (JS $ konflikt, HTML escape)
+- Fix'lar sifatli va to'g'ri yo'nalishda
+
+**6 ta bug HALI TUZATILMAGAN ❌**
+- Bug-008/032 (logout POST) — oson tuzatiladi
+- BUG-230ka31 (minlength 15) — 1 qator o'zgarish
+- BUG-230hz116 (CSP) — helmet sozlamasi
+- BUG-071 (footer legal) — href o'zgartirish
+- BUG-230hz43/84 (landing reg havola) — 1 havola qo'shish
+- BUG-230hz72 (email reauth input) — parol input qo'shish
+
+**5/6 qolgan bug "1 qatorlik" fix — keyingi deployda tuzatilsa, 100% bo'ladi!**
+
+---
+
+## 📌 KEYINGI QADAM
+1. Qolgan 6 ta kichik bug tuzatilsin (~30 daqiqa ish)
+2. Deploy qilinsin
+3. Men re-verify qilib status yangilayman
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
