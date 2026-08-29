@@ -752,3 +752,22 @@ Kod o'zgarishi NOLTA. Da'vo qilingan lekin TURLIGAN topilmalar (repository'da ha
  5) Probe (4638): landing link ✓, VIP 0 Cast tugma + preflight/sessions 403 ✓,
     student o'z testiga Cast 200 ✓, teacher Cast ✓. Regress: cast+landing vitest
     242+37 ✓, visual critical-pages update+verify 70/70 ✓, 118 view compile ✓.
+
+── ✅ S25 (AI-A, 2026-08-29): TEACHER ≠ VIP USER — alohida bo'lim (user tasdiqladi) ──
+ Holat: /admin/vip HAMMA userni chiqarardi, /api/users?vip=true faqat isVip'ga qarardi
+ → isVip=true bo'lgan teacher VIP ro'yxatiga aralashib qolardi; dashboard VIP tabda
+ teacherga "VIP qilish" tugmasi turardi.
+ 1) routes/admin.js: VIP_STAFF_ROLES = {teacher, teacher_pending, teacher_rejected,
+    co_teacher, board}. /api/users?vip=true endi isVip && !staff; yangi ?excludeStaff=true
+    (dashboard VIP tab uchun); /admin/vip ro'yxatidan staff chiqarildi (+staffExcluded
+    soni); /api/vip/grant → staff'ga 400 "O'qituvchilar VIP bo'la olmaydi — alohida
+    boshqariladi" (revoke qoldi — eski ma'lumot tozalanishi uchun).
+ 2) UI: vip.ejs + dashboard VIP tabga eslatma banner (.vip-staff-note, admin.css):
+    "O'qituvchilar VIP emas — O'qituvchilar bo'limida alohida" (+link /admin/teachers).
+ 3) Ochiq sir hal bo'ldi: /admin/teachers to'g'ridan seed role:teacher userni
+    default 'pending' filterda ko'rsatmaydi — 'Tasdiqlangan' (filter=approved) tabda
+    KO'RINADI (probe bilan isbot). Bu to'g'ri xatti-harakat.
+ 4) Probe (4640): vip-page da teacher (isVip=true bilan!) YO'Q ✓, banner ✓;
+    api vip=true → [s25_vip] faqat ✓; excludeStaff ✓; role=teacher → faqat teacher ✓;
+    teachers approved/pending tablar ✓; grant→teacher 400 ✓, grant→talaba 200 ✓.
+    Regress: 118 view ✓, design:check 6/6 ✓, admin vitest 9/9 ✓.

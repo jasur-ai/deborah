@@ -760,13 +760,14 @@
     async function loadVip() {
       const wrap = document.getElementById('vip-table-wrap');
       try {
-        const res = await fetch('/admin/api/users');
+        const res = await fetch('/admin/api/users?excludeStaff=true');
         const data = await res.json();
         if (!data.users?.length) {
           wrap.innerHTML = '<div class="admin-empty">Foydalanuvchilar yo\'q</div>';
           return;
         }
         wrap.innerHTML = `
+          <div class="vip-staff-note">ℹ️ O'qituvchilar bu yerda ko'rinmaydi — <a href="/admin/teachers?filter=approved">O'qituvchilar bo'limi</a>.</div>
           <div class="table-wrap"><table><thead><tr>
             <th>#</th><th>Username</th><th>VIP</th><th>Ro\'yxatdan o\'tgan</th><th>VIP berilgan</th><th>Admin</th><th>Amallar</th>
           </tr></thead><tbody>

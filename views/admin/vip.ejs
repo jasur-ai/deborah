@@ -4,6 +4,8 @@
   <%- include('../partials/head') %>
   <link rel="stylesheet" href="/css/admin.css">
   <link rel="stylesheet" href="/design/admin-command.css">
+<style>
+</style>
 </head>
 <body>
   <nav class="admin-navbar">
@@ -53,6 +55,11 @@
       </div>
 
       <input class="inp" id="vip-search" placeholder="Qidirish..." oninput="filterVip()" style="margin-bottom:12px">
+
+      <!-- S25: o'qituvchilar VIP emas — alohida bo'lim -->
+      <div class="vip-staff-note">
+        ℹ️ O'qituvchilar VIP user emas — ular <a href="/admin/teachers?filter=approved">O'qituvchilar bo'limida</a> alohida ko'rinadi<% if (typeof staffExcluded !== 'undefined' && staffExcluded > 0) { %> (<%= staffExcluded %> ta xodim bu ro'yxatdan chiqarildi)<% } %>.
+      </div>
 
       <!-- S33.05: STEP 18 table (dt-wrap / dt / dt-row + density) -->
       <div class="table-wrap dt-wrap is-reflow"><table class="dt" data-density="default"><thead><tr>

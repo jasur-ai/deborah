@@ -612,6 +612,10 @@ router.post('/api/users/unblock', requireAdminMfaStepUp, async (req, res) => {
 // C-08: email/role/status/name qo'shildi (admin PII minimal — email
 // admin'ga ko'rinadi, guide §28). Qidiruv (username/email) + filter
 // (role/status) + pagination (page/pageSize) client'da emas — server'da.
+// S25: O'qituvchilar VIP user EMAS — VIP bo'limidan xodim rollari chiqariladi,
+// ular /admin/teachers'da alohida boshqariladi (user qarori 2026-08-29).
+const VIP_STAFF_ROLES = new Set(['teacher', 'teacher_pending', 'teacher_rejected', 'co_teacher', 'board']);
+
 router.get('/api/users', async (req, res) => {
   try {
     const usersSnap = await fb.get(DB_PATHS.USERS);
@@ -637,8 +641,11 @@ router.get('/api/users', async (req, res) => {
     if (role) filtered = filtered.filter(([, u]) => (u.role || 'student') === role);
     if (status) filtered = filtered.filter(([, u]) => (u.status || 'active') === status);
     // S22: VIP filtri (?vip=true|false) — VIP userlar bo'limi uchun
-    if (req.query.vip === 'true') filtered = filtered.filter(([, u]) => !!u.isVip);
+    // S25: VIP = talaba bo'lgan user — xodim (o'qituvchi) rollari chiqariladi
+    if (req.query.vip === 'true') filtered = filtered.filter(([, u]) => !!u.isVip && !VIP_STAFF_ROLES.has(u.role || 'student'));
     else if (req.query.vip === 'false') filtered = filtered.filter(([, u]) => !u.isVip);
+    // S25: ?excludeStaff=true — VIP boshqaruv tabi (o'qituvchilarga VIP berilmaydi)
+    if (req.query.excludeStaff === 'true') filtered = filtered.filter(([, u]) => !VIP_STAFF_ROLES.has(u.role || 'student'));
 
     const total = filtered.length;
     const pageItems = filtered.slice((page - 1) * pageSize, page * pageSize);
@@ -735,9 +742,17 @@ router.get('/vip', async (req, res) => {
     const usersSnap = await fb.get(DB_PATHS.USERS);
     const users = usersSnap.val() || {};
     
+    // S25: VIP ro'yxati = faqat talabalar; o'qituvchilar alohida bo'limda
+    let staffExcluded = 0;
+    const nonStaff = Object.entries(users).filter(([, u]) => {
+      const isStaff = VIP_STAFF_ROLES.has(u.role || 'student');
+      if (isStaff) staffExcluded++;
+      return !isStaff;
+    });
     res.render('admin/vip', {
       title: 'VIP Foydalanuvchilar',
-      users: Object.entries(users)
+      staffExcluded,
+      users: nonStaff
         .sort((a, b) => (b[1].created_at || 0) - (a[1].created_at || 0))
         .map(([key, u]) => ({
           key,
@@ -767,6 +782,12 @@ router.post('/api/vip/grant', requireAdminMfaStepUp, async (req, res) => {
     
     if (!snap.exists()) {
       return res.status(404).json({ error: 'Bunday foydalanuvchi topilmadi' });
+    }
+
+    // S25: o'qituvchi/xodim VIP bo'la olmaydi — alohida bo'limda boshqariladi
+    const targetRole = snap.val()?.role || 'student';
+    if (VIP_STAFF_ROLES.has(targetRole)) {
+      return res.status(400).json({ error: "O'qituvchilar VIP bo'la olmaydi — 'O'qituvchilar' bo'limida alohida boshqariladi" });
     }
 
     // Generate random password for VIP user
