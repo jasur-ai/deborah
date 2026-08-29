@@ -88,7 +88,11 @@ describe('Auth — AUTH A-02 (cookie spec + idle timeout + limit)', () => {
       xhr: false,
       accepts: () => false,
       ip: '127.0.0.1',
-      headers: {},
+      // S28.2: real brauzer navigatsiyasi Accept yuboradi — mock ham shunga
+      // moslandi (Accept'siz klient endi 401 JSON oladi, a30 §06 kontrakt).
+      get: (h) => (String(h).toLowerCase() === 'accept'
+        ? 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' : null),
+      headers: { accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' },
       session: {
         user: { safeKey: 'zzz_a02_no_such_user2', passwordUpdatedAt: 0, roleVersion: 0 },
         lastActiveAt: Date.now() - 60 * 60 * 1000,

@@ -74,7 +74,12 @@ describe('requireAdmin — Strict cookie + Max-Age assert (C-07 §07)', () => {
     const req = {
       originalUrl: '/admin/dashboard', path: '/admin/dashboard',
       session: { user: { safeKey: 'u1' } },
-      headers: {}, accepts: () => false,
+      // S28.2: brauzer navigatsiyasi Accept yuboradi (Accept'siz klient
+      // endi 401 JSON oladi — a30 §06 kontrakti).
+      get: (h) => (String(h).toLowerCase() === 'accept'
+        ? 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' : null),
+      headers: { accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' },
+      accepts: () => false,
     };
     const res = { redirect: vi.fn() };
     requireAdmin(req, res, vi.fn());

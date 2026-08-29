@@ -267,10 +267,37 @@ async function invalidateIfStale(req, res) {
 function expireSessionResponse(req, res, message) {
   const isApi = req.originalUrl.startsWith('/api/') || req.path.startsWith('/api/');
   const returnUrl = loginReturnUrl(req.originalUrl);
-  if (isApi || req.xhr || req.accepts(['html', 'json']) === 'json') { // BUG-041: accepts('json') `*/*` tufayli brauzerga ham JSON qaytarardi — html afzal bo'lsa redirect
+  if (isApi || req.xhr || prefersJson401(req)) { // S28.2: BUG-041 semantik + Accept'siz/*/* klient ham JSON (a30/b22)
     return res.status(401).json({ error: message, redirect: `/user/login?returnUrl=${returnUrl}` });
   }
   return res.redirect(`/user/login?returnUrl=${returnUrl}`);
+}
+
+
+/**
+ * S28.2 (a30 §06 / b22 regress): bu klient JSON xatosini kutadimi?
+ * BUG-041 semantikasi SAQLANADI: brauzer navigatsiyasi (Accept'da text/html
+ * ustuvor) → redirect; qolgan hamma klient — /api/, XHR, fetch (default
+ * Accept yulduzcha), Accept yubormagan klient (supertest), application/json
+ * — → 401 JSON.
+ * Eski `req.accepts(['html','json']) === 'json'` sharti Accept'siz yoki
+ * "hamma qabul" Accept'li klientni html'ga negotiate qilib 302 redirect
+ * follow qilib login sahifasidan 200 olar edi (anonim /user/telegram/link 200,
+ * /admin/dashboard 302≠401 — a30 §06, b22 testlari qizil).
+ */
+function prefersJson401(req) {
+  // Mock req'lar (unit testlar) req.get'isiz kelishi mumkin — headers fallback.
+  let accept = '';
+  try {
+    accept = typeof req?.get === 'function' ? req.get('accept') : req?.headers?.accept;
+  } catch (_) { /* mock — Accept yo'q deb olamiz */ }
+  accept = String(accept || '').toLowerCase();
+  // Accept yuborilmagan klient (supertest/fetch protokollari, a30 §06 kontrakt)
+  // — 401 JSON; brauzer navigatsiyasi (text/html ustuvor) — redirect;
+  // application/json / yulduzcha-yulduzcha (fetch) — 401 JSON.
+  if (!accept) return true;
+  const htmlPreferred = accept.includes('text/html') && !accept.includes('application/json');
+  return !htmlPreferred;
 }
 
 /**
@@ -335,7 +362,7 @@ export async function requireAuth(req, res, next) {
   // Use originalUrl (not req.path) — scoped router.use('/api', ...) strips the
   // /api prefix from req.path, which would wrongly classify API calls as HTML.
   const isApi = req.originalUrl.startsWith('/api/') || req.path.startsWith('/api/');
-  if (isApi || req.xhr || req.accepts(['html', 'json']) === 'json') { // BUG-041: accepts('json') `*/*` tufayli brauzerga ham JSON qaytarardi — html afzal bo'lsa redirect
+  if (isApi || req.xhr || prefersJson401(req)) { // S28.2: BUG-041 semantik + Accept'siz/*/* klient ham JSON (a30/b22)
     return res.status(401).json({ error: 'Avtorizatsiya talab qilinadi', redirect: '/user/login' });
   }
   res.redirect('/user/login');
@@ -359,7 +386,7 @@ export async function requireEmailVerified(req, res, next) {
   const user = req.session?.user;
   if (!user?.safeKey) {
     const isApi = req.originalUrl.startsWith('/api/') || req.path.startsWith('/api/');
-    if (isApi || req.xhr || req.accepts(['html', 'json']) === 'json') { // BUG-041: accepts('json') `*/*` tufayli brauzerga ham JSON qaytarardi — html afzal bo'lsa redirect
+    if (isApi || req.xhr || prefersJson401(req)) { // S28.2: BUG-041 semantik + Accept'siz/*/* klient ham JSON (a30/b22)
       return res.status(401).json({ error: 'Avtorizatsiya talab qilinadi', redirect: '/user/login' });
     }
     return res.redirect('/user/login');
@@ -400,7 +427,7 @@ export async function requireEmailVerified(req, res, next) {
   } catch (_) { /* telemetry fail-soft */ }
 
   const isApi = req.originalUrl.startsWith('/api/') || req.path.startsWith('/api/');
-  if (isApi || req.xhr || req.accepts(['html', 'json']) === 'json') { // BUG-041: accepts('json') `*/*` tufayli brauzerga ham JSON qaytarardi — html afzal bo'lsa redirect
+  if (isApi || req.xhr || prefersJson401(req)) { // S28.2: BUG-041 semantik + Accept'siz/*/* klient ham JSON (a30/b22)
     return res.status(403).json({ error: 'EMAIL_VERIFY_REQUIRED', redirect: '/user/panel' });
   }
   res.redirect('/user/panel');
@@ -442,7 +469,7 @@ export function requireAdmin(req, res, next) {
   // Use originalUrl (not req.path) — scoped router.use('/api', ...) strips the
   // /api prefix from req.path, which would wrongly classify API calls as HTML.
   const isApi = req.originalUrl.startsWith('/api/') || req.path.startsWith('/api/');
-  if (isApi || req.xhr || req.accepts(['html', 'json']) === 'json') { // BUG-041: accepts('json') `*/*` tufayli brauzerga ham JSON qaytarardi — html afzal bo'lsa redirect
+  if (isApi || req.xhr || prefersJson401(req)) { // S28.2: BUG-041 semantik + Accept'siz/*/* klient ham JSON (a30/b22)
     return res.status(401).json({ error: 'Admin avtorizatsiyasi talab qilinadi', redirect: '/admin/login' });
   }
   res.redirect('/admin/login');
