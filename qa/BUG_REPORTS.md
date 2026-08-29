@@ -3028,6 +3028,58 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ka260: ℹ️ Jami: 94 stepda 260+ BUG + 250+ PASS yozuv (jami ~1060)
 
+### STEP 95 — 95-STEP ORALIQ XULOSA
+
+### BUG-230ka271: 📊 95 STEP JAMI: ~1100 yozuv, 96 PNG, 98 commit, 23MB
+- 🔴 Critical: **86** | 🟠 Major: **50** | 🟡 Minor: **145** | ⚪ Trivial: **38**
+- ℹ️ Info: **116** | ✅ Positive: **260** | 🎯 Xulosa: **10** | 📋 Jadval: **3**
+- **Jami:** **~1100 yozuv**
+
+### BUG-230ka272: 🎯 PLATFORMA HOLATI: **6.5/10** (o'zgarmagan)
+- Asos kuchli: xavfsizlik 9/10, auth 8/10, AI 8/10, governance 8/10, portfolio 8/10, roster 8/10
+- Frontend buzilgan: cast 2/10, attempt 1/10, student panel 4/10
+
+### BUG-230ka273: 🔴 MFA HOLAT: teacher 0, admin 0 — yangi kodlar BEKOR QILINGANCHA Admin/Teacher sahifalar test qilinmaydi
+
+### BUG-230ka274: ✅ 260+ PASS — 94 stepda eng katta pozitiv bazalar:
+- Xavfsizlik arxitekturasi (CSRF/origin/IDOR/replay/rate/cookie/fixation)
+- Auth (MFA+backup+remember+OIDC+passkey+password E2E)
+- Portfolio (CRUD+share token+visibility+guest+xlsx)
+- Roster (upload→map→commit→user yaratildi E2E)
+- Create-test (5 savol turi BARCHASI ishlaydi)
+- Cast Governance (full pipeline + 2-bosqichli publish)
+- Gemini AI (real uz savollar, rate limit OK)
+
+### BUG-230ka275: 🔴 TOP-15 CRITICAL YANGILANGAN (ta'sir bo'yicha):
+1. `main.js` $ IIFE fix → 30+ bug hal (BUG-012/044/059/ka73a)
+2. `cast-socket-client.js` race fix → participant join (BUG-052/230ca)
+3. `preflight.js` actorId → safeKey (BUG-230hz — assignments 401)
+4. `server.js` publish.js app.use → assignments/publish (BUG-230ij)
+5. `footer-scripts.ejs` partial → camera-pilot/review 500 (BUG-007)
+6. SMTP timeout → reg timeout (BUG-039)
+7. Landing'da /user/register havola → teacher reg kirish (BUG-230hz43)
+8. Admin nav href → 5 link hal (BUG-006)
+9. Footer legal linklar → 9x '#' (BUG-071/230hz104)
+10. Redis session store → deploy'da sessiyalar (BUG-090)
+11. `register.ejs` auth-error div → teacher reg xato ko'rsatish (BUG-230ka3)
+12. `register.ejs` minlength 15 → 8 (BUG-230ka31)
+13. Portfolio share token → guest 404 (BUG-230hz101)
+14. Email change reauth flow → parol input (BUG-230hz72)
+15. `mfa-settings.js` null element → security-profile crash (BUG-011)
+
+### BUG-230ka276: ✅ YANGI IJOBIY (90-95 steplarda):
+- Security-profile passkey matni ko'rinadi
+- Notifications 9 toggle granular
+- i18n-formatters 7 fn professional (Intl)
+- Switch 1.6KB toza
+- Offline-journal 11.7KB kod to'la
+
+### BUG-230ka277: ✅ Jami sahifalar test qilingan: 50+, endpoint: 110+, E2E: 20+
+
+### BUG-230ka278: ℹ️ Dalillar: 96 skrinshot, 100 commit
+
+### BUG-230ka279: ℹ️ Jami: 95 stepda ~1100 yozuv, ~350 kategoriyalangan bug
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI

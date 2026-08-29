@@ -143,3 +143,4 @@
 - ✅ STEP 92 — yakunlandi: BUG-230ka231 ✅ (nav semantik — BUG-230ka223 QAYTA YOZILDI) + ka232-235 ✅ (SW 19 fayl, journal 11.7KB kod to'la, i18n 130 kalit uz/ru/en)
 - ✅ STEP 93 — yakunlandi: BUG-230ka241 ℹ️ (TERM lug'at bo'sh — registry bog'lanmagan) + ka242/243 ✅ (switch 1.6KB toza, formatters 7 fn professional) + ka244 ℹ️ (teacher jar eskirgan)
 - ✅ STEP 94 — yakunlandi: BUG-230ka251 ⚠️ (MFA BARCHA kodlar ishlatilgan/invalid/locked — yangi SHART) + BUG-230ka254 🔴 (notifications pageerror re-confirm) + BUG-230ka252/253/256 ✅ (security-profile, notifications 9 toggle, empty OK)
+- ✅ STEP 95 — 95-STEP XULOSA: ~1100 yozuv, 86🔴/50🟠/145🟡/38⚪/116ℹ️/260✅, TOP-15 dev fix, 96 PNG, 98 commit
