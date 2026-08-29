@@ -845,3 +845,41 @@ Kod o'zgarishi NOLTA. Da'vo qilingan lekin TURLIGAN topilmalar (repository'da ha
      redirect kutadi). Ikkalasi 0922e9a'da HAM qizil edi (meniki emas) — tegishli
      AI (B-22 telegram / A-30 admin MFA) tuzatsin. Design Gate S12 components
      visual drift — 13:49'dan beri hamma commitda qizil (QARZ, keyingi step).
+
+── ✅ S29 (AI-A, 2026-08-29): ADMIN PANEL YUKLANMASLIGI + BARCHA CI QIZILLAR ──
+  1) ADMIN PANEL (user: "hech qanday ma'lumot yuklanmayapti, filtrlar ishlamaydi,
+     ~20 demo user, 162 test, real db xatosi"). 2 ta ildiz:
+     a) local-db.js get()/set()/update()/remove() HAR op'da butun db.json'ni
+        qayta o'qib JSON.parse qilardi → bulg'angan/katta DB'da panel cheksiz
+        osiladi. FIX: readDB() mtime+size keshi (tashqi process yozuvi ham
+        ko'rinadi — semantik saqlanadi; statSync arzon). Perf test: 30×get
+        1MB foniida <150ms (pre-fix ~300ms+). Regress: tests/unit/
+        localdb-cache.test.js 3/3.
+     b) DB bulg'anish MANBAI: vitest (LOCAL_DB_FILE→temp) va visual-server
+        izolyatsiyasi FAQAT e6ae35e'da (bugun) qo'shilgan — undan OLDINGI har
+        test/e2e run real data/db.json'ga yozgan (user'dagi ~20 demo user +
+        162 test shundan). FIX: scripts/clean-test-data.js — test-pattern
+        userlarni topadi (prefix_raqam / hex / @test.* email), dry-run default,
+        --apply (backup data/backups/ + removed-users-<ts>.json), KEEP list,
+        7 kun login himoyasi (--force). USER RUNBOOK: git pull →
+        node scripts/clean-test-data.js (ko'rish) → --apply → restart.
+     c) Firebase rejimi: SDK init ulanishni kafolatlamaydi (eski banner yolg'on
+        "CONNECTED" chiqarardi), op'larda timeout yo'q → DB elec bo'lsa panel
+        cheksiz spinner. FIX: har op withFBTimeout (FIREBASE_TIMEOUT_MS,
+        default 8s) fast-fail + startup probe (.info/serverTimeOffset, 5s) —
+        banner endi haqiqiy: "CONNECTED (probe OK)" yoki "⛔ PROBE FAILED".
+  2) CI 2 PRE-EXISTING QIZIL (a30 §06 + b22) — ildiz bitta: e6ae35e'dagi
+     req.accepts(['html','json'])==='json' sharti Accept'siz /*/*/ klientni
+     html'ga negotiate qilib 302 redirect qaytarardi (fetch follow → login 200).
+     FIX: prefersJson401(req) helper (5 joyda): brauzer (text/html ustuvor) →
+     redirect (BUG-041 saqlandi); Accept'siz / application/json / fetch → 401
+     JSON. Mock-testlar (a02, c07) real brauzer Accept'i bilan yangilandi.
+     Natija: a30+b22 16/16, tests/auth+integration 513/513.
+  3) DESIGN GATE 72 QIZIL: e6ae35e baseline PNG'larni git'dan olib
+     tashlab .gitignore'ga butun design-audit/screenshots/ papkasini yozgan
+     (o'z izohida "baseline'lar git'da SAQLANADI" deyilganiga qarama-qarshi) —
+     CI baseline'siz → 72 fail. FIX: .gitignore qatori olindi, 119 baseline
+     regeneratsiya (286 passed update rejimda), design:check:full 8/8 PASS
+     (visual 80/80). Repo: +24MB baseline (umumiy <100MB chegarada).
+  4) YAKUNIY REGRESS: vitest TO'LIQ 7111/7111 ✅ (birinchi marta nolda),
+     playwright auth-e2e 5/5 ✅, design:check:full PASS ✅.
