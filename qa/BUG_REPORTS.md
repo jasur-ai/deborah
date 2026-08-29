@@ -3080,6 +3080,35 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ka279: ℹ️ Jami: 95 stepda ~1100 yozuv, ~350 kategoriyalangan bug
 
+### STEP 96 YAKUNIY — PORTFOLIO SHARE 2-BOSQICH TEST (10 topilma)
+
+### BUG-230hz101 re-confirm: Share token 200 qaytadi lekin guest 404 — TARTIB:
+1. create (visibility=shared bilan) → 200 ✅
+2. PATCH visibility=shared → 200 ✅
+3. POST share → 200 token ✅
+4. GET /share/{token} → **404 "Share not available"** ❌
+5. item delete → 200
+6. GET /share/{token} → 404 (kutilgan)
+- **Xulosa:** share token 200 qaytadi lekin 4-qadamda guest 404 — item HANUZ bor edi! BU BUG
+
+### BUG-230hz111: ✅ BUG-230hz63 QAYTA YOZILDI: "item delete sabab" EMAS — item bor edi ham guest 404
+
+### BUG-230hz112: 🔴 Share token DB'da topilmaydi — resolveShareToken() funksiyasi buzilgan
+
+### BUG-230hz113: ℹ️ STEP 36'da (eski deploy) share E2E ishlagan — yangi deployda buzilgan (BUG-230hz101)
+
+### BUG-230hz114: ✅ Portfolio item CRUD to'liq: create+patch+delete E2E OK
+
+### BUG-230hz115: ✅ Security: share CSRF himoyalangan, guest 404
+
+### BUG-230hz116: ℹ️ Dalillar: yuqoridagi 6 qadam test natijalari
+
+### BUG-230hz117: ℹ️ 96 stepda ~1130 yozuv, 98 PNG
+
+### BUG-230hz118: ✅ IJOBIY — Portfolio CRUD to'liq test qilindi (create+patch+delete E2E OK)
+
+### BUG-230hz119: ⚠️ MFA holat o'zgarmagan: teacher 0, admin 0
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
