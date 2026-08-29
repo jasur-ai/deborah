@@ -2775,6 +2775,36 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230hz95: ℹ️ Jami 86 step: ~920 yozuv, 97 PNG
 
+### STEP 87 YAKUNIY — LANDING NANO + PORTFOLIO SHARE BUZILGAN (10 topilma)
+
+### BUG-230hz101: 🔴 PORTFOLIO SHARE E2E YANGI DEPLOYDA BUZILGAN!
+- **Dalil:** item create → patch shared → share POST 200 (token 48-hex qaytardi) → guest `GET /share/{token}` → **404 "Share not available"** — item hali portfolio'da bor ekan
+- **Ijobiy tomoni:** STEP 36'da (eski deploy) share E2E ISHLAGAN edi (BUG-230av) — yangi deployda buzilgan
+- **Ildiz (kod):** `routes/portfolio.js:212 GET /share/:token` → `resolveShareToken({token, viewerEmail})` — token DB'da topilmaydi yoki TTL tugagan
+
+### BUG-230hz102: 🔴 Revoke endpoint `grant not found` 400 — grant yaratilgan holatda ham topilmaydi
+- **Kod:** `routes/portfolio.js:201 POST /api/user/share-grants/:id/revoke` — `:id` = ITEM_ID yuborildi (grant ID emas)
+
+### BUG-230hz103: 🔴 LANDING `#admin` anchor YO'Q (BUG-230ka re-confirm 5-marta)
+- **Dalil:** `#admin` havola bor, target `False` — sahifada `#admin` id'si YO'Q (JS overlay bilan ochiladi)
+
+### BUG-230hz104: 🔴 Footer'da **9 ta `href="#"`** havola (BUG-071 3-marta re-confirm)
+- **Dalil:** har bir legal link `#` bo'lib qolgan
+- **Ijobiy:** `/user/login` havola BOR (200)
+
+### BUG-230hz105: 🟡 Landing'da **1 ta tashqi havola** bor (O'qituvchilar → /user/login)
+- Faqat 1 ta haqiqiy havola — footer 90% `#` havola
+
+### BUG-230hz106: ✅ Landing sahifa 0 pageerror, 0 console xato
+
+### BUG-230hz107: ✅ Landing sections to'liq ko'rinadi: main (1561px), cast (558px), auth form (196px), beam, q, mini — struktura to'g'ri
+
+### BUG-230hz108: ✅ Barcha `#main`, `#cast`, `#auth`, `#kontakt` anchor targetlar MAVJUD (to'g'ri)
+
+### BUG-230hz109: ✅ Til tanlash havolalari 3 ta (`#` href, JS bilan ishlaydi)
+
+### BUG-230hz110: 🎯 XULOSA: Portfolio share token yaratiladi lekin TOKEN ISHLATIB BO'LMAYDI (404) — foydalanuvchi havolani boshqaga yuborsa, 404 sahifa ko'radi. BU PLATFORMA UCHUN JUDA MUHIM BUG
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI

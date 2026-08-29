@@ -135,3 +135,4 @@
 - ✅ STEP 71 — yakunlandi: BUG-230iha 🟡 (demo YO'Q) + ihb 🟡 (aria-expanded YO'Q) + ihc 🟡 (heading tartibi) + ihd/ihf/ihg ✅ (noopener/label/console toza)
 - ✅ STEP 85 — 85-STEP XULOSA: ~880 yozuv, 81🔴, 230✅, 96 PNG, 88 commit, 23MB. MFA 0 kod. Qolgan 15 step rejada.
 - ✅ STEP 86 — yakunlandi: BUG-230hz91 🔴 (camera-pilot 500 re-confirm) + BUG-230hz92 🔴 (CSP/PP/COEP YO'Q re-confirm)
+- ✅ STEP 87 — yakunlandi: BUG-230hz101 🔴 (Portfolio share E2E YANGI DEPLOYDA BUZILGAN — guest 404!) + BUG-230hz102 🔴 (revoke grant not found) + BUG-230hz103-110 (landing nano)
