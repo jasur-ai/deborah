@@ -154,4 +154,5 @@
 - ✅ STEP 103 — AI-B S19 ADMIN: BUG-130 🟠 (13/21 write MFA step-up YO'Q) + BUG-131 🔴 (fb.remove key validation YO'Q — path traversal) + BUG-132 🟡 (observability escape) + 133-140 ✅ℹ️
 - ✅ STEP 103 — ARENA E2E ISHLAYDI: kod 12345 -> host+play iframe -> 0 pageerror (BUG-044 YANILDI)
 - ✅ STEP 104 — ROL BO'YICHA TAHLIL: ADMIN 9/10, TEACHER 8/10, VIP 5/10 (Cast tugma ortiqcha), STUDENT 6/10 (Cast ISHLAYDI lekin yashirish kerakmi?) + BUG-230hz153
+- ✅ STEP 105 — STUDENT E2E 5/5 PASS: Test yaratish+Cast+Arena+Portfolio+Sessions hammasi ISHLAYDI (yangi deployda BUG-049/044 hal bo'lgan ko'rinadi!)
 - ✅ STEP 104 — ROL BO'YICHA TAHLIL: ADMIN 9/10 (arena bor), TEACHER 8/10 (arena+cast+sinov), VIP ⚠️ (Cast tugma ko'rinadi lekin kerak emas), STUDENT ⚠️ (Cast tugma ko'rinadi lekin 403)

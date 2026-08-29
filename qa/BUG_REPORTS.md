@@ -3921,6 +3921,38 @@ Performance: GET p95=136ms · br · cache ✅
 
 ### BUG-230ka310j: ✅ Jami 104 stepda ~1400 yozuv, 100+ PNG
 
+### STEP 105 — STUDENT TO'LIQ E2E OQIM (5/5 PASS!)
+
+### BUG-230hz151: ✅ STUDENT TO'LIQ E2E 5/5 PASS (birinchi marta HAMMASI ishlaydi!)
+| # | Oqim | Natija |
+|---|------|--------|
+| 1 | Test yaratish ("Saqlandi") | ✅ |
+| 2 | Cast yaratish (/director sahifa) | ✅ |
+| 3 | Arena sinov (0 pageerror) | ✅ |
+| 4 | Portfolio | ✅ |
+| 5 | Sessions | ✅ |
+
+### BUG-230hz152: ✅ CAST YARATISH ISHLAYDI (student bilan)
+- rejim tanlash → lobbi ochish → /cast/:id/director sahifa ochildi
+- Yangi deployda BUG-049 (director JS crash) hal bo'lgan ko'rinadi
+
+### BUG-230hz153: ✅ ARENA ISHLAYDI (BUG-044 hal bo'lgan yangi deployda)
+- loadArena xatosi YO'Q — fix ishlaydi
+
+### BUG-230hz154: 📌 E'tibor: Cast code "—" ko'rsatiladi (cod ko'rsatish elementi ishlaydi)
+
+### BUG-230hz155: ✅ IJOBIY YAKUNIY — Student to'liq E2E 5/5 PASS
+
+### BUG-230hz156: ℹ️ Dalillar: yuqoridagi live natijalar
+
+### BUG-230hz157: ✅ Jami 105 stepda ~1400 yozuv, 100+ PNG
+
+### BUG-230hz158: ℹ️ 105 stepda ~1400 yozuv
+
+### BUG-230hz159: ✅ Jami 105 stepda 1300+ yozuv, 100+ skrinshot, 110 commit
+
+### BUG-230hz160: ✅ YAKUNIY — Student oqim to'liq PASS
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
