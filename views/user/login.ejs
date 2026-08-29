@@ -121,7 +121,7 @@
           <input class="inp" id="reg-email" name="email" type="email" placeholder="<%= copy.register.emailPh %>" autocomplete="email" autocapitalize="off" spellcheck="false" inputmode="email" required aria-required="true" aria-invalid="false" value="<%= mode === 'reg' && typeof prevEmail !== 'undefined' && prevEmail ? prevEmail : '' %>" data-inline-error="err-reg-email" aria-describedby="err-reg-email">
           <!-- AUTH A-21: honeypot — CSS'da ko'rinmaydi, bot'lar to'ldiradi -->
           <div class="hp-field" aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden">
-            <label for="reg-website">Website (bot tekshiruvi)</label>
+            <label for="reg-website"><%= copy.register.websiteHp || 'Website (bot tekshiruvi)' %></label>
             <input id="reg-website" name="website" type="text" tabindex="-1" autocomplete="off" value="">
           </div>
           <div class="err-text" id="err-reg-email" data-inline-error="reg-email" style="display:none" role="alert"><%- icon('alertTriangle', 13) %><span></span></div>

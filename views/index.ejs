@@ -7,7 +7,7 @@
   (POST /user/login · POST /admin/login · /auth/google · /play?code=)
   ═══════════════════════════════════════════════════════════
 -->
-<html lang="<%= lang === 'ru' ? 'ru' : lang === 'en' ? 'en' : 'uz' %>" data-theme="dark" dir="ltr">
+<html lang="<%= lang === 'ru' ? 'ru' : lang === 'en' ? 'en' : lang === 'uz-cyrl' ? 'uz-Cyrl' : 'uz' %>" data-theme="dark" dir="ltr">
 <head>
   <%- include('partials/landing-head', { title: 'Deborah — savolni sinf ekraniga uzatish', description: copy.meta.description, siteUrl: (typeof siteUrl !== 'undefined' ? siteUrl : ''), path: path, lang: lang }) %>
 </head>

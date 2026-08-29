@@ -102,6 +102,7 @@ router.get('/teacher-approval', async (req, res) => {
       username: user.username || user.safeKey,
       lang: l,
       copy: copy.teacherApproval,
+      fullCopy: copy, // S14 (BUG-087): sidebar copy.sidebar uchun
       cooldown,
       // AUTH B-36 §12: apellyatsiya yuborilgach tasdiq banneri
       appealSent: req.query.appeal === '1',
@@ -601,7 +602,8 @@ router.get('/settings', async (req, res) => {
     } catch (_) { /* fail-soft — UI konsent holda render bo'ladi */ }
 
     res.render('user/settings', {
-      title: 'Sozlamalar',
+      title: AUTH_COPY[resolvedLang]?.settings?.title || 'Sozlamalar',
+      lang: resolvedLang, // S14 (BUG-087): html lang to'g'ri bo'lsin
       active: 'settings',
       user: req.session.user,
       csrfToken: req.session.csrfToken,
@@ -615,6 +617,7 @@ router.get('/settings', async (req, res) => {
       // D-09: ps i18n bloki (`settings` kaliti) — hali yo'q bo'lsa fallback {} (render buzilmaydi)
       settingsCopy: AUTH_COPY[resolvedLang]?.settings || {},
       accountCopy: AUTH_COPY[resolvedLang]?.account || {},
+      copy: AUTH_COPY[resolvedLang] || AUTH_COPY.uz, // S14 (BUG-087): sidebar 4 til
       // AUTH D-25: consent holati (settings UI) — {purpose: {granted,version,grantedAt,revokedAt}}
       consents: consents || {},
       consentCurrent,
@@ -629,6 +632,7 @@ router.get('/settings', async (req, res) => {
       profile: { name: user.name || '', lang: 'uz', theme: 'light', email: user.email || null, emailVerified: user.emailVerified === true },
       settingsCopy: {},
       accountCopy: {},
+      copy: AUTH_COPY.uz,
     });
   }
 });

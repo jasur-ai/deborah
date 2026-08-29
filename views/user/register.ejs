@@ -88,7 +88,7 @@
 
           <!-- AUTH A-21: honeypot — CSS'da ko'rinmaydi, bot'lar to'ldiradi -->
           <div class="hp-field" aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden">
-            <label for="reg-website">Website (bot tekshiruvi)</label>
+            <label for="reg-website"><%= copy.register.websiteHp || 'Website (bot tekshiruvi)' %></label>
             <input id="reg-website" name="website" type="text" tabindex="-1" autocomplete="off" value="">
           </div>
 

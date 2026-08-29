@@ -89,7 +89,7 @@ describe('STEP 17 — Navigation components', () => {
       expect(sidebar).toMatch(/aria-expanded="false"/);
     });
     it('theme grouped, logout primary emas', () => {
-      expect(sidebar).toMatch(/include\('theme-control'\)/);
+      expect(sidebar).toMatch(/include\('theme-control'/); // S14: headerCopy argument bilan ham mos
       expect(sidebar).toMatch(/shell-account-menu-item--logout/);
       expect(sidebar).not.toMatch(/shell-account-menu-item--logout\s*nav-btn--primary/);
     });

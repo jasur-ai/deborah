@@ -31,7 +31,7 @@ export const LANDING_COPY = {
       description: 'Savol tuzing, sinf ekraniga uzating, javoblarni jonli ko\'ring. OTM o\'qituvchilari uchun jonli baholash.',
     },
     header: {
-      cta: 'Kirish',
+      themeLabel: 'Mavzu', themeSystem: 'Tizim', themeLight: 'Yoru\u02bbq', themeDark: 'Qorong\u02bbi', cta: 'Kirish',
       switcherLabel: 'Tilni tanlash',
     },
     hero: {
@@ -145,7 +145,7 @@ export const LANDING_COPY = {
       description: 'Савол тузинг, синф экранига узатинг, жавобларни жонли кўринг. ОТМ ўқитувчилари учун жонли баҳолаш.',
     },
     header: {
-      cta: 'Кириш',
+      themeLabel: '\u041c\u0430\u0432\u0437\u0443', themeSystem: '\u0422\u0438\u0437\u0438\u043c', themeLight: '\u0401\u0440\u0443\u0493', themeDark: '\u049a\u043e\u0440\u0443\u043d\u0493\u0438', cta: 'Кириш',
       switcherLabel: 'Тилни танлаш',
     },
     hero: {
@@ -259,7 +259,7 @@ export const LANDING_COPY = {
       description: 'Создайте вопрос, выведите на экран аудитории, следите за ответами вживую. Живое оценивание для преподавателей вузов.',
     },
     header: {
-      cta: 'Вход',
+      themeLabel: '\u0422\u0435\u043c\u0430', themeSystem: '\u0421\u0438\u0441\u0442\u0435\u043c\u0430', themeLight: '\u0421\u0432\u0435\u0442\u043b\u0430\u044f', themeDark: '\u0422\u0451\u043c\u043d\u0430\u044f', cta: 'Вход',
       switcherLabel: 'Выбор языка',
     },
     hero: {
@@ -373,7 +373,7 @@ export const LANDING_COPY = {
       description: 'Write a question, cast it to the class screen, watch answers live. Live assessment for higher-education instructors.',
     },
     header: {
-      cta: 'Sign in',
+      themeLabel: 'Theme', themeSystem: 'System', themeLight: 'Light', themeDark: 'Dark', cta: 'Sign in',
       switcherLabel: 'Language switcher',
     },
     hero: {

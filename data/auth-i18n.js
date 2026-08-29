@@ -30,6 +30,34 @@ export const AUTH_COPY = {
       title: 'Kirish · Deborah',
       description: 'Tizimga kirish yoki ro\'yxatdan o\'tish.',
     },
+    // S14 (BUG-087/088): sidebar chrome + theme-control 4 til
+    header: { themeLabel: 'Mavzu', themeSystem: 'Tizim', themeLight: 'Yoruq', themeDark: 'Qorong\u02bbi' },
+    sidebar: {
+      roleTeacher: "O'qituvchi", roleStudent: 'Talaba', roleProctor: 'Proktor', roleMarker: 'Baholovchi', roleBoard: "Hay'at",
+      secTools: 'Asboblar', secAccount: 'Akkaunt', myTests: 'Testlarim', newTest: 'Yangi test', myPanel: 'Panelim',
+      calendar: 'Kalendar', portfolio: 'Portfolio', security: 'Xavfsizlik', courses: 'Kurslar', assessments: 'Baholashlar',
+      gradingQueue: 'Baholash navbati', liveMonitor: 'Jonli monitoring', ratification: 'Ratifikatsiya',
+      myProfile: 'Profilim', logout: 'Chiqish', home: 'Bosh sahifa', panel: 'Panel',
+    },
+    // S14 (BUG-087): nav.ejs chrome 4 til (oldin fallback uz qolardi)
+    nav: { aria: 'Asosiy navigatsiya', menu: 'Menyu', product: 'Product', teachers: 'Teachers', ready: 'Ready tests', resources: 'Resources', logout: 'Chiqish', login: 'Kirish', cta: "Ro'yxatdan o'tish" },
+    // S14 (BUG-087): settings sahifasi 4 til (avval faqat fallback uz edi)
+    settings: {
+      title: 'Sozlamalar', backToPanel: 'Mening panelim', logout: 'Chiqish',
+      secProfile: 'Profil', secSecurity: 'Xavfsizlik', secNotif: 'Bildirishnomalar', secPrivacy: 'Maxfiylik',
+      name: 'Ism', nameDesc: '2\u201360 belgi', save: 'Saqlash',
+      email: 'Email', emailVerified: '\u2713 tasdiqlangan', emailNotVerified: 'tasdiqlanmagan', changeEmail: "O\u2018zgartirish",
+      password: 'Parol', passwordDesc: 'Joriy parol bilan tasdiqlab o\u2018zgartirish',
+      mfa: '2FA (MFA)', mfaDesc: 'TOTP va zaxira kodlar', passkey: 'Passkey', passkeyDesc: 'Biometriya / qurilma kalitlari',
+      language: 'Til', languageDesc: 'Interfeys tili',
+      notifEmail: 'Email', notifEmailDesc: 'Email xabarlari', notifTelegram: 'Telegram', notifTelegramDesc: 'Telegram xabarlari (B-21)',
+      myData: 'Ma\u2019lumotlarim', myDataDesc: 'Tizimda saqlanadigan shaxsiy ma\u2019lumotlar ro\u2018yxati',
+      dsarStatus: 'DSAR holati', open: 'Ochish',
+      export: 'Eksport', exportBtn: 'Eksport qilish', exportDesc: 'CSV/JSON \u2014 DSAR (D-23)',
+      correct: 'Ma\u2019lumotni tuzatish', correctBtn: 'Tuzatish', correctDesc: 'DSAR \u2014 ismni tuzatish (reauth)',
+      restrict: 'Qayta ishlashni cheklash', restrictDesc: 'Legal hold \u2014 email/telegram yuborilmaydi',
+      deleteAccount: "Hisobni o\u2018chirish", deleteAccountDesc: 'DSAR \u2014 reauth talab qilinadi (D-23)', deleteBtn: "O\u2018chirish",
+    },
     login: {
       title: 'Kirish',
       sub: 'Hisobingizga kiring — darsni jonli o\'lchashni davom eting.',
@@ -56,6 +84,7 @@ export const AUTH_COPY = {
       trust: 'Hisobingiz shifrlangan va O\'zbekistonda xavfsiz saqlanadi.',
     },
     register: {
+      websiteHp: 'Website (bot tekshiruvi)',
       title: 'Ro\'yxatdan o\'tish',
       sub: 'Hisob yarating — 30 soniyada boshlang.',
       tab: 'Ro\'yxatdan o\'tish',
@@ -224,6 +253,8 @@ export const AUTH_COPY = {
       sameDeviceMore: 'Shu qurilmadan yana bir sessiya',
     },
     notif: {
+      // S14 (BUG-087): kanal holat xabarlar 4 til
+      tgOn: "Telegram — O'zbekiston uchun standart kanal", tgOff: "Telegram hozircha sozlanmagan — kanal qo'shilganda yoqiladi", pushOff: "Push bildirishnomalar bu serverda yoqilmagan (VAPID kalitlari yo'q)", skip: "Asosiy qismga o'tish →",
       title: "Bildirishnomalar",
       subtitle: "Qaysi xabarlarni olishni tanlang.",
       channelsTitle: "Kanallar",
@@ -519,6 +550,34 @@ export const AUTH_COPY = {
       title: 'Кириш · Deborah',
       description: 'Тизимга кириш ёки рўйхатдан ўтиш.',
     },
+    // S14 (BUG-087/088): sidebar chrome + theme-control 4 til
+    header: { themeLabel: '\u041c\u0430\u0432\u0437\u0443', themeSystem: '\u0422\u0438\u0437\u0438\u043c', themeLight: '\u0401\u0440\u0443\u0493', themeDark: '\u049a\u043e\u0440\u0443\u043d\u0493\u0438' },
+    sidebar: {
+      roleTeacher: '\u040e\u049b\u0438\u0442\u0443\u0432\u0447\u0438', roleStudent: '\u0422\u0430\u043b\u0430\u0431\u0430', roleProctor: '\u041f\u0440\u043e\u043a\u0442\u043e\u0440', roleMarker: '\u0411\u0430\u04b3\u043e\u043b\u043e\u0432\u0447\u0438', roleBoard: '\u04b2\u0430\u0439\u049b\u0430\u0442',
+      secTools: '\u0410\u0441\u0431\u043e\u0431\u043b\u0430\u0440', secAccount: '\u0410\u043a\u043a\u0430\u0443\u043d\u0442', myTests: '\u0422\u0435\u0441\u0442\u043b\u0430\u0440\u0438\u043c', newTest: '\u042f\u043d\u0433\u0438 \u0442\u0435\u0441\u0442', myPanel: '\u041f\u0430\u043d\u0435\u043b\u0438\u043c',
+      calendar: '\u041a\u0430\u043b\u0435\u043d\u0434\u0430\u0440', portfolio: '\u041f\u043e\u0440\u0442\u0444\u043e\u043b\u0438\u043e', security: '\u0425\u0430\u0432\u0444\u0441\u0438\u0437\u043b\u0438\u043a', courses: '\u041a\u0443\u0440\u0441\u043b\u0430\u0440', assessments: '\u0411\u0430\u04b3\u043e\u043b\u0430\u0448\u043b\u0430\u0440',
+      gradingQueue: '\u0411\u0430\u04b3\u043e\u043b\u0430\u0448 \u043d\u0430\u0432\u0431\u0430\u0442\u0438', liveMonitor: '\u0416\u043e\u043d\u043b\u0438 \u043c\u043e\u043d\u0438\u0442\u043e\u0440\u0438\u043d\u0433', ratification: '\u0420\u0430\u0442\u0438\u0444\u0438\u043a\u0430\u0446\u0438\u044f',
+      myProfile: '\u041f\u0440\u043e\u0444\u0438\u043b\u0438\u043c', logout: '\u0427\u0438\u049b\u0438\u0448', home: '\u0411\u043e\u0448 \u0441\u0430\u04b3\u0438\u0444\u0430', panel: '\u041f\u0430\u043d\u0435\u043b',
+    },
+    // S14 (BUG-087): nav.ejs chrome 4 til (oldin fallback uz qolardi)
+    nav: { aria: '\u0410\u0441\u043e\u0441\u0438\u0439 \u043d\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u044f', menu: '\u041c\u0435\u043d\u044e', product: 'Product', teachers: 'Teachers', ready: 'Ready tests', resources: 'Resources', logout: '\u0427\u0438\u049b\u0438\u0448', login: '\u041a\u0438\u0440\u0438\u0448', cta: '\u0420\u045e\u0439\u0445\u0430\u0442\u0434\u0430\u043d \u045e\u0442\u0438\u0448' },
+    // S14 (BUG-087): settings sahifasi 4 til (avval faqat fallback uz edi)
+    settings: {
+      title: '\u0421\u043e\u0437\u043b\u0430\u043c\u0430\u043b\u0430\u0440', backToPanel: '\u041c\u0435\u043d\u0438\u043d\u0433 \u043f\u0430\u043d\u0435\u043b\u0438\u043c', logout: '\u0427\u0438\u049b\u0438\u0448',
+      secProfile: '\u041f\u0440\u043e\u0444\u0438\u043b', secSecurity: '\u0425\u0430\u0432\u0444\u0441\u0438\u0437\u043b\u0438\u043a', secNotif: '\u0411\u0438\u043b\u0434\u0438\u0440\u0438\u0448\u043d\u043e\u043c\u0430\u043b\u0430\u0440', secPrivacy: '\u041c\u0430\u0445\u0444\u0438\u0439\u043b\u0438\u043a',
+      name: '\u0418\u0441\u043c', nameDesc: '2\u201360 \u0431\u0435\u043b\u0433\u0438', save: '\u0421\u0430\u049b\u043b\u0430\u0448',
+      email: 'Email', emailVerified: '\u2713 \u0442\u0430\u0441\u0434\u0438\u049b\u043b\u0430\u043d\u0433\u0430\u043d', emailNotVerified: '\u0442\u0430\u0441\u0434\u0438\u049b\u043b\u0430\u043d\u043c\u0430\u0433\u0430\u043d', changeEmail: '\u040e\u0437\u0433\u0430\u0440\u0442\u0438\u0440\u0438\u0448',
+      password: '\u041f\u0430\u0440\u043e\u043b', passwordDesc: '\u0416\u043e\u0440\u0438\u0439 \u043f\u0430\u0440\u043e\u043b \u0431\u0438\u043b\u0430\u043d \u0442\u0430\u0441\u0434\u0438\u049b\u043b\u0430\u0431 \u045e\u0437\u0433\u0430\u0440\u0442\u0438\u0440\u0438\u0448',
+      mfa: '2FA (MFA)', mfaDesc: 'TOTP \u0432\u0430 \u0437\u0430\u0445\u0438\u0440\u0430 \u043a\u043e\u0434\u043b\u0430\u0440', passkey: 'Passkey', passkeyDesc: '\u0411\u0438\u043e\u043c\u0435\u0442\u0440\u0438\u044f / \u049b\u0443\u0440\u0438\u043b\u043c\u0430 \u043a\u0430\u043b\u0438\u0442\u043b\u0430\u0440\u0438',
+      language: '\u0422\u0438\u043b', languageDesc: '\u0418\u043d\u0442\u0435\u0440\u0444\u0435\u0439\u0441 \u0442\u0438\u043b\u0438',
+      notifEmail: 'Email', notifEmailDesc: 'Email \u0445\u0430\u0431\u0430\u0440\u043b\u0430\u0440\u0438', notifTelegram: 'Telegram', notifTelegramDesc: 'Telegram \u0445\u0430\u0431\u0430\u0440\u043b\u0430\u0440\u0438 (B-21)',
+      myData: '\u041c\u0430\u044a\u043b\u0443\u043c\u043e\u0442\u043b\u0430\u0440\u0438\u043c', myDataDesc: '\u0422\u0438\u0437\u0438\u043c\u0434\u0430 \u0441\u0430\u049b\u043b\u0430\u043d\u0430\u0434\u0438\u0433\u0430\u043d \u0448\u0430\u0445\u0441\u0438\u0439 \u043c\u0430\u044a\u043b\u0443\u043c\u043e\u0442\u043b\u0430\u0440 \u0440\u045e\u0439\u0445\u0430\u0442\u0438',
+      dsarStatus: 'DSAR \u04b3\u043e\u043b\u0430\u0442\u0438', open: '\u041e\u0447\u0438\u0448',
+      export: '\u042d\u043a\u0441\u043f\u043e\u0440\u0442', exportBtn: '\u042d\u043a\u0441\u043f\u043e\u0440\u0442 \u049b\u0438\u043b\u0438\u0448', exportDesc: 'CSV/JSON \u2014 DSAR (D-23)',
+      correct: '\u041c\u0430\u044a\u043b\u0443\u043c\u043e\u0442\u043d\u0438 \u0442\u0443\u0437\u0430\u0442\u0438\u0448', correctBtn: '\u0422\u0443\u0437\u0430\u0442\u0438\u0448', correctDesc: 'DSAR \u2014 \u0438\u0441\u043c\u043d\u0438 \u0442\u0443\u0437\u0430\u0442\u0438\u0448 (reauth)',
+      restrict: '\u049a\u0430\u0439\u0442\u0430 \u0438\u0448\u043b\u0430\u0448\u043d\u0438 \u0447\u0435\u043a\u043b\u0430\u0448', restrictDesc: 'Legal hold \u2014 email/telegram \u044e\u0431\u043e\u0440\u0438\u043b\u043c\u0430\u0439\u0434\u0438',
+      deleteAccount: '\u04b2\u0438\u0441\u043e\u0431\u043d\u0438 \u045e\u0447\u0438\u0440\u0438\u0448', deleteAccountDesc: 'DSAR \u2014 reauth talab \u049b\u0438\u043b\u0438\u043d\u0430\u0434\u0438 (D-23)', deleteBtn: '\u040e\u0447\u0438\u0440\u0438\u0448',
+    },
     login: {
       title: 'Платформага кириш',
       sub: 'Ҳисобингизга киринг — дарсни жонли ўлчашни давом этинг.',
@@ -545,6 +604,7 @@ export const AUTH_COPY = {
       trust: 'Ҳисобингиз шифрланган ва хавфсиз сақланади.',
     },
     register: {
+      websiteHp: 'Website (bot \u0442\u0435\u043a\u0448\u0438\u0440\u0443\u0432\u0438)',
       title: 'Рўйхатдан ўтиш',
       sub: 'Ҳисоб яратинг — 30 сонияда бошланг.',
       tab: 'Рўйхатдан ўтиш',
@@ -713,6 +773,8 @@ export const AUTH_COPY = {
       sameDeviceMore: 'Шу қуриладан яна бир сессия',
     },
     notif: {
+      // S14 (BUG-087): kanal holat xabarlar 4 til
+      tgOn: '\u0422\u0435\u043b\u0435\u0433\u0440\u0430\u043c \u2014 \u040e\u0437\u0431\u0435\u043a\u0438\u0441\u0442\u043e\u043d \u0443\u0447\u0443\u043d \u0441\u0442\u0430\u043d\u0434\u0430\u0440\u0442 \u043a\u0430\u043d\u0430\u043b', tgOff: '\u0422\u0435\u043b\u0435\u0433\u0440\u0430\u043c \u04b3\u043e\u0437\u0438\u0440\u0447\u0430 \u0441\u043e\u0437\u043b\u0430\u043d\u043c\u0430\u0433\u0430\u043d \u2014 \u043a\u0430\u043d\u0430\u043b \u049b\u04e3\u0448\u0438\u043b\u0433\u0430\u043d\u0434\u0430 \u0439\u04e3\u043a\u0438\u043b\u0430\u0434\u0438', pushOff: 'Push \u0431\u0438\u043b\u0434\u0438\u0440\u0438\u0448\u043d\u043e\u043c\u0430\u043b\u0430\u0440 \u0431\u0443 \u0441\u0435\u0440\u0432\u0435\u0440\u0434\u0430 \u0439\u04e3\u049b\u0438\u043b\u043c\u0430\u0433\u0430\u043d (VAPID \u043a\u0430\u043b\u0438\u0442\u043b\u0430\u0440 \u0439\u04e3\u049b)', skip: '\u0410\u0441\u043e\u0441\u0438\u0439 \u049b\u0438\u0441\u043c\u0433\u0430 \u045e\u0442\u0438\u0448 \u2192',
       title: 'Билдиришномалар',
       subtitle: 'Қайси хабарларни олишни танланг.',
       channelsTitle: 'Каналлар',
@@ -1009,6 +1071,34 @@ export const AUTH_COPY = {
       title: 'Вход · Deborah',
       description: 'Вход в систему или регистрация.',
     },
+    // S14 (BUG-087/088): sidebar chrome + theme-control 4 til
+    header: { themeLabel: '\u0422\u0435\u043c\u0430', themeSystem: '\u0421\u0438\u0441\u0442\u0435\u043c\u0430', themeLight: '\u0421\u0432\u0435\u0442\u043b\u0430\u044f', themeDark: '\u0422\u0451\u043c\u043d\u0430\u044f' },
+    sidebar: {
+      roleTeacher: '\u041f\u0440\u0435\u043f\u043e\u0434\u0430\u0432\u0430\u0442\u0435\u043b\u044c', roleStudent: '\u0421\u0442\u0443\u0434\u0435\u043d\u0442', roleProctor: '\u041f\u0440\u043e\u043a\u0442\u043e\u0440', roleMarker: '\u041e\u0446\u0435\u043d\u0449\u0438\u043a', roleBoard: '\u041a\u043e\u043c\u0438\u0442\u0435\u0442',
+      secTools: '\u0418\u043d\u0441\u0442\u0440\u0443\u043c\u0435\u043d\u0442\u044b', secAccount: '\u0410\u043a\u043a\u0430\u0443\u043d\u0442', myTests: '\u041c\u043e\u0438 \u0442\u0435\u0441\u0442\u044b', newTest: '\u041d\u043e\u0432\u044b\u0439 \u0442\u0435\u0441\u0442', myPanel: '\u041c\u043e\u044f \u043f\u0430\u043d\u0435\u043b\u044c',
+      calendar: '\u041a\u0430\u043b\u0435\u043d\u0434\u0430\u0440\u044c', portfolio: '\u041f\u043e\u0440\u0442\u0444\u043e\u043b\u0438\u043e', security: '\u0411\u0435\u0437\u043e\u043f\u0430\u0441\u043d\u043e\u0441\u0442\u044c', courses: '\u041a\u0443\u0440\u0441\u044b', assessments: '\u041e\u0446\u0435\u043d\u043a\u0438',
+      gradingQueue: '\u041e\u0447\u0435\u0440\u0435\u0434\u044c \u043e\u0446\u0435\u043d\u0438\u0432\u0430\u043d\u0438\u044f', liveMonitor: '\u041c\u043e\u043d\u0438\u0442\u043e\u0440\u0438\u043d\u0433 \u0432 \u0440\u0435\u0430\u043b\u044c\u043d\u043e\u043c \u0432\u0440\u0435\u043c\u0435\u043d\u0438', ratification: '\u0420\u0430\u0442\u0438\u0444\u0438\u043a\u0430\u0446\u0438\u044f',
+      myProfile: '\u041c\u043e\u0439 \u043f\u0440\u043e\u0444\u0438\u043b\u044c', logout: '\u0412\u044b\u0439\u0442\u0438', home: '\u0413\u043b\u0430\u0432\u043d\u0430\u044f', panel: '\u041f\u0430\u043d\u0435\u043b\u044c',
+    },
+    // S14 (BUG-087): nav.ejs chrome 4 til (oldin fallback uz qolardi)
+    nav: { aria: '\u041e\u0441\u043d\u043e\u0432\u043d\u0430\u044f \u043d\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u044f', menu: '\u041c\u0435\u043d\u044e', product: 'Product', teachers: 'Teachers', ready: 'Ready tests', resources: 'Resources', logout: '\u0412\u044b\u0439\u0442\u0438', login: '\u0412\u0445\u043e\u0434', cta: '\u0420\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u044f' },
+    // S14 (BUG-087): settings sahifasi 4 til (avval faqat fallback uz edi)
+    settings: {
+      title: '\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438', backToPanel: '\u041c\u043e\u044f \u043f\u0430\u043d\u0435\u043b\u044c', logout: '\u0412\u044b\u0439\u0442\u0438',
+      secProfile: '\u041f\u0440\u043e\u0444\u0438\u043b\u044c', secSecurity: '\u0411\u0435\u0437\u043e\u043f\u0430\u0441\u043d\u043e\u0441\u0442\u044c', secNotif: '\u0423\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f', secPrivacy: '\u041a\u043e\u043d\u0444\u0438\u0434\u0435\u043d\u0446\u0438\u0430\u043b\u044c\u043d\u043e\u0441\u0442\u044c',
+      name: '\u0418\u043c\u044f', nameDesc: '2\u201360 \u0441\u0438\u043c\u0432\u043e\u043b\u043e\u0432', save: '\u0421\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c',
+      email: 'Email', emailVerified: '\u2713 \u043f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043d', emailNotVerified: '\u043d\u0435 \u043f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043d', changeEmail: '\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c',
+      password: '\u041f\u0430\u0440\u043e\u043b\u044c', passwordDesc: '\u0418\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u0435 \u0441 \u043f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043d\u0438\u0435\u043c \u0442\u0435\u043a\u0443\u0449\u0435\u0433\u043e \u043f\u0430\u0440\u043e\u043b\u044f',
+      mfa: '2FA (MFA)', mfaDesc: 'TOTP \u0438 \u0440\u0435\u0437\u0435\u0440\u0432\u043d\u044b\u0435 \u043a\u043e\u0434\u044b', passkey: 'Passkey', passkeyDesc: '\u0411\u0438\u043e\u043c\u0435\u0442\u0440\u0438\u044f / \u043a\u043b\u044e\u0447\u0438 \u0443\u0441\u0442\u0440\u043e\u0439\u0441\u0442\u0432',
+      language: '\u042f\u0437\u044b\u043a', languageDesc: '\u042f\u0437\u044b\u043a \u0438\u043d\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0430',
+      notifEmail: 'Email', notifEmailDesc: 'Email-\u0443\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f', notifTelegram: 'Telegram', notifTelegramDesc: 'Telegram-\u0443\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f (B-21)',
+      myData: '\u041c\u043e\u0438 \u0434\u0430\u043d\u043d\u044b\u0435', myDataDesc: '\u0421\u043f\u0438\u0441\u043e\u043a \u043f\u0435\u0440\u0441\u043e\u043d\u0430\u043b\u044c\u043d\u044b\u0445 \u0434\u0430\u043d\u043d\u044b\u0445, \u0445\u0440\u0430\u043d\u044f\u0449\u0438\u0445\u0441\u044f \u0432 \u0441\u0438\u0441\u0442\u0435\u043c\u0435',
+      dsarStatus: '\u0421\u0442\u0430\u0442\u0443\u0441 DSAR', open: '\u041e\u0442\u043a\u0440\u044b\u0442\u044c',
+      export: '\u042d\u043a\u0441\u043f\u043e\u0440\u0442', exportBtn: '\u042d\u043a\u0441\u043f\u043e\u0440\u0442\u0438\u0440\u043e\u0432\u0430\u0442\u044c', exportDesc: 'CSV/JSON \u2014 DSAR (D-23)',
+      correct: '\u0418\u0441\u043f\u0440\u0430\u0432\u0438\u0442\u044c \u0434\u0430\u043d\u043d\u044b\u0435', correctBtn: '\u0418\u0441\u043f\u0440\u0430\u0432\u0438\u0442\u044c', correctDesc: 'DSAR \u2014 \u0438\u0441\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u0435 \u0438\u043c\u0435\u043d\u0438 (reauth)',
+      restrict: '\u041e\u0433\u0440\u0430\u043d\u0438\u0447\u0438\u0442\u044c \u043e\u0431\u0440\u0430\u0431\u043e\u0442\u043a\u0443', restrictDesc: 'Legal hold \u2014 email/telegram \u043d\u0435 \u043e\u0442\u043f\u0440\u0430\u0432\u043b\u044f\u044e\u0442\u0441\u044f',
+      deleteAccount: '\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u0430\u043a\u043a\u0430\u0443\u043d\u0442', deleteAccountDesc: 'DSAR \u2014 \u0442\u0440\u0435\u0431\u0443\u0435\u0442\u0441\u044f reauth (D-23)', deleteBtn: '\u0423\u0434\u0430\u043b\u0438\u0442\u044c',
+    },
     login: {
       title: 'Вход в платформу',
       sub: 'Войдите в аккаунт — продолжайте живое оценивание занятия.',
@@ -1035,6 +1125,7 @@ export const AUTH_COPY = {
       trust: 'Ваши данные надёжно защищены.',
     },
     register: {
+      websiteHp: 'Website (\u043f\u0440\u043e\u0432\u0435\u0440\u043a\u0430 \u043d\u0430 \u0431\u043e\u0442\u043e\u0432)',
       title: 'Регистрация',
       sub: 'Создайте аккаунт — начните за 30 секунд.',
       tab: 'Регистрация',
@@ -1203,6 +1294,8 @@ export const AUTH_COPY = {
       sameDeviceMore: 'Ещё одна сессия с этого устройства',
     },
     notif: {
+      // S14 (BUG-087): kanal holat xabarlar 4 til
+      tgOn: '\u0422\u0435\u043b\u0435\u0433\u0440\u0430\u043c \u2014 \u0441\u0442\u0430\u043d\u0434\u0430\u0440\u0442\u043d\u044b\u0439 \u043a\u0430\u043d\u0430\u043b \u0434\u043b\u044f \u0423\u0437\u0431\u0435\u043a\u0438\u0441\u0442\u0430\u043d\u0430', tgOff: '\u0422\u0435\u043b\u0435\u0433\u0440\u0430\u043c \u043f\u043e\u043a\u0430 \u043d\u0435 \u043d\u0430\u0441\u0442\u0440\u043e\u0435\u043d \u2014 \u0431\u0443\u0434\u0435\u0442 \u0432\u043a\u043b\u044e\u0447\u0451\u043d \u043f\u0440\u0438 \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0438\u0438 \u043a\u0430\u043d\u0430\u043b\u0430', pushOff: 'Push-\u0443\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f \u043d\u0430 \u044d\u0442\u043e\u043c \u0441\u0435\u0440\u0432\u0435\u0440\u0435 \u0432\u043a\u043b\u044e\u0447\u0435\u043d\u044b (\u043d\u0435\u0442 \u043a\u043b\u044e\u0447\u0435\u0439 VAPID)', skip: '\u041f\u0435\u0440\u0435\u0439\u0442\u0438 \u043a \u043e\u0441\u043d\u043e\u0432\u043d\u043e\u043c\u0443 \u0441\u043e\u0434\u0435\u0440\u0436\u0438\u043c\u043e\u043c\u0443 \u2192',
       title: 'Уведомления',
       subtitle: 'Выберите, какие сообщения получать.',
       channelsTitle: 'Каналы',
@@ -1497,6 +1590,34 @@ export const AUTH_COPY = {
       title: 'Sign in · Deborah',
       description: 'Sign in or create an account.',
     },
+    // S14 (BUG-087/088): sidebar chrome + theme-control 4 til
+    header: { themeLabel: 'Theme', themeSystem: 'System', themeLight: 'Light', themeDark: 'Dark' },
+    sidebar: {
+      roleTeacher: 'Teacher', roleStudent: 'Student', roleProctor: 'Proctor', roleMarker: 'Marker', roleBoard: 'Board',
+      secTools: 'Tools', secAccount: 'Account', myTests: 'My tests', newTest: 'New test', myPanel: 'My panel',
+      calendar: 'Calendar', portfolio: 'Portfolio', security: 'Security', courses: 'Courses', assessments: 'Assessments',
+      gradingQueue: 'Grading queue', liveMonitor: 'Live monitoring', ratification: 'Ratification',
+      myProfile: 'My profile', logout: 'Log out', home: 'Home', panel: 'Panel',
+    },
+    // S14 (BUG-087): nav.ejs chrome 4 til (oldin fallback uz qolardi)
+    nav: { aria: 'Main navigation', menu: 'Menu', product: 'Product', teachers: 'Teachers', ready: 'Ready tests', resources: 'Resources', logout: 'Log out', login: 'Log in', cta: 'Register' },
+    // S14 (BUG-087): settings sahifasi 4 til (avval faqat fallback uz edi)
+    settings: {
+      title: 'Settings', backToPanel: 'My panel', logout: 'Log out',
+      secProfile: 'Profile', secSecurity: 'Security', secNotif: 'Notifications', secPrivacy: 'Privacy',
+      name: 'Name', nameDesc: '2\u201360 characters', save: 'Save',
+      email: 'Email', emailVerified: '\u2713 verified', emailNotVerified: 'not verified', changeEmail: 'Change',
+      password: 'Password', passwordDesc: 'Change with current password confirmation',
+      mfa: '2FA (MFA)', mfaDesc: 'TOTP and backup codes', passkey: 'Passkey', passkeyDesc: 'Biometrics / device keys',
+      language: 'Language', languageDesc: 'Interface language',
+      notifEmail: 'Email', notifEmailDesc: 'Email notifications', notifTelegram: 'Telegram', notifTelegramDesc: 'Telegram notifications (B-21)',
+      myData: 'My data', myDataDesc: 'List of personal data stored in the system',
+      dsarStatus: 'DSAR status', open: 'Open',
+      export: 'Export', exportBtn: 'Export', exportDesc: 'CSV/JSON \u2014 DSAR (D-23)',
+      correct: 'Correct data', correctBtn: 'Correct', correctDesc: 'DSAR \u2014 name correction (reauth)',
+      restrict: 'Restrict processing', restrictDesc: 'Legal hold \u2014 no email/telegram sent',
+      deleteAccount: 'Delete account', deleteAccountDesc: 'DSAR \u2014 reauth required (D-23)', deleteBtn: 'Delete',
+    },
     login: {
       title: 'Sign in to Deborah',
       sub: 'Sign in to keep measuring your lesson live.',
@@ -1523,6 +1644,7 @@ export const AUTH_COPY = {
       trust: 'Your data is encrypted and stored securely in Uzbekistan.',
     },
     register: {
+      websiteHp: 'Website (bot check)',
       title: 'Register',
       sub: 'Create an account — start in 30 seconds.',
       tab: 'Register',
@@ -1691,6 +1813,8 @@ export const AUTH_COPY = {
       sameDeviceMore: 'Another session from this device',
     },
     notif: {
+      // S14 (BUG-087): kanal holat xabarlar 4 til
+      tgOn: 'Telegram — the standard channel for Uzbekistan', tgOff: 'Telegram is not configured yet — will be enabled when a channel is added', pushOff: 'Push notifications are not enabled on this server (no VAPID keys)', skip: 'Skip to main content →',
       title: 'Notifications',
       subtitle: 'Choose which messages you receive.',
       channelsTitle: 'Channels',

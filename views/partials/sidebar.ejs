@@ -9,9 +9,13 @@ const _role = typeof role !== 'undefined' && role
   : (typeof res !== 'undefined' && res.locals && res.locals.role) || 'student';
 const _user = typeof user !== 'undefined' ? user : (typeof res !== 'undefined' && res.locals && res.locals.user) || null;
 const _uname = (_user && _user.username) || '';
+const _sb = ((typeof copy !== 'undefined' && copy.sidebar) ? copy.sidebar : ((typeof fullCopy !== 'undefined' && fullCopy && fullCopy.sidebar) ? fullCopy.sidebar : null));
+const _tc = ((typeof copy !== 'undefined' && copy.header) ? copy.header : ((typeof fullCopy !== 'undefined' && fullCopy && fullCopy.header) ? fullCopy.header : null));
+// S14 (BUG-087): sidebar 4 til — copy.sidebar (AUTH_COPY[l]); copy yo'qsa uz fallback
+const _st = (k, fb) => (_sb && _sb[k]) ? _sb[k] : fb;
 const _roleLabel = (typeof roleLabel !== 'undefined' && roleLabel)
   ? roleLabel
-  : ({ admin: 'Administrator', teacher: "O'qituvchi", student: 'Talaba', proctor: 'Proktor', marker: 'Baholovchi', board: "Hay'at" })[_role] || 'Talaba';
+  : _st('role' + String(_role || '').charAt(0).toUpperCase() + String(_role || '').slice(1), ({ admin: 'Administrator', teacher: "O'qituvchi", student: 'Talaba', proctor: 'Proktor', marker: 'Baholovchi', board: "Hay'at" })[_role] || 'Talaba');
 const _nav = (typeof navItems !== 'undefined' && navItems) ? navItems : null;
 const _isActive = (href) => {
   if (!href || href === '/') return _active === href;
@@ -105,41 +109,41 @@ const _isActive = (href) => {
     <% } else if (_role === 'teacher') { %>
       <div class="shell-nav-sec">Ish maydoni</div>
       <a href="/teacher" class="shell-nav-link<%= _isActive('/teacher') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('grid', 16) %></span><span>Umumiy ko'rinish</span></a>
-      <a href="/teacher?tab=courses" class="shell-nav-link<%= _active === 'courses' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('bookOpen', 16) %></span><span>Kurslar</span></a>
-      <a href="/teacher?tab=assessments" class="shell-nav-link<%= _active === 'assessments' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('target', 16) %></span><span>Baholashlar</span></a>
-      <a href="/teacher?tab=grading" class="shell-nav-link<%= _active === 'grading' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('clipboard', 16) %></span><span>Baholash navbati</span></a>
-      <div class="shell-nav-sec">Asboblar</div>
-      <a href="/user/panel" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('book', 16) %></span><span>Testlarim</span></a>
-      <a href="/user/create-test" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('plus', 16) %></span><span>Yangi test</span></a>
+      <a href="/teacher?tab=courses" class="shell-nav-link<%= _active === 'courses' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('bookOpen', 16) %></span><span><%= _st('courses', 'Kurslar') %></span></a>
+      <a href="/teacher?tab=assessments" class="shell-nav-link<%= _active === 'assessments' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('target', 16) %></span><span><%= _st('assessments', 'Baholashlar') %></span></a>
+      <a href="/teacher?tab=grading" class="shell-nav-link<%= _active === 'grading' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('clipboard', 16) %></span><span><%= _st('gradingQueue', 'Baholash navbati') %></span></a>
+      <div class="shell-nav-sec"><%= _st('secTools', 'Asboblar') %></div>
+      <a href="/user/panel" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('book', 16) %></span><span><%= _st('myTests', 'Testlarim') %></span></a>
+      <a href="/user/create-test" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('plus', 16) %></span><span><%= _st('newTest', 'Yangi test') %></span></a>
     <% } else if (_role === 'student') { %>
-      <div class="shell-nav-sec">Talaba</div>
-      <a href="/user/panel" class="shell-nav-link<%= _active === 'panel' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('grid', 16) %></span><span>Panelim</span></a>
-      <a href="/student" class="shell-nav-link<%= _isActive('/student') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('calendar', 16) %></span><span>Kalendar</span></a>
-      <a href="/user/portfolio" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('award', 16) %></span><span>Portfolio</span></a>
-      <a href="/user/security-profile" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('shieldCheck', 16) %></span><span>Xavfsizlik</span></a>
+      <div class="shell-nav-sec"><%= _st('roleStudent', 'Talaba') %></div>
+      <a href="/user/panel" class="shell-nav-link<%= _active === 'panel' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('grid', 16) %></span><span><%= _st('myPanel', 'Panelim') %></span></a>
+      <a href="/student" class="shell-nav-link<%= _isActive('/student') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('calendar', 16) %></span><span><%= _st('calendar', 'Kalendar') %></span></a>
+      <a href="/user/portfolio" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('award', 16) %></span><span><%= _st('portfolio', 'Portfolio') %></span></a>
+      <a href="/user/security-profile" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('shieldCheck', 16) %></span><span><%= _st('security', 'Xavfsizlik') %></span></a>
     <% } else if (_role === 'proctor') { %>
-      <div class="shell-nav-sec">Proktor</div>
-      <a href="/proctor" class="shell-nav-link<%= _active === 'monitor' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('monitor', 16) %></span><span>Jonli monitoring</span></a>
+      <div class="shell-nav-sec"><%= _st('roleProctor', 'Proktor') %></div>
+      <a href="/proctor" class="shell-nav-link<%= _active === 'monitor' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('monitor', 16) %></span><span><%= _st('liveMonitor', 'Jonli monitoring') %></span></a>
       <a href="/admin/camera-review" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('camera', 16) %></span><span>Camera review</span></a>
       <a href="/admin/command-center" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('zap', 16) %></span><span>Command Center</span></a>
     <% } else if (_role === 'marker') { %>
-      <div class="shell-nav-sec">Baholovchi</div>
-      <a href="/marker" class="shell-nav-link<%= _active === 'queue' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('clipboard', 16) %></span><span>Baholash navbati</span></a>
+      <div class="shell-nav-sec"><%= _st('roleMarker', 'Baholovchi') %></div>
+      <a href="/marker" class="shell-nav-link<%= _active === 'queue' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('clipboard', 16) %></span><span><%= _st('gradingQueue', 'Baholash navbati') %></span></a>
       <a href="/admin/marking" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('checkCircle', 16) %></span><span>Marking</span></a>
       <a href="/admin/consideration" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('alertTriangle', 16) %></span><span>Consideration</span></a>
     <% } else if (_role === 'board') { %>
-      <div class="shell-nav-sec">Hay'at</div>
-      <a href="/board" class="shell-nav-link<%= _active === 'ratify' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('award', 16) %></span><span>Ratifikatsiya</span></a>
+      <div class="shell-nav-sec"><%= _st('roleBoard', "Hay'at") %></div>
+      <a href="/board" class="shell-nav-link<%= _active === 'ratify' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('award', 16) %></span><span><%= _st('ratification', 'Ratifikatsiya') %></span></a>
       <a href="/admin/board" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('shield', 16) %></span><span>Board</span></a>
       <a href="/admin/grading" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('trendUp', 16) %></span><span>Grading</span></a>
     <% } %>
-    <div class="shell-nav-sec">Akkaunt</div>
-    <a href="/user/profile" class="shell-nav-link<%= _isActive('/user/profile') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('user', 16) %></span><span>Profilim</span></a>
+    <div class="shell-nav-sec"><%= _st('secAccount', 'Akkaunt') %></div>
+    <a href="/user/profile" class="shell-nav-link<%= _isActive('/user/profile') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('user', 16) %></span><span><%= _st('myProfile', 'Profilim') %></span></a>
     <% // BUG-037: doim ko'rinadigan Chiqish — POST + CSRF (BUG-032), dropdown ochilmasdan ham ├── %>
     <form method="post" action="/user/logout" style="margin:0;display:block;width:100%">
       <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
       <button type="submit" class="shell-nav-link shell-nav-btn">
-        <span class="shell-nav-ico"><%- icon('logOut', 16) %></span><span>Chiqish</span>
+        <span class="shell-nav-ico"><%- icon('logOut', 16) %></span><span><%= _st('logout', 'Chiqish') %></span>
       </button>
     </form>
   </nav>
@@ -155,11 +159,11 @@ const _isActive = (href) => {
       <span class="shell-nav-ico" style="margin-left:auto;opacity:.6"><%- icon('chevronDown', 12) %></span>
     </button>
     <div class="shell-account-menu" id="shell-account-menu">
-      <a href="/" class="shell-account-menu-item"><span class="shell-nav-ico"><%- icon('home', 14) %></span> Bosh sahifa</a>
-      <a href="/user/panel" class="shell-account-menu-item"><span class="shell-nav-ico"><%- icon('grid', 14) %></span> Panel</a>
-      <a href="/user/profile" class="shell-account-menu-item"><span class="shell-nav-ico"><%- icon('user', 14) %></span> Profilim</a>
-      <%- include('theme-control') %>
-      <a href="/user/logout" class="shell-account-menu-item shell-account-menu-item--logout"><span class="shell-nav-ico"><%- icon('logOut', 14) %></span> Chiqish</a>
+      <a href="/" class="shell-account-menu-item"><span class="shell-nav-ico"><%- icon('home', 14) %></span> <%= _st('home', 'Bosh sahifa') %></a>
+      <a href="/user/panel" class="shell-account-menu-item"><span class="shell-nav-ico"><%- icon('grid', 14) %></span> <%= _st('panel', 'Panel') %></a>
+      <a href="/user/profile" class="shell-account-menu-item"><span class="shell-nav-ico"><%- icon('user', 14) %></span> <%= _st('myProfile', 'Profilim') %></a>
+      <%- include('theme-control', { headerCopy: _tc }) %>
+      <a href="/user/logout" class="shell-account-menu-item shell-account-menu-item--logout"><span class="shell-nav-ico"><%- icon('logOut', 14) %></span> <%= _st('logout', 'Chiqish') %></a>
     </div>
   </div>
 </aside>

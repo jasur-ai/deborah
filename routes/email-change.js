@@ -43,7 +43,8 @@ router.use((req, res, next) => {
 // ── UI sahifasi ──
 router.get('/user/email-change', async (req, res) => {
   try {
-    const lang = resolveAuthLang(req);
+    // BUG-085 (S14): req OBYEKTI berilardi → doim 'uz'; endi query/cookie
+    const lang = resolveAuthLang(req.query?.lang || req.cookies?.lang);
     const copy = AUTH_COPY[lang] || AUTH_COPY.uz;
     const user = req.session.user;
     const status = await getEmailChangeStatus(user.safeKey);
@@ -52,6 +53,7 @@ router.get('/user/email-change', async (req, res) => {
       lang,
       user,
       emailCopy: copy.emailChange || {},
+      copy, // S14 (BUG-087): sidebar/theme-control 4 til
       pending: status,
       __csrf: res.locals.csrfToken || null,
     });

@@ -371,6 +371,47 @@ cast e2e 21+5 o'tdi; design-lint PASS ✓; full vitest 7098/7108 — 9 ta S12'da
 pre-existing (S11 HEAD worktree'da ham xato) + 1 S13 regression ([hidden] important +2) TOPILDI
 VA TA'SIRLANDI (27→26, chegara yangilandi, test o'tdi).
 
+## STEP 14 — 🟠 Faza B: i18n qatlamlar (4 til: uz/uz-cyrl/ru/en) — ✅
+**Buglar:** BUG-084/085/086/087/088/089/091/092 (jami 8 guruh)
+**Qanday (qaysi+qanday):**
+- **BUG-084** cookie-parser UMUMAN mount qilinmagan — `?lang=ru` cookie YOZILARDI, lekin
+  `req.cookies` app bo'ylab undefined qolardi (auth/session/oidc/mfa/reset/roster/portfolio —
+  16 joyda o'lik kod; til tanlovi sahifalar orasida saqlanmasdi). Fix: `cookie-parser@1.4.7` +
+  server.js mount.
+- **BUG-085** `resolveAuthLang(req)` — req OBYEKTI uzatilgan (notifications userLang,
+  email-change): `String(req)`='[object Object]' → doim 'uz'. Fix: `req.query?.lang ||
+  req.cookies?.lang` ×2.
+- **BUG-086** `/locales` static yo'q — CastI18n `/locales/{locale}/cast.json` **404** olardi:
+  cast i18n (participant/director/projector) butunlay ishlamasdi, hammasi hardcoded uz'da
+  qolardi. Fix: `app.use('/locales', express.static(...))`.
+- **BUG-087** chrome qatlamlari uz'ga qotib qolgan — AUTH_COPY'da `nav` (9 kalit), `sidebar`
+  (22), `settings` (41! — D-09 rejadagi blok hech qachon qo'shilmagan), notif kanal-hint (5),
+  register honeypot kalitlari YO'Q; sidebar.ejs 23 matn + notifications/email-change inline nav
+  hardcoded; settings html lang="uz". Fix: 4 til lug'atlar (≈200 ta yangi tarjima) + views/route
+  ulash (sidebar `_st` pattern, fullCopy, copy pass ×4 route, settings lang pass).
+- **BUG-088** theme-control.ejs fallback INGLIZCHA ('System/Light/Dark') — copy'siz sahifalarda
+  (admin, eski viewlar) ham doim EN ko'rinardi. Fix: uz fallback + `header.theme*` kalitlari
+  AUTH_COPY (4 til) va LANDING_COPY (4 til) header'lariga.
+- **BUG-089** uz-cyrl foydalanuvchilarga LOTIN matnlar qolardi: legal.ejs (5 matn
+  `lang==='uz' || lang==='uz-cyrl'` sharti bilan), auth-footer.ejs (3), landing I18N'da uz-cyrl
+  blok YO'Q (60 ta data-i18n elementi lotin qolardi → /uz-cyrl aralash skript), index.ejs html
+  lang uz. Fix: kirill variantlari + landing I18N `uz-cyrl` bloki (~50 kalit) + canonical
+  'uz-Cyrl' + ў (\u045e) vs ө (\u04e9) belgi xatosi tuzatildi.
+- **BUG-091** landing hreflang alternates yo'q (SEO). Fix: uz-Latn/uz-Cyrl/ru/en/x-default
+  linklari landing-head'ga.
+- **BUG-092** landing.js klient tili serverni bosib o'tardi: har yuklanishda
+  `applyLang(localStorage['deborah-lang'] || 'uz')` — `/ru` havolasi ochilsa ham kontent uz'ga
+  qaytardi (SEO/ulashish havolalari buzilgan). Fix: path-lang (/ru,/en,/uz-cyrl) USTUN.
+**Tool:** `scripts/scan-step14.mjs` (PORT 4608; landing 4 yo'l skript-nisbati + 4 til render
+diff (ru/cyrl uz-lotin bir xil matn, en o'zbekcha markerlar) + html lang + cookie + hreflang +
+cast.json/AUTH_COPY pariteti) + `scripts/repro-step14.mjs` (PORT 4610, 23 tekshiruv).
+**Verify:** repro **23/23 HAMMASI OK**; scanner — landing 4/4 til ✓, COOKIE ru ✓, CAST /play ru
+✓ ("Присоединиться"), AUTH_COPY paritet TO'LIQ, cast.json 87 kalit ×4; qolgan topilmalar —
+dizayn-qoldiq (nav EN mahsulot nomlari, til-almashtirgich o'z-o'zini nomlari "O'zbek/English",
+emaillar); design 253→ navigation regex sinxron 19/19; **full vitest 7099/7108 — 9 fail
+S12'dan ma'lum pre-existing to'plam (S11 HEAD worktree'da isbotlangan), 0 S14 regress**;
+design-lint PASS ✓.
+
 ## ✅ YAKUNLANGANLAR
 - **STEP 1** (2026-08-27): BUG-009/010/012/044 + 2 yangi topilma — 6 fayl; brauzer 13/13 PASS, vitest 45/45.
 - **STEP 2** (2026-08-27): BUG-011/016/041 — 5 fayl + 3 test sinxron; brauzer 10/10 PASS, auth 491/491, integration 104/104.
@@ -385,6 +426,7 @@ VA TA'SIRLANDI (27→26, chegara yangilandi, test o'tdi).
 - **STEP 11** (2026-08-28): BUG-013/015/022/045 + YANGI 068/069/070 (settings crash, S10 TDZ regress, eskirgan test) — konsol-scan 12/12 toza, repro 16/16, 4896/4896.
 - **STEP 12** (2026-08-28): BUG-071…077 (sessions/cast/enter kontrast, projector 302, roles html/json negotiate, hc graceful) — scan 24+ sahifa 0 buzilish, repro 16/16, full 7099/7108 (9 fail pre-existing @HEAD), design-lint PASS.
 - **STEP 13** (2026-08-28): BUG-078…083 (participant [hidden] +733px overflow, director topbar +315px, iOS input-zoom <16px, touch-target <24px) — scan 36 sahifa 0 buzilish, repro 24/24, cast e2e 21+5, design-lint PASS.
+- **STEP 14** (2026-08-29): BUG-084…092 (cookie-parser yo'q, resolveAuthLang(req) ×2, /locales 404 — cast i18n o'lik, AUTH_COPY nav/sidebar/settings 4 til ≈200 tarjima, theme-control EN fallback, uz-cyrl lotin qoldiqlar, hreflang, landing klient tili serverni bosardi) — repro 23/23, full 7099/7108 (9 pre-existing), design-lint PASS.
 
 ## 📋 MANBA HAVOLALAR
 - BUG hisobotlari: `workspace` branch → `qa/BUG_REPORTS.md`

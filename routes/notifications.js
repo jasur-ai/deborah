@@ -42,7 +42,9 @@ async function userLang(req) {
     const snap = await fb.get(`users/${safeKey(req.session.user.safeKey)}/settings/lang`);
     if (snap.exists() && snap.val()) return snap.val();
   } catch (_) {}
-  return resolveAuthLang(req);
+  // BUG-085 (S14): avval req OBYEKTINI berilardi — String(req)='[object Object]'
+  // → doim 'uz' qaytardi. Query/cookie (BUG-084'dan keyin cookie o'qiladi) to'g'ri.
+  return resolveAuthLang(req.query?.lang || req.cookies?.lang);
 }
 
 router.get('/user/notifications', async (req, res) => {
@@ -59,6 +61,7 @@ router.get('/user/notifications', async (req, res) => {
       lang,
       user: req.session.user,
       prefs,
+      copy, // S14 (BUG-087): sidebar/theme-control 4 til
       notifCopy: copy.notif,
       channelAvail: avail,
       accountCopy: copy.account || {},

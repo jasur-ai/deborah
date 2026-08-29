@@ -49,6 +49,53 @@
     
     'ftr.legal':'© 2026 Deborah · Savolni sinf ekraniga uzatish tizimi'
   },
+  /* S14 (BUG-089c): /uz-cyrl landing — 60 ta data-i18n elementi klientda almashtiriladi,
+     lekin I18Nda uz-cyrl yo'q edi → aralash skript (server kirill, data-i18n lotin) */
+  'uz-cyrl':{
+    'hdr.kirish':'Кириш',
+    'hm.kirish':'Кириш','hm.cast':'Cast','hm.documents':'Ҳужжатлар',
+    'join.k':'Тайёр cast',
+    'join.h3':'Castга <em>кириш</em>',
+    'join.p':'Кодни киритинг.',
+    'join.err':'Код 5–6 белгидан иборат бўлиши керак (cast: 6 ҳарф/рақам).',
+    'join.go':'Кириш',
+    'join.load':'Уланмоқда… <i></i>',
+    'join.ok':'Сиз castга уланингиз. Савол кутилмоқда.',
+    'nav.cast':'Cast','nav.kirish':'Кириш',
+    'head.kicker':'Саволни синф экранига узатиш',
+    'head.h1':'Савол — <em>экранда</em>. Жавоб — телефонда.',
+    'head.p':'Бир тугма билан савол синф экранига узатилади. Жавоблар реал вақтда йиғилади.',
+    'beam.tx':'узатилмоқда…',
+    'live.live':'жонли',
+    'live.q':"SQL'да жадвалдан такрорий ёзувларни олиб ташлаб, фақат уникалларини қайтарувчи оператор қайси?",
+    'live.cap':'Response mosaic · 42 жавоб',
+    'live.dev':'Доминант хато: B · 43%',
+    'live.f1':'Савол cast қилинди','live.f2':'жавоблар йиғилмоқда',
+    'under':'Бу — <b>cast</b>: савол экранда, жавоблар телефонда. Ҳар бир савол шу тарзда узатилади.',
+    'auth.k':'Кириш ва рўйхатдан ўтиш','auth.h2':'Тизимга кириш','auth.t1':'Кириш','auth.t2':'Рўйхатдан ўтиш','auth.login':'Кириш','auth.register':'Рўйхатдан ўтиш','auth.doneReg':'Рўйхатдан ўтдингиз. Энди тизимга кира оласиз.',
+    'auth.google':'Google билан кириш',
+    'auth.loginId':'Email ёки username',
+    'auth.username':'Username',
+    'auth.userFree':"✓ Бўш — мос username",
+    'auth.userTaken':'Бу username банд — бошқасини танланг',
+    'auth.userReserved':'Бу ном тизим учун ажратилган',
+    'auth.userInvalid':'2–50 белги: лотин ҳарфлари, рақам, . _ -',
+    'auth.passHint':'Камида 8 белги — ҳарф ва рақам',
+    'auth.role':'Ролингиз','auth.roleStudent':'Талаба','auth.roleTeacher':'Ўқитувчи','auth.teacherLink':"Ўқитувчи учун тўлиқ ариза →",
+    'err.net':'Тармоқ хатоси — қайта уриниб кўринг',
+    'err.wait':'Бир неча сония кутинг...','auth.or':'ёки email билан',
+    'auth.name':'Исм ва фамилия','auth.email':'Email','auth.pass':'Парол',
+    'auth.doneLogin':'Кириш рўхсат тасдиқлангач очилади.',
+    'admin.btn':'Admin','admin.k':'Admin panel','admin.h3':'Administrator <em>кириши</em>','admin.p':'Фақат администраторлар учун.',
+    'admin.loginL':'Login','admin.passL':'Парол','admin.go':'Кириш','admin.err':'Логин ёки парол хато.','admin.ok':'Кириш муваффақиятли',
+    'ftr.col1t':'Саҳифалар','ftr.l1':'Бош саҳифа','ftr.l2':'Cast','ftr.l3':'Кириш','ftr.l4':'Рўйхатдан ўтиш',
+    'ftr.teachers':'Ўқитувчилар',
+    'ftr.col2t':'Ҳужжатлар','ftr.l5':'Махфийлик сиёсати','ftr.l6':'Фойдаланиш шартлари','ftr.l7':'Cookie сиёсати','ftr.l8':"Қонуний маълумот",
+    'ftr.col3t':'Алоқа','ftr.l9':'Status',
+    'ftr.col4t':'Тил',
+    'prov.g.off':'Google кириш серверда созланмаган (GOOGLE_CLIENT_ID). Администраторга мурожаат қилинг — ҳозир email билан киринг.',
+    'ftr.legal':'© 2026 Deborah · Саволни синф экранига узатиш тизими'
+  },
   ru:{
     'hdr.kirish':'Вход',
     'hm.kirish':'Вход','hm.cast':'Cast','hm.documents':'Документы',
@@ -150,7 +197,7 @@
       var k=el.getAttribute('data-i18n');
       if(d[k]!==undefined)el.innerHTML=d[k];
     });
-    document.documentElement.setAttribute('lang',lang);
+    document.documentElement.setAttribute('lang', lang === 'uz-cyrl' ? 'uz-Cyrl' : lang); /* S14: BCP-47 canonical */
     document.title=TITLES[lang]||d.title;
     document.querySelectorAll('.lang button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-lang')===lang);});
     try{localStorage.setItem('deborah-lang',lang);}catch(e){}
@@ -163,14 +210,20 @@
     else{document.documentElement.setAttribute('data-theme',t);}
   }
   var savedLang='uz',savedTheme='dark';
+  /* BUG-092 (S14): path-based sahifalar (/ru,/en,/uz-cyrl) — server tili USTUN.
+     Oldin localStorage (default 'uz') har yuklanishda server renderini bosib o'tardi:
+     /ru havolasi ochilsa ham kontent uz'ga qaytardi (SEO/ulashish havolalari buzilgan). */
+  var _pl=location.pathname.split('/')[1];
+  var pathLang=({'ru':'ru','en':'en','uz-cyrl':'uz-cyrl'})[_pl]||null;
   try{
-    savedLang=localStorage.getItem('deborah-lang')||'uz';
+    savedLang=pathLang||localStorage.getItem('deborah-lang')||'uz';
+    /* I18Nga uz-cyrl qo'shildi (BUG-089c) — pathLang qoladi, server+klient bir xil til */
     // Engine kaliti (deborah-theme-state) birinchi — tanlangan tema saqlansin;
     // eski demo kaliti (deborah-theme) migratsiya; hamma yo'q = demo odati: birinchi tashrif dark.
     savedTheme=localStorage.getItem('deborah-theme-state')||localStorage.getItem('deborah-theme')||'dark';
   }catch(e){}
   applyTheme(savedTheme);
-  applyLang(savedLang);
+  if(savedLang) applyLang(savedLang); /* /uz-cyrl: server render (kirill) o'zgarmaydi */
   document.querySelectorAll('.lang button').forEach(function(b){
     b.addEventListener('click',function(){applyLang(b.getAttribute('data-lang'));});
   });

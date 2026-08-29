@@ -2,11 +2,15 @@
   // Deborah Theme Control (STYLE STEP 07 / S07.09)
   // Accessible System/Light/Dark segmented control — icon-only emas.
   // theme.js [data-theme-state-btn] orqali boshqaradi.
+  // S14 (BUG-088): copy.header (AUTH_COPY/LANDING_COPY) yoki include'dan headerCopy;
+  // copy'siz sahifalar (admin) uchun uz fallback — oldin INGLIZCHA 'System/Light/Dark' edi
+  const _h = (typeof headerCopy !== 'undefined' && headerCopy) ? headerCopy
+    : ((typeof copy !== 'undefined' && copy.header) ? copy.header : null);
   const tcCopy = {
-    label: (typeof copy !== 'undefined' && copy.header && copy.header.themeLabel) ? copy.header.themeLabel : 'Mavzu',
-    system: (typeof copy !== 'undefined' && copy.header && copy.header.themeSystem) ? copy.header.themeSystem : 'System',
-    light: (typeof copy !== 'undefined' && copy.header && copy.header.themeLight) ? copy.header.themeLight : 'Light',
-    dark: (typeof copy !== 'undefined' && copy.header && copy.header.themeDark) ? copy.header.themeDark : 'Dark',
+    label: (_h && _h.themeLabel) ? _h.themeLabel : 'Mavzu',
+    system: (_h && _h.themeSystem) ? _h.themeSystem : 'Tizim',
+    light: (_h && _h.themeLight) ? _h.themeLight : 'Yoru\u02bbq',
+    dark: (_h && _h.themeDark) ? _h.themeDark : 'Qorong\u02bbi',
   };
 %>
 <div class="theme-segmented" role="group" aria-label="<%= tcCopy.label %>">

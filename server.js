@@ -21,6 +21,7 @@ import express from 'express';
 import session from 'express-session';
 import helmet from 'helmet';
 import compression from 'compression';
+import cookieParser from 'cookie-parser'; // BUG-084 (S14): lang va boshqa cookie'larni o'qish uchun (16 ta req.cookies ishlatuvchisi o'lik edi)
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import crypto from 'crypto';
@@ -195,6 +196,10 @@ export async function createApp() {
   app.use(express.json({ limit: '10mb', verify: (req, res, buf) => { req.rawBody = buf.toString('utf8'); } }));
   app.use(express.urlencoded({ extended: true, limit: '10mb', verify: (req, res, buf) => { req.rawBody = req.rawBody || buf.toString('utf8'); } }));
 
+  // BUG-084 (S14): cookie-parser — ?lang= cookie'si YOZILARDI lekin hech kim o'qimasdi
+  // (req.cookies app bo'ylab undefined; auth/session/oidc/mfa/reset/roster/portfolio 16 joyda).
+  app.use(cookieParser());
+
   // ── Session (Redis or MemoryStore) ──
   let sessionStore;
   if (CONFIG.REDIS_URL) {
@@ -335,6 +340,12 @@ export async function createApp() {
   // ── Static files ──
   app.use(express.static(join(__dirname, 'public'), {
     maxAge: CONFIG.NODE_ENV === 'production' ? '1d' : 0,
+  }));
+  // BUG-086 (S14): /locales kataloglari public/ ichida emas — CastI18n fetch
+  // /locales/{locale}/cast.json 404 olardi, cast i18n butunlay ishlamaydi.
+  app.use('/locales', express.static(join(__dirname, 'locales'), {
+    maxAge: '1h',
+    setHeaders: (res2) => res2.setHeader('Cache-Control', 'public, max-age=3600'),
   }));
   app.use('/characters', express.static(join(__dirname, 'characters'), {
     maxAge: CONFIG.NODE_ENV === 'production' ? '7d' : 0,

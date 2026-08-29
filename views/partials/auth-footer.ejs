@@ -1,5 +1,6 @@
+<%// S14 (BUG-089): uz-cyrl uchun kirill variantlar (oldin lotin uz qolardi) %>
 <footer class="auth-legal" role="contentinfo">
-  <a href="/privacy?lang=<%= lang %>"><%= lang === 'uz' || lang === 'uz-cyrl' ? 'Maxfiylik' : lang === 'ru' ? '\u041a\u043e\u043d\u0444\u0438\u0434\u0435\u043d\u0446\u0438\u0430\u043b\u044c\u043d\u043e\u0441\u0442\u044c' : 'Privacy' %></a>
-  <a href="/terms?lang=<%= lang %>"><%= lang === 'uz' || lang === 'uz-cyrl' ? 'Shartlar' : lang === 'ru' ? '\u0423\u0441\u043b\u043e\u0432\u0438\u044f' : 'Terms' %></a>
-  <a href="/cookies?lang=<%= lang %>"><%= lang === 'uz' || lang === 'uz-cyrl' ? 'Cookie' : lang === 'ru' ? 'Cookie' : 'Cookies' %></a>
+  <a href="/privacy?lang=<%= lang %>"><%= lang === 'uz' ? 'Maxfiylik' : lang === 'uz-cyrl' ? '\u041c\u0430\u0445\u0444\u0438\u0439\u043b\u0438\u043a' : lang === 'ru' ? '\u041a\u043e\u043d\u0444\u0438\u0434\u0435\u043d\u0446\u0438\u0430\u043b\u044c\u043d\u043e\u0441\u0442\u044c' : 'Privacy' %></a>
+  <a href="/terms?lang=<%= lang %>"><%= lang === 'uz' ? 'Shartlar' : lang === 'uz-cyrl' ? '\u0428\u0430\u0440\u0442\u043b\u0430\u0440' : lang === 'ru' ? '\u0423\u0441\u043b\u043e\u0432\u0438\u044f' : 'Terms' %></a>
+  <a href="/cookies?lang=<%= lang %>"><%= lang === 'uz' ? 'Cookie' : lang === 'uz-cyrl' ? 'Cookie' : lang === 'ru' ? 'Cookie' : 'Cookies' %></a>
 </footer>

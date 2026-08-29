@@ -33,10 +33,10 @@
   <nav class="navbar">
     <a href="/" class="nav-logo"><img src="/images/logo-vintage.png" alt="Deborah" class="logo-img" style="height:34px;width:auto"></a>
     <div class="nav-right">
-      <a href="/user/panel" class="nav-btn" style="text-decoration:none"><%- icon('book', 14) %> Panel</a>
-      <a href="/user/security-profile" class="nav-btn" style="text-decoration:none"><%- icon('shieldCheck', 14) %> Xavfsizlik</a>
+      <a href="/user/panel" class="nav-btn" style="text-decoration:none"><%- icon('book', 14) %> <%= (copy.sidebar && copy.sidebar.panel) || 'Panel' %></a>
+      <a href="/user/security-profile" class="nav-btn" style="text-decoration:none"><%- icon('shieldCheck', 14) %> <%= (copy.sidebar && copy.sidebar.security) || 'Xavfsizlik' %></a>
       <button type="button" class="nav-btn" data-theme-toggle title="Light mode"><%- icon('moon', 16) %></button>
-      <a href="/user/logout" class="nav-btn" style="text-decoration:none"><%- icon('logOut', 14) %> Chiqish</a>
+      <a href="/user/logout" class="nav-btn" style="text-decoration:none"><%- icon('logOut', 14) %> <%= (copy.sidebar && copy.sidebar.logout) || 'Chiqish' %></a>
     </div>
   </nav>
 
