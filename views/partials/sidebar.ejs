@@ -61,6 +61,7 @@ const _isActive = (href) => {
       <div class="shell-nav-sec">Boshqaruv</div>
       <a href="/admin/dashboard" class="shell-nav-link<%= _isActive('/admin/dashboard') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('grid', 16) %></span><span>Dashboard</span></a>
       <a href="/admin/vip" class="shell-nav-link<%= _isActive('/admin/vip') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('shield', 16) %></span><span>VIP</span></a>
+      <a href="/admin/teachers" class="shell-nav-link<%= _isActive('/admin/teachers') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('bookOpen', 16) %></span><span>O'qituvchilar</span></a>
       <a href="/admin/observability" class="shell-nav-link<%= _isActive('/admin/observability') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('activity', 16) %></span><span>Observability (SLO)</span></a>
       <a href="/admin/reliability" class="shell-nav-link<%= _isActive('/admin/reliability') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('refresh', 16) %></span><span>Reliability</span></a>
       <a href="/admin/security-guard" class="shell-nav-link<%= _isActive('/admin/security-guard') ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('shield', 16) %></span><span>Security Guard</span></a>

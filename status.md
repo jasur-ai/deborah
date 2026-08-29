@@ -792,3 +792,29 @@ Kod o'zgarishi NOLTA. Da'vo qilingan lekin TURLIGAN topilmalar (repository'da ha
     to'liq so'rov 503 not_configured (sandboxda kalit yo'q — prod'da ishlaydi) ✓,
     student 403/403 ✓, kind=plan eksport PDF(%PDF)+DOCX(PK, 3.5K) disposition ✓.
     Regress: 118 view ✓, design:check 6/6 ✓, vitest ai+cast 28/28 ✓.
+
+── ✅ S27 (AI-A, 2026-08-29): TEACHER NIQOB KIRISHI (/ustoz) + burger + admin oqimi E2E ──
+ User qarori: landing login/register faqat oddiy/VIP userga; o'qituvchi — burger'dan.
+ 1) LANDING: hbtn (☰) CHAP yuqori burchakka ko'chirildi (logo'dan oldin, DOM + CSS
+    .hmenu left:18px). Burger menyudagi "Kirish" endi → /ustoz ("O'qituvchi kirishi",
+    i18n 4 til: uz/uz-Cyrl/ru/en) — niqob o'tish, xuddi eski demo cast index kabi.
+    Tepadagi "Kirish" (#auth) va "Ro'yxatdan o'tish" esa oddiy/VIP login-registerga
+    tushadi (o'zgarmadi). A11y: aria-haspopup/expanded/controls + Escape close.
+ 2) GET /ustoz (routes/auth.js, redirectIfAuth): o'qituvchilar maydoni — dark vintage
+    alohida sahifa (views/ustoz.ejs, landing.css oilasi, class-only S37.05):
+    hero + 4 feat (Cast monitoring, AI Studiya, dars reja, baholash) + LOGIN formasi
+    (mode=login) + ARIZA formasi (mode=reg&role=teacher: name/email/username/parol
+    min15/university/subject/experience/reason/consent + honeypot). POST /user/login'ga
+    boradi — A-faza himoyalari (CSRF/honeypot/limiter/HIBP) to'liq, NOLTA duplikat.
+    Logged-in → redirect (panel/teacher).
+ 3) ADMIN: sidebar'ga "O'qituvchilar" (/admin/teachers) havolasi qo'shildi. Approve/
+    reject oqimi AVVAL ham bor edi (A-19/A-25 + MFA step-up + reauth + justification).
+ 4) E2E PROBE (4644): landing burger chapda ✓ menyu→/ustoz ✓ top Kirish→#auth ✓;
+    /ustoz guest 200 (2 forma+honeypot+consent) ✓; ariza POST → teacher_pending +
+    teacher_application (university saqlandi) ✓; admin pending ro'yxatida ✓;
+    reauth 200 → approve 200 → role: teacher (role_version oshdi) ✓; yangi login
+    302→/teacher, /teacher 200 ✓; pending login → /user/teacher-approval (to'g'ri) ✓;
+    logged-in /ustoz → 302 panel ✓.
+ 5) Regress: 119 view compile ✓ (ustoz.ejs qo'shildi), design:check 6/6 ✓,
+    landing vitest 38/38 ✓ (HMENU testi yangi qarorga yangilandi), visual
+    critical-pages update+verify 70/70 ✓.

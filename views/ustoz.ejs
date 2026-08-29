@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O'qituvchilar uchun — Deborah</title>
+  <meta name="description" content="Deborah o'qituvchi maydoni: Cast monitoring, AI Studiya, dars reja, baholash.">
+  <link rel="stylesheet" href="/css/landing.css">
+  <style>
+    /* S27: O'qituvchi maydoni — landing bilan bir oila (vintage dark), class-only */
+    .uz-page{min-height:100vh;background:radial-gradient(1200px 600px at 70% -10%,rgba(194,160,106,.14),transparent 60%),var(--ld-bg,#14110b);color:var(--ivory,#f2ede3);font-family:var(--font-body,system-ui,sans-serif)}
+    .uz-top{display:flex;align-items:center;gap:12px;padding:18px 22px;border-bottom:1px solid rgba(194,160,106,.18)}
+    .uz-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
+    .uz-brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--ld-gold,#c2a06a),#8a6d3f);display:grid;place-items:center;font-weight:900;color:#141006;font-size:.95rem}
+    .uz-brand b{letter-spacing:.14em;font-size:.95rem}
+    .uz-top-badge{font-size:.68rem;font-weight:700;letter-spacing:.08em;color:var(--ld-gold,#c2a06a);border:1px solid rgba(194,160,106,.4);border-radius:999px;padding:4px 10px}
+    .uz-top a.uz-back{margin-left:auto;font-size:.78rem;font-weight:700;color:var(--mut,#b3aa98);text-decoration:none}
+    .uz-top a.uz-back:hover{color:var(--ivory,#f2ede3)}
+    .uz-hero{max-width:980px;margin:0 auto;padding:56px 20px 30px;text-align:center}
+    .uz-kicker{font-size:.74rem;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--ld-gold,#c2a06a)}
+    .uz-hero h1{font-size:clamp(1.9rem,4.6vw,3.1rem);line-height:1.12;margin:14px 0 12px;font-weight:900}
+    .uz-hero h1 em{font-style:normal;color:var(--ld-gold,#c2a06a)}
+    .uz-hero p{color:var(--mut,#b3aa98);font-size:1rem;line-height:1.65;max-width:640px;margin:0 auto}
+    .uz-feats{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;max-width:980px;margin:34px auto 0;padding:0 20px}
+    .uz-feat{background:rgba(255,255,255,.028);border:1px solid rgba(194,160,106,.16);border-radius:14px;padding:16px 18px;text-align:left}
+    .uz-feat-ico{font-size:1.3rem}
+    .uz-feat b{display:block;font-size:.92rem;margin:8px 0 4px}
+    .uz-feat span{font-size:.78rem;color:var(--mut,#b3aa98);line-height:1.5}
+    .uz-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:980px;margin:44px auto 0;padding:0 20px 70px}
+    @media(max-width:860px){.uz-cols{grid-template-columns:1fr}}
+    .uz-card{background:rgba(255,255,255,.03);border:1px solid rgba(194,160,106,.2);border-radius:18px;padding:26px 26px 22px;text-align:left}
+    .uz-card h2{font-size:1.12rem;margin:0 0 4px;font-weight:900}
+    .uz-card .uz-card-sub{font-size:.78rem;color:var(--mut,#b3aa98);margin-bottom:16px}
+    .uz-fld{margin-bottom:12px}
+    .uz-fld label{display:block;font-size:.72rem;font-weight:700;letter-spacing:.04em;color:var(--mut,#b3aa98);margin-bottom:6px}
+    .uz-inp{width:100%;box-sizing:border-box;background:rgba(0,0,0,.32);border:1px solid rgba(194,160,106,.28);border-radius:10px;color:var(--ivory,#f2ede3);padding:11px 13px;font-size:.92rem;font-family:inherit;min-height:44px;outline:none}
+    .uz-inp:focus{border-color:var(--ld-gold,#c2a06a);box-shadow:0 0 0 3px rgba(194,160,106,.18)}
+    .uz-inp::placeholder{color:rgba(179,170,152,.55)}
+    textarea.uz-inp{min-height:76px;resize:vertical}
+    .uz-row{display:flex;gap:10px;flex-wrap:wrap}
+    .uz-row .uz-fld{flex:1;min-width:150px}
+    .uz-btn{width:100%;border:0;border-radius:11px;background:linear-gradient(135deg,var(--ld-gold,#c2a06a),var(--ld-gold2,#d6bd8c));color:var(--on-gold,#141006);font-weight:900;font-size:.95rem;padding:13px 18px;min-height:48px;cursor:pointer;font-family:inherit;letter-spacing:.02em}
+    .uz-btn:hover{filter:brightness(1.06)}
+    .uz-btn--ghost{background:transparent;border:1px solid rgba(194,160,106,.5);color:var(--ld-gold,#c2a06a)}
+    .uz-consent{display:flex;gap:9px;align-items:flex-start;font-size:.74rem;color:var(--mut,#b3aa98);line-height:1.5;margin:4px 0 14px}
+    .uz-consent input{margin-top:3px;accent-color:var(--ld-gold,#c2a06a)}
+    .uz-note{margin-top:14px;font-size:.74rem;color:var(--mut,#b3aa98);line-height:1.55;border-top:1px dashed rgba(194,160,106,.25);padding-top:12px}
+    .uz-note b{color:var(--ld-gold,#c2a06a)}
+    .uz-err{background:rgba(220,80,60,.12);border:1px solid rgba(220,110,90,.4);border-radius:10px;color:#f3b3a6;font-size:.8rem;padding:10px 12px;margin-bottom:14px;line-height:1.5}
+    .uz-switch{font-size:.78rem;color:var(--mut,#b3aa98);text-align:center;margin-top:14px}
+    .uz-switch a{color:var(--ld-gold,#c2a06a);font-weight:700;text-decoration:none}
+    @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+  </style>
+</head>
+<body class="uz-page" id="top">
+  <header class="uz-top">
+    <a class="uz-brand" href="/ustoz" aria-label="Deborah o'qituvchilar maydoni">
+      <span class="uz-brand-mark" aria-hidden="true">D</span>
+      <b>DEBORAH</b>
+    </a>
+    <span class="uz-top-badge">O'qituvchilar maydoni</span>
+    <a class="uz-back" href="/">← Asosiy sahifa</a>
+  </header>
+
+  <main>
+    <section class="uz-hero">
+      <div class="uz-kicker">Faqat o'qituvchilar uchun</div>
+      <h1>Sinfxonangiz — <em>bir joyda</em></h1>
+      <p>Jonli Cast muhitlari ustidan to'liq nazorat, AI Studiya (dars reja, savol va slayd generatsiya, OCR), baholash navbati va tayyorlash materiallari. Kirish — o'qituvchi arizasi orqali.</p>
+      <div class="uz-feats" aria-label="Imkoniyatlar">
+        <div class="uz-feat"><div class="uz-feat-ico">📡</div><b>Cast monitoring</b><span>O'zingiz yaratgan jonli muhitlar: ishtirokchilar, holat, natijalar</span></div>
+        <div class="uz-feat"><div class="uz-feat-ico">✨</div><b>AI Studiya</b><span>Savol/slayd generator, OCR, dars reja — PDF/Word/Excel eksport</span></div>
+        <div class="uz-feat"><div class="uz-feat-ico">📘</div><b>Dars reja</b><span>Fan + mavzu + daqiqa → to'liq reja: maqsadlar, bosqichlar, baholash</span></div>
+        <div class="uz-feat"><div class="uz-feat-ico">✅</div><b>Baholash</b><span>Baholash navbati, o'quvchilar progressi, yakka mashq tarixi</span></div>
+      </div>
+    </section>
+
+    <div class="uz-cols" id="auth">
+      <!-- ═══ KIRISH ═══ -->
+      <section class="uz-card" aria-labelledby="uz-login-h">
+        <h2 id="uz-login-h">Kirish</h2>
+        <div class="uz-card-sub">O'qituvchi logini — username yoki email</div>
+        <% if (typeof error !== 'undefined' && error) { %><div class="uz-err" role="alert"><%= error %></div><% } %>
+        <form action="/user/login" method="POST" novalidate>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="mode" value="login">
+          <input type="hidden" name="lang" value="uz">
+          <div class="uz-fld">
+            <label for="ul-acc">Username yoki email</label>
+            <input class="uz-inp" id="ul-acc" name="username" type="text" autocomplete="username" required>
+          </div>
+          <div class="uz-fld">
+            <label for="ul-pass">Parol</label>
+            <input class="uz-inp" id="ul-pass" name="password" type="password" autocomplete="current-password" required>
+          </div>
+          <button class="uz-btn" type="submit">Kirish</button>
+          <div class="uz-switch">Arizangiz tasdiqlanganini kutyapsizmi? <a href="/user/teacher-approval">Ariza holati →</a></div>
+        </form>
+      </section>
+
+      <!-- ═══ ARIZA (REGISTER) ═══ -->
+      <section class="uz-card" aria-labelledby="uz-reg-h">
+        <h2 id="uz-reg-h">O'qituvchi arizasi</h2>
+        <div class="uz-card-sub">Ma'lumotlaringiz adminga yuboriladi — tasdiqlangach o'qituvchi paneliga kirasiz</div>
+        <form action="/user/login" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="mode" value="reg">
+          <input type="hidden" name="lang" value="uz">
+          <input type="hidden" name="role" value="teacher">
+          <input type="text" name="website" id="uz-hp" tabindex="-1" autocomplete="off" value="" aria-hidden="true" style="position:absolute;left:-9999px">
+          <div class="uz-row">
+            <div class="uz-fld">
+              <label for="ur-name">Ism va familiya</label>
+              <input class="uz-inp" id="ur-name" name="name" type="text" autocomplete="name" required>
+            </div>
+            <div class="uz-fld">
+              <label for="ur-username">Username</label>
+              <input class="uz-inp" id="ur-username" name="username" type="text" autocomplete="username" pattern="[a-zA-Z0-9_.\-]{2,50}" required>
+            </div>
+          </div>
+          <div class="uz-fld">
+            <label for="ur-email">Email</label>
+            <input class="uz-inp" id="ur-email" name="email" type="email" autocomplete="email" required>
+          </div>
+          <div class="uz-fld">
+            <label for="ur-pass">Parol (kamida 15 belgi)</label>
+            <input class="uz-inp" id="ur-pass" name="password" type="password" autocomplete="new-password" minlength="15" maxlength="128" required>
+          </div>
+          <div class="uz-row">
+            <div class="uz-fld">
+              <label for="ur-uni">Universitet / maktab</label>
+              <input class="uz-inp" id="ur-uni" name="university" type="text" autocomplete="organization" required>
+            </div>
+            <div class="uz-fld">
+              <label for="ur-subj">Fan</label>
+              <input class="uz-inp" id="ur-subj" name="subject" type="text" autocomplete="off" required>
+            </div>
+          </div>
+          <div class="uz-fld">
+            <label for="ur-exp">Tajriba (yil)</label>
+            <input class="uz-inp" id="ur-exp" name="experience" type="number" min="0" max="50" inputmode="numeric">
+          </div>
+          <div class="uz-fld">
+            <label for="ur-reason">Nega o'qituvchi sifatida qo'shilmoqchisiz?</label>
+            <textarea class="uz-inp" id="ur-reason" name="reason" rows="2" maxlength="500" placeholder="Qisqacha (ixtiyoriy, lekin tasdiqlashga yordam beradi)"></textarea>
+          </div>
+          <label class="uz-consent">
+            <input type="checkbox" name="consent" value="on" required>
+            <span>Maxfiylik siyosati va foydalanish shartlariga roziman. Ma'lumotlarim arizani ko'rib chiqish uchun adminga yuboriladi.</span>
+          </label>
+          <button class="uz-btn" type="submit">Arizani yuborish</button>
+          <div class="uz-note"><b>Qanday ishlaydi:</b> ariza yuborilgach, holatingiz «Kutilmoqda» bo'ladi → admin <b>O'qituvchilar</b> bo'limida ko'rib chiqadi → tasdiqlansa, shu login/parol bilan kirib ishlashni boshlaysiz. Rad etilsa, sababi ko'rsatiladi.</div>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    // Honeypot maydonini oddiy userlardan yashirish (botlar uchun ko'rinadi)
+    (function () { var hp = document.getElementById('uz-hp'); if (hp) hp.setAttribute('aria-hidden', 'true'); })();
+  </script>
+</body>
+</html>

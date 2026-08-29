@@ -99,7 +99,7 @@ body::before{content:'';position:fixed;inset:0;z-index:9997;pointer-events:none;
 .admin-err{display:none;font-size:.8rem;color:var(--crimson);text-align:center;margin:4px 0 12px}
 .admin-err.show{display:block}
 .admin-card .btn-gold{width:100%}
-.hmenu{position:fixed;top:62px;right:18px;z-index:950;min-width:200px;border:1px solid var(--line);background:var(--panel-a);backdrop-filter:blur(10px);box-shadow:var(--shadow);padding:8px;opacity:0;transform:translateY(-6px);pointer-events:none;transition:all .22s}
+.hmenu{position:fixed;top:62px;left:18px;z-index:950;min-width:200px;border:1px solid var(--line);background:var(--panel-a);backdrop-filter:blur(10px);box-shadow:var(--shadow);padding:8px;opacity:0;transform:translateY(-6px);pointer-events:none;transition:all .22s}
 .hmenu.open{opacity:1;transform:none;pointer-events:auto}
 .hmenu a{display:block;padding:11px 14px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--mut);transition:all .15s}
 .hmenu a:hover{color:var(--ivory);background:var(--card-bg)}

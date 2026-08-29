@@ -297,11 +297,17 @@ describe('Landing — HTTP routing (CAST demo 1:1 — tasdiqlangan cast.html por
     expect(html).toContain('data-i18n="auth.loginId"');
   });
 
-  it('LANDING HMENU — Admin 3-chiziq menyu ichida (foydalanuvchi qarori)', async () => {
+  it('LANDING HMENU — burger: O\'qituvchi kirishi + Admin ichida (S27 user qarori)', async () => {
     const html = await (await fetch(`${serverUrl}/`)).text();
-    const m = html.match(/<div class="hmenu" id="hmenu">[\s\S]*?<\/div>/) || [''];
+    const m = html.match(/<div class="hmenu"[^>]*>[\s\S]*?<\/div>/) || [''];
     expect(m[0]).toContain('href="/admin/login"'); // BUG-028: alohida page (modal emas)
-    expect(m[0]).toContain('href="#auth"');
+    // S27: burger'dagi Kirish endi O'QITUVCHI maydoniga (/ustoz); top nav Kirish → #auth
+    expect(m[0]).toContain('href="/ustoz"');
+    expect(m[0]).not.toContain('href="#auth"');
+    const nav = html.match(/<nav class="nav">[\s\S]*?<\/nav>/) || [''];
+    expect(nav[0]).toContain('href="#auth"'); // oddiy/VIP user login-register
+    // burger chap yuqori burchakda (logo'dan oldin)
+    expect(html.indexOf('id="hbtn"')).toBeLessThan(html.indexOf('class="logo"'));
     // footer kontakt anchor (demo #kontakt)
     expect(html).toContain('<footer class="ftr" id="kontakt">');
   });

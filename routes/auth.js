@@ -734,6 +734,20 @@ router.get('/user/register', redirectIfAuth, (req, res) => {
   renderUserRegister(res, { lang });
 });
 
+// ── S27: O'qituvchilar maydoni (/ustoz) — landing burger'idagi yashirin kirish ──
+// Login (mode=login) va ariza (mode=reg&role=teacher) POST /user/login'ga
+// boradi — A-faza himoyalari (CSRF/honeypot/limiter/HIBP) to'liq qayta ishlanadi.
+router.get('/ustoz', redirectIfAuth, (req, res) => {
+  try {
+    recordMetric('auth.ustoz.view', 1, { type: 'counter', labels: { lang: 'uz' } });
+  } catch (_) {}
+  res.render('ustoz', {
+    title: "O'qituvchilar uchun — Deborah",
+    csrfToken: req.session.csrfToken || '',
+    error: null,
+  });
+});
+
 // ── AUTH B-05: email real-time validatsiya (blur) ──
 // Backend'da tekshiradi (client off → server check §17); CSRF (global) +
 // per-IP rate limit (enumeration qarshi). Javobda email YO'Q (PII minimal),
