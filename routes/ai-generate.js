@@ -9,9 +9,12 @@
  * Ishlatiladi: cast director Quick Prompt (AI ✨), panel test yaratish.
  */
 import { Router } from 'express';
+import multer from 'multer';
 import { requireAuth } from '../middleware/auth.js';
-import { isAiEnabled, aiGenerateQuestions } from '../src/modules/ai/gemini-client.js';
+import { fb } from '../firebase/admin.js';
+import { isAiEnabled, aiGenerateQuestions, aiGenerateSlides, aiGenerateVision, aiGenerateText, extractJson } from '../src/modules/ai/gemini-client.js';
 import { recordMetric } from '../src/telemetry/index.js';
+import { buildPptx } from '../utils/minipptx.js';
 
 const router = Router();
 
@@ -73,3 +76,162 @@ router.post('/api/ai/generate-questions', requireAuth, async (req, res) => {
 });
 
 export default router;
+
+
+// ═══════════════════════════════════════════════════════════════════
+// S22 — AI Studiya (VIP userlar + o'qituvchilar uchun)
+// Oddiy student: faqat Cast paytida AI (quick prompt) — studiya yopiq.
+// ═══════════════════════════════════════════════════════════════════
+
+async function isAiStudioMember(req) {
+  if (!req.session?.user) return false;
+  const role = req.session.user.role;
+  if (role === 'teacher' || role === 'admin' || role === 'board') return true;
+  try {
+    const snap = await fb.get(`users/${req.session.user.safeKey}/isVip`);
+    if (snap.exists() && snap.val() === true) return true;
+  } catch (_) {}
+  return false;
+}
+
+async function requireStudio(req, res, next) {
+  if (!(await isAiStudioMember(req))) {
+    return res.status(403).render('error', { title: '403', message: "AI Studiya VIP a'zolar va o'qituvchilar uchun", status: 403 });
+  }
+  next();
+}
+
+router.get('/user/ai-studio', requireAuth, requireStudio, (req, res) => {
+  res.render('user/ai-studio', {
+    title: 'AI Studiya',
+    username: req.session.user.username,
+    role: req.session.user.role || 'student',
+    csrfToken: res.locals.csrfToken || req.session.csrfToken || '',
+    aiEnabled: isAiEnabled(),
+  });
+});
+
+// ── AI slayd generatsiya ──
+router.post('/api/ai/generate-slides', requireAuth, requireStudio, async (req, res) => {
+  const topic = String(req.body?.topic || '').trim();
+  if (topic.length < 3 || topic.length > 600) {
+    return res.status(400).json({ ok: false, error: 'invalid_topic' });
+  }
+  if (!isAiEnabled()) return res.status(503).json({ ok: false, error: 'not_configured' });
+  const count = Math.min(Math.max(Number(req.body?.count) || 6, 1), 15);
+  const lang = ['uz', 'ru', 'en'].includes(req.body?.lang) ? req.body.lang : 'uz';
+  const result = await aiGenerateSlides({ topic, count, lang });
+  if (!result.ok) {
+    const status = result.error === 'not_configured' ? 503 : result.error === 'bad_format' ? 502 : 500;
+    return res.status(status).json({ ok: false, error: result.error });
+  }
+  res.json({ ok: true, deck: result.deck, model: result.model });
+});
+
+// ── OCR: fayl (rasm/pdf) → matn → savollar yoki slaydlar ──
+const ocrUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 12 * 1024 * 1024, files: 1 },
+  fileFilter: (req, file, cb) => {
+    const ok = /^image\/(png|jpe?g|webp)$/.test(file.mimetype) || file.mimetype === 'application/pdf';
+    if (ok) return cb(null, true);
+    cb(new Error('Faqat PNG/JPG/WEBP rasm yoki PDF (≤12MB)'));
+  },
+});
+
+router.post('/api/ai/ocr-generate', requireAuth, requireStudio, ocrUpload.single('file'), async (req, res) => {
+  try {
+    if (!isAiEnabled()) return res.status(503).json({ ok: false, error: 'not_configured' });
+    if (!req.file) return res.status(400).json({ ok: false, error: 'file_required' });
+    const mode = req.body?.mode === 'slides' ? 'slides' : 'questions';
+    const extra = String(req.body?.prompt || '').slice(0, 500);
+    const lang = ['uz', 'ru', 'en'].includes(req.body?.lang) ? req.body.lang : 'uz';
+
+    // 1) Matnni ajratish: PDF → pdf-parse (text layer); rasm → Gemini vision OCR
+    let text = '';
+    if (req.file.mimetype === 'application/pdf') {
+      const pdfParse = (await import('pdf-parse')).default;
+      const parsed = await pdfParse(req.file.buffer);
+      text = String(parsed?.text || '').trim();
+      // Text layer juda kambag'al bo'lsa — birinchi sahifani rasm sifatida vision'ga
+      if (text.length < 40) {
+        return res.status(400).json({ ok: false, error: 'pdf_no_text', message: "PDFda matn qatlami yo'q — rasmni PNG/JPG sifatida yuklang" });
+      }
+    } else {
+      const sharp = (await import('sharp')).default;
+      const png = await sharp(req.file.buffer).rotate().resize({ width: 1600, height: 2200, fit: 'inside', withoutEnlargement: true }).png({ quality: 90 }).toBuffer();
+      const v = await aiGenerateVision({
+        base64: png.toString('base64'),
+        mimeType: 'image/png',
+        prompt: "Bu rasmdagi BARCHA matnni aniq ajratib ber (OCR). Tartibni, ro'yxatlarni va jadval strukturasini saqla. Faqat matnni qaytar.",
+      });
+      if (!v.ok) return res.status(v.error === 'not_configured' ? 503 : 500).json({ ok: false, error: 'ocr_' + v.error });
+      text = v.text;
+    }
+    if (!text || text.length < 20) return res.status(400).json({ ok: false, error: 'no_text' });
+    const sourceText = text.slice(0, 12000);
+
+    // 2) Matndan savollar yoki slaydlar
+    if (mode === 'slides') {
+      const sys = 'Sen professional taqdimot muallifisan. Faqat ' + ({ uz: "o'zbek (lotin)", ru: 'rus', en: 'ingliz' }[lang]) + ' tilida javob ber.';
+      const usr = `Quyidagi matndan 4-8 slaydli taqdimot tuz${extra ? ' (qo\u2018shimcha talab: ' + extra + ')' : ''}.\nJavob FAQAT JSON: {"title":"...","slides":[{"title":"...","bullets":["...","..."]}]}\n\nMATN:\n${sourceText}`;
+      const r = await aiGenerateText(usr, { systemInstruction: sys, maxOutputTokens: 4096 });
+      if (!r.ok) return res.status(502).json({ ok: false, error: r.error });
+      const deck = extractJson(r.text);
+      if (!deck || !Array.isArray(deck.slides)) return res.status(502).json({ ok: false, error: 'bad_format' });
+      return res.json({ ok: true, mode, textPreview: sourceText.slice(0, 400), deck });
+    }
+    const sys = 'Sen professional test muallifisan. Faqat ' + ({ uz: "o'zbek (lotin)", ru: 'rus', en: 'ingliz' }[lang]) + ' tilida javob ber.';
+    const usr = `Quyidagi matndan 5-10 ta variantli test savoli tuz${extra ? ' (qo\u2018shimcha talab: ' + extra + ')' : ''}.\nJavob FAQAT JSON array: [{"text":"savol","options":["A","B","C","D"],"correctIndex":0,"explanation":"qisqa izoh"}]\n\nMATN:\n${sourceText}`;
+    const r = await aiGenerateText(usr, { systemInstruction: sys, maxOutputTokens: 4096 });
+    if (!r.ok) return res.status(502).json({ ok: false, error: r.error });
+    const arr = extractJson(r.text);
+    if (!Array.isArray(arr)) return res.status(502).json({ ok: false, error: 'bad_format' });
+    const questions = arr.slice(0, 10).map((q) => ({
+      text: String(q?.text || '').slice(0, 800),
+      options: Array.isArray(q?.options) ? q.options.slice(0, 6).map((o) => String(o).slice(0, 300)) : [],
+      correctIndex: Number.isInteger(q?.correctIndex) ? q.correctIndex : 0,
+      explanation: String(q?.explanation || '').slice(0, 500),
+    })).filter((q) => q.text && q.options.length >= 2);
+    return res.json({ ok: true, mode, textPreview: sourceText.slice(0, 400), questions });
+  } catch (err) {
+    res.status(400).json({ ok: false, error: err.message });
+  }
+});
+
+// ── Eksport: xlsx / pptx (server-side, haqiqiy fayl) ──
+router.post('/api/ai/export', requireAuth, requireStudio, async (req, res) => {
+  try {
+    const format = req.body?.format === 'pptx' ? 'pptx' : 'xlsx';
+    const name = String(req.body?.name || 'deborah').replace(/[^\w\-]+/g, '_').slice(0, 40) || 'deborah';
+    if (format === 'pptx') {
+      const deck = req.body?.deck;
+      if (!deck || !Array.isArray(deck.slides) || !deck.slides.length) {
+        return res.status(400).json({ ok: false, error: 'deck_required' });
+      }
+      const buf = buildPptx(deck);
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.presentationml.presentation');
+      res.setHeader('Content-Disposition', `attachment; filename="${name}.pptx"`);
+      return res.send(buf);
+    }
+    const questions = req.body?.questions;
+    if (!Array.isArray(questions) || !questions.length) {
+      return res.status(400).json({ ok: false, error: 'questions_required' });
+    }
+    const XLSX = await import('xlsx');
+    const rows = [['#', 'Savol', ...['A', 'B', 'C', 'D', 'E', 'F'], 'To\u2018g\u2018ri', 'Izoh']];
+    questions.forEach((q, i) => {
+      const opts = [0, 1, 2, 3, 4, 5].map((j) => String(q.options?.[j] || ''));
+      rows.push([i + 1, String(q.text || ''), ...opts, String(q.options?.[q.correctIndex] || ''), String(q.explanation || '')]);
+    });
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb, ws, 'Savollar');
+    const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="${name}-savollar.xlsx"`);
+    return res.send(buf);
+  } catch (err) {
+    res.status(400).json({ ok: false, error: err.message });
+  }
+});

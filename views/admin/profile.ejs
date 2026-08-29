@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — Deborah Admin</title>
+  <link rel="stylesheet" href="/css/admin.css">
+  <style>
+    .prof-wrap { max-width: 760px; margin: 0 auto; padding: 26px 18px 60px; }
+    .prof-card { background: var(--deborah-semantic-color-surface-raised, #fff); border: 1px solid var(--deborah-semantic-color-border-default, #e2e8f0); border-radius: 14px; padding: 22px; margin-bottom: 16px; }
+    .prof-head { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+    .prof-avatar { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.25rem; background: rgba(37,99,235,.12); color: var(--deborah-semantic-color-action-primary, #2563eb); }
+    .prof-name { font-size: 1.15rem; font-weight: 800; }
+    .prof-sub { font-size: .8rem; color: var(--deborah-semantic-color-text-secondary, #64748b); }
+    .prof-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-top: 16px; }
+    .prof-item { border: 1px solid var(--deborah-semantic-color-border-default, #e2e8f0); border-radius: 10px; padding: 12px 14px; }
+    .prof-item-label { font-size: .7rem; text-transform: uppercase; letter-spacing: .5px; color: var(--deborah-semantic-color-text-secondary, #64748b); font-weight: 700; }
+    .prof-item-value { font-size: .92rem; font-weight: 700; margin-top: 3px; word-break: break-all; }
+    .prof-badge { display: inline-flex; align-items: center; gap: 5px; border-radius: 999px; padding: 3px 10px; font-size: .72rem; font-weight: 700; }
+    .prof-badge--ok { background: rgba(16,185,129,.12); color: #059669; }
+    .prof-badge--warn { background: rgba(245,158,11,.14); color: #b45309; }
+    table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--deborah-semantic-color-border-default, #e2e8f0); }
+    th { font-size: .7rem; text-transform: uppercase; color: var(--deborah-semantic-color-text-secondary, #64748b); }
+    @media (max-width: 600px) { .prof-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <%
+    const _t = (typeof adminCopy === 'object' && adminCopy) || {};
+    const fmtDate = (ts) => ts ? new Date(ts).toLocaleString('uz-UZ') : '—';
+  %>
+  <main class="prof-wrap" id="main">
+    <div class="prof-card">
+      <div class="prof-head">
+        <div class="prof-avatar" aria-hidden="true"><%= (profile.username || 'A').charAt(0).toUpperCase() %></div>
+        <div>
+          <div class="prof-name"><%= profile.username %></div>
+          <div class="prof-sub">Administrator — Deborah platformasi</div>
+        </div>
+      </div>
+      <div class="prof-grid">
+        <div class="prof-item">
+          <div class="prof-item-label">Login</div>
+          <div class="prof-item-value"><%= profile.username %></div>
+        </div>
+        <div class="prof-item">
+          <div class="prof-item-label">MFA holati</div>
+          <div class="prof-item-value">
+            <span class="prof-badge <%= profile.mfaEnrolled ? 'prof-badge--ok' : 'prof-badge--warn' %>">
+              <%= profile.mfaEnrolled ? 'MFA yoqilgan' : 'MFA yo\'q' %>
+            </span>
+          </div>
+        </div>
+        <div class="prof-item">
+          <div class="prof-item-label">Kirish vaqti</div>
+          <div class="prof-item-value"><%= fmtDate(profile.loginAt) %></div>
+        </div>
+        <div class="prof-item">
+          <div class="prof-item-label">Kirish IP</div>
+          <div class="prof-item-value"><%= profile.loginIp || '—' %></div>
+        </div>
+        <div class="prof-item">
+          <div class="prof-item-label">Sessiya tugashi</div>
+          <div class="prof-item-value"><%= fmtDate(profile.sessionExpires) %></div>
+        </div>
+      </div>
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+        <a href="/admin/mfa" class="prof-badge prof-badge--ok" style="text-decoration:none;padding:8px 14px">MFA sozlamalari</a>
+        <a href="/admin/dashboard" class="prof-badge" style="text-decoration:none;padding:8px 14px;background:rgba(37,99,235,.1);color:var(--deborah-semantic-color-action-primary,#2563eb)">Boshqaruv paneli</a>
+        <a href="/admin/logout" class="prof-badge prof-badge--warn" style="text-decoration:none;padding:8px 14px">Chiqish</a>
+      </div>
+    </div>
+
+    <div class="prof-card">
+      <div style="font-weight:800;margin-bottom:10px">Oxirgi amallar (audit)</div>
+      <% if (recent.length === 0) { %>
+        <div class="prof-sub">Hozircha audit yozuvlari yo'q.</div>
+      <% } else { %>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Amal</th><th>Holat</th><th>Vaqt</th></tr></thead>
+          <tbody>
+            <% recent.forEach((r) => { %>
+              <tr>
+                <td><%= r.action %></td>
+                <td><%= r.outcome %></td>
+                <td><%= fmtDate(r.at) %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table></div>
+      <% } %>
+    </div>
+    <p style="text-align:center"><a href="/admin/dashboard" style="color:var(--deborah-semantic-color-action-primary,#2563eb);font-weight:700;font-size:.85rem">← Panelga qaytish</a></p>
+  </main>
+</body>
+</html>

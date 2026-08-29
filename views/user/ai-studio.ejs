@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — Deborah</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <style>
+    :root { --b: #2563eb; --g: #10b981; --w: #f59e0b; --p: #8b5cf6; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f1f5f9; margin: 0; color: #0f172a; }
+    .st-top { background: linear-gradient(135deg, #0f172a, #1e3a8a); color: #fff; padding: 18px 22px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .st-top h1 { font-size: 1.15rem; margin: 0; }
+    .st-top .st-badge { background: rgba(255,255,255,.14); border-radius: 999px; padding: 4px 12px; font-size: .72rem; font-weight: 700; }
+    .st-top a { color: #93c5fd; font-size: .82rem; font-weight: 700; text-decoration: none; margin-left: auto; }
+    .st-wrap { max-width: 1020px; margin: 0 auto; padding: 20px 16px 70px; }
+    .st-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    .st-tab { border: 1px solid #cbd5e1; background: #fff; border-radius: 10px; padding: 10px 16px; font-weight: 700; font-size: .85rem; cursor: pointer; min-height: 44px; }
+    .st-tab.active { background: var(--b); color: #fff; border-color: var(--b); }
+    .st-pane { display: none; }
+    .st-pane.active { display: block; }
+    .st-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px; margin-bottom: 14px; }
+    .st-card h2 { font-size: 1rem; margin: 0 0 6px; }
+    .st-sub { font-size: .8rem; color: #64748b; margin-bottom: 14px; }
+    .inp, textarea, select { width: 100%; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 9px; padding: 10px 12px; font-size: .9rem; font-family: inherit; min-height: 44px; }
+    textarea { min-height: 84px; resize: vertical; }
+    .st-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0; }
+    .st-row > * { flex: 1; min-width: 140px; }
+    .btn { border: 0; border-radius: 9px; padding: 11px 18px; font-weight: 700; font-size: .88rem; cursor: pointer; min-height: 44px; }
+    .btn-primary { background: var(--b); color: #fff; }
+    .btn-ok { background: var(--g); color: #fff; }
+    .btn-quiet { background: #eef2ff; color: #3730a3; }
+    .btn[disabled] { opacity: .55; cursor: wait; }
+    .st-msg { font-size: .82rem; margin-top: 8px; min-height: 18px; font-weight: 600; }
+    .st-msg.err { color: #dc2626; } .st-msg.ok { color: #059669; }
+    .q-item { border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; }
+    .q-text { font-weight: 700; font-size: .9rem; }
+    .q-opt { font-size: .82rem; color: #334155; margin: 3px 0 0 12px; }
+    .q-opt.correct { color: #059669; font-weight: 700; }
+    .q-exp { font-size: .76rem; color: #64748b; margin-top: 6px; border-top: 1px dashed #e2e8f0; padding-top: 6px; }
+    .slide { border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px 18px; margin-bottom: 10px; background: #fff; }
+    .slide h3 { margin: 0 0 8px; font-size: .98rem; color: #1e3a8a; }
+    .slide ul { margin: 0; padding-left: 20px; font-size: .85rem; color: #334155; }
+    .slide li { margin: 3px 0; }
+    .ext-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+    .ext-card { border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; text-decoration: none; color: inherit; display: block; background: #fff; }
+    .ext-card:hover { border-color: var(--b); box-shadow: 0 4px 14px rgba(37,99,235,.12); }
+    .ext-ico { font-size: 1.4rem; }
+    .ext-name { font-weight: 800; font-size: .9rem; margin: 6px 0 3px; }
+    .ext-desc { font-size: .75rem; color: #64748b; }
+    .drop { border: 2px dashed #94a3b8; border-radius: 12px; padding: 26px; text-align: center; color: #64748b; font-size: .85rem; cursor: pointer; background: #f8fafc; }
+    .drop.has { border-color: var(--g); background: rgba(16,185,129,.06); color: #047857; }
+    @media print { .st-top, .st-tabs, .st-actions, .st-no-print { display: none !important; } body { background: #fff; } .st-pane { display: none; } .st-pane.active { display: block; } }
+  </style>
+</head>
+<body>
+  <div class="st-top">
+    <h1>✨ AI Studiya</h1>
+    <span class="st-badge"><%= role === 'teacher' ? "O'qituvchi" : 'VIP a\'zo' %></span>
+    <% if (!aiEnabled) { %><span class="st-badge" style="background:rgba(245,158,11,.25)">AI sozlanmagan</span><% } %>
+    <a href="/user/panel">← Panel</a>
+  </div>
+
+  <div class="st-wrap">
+    <div class="st-tabs" role="tablist">
+      <button type="button" class="st-tab active" data-pane="q" role="tab" aria-selected="true">🧠 AI savol generator</button>
+      <button type="button" class="st-tab" data-pane="s" role="tab" aria-selected="false">🖼️ AI slide generator</button>
+      <button type="button" class="st-tab" data-pane="o" role="tab" aria-selected="false">📄 Fayldan (OCR)</button>
+      <button type="button" class="st-tab" data-pane="e" role="tab" aria-selected="false">🧰 Tashqi vositalar</button>
+    </div>
+
+    <!-- ═══ Savol generator ═══ -->
+    <section class="st-pane active" data-pane="q">
+      <div class="st-card">
+        <h2>Mavzu bo'yicha test savollari</h2>
+        <p class="st-sub">Gemini mavzu bo'yicha variantli savollar tuzadi — keyin test sifatida saqlang, Excel yuklab oling yoki chop eting.</p>
+        <div class="st-row">
+          <input class="inp" id="q-topic" placeholder="Mavzu (masalan: Algebra — kvadrat tenglamalar)">
+        </div>
+        <div class="st-row">
+          <select id="q-count" aria-label="Savollar soni"><option value="3">3 ta savol</option><option value="5" selected>5 ta savol</option><option value="10">10 ta savol</option></select>
+          <select id="q-type" aria-label="Turi"><option value="single_choice">Variantli</option><option value="true_false">To'g'ri / Xato</option></select>
+          <select id="q-lang" aria-label="Til"><option value="uz">O'zbek</option><option value="ru">Русский</option><option value="en">English</option></select>
+        </div>
+        <div class="st-actions" style="display:flex;gap:10px;flex-wrap:wrap">
+          <button type="button" class="btn btn-primary" id="q-go">✨ Generatsiya</button>
+        </div>
+        <div class="st-msg" id="q-msg" role="status"></div>
+      </div>
+      <div id="q-out"></div>
+    </section>
+
+    <!-- ═══ Slide generator ═══ -->
+    <section class="st-pane" data-pane="s">
+      <div class="st-card">
+        <h2>Taqdimot (slaydlar) generatsiya</h2>
+        <p class="st-sub">Mavzudan professional slayd to'plami — PPTX yuklab oling yoki brauzerdan PDF sifatida chop eting.</p>
+        <div class="st-row">
+          <input class="inp" id="s-topic" placeholder="Taqdimot mavzusi (masalan: Quyosh tizimi)">
+        </div>
+        <div class="st-row">
+          <select id="s-count" aria-label="Slaydlar soni"><option value="4">4 slayd</option><option value="6" selected>6 slayd</option><option value="10">10 slayd</option></select>
+          <select id="s-lang" aria-label="Til"><option value="uz">O'zbek</option><option value="ru">Русский</option><option value="en">English</option></select>
+        </div>
+        <div class="st-actions" style="display:flex;gap:10px;flex-wrap:wrap">
+          <button type="button" class="btn btn-primary" id="s-go">✨ Slaydlar</button>
+        </div>
+        <div class="st-msg" id="s-msg" role="status"></div>
+      </div>
+      <div id="s-out"></div>
+    </section>
+
+    <!-- ═══ OCR ═══ -->
+    <section class="st-pane" data-pane="o">
+      <div class="st-card">
+        <h2>Katta fayldan → savollar / slaydlar</h2>
+        <p class="st-sub">Rasm (PNG/JPG/WEBP) yoki matnli PDF (≤12MB) yuklang — OCR qilib ichidagi matndan promptga ko'ra savol yoki slayd tuziladi.</p>
+        <div class="drop" id="o-drop" role="button" tabindex="0" aria-label="Fayl tanlash">📄 Fayl tanlash yoki bu yerga tashlash (rasm / PDF)</div>
+        <input type="file" id="o-file" accept="image/png,image/jpeg,image/webp,application/pdf" style="display:none">
+        <div class="st-row" style="margin-top:12px">
+          <select id="o-mode" aria-label="Natija turi"><option value="questions">Savollar</option><option value="slides">Slaydlar</option></select>
+          <input class="inp" id="o-prompt" placeholder="Qo'shimcha talab (ixtiyoriy): 'faqat formulalar', 'sinf uchun soddalashtir'...">
+        </div>
+        <div class="st-actions" style="display:flex;gap:10px;flex-wrap:wrap">
+          <button type="button" class="btn btn-primary" id="o-go" disabled>🔍 OCR + generatsiya</button>
+        </div>
+        <div class="st-msg" id="o-msg" role="status"></div>
+      </div>
+      <div id="o-out"></div>
+    </section>
+
+    <!-- ═══ Tashqi vositalar ═══ -->
+    <section class="st-pane" data-pane="e">
+      <div class="st-card">
+        <h2>Tashqi AI vositalari</h2>
+        <p class="st-sub">Taqdimot va kontent yaratish uchun populyar platformalar.</p>
+        <div class="ext-grid">
+          <a class="ext-card" href="https://docs.google.com/presentation/u/0/?tgid=none" target="_blank" rel="noopener noreferrer"><div class="ext-ico">📑</div><div class="ext-name">Google Slides</div><div class="ext-desc">Onlayn taqdimotlar — jamoa bilan birga tahrir</div></a>
+          <a class="ext-card" href="https://manus.im" target="_blank" rel="noopener noreferrer"><div class="ext-ico">🤖</div><div class="ext-name">Manus</div><div class="ext-desc">AI agent — murakkab vazifalarni bajaradi</div></a>
+          <a class="ext-card" href="https://gamma.app" target="_blank" rel="noopener noreferrer"><div class="ext-ico">🌀</div><div class="ext-name">Gamma</div><div class="ext-desc">Matndan chiroyli taqdimotlar bir zumda</div></a>
+          <a class="ext-card" href="https://canva.com" target="_blank" rel="noopener noreferrer"><div class="ext-ico">🎨</div><div class="ext-name">Canva</div><div class="ext-desc">Dizayn, poster, taqdimot shablonlari</div></a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const CSRF = <%- JSON.stringify(csrfToken || '') %>;
+    const $ = (s) => document.querySelector(s);
+    const msg = (id, text, cls) => { const el = $('#' + id + '-msg'); el.textContent = text || ''; el.className = 'st-msg ' + (cls || ''); };
+
+    // Tabs
+    document.querySelectorAll('.st-tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.st-tab').forEach((t) => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+        document.querySelectorAll('.st-pane').forEach((p) => p.classList.remove('active'));
+        tab.classList.add('active'); tab.setAttribute('aria-selected', 'true');
+        document.querySelector('.st-pane[data-pane="' + tab.dataset.pane + '"]').classList.add('active');
+      });
+    });
+
+    const esc = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+    let lastQuestions = null, lastDeck = null, lastQuestionsName = 'ai-test';
+
+    function renderQuestions(container, questions, editable) {
+      lastQuestions = questions;
+      container.innerHTML = questions.map((q, i) => `
+        <div class="q-item">
+          <div class="q-text">${i + 1}. ${esc(q.text)}</div>
+          ${q.options.map((o, j) => `<div class="q-opt${j === q.correctIndex ? ' correct' : ''}">${String.fromCharCode(65 + j)}) ${esc(o)}${j === q.correctIndex ? ' ✓' : ''}</div>`).join('')}
+          ${q.explanation ? `<div class="q-exp">💡 ${esc(q.explanation)}</div>` : ''}
+        </div>`).join('') + `
+        <div class="st-actions st-no-print" style="display:flex;gap:10px;flex-wrap:wrap">
+          <button type="button" class="btn btn-ok" id="ai-save-test">💾 Test sifatida saqlash</button>
+          <button type="button" class="btn btn-quiet" id="ai-xlsx">📊 Excel (xlsx)</button>
+          <button type="button" class="btn btn-quiet" onclick="window.print()">🖨️ Chop etish / PDF</button>
+        </div>`;
+      $('#ai-save-test').addEventListener('click', () => saveAsTest(questions));
+      $('#ai-xlsx').addEventListener('click', () => exportFile({ format: 'xlsx', questions, name: lastQuestionsName }));
+    }
+
+    function renderDeck(container, deck) {
+      lastDeck = deck;
+      container.innerHTML = `
+        <div class="slide" style="text-align:center"><h3 style="font-size:1.15rem">${esc(deck.title)}</h3></div>
+        ${deck.slides.map((s, i) => `<div class="slide"><h3>${i + 1}. ${esc(s.title)}</h3><ul>${s.bullets.map((b) => `<li>${esc(b)}</li>`).join('')}</ul></div>`).join('')}
+        <div class="st-actions st-no-print" style="display:flex;gap:10px;flex-wrap:wrap">
+          <button type="button" class="btn btn-ok" id="ai-pptx">📽️ PPTX yuklab olish</button>
+          <button type="button" class="btn btn-quiet" onclick="window.print()">🖨️ Chop etish / PDF</button>
+        </div>`;
+      container.querySelector('#ai-pptx').addEventListener('click', () => exportFile({ format: 'pptx', deck, name: 'ai-taqdimot' }));
+    }
+
+    async function saveAsTest(questions) {
+      const name = prompt('Test nomi:', lastQuestionsName);
+      if (!name) return;
+      const res = await fetch('/user/api/tests/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF },
+        body: JSON.stringify({
+          name,
+          questions: questions.map((q) => ({ type: 'single_choice', text: q.text, options: q.options, correct: q.correctIndex, explanation: q.explanation || '', tags: ['ai'], timing: 0 })),
+        }),
+      });
+      const data = await res.json();
+      if (data.success) alert("✅ Test saqlandi — panelda 'Testlarim' bo'limida!");
+      else alert('Xato: ' + (data.error || res.status));
+    }
+
+    async function exportFile(payload) {
+      const res = await fetch('/api/ai/export', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) { alert('Eksport xato: ' + res.status); return; }
+      const blob = await res.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = payload.format === 'pptx' ? payload.name + '.pptx' : payload.name + '-savollar.xlsx';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    async function post(url, body) {
+      const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF }, body: JSON.stringify(body) });
+      return { res, data: await res.json().catch(() => ({})) };
+    }
+
+    // ── Savol generator ──
+    $('#q-go').addEventListener('click', async () => {
+      const btn = $('#q-go'); btn.disabled = true; btn.textContent = '⏳ AI yozmoqda…';
+      msg('q', 'Gemini generatsiya qilmoqda (5–15 soniya)…');
+      try {
+        const { res, data } = await post('/api/ai/generate-questions', {
+          prompt: $('#q-topic').value.trim(), count: +$('#q-count').value,
+          lang: $('#q-lang').value, difficulty: 'mixed', type: $('#q-type').value,
+        });
+        if (!res.ok || !data.ok) { msg('q', '⚠️ AI javob bermadi (' + (data.error || res.status) + ')', 'err'); return; }
+        lastQuestionsName = $('#q-topic').value.trim().slice(0, 40) || 'AI test';
+        renderQuestions($('#q-out'), data.questions);
+        msg('q', '✅ ' + data.questions.length + ' ta savol tayyor', 'ok');
+      } catch (e) { msg('q', '⚠️ Tarmoq xatosi', 'err'); }
+      finally { btn.disabled = false; btn.textContent = '✨ Generatsiya'; }
+    });
+
+    // ── Slide generator ──
+    $('#s-go').addEventListener('click', async () => {
+      const btn = $('#s-go'); btn.disabled = true; btn.textContent = '⏳ AI yozmoqda…';
+      msg('s', 'Slaydlar tuzilmoqda…');
+      try {
+        const { res, data } = await post('/api/ai/generate-slides', { topic: $('#s-topic').value.trim(), count: +$('#s-count').value, lang: $('#s-lang').value });
+        if (!res.ok || !data.ok) { msg('s', '⚠️ AI javob bermadi (' + (data.error || res.status) + ')', 'err'); return; }
+        renderDeck($('#s-out'), data.deck);
+        msg('s', '✅ ' + data.deck.slides.length + ' slayd tayyor', 'ok');
+      } catch (e) { msg('s', '⚠️ Tarmoq xatosi', 'err'); }
+      finally { btn.disabled = false; btn.textContent = '✨ Slaydlar'; }
+    });
+
+    // ── OCR ──
+    const drop = $('#o-drop'), fileInp = $('#o-file');
+    drop.addEventListener('click', () => fileInp.click());
+    drop.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') fileInp.click(); });
+    drop.addEventListener('dragover', (e) => { e.preventDefault(); });
+    drop.addEventListener('drop', (e) => { e.preventDefault(); if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]); });
+    fileInp.addEventListener('change', () => { if (fileInp.files[0]) setFile(fileInp.files[0]); });
+    function setFile(f) {
+      fileInp.files = fileInp.files; // noop
+      const dt = new DataTransfer(); dt.items.add(f); fileInp.files = dt.files;
+      drop.classList.add('has');
+      drop.textContent = '📎 ' + f.name + ' (' + Math.round(f.size / 1024) + ' KB)';
+      $('#o-go').disabled = false;
+    }
+    $('#o-go').addEventListener('click', async () => {
+      const f = fileInp.files[0];
+      if (!f) return;
+      const btn = $('#o-go'); btn.disabled = true; btn.textContent = '⏳ OCR…';
+      msg('o', 'Fayl o\'qilmoqda va generatsiya qilinmoqda (10–30 soniya)…');
+      try {
+        const fd = new FormData();
+        fd.append('file', f);
+        fd.append('mode', $('#o-mode').value);
+        fd.append('prompt', $('#o-prompt').value);
+        fd.append('lang', 'uz');
+        const res = await fetch('/api/ai/ocr-generate', { method: 'POST', headers: { 'X-CSRF-Token': CSRF }, body: fd });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) { msg('o', '⚠️ ' + (data.message || data.error || res.status), 'err'); return; }
+        if (data.mode === 'slides') { renderDeck($('#o-out'), data.deck); msg('o', '✅ OCR: ' + (data.textPreview || '').length + ' belgi o\'qildi → slaydlar tayyor', 'ok'); }
+        else { lastQuestionsName = 'OCR test'; renderQuestions($('#o-out'), data.questions); msg('o', '✅ OCR: ' + (data.textPreview || '').length + ' belgi o\'qildi → ' + data.questions.length + ' savol', 'ok'); }
+      } catch (e) { msg('o', '⚠️ Tarmoq xatosi', 'err'); }
+      finally { btn.disabled = false; btn.textContent = '🔍 OCR + generatsiya'; }
+    });
+  </script>
+</body>
+</html>

@@ -11,6 +11,7 @@
 
 import { Router } from 'express';
 import { requireRole, ROLE_NAV, roleLabel, can } from '../middleware/roles.js';
+import { fb } from '../firebase/admin.js';
 
 const router = Router();
 
@@ -26,18 +27,58 @@ function roleLocals(role, active, extra = {}) {
   };
 }
 
-// ── Teacher Workspace (Overview / Courses / Assessments / Grading) ──
-router.get('/teacher', requireRole('teacher'), (req, res) => {
+// ── Teacher Workspace (Overview / Courses / Assessments / Grading / Muhitlarim) ──
+// S22 matritsa: monitoring = FAQAT o'zi yaratgan muhitlar; tayyor mock/subtest
+// kutubxonasi teacher'ga ko'rinmaydi (imtihon tayyorlash maxsadi bilan).
+router.get('/teacher', requireRole('teacher'), async (req, res) => {
   const role = 'teacher';
   const tab = req.query.tab || 'overview';
   const canOverride = can(role, 'grade:override');
   const canPublish = can(role, 'test:publish');
+  const username = req.session?.user?.username || '';
+  const safeKey = req.session?.user?.safeKey || '';
+
+  // Real ma'lumotlar: o'z testlari + o'zi host qilgan Cast sessiyalari + mashq tarixi
+  let myTests = [];
+  let mySessions = [];
+  let practiceCount = 0;
+  try {
+    const [testsSnap, sessionsSnap, histSnap] = await Promise.all([
+      fb.get(`users/${safeKey}/tests`),
+      fb.get('game_sessions'),
+      fb.get(`users/${safeKey}/practice_history`),
+    ]);
+    if (testsSnap.exists()) {
+      myTests = Object.entries(testsSnap.val() || {})
+        .map(([key, v]) => ({ key, name: v?.name || key, count: v?.questions?.length || 0, createdAt: v?.created_at || v?.created || 0, isPublic: !!v?.isPublic }))
+        .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
+        .slice(0, 50);
+    }
+    if (sessionsSnap.exists()) {
+      mySessions = Object.entries(sessionsSnap.val() || {})
+        .filter(([, v]) => v && typeof v.host === 'string' && v.host === username)
+        .map(([code, v]) => ({
+          code,
+          testName: v.test_name || 'Test',
+          players: Object.keys(v.players || {}).length,
+          status: v?.state?.status || 'waiting',
+          createdAt: v.created_at || 0,
+        }))
+        .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
+        .slice(0, 30);
+    }
+    if (histSnap.exists()) practiceCount = Object.keys(histSnap.val() || {}).length;
+  } catch (_) { /* fb yo'q — bo'sh ko'rsatamiz */ }
+
   res.render('role/teacher', roleLocals(role, '/teacher', {
     title: "O'qituvchi ish maydoni",
     tab,
     canOverride,
     canPublish,
-    username: req.session?.user?.username || '',
+    username,
+    myTests,
+    mySessions,
+    practiceCount,
   }));
 });
 

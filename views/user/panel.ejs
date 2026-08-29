@@ -246,11 +246,13 @@
     <div class="ws-sec-hd">
       <h2 class="ws-sec-title">Qidirish</h2>
     </div>
+    <% if (typeof isVip !== 'undefined' && isVip) { %>
     <div class="ws-search" style="margin-bottom:14px">
       <input class="ws-search-inp" id="search-inp" placeholder="Test nomi bo'yicha qidirish..." aria-label="Test qidirish">
       <button type="button" class="ws-search-btn" onclick="doSearch()"><%- icon('search', 14) %> Qidirish</button>
     </div>
     <div id="search-results"></div>
+    <% } %>
 
     <!-- ════ Test Library (S26) ════ -->
     <div class="ws-sec-hd" style="margin-top:28px">
@@ -331,6 +333,7 @@
               <div class="ws-lib-menu" role="menu" data-menu="<%= t.key %>">
                 <button type="button" role="menuitem" data-act="edit" data-key="<%= t.key %>"><%- icon('edit', 15) %> Tahrirlash</button>
                 <button type="button" role="menuitem" data-act="practice" data-key="<%= t.key %>" data-name="<%= t.name %>" data-count="<%= t.count %>"><%- icon('zap', 15) %> Sinov</button>
+                <a role="menuitem" href="/user/practice?source=user&key=<%= t.key %>"><%- icon('book', 15) %> Yakka mashq</a>
                 <button type="button" role="menuitem" data-act="duplicate" data-key="<%= t.key %>"><%- icon('copy', 15) %> Nusxalash</button>
                 <button type="button" role="menuitem" data-act="visibility" data-key="<%= t.key %>"><%- icon(t.isPublic ? 'shield' : 'globe', 15) %> <%= t.isPublic ? 'Shaxsiy qilish' : 'Ommaviy qilish' %></button>
                 <button type="button" role="menuitem" data-act="export" data-key="<%= t.key %>"><%- icon('download', 15) %> Eksport (JSON)</button>
@@ -381,6 +384,7 @@
               <div class="ws-ready-desc">Fanga oid tayyor mashq testi.</div>
               <div class="ws-ready-actions">
                 <button type="button" class="btn btn-quiet btn-sm" onclick="openStartModal('<%= f.name.replace(/'/g, "\\'") %>', <%= f.count %>, '/user/test-arena?source=mock&key=<%= f.key %>')"><%- icon('zap', 13) %> Sinov</button>
+                <a class="btn btn-quiet btn-sm" style="text-decoration:none" href="/user/practice?source=mock&key=<%= f.key %>"><%- icon('book', 13) %> Mashq</a>
                 <button type="button" class="btn btn-primary btn-sm" data-source="mock" data-key="<%= f.key %>"><%- icon('gamepad', 13) %> Cast</button>
               </div>
             </div>
@@ -405,6 +409,7 @@
                 <div class="ws-ready-desc">Bosqichli to'plam subtestsi.</div>
                 <div class="ws-ready-actions">
                   <button type="button" class="btn btn-quiet btn-sm" onclick="openStartModal('<%= (g.title + ' - ' + c.name).replace(/'/g, "\\'") %>', <%= c.count %>, '/user/test-arena?source=pre&key=<%= g.key %>&chunk=<%= c.id %>')"><%- icon('zap', 13) %> Sinov</button>
+                  <a class="btn btn-quiet btn-sm" style="text-decoration:none" href="/user/practice?source=pre&key=<%= g.key %>&chunk=<%= c.id %>"><%- icon('book', 13) %> Mashq</a>
                   <button type="button" class="btn btn-primary btn-sm" data-source="pre" data-key="<%= g.key %>" data-chunk="<%= c.id %>"><%- icon('gamepad', 13) %> Cast</button>
                 </div>
               </div>

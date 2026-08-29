@@ -112,6 +112,45 @@ export function extractJson(text) {
   return null;
 }
 
+/**
+ * S22: Ko'p formatli (vision/OCR) generatsiya — rasm/pdf sahifasini inlineData
+ * sifatida Gemini'ga yuboradi (haqiqiy OCR, lokal tesseract kerak emas).
+ * @returns {Promise<{ok:true,text:string,model:string}|{ok:false,error:string}>}
+ */
+export async function aiGenerateVision({ base64, mimeType = 'image/png', prompt, systemInstruction = '', maxOutputTokens = 4096, timeoutMs = TIMEOUT_MS } = {}) {
+  if (!isAiEnabled()) return { ok: false, error: 'not_configured' };
+  if (!base64 || typeof base64 !== 'string') return { ok: false, error: 'invalid_prompt' };
+  const body = {
+    contents: [{ role: 'user', parts: [
+      { inline_data: { mime_type: mimeType, data: base64 } },
+      { text: String(prompt || 'Matnni to\u2018liq ajratib ber, formatini saqlab.').slice(0, 8000) },
+    ] }],
+    generationConfig: { maxOutputTokens, temperature: 0.3 },
+  };
+  if (systemInstruction) body.systemInstruction = { parts: [{ text: String(systemInstruction).slice(0, 4000) }] };
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const res = await fetch(`${API_BASE}/${DEFAULT_MODEL}:generateContent`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-goog-api-key': apiKey() },
+      body: JSON.stringify(body),
+      signal: ctrl.signal,
+    });
+    clearTimeout(timer);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      return { ok: false, error: err?.error?.status ? String(err.error.status).toLowerCase() : `upstream_${res.status}` };
+    }
+    const data = await res.json();
+    const text = (data.candidates?.[0]?.content?.parts || []).map((p) => p.text || '').join('').trim();
+    return text ? { ok: true, text, model: DEFAULT_MODEL } : { ok: false, error: 'empty_response' };
+  } catch (e) {
+    clearTimeout(timer);
+    return { ok: false, error: e.name === 'AbortError' ? 'timeout' : 'network' };
+  }
+}
+
 const LANG_NAME = { uz: "o'zbek (lotin)", ru: 'rus', en: 'ingliz' };
 
 /**
@@ -151,4 +190,35 @@ ${type === 'true_false' ? 'options ["To\u2019g\u2019ri","Xato"] bo\u2019lsin.' :
   }
   if (!questions.length) return { ok: false, error: 'bad_format' };
   return { ok: true, questions, model: res.model };
+}
+
+
+/**
+ * S22: AI slayd generatsiya — {title, slides:[{title, bullets[]}]} deck.
+ * @returns {Promise<{ok:true,deck:object,model:string}|{ok:false,error:string}>}
+ */
+export async function aiGenerateSlides({ topic, count = 6, lang = 'uz' } = {}) {
+  const n = Math.min(Math.max(Number(count) || 6, 1), 15);
+  const langName = LANG_NAME[lang] || LANG_NAME.uz;
+  const sys = `Sen professional taqdimot muallifisan. Faqat ${langName} tilida javob ber.`;
+  const usr = `Mavzu: "${String(topic).slice(0, 600)}"
+
+${n} ta slaydli taqdimot tuz. Har slaydda sarlavha + 3-5 qisqa bullet.
+Javobni FAQAT quyidagi JSON formatida ber, boshqa matn YO'Q:
+{"title":"taqdimot nomi","slides":[{"title":"slayd sarlavhasi","bullets":["bullet 1","bullet 2"]}]}`;
+  const res = await aiGenerateText(usr, { systemInstruction: sys, maxOutputTokens: 4096 });
+  if (!res.ok) return res;
+  const parsed = extractJson(res.text);
+  if (!parsed || !Array.isArray(parsed.slides) || !parsed.slides.length) {
+    return { ok: false, error: 'bad_format' };
+  }
+  const deck = {
+    title: String(parsed.title || topic).slice(0, 200),
+    slides: parsed.slides.slice(0, n).map((s) => ({
+      title: String(s?.title || '').slice(0, 160),
+      bullets: Array.isArray(s?.bullets) ? s.bullets.slice(0, 6).map((b) => String(b || '').slice(0, 240)) : [],
+    })).filter((s) => s.title || s.bullets.length),
+  };
+  if (!deck.slides.length) return { ok: false, error: 'bad_format' };
+  return { ok: true, deck, model: res.model };
 }

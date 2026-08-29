@@ -114,6 +114,42 @@ async function adminCopyFor(req) {
 
 // ── C-08: User Management sahifasi (ro'yxat, qidiruv, filter, pagination) ──
 // Alohida sahifa — dashboard'dan ajratilgan (C-08 §06: views/admin/users.ejs)
+// ── S22: Admin "Profilim" — session identiteti, MFA holati, oxirgi amallar ──
+router.get('/profile', async (req, res) => {
+  try {
+    const admin = req.session?.admin || {};
+    // Oxirgi o'z amallari (audit logdan)
+    let recent = [];
+    try {
+      const snap = await fb.get('audit_logs');
+      if (snap.exists()) {
+        const all = typeof snap.val === 'function' ? snap.val() : {};
+        recent = Object.values(all)
+          .filter((e) => e && (e.actorId === admin.username || e.userId === admin.username))
+          .sort((a, b) => (b.at || b.timestamp || 0) - (a.at || a.timestamp || 0))
+          .slice(0, 10)
+          .map((e) => ({ action: e.action || e.type || '-', at: e.at || e.timestamp || 0, outcome: e.outcome || '-' }));
+      }
+    } catch (_) {}
+    res.render('admin/profile', {
+      title: 'Profilim',
+      csrfToken: req.session?.csrfToken || '',
+      adminName: admin.username || 'admin',
+      adminCopy: await adminCopyFor(req),
+      profile: {
+        username: admin.username || '-',
+        mfaEnrolled: !!admin.mfaEnrolled || !!admin.mfa,
+        loginAt: admin.loginAt || admin.createdAt || null,
+        loginIp: admin.loginIp || null,
+        sessionExpires: req.session?.cookie?.expires || null,
+      },
+      recent,
+    });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
 router.get('/users', async (req, res) => {
   try {
     res.render('admin/users', {
@@ -600,6 +636,9 @@ router.get('/api/users', async (req, res) => {
     }
     if (role) filtered = filtered.filter(([, u]) => (u.role || 'student') === role);
     if (status) filtered = filtered.filter(([, u]) => (u.status || 'active') === status);
+    // S22: VIP filtri (?vip=true|false) — VIP userlar bo'limi uchun
+    if (req.query.vip === 'true') filtered = filtered.filter(([, u]) => !!u.isVip);
+    else if (req.query.vip === 'false') filtered = filtered.filter(([, u]) => !u.isVip);
 
     const total = filtered.length;
     const pageItems = filtered.slice((page - 1) * pageSize, page * pageSize);

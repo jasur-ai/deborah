@@ -123,6 +123,8 @@
     if (q) params.set('q', q);
     if (role) params.set('role', role);
     if (status) params.set('status', status);
+    const vip = document.getElementById('users-vip')?.value || ''; // S22
+    if (vip) params.set('vip', vip);
     try {
       const r = await fetch('/admin/api/users?' + params.toString());
       const data = await r.json();

@@ -677,3 +677,26 @@ Kod o'zgarishi NOLTA. Da'vo qilingan lekin TURLIGAN topilmalar (repository'da ha
     POST /api/qti/upload ham PUBLIC (AI-A tekshirdi, 2026-08-29).
 ➡ AI-B: haqiqiy kodni qayta push qiling (da'vo qilingan topilmalar ro'yxati tayyor — yaxshi
   boshlanish). BUG ID diapazoni sizniki: 130..149. Yoki user AI-Aga topshiradi.
+
+── ✅ S22 (AI-A, 2026-08-29): ROL MATRITSASI + AI STUDIYA + EKSPORT — kod+probe TAYYOR ──
+1) ADMIN: dashboard.ejs'da svgIcon/esc aniqlanmagan (24 ishlatilish) → VIP/fans/results/stats
+   tablar "Yuklab bo'lmadi"da o'lgan — icon JSON map EJS inject bilan FIX. GET /admin/profile
+   (sessiya+MFA holati+audit oxirgi 10 amal), /admin/api/users?vip=true|false filtri,
+   users.ejs VIP filtri UI. Probe: dashboard 200 (svgIcon/esc def), profile 200, filter ✓.
+2) VIP yuklanmaslik ildizi = ana shu svgIcon ReferenceError — ochildi va yopildi.
+3) AI STUDIYA (/user/ai-studio, VIP+teacher): savol generator (mavjud /api/ai/generate-questions),
+   slide generator (/api/ai/generate-slides → aiGenerateSlides), OCR (/api/ai/ocr-generate:
+   rasm→sharp→Gemini vision OCR, PDF→pdf-parse text layer; matndan savol YOKI slayd, prompt
+   parametri bilan), tashqi vositalar (Google Slides/Manus/Gamma/Canva).
+4) EKSPORT (/api/ai/export): xlsx (node_modules/xlsx, real .xlsx — probe valid), pptx
+   (utils/minipptx.js — zip libsiz crc32+zlib OOXML generatori; unzip -t ✓, escape ✓).
+   PDF = brauzer chop-etish (window.print) — server-side PDF lib yo'q, fake feature qilinmadi.
+5) YAKKA MASHQ: GET /user/practice?source=user|mock|pre (javob kaliti klientga TUSHMAYDI —
+   grade serverda /user/api/practice/grade, practice_history'ga yozadi). mock/pre FAQAT VIP.
+6) MATRITSA (server-enforced): oddiy user → tayyor to'plamlar yashirin (VIP upsell), ommaviy
+   qidiruv formasi yashirin + /api/tests/search public scan faqat VIP, AI studiya 403,
+   mock 403. VIP → hammasi + AI studiya 200. Teacher → /teacher real ma'lumotlar (o'z
+   testlari, O'ZI host qilgan game_sessions = "Muhitlarim" monitoringi, AI tab), AI studiya 200,
+   sidebar/ROLE_NAV'ga AI Studiya. Sidebar: VIP studentga AI Studiya (navItems'li holatda ham).
+7) Probe (4630): 4 rol ham ✓, grade 200 (1/2 to'g'ri, kalit yashirin), xlsx/pptx 200 PK-magic.
+   Regress: 118 view compile ✓, vitest gemini/ai-question-gen/cast-roles/teacher-sla 32/32 ✓.

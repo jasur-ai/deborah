@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — Deborah</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f1f5f9; margin: 0; color: #0f172a; }
+    .pr-top { background: linear-gradient(135deg, #0f172a, #1e3a8a); color: #fff; padding: 14px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .pr-top h1 { font-size: 1.02rem; margin: 0; }
+    .pr-top a { color: #93c5fd; font-size: .8rem; font-weight: 700; text-decoration: none; }
+    .pr-wrap { max-width: 780px; margin: 0 auto; padding: 20px 14px 80px; }
+    .pr-meta { font-size: .8rem; color: #64748b; margin-bottom: 14px; }
+    .pr-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px; margin-bottom: 14px; }
+    .pr-q { font-weight: 800; font-size: 1rem; margin-bottom: 12px; }
+    .pr-opt { display: flex; align-items: flex-start; gap: 10px; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 11px 13px; margin-bottom: 8px; cursor: pointer; font-size: .9rem; transition: border-color .12s, background .12s; }
+    .pr-opt:hover { border-color: #93c5fd; }
+    .pr-opt.sel { border-color: #2563eb; background: rgba(37,99,235,.06); }
+    .pr-opt input { margin-top: 3px; }
+    .pr-nav { display: flex; gap: 10px; justify-content: space-between; margin-top: 16px; }
+    .btn { border: 0; border-radius: 9px; padding: 11px 20px; font-weight: 700; font-size: .9rem; cursor: pointer; min-height: 44px; }
+    .btn-primary { background: #2563eb; color: #fff; }
+    .btn-quiet { background: #eef2ff; color: #3730a3; }
+    .btn[disabled] { opacity: .5; cursor: not-allowed; }
+    .pr-dots { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 16px; }
+    .pr-dot { width: 30px; height: 30px; border-radius: 8px; border: 1.5px solid #cbd5e1; background: #fff; font-size: .72rem; font-weight: 800; color: #475569; cursor: pointer; }
+    .pr-dot.done { background: #dbeafe; border-color: #2563eb; color: #1e3a8a; }
+    .pr-dot.cur { outline: 2px solid #2563eb; outline-offset: 1px; }
+    .pr-res-score { font-size: 2.4rem; font-weight: 900; color: #059669; text-align: center; }
+    .pr-res-sub { text-align: center; color: #64748b; font-size: .85rem; margin-bottom: 16px; }
+    .pr-review { border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; }
+    .pr-review.wrong { border-color: #fca5a5; background: rgba(239,68,68,.05); }
+    .pr-review.right { border-color: #a7f3d0; background: rgba(16,185,129,.05); }
+    .pr-rv-q { font-weight: 700; font-size: .88rem; margin-bottom: 6px; }
+    .pr-rv-o { font-size: .8rem; margin-left: 10px; color: #334155; }
+    .pr-rv-o.ok { color: #059669; font-weight: 700; }
+    .pr-rv-o.no { color: #dc2626; }
+    .pr-rv-e { font-size: .76rem; color: #64748b; margin-top: 6px; border-top: 1px dashed #e2e8f0; padding-top: 6px; }
+    @media print { .pr-top, .pr-nav, .no-print { display: none !important; } body { background: #fff; } }
+  </style>
+</head>
+<body>
+  <div class="pr-top">
+    <h1>🎯 <%= practiceTitle %> — Yakka mashq</h1>
+    <a href="/user/panel">← Panel</a>
+  </div>
+  <div class="pr-wrap">
+    <div class="pr-meta">Javob kaliti serverda saqlanadi — yakunda baho va tushuntirishlar ko'rasiz.</div>
+    <div class="pr-dots" id="dots"></div>
+    <div id="quiz"></div>
+    <div id="result" hidden></div>
+  </div>
+
+  <script>
+    const QUESTIONS = <%- JSON.stringify(questions).replace(/</g, '\\u003c') %>;
+    const CSRF = <%- JSON.stringify(csrfToken || '') %>;
+    const SOURCE = <%- JSON.stringify(source) %>;
+    const KEY = <%- JSON.stringify(key) %>;
+    const CHUNK = <%- JSON.stringify(chunk) %>;
+    const answers = new Array(QUESTIONS.length).fill(-1);
+    let cur = 0;
+
+    const dots = document.getElementById('dots');
+    function renderDots() {
+      dots.innerHTML = QUESTIONS.map((_, i) =>
+        `<button type="button" class="pr-dot${answers[i] >= 0 ? ' done' : ''}${i === cur ? ' cur' : ''}" data-i="${i}" aria-label="Savol ${i + 1}">${i + 1}</button>`).join('');
+      dots.querySelectorAll('.pr-dot').forEach((d) => d.addEventListener('click', () => { cur = +d.dataset.i; renderQ(); renderDots(); }));
+    }
+
+    const quiz = document.getElementById('quiz');
+    function renderQ() {
+      const q = QUESTIONS[cur];
+      quiz.innerHTML = `
+        <div class="pr-card">
+          <div class="pr-q">${cur + 1} / ${QUESTIONS.length}. ${esc(q.text)}</div>
+          ${q.options.map((o, j) => `
+            <label class="pr-opt${answers[cur] === j ? ' sel' : ''}">
+              <input type="radio" name="q${cur}" value="${j}" ${answers[cur] === j ? 'checked' : ''}>
+              <span><b>${String.fromCharCode(65 + j)})</b> ${esc(o)}</span>
+            </label>`).join('')}
+          <div class="pr-nav">
+            <button type="button" class="btn btn-quiet" id="prev" ${cur === 0 ? 'disabled' : ''}>← Oldingi</button>
+            ${cur === QUESTIONS.length - 1
+              ? '<button type="button" class="btn btn-primary" id="finish">✅ Yakunlash</button>'
+              : '<button type="button" class="btn btn-primary" id="next">Keyingi →</button>'}
+          </div>
+        </div>`;
+      quiz.querySelectorAll('input[type=radio]').forEach((r) => r.addEventListener('change', () => {
+        answers[cur] = +r.value;
+        renderQ(); renderDots();
+      }));
+      const prev = quiz.querySelector('#prev');
+      if (prev) prev.addEventListener('click', () => { cur--; renderQ(); renderDots(); });
+      const next = quiz.querySelector('#next');
+      if (next) next.addEventListener('click', () => { cur++; renderQ(); renderDots(); });
+      const fin = quiz.querySelector('#finish');
+      if (fin) fin.addEventListener('click', finish);
+    }
+
+    function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+    async function finish() {
+      const unanswered = answers.filter((a) => a < 0).length;
+      if (unanswered > 0 && !confirm(unanswered + ' ta savol javobsiz qoldi. Yakunlaymizmi?')) return;
+      try {
+        const res = await fetch('/user/api/practice/grade', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF },
+          body: JSON.stringify({ answers, source: SOURCE, key: KEY, chunk: CHUNK }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) { alert('Xato: ' + (data.error || res.status)); return; }
+        showResult(data);
+      } catch (e) { alert('Tarmoq xatosi'); }
+    }
+
+    function showResult(data) {
+      document.getElementById('quiz').hidden = true;
+      dots.hidden = true;
+      const el = document.getElementById('result');
+      el.hidden = false;
+      el.innerHTML = `
+        <div class="pr-card">
+          <div class="pr-res-score">${data.percent}%</div>
+          <div class="pr-res-sub">${data.correct} / ${data.total} to'g'ri javob</div>
+          <div style="text-align:center" class="no-print">
+            <button type="button" class="btn btn-quiet" onclick="window.print()">🖨️ Chop etish</button>
+            <a class="btn btn-primary" style="text-decoration:none;display:inline-block" href="/user/panel">← Panelga qaytish</a>
+          </div>
+        </div>
+        ${data.results.map((r, i) => {
+          const q = QUESTIONS[i];
+          return `<div class="pr-review ${r.isCorrect ? 'right' : 'wrong'}">
+            <div class="pr-rv-q">${i + 1}. ${esc(q.text)} ${r.isCorrect ? '✅' : '❌'}</div>
+            ${q.options.map((o, j) => `<div class="pr-rv-o${j === r.correctIndex ? ' ok' : j === r.given ? ' no' : ''}">${String.fromCharCode(65 + j)}) ${esc(o)}${j === r.correctIndex ? ' ✓' : j === r.given ? ' ← sizning javobingiz' : ''}</div>`).join('')}
+            ${r.explanation ? `<div class="pr-rv-e">💡 ${esc(r.explanation)}</div>` : ''}
+          </div>`;
+        }).join('')}`;
+    }
+
+    renderDots();
+    renderQ();
+  </script>
+</body>
+</html>

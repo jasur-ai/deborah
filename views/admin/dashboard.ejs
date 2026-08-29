@@ -19,6 +19,7 @@
     <div class="flex items-center gap-8">
       <button type="button" class="admin-nav-btn" onclick="refreshActiveTab()"><%- icon('refresh', 14) %> Yangilash</button>
       <%- include('../partials/theme-control') %>
+      <a href="/admin/profile" class="admin-nav-btn"><%- icon('user', 14) %> Profilim</a>
       <a href="/admin/logout" class="admin-nav-btn"><%- icon('logOut', 14) %> <%= (adminCopy.logout || 'Chiqish') %></a>
     </div>
   </nav>
@@ -28,6 +29,8 @@
     <!-- Sidebar -->
     <div class="admin-sidebar" id="admin-sidebar">
       <div class="admin-side-label"><%= (adminCopy.navSections || 'Bo\'limlar') %></div>
+      <a href="/admin/profile" class="admin-side-btn"><span class="admin-side-ico"><%- icon('user', 16) %></span>Profilim</a>
+      <a href="/admin/users" class="admin-side-btn"><span class="admin-side-ico"><%- icon('users', 16) %></span>Userlar boshqaruvi</a>
       <a href="/admin/index" class="admin-side-btn"><span class="admin-side-ico"><%- icon('grid', 16) %></span>Barcha funksiyalar</a> <!-- BUG-029: bir ko'rinish indeks -->
       <button class="admin-side-btn <%= activeTab === 'danger' ? 'active' : '' %>" onclick="switchTab('danger')" style="--c:var(--deborah-semantic-color-action-primary);--cbg:rgba(37,99,235,.14)"><span class="admin-side-ico"><%- icon('alertTriangle', 16) %></span><%= (adminCopy.navUsers || 'Foydalanuvchilar') %></button>
       <button class="admin-side-btn <%= activeTab === 'fans' ? 'active' : '' %>" onclick="switchTab('fans')"><span class="admin-side-ico"><%- icon('book', 16) %></span><%= (adminCopy.navFans || 'Namuna fanlar') %></button>
@@ -307,6 +310,13 @@
       else if (currentTab === 'vip') loadVip();
       else if (currentTab === 'governance') loadGovernance();
     }
+
+    // ── S22 FIX (VIP tab yuklanmasligi): svgIcon 24 joyda ishlatilgan, lekin
+    // HECH QAYERDA aniqlanmagan — har bir JS-render tab (VIP/fans/results...)
+    // ReferenceError bilan 'Yuklab bo'lmadi'ga tushardi. esc ham xuddi shunday.
+    const __DASH_ICONS = JSON.parse('<%- JSON.stringify(Object.fromEntries(["shield","check","upload","save","layers","book","zap","gamepad","monitor","refresh","alertTriangle","x","plus"].map((n) => [n, icon(n, 13)]))).replace(/</g, "\u003c") %>');
+    function svgIcon(name, size) { return __DASH_ICONS[name] || ''; }
+    function esc(v) { return escHtml(v); }
 
     // ── Cast Governance (C4-08) ──
     function escHtml(v) {

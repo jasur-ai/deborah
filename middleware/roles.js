@@ -74,6 +74,8 @@ export const ROLE_NAV = {
     { section: "Asboblar" },
     { href: '/user/panel', icon: 'book', label: 'Testlarim' },
     { href: '/user/create-test', icon: 'plus', label: 'Yangi test' },
+    // S22 matritsa: teacher → AI + presentations ko'rinadi
+    { href: '/user/ai-studio', icon: 'sparkles', label: 'AI Studiya' },
   ],
   student: [
     { section: "Talaba" },

@@ -65,9 +65,29 @@
           <option value="active">Active</option>
           <option value="blocked">Bloklangan</option>
         </select>
+        <!-- S22: VIP filtri + tezkor bo'limlar (Userlar / VIP / O'qituvchilar) -->
+        <select id="users-vip" class="inp" aria-label="VIP filtri" style="min-width:130px">
+          <option value="">VIP: hammasi</option>
+          <option value="true">Faqat VIP</option>
+          <option value="false">Faqat oddiy</option>
+        </select>
+        <button type="button" class="btn" onclick="quickSection('')" style="min-height:44px">Barchasi</button>
+        <button type="button" class="btn" onclick="quickSection('vip')" style="min-height:44px">VIP userlar</button>
+        <button type="button" class="btn" onclick="quickSection('teacher')" style="min-height:44px">O'qituvchilar</button>
         <button type="button" class="btn btn-primary" onclick="loadUsers(1)" style="min-height:44px"><%- icon('filter', 14) %> Filtrlash</button>
         <button type="button" class="btn" onclick="resetFilters()" style="min-height:44px">Tozalash</button>
       </div>
+      <script>
+        // S22: bo'lim filtrlari — VIP userlar / O'qituvchilar bir klikda
+        function quickSection(kind) {
+          const vipSel = document.getElementById('users-vip');
+          const roleSel = document.getElementById('users-role');
+          if (kind === 'vip') { vipSel.value = 'true'; roleSel.value = ''; }
+          else if (kind === 'teacher') { vipSel.value = ''; roleSel.value = 'teacher'; }
+          else { vipSel.value = ''; roleSel.value = ''; }
+          loadUsers(1);
+        }
+      </script>
 
       <div class="table-wrap dt-wrap is-reflow"><table class="dt" data-density="default">
         <thead><tr>

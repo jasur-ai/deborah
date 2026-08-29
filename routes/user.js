@@ -551,9 +551,11 @@ router.get('/api/tests/search', async (req, res) => {
     const results = [];
     const seenKeys = new Set();
 
+    // S22 matritsa: ommaviy kutubxona faqat VIP — oddiy user faqat o'z testlarini ko'radi
+    const vipForSearch = await isCurrentUserVip(req);
     // 1️⃣ Search public_tests collection (fast, indexed)
     try {
-      const pubSnap = await fb.get('public_tests');
+      const pubSnap = vipForSearch ? await fb.get('public_tests') : null;
       if (pubSnap.exists()) {
         const pubTests = pubSnap.val();
         for (const [globalKey, pub] of Object.entries(pubTests)) {
@@ -742,6 +744,126 @@ router.patch('/api/settings/profile', async (req, res) => {
   } catch (err) {
     res.status(500).json({ ok: false, error: 'settings_save_failed' });
   }
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// S22 — Yakka mashq (solo practice): o'z/ommaviy testlar (student),
+// mock/pre to'plamlar (faqat VIP). Javob kaliti klientga TUSHMAYDI —
+// grade serverda.
+// ═══════════════════════════════════════════════════════════════════
+async function loadPracticeQuestions(req, res) {
+  const source = String(req.query.source || req.body?.source || 'user');
+  const key = String(req.query.key || req.body?.key || '');
+  if (!key || !/^[A-Za-z0-9_.-]{1,120}$/.test(key) || key.includes('..')) {
+    return { err: res.status(400).json({ ok: false, error: 'invalid_key' }) };
+  }
+  const user = req.session.user;
+  if (source === 'user') {
+    // O'z testi YOKI boshqa userning public testi
+    const ownSnap = await fb.get(`users/${user.safeKey}/tests/${key}`);
+    if (ownSnap.exists()) {
+      const d = ownSnap.val();
+      return { title: d.name || 'Test', questions: Array.isArray(d.questions) ? d.questions : [] };
+    }
+    const pubSnap = await fb.get(`public_tests`);
+    if (pubSnap.exists()) {
+      for (const [globalKey, meta] of Object.entries(pubSnap.val() || {})) {
+        if (meta && meta.testKey === key) {
+          const authorSnap = await fb.get(`users/${meta.authorUid}/tests/${key}`);
+          if (authorSnap.exists()) {
+            const d = authorSnap.val();
+            return { title: d.name || 'Ommaviy test', questions: Array.isArray(d.questions) ? d.questions : [] };
+          }
+        }
+      }
+    }
+    return { err: res.status(404).json({ ok: false, error: 'not_found' }) };
+  }
+  if (source === 'mock' || source === 'pre') {
+    // Faqat VIP (imtihonga tayyorlanish to'plamlari — S22 qarori)
+    const vipSnap = await fb.get(`users/${user.safeKey}/isVip`);
+    const isVip = vipSnap.exists() && vipSnap.val() === true;
+    const isStaff = ['teacher', 'admin', 'board'].includes(user.role);
+    if (!isVip && !isStaff) {
+      return { err: res.status(403).json({ ok: false, error: 'vip_required' }) };
+    }
+    if (source === 'mock') {
+      const snap = await fb.get(`mock_fans/${key}`);
+      if (!snap.exists()) return { err: res.status(404).json({ ok: false, error: 'not_found' }) };
+      const d = snap.val();
+      return { title: d.name || key, questions: Array.isArray(d.questions) ? d.questions : [] };
+    }
+    const chunk = String(req.query.chunk || req.body?.chunk || '');
+    if (!chunk || !/^[A-Za-z0-9_.-]{1,64}$/.test(chunk) || chunk.includes('..')) {
+      return { err: res.status(400).json({ ok: false, error: 'invalid_chunk' }) };
+    }
+    const snap = await fb.get(`pre_groups/${key}`);
+    if (!snap.exists()) return { err: res.status(404).json({ ok: false, error: 'not_found' }) };
+    const g = snap.val();
+    const sel = (g.chunks || []).find((c) => c && c.id === chunk);
+    if (!sel) return { err: res.status(404).json({ ok: false, error: 'not_found' }) };
+    return { title: (g.title || key) + ' — ' + (sel.name || chunk), questions: Array.isArray(sel.questions) ? sel.questions : [] };
+  }
+  return { err: res.status(400).json({ ok: false, error: 'invalid_source' }) };
+}
+
+router.get('/practice', async (req, res) => {
+  const loaded = await loadPracticeQuestions(req, res);
+  if (loaded.err) return;
+  const qs = (loaded.questions || []).map((q, i) => ({
+    id: i,
+    text: String(q?.text || ''),
+    type: q?.type || 'single_choice',
+    options: Array.isArray(q?.options) ? q.options.map((o) => String(o || '')) : [],
+    // correct NI YUBORMAYMIZ
+  })).filter((q) => q.text && q.options.length >= 2);
+  if (!qs.length) return res.status(404).render('error', { title: '404', message: 'Savollar topilmadi', status: 404 });
+  return res.render('user/practice', {
+    title: loaded.title + ' — Yakka mashq',
+    practiceTitle: loaded.title,
+    source: String(req.query.source || 'user'),
+    key: String(req.query.key || ''),
+    chunk: String(req.query.chunk || ''),
+    questions: qs,
+    csrfToken: res.locals.csrfToken || req.session.csrfToken || '',
+  });
+});
+
+router.post('/api/practice/grade', async (req, res) => {
+  const loaded = await loadPracticeQuestions(req, res);
+  if (loaded.err) return;
+  const answers = Array.isArray(req.body?.answers) ? req.body.answers : [];
+  const results = [];
+  let correct = 0;
+  (loaded.questions || []).forEach((q, i) => {
+    const opts = Array.isArray(q?.options) ? q.options : [];
+    const correctIdx = Math.max(0, Math.min(Number.isFinite(+q?.correct) ? Math.floor(+q.correct) : 0, opts.length - 1));
+    const given = Number.isInteger(answers[i]) ? answers[i] : -1;
+    const isCorrect = given === correctIdx;
+    if (isCorrect) correct++;
+    results.push({
+      id: i,
+      correctIndex: correctIdx, // grade'dan KEYIN ochiq — o'quv ko'rinishi uchun
+      given,
+      isCorrect,
+      explanation: String(q?.explanation || ''),
+    });
+  });
+  const total = results.length || 1;
+  // Natijani saqlash (o'z testi bo'lsa — progress kuzatuvi)
+  try {
+    const user = req.session.user;
+    const src = String(req.body?.source || req.query.source || 'user');
+    if (user && src === 'user') {
+      await fb.set(`users/${user.safeKey}/practice_history/${Date.now().toString(36)}`, {
+        key: String(req.body?.key || req.query.key || ''),
+        title: loaded.title,
+        correct, total, percent: Math.round((correct / total) * 100),
+        at: Date.now(),
+      });
+    }
+  } catch (_) { /* non-critical */ }
+  res.json({ ok: true, correct, total, percent: Math.round((correct / total) * 100), results });
 });
 
 export default router;

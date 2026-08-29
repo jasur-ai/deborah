@@ -29,14 +29,16 @@
       <a href="/teacher?tab=courses" class="role-tab <%= tab === 'courses' ? 'active' : '' %>" role="tab" aria-selected="<%= tab === 'courses' %>"><%- icon('bookOpen', 14) %> Kurslar</a>
       <a href="/teacher?tab=assessments" class="role-tab <%= tab === 'assessments' ? 'active' : '' %>" role="tab" aria-selected="<%= tab === 'assessments' %>"><%- icon('target', 14) %> Baholashlar</a>
       <a href="/teacher?tab=grading" class="role-tab <%= tab === 'grading' ? 'active' : '' %>" role="tab" aria-selected="<%= tab === 'grading' %>"><%- icon('clipboard', 14) %> Baholash navbati</a>
+      <a href="/teacher?tab=environments" class="role-tab <%= tab === 'environments' ? 'active' : '' %>" role="tab" aria-selected="<%= tab === 'environments' %>"><%- icon('monitor', 14) %> Muhitlarim</a>
+      <a href="/teacher?tab=ai" class="role-tab <%= tab === 'ai' ? 'active' : '' %>" role="tab" aria-selected="<%= tab === 'ai' %>"><%- icon('sparkles', 14) %> AI &amp; Taqdimot</a>
     </div>
 
     <% if (tab === 'overview') { %>
       <div class="ov-stats">
-        <div class="ov-stat"><div class="n">0</div><div class="l">Bugungi darslar</div></div>
-        <div class="ov-stat"><div class="n">0</div><div class="l">Qoralama testlar</div></div>
-        <div class="ov-stat"><div class="n">0</div><div class="l">Baholash navbati</div></div>
-        <div class="ov-stat"><div class="n">0</div><div class="l">Aktiv attemptlar</div></div>
+        <div class="ov-stat"><div class="n"><%= myTests.length %></div><div class="l">Mening testlarim</div></div>
+        <div class="ov-stat"><div class="n"><%= mySessions.length %></div><div class="l">Mening Cast sessiyalarim</div></div>
+        <div class="ov-stat"><div class="n"><%= mySessions.filter(s => s.status === 'active' || s.status === 'waiting').length %></div><div class="l">Aktiv/kutayotgan sessiya</div></div>
+        <div class="ov-stat"><div class="n"><%= practiceCount %></div><div class="l">Yakka mashqlar (kuzatuv)</div></div>
       </div>
       <div class="quick-grid">
         <div class="role-card">
@@ -64,6 +66,18 @@
           <div class="rc-sub">Groups / Cohorts / Students</div>
           <a href="/teacher?tab=courses" class="go-gold" style="display:inline-block;margin-top:12px;text-decoration:none;font-weight:700;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
         </div>
+        <div class="role-card">
+          <div class="rc-ico" style="background:rgba(139,92,246,.14);color:var(--purple)"><%- icon('monitor', 20) %></div>
+          <div class="rc-title">Muhitlarim — monitoring</div>
+          <div class="rc-sub">Faqat o'zingiz yaratgan Cast sessiyalari ustidan nazorat</div>
+          <a href="/teacher?tab=environments" style="display:inline-block;margin-top:12px;text-decoration:none;color:var(--purple);font-weight:700;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
+        </div>
+        <div class="role-card">
+          <div class="rc-ico" style="background:rgba(37,99,235,.14);color:var(--deborah-semantic-color-action-primary)"><%- icon('sparkles', 20) %></div>
+          <div class="rc-title">AI Studiya</div>
+          <div class="rc-sub">Savol/slayd generator, OCR → xlsx/pptx/eksport</div>
+          <a href="/user/ai-studio" style="display:inline-block;margin-top:12px;text-decoration:none;color:var(--deborah-semantic-color-action-primary);font-weight:700;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
+        </div>
       </div>
     <% } else if (tab === 'courses') { %>
       <%- include('../partials/states', { state: 'empty', iconName: 'bookOpen', title: "Kurslar bo'limi", sub: 'Kurs yaratish va guruhlarni boshqarish' }) %>
@@ -71,6 +85,47 @@
       <%- include('../partials/states', { state: 'empty', iconName: 'target', title: 'Baholashlar', sub: 'Assessment builder, blueprint va monitoring' }) %>
     <% } else if (tab === 'grading') { %>
       <%- include('../partials/states', { state: 'job', iconName: 'cpu', title: "Baholash navbati bo'sh", sub: canOverride ? 'Model override huquqiga egasiz' : "Faqat o'qish rejimi" }) %>
+    <% } else if (tab === 'environments') { %>
+      <div class="ov-stats">
+        <div class="ov-stat"><div class="n"><%= mySessions.length %></div><div class="l">Jami sessiyalarim</div></div>
+        <div class="ov-stat"><div class="n"><%= mySessions.reduce((a, s) => a + s.players, 0) %></div><div class="l">Jami ishtirokchilar</div></div>
+        <div class="ov-stat"><div class="n"><%= myTests.length %></div><div class="l">Testlarim</div></div>
+      </div>
+      <div class="quick-grid" style="margin-bottom:20px">
+        <% if (mySessions.length === 0) { %>
+          <%- include('../partials/states', { state: 'empty', iconName: 'monitor', title: 'Hali sessiya yo\u2018q', sub: "Panel'dagi 'Cast' tugmasi bilan muhit yarating — shu yerda ko\u2018rinadi" }) %>
+        <% } else { %>
+          <% mySessions.forEach(s => { %>
+            <div class="role-card">
+              <div class="rc-ico" style="background:rgba(139,92,246,.14);color:var(--purple)"><%- icon('gamepad', 18) %></div>
+              <div class="rc-title"><%= s.testName %> <span style="font-size:.7rem;color:var(--deborah-semantic-color-text-muted)">#<%= s.code %></span></div>
+              <div class="rc-sub"><%= s.players %> ishtirokchi · <%= s.status === 'waiting' ? 'Kutish' : s.status === 'active' ? 'Aktiv' : 'Yakunlangan' %> · <%= new Date(s.createdAt).toLocaleDateString('uz-UZ') %></div>
+              <a href="/host/<%= s.code %>" style="display:inline-block;margin-top:10px;text-decoration:none;color:var(--purple);font-weight:700;font-size:.8rem"><%- icon('monitor', 13) %> Boshqaruv paneli</a>
+            </div>
+          <% }); %>
+        <% } %>
+      </div>
+    <% } else if (tab === 'ai') { %>
+      <div class="quick-grid">
+        <div class="role-card">
+          <div class="rc-ico" style="background:rgba(37,99,235,.14);color:var(--deborah-semantic-color-action-primary)"><%- icon('sparkles', 20) %></div>
+          <div class="rc-title">AI Studiya</div>
+          <div class="rc-sub">Mavzudan savollar/slaydlar, OCR: fayl → savol/slayd, xlsx/pptx eksport</div>
+          <a href="/user/ai-studio" style="display:inline-block;margin-top:12px;text-decoration:none;color:var(--deborah-semantic-color-action-primary);font-weight:700;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
+        </div>
+        <div class="role-card">
+          <div class="rc-ico" style="background:rgba(56,189,248,.14);color:var(--blue)"><%- icon('book', 20) %></div>
+          <div class="rc-title">Mening testlarim</div>
+          <div class="rc-sub">O'zingiz yaratgan testlar — Cast/mashq muhitlari shu yerdan</div>
+          <a href="/user/panel" style="display:inline-block;margin-top:12px;text-decoration:none;color:var(--blue);font-weight:700;font-size:.8rem"><%- icon('arrowRight', 13) %> O'tish</a>
+        </div>
+        <div class="role-card">
+          <div class="rc-ico" style="background:rgba(0,229,160,.12);color:var(--green)"><%- icon('play', 20) %></div>
+          <div class="rc-title">Taqdimot vositalari</div>
+          <div class="rc-sub">Google Slides, Gamma, Canva, Manus — tashqi platformalar</div>
+          <a href="/user/ai-studio" style="display:inline-block;margin-top:12px;text-decoration:none;color:var(--green);font-weight:700;font-size:.8rem"><%- icon('arrowRight', 13) %> Ko'rish</a>
+        </div>
+      </div>
     <% } %>
   </main>
 </body>
