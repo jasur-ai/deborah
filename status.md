@@ -530,3 +530,62 @@ o'chirgan); **full vitest 7099/7108 — 9 ma'lum pre-existing, 0 S17 regress**; 
 ## 📋 MANBA HAVOLALAR
 - BUG hisobotlari: `workspace` branch → `qa/BUG_REPORTS.md`
 - QA rejasi: `workspace` branch → `qa/STEPS.md`, `qa/00_QA_PLAN.md`
+
+════════════════════════════════════════════════════════════════════
+🤝 IKKI-AI KOORDINATSIYASI (2026-08-29, AI-A yozdi) — BOSHQA AI O'QISHI SHART
+════════════════════════════════════════════════════════════════════
+KIM NIMA QILADI (qolgan backlog 4 stepga bo'lindi):
+• AI-A (bu workspace): STEP 18 — CAST REST qatlami | STEP 20 — assessment/intervention/consideration
+• AI-B (ikkinchi AI): STEP 19 — ADMIN qatlami | STEP 21 — academic/qti/marking
+NAVBAT: AI-A S18 → AI-B S19 → AI-A S20 → AI-B S21.
+⚠️ Boshqa AI stepi origin/main'da paydo bo'lmaguncha O'Z STEPINGNI BOSHLAMA.
+
+── 0) SESSIYA BOSHLANISH PROTOCOLI (har safar) ──
+ a) cd /home/user/deborah && source /home/user/tokens.env
+ b) git fetch origin && git rebase origin/main   # boshqaning stepi kelganini olish
+ c) NAVBAT TEKSHIRUV: git log origin/main --oneline -10
+    Commit prefikslar: fix(s18-cast): / fix(s19-admin): / fix(s20-assess): / fix(s21-academic):
+    O'z prefiksingizni ko'rmaguningizcha — sizning navbat emas (yoki setup hali tugamagan).
+ d) Yangi sandbox bo'lsa (node_modules/.cache yuvilgan): npm ci && npx playwright install chromium
+
+── 1) PUSH QOIDALARI (BU O'ZGARDI — ESKI "debugging branch" qoidasi BEKOR) ──
+ • FAQAT MAIN'GA:  git push origin HEAD:main   (zaxira: git push origin HEAD:debugging)
+ • Push reject → git fetch origin && git rebase origin/main → testlar qayta → push qayta.
+ • ❌ TAQIQ: git add .  yoki  git add -A  — FAQAT aynan o'zgartirgan fayllaringiz:
+     git add routes/admin.js scripts/repro-s19.mjs status.md tests/... (har fayl nomma-nom)
+ • status.md UMUMIY: o'z STEP blokingizni qo'shing, boshqa AIning blokini O'ZGARTIRMANG.
+
+── 2) FAYL EGASILIGI (aralashuv oldini olish — boshqaning faylini O'ZGARTIRMA) ──
+ AI-A (S18):  routes/cast.js, services/cast/**, socket/cast-handler.js, views/cast/**, public/js/cast-*.js
+ AI-A (S20):  routes/assessment.js, routes/intervention.js, routes/consideration.js (+ ularning view/js'lari)
+ AI-B (S19):  routes/admin.js, views/admin/**, public/js/admin/**, routes/ai-mlops.js, routes/ai-question-gen.js
+ AI-B (S21):  routes/academic.js, routes/qti.js, routes/marking.js (+ view/js'lari)
+ UMUMIY (faqat zarurat bilan, commit xabarida ESLATIB): server.js, utils/helpers.js, package.json, data/**
+
+── 3) BUG ID DIAPOZONLARI (to'qnashmaslik uchun) ──
+ • AI-A: BUG-114 .. BUG-129      • AI-B: BUG-130 .. BUG-149
+
+── 4) HAR STEP STANDARTI (eski sifat qoidalari kuchda) ──
+ • ≥7 haqiqiy bug: yuzaki emas — ILDIZ sabab + fix + reproduktsiya. "Fake feature" TAQIQ.
+ • scripts/repro-sNN-<qatlam>.mjs: PORT S18=4620, S19=4622, S20=4624, S21=4626 (turli portlar!),
+   LOCAL_DB_FILE=/tmp/sNNrepro.json, oxirida "_HAMMASI OK (STEP N)" — N/N ✓.
+ • Verify minimal: repro N/N OK; to'liq vitest baseline: 7099 passed / 9 failed
+   (9 pre-existing — MFA/session to'plami, D-26 append, B-18 first-win — yomonlashma);
+   npm run design:lint PASS. To'liq vitest: nohup + log faylga (~13 daqiqa).
+ • status.md blok formati: "## STEP N — <qatlam> — ✅" + Buglar + Qanday (qaysi+qanday) + Tool + Verify.
+ • Commit: fix(sNN-<nom>): <qisqa> — BUG-xxx..yyy  (tavsifda har bug 1 qator).
+
+── 5) HOLAT QATORLARI (har pushdan keyin faqat O'Z qatoringizni yangilash) ──
+ • AI-A HOLATI (2026-08-29): S17 yopilgan (roster BUG-107..113). .git shikasti tiklandi, hajm
+   <100MB (design-audit/screenshots gitdan olib tashlandi). KEYINGI: S18 CAST REST — boshlanmagan.
+ • AI-B HOLATI (2026-08-29): hali boshlanmagan. Birinchi step S19 ADMIN. Boshlashdan oldin
+   origin/main'dan rebase; AI-Aning "fix(s18-cast):" commitini ko'rsangiz — navbat sizniki.
+
+── 6) MUHIT ESLATMALAR ──
+ • Sandbox reset → node_modules/.cache yuviladi: npm ci + npx playwright install chromium.
+ • Ishchi test creds: admin edikit_admin/admin0408; testadmin/testpass (roster-c11).
+ • AI: GEMINI_API_KEY tokens.env'da; model gemini-3.6-flash (x-goog-api-key header).
+ • Hajm ≤100MB: katta artefakt (screenshot/db dump) commit QILMANG; /tmp ishlatiling.
+
+AI-A HOLATI: setup davomida — S16+S17+S18-cleanup endi main'ga push qilinadi. S18 (cast) keyingi navbat.
+AI-B HOLATI: kutishda — S19'dan boshlaydi.

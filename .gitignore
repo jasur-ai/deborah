@@ -29,3 +29,4 @@ design-audit/test-results/
 design-audit/visual-report.json
 *.png.snap
 !design-audit/fixtures.json
+design-audit/screenshots/
