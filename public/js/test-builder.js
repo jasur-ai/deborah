@@ -187,7 +187,7 @@
     const q = state.questions.find(x => x.id === state.activeId);
     if (!q) {
       el.innerHTML = `<div class="tb-err-summary is-open" style="border-style:dashed">
-        <span class="tb-err-summary-title"><%- 0 %></span>
+        <span class="tb-err-summary-title">!</span>
       </div>`;
       el.innerHTML = `<div class="ws-lib-empty"><div class="ws-lib-empty-title">Savol tanlanmagan</div>
         <div class="ws-lib-empty-sub">Chapdagi ro'yxatdan savol tanlang yoki yangi qo'shing.</div>
@@ -203,21 +203,21 @@
       <div class="tb-opt${oi === q.correct ? ' is-correct' : ''}">
         <span class="tb-opt-letter">${OPT_LETTERS[oi]}</span>
         <input class="inp" type="text" value="${escAttr(opt)}" placeholder="${OPT_LETTERS[oi]}) variant matni..." data-opt="${oi}" aria-label="Variant ${OPT_LETTERS[oi]}">
-        <button type="button" class="tb-opt-remove" data-opt-remove="${oi}" aria-label="Variantni o'chirish"><%- 0 %></button>
+        <button type="button" class="tb-opt-remove" data-opt-remove="${oi}" aria-label="Variantni o'chirish" title="Variantni o'chirish">×</button>
       </div>`).join('');
 
     el.innerHTML = `
       <div class="tb-q-head">
         <span class="tb-q-count">Savol ${qNum} / ${state.questions.length}</span>
         <div class="tb-reorder">
-          <button type="button" class="tb-move" data-move="up" aria-label="Yuqoriga ko'chirish"><%- 0 %></button>
-          <button type="button" class="tb-move" data-move="down" aria-label="Pastga ko'chirish"><%- 0 %></button>
+          <button type="button" class="tb-move" data-move="up" aria-label="Yuqoriga ko'chirish" title="Yuqoriga">↑</button>
+          <button type="button" class="tb-move" data-move="down" aria-label="Pastga ko'chirish" title="Pastga">↓</button>
         </div>
         <div class="tb-q-overflow-wrap">
-          <button type="button" class="tb-q-overflow-btn" aria-haspopup="menu" aria-expanded="false" aria-label="Savol amallari" data-q-overflow><%- 0 %></button>
+          <button type="button" class="tb-q-overflow-btn" aria-haspopup="menu" aria-expanded="false" aria-label="Savol amallari" data-q-overflow title="Amallar">⋯</button>
           <div class="tb-q-menu" role="menu" data-q-menu>
-            <button type="button" role="menuitem" data-act="duplicate"><%- 0 %><span>Nusxalash</span></button>
-            <button type="button" role="menuitem" data-act="delete" class="tb-q-menu-danger"><%- 0 %><span>O'chirish</span></button>
+            <button type="button" role="menuitem" data-act="duplicate"><span>⎕ Nusxalash</span></button>
+            <button type="button" role="menuitem" data-act="delete" class="tb-q-menu-danger"><span>✕ O'chirish</span></button>
           </div>
         </div>
       </div>
@@ -225,7 +225,7 @@
       <div class="tb-field${q.text.trim() ? '' : ' is-error'}">
         <label class="tb-field-label" for="tb-q-text">Savol matni <span class="tb-req">*</span></label>
         <textarea class="inp" id="tb-q-text" rows="3" placeholder="Savol matnini kiriting..." data-q-text>${escHtml(q.text)}</textarea>
-        <span class="tb-field-err"><%- 0 %> Savol matni kiritilishi shart</span>
+        <span class="tb-field-err">Savol matni kiritilishi shart</span>
       </div>
 
       <div class="tb-field">

@@ -412,6 +412,40 @@ emaillar); design 253→ navigation regex sinxron 19/19; **full vitest 7099/7108
 S12'dan ma'lum pre-existing to'plam (S11 HEAD worktree'da isbotlangan), 0 S14 regress**;
 design-lint PASS ✓.
 
+## STEP 15 — 🟠 PUSH nuqtasi + Faza: test-yaratish qatlami (IDOR/validatsiya) — ✅
+**Push:** `21c163f..6aa418b debugging → origin/debugging` (S11 b60e862 + S12 e01f822 + S13
+66281ff + S14 6aa418b). Remote git-remote-tikla.sh + tokens.env bilan tiklandi.
+**Buglar:** BUG-093/094/095/096/097/098/099 (jami 7)
+**Qanday (qaysi+qanday):**
+- **BUG-093 (KRITIK — path traversal/IDOR)**: barcha test API endpointlari (`/api/tests/save/
+  delete/duplicate/archive/rename/toggle-public/export` + `GET /create-test?edit=`) `key`/
+  `editKey` paramini fb path'ga to'g'ridan-to'g'ri qo'yardi — lokal fb implementatsiyasi `..`
+  segmentlarni RESOLVE QILADI (isbot: `fb.set('users/bob/tests/../../users/alice/tests/t1')`
+  alice yozuvini o'zgartirdi). Oqibat: boshqa userning testini O'QISH (?edit traversal — maxfiy
+  kontent oqdi), YOZIB OLISH (save), O'CHIRISH, butun user yozuvini bosib olish (editKey=
+  `../../users/VICTIM` → parol/role yo'q). Fix: `safeTestKey()` whitelist
+  (`/^[A-Za-z0-9_-]{1,64}$/`) — 8 ta joyda, traversal → 400.
+- **BUG-094** `/api/tests/rename` — uzunlik chegarasi YO'Q (5 000 belgi o'tdi) + mavjudlik
+  tekshiruvi yo'q (ghost "faqat nom" yozuvlar). Fix: ≤300 + 404 + updated_at.
+- **BUG-095** `/api/tests/save` — `correct` validatsiyasiz: 999/-1/1.5 qabul → arena/render
+  buziladi. Fix: int + clamp [0..options-1].
+- **BUG-096** save — BUG-014 to'liq emas: explanation (400KB o'tdi), variant matni, tags
+  chegaralanmagan. Fix: izoh ≤2000, variant ≤500, teg ≤10×60.
+- **BUG-097** save edit — `archived` maydoni TASHLANIB KETARDI (arxivlangan testni tahrirlash
+  jim unarchive qilardi) + `updated_at` yozilmasdi (duplicate/archive yozadi — 'Eng yangi'
+  sorti chiriydi). Fix: preserved + updated_at.
+- **BUG-098** public/js/test-builder.js — 8 ta `<%- 0 %>` EJS artefakti STATIK JS'da literal
+  matn ko'rinardi (S27 migratsiyada ikonalar yo'qolgan): variant-o'chirish, yuqori/past
+  ko'chirish, overflow meny, xato-prefiks. Fix: unicode ikonalar (× ↑ ↓ ⋯), chiqindi toza.
+- **BUG-099** create-test.ejs xlsx CDN'dan (cdnjs) — offline/intranet'da Excel import o'lib
+  qolardi (lokal siyosatga zid — shriftlar ham self-host). Fix: node_modules'dan
+  `/js/vendor/xlsx.full.min.js` self-host.
+**Tool:** `scripts/repro-step15.mjs` (PORT 4614; 26 tekshiruv: 9 traversal vektor ×400,
+rename 404/400, clamp, bounds, archived/updated_at, UI chiqindi-siz save oqimi, xlsx lokal).
+**Verify:** repro **26/26 HAMMASI OK**; ta'sirli testlar 146/146 (api/tests+create-test
+ishtirokchilari); **full vitest 7098/7108 — 9 fail ma'lum pre-existing + 1 flake (hemis
+register-burst, izolyatsiyada 6/6 o'tadi), 0 S15 regress**; design-lint PASS ✓.
+
 ## ✅ YAKUNLANGANLAR
 - **STEP 1** (2026-08-27): BUG-009/010/012/044 + 2 yangi topilma — 6 fayl; brauzer 13/13 PASS, vitest 45/45.
 - **STEP 2** (2026-08-27): BUG-011/016/041 — 5 fayl + 3 test sinxron; brauzer 10/10 PASS, auth 491/491, integration 104/104.
@@ -427,6 +461,7 @@ design-lint PASS ✓.
 - **STEP 12** (2026-08-28): BUG-071…077 (sessions/cast/enter kontrast, projector 302, roles html/json negotiate, hc graceful) — scan 24+ sahifa 0 buzilish, repro 16/16, full 7099/7108 (9 fail pre-existing @HEAD), design-lint PASS.
 - **STEP 13** (2026-08-28): BUG-078…083 (participant [hidden] +733px overflow, director topbar +315px, iOS input-zoom <16px, touch-target <24px) — scan 36 sahifa 0 buzilish, repro 24/24, cast e2e 21+5, design-lint PASS.
 - **STEP 14** (2026-08-29): BUG-084…092 (cookie-parser yo'q, resolveAuthLang(req) ×2, /locales 404 — cast i18n o'lik, AUTH_COPY nav/sidebar/settings 4 til ≈200 tarjima, theme-control EN fallback, uz-cyrl lotin qoldiqlar, hreflang, landing klient tili serverni bosardi) — repro 23/23, full 7099/7108 (9 pre-existing), design-lint PASS.
+- **STEP 15** (2026-08-29): PUSH (S11–S14 → origin) + BUG-093..099 (KRITIK test-API path-traversal IDOR ×8 endpoint, rename ghost/bounds, correct clamp, explanation/option/tags bounds, edit arxiv yo'qolishi, test-builder 8×EJS-chiqindi, xlsx CDN→self-host) — repro 26/26, 146/146 ta'sirli, full 7098/7108 (0 regress).
 
 ## 📋 MANBA HAVOLALAR
 - BUG hisobotlari: `workspace` branch → `qa/BUG_REPORTS.md`

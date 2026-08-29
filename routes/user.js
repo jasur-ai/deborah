@@ -264,7 +264,12 @@ router.get('/assignments', async (req, res) => {
 
 // ── Create Test Page ──
 router.get('/create-test', async (req, res) => {
-  const editKey = req.query.edit || null;
+  // S15 BUG-093: ?edit kaliti ham traversal kelishi mumkin edi (boshqa userning
+  // maxfiy testini edit sahifasida o'qib olish). Whitelist.
+  const editKey = req.query.edit ? safeTestKey(req.query.edit) : null;
+  if (req.query.edit && !editKey) {
+    return res.status(400).render('error', { title: '400 — Yaroqsiz so\u2018rov', message: 'Noto\u2018g\u2018ri test kaliti', status: 400 });
+  }
   let testData = null;
 
   if (editKey) {
@@ -282,6 +287,15 @@ router.get('/create-test', async (req, res) => {
   });
 });
 
+// ── S15 BUG-093: test kaliti whitelist — path traversal/IDOR himoyasi ──
+// fb.set/get lokal implementatsiya '..' segmentlarini resolve QILADI:
+// editKey='../../users/VICTIM/tests/x' boshqa userning testini yozib olardi
+// (yoki butun user yozuvini bosib o'tish). Barcha test endpointlarida majburiy.
+const TEST_KEY_RE = /^[A-Za-z0-9_-]{1,64}$/;
+function safeTestKey(key) {
+  return (typeof key === 'string' && TEST_KEY_RE.test(key)) ? key : null;
+}
+
 // ── Save Test ──
 router.post('/api/tests/save', async (req, res) => {
   try {
@@ -290,26 +304,42 @@ router.post('/api/tests/save', async (req, res) => {
     if (!name || !questions?.length) {
       return res.status(400).json({ error: 'Invalid data' });
     }
-    // BUG-014: server-side input bounds (role emas — o'z testini yaratish barcha
-    // rollar uchun mo'ljallangan; cheklovsiz payload — resurs xavfsizligi muammosi)
+    // BUG-014 + S15 BUG-093/095/096: server-side input bounds + kalit whitelist
     if (String(name).trim().length > 300 || questions.length > 300) {
       return res.status(400).json({ error: 'Test juda katta (nom ≤300 belgi, ≤300 savol)' });
+    }
+    // BUG-093: editKey traversal — boshqa user yozuvlarini bosib olishni bloklash
+    const validEditKey = editKey ? safeTestKey(editKey) : null;
+    if (editKey && !validEditKey) {
+      return res.status(400).json({ error: 'Yaroqsiz test kaliti' });
     }
     for (const q of questions) {
       if (String(q?.text || '').length > 2000) return res.status(400).json({ error: 'Savol matni ≤2000 belgi' });
       if (Array.isArray(q?.options) && q.options.length > 12) return res.status(400).json({ error: 'Har savolda ≤12 variant' });
+      // BUG-096: variant matni/explanation/tags chegarasi (BUG-014 to'liqmagan edi)
+      if (Array.isArray(q?.options) && q.options.some((o2) => String(o2 || '').length > 500)) {
+        return res.status(400).json({ error: 'Variant matni ≤500 belgi' });
+      }
+      if (String(q?.explanation || '').length > 2000) return res.status(400).json({ error: 'Izoh ≤2000 belgi' });
+      if (Array.isArray(q?.tags) && (q.tags.length > 10 || q.tags.some((x) => String(x || '').length > 60))) {
+        return res.status(400).json({ error: 'Teglar: ≤10 ta, har biri ≤60 belgi' });
+      }
     }
 
-    const testKey = editKey || Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    const testKey = validEditKey || Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
     // Preserve isPublic + created_at when editing (bitta get, ikkita maydon)
+    // S15 BUG-097: `archived` HAM saqlansin — tahrirlangan arxiv testi jim yo'qolardi;
+    // updated_at qo'shildi (duplicate/archive yozadi, save yozmasdi — 'Eng yangi' sorti chiriydi)
     let isPublic = false;
+    let wasArchived = false;
     let createdAt = Date.now();
-    if (editKey) {
+    if (validEditKey) {
       try {
-        const existing = await fb.get(`users/${user.safeKey}/tests/${editKey}`);
+        const existing = await fb.get(`users/${user.safeKey}/tests/${validEditKey}`);
         if (existing.exists()) {
           isPublic = !!existing.val().isPublic;
+          wasArchived = !!existing.val().archived;
           createdAt = existing.val().created_at || createdAt;
         }
       } catch (_) {}
@@ -320,7 +350,11 @@ router.post('/api/tests/save', async (req, res) => {
       questions: questions.map(q => ({
         text: q.text || '',
         options: (q.options || []).map(o => String(o || '')),
-        correct: typeof q.correct === 'number' ? q.correct : 0,
+        // BUG-095: correct indeks int + [0..options-1] oralig'ida (999/-1/1.5 kelib qolmasin)
+        correct: Math.max(0, Math.min(
+          Number.isFinite(+q?.correct) ? Math.floor(+q.correct) : 0,
+          Math.max(0, (q.options || []).length - 1),
+        )),
         // S27: Test Builder draft maydonlari
         type: ['single_choice', 'true_false', 'multiple_select', 'short_answer', 'exit_ticket'].includes(q.type) ? q.type : 'single_choice',
         explanation: typeof q.explanation === 'string' ? q.explanation : '',
@@ -329,6 +363,8 @@ router.post('/api/tests/save', async (req, res) => {
       })),
       count: questions.length,
       created_at: createdAt,
+      updated_at: Date.now(), // S15 BUG-097
+      archived: wasArchived, // S15 BUG-097: edit arxivlangan testni qayta tiriltirmasin
       isPublic, // Preserved from existing test, default false
     };
 
@@ -352,7 +388,8 @@ router.post('/api/tests/save', async (req, res) => {
 router.post('/api/tests/delete', async (req, res) => {
   try {
     const userKey = req.session.user.safeKey;
-    const testKey = req.body.key;
+    const testKey = safeTestKey(req.body.key); // S15 BUG-093
+    if (!testKey) return res.status(400).json({ error: 'Yaroqsiz test kaliti' });
     
     // Remove from public_tests if was public
     const snap = await fb.get(`users/${userKey}/tests/${testKey}`);
@@ -371,8 +408,8 @@ router.post('/api/tests/delete', async (req, res) => {
 router.post('/api/tests/duplicate', async (req, res) => {
   try {
     const userKey = req.session.user.safeKey;
-    const { key } = req.body;
-    if (!key) return res.status(400).json({ error: 'Key required' });
+    const key = safeTestKey(req.body.key); // S15 BUG-093
+    if (!key) return res.status(400).json({ error: 'Yaroqsiz test kaliti' });
 
     const snap = await fb.get(`users/${userKey}/tests/${key}`);
     if (!snap.exists()) return res.status(404).json({ error: 'Test topilmadi' });
@@ -398,8 +435,9 @@ router.post('/api/tests/duplicate', async (req, res) => {
 // ── Archive / Restore Test (S26.03 overflow) ──
 router.post('/api/tests/archive', async (req, res) => {
   try {
-    const { key, archived } = req.body;
-    if (!key) return res.status(400).json({ error: 'Key required' });
+    const { archived } = req.body;
+    const key = safeTestKey(req.body.key); // S15 BUG-093
+    if (!key) return res.status(400).json({ error: 'Yaroqsiz test kaliti' });
 
     const snap = await fb.get(`users/${req.session.user.safeKey}/tests/${key}`);
     if (!snap.exists()) return res.status(404).json({ error: 'Test topilmadi' });
@@ -417,8 +455,8 @@ router.post('/api/tests/archive', async (req, res) => {
 // ── Export Test as JSON (S26.03 overflow) ──
 router.get('/api/tests/export', async (req, res) => {
   try {
-    const { key } = req.query;
-    if (!key) return res.status(400).json({ error: 'Key required' });
+    const key = safeTestKey(req.query.key); // S15 BUG-093
+    if (!key) return res.status(400).json({ error: 'Yaroqsiz test kaliti' });
     const snap = await fb.get(`users/${req.session.user.safeKey}/tests/${key}`);
     if (!snap.exists()) return res.status(404).json({ error: 'Test topilmadi' });
     const name = (snap.val().name || 'test').replace(/[^\w\-]+/g, '_').slice(0, 40);
@@ -433,9 +471,16 @@ router.get('/api/tests/export', async (req, res) => {
 // ── Rename Test ──
 router.post('/api/tests/rename', async (req, res) => {
   try {
-    const { key, name } = req.body;
+    const { name } = req.body;
+    const key = safeTestKey(req.body.key); // S15 BUG-093
+    // S15 BUG-094: uzunlik chegarasi yo'q edi (5 000 belgi qabul qilinardi) +
+    // mavjudlik tekshiruvi yo'q — ghost 'faqat nom' yozuvlar yaratilardi
+    if (!key) return res.status(400).json({ error: 'Yaroqsiz test kaliti' });
     if (!name?.trim()) return res.status(400).json({ error: 'Name required' });
-    await fb.update(`users/${req.session.user.safeKey}/tests/${key}`, { name: name.trim() });
+    if (name.trim().length > 300) return res.status(400).json({ error: 'Nom ≤300 belgi' });
+    const snap = await fb.get(`users/${req.session.user.safeKey}/tests/${key}`);
+    if (!snap.exists()) return res.status(404).json({ error: 'Test topilmadi' });
+    await fb.update(`users/${req.session.user.safeKey}/tests/${key}`, { name: name.trim(), updated_at: Date.now() });
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -445,9 +490,9 @@ router.post('/api/tests/rename', async (req, res) => {
 // ── Toggle Test Public/Private ──
 router.post('/api/tests/toggle-public', async (req, res) => {
   try {
-    const { key } = req.body;
-    if (!key) return res.status(400).json({ error: 'Key required' });
-    
+    const key = safeTestKey(req.body.key); // S15 BUG-093
+    if (!key) return res.status(400).json({ error: 'Yaroqsiz test kaliti' });
+
     const userKey = req.session.user.safeKey;
     const snap = await fb.get(`users/${userKey}/tests/${key}`);
     if (!snap.exists()) return res.status(404).json({ error: 'Test topilmadi' });
