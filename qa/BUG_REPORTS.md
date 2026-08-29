@@ -2759,6 +2759,22 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ka170: ✅ QOLGAN 15 STEP: FAZA D-J rejada, fix'lar deploy bo'lsa re-verify
 
+### STEP 86 YAKUNIY — CAMERA-PILOT RE-CHECK + HEADERS (10 topilma)
+
+### BUG-230hz91: 🔴 /user/camera-pilot HANUZ 500 (BUG-007 re-confirm, yangi deployda ham)
+- footer-scripts.ejs partial hali yaratilmagan
+
+### BUG-230hz92: 🔴 Security headers HANUZ YO'Q:
+- CSP: YO'Q (BUG-230ka101 re-confirm)
+- Permissions-Policy: YO'Q (BUG-230ka102 re-confirm)
+- COEP: YO'Q (BUG-230ka103 re-confirm)
+
+### BUG-230hz93: ℹ️ Dalil: 97_camera_pilot_recheck.png
+
+### BUG-230hz94: ✅ IJOBIY — User login sessiyasi ishlaydi (endpoint OK)
+
+### BUG-230hz95: ℹ️ Jami 86 step: ~920 yozuv, 97 PNG
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
