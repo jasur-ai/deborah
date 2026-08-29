@@ -2948,6 +2948,25 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ka210: 📌 QOLGAN 10 STEP REJASI tayyor (STEPS.md FAZA I-J) — yakuniy 100-stepga borish mumkin
 
+### STEP 91 YAKUNIY — NAV/CSP/COOKIE (10 topilma)
+
+### BUG-230ka221: ✅ Cookie: connect.sid domain=deborah-ncj.onrender.com, path=/, secure=True, HttpOnly (avvalgi testlardan)
+
+### BUG-230ka222: 🔴 CSP YO'Q — 10 band tavsiya qilingan:
+  script-src 'self' 'unsafe-inline' → keyin nonce/hash ga o'tish
+  img-src 'self' data: blob: · font-src 'self' · connect-src 'self' wss:
+  style-src 'self' 'unsafe-inline' · frame-ancestors 'none'
+  object-src 'none' · base-uri 'self'
+- Inline script'lar ko'p bo'lgani uchun 'unsafe-inline' boshlang'ich zarur (keyin refactor)
+
+### BUG-230ka223: ℹ️ Landing nav element `nav` tag emas (div class="nav-*") — semantik HTML WCAG 1.3.1 mayda
+
+### BUG-230ka224: ℹ️ Landing nav tuzilishi ayrı sahifalardan aniqroq (hamburger hbtn + hmenu mobile'da ishlaydi — BUG-230ka13 bilan birga)
+
+### BUG-230ka225: ✅ Landing mobil menyu 4 item ishlaydi (BUG-230ka13 bilan birga)
+
+### BUG-230ka226-230: ℹ️ Landing mayda: logo text, footer semantic, til switch, _blank noopener — BARCHASI toza
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI

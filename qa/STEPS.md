@@ -139,3 +139,4 @@
 - ✅ STEP 88 — yakunlandi: BUG-230hz111 🔴 (landing 0 section) + BUG-230hz112 🔴 (footer tag YO'Q) + BUG-230hz114 🔴 (theme-core include YO'Q) + BUG-230hz115 🟡 (118 element juda kam) + BUG-230hz116 🔴 (CSP/PP/COEP re-confirm) + 113/117/118 ✅
 - ✅ STEP 89 — yakunlandi: BUG-230hz143 🔴 (parol minlength=15 TASDIQLANDI DOM'da) + BUG-230hz141-150 (13 input to'liq jadval: honeypot/role/consent/teacher shartli maydonlar hammasi to'g'ri)
 - ✅ STEP 90 — 90-STEP XULOSA: ~1000 yozuv, 82🔴/48🟠/140🟡/36⚪/112ℹ️/240✅, platforma 6.5/10, TOP-15 Critical, 98 PNG, 93 commit
+- ✅ STEP 91 — yakunlandi: BUG-230ka222 🔴 (CSP tavsiya 10 band bilan) + 221/223-230 ✅ℹ️ (cookie/nav/mobile toza)
