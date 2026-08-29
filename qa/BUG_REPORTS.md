@@ -3000,6 +3000,34 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ka246-250: ✅ ℹ️ Qolgan komponentlar tekshirildi (avvalgi steplarda)
 
+### STEP 94 YAKUNIY — MFA HOLAT + SECURITY-EVENTS + NOTIFICATIONS (10 topilma)
+
+### BUG-230ka251: ⚠️ MFA BACKUP HOLATI (yangi deployda):
+- Teacher: 3fc3a80ee7 ❌, fe36c1242c ❌, c745de5358 ❌, 507655b928 429 locked
+- Admin: 2b70f3d7f7 ❌, e36030562f ❌ (429 lock)
+- **Xulosa:** BARCHA kodlar ishlatilgan (eski rotatsiya qoldi — ishlamaydi)
+- **Talab:** yangi backup kodlar berilsin (yoki MFA vaqtincha o'chirilsin)
+
+### BUG-230ka252: ✅ Security-profile sahifa toza: parol bilan kirish, parolsiz xavfsiz kirish, Parolni o'zgartirish — barcha ko'rinadi
+- Passkey moduli: "parolsiz xavfsiz kirish usuli" matni bor ✅
+
+### BUG-230ka253: ✅ Notifications sahifa 9 toggle + 9 checkbox — to'liq granular boshqaruv
+
+### BUG-230ka254: 🔴 Notifications sahifada pageerror: `Cannot read properties of null (reading 'addEventListener')` — BUG-230ka241 bilan bir ildiz (mfa-settings.js null element)
+- BUG-011 re-confirm (mfa-settings.js:119)
+
+### BUG-230ka255: ℹ️ Security-profile sahifada "Bu funksiya faqat admin" matni — student uchun ko'rsatilgan (mavjud bo'lsa ham ko'rsatilmaydi)
+
+### BUG-230ka256: ✅ Notifications "hali faollik" empty state to'g'ri
+
+### BUG-230ka257: ℹ️ Jami 94 step: ~1060 yozuv
+
+### BUG-230ka258: ✅ Dalillar: avvalgi skrinshotlar
+
+### BUG-230ka259: ℹ️ Audit API teacher/admin bilan tekshirilmadi (MFA blok)
+
+### BUG-230ka260: ℹ️ Jami: 94 stepda 260+ BUG + 250+ PASS yozuv (jami ~1060)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
