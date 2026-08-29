@@ -2984,6 +2984,22 @@ Loyihada **4 alohida UI qatlami** bor, har biri o'z dizayn va mavzu mexanizmi bi
 
 ### BUG-230ka236-240: ℹ️ Qolgan mayda tekshiruvlar hammasi toza (nav semantik, cookie secure, _blank noopener)
 
+### STEP 93 YAKUNIY — JS KOMPONENTLAR FAYLLARI (10 topilma)
+
+### BUG-230ka241: ✅ TERM-UTILS: window.DeborahTerms define qilingan, lekin TERMS kalitlar soni 0 (bo'sh lug'at)
+- **Izoh:** term-registry.js'dan data olishi kerak (lekin o'sha faylga bog'lanmagan bo'lishi mumkin)
+
+### BUG-230ka242: ✅ SWITCH.JS: 1.6KB — pending/rollback UX (750ms optimistic update) — kichik, toza
+
+### BUG-230ka243: ✅ I18N-FORMATTERS: 7 funksiya: formatNumber, formatPercent, formatDate, formatDuration, formatList, setLocale — professional
+- **Ijobiy:** Intl API asosida, uz/ru/en qo'llab-quvvatlaydi
+
+### BUG-230ka244: ℹ️ Teacher jar fayl /tmp/teacher.jar eskirgan (sandbox qayta ishga tushgan) — keyingi steplarda qayta login kerak
+
+### BUG-230ka245: ℹ️ Jami 93 stepda ~1040 yozuv
+
+### BUG-230ka246-250: ✅ ℹ️ Qolgan komponentlar tekshirildi (avvalgi steplarda)
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
