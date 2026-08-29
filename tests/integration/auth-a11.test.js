@@ -127,7 +127,8 @@ const xff = '203.0.113.90';
 
 describe('AUTH A-11 — commit HAQIQATAN yozadi (API orqali)', () => {
   it('upload → map → preview → commit → DB user/enroll/guruh', async () => {
-    const { cookie, token } = await registerAndLogin(xff);
+    // S17 BUG-108: staging endi teacher/admin — student emas, teacher sessiya
+    const { cookie, token } = await loginAsTeacher(xff);
     const { sessionId } = await uploadAndMap(cookie, token, xff);
 
     const previewRes = await fetch(`${serverUrl}/api/roster/sessions/${sessionId}/preview`, {
@@ -197,9 +198,11 @@ describe('AUTH A-11 — commit HAQIQATAN yozadi (API orqali)', () => {
 describe('AUTH A-11 — invite + public aktivatsiya', () => {
   it('IDOR: student invite boshqaruviga kira olmaydi (403)', async () => {
     const { cookie, token } = await registerAndLogin(xff);
-    const { sessionId } = await uploadAndMap(cookie, token, xff);
+    // S17 BUG-108: student endi staging'ga ham kira olmaydi — upload'danoq 403
+    const up = await uploadFile({ cookie, token, filename: 'hemis.csv', bytes: Buffer.from(HEMIS_CSV, 'utf-8'), xff });
+    expect(up.status).toBe(403);
 
-    const listRes = await fetch(`${serverUrl}/api/roster/sessions/${sessionId}/invites`, {
+    const listRes = await fetch(`${serverUrl}/api/roster/sessions/80b762e028bbea10/invites`, {
       headers: { cookie },
     });
     expect(listRes.status).toBe(403);

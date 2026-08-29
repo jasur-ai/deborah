@@ -478,6 +478,36 @@ answer→idempotency→leaderboard(100 ball)→end, victim-saqlanishi, host sahi
 rate-limiter/socket/gate-0/cast-security); **full vitest 7098/7108 — 9 ma'lum pre-existing +
 1 flake (createRoleInvite, izolyatsiyada 13/13), 0 S16 regress**; design-lint PASS ✓.
 
+## STEP 17 — 🟠 Roster (sinf importi) qatlami — ✅
+**Buglar:** BUG-107/108/109/110/111/112/113 (jami 7; 2 tasi KRITIK)
+**Qanday (qaysi+qanday):**
+- **BUG-107 (KRITIK — traversal ×14 endpoint)**: `/api/roster/sessions/:id` — sessionId
+  whitelist'siz fb path'ga tushardi (getStagingSession/report/rows/preview = ARB. O'QISH,
+  deleteStagingSession = ARB. O'CHIRISH, setSessionApproval/rollback/map/commit = ARB. YOZISH;
+  fb adapter '..' resolve qiladi — S15 BUG-093 oilasi). Fix: `safeSessionId()`
+  (`/^[a-f0-9]{16}$/` — crypto.randomBytes(8) formati) + `sessionReq` middleware ×14.
+- **BUG-108 (KRITIK — privilege/PII)**: staging namespace faqat requireAuth edi — HAR QANDAY
+  student: barcha staging sessiyalar ro'yxati (teacher fayl nomlari), rows/preview bilan
+  TO'LIQ RO'YXAT PII (talaba F.I.Sh/id), boshqa teacher sessiyasini approve/rollback/delete,
+  fayl upload (staging+audit spam). Fix: `router.use('/api/roster', requireRosterManager)` —
+  invite route'laridagi A-11 standardi butun staging'ga.
+- **BUG-109**: `GET /api/roster/sessions?limit=` parseInt xom (99999/-1). Fix: clamp 1..100.
+- **BUG-110**: `POST /api/roster/invites/accept` PUBLIC va cheksiz (token brute-force/spam).
+  Fix: per-IP 20/15 daqiqa (B-12 §15 pattern'i).
+- **BUG-111**: admin sessiyasida upload auditi 'anonymous' deb yozilardi (req.session.user
+  yo'q). Fix: admin?.username fallback — audit atributsiyasi to'g'ri.
+- **BUG-112**: `GET /invite/:token` auditi RAW tokenni resourceId sifatida yozardi (§10: token
+  log'larga tushmasligi kerak — invite linki audit oqimida oshadi). Fix: 12-belgi prefiks.
+- **BUG-113**: `/map` — klient mapping obyekti sxemasiz saqlanardi (commit/generateDiff keyin
+  ishlatadi). Fix: `validMapping()` — ≤64 ustun, field/entity satr caps, path-belgilar blok.
+**Test sinxron:** auth-a10 (register→teacher promote→re-login), auth-a11 (commit test
+loginAsTeacher; IDOR test endi upload'danoq 403 kutadi — kuchaygan holat).
+**Tool:** `scripts/repro-step17.mjs` (PORT 4618; 18 tekshiruv: traversal ×3, student ×4 blok,
+teacher baxtli yo'l, limit clamp, accept 429, mapping 3 vektor, audit token-tozalik).
+**Verify:** repro **18/18 HAMMASI OK**; ta'sirli 49/49 (a10/a11/c11/b11/b12/b13/teacher-journey/
+gate-0) + cast-a11y 19/19 (env: playwright chromium qayta o'rnatildi — sandbox reset .cache
+o'chirgan); **full vitest 7099/7108 — 9 ma'lum pre-existing, 0 S17 regress**; design-lint PASS ✓.
+
 ## ✅ YAKUNLANGANLAR
 - **STEP 1** (2026-08-27): BUG-009/010/012/044 + 2 yangi topilma — 6 fayl; brauzer 13/13 PASS, vitest 45/45.
 - **STEP 2** (2026-08-27): BUG-011/016/041 — 5 fayl + 3 test sinxron; brauzer 10/10 PASS, auth 491/491, integration 104/104.
@@ -495,6 +525,7 @@ rate-limiter/socket/gate-0/cast-security); **full vitest 7098/7108 — 9 ma'lum 
 - **STEP 14** (2026-08-29): BUG-084…092 (cookie-parser yo'q, resolveAuthLang(req) ×2, /locales 404 — cast i18n o'lik, AUTH_COPY nav/sidebar/settings 4 til ≈200 tarjima, theme-control EN fallback, uz-cyrl lotin qoldiqlar, hreflang, landing klient tili serverni bosardi) — repro 23/23, full 7099/7108 (9 pre-existing), design-lint PASS.
 - **STEP 15** (2026-08-29): PUSH (S11–S14 → origin) + BUG-093..099 (KRITIK test-API path-traversal IDOR ×8 endpoint, rename ghost/bounds, correct clamp, explanation/option/tags bounds, edit arxiv yo'qolishi, test-builder 8×EJS-chiqindi, xlsx CDN→self-host) — repro 26/26, 146/146 ta'sirli, full 7098/7108 (0 regress).
 - **STEP 16** (2026-08-29): BUG-100..106 (arena check-session oracle, socket code traversal ×13, botAnswer playerName arb-yozish KRITIK, optionIndex bounds, normalizeQuestion buxoro, host:create caps, /host/:code regex) — repro 25/25 (baxtli yo'l bilan), 175/175 ta'sirli, full 7098/7108 (0 regress).
+- **STEP 17** (2026-08-29): BUG-107..113 (roster staging traversal ×14 KRITIK, student PII/privilege KRITIK, limit clamp, accept rate-limit, admin audit attributsiya, invite token audit leak, mapping sxema) — repro 18/18, ta'sirli 49/49+19/19, full 7099/7108 (0 regress).
 
 ## 📋 MANBA HAVOLALAR
 - BUG hisobotlari: `workspace` branch → `qa/BUG_REPORTS.md`

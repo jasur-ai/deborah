@@ -85,6 +85,56 @@ function requireRosterManager(req, res, next) {
   return res.status(403).json({ error: 'Forbidden: teacher/admin required' });
 }
 
+// ── S17 BUG-107: staging sessionId whitelist — fb adapter '..' resolve qiladi
+// (S15 BUG-093/S16dan ma'lum oila). :id hamma handlerda xom fb path'ga
+// tushardi: getStagingSession (ARB. O'QISH), deleteStagingSession (ARB.
+// O'CHIRISH), setSessionApproval/rollback/map (ARB. YOZISH).
+// Session ID = crypto.randomBytes(8).toString('hex') — 16 hex belgi.
+const SESSION_ID_RE = /^[a-f0-9]{16}$/;
+function safeSessionId(id) {
+  return (typeof id === 'string' && SESSION_ID_RE.test(id)) ? id : null;
+}
+function sessionReq(req, res, next) {
+  const id = safeSessionId(req.params.id);
+  if (!id) return res.status(404).json({ error: 'Session not found' });
+  req.rosterSessionId = id;
+  next();
+}
+
+// S17 BUG-110: PUBLIC /api/roster/invites/accept uchun per-IP limit
+// (GET /invite/:token'dagi B-12 §15 pattern'i; acceptsiz cheksiz urinish).
+const ACCEPT_MAX = 20; // 20/15 daqiqa per IP
+const acceptAttempts = new Map();
+function checkAcceptLimit(ip) {
+  const now = Date.now();
+  const key = String(ip || 'unknown');
+  const arr = (acceptAttempts.get(key) || []).filter((t) => now - t < INVITE_VIEW_WINDOW_MS);
+  if (arr.length >= ACCEPT_MAX) return { allowed: false };
+  arr.push(now);
+  acceptAttempts.set(key, arr);
+  if (acceptAttempts.size > 5000) acceptAttempts.delete(acceptAttempts.keys().next().value);
+  return { allowed: true };
+}
+
+// S17 BUG-113: /map — klient mapping'ini sxema bo'yicha cheklash
+// (keyin commit/generateDiff ishlatadi; cheksiz o'bektni fb'ga yozmang)
+function validMapping(mapping) {
+  if (!mapping || typeof mapping !== 'object' || Array.isArray(mapping)) return null;
+  const keys = Object.keys(mapping);
+  if (!keys.length || keys.length > 64) return null;
+  const out = {};
+  for (const k of keys) {
+    if (typeof k !== 'string' || !k.length || k.length > 64 || /[\/#$\[\]\x00-\x1f]/.test(k)) return null; // nuqta ruxsat (F.I.Sh ustunlari)
+    const v = mapping[k];
+    if (!v || typeof v !== 'object' || Array.isArray(v)) return null;
+    const field = typeof v.field === 'string' ? v.field.slice(0, 48) : null;
+    const entity = typeof v.entity === 'string' ? v.entity.slice(0, 32) : null;
+    if (!field || !entity) return null;
+    out[k] = v.required === true ? { field, entity, required: true } : { field, entity };
+  }
+  return out;
+}
+
 // ── Multer: temporary upload directory ──
 const uploadDir = path.resolve(os.tmpdir(), 'deborah-roster-uploads');
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
@@ -160,7 +210,9 @@ router.get('/invite/:token', async (req, res) => {
       action: AUDIT_ACTIONS.INVITE_VIEW,
       outcome: result.ok ? 'success' : 'blocked',
       resourceType: 'roster_invite',
-      resourceId: req.params.token,
+      // S17 BUG-112: auditga raw token emas — kalit prefiksi (§10: token
+      // log'larga tushmasligi kerak; invite linki audit oqimida oshmasin)
+      resourceId: String(req.params.token || '').slice(0, 12) + '…',
       details: { ok: result.ok, reason: result.ok ? null : result.error },
       ipAddress: req.ip,
       userAgent: req.headers['user-agent'],
@@ -200,6 +252,10 @@ router.get('/invite/:token', async (req, res) => {
 // AUTH A-11 §13 — Invite aktivatsiyasi (PUBLIC — student session talab qilmaydi).
 // requireAuth'dan OLDIN mount qilinadi; CSRF exemption server.js'da.
 router.post('/api/roster/invites/accept', async (req, res) => {
+  // S17 BUG-110: public endpoint — per-IP brute-force/spam limit
+  if (!checkAcceptLimit(req.ip).allowed) {
+    return res.status(429).json({ ok: false, error: 'Ko\u2018p urinish — 15 daqiqadan keyin qayta urinib ko\u2018ring' });
+  }
   try {
     const result = await acceptInvite({
       token: req.body?.token,
@@ -220,7 +276,14 @@ router.post('/api/roster/invites/accept', async (req, res) => {
   }
 });
 
-router.use('/api/roster', requireRosterAuth);
+// S17 BUG-108: staging oqimlari (upload/list/rows/preview/map/approve/
+// rollback/delete/commit) faqat requireAuth edi — HAR QANDAY student:
+//   • barcha staging sessiyalar ro'yxati + to'liq ro'yxat PII (rows/preview)
+//   • boshqa o'qituvchi sessiyasini approve/rollback/delete qilish
+//   • roster fayl yuklash (staging + audit spam)
+// requireRosterManager (teacher/admin/board) — invite route'laridagi A-11
+// standardi bilan bir xil — endi butun staging namespace'ga qo'llanadi.
+router.use('/api/roster', requireRosterManager);
 
 // ═══════════════════════════════════════════════════════════════════
 // POST /api/roster/upload — Upload + parse + stage
@@ -239,7 +302,9 @@ router.post('/api/roster/upload', (req, res) => {
       const filePath = req.file.path;
       const originalName = req.file.originalname;
       const mimeType = req.file.mimetype;
-      const userId = req.session?.user?.username || 'anonymous';
+      // S17 BUG-111: admin sessiyasida req.session.user yo'q — audit
+      // 'anonymous' deb yozilardi (kim yuklagani yo'qoladi)
+      const userId = req.session?.user?.username || req.session?.admin?.username || 'anonymous';
 
       // A-10 §26: 24 soat retention — muddati o'tgan staging sessiyalarni tozalash (fail-soft)
       purgeExpiredStagingSessions().catch(() => {});
@@ -328,7 +393,7 @@ router.get('/api/roster/sessions', async (req, res) => {
   try {
     const sessions = await listStagingSessions({
       status: req.query.status,
-      limit: parseInt(req.query.limit) || 20,
+      limit: Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 20)), // S17 BUG-109
     });
     res.json(sessions);
   } catch (err) {
@@ -340,9 +405,9 @@ router.get('/api/roster/sessions', async (req, res) => {
 // GET /api/roster/sessions/:id — Get session details
 // ═══════════════════════════════════════════════════════════════════
 
-router.get('/api/roster/sessions/:id', async (req, res) => {
+router.get('/api/roster/sessions/:id', sessionReq, async (req, res) => {
   try {
-    const session = await getStagingSession(req.params.id);
+    const session = await getStagingSession(req.rosterSessionId);
     if (!session) return res.status(404).json({ error: 'Session not found' });
     res.json(session);
   } catch (err) {
@@ -354,9 +419,9 @@ router.get('/api/roster/sessions/:id', async (req, res) => {
 // GET /api/roster/sessions/:id/report — Parse report
 // ═══════════════════════════════════════════════════════════════════
 
-router.get('/api/roster/sessions/:id/report', async (req, res) => {
+router.get('/api/roster/sessions/:id/report', sessionReq, async (req, res) => {
   try {
-    const report = await generateParseReport(req.params.id);
+    const report = await generateParseReport(req.rosterSessionId);
     if (report.error) return res.status(404).json(report);
     res.json(report);
   } catch (err) {
@@ -368,9 +433,9 @@ router.get('/api/roster/sessions/:id/report', async (req, res) => {
 // GET /api/roster/sessions/:id/rows — Get parsed rows
 // ═══════════════════════════════════════════════════════════════════
 
-router.get('/api/roster/sessions/:id/rows', async (req, res) => {
+router.get('/api/roster/sessions/:id/rows', sessionReq, async (req, res) => {
   try {
-    const rows = await getParsedRows(req.params.id, req.query.sheet);
+    const rows = await getParsedRows(req.rosterSessionId, req.query.sheet);
     res.json(rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -383,12 +448,12 @@ router.get('/api/roster/sessions/:id/rows', async (req, res) => {
 
 // AUTH A-30 §09: roster commit — fresh MFA shart (teacher viaMfa / admin
 // step-up). MFA yoqilmagan sessiya (viaMfa yo'q) o'tadi — regression yo'q.
-router.post('/api/roster/sessions/:id/commit', requireRosterMfaStepUp, async (req, res) => {
+router.post('/api/roster/sessions/:id/commit', requireRosterMfaStepUp, sessionReq, async (req, res) => {
   try {
     const userId = req.session?.user?.username || 'admin';
     // AUTH A-11 §10: idempotency hash — /preview dan olinadi; qayta commit
     // (bir xil hash) reject qilinadi.
-    const result = await commitStagingSession(req.params.id, userId, {
+    const result = await commitStagingSession(req.rosterSessionId, userId, {
       hash: req.body?.hash || null,
     });
     if (!result.ok) return res.status(400).json(result);
@@ -402,10 +467,16 @@ router.post('/api/roster/sessions/:id/commit', requireRosterMfaStepUp, async (re
 // POST /api/roster/sessions/:id/map — Detect/apply column mapping
 // ═══════════════════════════════════════════════════════════════════
 
-router.post('/api/roster/sessions/:id/map', async (req, res) => {
+router.post('/api/roster/sessions/:id/map', sessionReq, async (req, res) => {
   try {
-    const sessionId = req.params.id;
-    const { mapping } = req.body;
+    const sessionId = req.rosterSessionId; // S17 BUG-107
+    // S17 BUG-113: klient mapping'i sxema bo'yicha (oddiy obyekt, <=64 ustun,
+    // field/entity satrlari) — xom obyektni fb'ga saqlamang
+    const rawMapping = req.body ? req.body.mapping : null;
+    const mapping = rawMapping ? validMapping(rawMapping) : null;
+    if (rawMapping && !mapping) {
+      return res.status(400).json({ error: 'Yaroqsiz mapping formati' });
+    }
 
     // Get parsed rows
     const rows = await getParsedRows(sessionId);
@@ -442,9 +513,9 @@ router.post('/api/roster/sessions/:id/map', async (req, res) => {
 // GET /api/roster/sessions/:id/preview — Get admin preview
 // ═══════════════════════════════════════════════════════════════════
 
-router.get('/api/roster/sessions/:id/preview', async (req, res) => {
+router.get('/api/roster/sessions/:id/preview', sessionReq, async (req, res) => {
   try {
-    const sessionId = req.params.id;
+    const sessionId = req.rosterSessionId; // S17 BUG-107
 
     // Load mapping
     const savedMapping = await loadColumnMapping(sessionId);
@@ -513,11 +584,11 @@ router.get('/api/roster/sessions/:id/preview', async (req, res) => {
 // POST /api/roster/sessions/:id/approve — Admin approval
 // ═══════════════════════════════════════════════════════════════════
 
-router.post('/api/roster/sessions/:id/approve', async (req, res) => {
+router.post('/api/roster/sessions/:id/approve', sessionReq, async (req, res) => {
   try {
     const { approve } = req.body;
     const userId = req.session?.user?.username || 'admin';
-    await setSessionApproval(req.params.id, approve !== false, userId);
+    await setSessionApproval(req.rosterSessionId, approve !== false, userId);
     res.json({ ok: true, approved: approve !== false });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -528,9 +599,9 @@ router.post('/api/roster/sessions/:id/approve', async (req, res) => {
 // POST /api/roster/sessions/:id/rollback — Rollback commit
 // ═══════════════════════════════════════════════════════════════════
 
-router.post('/api/roster/sessions/:id/rollback', async (req, res) => {
+router.post('/api/roster/sessions/:id/rollback', sessionReq, async (req, res) => {
   try {
-    const result = await rollbackStagingSession(req.params.id);
+    const result = await rollbackStagingSession(req.rosterSessionId);
     if (!result.ok) return res.status(400).json(result);
     res.json(result);
   } catch (err) {
@@ -542,13 +613,13 @@ router.post('/api/roster/sessions/:id/rollback', async (req, res) => {
 // GET /api/roster/sessions/:id/errors/download — Export row errors
 // ═══════════════════════════════════════════════════════════════════
 
-router.get('/api/roster/sessions/:id/errors/download', async (req, res) => {
+router.get('/api/roster/sessions/:id/errors/download', sessionReq, async (req, res) => {
   try {
-    const result = await exportRowErrors(req.params.id);
+    const result = await exportRowErrors(req.rosterSessionId);
     if (result.error) return res.status(404).json(result);
 
     res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Content-Disposition', `attachment; filename="roster-errors-${req.params.id}.json"`);
+    res.setHeader('Content-Disposition', `attachment; filename="roster-errors-${req.rosterSessionId}.json"`);
     res.json(result);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -559,9 +630,9 @@ router.get('/api/roster/sessions/:id/errors/download', async (req, res) => {
 // AUTH A-11 §11/§29 — Row status + reconciliation
 // ═══════════════════════════════════════════════════════════════════
 
-router.get('/api/roster/sessions/:id/rows/status', async (req, res) => {
+router.get('/api/roster/sessions/:id/rows/status', sessionReq, async (req, res) => {
   try {
-    const report = await buildRowStatusReport(req.params.id);
+    const report = await buildRowStatusReport(req.rosterSessionId);
     if (report.error) return res.status(404).json(report);
     res.json(report);
   } catch (err) {
@@ -569,9 +640,9 @@ router.get('/api/roster/sessions/:id/rows/status', async (req, res) => {
   }
 });
 
-router.get('/api/roster/sessions/:id/reconcile', async (req, res) => {
+router.get('/api/roster/sessions/:id/reconcile', sessionReq, async (req, res) => {
   try {
-    const result = await reconcileSession(req.params.id);
+    const result = await reconcileSession(req.rosterSessionId);
     if (result.error) return res.status(404).json(result);
     res.json(result);
   } catch (err) {
@@ -585,7 +656,7 @@ router.get('/api/roster/sessions/:id/reconcile', async (req, res) => {
 
 // Invite boshqaruvi — teacher/admin rol talab qiladi (PII: email/identity)
 // AUTH B-11 §13: invite yaratish rate limit — 50/soat per teacher.
-router.post('/api/roster/sessions/:id/invites', requireRosterManager, (req, res, next) => {
+router.post('/api/roster/sessions/:id/invites', requireRosterManager, sessionReq, (req, res, next) => {
   const limit = checkInviteSendLimit(req.session?.user?.safeKey || req.session?.user?.username || 'roster-manager');
   if (!limit.allowed) {
     return res.status(429).json({ error: 'Invite limit: 50/soat', retryAfterSeconds: limit.retryAfterSeconds });
@@ -593,7 +664,7 @@ router.post('/api/roster/sessions/:id/invites', requireRosterManager, (req, res,
   next();
 }, async (req, res) => {
   try {
-    const result = await createInvitesForSession(req.params.id, {
+    const result = await createInvitesForSession(req.rosterSessionId, {
       channel: req.body?.channel || 'email',
     });
     if (!result.ok) return res.status(400).json(result);
@@ -635,9 +706,9 @@ router.post('/api/roster/invites/expire-overdue', requireRosterManager, async (r
   }
 });
 
-router.get('/api/roster/sessions/:id/invites', requireRosterManager, async (req, res) => {
+router.get('/api/roster/sessions/:id/invites', requireRosterManager, sessionReq, async (req, res) => {
   try {
-    const result = await listInvites(req.params.id);
+    const result = await listInvites(req.rosterSessionId);
     res.json(result);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -667,9 +738,9 @@ router.get('/api/roster/invites/pending-summary', requireRosterManager, async (r
 // DELETE /api/roster/sessions/:id — Delete staging session
 // ═══════════════════════════════════════════════════════════════════
 
-router.delete('/api/roster/sessions/:id', async (req, res) => {
+router.delete('/api/roster/sessions/:id', sessionReq, async (req, res) => {
   try {
-    const result = await deleteStagingSession(req.params.id);
+    const result = await deleteStagingSession(req.rosterSessionId);
     if (!result.ok) return res.status(404).json(result);
     res.json(result);
   } catch (err) {

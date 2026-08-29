@@ -57,6 +57,12 @@ async function registerAndLogin(xff) {
     email: `a10_${Date.now()}_${Math.floor(Math.random() * 1000000)}@test.uz`,
   }, xff);
 
+  // S17 BUG-108: roster staging endi teacher/admin rol talab qiladi —
+  // yangi user'ni teacher'ga ko'taramiz (login keyin rol yangi sessiyaga tushadi)
+  const { fb } = await import('../../firebase/admin.js');
+  const { safeKey } = await import('../../utils/helpers.js');
+  await fb.update(`users/${safeKey(uname)}`, { role: 'teacher', role_version: 1 });
+
   const { csrf, cookie } = await getCsrf('/user/login');
   const loginRes = await postForm('/user/login', cookie, {
     _csrf: csrf, lang: 'uz', mode: 'login', username: uname, password,
