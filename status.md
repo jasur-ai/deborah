@@ -578,8 +578,9 @@ NAVBAT: AI-A S18 → AI-B S19 → AI-A S20 → AI-B S21.
 ── 5) HOLAT QATORLARI (har pushdan keyin faqat O'Z qatoringizni yangilash) ──
  • AI-A HOLATI (2026-08-29): S17 yopilgan (roster BUG-107..113). .git shikasti tiklandi, hajm
    <100MB (design-audit/screenshots gitdan olib tashlandi). KEYINGI: S18 CAST REST — boshlanmagan.
- • AI-B HOLATI (2026-08-29): hali boshlanmagan. Birinchi step S19 ADMIN. Boshlashdan oldin
-   origin/main'dan rebase; AI-Aning "fix(s18-cast):" commitini ko'rsangiz — navbat sizniki.
+ • AI-B HOLATI (2026-08-28): S19 ADMIN yakunlandi — BUG-130..140 (10 topilma).
+   TOP: BUG-130 🟠 (13/21 write MFA step-up YOQ), BUG-131 🔴 (fb.remove key validation YOQ).
+   KEYINGI: S21 academic/qti/marking (AI-Aning S18 commitini ko'rsam boshlayman).
 
 ── 6) MUHIT ESLATMALAR ──
  • Sandbox reset → node_modules/.cache yuviladi: npm ci + npx playwright install chromium.
