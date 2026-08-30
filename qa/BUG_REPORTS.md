@@ -3965,6 +3965,33 @@ Performance: GET p95=136ms · br · cache ✅
 
 ### BUG-230ka327: ✅ IJOBIY — Teacher E2E 4/6 PASS (67%) — asosiy oqimlar ishlaydi, faqat Cast darajasida muammo
 
+### STEP 107 — XAVFSIZLIK CHUQUR TAHLIL (10 topilma)
+
+### BUG-230hz161: 🔴 LOGIN RATE LIMIT YO'Q — 6 ketma-kat xato login 200 qaytadi
+- **Dalil:** 6 xato urinish → hammasi 200 (429 YO'Q) — brute-force himoyasi yo'q
+- **Izoh:** server.js'da loginLimiter bor, lekin faqat /admin/login'ga qo'llanadi; /user/login uchun limiter yo'q yoki limit juda katta
+- **Ta'sir:** parol brute-force mumkin — katta xavfsizlik zaifligi
+
+### BUG-230hz162: ✅ XSS PROBE — to'liq himoyalangan (raw=False, escaped=True, export JSON valid)
+
+### BUG-230hz163: ✅ PATH TRAVERSAL — 400 qaytaradi (3 vektor ham)
+
+### BUG-230hz164: ✅ INPUT BOUNDS — 5000 belgi nom → 400 rad (nom ≤300 belgi cheklov bor)
+
+### BUG-230hz165: ✅ NoSQL INJECTION — $gt/$ne operatorlar 400 rad ("Yaroqsiz test kaliti")
+
+### BUG-230hz166: ✅ OPEN REDIRECT — returnUrl=evil 3 vektor ham xavfsiz (evil redirect YO'Q)
+
+### BUG-230hz167: 🔴 /api/qti/packages AUTH YO'Q (guest 200 qaytaradi — BUG-230ka301 re-confirm)
+
+### BUG-230hz168: ✅ /api/student/attempt/meta authsiz 200 — lekin faqat metadata (statuslar ro'yxati), maxfiy emas
+
+### BUG-230hz169: 📊 SECURITY HEADERS HOLATI (14 header):
+- Bor (8): HSTS ✅, nosniff ✅, XFO ✅, RP ✅, COOP ✅, CORP ✅, DNS-prefetch ✅, X-Download ✅, X-Permitted ✅, Origin-Agent ✅, X-XSS=0 ✅
+- YO'Q (3): CSP ❌, Permissions-Policy ❌, COEP ❌
+
+### BUG-230hz170: ℹ️ YAKUNIY XAVFSIZLIK BAHOSI: **8/10** — asosiy himoyalar professional darajada, faqat CSP va login rate limit yetishmaydi
+
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
 
 ### ✅ FOYDALANUVCHI TALABLARI TEKSHIRUVI
