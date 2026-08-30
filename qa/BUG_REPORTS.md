@@ -4828,3 +4828,35 @@ Performance: GET p95=136ms · br · cache ✅
 
 ### BUG-230db211: ℹ️ Director retest (empty-test sessiya) yaratilmadi
 - DALIL: 0 savolli test preflight'da o'tmadi (savollar bo'sh) — cast minimal 1 savol talab qiladi (kutish); avvalgi sessiya bilan 25s retest STEP 174'da qilinmadi — BUG-230db143 daliliga qaytadigan bo'lak
+
+## STEP 183-194 — HTML/i18n/console/socket/export/tap-target (2026-08-30)
+
+### BUG-230db212: 🟡 Landing'da duplicate id="kontakt"
+- DALIL: 6 sahifa skanida faqat /'da `kontakt` id 2 marta (eski BUG-220 oilasi qoldig'i); boshqa 5 sahifa toza
+
+### BUG-230db213: ℹ️ Inline style'lar CSP-ga o'tish xarajati
+- DALIL: / 52, /play 36, /login 13, /panel 13, /settings 7, /arena 5 — CSP style-src'ni qat'iy qilishdan oldin tozalanishi kerak
+
+### BUG-230db214: ✅ 9/10 sahifa 0 console warning/error (PASS)
+- DALIL: landing, login, panel, settings, portfolio, notifications, play, arena, create-test — toza
+
+### BUG-230db215: 🟠 /terms sahifada 404 subresource
+- DALIL: console.error "Failed to load resource: 404" — terms sahifada biror asset/havola o'lik (resurs aniqlanmadi — header/footer assetlarida davom etish kerak)
+
+### BUG-230db216: ℹ️ Socket.io anon handshake ochiq (dizayn normal)
+- DALIL: polling handshake 200 + connect paketi qabul — event darajasida auth (xavfsiz arxitektura)
+
+### BUG-230db217: 🟠 /api/validate/email limit NOMUVOFIQ: 30/30 → 200 (0 ta 429)
+- DALIL: 30 tezkor so'rov 200 (STEP 110'da 35x → 5 ta 429 edi) — sliding/fixed window o'rtasidagi farq yoki bucket reset; limit shartli ishlaydi
+- FILE: auth.js:741 EMAIL_VALIDATE_MAX=30/min — window implementatsiyasi tekshirilishi kerak
+
+### BUG-230db218: 🟡 Portfolio export format parametr E'TIBORSIZ — har doim PDF
+- DALIL: ?format=csv/json/xml → hammasi `application/pdf` (1434B) — contract yoki hujjat yo'qligi; UI'da format tanlanmasa mayda
+
+### BUG-230db219: ℹ️ Panel HTML 132KB + 23 JS + 38 CSS — eng og'ir sahifa
+- DALIL: sahifa og'irliklari: / 24KB, panel 132KB, settings 63KB, arena 55KB, create-test 46KB
+
+### BUG-230db220: 🟡 18 ta <24px mobil tap-target (landing 12, login 6)
+- DALIL: WCAG 2.5.5 target size — mobil foydalanuvchi uchun kichik tugmalar
+
+### BUG-230db221: ℹ️ SRI yo'q (same-origin — shart emas), canonical 6/6 bor, robots-meta 0/6 (default index,follow)
