@@ -4860,3 +4860,111 @@ Performance: GET p95=136ms · br · cache ✅
 - DALIL: WCAG 2.5.5 target size — mobil foydalanuvchi uchun kichik tugmalar
 
 ### BUG-230db221: ℹ️ SRI yo'q (same-origin — shart emas), canonical 6/6 bor, robots-meta 0/6 (default index,follow)
+
+## STEP 195-206 — Yakuniy regressiya to'plami (2026-08-30)
+
+### BUG-230db222: 🔴 BUG-008 YAKUNIY (5-marta): GET /user/logout hali ham 302 — POST+CSRF talab qilinmaydi
+- DALIL: GET → 302 /, POST → 403 (faqat POST himoyalangan; GET ochiq) — logout CSRF davom etmoqda
+
+### BUG-230db223: 🟡 BUG-230ka31 YAKUNIY: register minlength=15 vs landing=8 (server 8) — o'zgarmagan
+
+### BUG-230db224: 🟡 BUG-230hz72 YAKUNIY: email-change bo'limi bor lekin reauth parol inputi YO'Q
+- DALIL: settings'da email o'zgartirish UI mavjud, yaqinida hech qanday password input yo'q — reauth oqimi hali uzilgan
+
+### BUG-230db225: 🟡 BUG-230hz161 YAKUNIY: 5 xato parol 5×200 (lock faqat 10-da) — konfigga mos, per-IP qatlamsiz
+
+### BUG-230db226: 🟡 Footer: legal 4 havola ✅ lekin 3 ta "#" (social) qoldi
+
+### BUG-230db227: ✅ BUG-044 YAKUNIY: /arena 0 JS xato — to'liq ISHLAYDI (PASS)
+
+### BUG-230db228: 🟠🔴 /metrics ANON OCHIQ — Prometheus metrikalari oshkor
+- DALIL: `GET /metrics` → 200 `# HELP deborah_http_requests_total HTTP requests` cookie'siz!
+- TA'SIR: request hajmi, endpoint nomlari, ichki arxitektura metrikalari tashqariga ochiq; DoS uchun resurs ko'rsatkichlari
+- TAVSIYA: /metrics faqat ichki networkda (127.0.0.1 bind) yoki token ortida bo'lishi kerak
+
+### BUG-230db229: ✅ Server banner YASHIRIN (PASS)
+- DALIL: server=cloudflare, x-powered-by=YO'Q — fingerprinting qiyinlashtirilgan
+
+### BUG-230db230: ✅ Static asset cache public max-age=86400 (PASS)
+
+### BUG-230db231: 🟡 BUG-230hz111 QISMAN: landing 1 ta <section>, 268 element
+- DALIL: avval 0 section/118 element edi — endi 1 section/268 element (yaxshilangan, lekin struktura hali kam)
+
+### BUG-230db232: ✅ Register forma: autocomplete=new-password ✅, honeypot ✅, consent ✅ (PASS)
+- MAYDA: parol ko'rsatish/berkitish tugmasi YO'Q (UX mayda)
+
+### BUG-230db233: ✅ og:image + twitter:image 200 (PASS — ijtimoiy ulashuv to'liq)
+
+---
+# ═══ STEP 207 — QATOR 2 YAKUNIY XULOSA (2026-08-30) ═══
+
+## Statistika (bu qator: STEP 108–207)
+
+| Ko'rsatkich | Qiymat |
+|---|---|
+| Bajarilgan step | **100** (108→207), 2 kun |
+| Yangi yozuv (BUG-230db) | **233** |
+| 🔴 Critical | **13** |
+| 🟠 Major | **14** |
+| 🟡 Minor | **30** |
+| ⚪ Trivial | 4 |
+| ℹ️ Info | 72 |
+| ✅ PASS (tekshirilgan-toza) | **100** |
+| Umumiy bug-baza | ~1680 yozuv (233+1450 oldingi) |
+| Skrinshot | qa/evidence/118-134 (17 yangi) |
+| Commit | 12 ta push (workspace branch) |
+| Workspace hajmi | ~19MB (limit 100MB OK) |
+
+## TOP-10 Critical (bu qatorning eng muhimlari)
+
+1. **BUG-230db124 🔴🔴 STORED XSS EXECUTE** — foydalanuvchi ISMI orqali JS ishlaydi (`settings.ejs:311 <%- JSON.stringify %>`) — 1 qatorlik fix
+2. **BUG-230db143 🔴 Director host-socket O'LIK** — WS ochilib zudlik yopiladi, cast hosting ishlamaydi (student join esa tirik)
+3. **BUG-230db119 🔴 preflight actorId: session `safeKey` bor, kod `user.id` o'qiydi** — butun student-assignments subsystem 401 (preflight.js:42)
+4. **BUG-230db228 🟠 /metrics ANON OCHIQ** — Prometheus metrikalari cookie'siz 200
+5. **BUG-230db065 🔴 CSP 14/14 route'da YO'Q** (5-marta re-confirm) — XSS uchun 2-mudofaa yo'q
+6. **BUG-230db054 🔴 Server name sanitizatsiya YO'Q** — `<script>` li akkaunt saqlanadi
+7. **BUG-230db148 🔴 /api/qti/packages auth YO'Q** (3-marta re-confirm)
+8. **BUG-230db002/222 🔴 BUG-008 GET logout** (5-marta re-confirm) — debugging branch'dagi fix live'ga tushmagan
+9. **BUG-230db178 🔴 /cast o'lik havola** — nav'dan cast'ga kirish 404
+10. **BUG-230db184 🔴 BUG-090 restart=logout** (MemoryStore) — aniq dalil bilan 3-marta
+
+## ✅ TUZATILGANI TASDIQLANGANLAR (yangi deployda re-verify)
+
+| Bug | Holat |
+|---|---|
+| BUG-230db124 uchun asos — settings XSS | ❌ OCHIQ (yana) |
+| **BUG-230hz43** landing register havola | ✅ TUZATILGAN (2x havola bor) |
+| **BUG-230hz101** portfolio share guest 404 | ✅ RESOLVED (to'g'ri oqimda 200) |
+| **BUG-007** camera-pilot 500 | ✅ TUZATILGAN (200) |
+| **BUG-049** director sahifa crash | ✅ TUZATILGAN (0 JS xato) — lekin socket o'lik (yangi bug) |
+| **BUG-052** student join TDZ | ✅ TUZATILGAN (0 xato) |
+| **BUG-044** arena o'lik | ✅ ISHLAYDI (0 xato, 2 rol) |
+| **BUG-080** dark mode | ✅ 10/10 sahifa |
+| **BUG-105** mobil overflow | ✅ 0px 8/8 |
+| **BUG-067** keepalive CSRF | ✅ 403 qaytaradi |
+| **BUG-071/230hz104** footer 9x # | ✅ 90% tuzatilgan (3 ta social qoldi) |
+| **BUG-230hz11** settings profile | ✅ regression yo'q |
+| **BUG-010** create-test leak | ✅ regression yo'q |
+| **BUG-005** robots.txt | ✅ bor |
+
+## ❌ HALI OCHIQ (eski + yangi, eng muhim 8 ta)
+
+1. STORED XSS settings.ejs:311 (1-qatorlik fix!)
+2. Director host-socket (cast hosting o'lik)
+3. preflight actorId (student assignments 401)
+4. CSP yo'q (helmet config)
+5. /metrics ochiq (token/localhost bind)
+6. BUG-008 GET logout (debugging fix live'da emas)
+7. BUG-230hz72 email-change reauth input yo'q
+8. BUG-230ka31 parol minlength 15/8/8 uchlik nomuvofiq
+
+## Platforma bahosi (yangilangan)
+
+**7/10** (avval 6.5) — asosiy oqimlar (auth, test, portfolio, arena, share) tirik va xavfsiz; qolgan 3 ball: XSS fix, cast host, CSP va student-assignments tuzatilishi bilan qaytariladi.
+
+## Metodologiya eslatmalari (halol QA)
+
+- 4 ta false-positive topildi va TO'G'RILANDI hujjatda: XSS echo (escaped chiqdi), portfolio list XSS (substring FP), javascript: URL (url maydoni o'qilmaydi), password-breach (sha1 kutadi)
+- Har bir 🔴 live dalil + screenshot + file:line bilan
+- Teacher backup kod: 1 ta sarflandi (d4b36c76f5), 7 ta qoldi
+- QA test-akkauntlar: qa_xss_0830xx, qa_xss2/3_0830, qa_pw7_0830 (o'chirish kerak)

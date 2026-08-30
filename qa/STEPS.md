@@ -175,3 +175,5 @@
 - ✅ STEP 164-170 — yakunlandi (2026-08-30): BUG-230db189-200 — BUG-230hz43 RESOLVED ✅✅ (landing register link), BUG-230hz11/010 regression YO'Q ✅, admin izolyatsiya 10/10 ✅, type-confusion 🟡, webhook CSRF design 🟠
 - ✅ STEP 171-182 — yakunlandi (2026-08-30): BUG-230db201-211 — PWA to'liq ✅, hreflang 5 til ✅, notifications RU aralash 🟡, webhook/status/forgot ✅
 - ✅ STEP 183-194 — yakunlandi (2026-08-30): BUG-230db212-221 — /terms 404 subresource 🟠, email-validate limit nomuvofiq 🟠, export format e'tiborsiz 🟡, duplicate id kontakt 🟡, console 9/10 toza ✅
+- ✅ STEP 195-206 — yakunlandi (2026-08-30): BUG-230db222-233 — /metrics ANON OCHIQ 🟠🔴, BUG-008 re-confirm#5, BUG-044 ✅, og:image ✅
+- ✅ STEP 207 — QATOR 2 YAKUNIY XULOSA: 100 step (108-207), 233 yozuv (13🔴/14🟠/30🟡/100✅), 12 commit, ~19MB. 14 eski bug TUZATILGANI tasdiqlandi, 8 Critical ochiq. Platforma 7/10.
