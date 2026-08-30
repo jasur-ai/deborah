@@ -158,3 +158,8 @@
 - ✅ STEP 106 — TEACHER E2E: 4/6 PASS (panel/test/portfolio OK, cast/director hali buzilgan — BUG-049/052 re-confirm)
 - ✅ STEP 104 — ROL BO'YICHA TAHLIL: ADMIN 9/10 (arena bor), TEACHER 8/10 (arena+cast+sinov), VIP ⚠️ (Cast tugma ko'rinadi lekin kerak emas), STUDENT ⚠️ (Cast tugma ko'rinadi lekin 403)
 - ✅ STEP 107 — XAVFSIZLIK CHUQUR: BUG-230hz161 🔴 (login rate limit YO'Q — 6/6 200) + BUG-230hz167 🔴 (QTI auth YO'Q re-confirm) + 162-166/168-170 ✅ (XSS/traversal/NoSQL/redirect/cookies professional)
+- ✅ STEP 108 — yakunlandi (2026-08-30): BUG-230db001-013 — session fixation ✅HIMOYA, BUG-008 re-confirm 🔴 (GET logout), BUG-067 TUZATILGAN ✅, cookie flags 4/4 ✅
+- ✅ STEP 109 — yakunlandi (2026-08-30): BUG-230db014-023 — MFA verify CSRF ✅, challenge binding ✅, bo'sh-csrf bypass YO'Q ✅, replay test metodologiya tuzatish
+- ✅ STEP 110 — yakunlandi (2026-08-30): BUG-230db024-033 — BUG-230hz161 QAYTA BAHOLANDI: per-user lock ISHLAYDI, per-IP 5-xato lock ishlamayapti 🟠, timing enum ✅
+- ✅ STEP 111 — yakunlandi (2026-08-30): BUG-230db034-043 — HIBP live ✅, BUG-230ka31 re-confirm 🟡 (server 14-belgini qabul qildi — ISBOT), parol-username check 🟡
+- ✅ STEP 112 — yakunlandi (2026-08-30): BUG-230db044-056 — XSS echo 3x ESCAPED ✅ (false-positive to'g'irlandi), server name sanitizatsiya YO'Q 🔴 (qa_xss_0830xx yaratildi), honeypot ✅

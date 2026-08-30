@@ -4041,3 +4041,199 @@ Performance: GET p95=136ms · br · cache ✅
 
 > ⚠️ **Backup kodlar:** teacher — 1/12 ishlatildi (9883e203c6). Sistemada rotatsiya 10 ta kod generatsiya qiladi — siz bergan 12 dan oxirgi 2 tasi (c745de5358, 507655b928) eski rotatsiyadan bo'lishi mumkin.
 > ⚠️ **Xavfsizlik:** parollar chat'da qoldi — sessiya tugagach rotate qiling. Test tugach user hisoblariga MFA'ni qayta yoqing.
+
+---
+# ═══ QATOR 2 (2026-08-30): STEP 108–207 — BUG-230db seriyasi ═══
+> 100 step reja: Auth/Session chuqur → Cast/Arena re-verify → API matritsa → Perf/A11y → Yakuniy.
+> Har yozuv live dalil bilan. Seriya: BUG-230db001+
+
+## STEP 108 — MFA/Session chuqur (2026-08-30)
+
+### BUG-230db001: ✅ Session fixation HIMOYALANGAN (PASS)
+- DALIL: login oldi connect.sid=`s%3Ad8e05fc88...` → login keyin `s%3A2d25924e79...` — sid TO'LIQ regenerate qilinadi (auth.js:1989 `req.session.regenerate`)
+- XULOSA: fixation hujumi yopilgan — senior-daraja amalga oshirilgan
+
+### BUG-230db002: 🔴 BUG-008 RE-CONFIRM (3-marta): GET /user/logout state o'zgartiradi
+- DALIL: `GET /user/logout` → HTTP 302 Location=/ — sessiya o'chirildi, CSRF token'siz
+- REPRO: brauzerda `<img src="https://deborah-ncj.onrender.com/user/logout">` ochiq sessiyali har qanday sahifada → foydalanuvchi logaut bo'ladi (logout CSRF)
+- FILE: routes/auth.js logout GET route — POST+CSRF bo'lishi kerak edi (debugging branch'da fix bor deyilgan edi, LIVE'DA YO'Q)
+
+### BUG-230db003: ✅ Logout invalidate to'g'ri (PASS)
+- DALIL: logout'dan keyin ESLGI cookie bilan `GET /user/panel` → HTTP 401 — server tomonda sessiya haqiqatan bekor qilinadi
+
+### BUG-230db004: ✅ Cookie flaglar to'liq (PASS)
+- DALIL: anon `/user/login` Set-Cookie: `connect.sid=...; Path=/; Expires=...; HttpOnly; Secure; SameSite=Lax` — 4/4 flag to'g'ri
+
+### BUG-230db005: ⚪ Invalid challenge sahifasi 200 qaytaradi
+- DALIL: `GET /user/mfa?challenge=deadbeefdeadbeef` → HTTP 200, to'liq sahifa (58KB), error matn bor, forma yo'q
+- TAVSIYA: semantic jihatdan 400/404 to'g'riroq edi (mayda)
+
+### BUG-230db006: ⚪ challenge param'siz /user/mfa ham 200
+- DALIL: `GET /user/mfa` (param'siz) → HTTP 200 — xuddi shu holat
+
+### BUG-230db007: ✅ MFA-off user guard to'g'ri (PASS)
+- DALIL: MFA o'chirilgan student `GET /user/mfa/setup` → HTTP 302 → /user/panel (MFA setup'ga yo'l yo'q)
+
+### BUG-230db008: ✅ BUG-067 TUZATILGAN — keepalive endi CSRF talab qiladi (PASS, re-verify)
+- DALIL: `POST /api/session/keepalive` (CSRF'siz) → HTTP 403 `{"error":"CSRF token validation failed"}` — eski topilmada 403 CSRF'siz keepalive idle uzaytirmasdi; endi 403 = himoya bor
+
+### BUG-230db009: ℹ️ connect.sid high-entropy
+- DALIL: ~128 belgi (`s%3A` + 64 hex + HMAC signature) — entropy yetarli
+
+### BUG-230db010: ✅ Sessiya barqarorligi (PASS)
+- DALIL: student jar bilan 2-uchrashuvda ham panel 200 (Render wake'dan keyin ham)
+
+### BUG-230db011: 🟡 JSON API'ga HTML 404
+- DALIL: `GET /api/mfa/verify` → HTTP 404 to'liq HTML sahifa (JSON API kontekstida content-negotiation yo'q)
+
+### BUG-230db012: ℹ️ Cookie churn — har javobda yangi connect.sid
+- DALIL: panel 401 redirectida ham yangi Set-Cookie (sessiya tugalmagan holda ham qayta beriladi)
+
+### BUG-230db013: ℹ️ Anon sahifada ham session cookie beriladi
+- DALIL: `/user/login` GET → yangi connect.sid (fixation regenerate borligi uchun risk past, faqat eslatma)
+
+## STEP 109 — MFA verify xavfsizlik (2026-08-30)
+
+### BUG-230db014: ✅ MFA verify CSRF himoyalangan (PASS)
+- DALIL: `POST /api/mfa/verify` (header'siz) → HTTP 403 CSRF; authsiz json → 403
+
+### BUG-230db015: ℹ️ Xato javoblari generic — enumeration qarshi
+- DALIL: xato kod/challenge uchun bir xil turdagi javoblar (`invalid_code`, `challenge_mismatch`) — kod bor-yo'qligini aytmaydi ✅
+
+### BUG-230db016: ℹ️ Challenge binding ishlaydi
+- DALIL: to'liq 48-belgili challengeId bilan `POST /api/mfa/verify` (xato kod) → 403 `{"ok":false,"error":"invalid_code"}` — challenge sessiyaga bog'langan
+
+### BUG-230db017: ℹ️ Used-code replay testi CONCLUSIVE EMAS (metodologiya)
+- DALIL: 1-borishda challengeId 40 belgiga kesilgan (`[:40]`) — `challenge_mismatch` (binding rad etdi); to'liq challenge bilan replay keyingi stepda
+
+### BUG-230db018: ✅ GET /api/mfa/verify 404 (PASS)
+- DALIL: method guard ishlaydi
+
+### BUG-230db019: ✅ Admin MFA verify authsiz 403 (PASS)
+- DALIL: `POST /api/admin/mfa/verify` cookie'siz → 403 CSRF
+
+### BUG-230db020: ℹ️ MFA-off logged-in user /user/mfa?challenge=x → 200
+- DALIL: student sessiya bilan HTTP 200 (135KB) — kutilgani 302/404 edi; sahifa login render (zararsiz, mayda)
+
+### BUG-230db021: ✅ Bo'sh x-csrf-token bypass YO'Q (PASS)
+- DALIL: `x-csrf-token: ""` bilan keepalive → 403; portfolio POST → 403 (oldin shubha qilingan edi — isbotlandi: bypass yo'q)
+
+### BUG-230db022: ✅ Content-Type abuse rad etiladi (PASS)
+- DALIL: data-JSON string bilan POST → 403 (CSRF + body parse guard)
+
+### BUG-230db023: ℹ️ Backup kod iqtisodi
+- DALIL: teacher'da 8 ta kod qoldi — testlar faqat replay/truncation bilan cheklandi, yangi kod sarflanmadi
+
+## STEP 110 — Login rate limit QAYTA BAHOLASH (2026-08-30)
+
+### BUG-230db024: 🟠 BUG-230hz161 QAYTA BAHOLANDI — limiter BOR, lekin per-IP qatlami ishlamayapti
+- DALIL A: 7 ta noto'g'ri parol / 1 IP, 5 soniyada → 7/7 HTTP 200 (hech qanday 429/lock YO'Q)
+- DALIL B: XFF spoof + qo'shimcha burstdan keyin 429 paydo bo'ldi → per-USER lockout ISHLAYDI
+- KOD: src/config/rate-limits.js:34-37 `login: ip 20/15m, account 15/15m`; src/modules/auth/lockout.js:16-21 per-IP default 5 xato → 5 daqiqa lock (in-memory), per-user 10 xato → 15 daqiqa (DB)
+- XULOSA: per-user lock konfigga mos (10 da), lekin per-IP 5-xato lock LIVE'DA ISHLAMADI (7/7 200) — env override yoki in-memory Map yo'qotilishi mumkin. OWASP tavsiyasi 5-10 — 10 yuqori chegarada.
+- TUZATISH: per-IP lockout loglarini tekshirish + Render'da ko'p instansiyada in-memory Map taqsimlanmasligi (Redis P2)
+
+### BUG-230db025: ℹ️ Rate-limit konfiguratsiya to'liq keltirildi
+- DALIL: rate-limits.js — login(ip 20/15m, acc 15/15m, asn 100/15m), register(ip 20/15m, burst 5/1s), mfa 5/15m, verifySend 3/soat — hujjatlashtirilgan
+
+### BUG-230db026: ✅ Timing enumeration himoyalangan (PASS)
+- DALIL: mavjud emas user 68ms vs mavjud user 134ms — o'rtacha farq 67ms; DUMMY_ARGON2_HASH + jitter ishlaydi (auth.js:1064-1067) — threshold 250ms dan past
+
+### BUG-230db027: ✅ /api/validate/email rate limit ISHLAYDI (PASS)
+- DALIL: 35 ta tezkor so'rov → 5 ta 429 (30/daqiqa/IP limit — auth.js:741 EMAIL_VALIDATE_MAX)
+
+### BUG-230db028: ℹ️ Register backstop 20/15m konfigga mos
+- DALIL: 12x mode=reg → 12x 200; keyingi stepda 429'lar boshlandi (window ichida ~20 dan oshgach)
+
+### BUG-230db029: ℹ️ Forgot 8x → 8x 200
+- DALIL: /user/forgot POST spamda 429 yo'q (reset account limit 3/soat faqat user+email kombinatsiyada — anonim email spam uchun ochiqroq)
+
+### BUG-230db030: ℹ️ XFF per-request spoof — to'liq ajratish tekshirilmadi
+- DALIL: 8 xil X-Forwarded-For bilan 8 so'rov → aralash 200/429 (per-user lock dominant); IP-bucket XFF bo'yicha ajralishi qo'shimcha tekshiruv talab qiladi (trust proxy 1 — faqat 1 hop)
+
+### BUG-230db031: ✅ Username enumeration xato matnida YO'Q (PASS)
+- DALIL: mavjud emas va xato-parol javoblari bir xil HTML render (ayrim kalit so'zlar ikkalasida ham yo'q) — copy.errors bir xil shablon
+
+### BUG-230db032: ℹ️ Admin login invalid → 403
+- DALIL: /admin/login noto'g'ri → 403 (admin limiter alohida yo'l — chuqur tekshiruv admin sessiyasiz cheklangan)
+
+### BUG-230db033: ℹ️ Telemetry limiter holati
+- DALIL: /health `rateLimiter.connections=0, events 13 kalit` — limiter modul yuklangan, hisoblagichlar tirik
+
+## STEP 111 — Parol siyosati chuqur (2026-08-30)
+
+### BUG-230db034: ✅ Raqam-only parol rad (PASS)
+- DALIL: `12345678` (8 raqam) → 200 error (harf+raqam talabi ishlaydi — auth.js:1892 evaluatePassword)
+
+### BUG-230db035: ✅ HIBP breach tekshiruvi LIVE ISHLAYDI (PASS)
+- DALIL: `password` → `/api/validate/password-breach {sha1}` → `{"breached":true,"checked":true}`; kuchli parol → `{"breached":false}` — kDU API tirik
+
+### BUG-230db036: ✅ Monoton parol rad (PASS)
+- DALIL: `aaaaaaaaaaaaaa1` (15 belgi) → 200 error (rad)
+
+### BUG-230db037: 🟡 BUG-230ka31 RE-CONFIRM (2-marta): parol minlength DOM/server nomuvofiq
+- DALIL: register.ejs `minlength="15"` (DOM), landing formada `minlength="8"`; SERVER esa 14-belgili `qa_pw7_0830xQ9` parolini QABUL QILDI (302 — akkaunt yaratildi)
+- XULOSA: server validatsiyasi min 8 (kod: auth.js:1892 passwordMin), DOM 15, landing 8 — UCH xil qiymat; eng zaif halqau server+landing
+- FILE: views/user/register.ejs:159, views/landing (parol input), src/modules/auth/password-policy (evaluatePassword)
+
+### BUG-230db038: ✅ password-breach faqat SHA-1 qabul qiladi (PASS — privacy to'g'ri dizayn)
+- DALIL: raw parol bilan POST → 400 `{"error":"required"}`; faqat 40-hex sha1 qabul (auth.js:782-784) — parol hech qachon serverga kelmaydi
+
+### BUG-230db039: 🟡 Parol ichida username QABUL QILINDI — personal-info tekshiruvi yo'q
+- DALIL: username `qa_pw7_0830`, parol `qa_pw7_0830xQ9` → 302 (yaratildi) — NIST SP 800-63B §5.1.1.2 "password contains username" taqiqlashi bajarilmagan
+- REPRO: register formada username bilan bir xil prefiksli parol yuborish
+
+### BUG-230db040: ℹ️ Kirill/probel/503-belgili parol testlari 429 bilan to'sildi
+- DALIL: register IP-backstop (20/15m) test oqimida tugagan — ushbu 3 holat keyingi oynada qayta sinovga reja
+
+### BUG-230db041: ✅ Consent'siz rad (PASS — GDPR A-18/D-24 bajarilgan)
+- DALIL: `consent=""` → 200 error (ro'yxatdan o'tish rad)
+
+### BUG-230db042: ℹ️ Legacy plaintext parol qiyoslash kodi bor (eslatma)
+- DALIL: auth.js:1155 `else if (storedHash === password)` — DB'da plaintext qolsa login o'tadi (keyin argon2'ga upgrade auth.js:1383-1387). Migratsiya to'liq bo'lsa olib tashlash kerak
+
+### BUG-230db043: ℹ️ HIBP fail-open dizayni
+- DALIL: auth.js:797-799 HIBP offline → `breached:false, checked:false` (bloklamaydi) — NIST mos, availability>strictness tanlovi
+
+## STEP 112 — Register flow chuqur (2026-08-30)
+
+### BUG-230db044: ✅ Duplicate username case-insensitive rad (PASS)
+- DALIL: `JASURJONAI` (bor: jasurjonai) → 200 duplicate xato — normalizeUsername NFKC+lowercase ishlaydi (auth.js:1042)
+
+### BUG-230db045: ℹ️ role=admin inject → 429 (inconclusive)
+- DALIL: burst limitda qoldi; avvalgi topilma (role ignored, faqat student/teacher) qayta tasdiqlash keyingi oynada
+
+### BUG-230db046: ✅ XSS name echo ESCAPED — shubha YO'Q (PASS, false-positive to'g'irlandi)
+- DALIL: `name=<script>alert(1)</script>` bilan xato renderda `value="&lt;script&gt;..."` — EJS `<%= %>` escape (register.ejs:139)
+
+### BUG-230db047: ✅ XSS username echo ESCAPED (PASS, false-positive to'g'irlandi)
+- DALIL: aniqlangan kontekst: `value="qa&#34;&gt;&lt;img src=x onerror=alert(1)&gt;"` — `&#34;` quote escape bilan atribut ichida qamalgan, ijro ETILMAYDI (register.ejs:154 `<%= %>`)
+
+### BUG-230db048: ✅ XSS invite echo ESCAPED (PASS)
+- DALIL: register.ejs:179 value `<%= prevInvite %>` — escape bilan
+
+### BUG-230db049: ℹ️ Email format abuse testlari 429 (inconclusive)
+- DALIL: a@b / probelli / 300-belgili domen testlari limiterga urildi — keyingi oynada
+
+### BUG-230db050: ✅ Teacher arizasi universitetsiz rad (PASS)
+- DALIL: role=teacher, university bo'sh → 200 error render (B-29 tekshiruvi ishlaydi)
+
+### BUG-230db051: ℹ️ Reserved-prefiks testlari 429 (inconclusive)
+- DALIL: adminqa0830/rootqa0830 limiterga urildi — keyingi oynada
+
+### BUG-230db052: ✅ Honeypot bot-guard ISHLAYDI (PASS)
+- DALIL: `website=http://spam.io` (honeypot) → 302 silent redirect — user YARATILMAYDI, 400-900ms padding (auth.js:960-980 A-21 design)
+
+### BUG-230db053: ℹ️ Name 500 belgi → 429 (inconclusive)
+- DALIL: DOM maxlength=100 bor (register.ejs:139); server tomoni keyingi oynada
+
+### BUG-230db054: 🔴 Server tomonda name sanitizatsiya YO'Q — `<script>` li akkaunt YARATILDI (stored XSS nomzodi)
+- DALIL: `name=<script>alert(1)</script>` bilan register → HTTP 302 (MUVAFFAQIYAT — auth.js:2110 avto-login /user/panel'ga); akkaunt `qa_xss_0830xx` DB'GA SAQLANDI
+- XULOSA: server parseRegister name'ni faqat uzunlik bilan tekshiradi — HTML sanitizatsiya yo'q; render nuqtalarida escape bor-yo'qligi DOM tekshiruvida (keyingi step) — agar biror joyda `<%- %>` bo'lsa stored XSS
+- REPRO: POST /user/login mode=reg, name="<script>alert(1)</script>" → 302
+
+### BUG-230db055: ℹ️ QA test-akkauntlar ro'yxati (o'chirish kerak)
+- DALIL: qa_pw7_0830 (parol ichida username), qa_xss_0830xx (name XSS payload) — yangi; avvalgi: qa_tester_0827, landing_reg_0827, rltest0-5
+
+### BUG-230db056: ℹ️ Register success = avto-login + session regenerate
+- DALIL: auth.js:1989-2110 — 302 /user/panel (student) yoki /user/teacher-approval (teacher); session regenerate bor ✅
