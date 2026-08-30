@@ -56,15 +56,20 @@ describe('S28.1 local-db mtime-kesh', () => {
     for (let i = 0; i < 4000; i++) big[`perf_${i}`] = { email: `p${i}@test.uz`, role: 'student', pad: 'x'.repeat(40) };
     await fb.set(`users/${KEY}_bulk`, big);
     try {
+      // S32: warm-up — birinchi get (cache miss) o'lchovdan tashqarida;
+      // faqat cache HIT qismi o'lchanadi. Bu parallel vitest muhitida
+      // scheduler kechikishlarini (153ms flaky) oldini oladi.
+      await fb.get(`users/${KEY}`);
       const t0 = Date.now();
       for (let i = 0; i < 30; i++) {
         const s = await fb.get(`users/${KEY}`);
         if (!s.exists()) throw new Error('kesh qiymat yo\'qoldi');
       }
       const dt = Date.now() - t0;
-      // Pre-fix: 30 × (~1MB readFileSync + JSON.parse) ≈ 300ms+.
-      // Post-fix: statSync + navigate ≈ bir necha ms. Chegaralar yumshoq.
-      expect(dt).toBeLessThan(150);
+      // Pre-fix: har get full re-read+parse ≈ 300ms+ (ushlanadi).
+      // Post-fix: statSync + navigate ≈ bir necha ms. Chegara 200ms —
+      // muhit yukiga 2×+ marja, regressni hali ham ushlaydi.
+      expect(dt).toBeLessThan(200);
     } finally {
       await fb.remove(`users/${KEY}_bulk`);
       await fb.remove(`users/${KEY}`);
