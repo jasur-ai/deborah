@@ -168,3 +168,4 @@
 - ✅ STEP 115 — yakunlandi (2026-08-30): BUG-230db071-079 — 404 mavzuli ✅, traversal blok ✅, auth-guard 401 ✅, stack leak YO'Q ✅
 - ✅ STEP 116 — yakunlandi (2026-08-30): BUG-230db080-085 — perf 34-116ms ✅, gzip ✅, HTML Cache-Control YO'Q 🟡
 - ✅ STEP 117 — yakunlandi (2026-08-30): BUG-230db086-092 — 14 sensitive path 404 ✅, sourcemap yo'q ✅, HTML comment izohlar 🟡
+- ✅ STEP 118-131 — yakunlandi (2026-08-30): BUG-230db093-133 — 🔴🔴 STORED XSS EXECUTE TASDIQLANDI (settings.ejs:311 <%- %> JSON), 🔴 preflight actorId safeKey mos emas (barcha student API 401), 🟠 panel.ejs:1089 crash, BUG-230hz101 RESOLVED (share E2E 200), BUG-007 camera-pilot TUZATILGAN, portfolio XSS render ✅escape

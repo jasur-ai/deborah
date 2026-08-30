@@ -4359,3 +4359,168 @@ Performance: GET p95=136ms · br · cache ✅
 
 ### BUG-230db092: ℹ️ Landing inline script kam
 - DALIL: 5 blok / 2.5KB jami — CSP'ga o'tish uchun qulay holat
+
+## STEP 118 — Stored XSS DOM sweep (2026-08-30)
+
+### BUG-230db093: 🔴 settings.ejs:311 — `<%- JSON.stringify(profile) %>` RAW JSON — stored XSS INYEKSIYA NUGATI
+- DALIL: `window.__SETTINGS_PROFILE__ = {"name":"<script>alert(1)</script>","lang":"uz"}` — name RAW qo'yilgan (3 kontekstdan 1'si raw)
+- FILE: views/user/settings.ejs:311 — `<%- %>` (escape'siz) ishlatilgan
+- XULOSA: `</script>` bilan payload inline script'dan chiqib ketadi → IJRO (STEP 128'da to'liq isbot)
+
+### BUG-230db094: ✅ Boshqa 4 sahifada name ESCAPED (PASS)
+- DALIL: /user/panel, /user/profile, /user/notifications, /user/portfolio — `raw=False` (EJS `<%= %>` ishlatilgan joylarida xavfsiz)
+
+### BUG-230db095: ✅ Settings input value'lar ESCAPED (PASS)
+- DALIL: `value="&lt;script&gt;alert(1)&lt;/script&gt;"` (set-name input) va DSAR placeholder — 2/3 kontekst escape
+
+### BUG-230db096: ℹ️ Hisob o'chirish (DSAR) UI mavjud
+- DALIL: settings'da "Hisobni o'chirish — DSAR, reauth talab qilinadi (D-23)" bloklari bor
+
+### BUG-230db097: ℹ️ QA test-akkaunt (artefakt)
+- DALIL: qa_xss_0830xx (name=<script> bilan) yaratildi — o'chirish ro'yxatida
+
+### BUG-230db098: ℹ️ Metodologiya ogohlantirish: substring-raw tekshiruv FP beradi
+- DALIL: `onerror=alert(2)` satri ESCAPED matn ichida ham uchraydi (`&lt;img src=x onerror=alert(2)&gt;`) — faqat kontekst bilan tekshirish kerak (STEP 130'da tuzatildi)
+
+## STEP 119 — Student 20 sahifa Playwright konsol skani (2026-08-30)
+
+### BUG-230db099: 🟠 /user/panel PAGEERROR — inline script :1089 crash
+- DALIL: `TypeError: Cannot read properties of null (reading 'addEventListener') at /user/panel:1089:42`
+- ILDIZ: `document.getElementById('search-inp').addEventListener('keydown',...)` — 'search-inp' elementi panel HTML'da YO'Q/yashirin → crash'dan keyingi kodlar (search Enter handler) O'LIKBOR
+
+### BUG-230db100: 🟠 /user/mfa/setup — xuddi shu crash (panel render merosi)
+- DALIL: bir xil pageerror (200, title "Mening Panelim") — mfa/setup sahifasi panel layoutini ishlatadi, xato bilan
+
+### BUG-230db101: ✅ 6 sahifa toza (PASS)
+- DALIL: /user/profile, /user/settings, /user/notifications, /user/portfolio, /user/create-test, /user/assignments — 0 pageerror, 0 console.error
+
+### BUG-230db102: ℹ️ To'g'ri URL xaritasi (404 probe'lar)
+- DALIL: /user/sessions→404 (to'g'risi /sessions), /user/tests→404 (/user/assignments), /user/results, /user/journal, /user/cast, /user/arena, /user/help, /user/certificates, /user/calendar → 404 (bu sahifalar umuman mavjud emas — nav havolalari bilan solishtirish kerak)
+
+### BUG-230db103: ✅ /teacher student uchun 404 (PASS — BUG-230hz153 yaxshilanishi)
+- DALIL: student sessiya /teacher → HTTP 404 (avval 403 edi — hidden-resource prinsipiga mos, rolni oshkor qilmaydi)
+
+### BUG-230db104: ✅ /user/camera-pilot 200 — BUG-007 TUZATILGAN (PASS, re-verify)
+- DALIL: avval 500 (BUG-007), endi 200 + "Kamera piloti — Privacy-first camera evidence" matni, 0 pageerror
+
+### BUG-230db105: 🟠 security-profile sahifada /api/student/assignments 401
+- DALIL: console.error 401 `https://.../api/student/assignments` — sahifa ochilganda o'z API'si rad etadi (→BUG-230db124 ildizi)
+
+## STEP 120 — MFA used-code replay (to'liq challenge) (2026-08-30)
+
+### BUG-230db106: ✅ Backup kod single-use himoyasi TIRIK (PASS)
+- DALIL: `3a564ae25e` (ishlatilgan) to'liq 48-belgili challenge bilan → 403 `{"ok":false,"error":"invalid_code"}` — qayta ishlatilmadi
+
+### BUG-230db107: ℹ️ Portfolio eski yo'llar 403
+- DALIL: /api/portfolio/items → 403 (to'g'ri yo'l: /api/user/portfolio/items — routes/portfolio.js:115); hujjatlarda yo'l farqi eslatma
+
+## STEP 121 — Portfolio CSRF mexanizmi tashxisi (2026-08-30)
+
+### BUG-230db108: ℹ️ Token manba zanjiri aniqlandi
+- DALIL: portfolio.ejs:152 `const CSRF = '<%= csrfToken || "" %>'` ← route `csrfToken: res.locals.csrfToken` (portfolio.js:102) ← middleware — zanjir to'liq
+
+### BUG-230db109: ✅ /api/user/* CSRF majburiy (PASS)
+- DALIL: token'siz 7/7 POST → 403 `{"error":"CSRF token validation failed"}`; text/plain content-type ham 403
+
+## STEP 122 — Notifications/Push/Sessions endpointlari (2026-08-30)
+
+### BUG-230db110: 🟡 GET /api/notifications/prefs 404 — POST bor, GET YO'Q (API asimmetriya)
+- DALIL: `GET → 404 HTML`, `POST → 200 {"ok":true,"prefs":...}` — prefs'ni O'QISH endpoint Yo'Q (UI faqat yozadi, sahifa refresh'da holatni ko'rsata olmaydi)
+- FILE: routes/notifications.js:59 (faqat POST define qilingan)
+
+### BUG-230db111: ℹ️ VAPID hali o'chirilgan
+- DALIL: /api/push/vapid-key → 400 `{"ok":false,"error":"push_disabled"}` (env YO'Q — ma'lum cheklov)
+
+### BUG-230db112: ℹ️ Push optin mantiq
+- DALIL: /api/push/optin-eligible → `{"eligible":false,"loginCount":34,"threshold":2}` — eligible=false (push_disabled dominant)
+
+### BUG-230db113: ✅ /sessions sahifa + ping (PASS)
+- DALIL: /sessions → 200 "Faol sessiyalar"; POST /api/session/ping → 204 (keepalive tirik)
+
+## STEP 123 — Stored XSS injection chuqur (2026-08-30)
+
+### BUG-230db114: 🔴 `</script><img ...>` payload bilan HTML element DOM'GA KIRITILDI
+- DALIL: name=`</script><img src=x onerror=...>` → /user/settings yuklanganda `img[src=x]` DOM'da=1 — inline script JSON'dan POSONI chiqib real element bo'ldi
+- IZO: JSON.stringify quote'lar `\` bilan qochirgani uchun QUOTED attribute ishlamadi — LEKIN (BUG-230db130) unquoted attr IJRO ETILDI
+
+## STEP 124/125 — Endpoint inventarizatsiya (2026-08-30)
+
+### BUG-230db115: ℹ️ To'g'ri endpointlar jadvali o'rnatildi
+- DALIL: notif prefs POST 200; push status 200; optin 200; sessions sahifa 200; ping 204 — API xaritasi to'liq
+
+### BUG-230db116: ℹ️ /sessions qurilma ro'yxati render
+- DALIL: sahifa 200, sessiya bloklari bor (avvalgi "Noma'lum qurilma" ogohlantirishida yaxshilanish kuzatildi)
+
+## STEP 126 — Crash tashxisi + camera-pilot (2026-08-30)
+
+### BUG-230db117: 🟠 Panel crash STACK qayd etildi
+- DALIL: `TypeError ... at https://.../user/panel:1089:42` — panel.ejs inline script 1089-qator, 'search-inp' null
+- FILE: views/user/panel.ejs:1089 — `if` guard yoki element qo'shish kerak (TUZATILMAYDI — faqat qayd)
+
+### BUG-230db118: ✅ BUG-007 YAKUNIY YOPILDI — camera-pilot normal ishlaydi (PASS)
+- DALIL: 200 + matn + 0 JS xato + screenshot (119_camera_pilot_now.png)
+
+### BUG-230db119: 🟠 /api/student/assignments 401 — ILDIZ SOURCE'DA ISBOTLANDI
+- DALIL: preflight.js:41-43 `actorId = req.session?.user?.id` lekin session'da `id` YO'Q — auth.js:1478-1480 `req.session.user = { username, safeKey, isVip, role, ... }` (safeKey bor, id YO'Q)
+- XULOSA: HAR BIR logged-in student uchun assignments/brief/attempt API 401 — butun preflight subsystem o'lik
+- FILE: routes/preflight.js:42 (actorId), routes/auth.js:1478 (session shakli)
+
+## STEP 127 — Portfolio API validatsiya (2026-08-30)
+
+### BUG-230db120: 🟡 Title 300 belgi QABUL qilindi — uzunlik validatsiya YO'Q
+- DALIL: `{"title":"A"*300}` → 200 `{"ok":true,"itemId":"51c3b57..."}` — DB'ga saqlandi; UI maxlength=200 bilan nomuvofiq
+
+### BUG-230db121: 🔴→✅ TO'G'IRLANDI: javascript: URL testi NOT APPLICABLE
+- DALIL: create API (portfolio.js:117-122) faqat `kind/title/contentMeta/evidence` o'qiydi — `url` va `type` maydonlari UMUMAN qabul qilinmaydi (silent drop); avvalgi "javascript: qabul qilindi" xulosasi noto'g'ri bo'lgan (url saqlanmagan)
+- ESLATMA: silent drop o'zi 🟡 mayda API-contract muammo — UI yuborgan maydon jigarrang qutilga ketishi mumkin
+
+### BUG-230db122: ✅ Bo'sh title rad (PASS)
+- DALIL: `{"title":""}` → 400 `{"error":"title required"}`
+
+### BUG-230db123: ℹ️ Title 201 belgi qabul (DOM 200 limitidan oshib)
+- DALIL: serverda maxlength chegarasi yo'q (mayda)
+
+## STEP 128 — STORED XSS EXECUTE YAKUNIY ISBOT (2026-08-30)
+
+### BUG-230db124: 🔴🔴 STORED XSS IJRO ETILDI — foydalanuvchi ISMI orqali JS code execution
+- DALIL: account `qa_xss3_0830`, name=`</script><img src=x onerror=window.__XSS_PWNED__=1>` (unquoted attr) → /user/settings ochilganda `window.__XSS_PWNED__ === 1` — JS IJRO ETILDI (Playwright evaluate tasdiqladi), `img[src=x]` DOM'da
+- ILDIZ: views/user/settings.ejs:311 `window.__SETTINGS_PROFILE__ = <%- JSON.stringify(profile || {}) %>;` — `<%- %>` escape'siz JSON embed (JSON.stringify `<` ni qochirmaydi → `</script>` parser'da inline scriptni yopadi)
+- SNAPSHOT: qa/evidence/120_stored_xss_execute.png
+- REPRO: (1) register name=`</script><img src=x onerror=alert(document.domain)>` (2) login (3) /user/settings ochish → alert
+- TA'SIR: sessiya o'g'irlash (cookie HttpOnly — lekin API'lar x-csrf-token bilan JS'dan olinadi → CSRF token o'g'irlab full account takeover mumkin), boshqa foydalanuvchi o'z settings'ini ochsa O'Z sessiyasida ijro (self-XSS ko'rinishi, lekin admin/teacher ko'rsa yoki name boshqa joyda render bo'lsa kengayadi)
+- TAVSIYA: `<%= JSON.stringify(...) %>` (escape bilan) yoki `.replace(/</g,'\\u003c')` — 1 qatorlik fix
+
+### BUG-230db125: ℹ️ XSS akkauntlari ro'yxati
+- DALIL: qa_xss_0830xx, qa_xss2_0830, qa_xss3_0830 (ijro payload) — barchasi o'chirilishi kerak (testdan keyin)
+
+## STEP 129 — Panel crash + assignments 401 yakuniy (2026-08-30)
+
+### BUG-230db126: 🟠 Panel inline-script crash ijobiy emas — 2-sahifada takrorlangan
+- DALIL: /user/panel va /user/mfa/setup ikkalasida ham :1089 crash — barcha panel-layout sahifalar zararlanadi
+
+### BUG-230db127: ℹ️ Route manba xaritasi
+- DALIL: /api/student/assignments — routes/preflight.js:46; actorId :41-43 — safeKey bilan mos emas (BUG-230db119)
+
+## STEP 130 — Portfolio XSS render to'g'rilash + share UX (2026-08-30)
+
+### BUG-230db128: ✅ Portfolio ro'yxat title ESCAPED — FP to'g'irlandi (PASS)
+- DALIL: portfolio.ejs:118 `<b><%= it.title %></b>` + live kontekst `<b>&lt;img src=q onerror=alert(7)&gt;</b>` — escape ishlaydi; STEP 130'dagi raw=True substring FP edi (BUG-230db098 metodologiya)
+
+### BUG-230db129: 🟡 Share oqimi 3 qadamli — private item'ga share 400
+- DALIL: `POST /api/user/items/:id/share` → 400 `{"error":"item is private — set visibility to shared/public first"}` — avval PATCH visibility kerak; xato matni yordamchi, LEKIN UI'da bu oqim qanchalik ravon — tekshirilishi kerak
+- IZO: eski BUG-230hz101 "guest 404" sababi shu bo'lishi mumkin (private item share urinishlari)
+
+### BUG-230db130: ℹ️ 6 ta QA portfolio item cleanup 200
+- DALIL: barcha test itemlari o'chirildi [200×6]
+
+## STEP 131 — Share to'liq E2E: BUG-230hz101 YAKUNIY HOLAT (2026-08-30)
+
+### BUG-230db131: ✅ BUG-230hz101 RESOLVED — share flow to'liq ISHLAYDI (PASS, yangi deployda)
+- DALIL: create(kind=certificate) 200 → PATCH visibility=shared 200 → POST share 200 `{"ok":true,"token":"90b43998..."}` → GUEST `GET /share/90b4...` → HTTP 200 "Shared evidence — Deborah", item title guest sahifada KO'RINADI
+- XULOSA: avvalgi 404 topilmasi private item + o'chirilgan item holatlarida edi; to'g'ri oqimda funksiya ishlaydi
+
+### BUG-230db132: ✅ kind validatsiya qat'iy (PASS)
+- DALIL: kind="nomaqbul_tur" → 400 `invalid item kind`; kind="link" ham 400 — faqat 10 ruxsat etilgan: proposal, outline, source_shortlist, draft, teacher_feedback, reflection, oral_defense, credential, result, certificate (portfolio.service.js:31-34)
+
+### BUG-230db133: 🟡 API create'da maydonlar silent-drop
+- DALIL: `type`/`url`/`visibility` create payload'ida e'tiborsiz (faqat kind/title/contentMeta/evidence) — hujjat bo'lmasa integratsiyalashuvchini chalg'itadi (mayda contract)
