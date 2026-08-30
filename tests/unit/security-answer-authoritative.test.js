@@ -112,13 +112,13 @@ describe('First-answer idempotency', () => {
   });
 
   it('idempotency key uniqueness', () => {
+    // S32 BUGFIX: Math.random(6 belgi base36 ≈ 31 bit) + Date.now() namunasi
+    // 1000 kalitda ~0.02% kolliziya ehtimoli bilan flaky edi (CI c959198da
+    // ro'y berdi). Is'lab chiqarish kalitlari deterministik hash yoki client
+    // kaliti; bu yerda crypto.randomUUID (122 bit) — kolliziya amaliyotda 0.
+    const { randomUUID } = require('node:crypto');
     const keys = new Set();
-    // Generate 1000 keys and check uniqueness
-    for (let i = 0; i < 1000; i++) {
-      const key = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
-      keys.add(key);
-    }
-    // All keys should be unique (probabilistically)
+    for (let i = 0; i < 1000; i++) keys.add(randomUUID());
     expect(keys.size).toBe(1000);
   });
 });
