@@ -163,3 +163,8 @@
 - ✅ STEP 110 — yakunlandi (2026-08-30): BUG-230db024-033 — BUG-230hz161 QAYTA BAHOLANDI: per-user lock ISHLAYDI, per-IP 5-xato lock ishlamayapti 🟠, timing enum ✅
 - ✅ STEP 111 — yakunlandi (2026-08-30): BUG-230db034-043 — HIBP live ✅, BUG-230ka31 re-confirm 🟡 (server 14-belgini qabul qildi — ISBOT), parol-username check 🟡
 - ✅ STEP 112 — yakunlandi (2026-08-30): BUG-230db044-056 — XSS echo 3x ESCAPED ✅ (false-positive to'g'irlandi), server name sanitizatsiya YO'Q 🔴 (qa_xss_0830xx yaratildi), honeypot ✅
+- ✅ STEP 113 — yakunlandi (2026-08-30): BUG-230db057-064 — 67/67 asset ✅, SW+manifest ✅, sitemap YO'Q 🟡, case-insensitive route ⚪
+- ✅ STEP 114 — yakunlandi (2026-08-30): BUG-230db065-070 — CSP YO'Q re-confirm#4 🔴, PP/COEP YO'Q 🟠, SEO to'liq ✅, method guard ✅
+- ✅ STEP 115 — yakunlandi (2026-08-30): BUG-230db071-079 — 404 mavzuli ✅, traversal blok ✅, auth-guard 401 ✅, stack leak YO'Q ✅
+- ✅ STEP 116 — yakunlandi (2026-08-30): BUG-230db080-085 — perf 34-116ms ✅, gzip ✅, HTML Cache-Control YO'Q 🟡
+- ✅ STEP 117 — yakunlandi (2026-08-30): BUG-230db086-092 — 14 sensitive path 404 ✅, sourcemap yo'q ✅, HTML comment izohlar 🟡

@@ -4237,3 +4237,125 @@ Performance: GET p95=136ms · br · cache ✅
 
 ### BUG-230db056: ℹ️ Register success = avto-login + session regenerate
 - DALIL: auth.js:1989-2110 — 302 /user/panel (student) yoki /user/teacher-approval (teacher); session regenerate bor ✅
+
+## STEP 113 — Statik assetlar auditi (2026-08-30)
+
+### BUG-230db057: ✅ 67/67 asset 200 (PASS)
+- DALIL: 6 anon sahifadan yig'ilgan barcha `src/href` assetlari (css/js/svg/ico) HEAD → 200; 404 YO'Q
+
+### BUG-230db058: ✅ Asset cache siyosati to'g'ri (PASS)
+- DALIL: 200 assetlarda Cache-Control (max-age/immutable) mavjud — static keshlanadi, HTML keshlanmaydi
+
+### BUG-230db059: ℹ️ Asset arxitektura
+- DALIL: /css/landing.css, /css/style.css, /design/brand.css + /design/components/* (accordion, badge, button...) — design-system tashkilotti tartibli
+
+### BUG-230db060: ℹ️ /sw.js 404 — LEKIN bu to'g'ri
+- DALIL: SW rasmiy yo'li `/service-worker.js` (head.ejs:161 `serviceWorker.register('/service-worker.js')`) → 200; `/sw.js` ochiq yo'lanmasligi kerak edi
+
+### BUG-230db061: ✅ SW + PWA manifest mos (PASS)
+- DALIL: /service-worker.js 200, /manifest.json 200, `<link rel="manifest" href="/manifest.json">` (head.ejs:58, landing-head.ejs:77) — PWA asos ulangan
+
+### BUG-230db062: 🟡 sitemap.xml YO'Q (404)
+- DALIL: `GET /sitemap.xml` → 404; public test qidiruv tizimi bor platforma uchun SEO teshigi; robots.txt esa bor (BUG-005 tuzatilganini tasdiqlash: "Disallow: /admin/ /api/ /user/ /play /sessions")
+
+### BUG-230db063: ⚪ Route case-insensitive: /USER/LOGIN → 200
+- DALIL: Express default `caseSensitive:false` — katta-kichik harf bilan duplicate URL'lar (kanonik bor, mayda SEO masala)
+
+### BUG-230db064: ℹ️ Trailing slash: /user/login/ → 200
+- DALIL: `strict routing` yo'q (Express default) — ikkala variant ishlaydi
+
+## STEP 114 — Security headers matritsa + SEO (2026-08-30)
+
+### BUG-230db065: 🔴 CSP HALI YO'Q — BUG-230hz116 RE-CONFIRM (4-marta)
+- DALIL: `GET /` javob headerlarida `content-security-policy` YO'Q (bor: HSTS, nosniff, XFO, RP, COOP, CORP, Origin-Agent)
+- FILE: server.js helmet konfiguratsiyasi — CSP yoqilmagan; XSS (agar escape o'tkazib yuborilsa) uchun IKKINCHI mudofaa chizig'i umuman yo'q
+- TAVSIYA: `Content-Security-Policy: default-src 'self'; script-src 'self'` + report-only bosqichma-bosqich
+
+### BUG-230db066: 🟠 Permissions-Policy + COEP YO'Q
+- DALIL: `permissions-policy` va `cross-origin-embedder-policy` headerlar yo'q — kamera/mikrofon (cast/proctor uchun ishlatiladi) hech qanday policy cheklovsiz
+
+### BUG-230db067: ✅ SEO meta to'liq professional (PASS)
+- DALIL: title ✓, description ✓, og:9 ta ✓, twitter:4 ta ✓, canonical ✓, lang="uz" ✓ — ijtimoiy ulashuv to'liq sozlangan
+
+### BUG-230db068: ✅ Landing H1 yagona (PASS)
+- DALIL: 1 ta H1: "Savol — ekranda. Javob — telefonda."
+
+### BUG-230db069: ℹ️ Cloudflare oldida
+- DALIL: cf-ray, cf-cache-status, alt-svc headerlar — CF+Render zanjiri
+
+### BUG-230db070: ✅ HTTP method xavfsizligi (PASS)
+- DALIL: HEAD / → 200, OPTIONS → 200 Allow:GET,HEAD, TRACE → 405, PATCH → 403 — TRACE bloklangan
+
+## STEP 115 — Error sahifalar va g'alat so'rovlar (2026-08-30)
+
+### BUG-230db071: ✅ 404 sahifa mavzu bilan + stack YO'Q (PASS)
+- DALIL: /nope-404 → 404, title="404 — Sahifa topilmadi", 39KB mavzuli sahifa, stack trace yo'q
+
+### BUG-230db072: ✅ Auth-guard 404'dan oldin (PASS — enumerate qarshi)
+- DALIL: /user/nope → 401 (65B JSON), /admin/nope → 401 — yashirin route'lar mavjudligi oshkor qilinmaydi
+
+### BUG-230db073: ✅ Path traversal blok (PASS)
+- DALIL: /../etc/passwd → 404, /%2e%2e/etc/passwd → 400, /%00 → 400
+
+### BUG-230db074: ✅ URL'da XSS payload reflected emas (PASS)
+- DALIL: /<script>alert(1)</script> → 404 mavzu sahifa, raw script HTML'da YO'Q
+
+### BUG-230db075: ✅ SQLi payload query'da zararsiz (PASS)
+- DALIL: /user/login?id=1'OR'1 → 200 login sahifa (param e'tiborsiz)
+
+### BUG-230db076: ⚪ 8KB query string → 200 (414 emas)
+- DALIL: uzun query qabul qilinadi; Node 16KB header limiti yagona to'siq (mayda)
+
+### BUG-230db077: ℹ️ 300 param → 200
+- DALIL: ko'p parametrli so'rov barqaror
+
+### BUG-230db078: ℹ️ Accept: application/xml → HTML
+- DALIL: content-negotiation yo'q (zararsiz — faqat HTML ishlab chiqaradi)
+
+### BUG-230db079: ✅ /api/health 404 — /health izolyatsiya (PASS)
+- DALIL: faqat /health ochiq, /api/health yo'q — monitoring endpoint xavfsiz joyda
+
+## STEP 116 — Performans (2026-08-30)
+
+### BUG-230db080: ✅ Perf zo'r: barcha anon sahifa 34–116ms (PASS)
+- DALIL: / 116ms, /user/login 40ms, /user/register 42ms, /legal/terms 40ms, /health 34ms (3x o'rtacha) — Render+CF tez
+
+### BUG-230db081: ✅ Gzip hamma HTML'da (PASS)
+- DALIL: content-encoding=gzip; landing 25.5KB, login 59KB, register 62.6KB gzip bilan
+
+### BUG-230db082: 🟡 HTML javoblarda Cache-Control YO'Q (faqat ETag)
+- DALIL: /user/login → `cache-control=-`, `etag=W/"e663-..."` — brauzer HEURISTIK kesh qo'llashi mumkin; auth sahifalarida `Cache-Control: no-store` bo'lishi kerak (back-button stale CSRF/old session xavfi past lekin bor)
+- TAVSIYA: `app.use(helmet.noCache())` yoki no-store dinamik sahifalarga
+
+### BUG-230db083: ✅ Landing 0 ta <img> — SVG/CSS asosida (PASS)
+- DALIL: rasmlar inline SVG — LCP tez, lazy-loading muammosi yo'q
+
+### BUG-230db084: ℹ️ Ikkinchi so'rov (keepalive) 39ms
+- DALIL: connection reuse ishlaydi
+
+### BUG-230db085: ℹ️ /health 1442B — 7 kalit
+- DALIL: status/uptime/timestamp/node/env/features/rateLimiter — ortiqcha maxfiyot YO'Q (node versiyasi oshkor — mayda)
+
+## STEP 117 — Secrets/config exposure skan (2026-08-30)
+
+### BUG-230db086: ✅ 14 ta sensitive yo'l 404 (PASS)
+- DALIL: /.env, /.git/config, /package.json, /config.js, /server.js, /firebase-debug.log, /debug, /debug/vars, /api/config, /api/debug, /js/main.js.map, /sw.js.map → HAMMASI 404
+
+### BUG-230db087: ✅ Sourcemap oshkor emas (PASS)
+- DALIL: .js.map fayllar production'da 404 — client kod qayta tiklanolmaydi
+
+### BUG-230db088: ✅ main.js secret'lardan toza (PASS)
+- DALIL: apikey/AIza/AKIA/Bearer/private patternlari yo'q (3.9KB)
+
+### BUG-230db089: ℹ️ HTML'da "secret" matni — FP tekshirildi
+- DALIL: /user/register'dagi "secret" — Turnstile widget izoh matni ("site key...secret backend'da") — maxfiyot EMAS, lekin:
+
+### BUG-230db090: 🟡 HTML comment'larda implementation izohlari clientga yetib boradi
+- DALIL: register sahifasida Turnstile arxitekturasi haqida izoh-satrlar brauzerga yuboriladi (server-side comment bo'lishi kerak edi) — info disclosure mayda
+- TAVSIYA: EJS `<%# %>` (render qilinmaydigan izoh) ishlatish
+
+### BUG-230db091: ℹ️ __CSRF_TOKEN global pattern
+- DALIL: `window.__CSRF_TOKEN = '...'` har sahifada — per-session token (dizayn bo'yicha oshkor; πtalog emas)
+
+### BUG-230db092: ℹ️ Landing inline script kam
+- DALIL: 5 blok / 2.5KB jami — CSP'ga o'tish uchun qulay holat
