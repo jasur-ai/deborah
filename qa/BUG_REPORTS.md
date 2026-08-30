@@ -4968,3 +4968,54 @@ Performance: GET p95=136ms · br · cache ✅
 - Har bir 🔴 live dalil + screenshot + file:line bilan
 - Teacher backup kod: 1 ta sarflandi (d4b36c76f5), 7 ta qoldi
 - QA test-akkauntlar: qa_xss_0830xx, qa_xss2/3_0830, qa_pw7_0830 (o'chirish kerak)
+
+---
+# ═══ STEP 208 — HAMMA BUG RE-VERIFY (2026-08-30, yangi restartdan keyin) ═══
+> Savol: "hamma bug tuzatilganmi?" → TO'LIQ TEKSHIRUV (3 blok: anon HTTP, student, teacher+director + repo audit)
+
+## Natija jadvali (26 tekshiruv)
+
+| Bug | Holat | Dalil (live) |
+|---|---|---|
+| BUG-230db228 /metrics anon | 🔴 YANA OCHIQ | `GET /metrics` → 200 `# HELP deborah_http_requests_total` |
+| BUG-008/230db222 GET logout | 🔴 YANA | 302 / (POST 403, GET ochiq) |
+| BUG-230hz116 CSP | 🔴 YANA YO'Q | header yo'q; REPODA `contentSecurityPolicy: false` (server.js:191) — ATAYLAB o'chirilgan |
+| BUG-230hz167 QTI anon | 🔴 YANA | 200 `[]` |
+| BUG-230db178 /cast 404 | 🔴 YANA | GET /cast → 404 |
+| BUG-230db143 Director host-socket | 🔴 YANA O'LIK | yangi sessiya 9WAPUH: WS OPEN→CLOSE, 18s "Ulanish…", JOIN KODI ko'rinmaydi |
+| BUG-230db124 Stored XSS | 🔴🔴 HANUZ IJRO ETILADI | qa_xss3_0830 bilan `/user/settings` → `window.__XSS_PWNED__=1` (Playwright isbot) |
+| BUG-230db119 preflight actorId | 🔴 YANA | student sessiya bilan 401 |
+| BUG-230db126 panel :1089 crash | 🔴 YANA | pageerror `null addEventListener` |
+| BUG-230ka31 minlength | 🟡 YANA | register=15, landing=8 (server 8) |
+| BUG-230db062 sitemap.xml | 🟡 YANA | 404 |
+| BUG-071/230hz104 footer # | 🟡 YANA | 3 ta social `#` |
+| BUG-230db217 email-validate limit | 🟡 YANA | 30/30 → 200, 0×429 |
+| BUG-230hz161 login lock | 🟡 (konfig) | 5×200 — lock 10-xatoda (per-IP qatlam yo'q) |
+| BUG-230db149 attempt/meta anon | 🟡 YANA | 200 metadata |
+| BUG-230db205 notifications RU | 🟡 YANA | Панель/Ошибка/Уведомления/Сохранить |
+| BUG-230db218 export format | 🟡 YANA | format=csv → PDF |
+| BUG-230db189 title=array | 🟡 YANA | 200 qabul |
+| BUG-230db200 100KB title | 🟡 YANA | 200 qabul |
+| BUG-230hz72 email-change reauth | 🟡 YANA | parol input yo'q |
+| BUG-230hz43 landing register link | ✅ BARQAROR (fixed qolgan) | 2 ta havola |
+| BUG-080 dark mode | ✅ BARQAROR | panel lum=0.1 |
+| BUG-052 student join | ✅ BARQAROR | 0 JS xato, wizard ochiladi |
+| BUG-090 MemoryStore | 🔴 TASDIQ #4 | server uptime 0.07h — barcha sessiyalar yana o'chgan (jar'lar 401 bo'lgan) |
+| Server publish mount | 🔴 YANA | REPODA ham `import` bor, `app.use` YO'Q (server.js:126) |
+| settings.ejs:311 | 🔴 REPODA HAM YO'Q | `<%- JSON.stringify %>` — fix main'ga kirmagan |
+
+## XULOSA: 0 TA YANGI FIX DEPLOY BO'LGAN
+
+- **19/26 tekshiruvda bug YANA BOR** (4🔴🔴 darajada), 3 ta oldingi fix barqaror
+- **Repo audit (main @ af98513):** debugging branch'dagi AI-A fix'lari (BUG-009/010/011/012/044/049/052...) main'ga MERGE QILINMAGAN — live'dagi fix'lar to'g'ridan-to'g'ri oldingi deploylardan
+- Main'da YANGI ish bor: `s32` commitlari (ai-studio ?tab=plan|materials alias, localdb perf test, 7116/7116 test) — boshqa AI hozir ai-studio/localdb ustida ishlayapti, BUG fix'lar ustida EMAS
+- CSP va GET-logout main'da ATAYLAB hozirgi holatda (S28 izohi) — yozilgan qaror, lekin xavf hujjatlashtirilmagan
+- Stored XSS fix 1 qator (`<%- %>` → `<%= %>` yoki `</` → `<\/`) — eng ustuvor
+
+## Amaliy tavsiya (davom etayotgan ish uchun)
+
+1. AI-A (debugging branch) fix'larini main'ga merge qilish — BUG-008/032, ka31, hz72 u erda
+2. settings.ejs:311 fix — MUSTAQIL hotfix sifatida darhol
+3. /metrics — `app.get('/metrics')` ni localhost-bind yoki token ortiga
+4. preflight.js:42 — `req.session?.user?.safeKey` qilish (1 qator)
+5. Director host-socket — cast-handler host claim loglarini ko'rish (server rad etmoqda)
