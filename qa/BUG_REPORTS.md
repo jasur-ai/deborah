@@ -4594,3 +4594,105 @@ Performance: GET p95=136ms · br · cache ✅
 
 ### BUG-230db150: ℹ️ Cast session end + test delete
 - DALIL: POST /api/cast/sessions/:id/end → ishlandi; /user/api/tests/delete → test mtf9whhf9a4i o'chirildi — artefaktlar tozalandi
+
+## STEP 145 — Security headers 14 route matritsasi (2026-08-30)
+
+### BUG-230db151: 🔴 CSP 14/14 ROUTE'DA YO'Q — BUG-230hz116 RE-CONFIRM (5-marta, butun sayt bo'ylab)
+- DALIL: /, /user/login, /user/register, /legal/*, /health, /arena, /play, /user/panel, /user/settings, /teacher, /sessions, /share/*, 404 — hech birida content-security-policy
+- XULOSA: helmet CSP umuman yoqilmagan — XSS (BUG-230db124 kabi) uchun ikkinchi himoya qatlami YO'Q
+
+### BUG-230db152: ✅ HSTS 14/14 (PASS)
+### BUG-230db153: ✅ X-Content-Type-Options 14/14 (PASS)
+### BUG-230db154: ✅ X-Frame-Options 14/14 — clickjacking himoya (PASS)
+
+### BUG-230db155: ℹ️ /legal/terms 404 — to'g'ri yo'llar /terms /privacy /cookies /legal
+- DALIL: routes/legal.js:56-61; eski havolalar (footer 9x '#' davri) yangilangan
+
+## STEP 146 — HTTP method matritsa 8 endpoint × 5 method (2026-08-30)
+
+### BUG-230db156: ✅ 40/40 noto'g'ri method kombinatsiyasi rad (PASS)
+- DALIL: PUT/DELETE/PATCH hammasi 403 (CSRF middleware); TRACE blok; faqat GET 200 — method xavfsizligi ideal
+- DALIL: POST ham token'siz 403 — barcha state o'zgartirish CSRF ortida
+
+## STEP 147 — 40 endpoint × 3 rol auth matritsasi (2026-08-30)
+
+### BUG-230db157: ℹ️ ANON ochiq faqat 4 endpoint (yaxshi)
+- DALIL: /health (dizayn), /api/opendata/stats (ochiq ma'lumot — dizayn), /api/qti/packages (BUG — db148), /api/student/attempt/meta (BUG — db149)
+
+### BUG-230db158: ℹ️ diploma-check 451 — tashqi redirect
+- DALIL: /api/user/portfolio/diploma-check → 302 https://diplom.edu.uz → tashqi sayt 451 qaytardi (bot blok) — platforma bug'i emas, tashqi bog'liqlik
+
+### BUG-230db159: ℹ️ 10 endpoint'da student=teacher bir xil javob
+- DALIL: rol farqi yo'q endpointlar (portfolio/push/session guruhi) — foydalanuvchi darajasidagi API'lar uchun normal; admin API'lar alohida
+
+## STEP 148 — A11y auto-skan 12 sahifa (2026-08-30)
+
+### BUG-230db160: 🟡 7 sahifada H1 YO'Q
+- DALIL: /user/settings, /user/notifications, /user/create-test, /user/assignments, /play, /arena (+login 3 button nom'siz) — heading ierarxiya buzilgan (WCAG 1.3.1)
+
+### BUG-230db161: 🟡 10 ta input label'siz (5 sahifada)
+- DALIL: / 1, /user/settings 1, /user/create-test 1, /play 2, /arena 4 — WCAG 3.3.2 (screen reader maydon nomini bilmaydi)
+
+### BUG-230db162: 🟡 9 ta button nom'siz (icon-button aria-label'siz)
+- DALIL: /user/login 3, /user/register 3, /user/panel 3, /user/notifications 1, /user/assignments 1 — WCAG 4.1.2
+
+### BUG-230db163: ℹ️ html lang nomuvofiq formatlar
+- DALIL: uz / ru / uz-Latn aralash (portfolio "uz-Latn", qolganlar "uz") — BCP-47 formatlar birlashtirilishi kerak (mayda)
+
+## STEP 149 — i18n uz/ru/en (2026-08-30)
+
+### BUG-230db164: 🟡 Landing title 3 tilda BIR XIL — lang=ru/en parametr e'tiborsiz
+- DALIL: /?lang=ru va ?lang=en — hammasi "Deborah — savolni sinf ekraniga uzatish" (uz); login/register esa to'g'ri tarjima (Kirish/Вход/Sign in)
+- IZO: landing qat'iy uz-market (dizayn tanlovi bo'lishi mumkin, lekin ?lang= navbatdagi UI'da ishlaydi)
+
+### BUG-230db165: ℹ️ settings sahifa til manbasi
+- DALIL: student uchun lang="ru" render — DB settings/lang='ru' (eski QA testidan artefakt bo'lishi mumkin); repo'da settings.ejs:2 hardcode lang="uz" lekin live ru — deploy drift eslatma
+
+## STEP 150 — Dark mode 10 sahifa (2026-08-30)
+
+### BUG-230db166: ✅ DARK MODE 10/10 ISHLAYDI — BUG-080 TUZATILGAN (PASS, katta yaxshilanish)
+- DALIL: barcha sahifada data-theme=dark, body bg=rgb(28,24,19) lum=0.1 (qorong'i) — landing, login, panel, settings, portfolio, notifications, play, arena, terms, create-test
+- IZO: eski STEP 13'da "dark panel oilasida umuman yo'q" edi — to'liq tuzatilgan
+
+## STEP 151 — Mobile 360px 8 sahifa (2026-08-30)
+
+### BUG-230db167: ✅ MOBILE OVERFLOW 0px 8/8 — BUG-105 TUZATILGAN (PASS)
+- DALIL: 360px viewport'da scrollWidth-clientWidth=0 hamma sahifada; viewport meta to'g'ri; play'dagi eski overflow ham yo'q
+
+## STEP 152 — Upload fuzz (2026-08-30)
+
+### BUG-230db168: ✅ .exe import rad (PASS)
+- DALIL: 400 `{"error":"Unsupported file type: .exe","code":"unsupported_format"}` — fileFilter ishlaydi
+
+### BUG-230db169: ℹ️ Import consent gate
+- DALIL: soxta xlsx → 400 `{"error":"Data-residency consent required","code":"consent_required"}` — import'dan oldin rozilik talab qilinadi (GDPR D-x dizayn); E2E import faqat consent bilan (blocked-by-design)
+
+### BUG-230db170: ✅ Multer limitlari bor (PASS)
+- DALIL: portfolio.js:56-59 `limits: {fileSize: MAX_FILE_BYTES, files: 1}` + fileFilter — upload himoyasi sozlangan
+
+### BUG-230db171: ✅ file'siz so'rov 400 (PASS)
+
+## STEP 153 — Cache headers 10 sahifa (2026-08-30)
+
+### BUG-230db172: 🟡 Cache-Control FAQAT manifest.json'da bor — barcha HTML'da YO'Q
+- DALIL: 10/10 sahifa cache-control=YO'Q (faqat etag); manifest.json `public, max-age=86400` — dinamik sahifalar heuristik cache'ga tushishi mumkin (BUG-230db082 kengaytirildi: platforma miqyosida)
+
+## STEP 154 — Edge parametrlar (2026-08-30)
+
+### BUG-230db173: ✅ page=-1/99mlrd, limit=NaN/999999, sort=(bad → barchasi 500 EMAS (PASS)
+- DALIL: 8/8 edge parametr 200/200 — crash yo'q, parametrlar e'tiborsiz (robust); LEKIN validatsiya xabarlari yo'q (mayda)
+
+### BUG-230db174: ✅ q=<script> JSON ichida xavfsiz (PASS)
+
+## STEP 155 — OpenData/Firebase REST (2026-08-30)
+
+### BUG-230db175: ℹ️ /api/opendata/stats ochiq (dizayn bo'yicha)
+- DALIL: 200 `{"enabled":true,"schemaVersion":1,"isLive":false,"stats":{"universities":211,"studentsTotal":1323000,...}}` — ochiq ma'lumot; shaxsiy emas
+
+### BUG-230db176: ✅ Firebase REST exposure YO'Q (PASS)
+- DALIL: /.json, /users.json → 404 — DB to'g'ridan-to'g'ri ochilmagan
+
+## STEP 156 — Open redirect 7 parametr (2026-08-30)
+
+### BUG-230db177: ✅ Open redirect YO'Q (PASS)
+- DALIL: next/redirect/returnUrl/return=javascript:/continue/oidc-next/play-next — hech biri Location'ga o'tmaydi (7/7 xavfsiz)
