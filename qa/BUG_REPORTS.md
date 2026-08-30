@@ -4524,3 +4524,73 @@ Performance: GET p95=136ms · br · cache ✅
 
 ### BUG-230db133: 🟡 API create'da maydonlar silent-drop
 - DALIL: `type`/`url`/`visibility` create payload'ida e'tiborsiz (faqat kind/title/contentMeta/evidence) — hujjat bo'lmasa integratsiyalashuvchini chalg'itadi (mayda contract)
+## STEP 132 — Teacher MFA login E2E (2026-08-30)
+
+### BUG-230db134: ✅ Teacher login + backup kod 2.3s (PASS)
+- DALIL: teacher/Teacher2026 + d4b36c76f5 → mfa-ok, /teacher 200 — MFA oqimi barqaror (kod sarfi: 1 ta, 7 ta qoldi)
+
+### BUG-230db135: ℹ️ Teacher ham /api/student/assignments 401
+- DALIL: teacher sessiya bilan ham `{"error":"Authentication required"}` — BUG-230db119 actorId bug'i barcha rollarga ta'sir (user.id hech kimga bor)
+
+## STEP 133 — Teacher sahifalar skani (2026-08-30)
+
+### BUG-230db136: ✅ /teacher + 4 tab toza (PASS)
+- DALIL: /teacher, ?tab=assessments, ?tab=courses, ?tab=grading, create-test, portfolio, panel, notifications — 8 sahifa 0 JS xato
+
+### BUG-230db137: 🟡 Teacher uchun ham /user/cast va /user/arena 404
+- DALIL: teacher sessiyada HTTP 404 — cast panel ichki Cast Studio partial (panel.ejs:449), arena /arena'da; /user/cast va /user/arena havolalari ESLAB QOLGAN (menu'da bo'lsa o'lik havola — nav tekshiruvi kerak)
+
+## STEP 139 — Create-test API (to'g'ri yo'l) (2026-08-30)
+
+### BUG-230db138: ℹ️ /api/tests/save (user.js:285) LIVE'DA 404 — real yo'l /user/api/tests/save
+- DALIL: test-builder.js `fetch('/user/api/tests/save')`; /api/tests/save → 404 — ikkala yo'l bir xil emas, hujjat/Postman foydalanuvchilari adashadi (mayda)
+
+### BUG-230db139: ✅ Test saqlash ISHLAYDI (PASS)
+- DALIL: `{name, questions[2]}` → 200 `{"success":true,"key":"mtf9whhf9a4i"}` — field `name` (title emas)
+
+### BUG-230db140: ✅ 5/5 noto'g'ri payload 400 "Invalid data" (PASS)
+- DALIL: bo'sh title/questions-string/correct=99/bo'sh savol/XSS-title — hammasi rad; server validatsiya qat'iy (generic xato matn — info leak yo'q)
+
+## STEP 140 — CAST FULL E2E: preflight→create→director (2026-08-30)
+
+### BUG-230db141: ✅ Cast preflight + create session ISHLAYDI (PASS)
+- DALIL: POST /api/cast/preflight {source:{type:'user',key}} → 200 pf_e491bfef...; POST /api/cast/sessions → 200 `{sessionId:'cast_72CdQWVYWG__', joinCode:'WNZKBB', directorUrl, projectorUrl?t=}` — 2-qadamli oqim ishlaydi
+
+### BUG-230db142: ✅ BUG-049 RESOLVED — director sahifa yuklanadi, 0 JS xato (PASS, yangi deployda)
+- DALIL: /cast/cast_72CdQWVYWG__/director → HTTP 200, 0 pageerror, UI to'liq (Lobbi/Proyektor/Owner/Natijalar/JOIN KODI) — eski crash (1203-qator addEventListener) YO'Q
+
+### BUG-230db143: 🔴🔴 YANGI: DIRECTOR HOST-SOCKET O'LIK — WS ochiladi va DARHOL yopiladi
+- DALIL: director sahifada WebSocket `OPEN wss://.../socket.io/` → bir zumda `CLOSE`; 20s kutishdan keyin hamon "Ulanish…", JOIN KODI "—", 0 ishtirokchi; student /play esa socket'ni ochiq TUTADI (join wizard ishlaydi)
+- SNAPSHOT: qa/evidence/131_cast_director_joined.png, 132_cast_director_20s.png
+- TA'SIR: O'qituvchi cast SESSIYANI BOSHLOLAYDI — host qurilma hech qachon ulanmaydi; student lobbidab qotadi. Cast jonli dars funksiyasi HOST TOMONDA O'LIK (student join ishlaydi)
+- REPRO: (1) teacher panel → Cast Studio → sessiya yaratish (2) /cast/:id/director ochish (3) 20s kuzatish — "Ulanish…" qotadi, WS close log
+- ILDIZ NOMZOD: cast-socket host auth/claim muvaffaqiyatsizligi (server host socketni rad etadi) — cast-socket-client.js host handshake
+
+### BUG-230db144: ✅ Projector ANON → /play redirect (PASS — IDOR EMAS, to'g'irlandi)
+- DALIL: /cast/:sid/projector (token'siz) → redirect /play join sahifa; projectorUrl `?t=<token>` bilan gate qilingan (cast.js:797 auth yo'q lekin token talab qilinadi)
+
+### BUG-230db145: ℹ️ Cast invites co_host nonce beriladi
+- DALIL: POST /api/cast/sessions/:id/invites → 200 `{nonce:'f02a97e9...', role:'co_host'}`
+
+## STEP 141 — Student join E2E (2026-08-30)
+
+### BUG-230db146: ✅ BUG-052 RESOLVED — student join 0 JS xato (PASS, yangi deployda)
+- DALIL: /play → kod WNZKBB → 3-qadamli wizard (Kod→Ism→Lobbi) ochildi, WS ulanadi, TDZ crash YO'Q — eski cast-socket-client.js:75/106 race TUZATILGAN ko'rinadi
+- SNAPSHOT: 130_cast_student_joined.png
+
+### BUG-230db147: ℹ️ Student lobbi bosqichi UI
+- DALIL: "Ismingiz / Qayerdan qatnashasiz? Sinfda (in-room) / Uzoqdan (remote) / Qo'shilish" — wizard to'liq; lekin director o'likligi sababli lobbidan keyin oqim davom etmaydi (BUG-230db143 to'sqin)
+
+## STEP 143 — QTI/attempt auth (2026-08-30)
+
+### BUG-230db148: 🔴 BUG-230hz167 RE-CONFIRM (3-marta): /api/qti/packages ANON 200
+- DALIL: cookie'siz GET → 200 `[]` (bo'sh ro'yxat, JSON) — auth guard umuman YO'Q; package'lar bo'lsa ro'yxat oshkor bo'ladi
+- FILE: routes/qti.js packages GET — requireAuth qo'shish kerak
+
+### BUG-230db149: 🟡 /api/student/attempt/meta ANON 200 — metadata ochiq
+- DALIL: `{"statuses":{"READY":"ready",...},"transitions":{...}}` — faqat statik metadata (parol/em emas), lekin auth'siz ochiq (past risk)
+
+## STEP 144 — Cleanup (2026-08-30)
+
+### BUG-230db150: ℹ️ Cast session end + test delete
+- DALIL: POST /api/cast/sessions/:id/end → ishlandi; /user/api/tests/delete → test mtf9whhf9a4i o'chirildi — artefaktlar tozalandi

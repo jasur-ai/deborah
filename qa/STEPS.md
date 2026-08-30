@@ -169,3 +169,4 @@
 - ✅ STEP 116 — yakunlandi (2026-08-30): BUG-230db080-085 — perf 34-116ms ✅, gzip ✅, HTML Cache-Control YO'Q 🟡
 - ✅ STEP 117 — yakunlandi (2026-08-30): BUG-230db086-092 — 14 sensitive path 404 ✅, sourcemap yo'q ✅, HTML comment izohlar 🟡
 - ✅ STEP 118-131 — yakunlandi (2026-08-30): BUG-230db093-133 — 🔴🔴 STORED XSS EXECUTE TASDIQLANDI (settings.ejs:311 <%- %> JSON), 🔴 preflight actorId safeKey mos emas (barcha student API 401), 🟠 panel.ejs:1089 crash, BUG-230hz101 RESOLVED (share E2E 200), BUG-007 camera-pilot TUZATILGAN, portfolio XSS render ✅escape
+- ✅ STEP 132-144 — yakunlandi (2026-08-30): BUG-230db134-150 — 🔴🔴 DIRECTOR host-socket O'LIK (WS OPEN→CLOSE, 20s Ulanish), BUG-049 RESOLVED (sahifa), BUG-052 RESOLVED (join), cast create E2E ✅, BUG-230hz167 re-confirm#3 🔴, /arena 2 rolda ✅
