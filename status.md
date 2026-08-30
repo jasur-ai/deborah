@@ -844,7 +844,7 @@ Kod o'zgarishi NOLTA. Da'vo qilingan lekin TURLIGAN topilmalar (repository'da ha
      keladi) + telegram-b22 (anonim /user/telegram/link 200 — guard yo'q,
      redirect kutadi). Ikkalasi 0922e9a'da HAM qizil edi (meniki emas) — tegishli
      AI (B-22 telegram / A-30 admin MFA) tuzatsin. Design Gate S12 components
-     visual drift — 13:49'dan beri hamma commitda qizil (QARZ, keyingi step).
+     visual drift — 13:49'dan beri hamma commitda qizil (✅ S29'da yopildi).
 
 ── ✅ S29 (AI-A, 2026-08-29): ADMIN PANEL YUKLANMASLIGI + BARCHA CI QIZILLAR ──
   1) ADMIN PANEL (user: "hech qanday ma'lumot yuklanmayapti, filtrlar ishlamaydi,
@@ -925,3 +925,20 @@ Kod o'zgarishi NOLTA. Da'vo qilingan lekin TURLIGAN topilmalar (repository'da ha
   Regress: landing.test HEADER yangilandi (kbtn/ustoz, adminBtn yo'q,
   themeBtn<kbtn, ⋮ ctrls ichida), landing+copy 38/38 ✓, visual critical
   update+verify 70/70 ✓, design:check:full 8/8 PASS ✓.
+
+── ✅ S32 (AI-A, 2026-08-30): JONLI BUG-SKAN + ai-studio tab alias ──
+  1) JONLI SKAN (server PG bilan): 117 haqiqiy GET marshrut guest+admin
+     cookie bilan tekshirildi — 500 XATO YO'Q; admin sahifalarning hammasi
+     200 ✓; 401'lar kontrakt bo'yicha (prefersJson401); /auth/google|hemis
+     404 "not configured" — OIDC'da ATAYLAB qilingan graceful qaror
+     (routes/oidc.js:15 izohi), tegilmadi; /cast/qr ?d= validatsiya to'g'ri.
+  2) BUGFIX: /user/ai-studio chuqur havola hujjati ?tab=plan|materials
+     deb yozilgan, pane kaliti bitta harf (p/m) — to'liq so'z ishlamasdi.
+     TAB_ALIAS xaritasi qo'shildi (plan→p, materials→m, questions→q,
+     sources→s, deck→o, export→e). Mavjud havolalar (teacher ?tab=e)
+     ta'sirlanmagan.
+  3) Workspace <100MB sharti: filter-branch bilan design-audit/screenshots
+     tarixi tozalandi (eski 29MB + 24MB dubl bloblar), baseline'lar bitta
+     commitda regeneratsiya (119 PNG, visual verify 70/70 ✓). .git 47→16MB.
+    ⚠️ AI-B/QA: tarix rewrite bo'ldi — 'git fetch && git reset --hard
+     origin/main' qiling (pull --rebase ishlamaydi).

@@ -208,7 +208,11 @@
     }
     document.querySelectorAll('.st-tab').forEach((tab) => tab.addEventListener('click', () => showPane(tab.dataset.pane)));
     // S26: chuqur havola /user/ai-studio?tab=plan|materials|q|s|o|e
-    const WANTED = new URLSearchParams(location.search).get('tab');
+    // S32 BUGFIX: pane kaliti bitta harf (p/m/q/s/o/e), hujjatlashtirilgan
+    // to'liq so'zlar (plan/materials) ishlamas edi — alias xaritasi qo'shildi.
+    const TAB_ALIAS = { plan: 'p', materials: 'm', questions: 'q', sources: 's', deck: 'o', export: 'e' };
+    let WANTED = new URLSearchParams(location.search).get('tab');
+    if (WANTED && TAB_ALIAS[WANTED]) WANTED = TAB_ALIAS[WANTED];
     if (WANTED && document.querySelector('.st-pane[data-pane="' + WANTED + '"]')) showPane(WANTED);
 
     const esc = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
