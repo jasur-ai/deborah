@@ -80,40 +80,46 @@ describe('Landing — copy bank (data/landing.js)', () => {
 });
 
 describe('Landing — HTTP routing (CAST demo 1:1 — tasdiqlangan cast.html port)', () => {
-  it('GET / (uz) — cast H1 (bitta), hero kicker/p, EDK-4821', async () => {
+  it('GET / (uz) — S33 namuna: hero H1 (bitta) + jonli cast ekrani', async () => {
     const res = await fetch(`${serverUrl}/`);
     expect(res.status).toBe(200);
     const html = await res.text();
-    expect(html).toContain('Savol — <em>ekranda</em>. Javob — telefonda.');
-    expect(html).toContain('Savolni sinf ekraniga uzatish');
-    expect(html).toContain('Bir tugma bilan savol sinf ekraniga uzatiladi');
+    // Namuna (uploads/index.html) hero nusxasi
+    expect(html).toContain('O\'qituvchi ishi — <em>yengil</em>.<br>Dars — samarali.');
+    expect(html).toContain("O'qituvchilar uchun · AI yordamchi bilan");
+    expect(html).toContain('Bepul boshlash');
     // Bitta H1
     const h1s = html.match(/<h1[\s>]/g) || [];
     expect(h1s).toHaveLength(1);
-    // Cast demo belgilari
+    // Jonli cast ekrani (hero ichida)
     expect(html).toContain('EDK-4821');
     expect(html).toContain('Response mosaic · 42 javob');
     expect(html).toContain('SELECT DISTINCT');
   });
 
-  it('CAST — tartib: hero → cast screen → auth; join overlay mavjud', async () => {
+  it('S33 — tartib: hero → stats → feat → qadam → signal → auth → cred → cta', async () => {
     const html = await (await fetch(`${serverUrl}/`)).text();
-    const hero = html.indexOf('class="kicker"');
-    const cast = html.indexOf('id="cast"');
-    const auth = html.indexOf('id="auth"');
-    expect(hero).toBeGreaterThan(-1);
-    expect(cast).toBeGreaterThan(hero);
-    expect(auth).toBeGreaterThan(cast);
+    const pos = (needle) => html.indexOf(needle);
+    expect(pos('id="top"')).toBeGreaterThan(-1);
+    expect(pos('class="stats"')).toBeGreaterThan(pos('id="top"'));
+    expect(pos('id="feat"')).toBeGreaterThan(pos('class="stats"'));
+    expect(pos('id="qadam"')).toBeGreaterThan(pos('id="feat"'));
+    expect(pos('id="signal"')).toBeGreaterThan(pos('id="qadam"'));
+    expect(pos('id="auth"')).toBeGreaterThan(pos('id="signal"'));
+    expect(pos('class="cred-in"')).toBeGreaterThan(pos('id="auth"'));
+    expect(pos('class="cta-stamp')).toBeGreaterThan(pos('class="cred-in"'));
+    // hero ichida jonli cast ekrani
+    expect(pos('id="cast"')).toBeGreaterThan(pos('id="top"'));
+    expect(pos('id="cast"')).toBeLessThan(pos('class="stats"'));
+    // 9 ta imkoniyat kartasi
+    expect((html.match(/class="f-card reveal"/g) || []).length).toBe(9);
     // Join overlay: 5–7 xonali kod (maxlength 7)
     expect(html).toContain('id="joinOverlay"');
     expect(html).toMatch(/id="jcode"[^>]*maxlength="7"/);
     // Eski demo bo'limlari YO'Q
-    for (const gone of ['ld-roles', 'ld-demo', 'ld-trust', 'ld-how', 'id="feat"', 'id="qadam"', 'id="signal"', 'data-theme-state-btn']) {
+    for (const gone of ['ld-roles', 'ld-demo', 'ld-trust', 'ld-how', 'data-theme-state-btn']) {
       expect(html).not.toContain(gone);
     }
-    // "O'qituvchilar uchun" matni YO'Q (foydalanuvchi talabi)
-    expect(html.toLowerCase()).not.toContain("o'qituvchilar uchun");
-    expect(html).not.toContain('O\'qituvchilar uchun');
   });
 
   it('CAST — footer: Sahifalar/Hujjatlar/Aloqa + deborah.uz + ©2026', async () => {
@@ -246,7 +252,7 @@ describe('Landing — HTTP routing (CAST demo 1:1 — tasdiqlangan cast.html por
     // Demo 1:1: header'dagi klassik oy/quyosh tugmasi (segmented EMAS)
     expect(html).toContain('class="tbtn" id="themeBtn"');
     expect(html).not.toContain('data-theme-state-btn');
-    expect(html).toContain('class="screen"');
+    expect(html).toContain('class="screen reveal"'); // S33: hero ichida, reveal animatsiya bilan
     // Cast screen statik kontenti server HTML'da (JS'siz ko'rinadi)
     expect(html).toContain('SELECT DISTINCT');
     expect(html).toContain('data-opt');
@@ -297,17 +303,17 @@ describe('Landing — HTTP routing (CAST demo 1:1 — tasdiqlangan cast.html por
     expect(html).toContain('data-i18n="auth.loginId"');
   });
 
-  it('LANDING HEADER — o\'ng menyu: Kirish(/ustoz) + Admin FAQAT ichida (S31 user namunasi)', async () => {
+  it('LANDING HEADER — o\'ng menyu: Kirish + Admin FAQAT ichida (S31/S33 user namunasi)', async () => {
     const html = await (await fetch(`${serverUrl}/`)).text();
     const m = html.match(/<div class="hmenu"[^>]*>[\s\S]*?<\/div>/) || [''];
     // Admin menyu ICHIDA (BUG-028: alohida page), tashqarida ko'rinmaydi
     expect(m[0]).toContain('href="/admin/login"');
     expect(html).not.toContain('id="adminBtn"'); // S31: tashqi Admin tugmasi o'ldi
-    // Kirish — /ustoz (niqob), menyu ichida ham
+    // Kirish — /ustoz (niqob) menyu ichida
     expect(m[0]).toContain('href="/ustoz"');
-    // Oltin Kirish tugmasi ctrls ichida (lang + temadan KEYIN)
+    // S33 (namuna): oltin Kirish ctrls ichida (lang + temadan KEYIN) → #auth kartaga
     const ctrls = html.match(/<div class="ctrls">[\s\S]*?<\/header>/) || [''];
-    expect(ctrls[0]).toContain('class="kbtn" href="/ustoz"');
+    expect(ctrls[0]).toContain('class="kbtn" href="#auth"');
     expect(ctrls[0].indexOf('id="themeBtn"')).toBeLessThan(ctrls[0].indexOf('class="kbtn"'));
     expect(ctrls[0]).toContain('data-lang="ru"'); // UZ/RU/EN
     // ⋮ menyu tugmasi ham ctrls ichida (chap burger yo'q)

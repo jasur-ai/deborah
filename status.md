@@ -947,3 +947,27 @@ Kod o'zgarishi NOLTA. Da'vo qilingan lekin TURLIGAN topilmalar (repository'da ha
      localdb-cache perf testi warm-up + 200ms (flaky 153/150).
   5) YAKUNIY: vitest 7116/7116 (496 fayl) ✓, auth E2E 5/5 ✓,
      email-cost-d32 3× barqaror ✓. Keyingi push: 6c612b8.
+
+── ✅ S33 (AI-A, 2026-08-30): LANDING = FOYDALANUVCHI NAMUNASI (uploads/index.html) 1:1 ──
+  Sabab: landing avval cast.html'dan port qilingan edi (faqat cast demo);
+  user namunasi — TO'LIQ o'qituvchi lendingi. S31 faqat header'ni moslagan edi.
+  1) views/index.ejs QAYTA QURILDI (namuna strukturasi):
+     ghost → hdr → hero#top (matn + jonli cast ekrani) → stats (3 counter)
+     → #feat (9 ta f-card, tanlanganda ochiladi) → #qadam (route SVG runner)
+     → #signal (2 ustun panel: barlar + mosaic + 43→82% countUp)
+     → #auth (REAL formalar) → cred → cta → ftr.
+     Nav: #feat/#qadam/#signal/#auth; kbtn Kirish → #auth (namuna kontrakti).
+  2) landing.css: namunadan 85+13 media qoida port qilindi; bare tokenlar
+     (--gold/--bg/--green/...) kanonik --ld-* ga o'tkazildi (legacy-check);
+     --ld-green/--ld-mut/--ld-dim aliaslar :root'da.
+  3) landing.js: +75 i18n kalit × 4 til (uz/uz-cyrl/ru/en; cyril qo'lda);
+     reveal observer, stats counter, f-card open/close, route runner,
+     signal mosaic/countUp; a[href="#cast"] hamma joyda join'ni ochadi.
+  4) NO-FAKE (muhim farqlar, ataylab): OneID/HEMIS tugmasi YO'Q (loyihada
+     yo'q), demo-hint (soxta kredensial) YO'Q, auth REAL: POST /user/login,
+     CSRF, rol tanlash, faol rozilik, username live-check; join REAL
+     (/play?code=); hmenu S31 kontrakti saqlandi (admin faqat ichida).
+  5) a11y: stats .lbl kontrast 4.22→WCAG AA (--dim→--mut). 
+  6) TESTLAR: landing.test.js S33 kontraktiga qayta yozildi (27/27);
+     a11y 12/12; visual baseline v2 (token-fix'dan keyin): verify 286/286;
+     design:check:full 8/8 PASS.

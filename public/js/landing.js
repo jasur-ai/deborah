@@ -24,7 +24,7 @@
     'live.dev':'Dominant xato: B · 43%',
     'live.f1':'Savol cast qilindi','live.f2':"javoblar yig'ilmoqda",
     'under':'Bu — <b>cast</b>: savol ekranda, javoblar telefonda. Har bir savol shu tarzda uzatiladi.',
-    'auth.k':"Kirish va ro'yxatdan o'tish",'auth.h2':'Tizimga kirish','auth.t1':'Kirish','auth.t2':"Ro'yxatdan o'tish",'auth.login':'Kirish','auth.register':"Ro'yxatdan o'tish",'auth.doneReg':"Ro'yxatdan o'tdingiz. Endi tizimga kira olasiz.",
+    'auth.k':"Kirish va ro'yxatdan o'tish",'auth.h2':"Hisobingizga kiring",'auth.t1':'Kirish','auth.t2':"Ro'yxatdan o'tish",'auth.login':'Kirish','auth.register':"Ro'yxatdan o'tish",'auth.doneReg':"Ro'yxatdan o'tdingiz. Endi tizimga kira olasiz.",
     'auth.google':'Google bilan kirish',
     'auth.loginId':'Email yoki username',
     'auth.username':'Username',
@@ -47,7 +47,84 @@
     'ftr.col4t':'Til',
     'prov.g.off':'Google kirish serverda sozlanmagan (GOOGLE_CLIENT_ID). Administratorga murojaat qiling — hozir email bilan kiring.',
     
-    'ftr.legal':'© 2026 Deborah · Savolni sinf ekraniga uzatish tizimi'
+    'ftr.legal':"© 2026 Deborah · O'qituvchilar uchun AI yordamchi",
+
+    /* S33: namuna (index.html) boLimlari */
+    "nav.feat":"Imkoniyatlar",
+    "nav.qadam":"Qadamlar",
+    "nav.signal":"Signal",
+    "hero.kicker":"O'qituvchilar uchun · AI yordamchi bilan",
+    "hero.h1":"O'qituvchi ishi — <em>yengil</em>.<br>Dars — samarali.",
+    "hero.lede":"Savol tuzish, slaydlar, baholash, qog'oz tekshirish — AI yordamchi bularni soniyalarda bajaradi. Siz darsga va talabalarga vaqt ajratasiz.",
+    "hero.cta1":"Bepul boshlash",
+    "hero.cta2":"Imkoniyatlar",
+    "hero.scroll":"Scroll · imkoniyatlar",
+    "stats.s1":"Savol tayyorlash — AI bilan",
+    "stats.s2":"AI yordamchi funksiyalar",
+    "stats.s3":"Tushunish o'sishi",
+    "feat.k":"Imkoniyatlar",
+    "feat.h2":"O'qituvchi ishini <em>yengillashtiradigan</em> imkoniyatlar.",
+    "feat.p":"AI yordamchi rutin ishlarni o'z zimmasiga oladi — siz o'qitishga e'tibor berasiz.",
+    "feat.hint":"Imkoniyatni tanlang — tafsilot ochiladi",
+    "feat.c1t":"AI savol generatsiyasi",
+    "feat.c1s":"Mavzudan test savollari soniyalarda.",
+    "feat.c1m":"50/30/20 taqsimot va validatorlar bilan; tayyor bankdan ham tanlash mumkin.",
+    "feat.c2t":"AI slaydlar",
+    "feat.c2s":"Dars taqdimoti avtomatik tayyorlanadi.",
+    "feat.c2m":"Canva, Google Slides va Gamma'ga bir tugma bilan eksport qilinadi.",
+    "feat.c3t":"AI baholash",
+    "feat.c3s":"Erkin javoblar avtomatik baholanadi.",
+    "feat.c3m":"Rubric va mezonlar asosida; natija serverda tasdiqlanadi.",
+    "feat.c4t":"Maqola tavsiyalari",
+    "feat.c4s":"Har bir mavzu uchun o'qish materiallari.",
+    "feat.c4m":"Maqolalar va manbalar avtomatik tavsiya etiladi.",
+    "feat.c5t":"Qog'oz + OCR",
+    "feat.c5s":"Qog'oz javob varaqlari skanerlanadi.",
+    "feat.c5m":"OMR belgilash, qo'lyozma va matn OCR — barchasi bitta joyda.",
+    "feat.c6t":"Savollar banki",
+    "feat.c6s":"QTI import/eksport va rubric.",
+    "feat.c6m":"Savollar, rubric va competency — bitta bankda.",
+    "feat.c7t":"Jonli viktorina",
+    "feat.c7s":"Savol sinf ekraniga uzatiladi.",
+    "feat.c7m":"Javoblar jonli yig'iladi; signal va mosaic ko'rsatiladi.",
+    "feat.c8t":"Hisobot",
+    "feat.c8s":"Dars yakunida avtomatik hisobot.",
+    "feat.c8m":"Sinf darajasidagi tahlil va natijalar.",
+    "feat.c9t":"Imtihon nazorati",
+    "feat.c9s":"Kamera evidence bilan nazorat.",
+    "feat.c9m":"Xavfsizlik profillari va proctor hodisalari.",
+    "qadam.k":"Qanday ishlaydi",
+    "qadam.h2":"Uch oddiy <em>qadam</em>.",
+    "qadam.p":"Tayyorlang, uzating, tahlil qiling — qolganini tizim bajaradi.",
+    "qadam.cite":"Yarat → Uzat → Tahlil",
+    "qadam.l1":"01 · YARAT",
+    "qadam.l2":"02 · UZAT",
+    "qadam.l3":"03 · TAHLIL",
+    "qadam.c1t":"Yarat",
+    "qadam.c1p":"Savol AI yordamida yoki bankdan tanlanadi — bir necha soniya.",
+    "qadam.c2t":"Uzat",
+    "qadam.c2p":"Savol sinf ekraniga uzatiladi; javoblar telefonda ochiladi.",
+    "qadam.c3t":"Tahlil",
+    "qadam.c3p":"Signal va hisobot: sinf holati bir qarashda.",
+    "signal.k":"Sinf signali",
+    "signal.h2":"Tushunish — <em>dalil bilan</em> o'lchanadi.",
+    "signal.p":"Bitta savol, bitta muhokama: tushunish 43% dan 82% ga — o'lchangan va tasdiqlangan.",
+    "signal.col1":"Birinchi o'lchov",
+    "signal.col2":"Muhokamadan keyin",
+    "signal.mos1":"Response mosaic · 42 javob",
+    "signal.mos2":"Muhokamadan keyin",
+    "signal.foot":"Bitta savol · tushunish <b>43% → 82%</b>",
+    "signal.note":"Server-confirmed · shaxsiy reyting maxfiy",
+    "cred.c1":"Google bilan kirish",
+    "cred.c2":"Server-confirmed",
+    "cred.c3":"WCAG 2.2 AA",
+    "cred.c4":"QTI import",
+    "cta.h2":"Ishni <em>osonlashtiring</em>.",
+    "cta.stamp":"AI · CAST · SIGNAL · HISOBOT",
+    "cta.p":"Ruxsat OTM ma'muriyati tomonidan beriladi. Tasdiqlash kutilayotganda ham imkoniyatlarni ko'rib chiqing.",
+    "cta.b1":"Kirish",
+    "cta.b2":"Imkoniyatlar",
+    "ftr.l2b":"Imkoniyatlar",
   },
   /* S14 (BUG-089c): /uz-cyrl landing — 60 ta data-i18n elementi klientda almashtiriladi,
      lekin I18Nda uz-cyrl yo'q edi → aralash skript (server kirill, data-i18n lotin) */
@@ -72,7 +149,7 @@
     'live.dev':'Доминант хато: B · 43%',
     'live.f1':'Савол cast қилинди','live.f2':'жавоблар йиғилмоқда',
     'under':'Бу — <b>cast</b>: савол экранда, жавоблар телефонда. Ҳар бир савол шу тарзда узатилади.',
-    'auth.k':'Кириш ва рўйхатдан ўтиш','auth.h2':'Тизимга кириш','auth.t1':'Кириш','auth.t2':'Рўйхатдан ўтиш','auth.login':'Кириш','auth.register':'Рўйхатдан ўтиш','auth.doneReg':'Рўйхатдан ўтдингиз. Энди тизимга кира оласиз.',
+    'auth.k':"Deborah ҳисоби",'auth.h2':"Ҳисобингизга киринг",'auth.t1':'Кириш','auth.t2':'Рўйхатдан ўтиш','auth.login':'Кириш','auth.register':'Рўйхатдан ўтиш','auth.doneReg':'Рўйхатдан ўтдингиз. Энди тизимга кира оласиз.',
     'auth.google':'Google билан кириш',
     'auth.loginId':'Email ёки username',
     'auth.username':'Username',
@@ -94,7 +171,84 @@
     'ftr.col3t':'Алоқа','ftr.l9':'Status',
     'ftr.col4t':'Тил',
     'prov.g.off':'Google кириш серверда созланмаган (GOOGLE_CLIENT_ID). Администраторга мурожаат қилинг — ҳозир email билан киринг.',
-    'ftr.legal':'© 2026 Deborah · Саволни синф экранига узатиш тизими'
+    'ftr.legal':"© 2026 Deborah · Ўқитувчилар учун АИ ёрдамчи",
+
+    /* S33: namuna (index.html) boLimlari */
+    "nav.feat":"Имкониятлар",
+    "nav.qadam":"Қадамлар",
+    "nav.signal":"Сигнал",
+    "hero.kicker":"Ўқитувчилар учун · АИ ёрдамчи билан",
+    "hero.h1":"Ўқитувчи иши — <em>енгил</em>.<br>Дарс — самарали.",
+    "hero.lede":"Савол тузиш, слайдлар, баҳолаш, қоғоз текшириш — АИ ёрдамчи буларни сонияларда бажаради. Сиз дарсга ва талабаларга вақт ажратасиз.",
+    "hero.cta1":"Бепул бошлаш",
+    "hero.cta2":"Имкониятлар",
+    "hero.scroll":"Скролл · имкониятлар",
+    "stats.s1":"Савол тайёрлаш — АИ билан",
+    "stats.s2":"АИ ёрдамчи функциялар",
+    "stats.s3":"Тушуниш ўсиши",
+    "feat.k":"Имкониятлар",
+    "feat.h2":"Ўқитувчи ишини <em>енгиллаштирувчи</em> имкониятлар.",
+    "feat.p":"АИ ёрдамчи рутин ишларни ўз зиммасига олади — сиз ўқитишга эътибор берасиз.",
+    "feat.hint":"Имкониятни танланг — тафсилот очилади",
+    "feat.c1t":"АИ савол генерацияси",
+    "feat.c1s":"Мавзудан тест саволлари сонияларда.",
+    "feat.c1m":"50/30/20 тақсимот ва валидаторлар билан; тайёр банкдан ҳам танлаш мумкин.",
+    "feat.c2t":"АИ слайдлар",
+    "feat.c2s":"Дарс тақдимоти автоматик тайёрланади.",
+    "feat.c2m":"Canva, Google Slides ва Gamma'га бир тугма билан экспорт қилинади.",
+    "feat.c3t":"АИ баҳолаш",
+    "feat.c3s":"Эркин жавоблар автоматик баҳоланади.",
+    "feat.c3m":"Рубрик ва мезонлар асосида; натижа серверда тасдиқланади.",
+    "feat.c4t":"Мақола тавсиялари",
+    "feat.c4m":"Мақолалар ва манбалар автоматик тавсия этилади.",
+    "feat.c5t":"Қоғоз + OCR",
+    "feat.c5s":"Қоғоз жавоб варақлари сканерланади.",
+    "feat.c5m":"OMR белгилаш, қўлёзма ва матн OCR — барчаси бир жойда.",
+    "feat.c6t":"Саволлар банки",
+    "feat.c6s":"QTI импорт/экспорт ва рубрик.",
+    "feat.c6m":"Саволлар, рубрик ва компетенция — бирта банкда.",
+    "feat.c7t":"Жонли викторина",
+    "feat.c7s":"Савол синф экранига узатилади.",
+    "feat.c7m":"Жавоблар жонли йиғилади; сигнал ва мозайк кўрсатилади.",
+    "feat.c8t":"Ҳисобот",
+    "feat.c8s":"Дарс якунида автоматик ҳисобот.",
+    "feat.c8m":"Синф даражасидаги таҳлил ва натижалар.",
+    "feat.c9t":"Имтиҳон назорати",
+    "feat.c9s":"Камера далили билан назорат.",
+    "feat.c9m":"Хавфсизлик профиллари ва проктор ҳодисалари.",
+    "qadam.k":"Қандай ишлайди",
+    "qadam.h2":"Учта оддий <em>қадам</em>.",
+    "qadam.p":"Тайёрланг, узатинг, таҳлил қилинг — қолганини тизим бажаради.",
+    "qadam.cite":"Ярат → Узат → Таҳлил",
+    "qadam.l1":"01 · ЯРАТ",
+    "qadam.l2":"02 · УЗАТ",
+    "qadam.l3":"03 · ТАҲЛИЛ",
+    "qadam.c1t":"Ярат",
+    "qadam.c1p":"Савол АИ ёрдамида ёки банкдан танланади — бир неча сония.",
+    "qadam.c2t":"Узат",
+    "qadam.c2p":"Савол синф экранига узатилади; жавоблар телефонда очилади.",
+    "qadam.c3t":"Таҳлил",
+    "qadam.c3p":"Сигнал ва ҳисобот: синф ҳолати бир қарашда.",
+    "signal.k":"Синф сигнали",
+    "signal.h2":"Тушуниш — <em>далил билан</em> ўлчанади.",
+    "signal.p":"Бирта савол, бирта муҳокама: тушуниш 43% дан 82% га — ўлчанган ва тасдиқланган.",
+    "signal.col1":"Биринчи ўлчов",
+    "signal.col2":"Муҳокамадан кейин",
+    "signal.mos1":"Response mosaic · 42 жавоб",
+    "signal.mos2":"Муҳокамадан кейин",
+    "signal.foot":"Бирта савол · тушуниш <b>43% → 82%</b>",
+    "signal.note":"Server-confirmed · шахсий рейтинг махфий",
+    "cred.c1":"Google билан кириш",
+    "cred.c2":"Server-confirmed",
+    "cred.c3":"WCAG 2.2 AA",
+    "cred.c4":"QTI импорт",
+    "cta.h2":"Ишни <em>осонлаштиринг</em>.",
+    "cta.stamp":"АИ · CAST · SIGNAL · ҲИСОБОТ",
+    "cta.p":"Рухсат ОТМ маъмурияти томонидан берилади. Тасдиқлаш кутилаётганда ҳам имкониятларни кўриб чиқинг.",
+    "cta.b1":"Кириш",
+    "cta.b2":"Имкониятлар",
+    "ftr.l2b":"Имкониятлар",
+    "feat.c4s":"Ҳар бир мавзу учун ўқиш материаллари.",
   },
   ru:{
     'hdr.kirish':'Вход',
@@ -117,7 +271,7 @@
     'live.dev':'Доминирующая ошибка: B · 43%',
     'live.f1':'Вопрос транслирован','live.f2':'ответы собираются',
     'under':'Это — <b>cast</b>: вопрос на экране, ответы в телефоне. Так передаётся каждый вопрос.',
-    'auth.k':'Вход и регистрация','auth.h2':'Вход в систему','auth.t1':'Вход','auth.t2':'Регистрация','auth.login':'Вход','auth.register':'Регистрация','auth.doneReg':'Вы зарегистрированы. Теперь можете войти.',
+    'auth.k':"Аккаунт Deborah",'auth.h2':"Войдите в аккаунт",'auth.t1':'Вход','auth.t2':'Регистрация','auth.login':'Вход','auth.register':'Регистрация','auth.doneReg':'Вы зарегистрированы. Теперь можете войти.',
     'auth.google':'Войти через Google',
     'auth.loginId':'Email или имя пользователя',
     'auth.username':'Имя пользователя',
@@ -141,7 +295,84 @@
     'ftr.col4t':'Язык',
     'prov.g.off':'Вход через Google не настроен на сервере (GOOGLE_CLIENT_ID). Обратитесь к администратору — пока входите по email.',
     
-    'ftr.legal':'© 2026 Deborah · Система трансляции вопроса на экран'
+    'ftr.legal':"© 2026 Deborah · Для преподавателей — ИИ-помощник",
+
+    /* S33: namuna (index.html) boLimlari */
+    "nav.feat":"Возможности",
+    "nav.qadam":"Шаги",
+    "nav.signal":"Сигнал",
+    "hero.kicker":"Для преподавателей · С ИИ-помощником",
+    "hero.h1":"Работа преподавателя — <em>легче</em>.<br>Занятие — эффективнее.",
+    "hero.lede":"Составление вопросов, слайды, проверка, обработка бумажных бланков — ИИ-помощник делает это за секунды. Вы уделяете время занятию и студентам.",
+    "hero.cta1":"Начать бесплатно",
+    "hero.cta2":"Возможности",
+    "hero.scroll":"Листайте · возможности",
+    "stats.s1":"Вопрос за секунды — с ИИ",
+    "stats.s2":"ИИ-функций",
+    "stats.s3":"Рост понимания",
+    "feat.k":"Возможности",
+    "feat.h2":"Возможности, которые <em>облегчают работу преподавателя</em>.",
+    "feat.p":"ИИ-помощник берёт на себя рутину — вы занимаетесь преподаванием.",
+    "feat.hint":"Выберите возможность — откроются детали",
+    "feat.c1t":"Генерация вопросов ИИ",
+    "feat.c1s":"Тестовые вопросы по теме за секунды.",
+    "feat.c1m":"Распределение 50/30/20 и валидаторы; можно брать из готового банка.",
+    "feat.c2t":"Слайды ИИ",
+    "feat.c2s":"Презентация занятия готовится автоматически.",
+    "feat.c2m":"Экспорт в Canva, Google Slides и Gamma одним действием.",
+    "feat.c3t":"Проверка ИИ",
+    "feat.c3s":"Свободные ответы проверяются автоматически.",
+    "feat.c3m":"По рубрике и критериям; результат подтверждается на сервере.",
+    "feat.c4t":"Рекомендация материалов",
+    "feat.c4s":"Чтение для каждой темы.",
+    "feat.c4m":"Статьи и источники подбираются автоматически.",
+    "feat.c5t":"Бумага + OCR",
+    "feat.c5s":"Бумажные бланки сканируются.",
+    "feat.c5m":"Разметка OMR, рукописный и печатный текст — всё в одном месте.",
+    "feat.c6t":"Банк вопросов",
+    "feat.c6s":"Импорт/экспорт QTI и рубрики.",
+    "feat.c6m":"Вопросы, рубрики и компетенции — в одном банке.",
+    "feat.c7t":"Живая викторина",
+    "feat.c7s":"Вопрос выводится на экран.",
+    "feat.c7m":"Ответы собираются в реальном времени; сигнал и mosaic.",
+    "feat.c8t":"Отчёты",
+    "feat.c8s":"Автоматический отчёт после занятия.",
+    "feat.c8m":"Анализ и результаты на уровне аудитории.",
+    "feat.c9t":"Надзор за экзаменом",
+    "feat.c9s":"Контроль с видеосвидетельством.",
+    "feat.c9m":"Профили безопасности и события проктора.",
+    "qadam.k":"Как это работает",
+    "qadam.h2":"Три простых <em>шага</em>.",
+    "qadam.p":"Подготовьте, выведите на экран, проанализируйте — остальное система делает сама.",
+    "qadam.cite":"Создать → Вывести → Проанализировать",
+    "qadam.l1":"01 · СОЗДАТЬ",
+    "qadam.l2":"02 · ВЫВЕСТИ",
+    "qadam.l3":"03 · АНАЛИЗ",
+    "qadam.c1t":"Создать",
+    "qadam.c1p":"Вопрос готовится с ИИ или выбирается из банка — за секунды.",
+    "qadam.c2t":"Вывести",
+    "qadam.c2p":"Вопрос выводится на экран аудитории; ответы открываются на телефонах.",
+    "qadam.c3t":"Анализ",
+    "qadam.c3p":"Сигнал и отчёт: состояние аудитории с одного взгляда.",
+    "signal.k":"Сигнал аудитории",
+    "signal.h2":"Понимание измеряется <em>доказательством</em>.",
+    "signal.p":"Один вопрос, одно обсуждение: понимание выросло с 43% до 82% — измерено и подтверждено.",
+    "signal.col1":"Первый замер",
+    "signal.col2":"После обсуждения",
+    "signal.mos1":"Response mosaic · 42 ответа",
+    "signal.mos2":"После обсуждения",
+    "signal.foot":"Один вопрос · понимание <b>43% → 82%</b>",
+    "signal.note":"Подтверждено сервером · личный рейтинг конфиденциален",
+    "cred.c1":"Вход через Google",
+    "cred.c2":"Подтверждение сервером",
+    "cred.c3":"WCAG 2.2 AA",
+    "cred.c4":"Импорт QTI",
+    "cta.h2":"Сделайте работу <em>проще</em>.",
+    "cta.stamp":"AI · CAST · SIGNAL · ОТЧЁТ",
+    "cta.p":"Доступ назначается администрацией вуза. Пока идёт одобрение — изучите возможности.",
+    "cta.b1":"Вход",
+    "cta.b2":"Возможности",
+    "ftr.l2b":"Возможности",
   },
   en:{
     'hdr.kirish':'Sign in',
@@ -164,7 +395,7 @@
     'live.dev':'Dominant error: B · 43%',
     'live.f1':'Question cast','live.f2':'collecting answers',
     'under':'This is <b>cast</b>: question on screen, answers on phones. Every question is delivered this way.',
-    'auth.k':'Sign in & register','auth.h2':'Sign in','auth.t1':'Sign in','auth.t2':'Register','auth.login':'Sign in','auth.register':'Register','auth.doneReg':'You are registered. You can now sign in.',
+    'auth.k':"Deborah account",'auth.h2':"Sign in to your account",'auth.t1':'Sign in','auth.t2':'Register','auth.login':'Sign in','auth.register':'Register','auth.doneReg':'You are registered. You can now sign in.',
     'auth.google':'Sign in with Google',
     'auth.loginId':'Email or username',
     'auth.username':'Username',
@@ -188,7 +419,84 @@
     'ftr.col4t':'Language',
     'prov.g.off':'Google sign-in is not configured on the server (GOOGLE_CLIENT_ID). Contact the administrator — use email for now.',
     
-    'ftr.legal':'© 2026 Deborah · Cast questions to the class screen'
+    'ftr.legal':"© 2026 Deborah · For instructors — AI assistant",
+
+    /* S33: namuna (index.html) boLimlari */
+    "nav.feat":"Capabilities",
+    "nav.qadam":"Steps",
+    "nav.signal":"Signal",
+    "hero.kicker":"For instructors · With an AI assistant",
+    "hero.h1":"Instructor work — <em>lighter</em>.<br>Lessons — more effective.",
+    "hero.lede":"Writing questions, slides, grading, scanning paper — the AI assistant does these in seconds. You spend time on teaching and students.",
+    "hero.cta1":"Start free",
+    "hero.cta2":"Capabilities",
+    "hero.scroll":"Scroll · capabilities",
+    "stats.s1":"Question ready in seconds — with AI",
+    "stats.s2":"AI-assisted features",
+    "stats.s3":"Understanding growth",
+    "feat.k":"Capabilities",
+    "feat.h2":"Capabilities that <em>lighten the instructor's work</em>.",
+    "feat.p":"The AI assistant handles the routine — you focus on teaching.",
+    "feat.hint":"Select a capability to see the details",
+    "feat.c1t":"AI question generation",
+    "feat.c1s":"MCQs from a topic in seconds.",
+    "feat.c1m":"50/30/20 split with validators; can also pick from the ready bank.",
+    "feat.c2t":"AI slides",
+    "feat.c2s":"Lesson decks generated automatically.",
+    "feat.c2m":"Export to Canva, Google Slides and Gamma with one action.",
+    "feat.c3t":"AI grading",
+    "feat.c3s":"Free-form answers graded automatically.",
+    "feat.c3m":"Based on a rubric and criteria; result is server-confirmed.",
+    "feat.c4t":"Article suggestions",
+    "feat.c4s":"Reading for every topic.",
+    "feat.c4m":"Articles and sources are recommended automatically.",
+    "feat.c5t":"Paper + OCR",
+    "feat.c5s":"Paper answer sheets are scanned.",
+    "feat.c5m":"OMR marking, handwriting and text OCR — all in one place.",
+    "feat.c6t":"Question bank",
+    "feat.c6s":"QTI import/export and rubrics.",
+    "feat.c6m":"Questions, rubrics and competencies — in one bank.",
+    "feat.c7t":"Live quiz",
+    "feat.c7s":"Cast the question to the screen.",
+    "feat.c7m":"Answers are collected live; signal and mosaic shown.",
+    "feat.c8t":"Reports",
+    "feat.c8s":"Automatic report after each session.",
+    "feat.c8m":"Class-level analysis and results.",
+    "feat.c9t":"Exam proctoring",
+    "feat.c9s":"Proctoring with camera evidence.",
+    "feat.c9m":"Security profiles and proctor events.",
+    "qadam.k":"How it works",
+    "qadam.h2":"Three simple <em>steps</em>.",
+    "qadam.p":"Prepare, cast, analyze — the system does the rest.",
+    "qadam.cite":"Create → Cast → Analyze",
+    "qadam.l1":"01 · CREATE",
+    "qadam.l2":"02 · CAST",
+    "qadam.l3":"03 · ANALYZE",
+    "qadam.c1t":"Create",
+    "qadam.c1p":"A question is drafted with AI or picked from the bank — in seconds.",
+    "qadam.c2t":"Cast",
+    "qadam.c2p":"The question appears on the class screen; answers open on phones.",
+    "qadam.c3t":"Analyze",
+    "qadam.c3p":"Signal and report: read the room at a glance.",
+    "signal.k":"Class signal",
+    "signal.h2":"Understanding is measured with <em>evidence</em>.",
+    "signal.p":"One question, one discussion: understanding rose from 43% to 82% — measured and confirmed.",
+    "signal.col1":"First measurement",
+    "signal.col2":"After discussion",
+    "signal.mos1":"Response mosaic · 42 answers",
+    "signal.mos2":"After discussion",
+    "signal.foot":"One question · understanding <b>43% → 82%</b>",
+    "signal.note":"Server-confirmed · private ratings stay confidential",
+    "cred.c1":"Google sign-in",
+    "cred.c2":"Server-confirmed",
+    "cred.c3":"WCAG 2.2 AA",
+    "cred.c4":"QTI import",
+    "cta.h2":"Make work <em>easier</em>.",
+    "cta.stamp":"AI · CAST · SIGNAL · REPORT",
+    "cta.p":"Access is granted by the university administration. While approval is pending, explore the capabilities.",
+    "cta.b1":"Sign in",
+    "cta.b2":"Capabilities",
+    "ftr.l2b":"Features",
   }};
   var TITLES={uz:'Deborah — savolni sinf ekraniga uzatish',ru:'Deborah — трансляция вопроса на экран',en:'Deborah — cast questions to the class screen'};
   function applyLang(lang){
@@ -258,7 +566,7 @@
     /* REAL: cast sessiyasiga o'tish */
     window.location.href='/play?code='+encodeURIComponent(v);
   });
-  document.querySelectorAll('.nav a[href="#cast"], #hmenu a[href="#cast"]').forEach(function(a){
+  document.querySelectorAll('a[href="#cast"]').forEach(function(a){
     a.addEventListener('click',function(e){e.preventDefault();openJoin();});
   });
   /* Hamburger menyu */
@@ -443,4 +751,148 @@
     document.getElementById('scTime').textContent=m+':'+s;
   },1000);
   setTimeout(run,700);
+
+  /* ═══ S33 (uploads/index.html): Reveal ═══ */
+  var rio = ('IntersectionObserver' in window) ? new IntersectionObserver(function(es){
+    es.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); rio.unobserve(en.target); } });
+  },{threshold:.15}) : null;
+  if (rio) document.querySelectorAll('.reveal').forEach(function(el){ rio.observe(el); });
+  else document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in'); });
+
+  /* ═══ S33: Stats counter ═══ */
+  var stWrap = document.querySelector('.stats');
+  if (stWrap) {
+    var counted=false;
+    var cio=new IntersectionObserver(function(es){es.forEach(function(en){
+      if(en.isIntersecting&&!counted){counted=true;countStats();}
+    })},{threshold:.4});
+    cio.observe(stWrap);
+    function countStats(){
+      var a=0,b=0,c=0,d=0,ti=0;
+      var iv=setInterval(function(){
+        ti++;
+        a=Math.min(30,Math.round(30*ti/50));
+        b=Math.min(10,Math.round(10*ti/50));
+        c=Math.min(43,Math.round(43*ti/50));
+        d=Math.min(82,Math.round(82*ti/50));
+        var e1=document.getElementById('st1'),e2=document.getElementById('st2'),e3=document.getElementById('st3');
+        if(e1)e1.textContent=a+' s';
+        if(e2)e2.textContent=b+'+';
+        if(e3)e3.textContent=c+'% \u2192 '+d+'%';
+        if(ti>=50)clearInterval(iv);
+      },30);
+    }
+  }
+
+  /* ═══ S33: Imkoniyatlar — f-card tanlash (blur focus) ═══ */
+  var grid3=document.querySelector('.grid3');
+  var activeCard=null;
+  function closeCard(){
+    if(!activeCard)return;
+    var c=activeCard; activeCard=null;
+    grid3.classList.remove('has-active');
+    var first=c.getBoundingClientRect();
+    c.classList.remove('active');
+    var last=c.getBoundingClientRect();
+    var dx=first.left-last.left, dy=first.top-last.top;
+    var sx=first.width/last.width, sy=first.height/last.height;
+    c.style.transition='none';
+    c.style.transform='translate(calc(-50% + '+dx+'px), calc(-50% + '+dy+'px)) scale('+sx+','+sy+')';
+    void c.offsetWidth;
+    c.style.transition='transform .4s cubic-bezier(.22,.61,.36,1)';
+    c.style.transform='translate(-50%,-50%) scale(1)';
+    setTimeout(function(){c.style.transition='';},420);
+  }
+  function openCard(c){
+    if(activeCard){closeCard();if(activeCard===c)return;}
+    grid3.classList.add('has-active');
+    var first=c.getBoundingClientRect();
+    c.classList.add('active');
+    var last=c.getBoundingClientRect();
+    var dx=first.left-last.left, dy=first.top-last.top;
+    var sx=first.width/last.width, sy=first.height/last.height;
+    c.style.transition='none';
+    c.style.transform='translate(calc(-50% + '+dx+'px), calc(-50% + '+dy+'px)) scale('+sx+','+sy+')';
+    void c.offsetWidth;
+    c.style.transition='transform .45s cubic-bezier(.22,.61,.36,1)';
+    c.style.transform='translate(-50%,-50%) scale(1)';
+    activeCard=c;
+  }
+  if(grid3){
+    grid3.querySelectorAll('.f-card').forEach(function(c){
+      c.addEventListener('click',function(){
+        if(c.classList.contains('active')){closeCard();}
+        else{openCard(c);}
+      });
+    });
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')closeCard();});
+    document.addEventListener('click',function(e){
+      if(activeCard&&!activeCard.contains(e.target)&&e.target!==grid3)closeCard();
+    });
+  }
+
+  /* ═══ S33: Qadamlar — route runner ═══ */
+  var svg=document.querySelector('.route-svg');
+  var route=document.getElementById('route');
+  var gold=document.getElementById('routeGold');
+  var runner=document.getElementById('runner');
+  var checks=document.querySelectorAll('.j-check');
+  var cards=document.querySelectorAll('.j-card');
+  var totalLen=route?route.getTotalLength():0;
+  if(totalLen){gold.style.strokeDasharray=totalLen;gold.style.strokeDashoffset=totalLen;}
+  function onScroll(){
+    if(!route||!svg)return;
+    var r=svg.getBoundingClientRect(),vh=window.innerHeight;
+    var p=Math.min(Math.max((vh*.6-r.top)/(r.height+vh*.3),0),1);
+    var pt=route.getPointAtLength(totalLen*p);
+    runner.setAttribute('transform','translate('+pt.x+','+pt.y+')');
+    runner.style.opacity=(p>.02&&p<.98)?1:0;
+    gold.style.strokeDashoffset=totalLen*(1-p);
+    checks.forEach(function(c,i){
+      c.classList.toggle('on',p>=(i+.5)/checks.length-.04);
+      var card=cards[i];
+      if(card){card.style.borderColor=(p>=(i+.5)/checks.length-.1&&p<=(i+.5)/checks.length+.14)?'var(--line2)':'';}
+    });
+  }
+  if(svg){window.addEventListener('scroll',onScroll,{passive:true});onScroll();}
+
+  /* ═══ S33: Signal panel — mosaic + countUp ═══ */
+  function mosaic(el,dist){
+    if(!el)return;
+    var n=42,cells=[];
+    dist.forEach(function(d,i){var c=Math.round(d*n/100);for(var k=0;k<c;k++)cells.push(i);});
+    while(cells.length<n)cells.push(-1);
+    for(var i=cells.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=cells[i];cells[i]=cells[j];cells[j]=t;}
+    var cls=['cr','gd','gr','bl'];
+    cells.forEach(function(v){
+      var d=document.createElement('div');
+      d.className='cell'+(v<0?'':' '+cls[v]);
+      el.appendChild(d);
+    });
+  }
+  mosaic(document.getElementById('mgrid1'),[20,43,27,10]);
+  mosaic(document.getElementById('mgrid2'),[82,10,5,3]);
+  var panel=document.querySelector('.panel');
+  if(panel){
+    var counted2=false;
+    var pio=new IntersectionObserver(function(es){es.forEach(function(en){
+      if(en.isIntersecting&&!counted2){counted2=true;countUp();}
+    })},{threshold:.35});
+    pio.observe(panel);
+    function countUp(){
+      var cr=document.querySelector('.bar i.crimson'),gr=document.querySelector('.bar i.green');
+      if(cr)cr.style.width='43%';
+      if(gr)gr.style.width='82%';
+      var n1=document.getElementById('n1'),n2=document.getElementById('n2');
+      var a=0,b=0,ti=0;
+      var iv=setInterval(function(){
+        ti++;
+        a=Math.min(43,Math.round(43*ti/60));
+        b=Math.min(82,Math.round(82*ti/60));
+        if(n1)n1.textContent=a+'%';
+        if(n2)n2.textContent=b+'%';
+        if(ti>=60)clearInterval(iv);
+      },24);
+    }
+  }
 })();
