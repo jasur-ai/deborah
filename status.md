@@ -942,3 +942,8 @@ Kod o'zgarishi NOLTA. Da'vo qilingan lekin TURLIGAN topilmalar (repository'da ha
      commitda regeneratsiya (119 PNG, visual verify 70/70 ✓). .git 47→16MB.
     ⚠️ AI-B/QA: tarix rewrite bo'ldi — 'git fetch && git reset --hard
      origin/main' qiling (pull --rebase ishlamaydi).
+  4) S32 qo'shimcha (CI c959198 failidan): idempotency uniqueness
+     testida Math.random namunasi (~31 bit) → crypto.randomUUID;
+     localdb-cache perf testi warm-up + 200ms (flaky 153/150).
+  5) YAKUNIY: vitest 7116/7116 (496 fayl) ✓, auth E2E 5/5 ✓,
+     email-cost-d32 3× barqaror ✓. Keyingi push: 6c612b8.
