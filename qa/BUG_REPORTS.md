@@ -4696,3 +4696,50 @@ Performance: GET p95=136ms · br · cache ✅
 
 ### BUG-230db177: ✅ Open redirect YO'Q (PASS)
 - DALIL: next/redirect/returnUrl/return=javascript:/continue/oidc-next/play-next — hech biri Location'ga o'tmaydi (7/7 xavfsiz)
+
+## STEP 157 — Nav dead-link sweep 53 havola (2026-08-30)
+
+### BUG-230db178: 🔴 /cast havolasi O'LIK (404) — navigatsiyadan cast'ga kirish yo'q
+- DALIL: 53 unikal nav havoladan faqat 1 tasi o'lik: GET /cast → 404; cast endi panel ichki studiyasi (panel.ejs:449) lekin eski /cast havolasi HTML'da qolgan
+- TA'SIR: foydalanuvchi nav'dan Cast'ga bossa 404 — asosiy funksiyaga kirish buzilgan ko'rinadi
+
+### BUG-230db179: ✅ 52/53 havola tirik (PASS)
+- DALIL: /admin/login, /auth/google, /cookies, /terms, /privacy, /legal, assetlar — hammasi 200/302
+
+## STEP 158 — Keyboard/focus (2026-08-30)
+
+### BUG-230db180: ✅ Skip-link 1-Tab'da, fokus ko'rsatkichi bor (PASS)
+- DALIL: Tab tartibi skip-link'dan boshlanadi; 12-Tab'da activeElement'da outline/shadow ko'rinadi — klaviatura navigatsiyasi asosi toza
+
+## STEP 159 — Legal sahifalar to'liqligi (2026-08-30)
+
+### BUG-230db181: ✅ 4 legal sahifa mazmunli + kuchga kirish sanasi bilan (PASS)
+- DALIL: /terms (9 h2, ~520 so'z), /privacy (8 h2, ~553), /cookies (7 h2, ~392), /legal — hammasida 2026-08-17 sana; BUG-071/230hz104 footer '#' asosan TUZATILGAN (privacy/terms/cookies/legal endi bog'langan)
+
+### BUG-230db182: 🟡 Footer'da 3 ta "#" havola qoldi (social ikonlar)
+- DALIL: landing footer oxirida 3x href="#" — ijtimoiy tarmoq ikonlari manzilsiz (BUG-230hz104 qoldiq: 9→3)
+
+## STEP 160-161 — MFA javoblari + sessiya holati (2026-08-30)
+
+### BUG-230db183: ✅ MFA verify anon 403 CSRF (PASS)
+
+### BUG-230db184: 🔴 BUG-090 RE-CONFIRM (3-marta, ANIQ DALIL): server restart sessiyalarni o'chiradi
+- DALIL: student sessiya STEP 151'da (36 daq oldin) panel 200 edi → server restart (uptime 31.5 daq) → XUDDI SHU cookie bilan panel 401 — MemoryStore (server.js:214) sessiyalar restartda YO'QOLADI
+- TA'SIR: har deploy/sleep-wake'da barcha foydalanuvchilar logaut bo'ladi; Render free tier'da 15 daq bo'shlikdan keyin bu TEZ-TEZ sodir bo'ladi
+- YECHIM: Redis session store (P2 rejadagi kabi)
+
+## STEP 162 — Burst perf 50 parallel GET (2026-08-30)
+
+### BUG-230db185: ✅ 50 parallel GET: 50/200, avg 140ms, max 300ms (PASS)
+- DALIL: 10 worker bilan 5 endpoint × 10 — 0 ta 429/5xx — free tier'da ham barqaror
+
+## STEP 163 — Repo statik audit (2026-08-30)
+
+### BUG-230db186: 🟠 publish.js HANUZ UNMOUNTED (server.js:124)
+- DALIL: `import publishRoutes from './routes/publish.js'` bor, `app.use(publishRoutes)` YO'Q — publish modul o'lik kod (eski topilma re-confirm; deploy drift emas — hozirgi repoda ham bor)
+
+### BUG-230db187: 🟡 Node versiya drift: engines >=20.12.0, LIVE v26.8.1
+- DALIL: package.json engines vs /health node=v26.8.1 — Render NODE_VERSION 26; sinovlar 26'da o'tdi lekin 20'da tekshirilmagan (compat risk)
+
+### BUG-230db188: ℹ️ Loyiha masshtabi
+- DALIL: 86 route modul, 112 EJS view, 32 dependency + 16 devDep
