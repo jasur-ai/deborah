@@ -4793,3 +4793,38 @@ Performance: GET p95=136ms · br · cache ✅
 
 ### BUG-230db200: 🟡 100KB title QABUL qilindi (HTTP 200, DB'ga yozildi)
 - DALIL: title 100K belgi → 200 itemId — server-side uzunlik limiti YO'Q (DOM maxlength=100/200 bilan ziddiyat; DB hajm o'sish riski)
+
+## STEP 171-182 — PWA/approval/AI/cast-kod/i18n/forgot/cookie/status/template/SEO (2026-08-30)
+
+### BUG-230db201: ✅ PWA manifest to'liq + 3 ikon 200 (PASS)
+- DALIL: name/short_name/start_url/display=standalone/theme_color + 3 icon 200
+
+### BUG-230db202: ℹ️ teacher-approval rol-gate
+- DALIL: ANON 401, STUDENT/TEACHER 404 — faqat teacher_pending uchun (dizayn; o'qituvchi arizachisi uchun alohida)
+
+### BUG-230db203: ℹ️ AI endpointlar topilmadi (yo'llar boshqacha)
+- DALIL: /api/ai/quota va boshqalar 404 — AI UI boshqa yo'llarda (keyingi auditda to'liq xarita)
+
+### BUG-230db204: ℹ️ /play?code= fake kodlar 200 — validatsiya client-side
+- DALIL: 6 xato kod → hammasi 200 (join server-side socket orqali — sahifa faqat forma)
+
+### BUG-230db205: 🟡 /user/notifications'da RUSSIA so'zlar aralash (uz sessiyada)
+- DALIL: 'Панель', 'Ошибка', 'Уведомления', 'Сохранить' sahifada uchraydi — notifications modul i18n kalitlari to'liq emas (uz foydalanuvchi RU matn ko'radi)
+- FILE: notifications view/i18n lug'ati — uz tarjimalari yetishmaydi
+
+### BUG-230db206: ✅ Forgot enumeration qarshi + reset invalid token xavfsiz (PASS)
+- DALIL: generic javob, invalid/200-belgili token → 200 error-state (crash yo'q)
+
+### BUG-230db207: ✅ Status-kodlar konsistent (PASS)
+- DALIL: 6/6 kutilgan holatlar mos (401/200/404 to'g'ri joyda)
+
+### BUG-230db208: ℹ️ Excel shablon yuklab olish endpointi topilmadi
+- DALIL: /api/tests/template, /templates/test.xlsx → 404 (shablon UI ichida generatsiya bo'lishi kerak — create-test sahifasida tekshirish kerak)
+
+### BUG-230db209: ✅ hreflang TO'LIQ: uz-Latn, uz-Cyrl, ru, en, x-default (PASS — professional SEO)
+- DALIL: landing <link hreflang>; og:url to'g'ri
+
+### BUG-230db210: ✅ 404 sahifada bosh sahifa havolasi bor (PASS)
+
+### BUG-230db211: ℹ️ Director retest (empty-test sessiya) yaratilmadi
+- DALIL: 0 savolli test preflight'da o'tmadi (savollar bo'sh) — cast minimal 1 savol talab qiladi (kutish); avvalgi sessiya bilan 25s retest STEP 174'da qilinmadi — BUG-230db143 daliliga qaytadigan bo'lak
