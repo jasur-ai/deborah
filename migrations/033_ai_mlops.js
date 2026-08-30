@@ -56,9 +56,9 @@ export async function up(db) {
     .addColumn('allowlisted', 'boolean', (col) => col.notNull().defaultTo(false))
     // deployment gate: threshold met bo'lsagina allowlist mumkin
     .addColumn('eval_metric', 'varchar(16)', (col) => col.notNull().defaultTo('qwk'))
-    .addColumn('eval_threshold', 'decimal(4,3)', (col) => col.notNull().defaultTo(0.8))
+    .addColumn('eval_threshold', sql`decimal(4,3)`, (col) => col.notNull().defaultTo(0.8))
     .addColumn('created_by', 'integer')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('updated_at', 'timestamptz')
     .execute();
 
@@ -86,7 +86,7 @@ export async function up(db) {
     // pinned model_version — production'da aynan shu versiya ishlaydi
     .addColumn('model_version', 'varchar(32)', (col) => col.notNull())
     .addColumn('pinned_by', 'integer')
-    .addColumn('pinned_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('pinned_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // Bitta active pin — har tenant uchun bitta model pin
@@ -112,7 +112,7 @@ export async function up(db) {
     .addColumn('holdout', 'boolean', (col) => col.notNull().defaultTo(true))
     .addColumn('item_count', 'integer', (col) => col.notNull().defaultTo(0))
     .addColumn('created_by', 'integer')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await sql`
@@ -132,12 +132,12 @@ export async function up(db) {
     )
     .addColumn('input_hash', 'varchar(64)', (col) => col.notNull())
     // human gold mark — Prompt 51 shadow run'dan yoki teacher adjudication
-    .addColumn('gold_score', 'decimal(8,2)', (col) => col.notNull())
-    .addColumn('ai_score', 'decimal(8,2)')
+    .addColumn('gold_score', sql`decimal(8,2)`, (col) => col.notNull())
+    .addColumn('ai_score', sql`decimal(8,2)`)
     // subgroup: language (uz|ru|en) / course_code / faculty (fairness §7.7)
     .addColumn('subgroup', 'varchar(32)')
     .addColumn('gold_response', 'text')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // Idempotency: bir item bir marta (dataset + input_hash)
@@ -166,21 +166,21 @@ export async function up(db) {
     )
     // queued → running → completed | failed
     .addColumn('status', 'varchar(12)', (col) => col.notNull().defaultTo('queued'))
-    .addColumn('qwk', 'decimal(4,4)')
-    .addColumn('mae', 'decimal(8,4)')
-    .addColumn('f1', 'decimal(4,4)')
-    .addColumn('ece', 'decimal(4,4)')
-    .addColumn('override_rate', 'decimal(4,4)')
-    .addColumn('exact_agreement', 'decimal(4,4)')
+    .addColumn('qwk', sql`decimal(4,4)`)
+    .addColumn('mae', sql`decimal(8,4)`)
+    .addColumn('f1', sql`decimal(4,4)`)
+    .addColumn('ece', sql`decimal(4,4)`)
+    .addColumn('override_rate', sql`decimal(4,4)`)
+    .addColumn('exact_agreement', sql`decimal(4,4)`)
     .addColumn('items_evaluated', 'integer', (col) => col.notNull().defaultTo(0))
     // deployment gate: threshold met bo'lsa passed=true
     .addColumn('passed', 'boolean')
-    .addColumn('threshold', 'decimal(4,3)')
+    .addColumn('threshold', sql`decimal(4,3)`)
     .addColumn('drift_detected', 'boolean', (col) => col.notNull().defaultTo(false))
     .addColumn('notes', 'varchar(1000)')
     .addColumn('created_by', 'integer')
     .addColumn('completed_at', 'timestamptz')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -201,10 +201,10 @@ export async function up(db) {
     )
     .addColumn('subgroup', 'varchar(32)', (col) => col.notNull())
     .addColumn('n', 'integer', (col) => col.notNull().defaultTo(0))
-    .addColumn('qwk', 'decimal(4,4)')
-    .addColumn('mae', 'decimal(8,4)')
-    .addColumn('exact_agreement', 'decimal(4,4)')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('qwk', sql`decimal(4,4)`)
+    .addColumn('mae', sql`decimal(8,4)`)
+    .addColumn('exact_agreement', sql`decimal(4,4)`)
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await sql`
@@ -229,12 +229,12 @@ export async function up(db) {
     .addColumn('stage', 'varchar(12)', (col) => col.notNull())
     // approved | rejected | pending
     .addColumn('decision', 'varchar(12)', (col) => col.notNull().defaultTo('pending'))
-    .addColumn('threshold', 'decimal(4,3)')
-    .addColumn('actual', 'decimal(4,4)')
+    .addColumn('threshold', sql`decimal(4,3)`)
+    .addColumn('actual', sql`decimal(4,4)`)
     .addColumn('reason', 'varchar(1000)')
     .addColumn('decided_by', 'integer')
     .addColumn('decided_at', 'timestamptz')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await sql`
@@ -256,13 +256,13 @@ export async function up(db) {
       col.references('ai_eval_runs.id').onDelete('cascade')
     )
     .addColumn('metric', 'varchar(16)', (col) => col.notNull())
-    .addColumn('baseline', 'decimal(8,4)')
-    .addColumn('current', 'decimal(8,4)')
+    .addColumn('baseline', sql`decimal(8,4)`)
+    .addColumn('current', sql`decimal(8,4)`)
     .addColumn('severity', 'varchar(10)', (col) => col.notNull().defaultTo('low'))
     // low | medium | high
     .addColumn('window_start', 'timestamptz')
     .addColumn('window_end', 'timestamptz')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -290,7 +290,7 @@ export async function up(db) {
     .addColumn('to_status', 'varchar(12)')
     .addColumn('runbook_ref', 'varchar(160)')
     .addColumn('actor_id', 'integer')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -313,7 +313,7 @@ export async function up(db) {
   ];
   for (const table of newTables) {
     await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    try { await sql`GRANT USAGE ON ${sql.id(table + '_id_seq')} TO deborah_runtime`.execute(db); } catch (_) { /* serial emas — seq yo'q */ }
     await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 }

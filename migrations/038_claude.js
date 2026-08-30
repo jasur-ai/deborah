@@ -50,11 +50,11 @@ export async function up(db) {
     .addColumn('status', 'varchar(20)', (col) => col.notNull().defaultTo('disabled'))
     .addColumn('quota_limit_daily', 'integer', (col) => col.notNull().defaultTo(100))
     .addColumn('max_tokens', 'integer', (col) => col.notNull().defaultTo(4096))
-    .addColumn('temperature', 'numeric(3,2)', (col) => col.notNull().defaultTo(0.3))
+    .addColumn('temperature', sql`numeric(3,2)`, (col) => col.notNull().defaultTo(0.3))
     .addColumn('terms_ok', 'boolean', (col) => col.notNull().defaultTo(false))
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('claude_provider_tenant_model', ['tenant_id', 'provider', 'model']);
+    .addUniqueConstraint('claude_provider_tenant_model', ['tenant_id', 'provider', 'model']).execute()
 
   // ── 2. claude_synthesis_jobs — streaming source-synthesis job ──
   await db.schema
@@ -83,7 +83,7 @@ export async function up(db) {
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('claude_jobs_tenant_hash', ['tenant_id', 'request_hash']);
+    .addUniqueConstraint('claude_jobs_tenant_hash', ['tenant_id', 'request_hash']).execute()
 
   // ── 3. claude_job_events — streaming SSE/job progress ──
   await db.schema
@@ -98,7 +98,7 @@ export async function up(db) {
     // content_block_stop | message_delta | message_stop | ping | error | job_*
     .addColumn('payload', 'jsonb', (col) => col.defaultTo(sql`'{}'::jsonb`))
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('claude_job_events_job_seq', ['job_id', 'seq']);
+    .addUniqueConstraint('claude_job_events_job_seq', ['job_id', 'seq']).execute()
 
   // ── 4. claude_usage — per tenant/day token + cost ──
   await db.schema
@@ -114,10 +114,10 @@ export async function up(db) {
     .addColumn('output_tokens', 'bigint', (col) => col.notNull().defaultTo(0))
     .addColumn('cache_creation_tokens', 'bigint', (col) => col.notNull().defaultTo(0))
     .addColumn('cache_read_tokens', 'bigint', (col) => col.notNull().defaultTo(0))
-    .addColumn('cost_estimate', 'numeric(12,6)', (col) => col.notNull().defaultTo(0))
+    .addColumn('cost_estimate', sql`numeric(12,6)`, (col) => col.notNull().defaultTo(0))
     .addColumn('request_count', 'integer', (col) => col.notNull().defaultTo(0))
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('claude_usage_tenant_day_model', ['tenant_id', 'provider', 'model', 'day']);
+    .addUniqueConstraint('claude_usage_tenant_day_model', ['tenant_id', 'provider', 'model', 'day']).execute()
 
   // ── 5. claude_circuit_breakers — retry/circuit state ──
   await db.schema
@@ -132,7 +132,7 @@ export async function up(db) {
     .addColumn('open_until', 'timestamp')
     .addColumn('last_error', 'text')
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('claude_circuit_tenant_model', ['tenant_id', 'provider', 'model']);
+    .addUniqueConstraint('claude_circuit_tenant_model', ['tenant_id', 'provider', 'model']).execute()
 
   // ── 6. claude_attributions — citation/search-result mapping ──
   await db.schema
@@ -151,7 +151,7 @@ export async function up(db) {
     )
     .addColumn('title', 'varchar(300)')
     .addColumn('url', 'text')
-    .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`));
+    .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`)).execute()
 }
 
 /**

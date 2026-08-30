@@ -66,8 +66,8 @@ export async function up(db) {
     .addColumn('content_package', 'jsonb', (col) => col.defaultTo('{}'))
     // Public item snapshots only (no private keys, ever)
     .addColumn('client_info', 'jsonb', (col) => col.defaultTo('{}'))
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // Idempotency: one attempt per assignment + user + day
@@ -105,7 +105,7 @@ export async function up(db) {
     .addColumn('connection_type', 'varchar(30)')
     .addColumn('camera_available', 'boolean')
     .addColumn('seb_present', 'boolean')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -132,7 +132,7 @@ export async function up(db) {
     )
     .addColumn('status', 'varchar(20)', (col) => col.notNull().defaultTo('active'))
     // active | released | expired
-    .addColumn('acquired_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('acquired_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('expires_at', 'timestamptz')
     .addColumn('released_at', 'timestamptz')
     .execute();

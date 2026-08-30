@@ -62,8 +62,8 @@ export async function up(db) {
     .addColumn('external_scoped', 'boolean', (col) => col.notNull().defaultTo(false))
     // external examiner — faqat o'ziga berilgan work items ko'radi
     .addColumn('created_by', 'integer')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await sql`
@@ -98,15 +98,15 @@ export async function up(db) {
     // single | sample | second | double
     .addColumn('status', 'varchar(14)', (col) => col.notNull().defaultTo('queued'))
     // queued → assigned → in_progress → scored → agreed
-    .addColumn('marker_score', 'decimal(8,2)')
+    .addColumn('marker_score', sql`decimal(8,2)`)
     .addColumn('marker_comment', 'text')
     .addColumn('locked_by', 'integer')
     .addColumn('locked_at', 'timestamptz')
     .addColumn('scored_at', 'timestamptz')
-    .addColumn('agreed_score', 'decimal(8,2)')
+    .addColumn('agreed_score', sql`decimal(8,2)`)
     // moderation policy agreed mark (done condition §25)
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await sql`
@@ -133,7 +133,7 @@ export async function up(db) {
     // rubric anchors reference (rubric_anchors.id)
     .addColumn('status', 'varchar(10)', (col) => col.notNull().defaultTo('draft'))
     // draft → open → completed | failed
-    .addColumn('threshold', 'decimal(5,2)', (col) => col.notNull().defaultTo(1.0))
+    .addColumn('threshold', sql`decimal(5,2)`, (col) => col.notNull().defaultTo(1.0))
     // allowed deviation from gold — calibration threshold
     .addColumn('gold_scores', 'jsonb', (col) => col.defaultTo('{}'))
     // { anchorId: goldScore }
@@ -141,7 +141,7 @@ export async function up(db) {
     // { anchorId: { score, passed } }
     .addColumn('passed', 'boolean', (col) => col.defaultTo(null))
     .addColumn('created_by', 'integer')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('completed_at', 'timestamptz')
     .execute();
 
@@ -164,12 +164,12 @@ export async function up(db) {
     .addColumn('criterion_id', 'integer', (col) =>
       col.references('rubric_criteria.id').onDelete('cascade')
     )
-    .addColumn('score', 'decimal(8,2)', (col) => col.notNull())
+    .addColumn('score', sql`decimal(8,2)`, (col) => col.notNull())
     .addColumn('comment', 'text')
     .addColumn('marker_user_id', 'integer', (col) =>
       col.references('users.id').onDelete('cascade').notNull()
     )
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -191,18 +191,18 @@ export async function up(db) {
     .addColumn('attempt_id', 'integer', (col) =>
       col.references('attempts.id').onDelete('cascade')
     )
-    .addColumn('delta', 'decimal(8,2)', (col) => col.notNull())
+    .addColumn('delta', sql`decimal(8,2)`, (col) => col.notNull())
     // |score1 - score2| — disagreement
     .addColumn('policy', 'varchar(12)', (col) => col.notNull().defaultTo('sample'))
     // sample | second | double
-    .addColumn('threshold', 'decimal(5,2)', (col) => col.notNull().defaultTo(5.0))
+    .addColumn('threshold', sql`decimal(5,2)`, (col) => col.notNull().defaultTo(5.0))
     .addColumn('status', 'varchar(12)', (col) => col.notNull().defaultTo('open'))
     // open → adjudicated → closed | escalated
     .addColumn('adjudicator_id', 'integer')
-    .addColumn('adjudicated_score', 'decimal(8,2)')
+    .addColumn('adjudicated_score', sql`decimal(8,2)`)
     .addColumn('adjudication_note', 'varchar(1000)')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await sql`
@@ -225,7 +225,7 @@ export async function up(db) {
   ];
   for (const table of newTables) {
     await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    try { await sql`GRANT USAGE ON ${sql.id(table + '_id_seq')} TO deborah_runtime`.execute(db); } catch (_) { /* serial emas — seq yo'q */ }
     await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 }

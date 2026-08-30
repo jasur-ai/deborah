@@ -68,7 +68,7 @@ export async function up(db) {
     // [{ code, message }]
     .addColumn('client_info', 'jsonb', (col) => col.defaultTo('{}'))
     // Raw browser/device/network hints submitted by the student app
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // Idempotency — same assignment + user + day → single row

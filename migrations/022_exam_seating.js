@@ -1,3 +1,5 @@
+import { sql } from 'kysely';
+
 /**
  * Deborah — Migration 022: Seat, Proctor, Hall Ticket & Check-in (Prompt 40)
  *
@@ -52,8 +54,8 @@ export async function up(db) {
     .addColumn('created_by', 'integer', (col) =>
       col.references('users.id').onDelete('set null')
     )
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -100,7 +102,7 @@ export async function up(db) {
     // offline check-in journal seq — idempotent replay
     .addColumn('reseat_of', 'integer')
     // prior seat assignment id — reseat/replacement audit chain
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -143,7 +145,7 @@ export async function up(db) {
     .addColumn('status', 'varchar(20)', (col) => col.notNull().defaultTo('assigned'))
     // assigned | acknowledged | replaced
     .addColumn('acknowledged_at', 'timestamptz')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -182,7 +184,7 @@ export async function up(db) {
     // high-water mark of contiguous applied seqs
     .addColumn('status', 'varchar(20)', (col) => col.notNull().defaultTo('pending'))
     // pending | applied | rejected
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // UNIQUE (tenant, device, client_seq) — offline replay idempotency:
@@ -208,7 +210,7 @@ export async function up(db) {
       col.references('exam_seat_assignments.id').onDelete('cascade').notNull()
     )
     .addColumn('seat_map_version', 'integer', (col) => col.notNull().defaultTo(1))
-    .addColumn('acked_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('acked_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -237,7 +239,7 @@ export async function up(db) {
     .addColumn('actor_user_id', 'integer', (col) =>
       col.references('users.id').onDelete('set null')
     )
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema

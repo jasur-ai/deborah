@@ -20,7 +20,7 @@
 export async function up(db) {
   await db.schema
     .alterTable('users')
-    .addColumn('telegram_id', 'text', (col) => col.unique())
+    // S30 fix: telegram_id 049_users_final_schema'da qo'shilgan; UNIQUE index pastda
     .addColumn('telegram_linked_at', 'timestamptz')
     .execute();
 

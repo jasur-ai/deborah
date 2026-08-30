@@ -431,8 +431,10 @@ router.post('/admin/login', redirectIfAdmin, async (req, res) => {
       }
     } catch (_) { /* risk fail-soft */ }
 
-    // ── 6) MFA mandatory (A-30 §06) ──
-    if (adminMfaMandatory()) {
+    // ── 6) MFA (A-30 §06 + S30: ixtiyoriy enroll'dan keyin ham) ──
+    // Admin MFA ACTIVE bo'lsa — mandatory flag'dan qat'i nazar challenge
+    // (aks holda ixtiyoriy yoqilgan MFA login'da bypass qilinardi).
+    if (adminMfaMandatory() || (await getMfaStatus(ADMIN_MFA_ACCOUNT)).status === 'active') {
       const status = await getMfaStatus(ADMIN_MFA_ACCOUNT);
       if (status.status !== 'active') {
         // Enroll yo'q → forced enrollment (QR + secret, bir marta ko'rsatiladi)
@@ -568,10 +570,29 @@ router.post('/api/admin/mfa/verify', async (req, res) => {
 });
 
 // ── Admin MFA Enroll Page (forced — QR + secret, bir marta) ──
-router.get('/admin/mfa/enroll', (req, res) => {
+router.get('/admin/mfa/enroll', async (req, res) => {
   const enroll = req.session?.adminMfaEnroll;
   if (!enroll?.secret) {
-    if (req.session?.admin) return res.redirect('/admin/dashboard');
+    // S30: logged-in admin uchun IXTIYORIY enroll (ADMIN_MFA_MANDATORY off
+    // bo'lsa ham). Faqat MFA hali active bo'lmaganda; aks holda profile'ga.
+    if (req.session?.admin) {
+      try {
+        const st = await getMfaStatus(ADMIN_MFA_ACCOUNT);
+        if (st.status === 'active') return res.redirect('/admin/profile?mfa=already');
+        const setup = await setupTotp(ADMIN_MFA_ACCOUNT, { accountName: 'Deborah Admin' });
+        if (!setup.ok) return res.redirect('/admin/profile?mfa=error');
+        const qr = await qrcode.toDataURL(setup.otpauth, { width: 220, margin: 1 }).catch(() => null);
+        req.session.adminMfaEnroll = { secret: setup.secret, otpauth: setup.otpauth, qr, voluntary: true };
+        return res.render('admin/mfa-enroll', {
+          title: 'Admin 2FA sozlash',
+          secret: setup.secret, otpauth: setup.otpauth, qr, error: null,
+          // S30: enable POST uchun CSRF (head.ejs window.__CSRF_TOKEN)
+          csrfToken: req.session?.csrfToken || (req.csrfToken ? req.csrfToken() : ''),
+        });
+      } catch (_) {
+        return res.redirect('/admin/profile?mfa=error');
+      }
+    }
     return res.redirect('/admin/login');
   }
   res.render('admin/mfa-enroll', {
@@ -580,6 +601,8 @@ router.get('/admin/mfa/enroll', (req, res) => {
     otpauth: enroll.otpauth,
     qr: enroll.qr || null,
     error: null,
+    // S30: head.ejs window.__CSRF_TOKEN shu local'dan oladi (enable POST uchun)
+    csrfToken: req.session?.csrfToken || (req.csrfToken ? req.csrfToken() : ''),
   });
 });
 
@@ -594,7 +617,13 @@ router.post('/api/admin/mfa/enable', async (req, res) => {
     if (!token) return res.status(400).json({ ok: false, error: 'required' });
     const result = await enableTotp(ADMIN_MFA_ACCOUNT, String(token).trim());
     if (!result.ok) return res.status(400).json({ ok: false, error: result.error });
+    const wasVoluntary = !!enroll.voluntary && !!req.session?.admin;
     delete req.session.adminMfaEnroll;
+    // S30: ixtiyoriy enroll — admin sessiyasi allaqachon ochiq, qayta yaratmaymiz
+    if (wasVoluntary) {
+      req.session.admin = { ...req.session.admin, mfaEnrolled: true, mfaAt: Date.now() };
+      return res.json({ ok: true, voluntary: true, backupCodes: result.backupCodes });
+    }
     logAuthEvent({
       action: AUDIT_ACTIONS.ADMIN_MFA_ENROLLED,
       outcome: 'success',

@@ -60,10 +60,10 @@ export async function up(db) {
     .addColumn('strike_level', 'varchar(20)', (col) => col.defaultTo(null))
     // null | warning_1 | warning_2 | terminated — server-computed
     .addColumn('server_received_at', 'timestamptz', (col) =>
-      col.notNull().defaultTo(db.fn.now())
+      col.notNull().defaultTo(sql`now()`)
     )
     // Server receive timestamp is authoritative for the timeline (§31.5)
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // Idempotent client retry: one row per (attempt, device, client_seq).

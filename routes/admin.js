@@ -12,6 +12,8 @@ import { recordMetric } from '../src/telemetry/index.js';
 import { DB_PATHS } from '../utils/constants.js';
 import crypto from 'crypto';
 import { safeKey } from '../utils/helpers.js';
+import { getMfaStatus } from '../src/modules/auth/mfa-totp.js';
+import { ADMIN_MFA_ACCOUNT } from '../src/modules/auth/admin-security.js';
 // AUTH A-19/B-15: teacher approval + B-34 signup review queue
 import teacherRoutes from './admin/teachers.js';
 // BUG-029: Barcha funksiyalar — bir ko'rinish indeks (sidebar'dan avto-katalog)
@@ -138,7 +140,10 @@ router.get('/profile', async (req, res) => {
       adminCopy: await adminCopyFor(req),
       profile: {
         username: admin.username || '-',
-        mfaEnrolled: !!admin.mfaEnrolled || !!admin.mfa,
+        // S30: MFA holati DB'dan (mfa_totp/admin) — sessiya flagidan mustaqil,
+        // yangi sessiyada ham "MFA yoqilgan" to'g'ri ko'rinadi.
+        mfaEnrolled: !!admin.mfaEnrolled || !!admin.mfa
+          || (await getMfaStatus(ADMIN_MFA_ACCOUNT).then((s) => s.status === 'active').catch(() => false)),
         loginAt: admin.loginAt || admin.createdAt || null,
         loginIp: admin.loginIp || null,
         sessionExpires: req.session?.cookie?.expires || null,

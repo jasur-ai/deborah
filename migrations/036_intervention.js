@@ -58,7 +58,7 @@ export async function up(db) {
     // draft | reviewed | approved | rejected
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('misconception_mappings_tenant_label', ['tenant_id', 'competency_id', 'label']);
+    .addUniqueConstraint('misconception_mappings_tenant_label', ['tenant_id', 'competency_id', 'label']).execute()
 
   // ── 2. misconception_clusters — cluster review ──
   await db.schema
@@ -76,7 +76,7 @@ export async function up(db) {
     .addColumn('reviewed_by', 'varchar(120)')
     .addColumn('reviewed_at', 'timestamp')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('misconception_clusters_tenant_key', ['tenant_id', 'cluster_key']);
+    .addUniqueConstraint('misconception_clusters_tenant_key', ['tenant_id', 'cluster_key']).execute()
 
   // ── 3. intervention_library — versioned intervention content ──
   await db.schema
@@ -100,7 +100,7 @@ export async function up(db) {
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('intervention_library_tenant_title', ['tenant_id', 'title']);
+    .addUniqueConstraint('intervention_library_tenant_title', ['tenant_id', 'title']).execute()
 
   // ── 4. intervention_versions — version history ──
   await db.schema
@@ -115,7 +115,7 @@ export async function up(db) {
     .addColumn('published_at', 'timestamp')
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('intervention_versions_iv_no', ['intervention_id', 'version_no']);
+    .addUniqueConstraint('intervention_versions_iv_no', ['intervention_id', 'version_no']).execute()
 
   // ── 5. next_action_cards — teacher-approved action flow ──
   await db.schema
@@ -154,7 +154,7 @@ export async function up(db) {
       'student_id',
       'competency_id',
       'status',
-    ]);
+    ]).execute()
 
   // ── 6. reassessments — DIFFERENT-item reassessment ──
   await db.schema
@@ -188,7 +188,7 @@ export async function up(db) {
       'tenant_id',
       'student_id',
       'competency_id',
-    ]);
+    ]).execute()
 
   // ── 7. mastery_estimates — rule + BKT ──
   await db.schema
@@ -205,14 +205,14 @@ export async function up(db) {
     )
     .addColumn('method', 'varchar(10)', (col) => col.notNull().defaultTo('rule'))
     // rule | bkt
-    .addColumn('mastery_est', 'numeric(6,4)', (col) => col.notNull().defaultTo(0))
-    .addColumn('threshold', 'numeric(6,4)', (col) => col.notNull().defaultTo(0.8))
+    .addColumn('mastery_est', sql`numeric(6,4)`, (col) => col.notNull().defaultTo(0))
+    .addColumn('threshold', sql`numeric(6,4)`, (col) => col.notNull().defaultTo(0.8))
     .addColumn('level', 'varchar(20)', (col) => col.notNull().defaultTo('below'))
     // below | approaching | at | above
-    .addColumn('prior_p', 'numeric(6,4)')
-    .addColumn('learn_rate', 'numeric(6,4)')
-    .addColumn('slip', 'numeric(6,4)')
-    .addColumn('guess', 'numeric(6,4)')
+    .addColumn('prior_p', sql`numeric(6,4)`)
+    .addColumn('learn_rate', sql`numeric(6,4)`)
+    .addColumn('slip', sql`numeric(6,4)`)
+    .addColumn('guess', sql`numeric(6,4)`)
     .addColumn('evidence_count', 'integer', (col) => col.notNull().defaultTo(0))
     .addColumn('last_evidence_at', 'timestamp')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
@@ -222,7 +222,7 @@ export async function up(db) {
       'student_id',
       'competency_id',
       'method',
-    ]);
+    ]).execute()
 
   // ── 8. practice_sessions — spaced-repetition scheduler ──
   await db.schema
@@ -249,7 +249,7 @@ export async function up(db) {
       'student_id',
       'competency_id',
       'due_at',
-    ]);
+    ]).execute()
 
   // ── 9. intervention_metrics — before / after / retention ──
   await db.schema
@@ -264,9 +264,9 @@ export async function up(db) {
     .addColumn('intervention_id', 'integer', (col) =>
       col.references('intervention_library.id').onDelete('cascade').notNull()
     )
-    .addColumn('pre_score', 'numeric(6,4)')
-    .addColumn('post_score', 'numeric(6,4)')
-    .addColumn('retention_score', 'numeric(6,4)')
+    .addColumn('pre_score', sql`numeric(6,4)`)
+    .addColumn('post_score', sql`numeric(6,4)`)
+    .addColumn('retention_score', sql`numeric(6,4)`)
     .addColumn('pre_attempt_id', 'integer', (col) =>
       col.references('attempts.id').onDelete('set null')
     )
@@ -279,7 +279,7 @@ export async function up(db) {
       'tenant_id',
       'student_id',
       'intervention_id',
-    ]);
+    ]).execute()
 
   // ── 10. support_cases — Ethical Student Success (no prediction labels) ──
   await db.schema
@@ -309,7 +309,7 @@ export async function up(db) {
       'student_id',
       'signal_type',
       'case_status',
-    ]);
+    ]).execute()
 
   // ── 11. student_contest_requests — student contest/appeal flow ──
   await db.schema
@@ -335,7 +335,7 @@ export async function up(db) {
       'tenant_id',
       'student_id',
       'case_id',
-    ]);
+    ]).execute()
 }
 
 /**

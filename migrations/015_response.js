@@ -48,7 +48,7 @@ export async function up(db) {
     .addColumn('mode', 'varchar(20)', (col) => col.notNull())
     // first | editable | item_lock
     .addColumn('client_seq', 'integer', (col) => col.notNull().defaultTo(1))
-    // Monotonic per item; server ACKs the highest accepted
+    // Monotonic per item.execute() server ACKs the highest accepted
     .addColumn('revision', 'integer', (col) => col.notNull().defaultTo(1))
     // For editable mode: 1..N revisions
     .addColumn('idempotency_key', 'varchar(160)')
@@ -60,11 +60,11 @@ export async function up(db) {
     .addColumn('payload', 'jsonb', (col) => col.defaultTo('{}'))
     // { value } — typed response payload
     .addColumn('server_received_at', 'timestamptz', (col) =>
-      col.notNull().defaultTo(db.fn.now())
+      col.notNull().defaultTo(sql`now()`)
     )
     // Server-authoritative receive time (epoch)
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // Idempotency: one row per (attempt, item, client_seq) — duplicate/out-of-order
@@ -129,7 +129,7 @@ export async function up(db) {
     // Full essay snapshot (every N chars / seconds)
     .addColumn('patch', 'jsonb', (col) => col.defaultTo('{}'))
     // { ops } minimal patch between snapshots
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await sql`

@@ -76,8 +76,8 @@ export async function up(db) {
     .addColumn('created_by', 'integer', (col) =>
       col.references('users.id').onDelete('set null')
     )
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -121,14 +121,14 @@ export async function up(db) {
     .addColumn('section_title', 'varchar(255)')
     .addColumn('question_type', 'varchar(30)')
     .addColumn('difficulty', 'varchar(10)')
-    .addColumn('points', 'numeric(8,2)', (col) => col.notNull().defaultTo(1))
+    .addColumn('points', sql`numeric(8,2)`, (col) => col.notNull().defaultTo(1))
     .addColumn('time_seconds', 'integer')
     .addColumn('sort_order', 'integer', (col) => col.notNull().defaultTo(0))
     .addColumn('public_data', 'jsonb', (col) => col.notNull().defaultTo('{}'))
     // PUBLIC: { stem, options, stimulus, mediaRefs } — never scoring keys
     .addColumn('item_hash', 'varchar(64)')
     // Per-item SHA-256 over canonical public content (immutability check)
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -153,7 +153,7 @@ export async function up(db) {
     .addColumn('private_data', 'jsonb')
     // PRIVATE: { correctKey, scoringRubric, explanation, distractorRationale }
     .addColumn('item_hash', 'varchar(64)')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -179,7 +179,7 @@ export async function up(db) {
       col.references('groups.id').onDelete('set null')
     )
     .addColumn('external_id', 'varchar(120)')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -209,7 +209,7 @@ export async function up(db) {
     .addColumn('payload', 'jsonb', (col) => col.defaultTo('{}'))
     .addColumn('status', 'varchar(20)', (col) => col.notNull().defaultTo('pending'))
     .addColumn('idempotency_key', 'varchar(200)')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -234,7 +234,7 @@ export async function up(db) {
   ];
   for (const table of newTables) {
     await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    try { await sql`GRANT USAGE ON ${sql.id(table + '_id_seq')} TO deborah_runtime`.execute(db); } catch (_) { /* serial emas — seq yo'q */ }
     await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
     await sql`GRANT SELECT ON ${sql.table(table)} TO deborah_scoring`.execute(db);
   }

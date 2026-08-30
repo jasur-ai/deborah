@@ -54,8 +54,8 @@ export async function up(db) {
     .addColumn('receipt', 'jsonb', (col) => col.defaultTo(null))
     // { signature, body } — HMAC-SHA256 signed receipt, written ATOMICALLY
     // inside the seal INSERT (no post-commit race)
-    .addColumn('sealed_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('sealed_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // EXACTLY ONE seal per attempt — a second submit is a no-op (idempotent).
@@ -90,7 +90,7 @@ export async function up(db) {
     .addColumn('attempted_at', 'timestamptz', (col) => col.defaultTo(null))
     .addColumn('processed_at', 'timestamptz', (col) => col.defaultTo(null))
     .addColumn('error', 'varchar(500)')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // UNIQUE attempt_id → duplicate scoring job is IMPOSSIBLE (Prompt 33 §15:

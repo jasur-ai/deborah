@@ -49,8 +49,8 @@ export async function up(db) {
     .addColumn('created_by', 'integer')
     .addColumn('approved_by', 'integer')
     .addColumn('approved_at', 'timestamptz')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -86,8 +86,8 @@ export async function up(db) {
     .addColumn('approved_by', 'integer')
     .addColumn('approved_at', 'timestamptz')
     .addColumn('created_by', 'integer')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // Idempotency: same tenant + same content hash → no duplicate source
@@ -126,7 +126,7 @@ export async function up(db) {
     .addColumn('embedding_model', 'varchar(64)')
     .addColumn('embedding_version', 'varchar(32)')
     .addColumn('embedding_updated_at', 'timestamptz')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // Chunk idempotency: one chunk per (source, page, index)
@@ -164,7 +164,7 @@ export async function up(db) {
     // approved | rejected
     .addColumn('note', 'varchar(500)')
     .addColumn('decided_by', 'integer')
-    .addColumn('decided_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('decided_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -177,7 +177,7 @@ export async function up(db) {
   const newTables = ['source_packs', 'sources', 'source_chunks', 'source_approvals'];
   for (const table of newTables) {
     await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    try { await sql`GRANT USAGE ON ${sql.id(table + '_id_seq')} TO deborah_runtime`.execute(db); } catch (_) { /* serial emas — seq yo'q */ }
     await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 }

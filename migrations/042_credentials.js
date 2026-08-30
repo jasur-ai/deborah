@@ -41,7 +41,7 @@ export async function up(db) {
     .addColumn('display_name', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('portfolio_tenant_user', ['tenant_id', 'user_id']);
+    .addUniqueConstraint('portfolio_tenant_user', ['tenant_id', 'user_id']).execute()
 
   await db.schema
     .createTable('portfolio_items')
@@ -63,7 +63,7 @@ export async function up(db) {
     .addColumn('evidence_ref', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addIndex('portfolio_items_portfolio_idx', ['portfolio_id']);
+    
 
   await db.schema
     .createTable('share_grants')
@@ -81,7 +81,7 @@ export async function up(db) {
     .addColumn('revoked_at', 'timestamp')
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addIndex('share_grants_token_idx', ['grant_token']);
+    
 
   await db.schema
     .createTable('credential_definitions')
@@ -98,7 +98,7 @@ export async function up(db) {
     .addColumn('issuer_authority', 'varchar(120)')
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`));
+    .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`)).execute()
 
   await db.schema
     .createTable('credentials')
@@ -126,8 +126,8 @@ export async function up(db) {
     .addColumn('issued_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addIndex('credentials_tenant_user_idx', ['tenant_id', 'user_id'])
-    .addIndex('credentials_digest_idx', ['vc_digest']);
+    
+    
 
   await db.schema
     .createTable('credential_events')
@@ -143,7 +143,7 @@ export async function up(db) {
     .addColumn('actor', 'varchar(120)')
     .addColumn('detail', 'jsonb', (col) => col.defaultTo(sql`'{}'::jsonb`))
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addIndex('credential_events_cred_idx', ['credential_id']);
+    
 }
 
 /**
@@ -151,6 +151,11 @@ export async function up(db) {
  */
 export async function down(db) {
   await db.schema.dropTable('credential_events');
+  await db.schema.createIndex('credential_events_cred_idx').on('credential_events').columns(['credential_id']).execute();
+  await db.schema.createIndex('credentials_digest_idx').on('credentials').columns(['vc_digest']).execute();
+  await db.schema.createIndex('credentials_tenant_user_idx').on('credentials').columns(['tenant_id', 'user_id']).execute();
+  await db.schema.createIndex('share_grants_token_idx').on('share_grants').columns(['grant_token']).execute();
+  await db.schema.createIndex('portfolio_items_portfolio_idx').on('portfolio_items').columns(['portfolio_id']).execute();
   await db.schema.dropTable('credentials');
   await db.schema.dropTable('credential_definitions');
   await db.schema.dropTable('share_grants');

@@ -61,7 +61,7 @@ export async function up(db) {
     .addColumn('last_error', 'text')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('resource_providers_tenant_name', ['tenant_id', 'name']);
+    .addUniqueConstraint('resource_providers_tenant_name', ['tenant_id', 'name']).execute()
 
   // ── 2. resource_records — canonical deduped records ──
   await db.schema
@@ -90,7 +90,7 @@ export async function up(db) {
       'tenant_id',
       'provider',
       'external_id',
-    ]);
+    ]).execute()
 
   // DOI idempotency — bitta tenant'da bitta DOI bir marta
   await db.schema
@@ -116,7 +116,7 @@ export async function up(db) {
     .addColumn('status', 'varchar(20)', (col) => col.notNull().defaultTo('completed'))
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('resource_searches_tenant_hash', ['tenant_id', 'query_hash']);
+    .addUniqueConstraint('resource_searches_tenant_hash', ['tenant_id', 'query_hash']).execute()
 
   // ── 4. resource_search_results — ranking output ──
   await db.schema
@@ -129,14 +129,14 @@ export async function up(db) {
       col.references('resource_records.id').onDelete('cascade').notNull()
     )
     .addColumn('rank', 'integer', (col) => col.notNull())
-    .addColumn('score', 'numeric(8,4)', (col) => col.notNull())
+    .addColumn('score', sql`numeric(8,4)`, (col) => col.notNull())
     .addColumn('components', 'jsonb', (col) => col.defaultTo(sql`'{}'::jsonb`))
     .addColumn('why_recommended', 'text')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addUniqueConstraint('resource_search_results_search_record', [
       'search_id',
       'record_id',
-    ]);
+    ]).execute()
 
   // ── 5. resource_feedback — teacher trust/hide/save/source-pack ──
   await db.schema
@@ -160,7 +160,7 @@ export async function up(db) {
       'record_id',
       'actor_id',
       'action',
-    ]);
+    ]).execute()
 
   // ── 6. resource_connector_logs — quota/cache/outage audit ──
   await db.schema
@@ -175,7 +175,7 @@ export async function up(db) {
     .addColumn('retries', 'integer', (col) => col.notNull().defaultTo(0))
     .addColumn('latency_ms', 'integer', (col) => col.notNull().defaultTo(0))
     .addColumn('error', 'text')
-    .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`));
+    .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`)).execute()
 
   // Search results: ranking bo'yicha tez qidiruv
   await db.schema

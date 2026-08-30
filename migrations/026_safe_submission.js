@@ -80,8 +80,8 @@ export async function up(db) {
     // pending → clean | infected | unscannable
     .addColumn('quarantine_reason', 'varchar(500)')
     .addColumn('created_by', 'integer')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await sql`
@@ -112,7 +112,7 @@ export async function up(db) {
     .addColumn('status', 'varchar(12)', (col) => col.notNull().defaultTo('received'))
     // received → verified | rejected
     .addColumn('storage_key', 'varchar(512)')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await sql`
@@ -139,7 +139,7 @@ export async function up(db) {
       col.references('users.id').onDelete('cascade').notNull()
     )
     .addColumn('version_no', 'integer', (col) => col.notNull())
-    // 1 = first submission; resubmission (authorized) → 2, 3, ...
+    // 1 = first submission.execute() resubmission (authorized) → 2, 3, ...
     .addColumn('upload_session_id', 'integer', (col) =>
       col.references('upload_sessions.id').onDelete('set null')
     )
@@ -148,9 +148,9 @@ export async function up(db) {
     .addColumn('superseded_by', 'integer')
     // id of the newer version (immutable history kept)
     .addColumn('superseded_at', 'timestamptz')
-    .addColumn('submitted_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('submitted_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('created_by', 'integer')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await sql`
@@ -180,7 +180,7 @@ export async function up(db) {
     // idempotency + shareable verification token
     .addColumn('receipt_body', 'jsonb', (col) => col.notNull())
     .addColumn('signature', 'varchar(64)', (col) => col.notNull())
-    .addColumn('issued_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('issued_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await sql`
@@ -207,7 +207,7 @@ export async function up(db) {
     .addColumn('verdict', 'varchar(14)', (col) => col.notNull())
     // clean | infected | suspicious | unscannable
     .addColumn('details', 'jsonb', (col) => col.defaultTo('{}'))
-    .addColumn('scanned_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('scanned_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -239,8 +239,8 @@ export async function up(db) {
     // low-confidence → teacher manual listen queue
     .addColumn('source_hash', 'varchar(64)')
     .addColumn('created_by', 'integer')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -265,7 +265,7 @@ export async function up(db) {
   ];
   for (const table of newTables) {
     await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    try { await sql`GRANT USAGE ON ${sql.id(table + '_id_seq')} TO deborah_runtime`.execute(db); } catch (_) { /* serial emas — seq yo'q */ }
     await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 }

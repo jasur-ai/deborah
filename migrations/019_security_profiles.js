@@ -52,7 +52,7 @@ export async function up(db) {
     .addColumn('updated_by', 'integer', (col) =>
       col.references('users.id').onDelete('set null')
     )
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // One institution policy per tenant

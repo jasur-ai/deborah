@@ -56,7 +56,7 @@ export async function up(db) {
     // { onDesignOpen, onDesignPublish, designUrl, editUrl }
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('canva_connections_tenant_user', ['tenant_id', 'user_id']);
+    .addUniqueConstraint('canva_connections_tenant_user', ['tenant_id', 'user_id']).execute()
 
   // ── 2. google_connections — Google Slides drive.file token vault ──
   await db.schema
@@ -78,7 +78,7 @@ export async function up(db) {
     .addColumn('status', 'varchar(20)', (col) => col.notNull().defaultTo('active'))
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('google_connections_tenant_user', ['tenant_id', 'user_id']);
+    .addUniqueConstraint('google_connections_tenant_user', ['tenant_id', 'user_id']).execute()
 
   // ── 3. deck_exports — final PPTX/PDF/handout with attribution ──
   await db.schema
@@ -106,7 +106,7 @@ export async function up(db) {
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('deck_exports_tenant_hash', ['tenant_id', 'request_hash']);
+    .addUniqueConstraint('deck_exports_tenant_hash', ['tenant_id', 'request_hash']).execute()
 
   // ── 4. deck_quiz_jobs — "Create quiz from this deck" (50/30/20) ──
   await db.schema
@@ -137,7 +137,7 @@ export async function up(db) {
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('deck_quiz_tenant_hash', ['tenant_id', 'request_hash']);
+    .addUniqueConstraint('deck_quiz_tenant_hash', ['tenant_id', 'request_hash']).execute()
 }
 
 /**

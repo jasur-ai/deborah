@@ -49,8 +49,8 @@ export async function up(db) {
     .addColumn('target_bank_id', 'integer', (col) =>
       col.references('item_banks.id').onDelete('set null')
     )
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -79,17 +79,17 @@ export async function up(db) {
     .addColumn('is_supported', 'boolean', (col) => col.notNull().defaultTo(true))
     .addColumn('unsupported_reason', 'text') // Why this item can't be mapped
     .addColumn('difficulty', 'varchar(10)') // Auto-detected or from QTI metadata
-    .addColumn('points', 'numeric(6,2)', (col) => col.defaultTo(1))
+    .addColumn('points', sql`numeric(6,2)`, (col) => col.defaultTo(1))
     .addColumn('time_seconds', 'integer')
-    .addColumn('tags', 'text[]') // Tags extracted from QTI metadata
+    .addColumn('tags', sql`text[]`) // Tags extracted from QTI metadata
     .addColumn('outcome_mappings', 'jsonb', (col) => col.defaultTo('[]'))
     // [{ outcome_identifier, weight }]
     .addColumn('review_status', 'varchar(20)', (col) => col.notNull().defaultTo('pending'))
     // pending | reviewed | approved | rejected
     .addColumn('review_notes', 'text')
     .addColumn('created_item_id', 'integer') // FK to items.id after commit
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -121,7 +121,7 @@ export async function up(db) {
       col.references('qti_staging_items.id').onDelete('set null')
     )
     .addColumn('media_dependencies', 'jsonb', (col) => col.defaultTo('[]'))
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -139,7 +139,7 @@ export async function up(db) {
   const newTables = ['qti_packages', 'qti_staging_items', 'qti_resource_map'];
   for (const table of newTables) {
     await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    try { await sql`GRANT USAGE ON ${sql.id(table + '_id_seq')} TO deborah_runtime`.execute(db); } catch (_) { /* serial emas — seq yo'q */ }
     await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 

@@ -41,8 +41,8 @@ export async function up(db) {
       col.references('users.id').onDelete('set null')
     )
     .addColumn('metadata', 'jsonb', (col) => col.defaultTo('{}'))
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -70,7 +70,7 @@ export async function up(db) {
     // easy | medium | hard
     .addColumn('cognitive_level', 'varchar(20)')
     // remember | understand | apply | analyze | evaluate | create
-    .addColumn('points', 'numeric(6,2)', (col) => col.notNull().defaultTo(1))
+    .addColumn('points', sql`numeric(6,2)`, (col) => col.notNull().defaultTo(1))
     .addColumn('time_seconds', 'integer') // Recommended time to answer
     .addColumn('public_data', 'jsonb', (col) => col.notNull())
     // PUBLIC: { stem: "question text", options: [{key, text}], stimulus, mediaRefs }
@@ -86,8 +86,8 @@ export async function up(db) {
     .addColumn('created_by', 'integer', (col) =>
       col.references('users.id').onDelete('set null')
     )
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -121,7 +121,7 @@ export async function up(db) {
     .addColumn('changed_by', 'integer', (col) =>
       col.references('users.id').onDelete('set null')
     )
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -141,7 +141,7 @@ export async function up(db) {
       col.references('items.id').onDelete('cascade').notNull()
     )
     .addColumn('tag', 'varchar(100)', (col) => col.notNull())
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await sql`
@@ -169,8 +169,8 @@ export async function up(db) {
       col.references('competencies.id').onDelete('cascade')
     )
     .addColumn('outcome_code', 'varchar(100)') // Direct code if no competency FK
-    .addColumn('weight', 'numeric(3,2)', (col) => col.notNull().defaultTo(1.00))
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('weight', sql`numeric(3,2)`, (col) => col.notNull().defaultTo(1.00))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await sql`
@@ -201,7 +201,7 @@ export async function up(db) {
     .addColumn('attribution', 'text') // Author/source attribution
     .addColumn('metadata', 'jsonb', (col) => col.defaultTo('{}'))
     .addColumn('sort_order', 'integer', (col) => col.defaultTo(0))
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -218,7 +218,7 @@ export async function up(db) {
 
   for (const table of newTables) {
     await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    try { await sql`GRANT USAGE ON ${sql.id(table + '_id_seq')} TO deborah_runtime`.execute(db); } catch (_) { /* serial emas — seq yo'q */ }
     await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
     await sql`GRANT SELECT ON ${sql.table(table)} TO deborah_scoring`.execute(db);
   }

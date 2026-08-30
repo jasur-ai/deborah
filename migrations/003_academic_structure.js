@@ -40,8 +40,8 @@ export async function up(db) {
     .addColumn('external_id', 'varchar(255)') // HEMIS/SIS term ID
     .addColumn('is_active', 'boolean', (col) => col.notNull().defaultTo(true))
     .addColumn('metadata', 'jsonb', (col) => col.defaultTo('{}'))
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -49,7 +49,7 @@ export async function up(db) {
     .on('academic_terms')
     .columns(['tenant_id', 'code'])
     .unique()
-    .where('code is not null')
+    .where(sql`code is not null`)
     .execute();
 
   // ── 2. Faculties (organizational units within tenant) ──
@@ -64,8 +64,8 @@ export async function up(db) {
     .addColumn('description', 'text')
     .addColumn('external_id', 'varchar(255)') // HEMIS/SIS faculty ID
     .addColumn('is_active', 'boolean', (col) => col.notNull().defaultTo(true))
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // ── 3. Programs (degree programs under faculties) ──
@@ -84,8 +84,8 @@ export async function up(db) {
     .addColumn('duration_years', 'integer')
     .addColumn('external_id', 'varchar(255)') // HEMIS/SIS program ID
     .addColumn('is_active', 'boolean', (col) => col.notNull().defaultTo(true))
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // ── 4. Course Offerings (term-specific instances of a course) ──
@@ -116,8 +116,8 @@ export async function up(db) {
     .addColumn('status', 'varchar(20)', (col) => col.notNull().defaultTo('draft')) // draft | active | archived | cancelled
     .addColumn('external_id', 'varchar(255)') // HEMIS/SIS offering ID
     .addColumn('metadata', 'jsonb', (col) => col.defaultTo('{}'))
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('archived_at', 'timestamptz')
     .execute();
 
@@ -138,8 +138,8 @@ export async function up(db) {
     .addColumn('type', 'varchar(20)', (col) => col.notNull().defaultTo('study')) // study | lab | project | tutorial
     .addColumn('external_id', 'varchar(255)') // HEMIS/SIS group ID
     .addColumn('is_active', 'boolean', (col) => col.notNull().defaultTo(true))
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // ── 6. Group Memberships (student ↔ group assignment) ──
@@ -154,7 +154,7 @@ export async function up(db) {
     )
     .addColumn('role', 'varchar(20)', (col) => col.notNull().defaultTo('member')) // member | leader
     .addColumn('status', 'varchar(20)', (col) => col.notNull().defaultTo('active')) // active | inactive | removed
-    .addColumn('enrolled_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('enrolled_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('removed_at', 'timestamptz')
     .addUniqueConstraint('uq_group_member', ['group_id', 'user_id'])
     .execute();
@@ -176,12 +176,12 @@ export async function up(db) {
     .addColumn('source', 'varchar(20)', (col) => col.notNull().defaultTo('manual')) // manual | roster | api | sis_sync
     .addColumn('version', 'integer', (col) => col.notNull().defaultTo(1))
     .addColumn('external_id', 'varchar(255)') // HEMIS/SIS enrollment ID
-    .addColumn('enrolled_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('enrolled_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('dropped_at', 'timestamptz')
     .addColumn('completed_at', 'timestamptz')
     .addColumn('metadata', 'jsonb', (col) => col.defaultTo('{}'))
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .addUniqueConstraint('uq_enrollment_offering_user', ['course_offering_id', 'user_id'])
     .execute();
 
@@ -196,9 +196,9 @@ export async function up(db) {
       col.references('users.id').onDelete('cascade').notNull()
     )
     .addColumn('role', 'varchar(20)', (col) => col.notNull().defaultTo('primary')) // primary | co_teacher | grader | assistant
-    .addColumn('assigned_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('assigned_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('revoked_at', 'timestamptz')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .addUniqueConstraint('uq_teacher_assignment', ['course_offering_id', 'user_id', 'role'])
     .execute();
 
@@ -247,7 +247,7 @@ export async function up(db) {
 
   for (const table of academicTables) {
     await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    try { await sql`GRANT USAGE ON ${sql.id(table + '_id_seq')} TO deborah_runtime`.execute(db); } catch (_) { /* serial emas — seq yo'q */ }
   }
 
   // Grant schema usage (required for roles to access tables)

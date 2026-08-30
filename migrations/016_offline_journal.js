@@ -50,9 +50,9 @@ export async function up(db) {
     .addColumn('acked_seq', 'integer', (col) => col.notNull().defaultTo(0))
     // Highest CONTIGUOUS seq ACKed by the server for this device
     .addColumn('last_acked_at', 'timestamptz', (col) => col.defaultTo(null))
-    .addColumn('last_sync_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('last_sync_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // Idempotent sync: one ACK watermark per (attempt, device).
@@ -92,7 +92,7 @@ export async function up(db) {
     // Privileged actor (admin username / proctor id) — audit trail
     .addColumn('imported_at', 'timestamptz', (col) => col.defaultTo(null))
     .addColumn('reject_reason', 'varchar(200)')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // Idempotent import: a retried import of the same package is a no-op.

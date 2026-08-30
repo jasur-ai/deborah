@@ -46,7 +46,7 @@ export async function up(db) {
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('ai_checkpoint_tenant_hash', ['tenant_id', 'request_hash']);
+    .addUniqueConstraint('ai_checkpoint_tenant_hash', ['tenant_id', 'request_hash']).execute()
 }
 
 /**

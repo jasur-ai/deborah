@@ -1,3 +1,5 @@
+import { sql } from 'kysely';
+
 /**
  * Deborah — Migration 023: Exam Command Center, Incident & Notifications (Prompt 41)
  *
@@ -74,14 +76,14 @@ export async function up(db) {
     .addColumn('action_required', 'varchar(255)')
     .addColumn('external_key', 'varchar(120)')
     // idempotency — tashqi tizimdan takroriy yaratishni bloklaydi
-    .addColumn('detected_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('detected_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('resolved_at', 'timestamptz')
     .addColumn('closed_at', 'timestamptz')
     .addColumn('created_by', 'integer', (col) =>
       col.references('users.id').onDelete('set null')
     )
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -122,7 +124,7 @@ export async function up(db) {
       col.references('users.id').onDelete('set null')
     )
     .addColumn('evidence_note', 'varchar(500)')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -154,7 +156,7 @@ export async function up(db) {
     )
     .addColumn('reason', 'varchar(500)')
     // close uchun MAJBURIY (done condition: owner + action + reason)
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -191,8 +193,8 @@ export async function up(db) {
     .addColumn('created_by', 'integer', (col) =>
       col.references('users.id').onDelete('set null')
     )
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -227,8 +229,8 @@ export async function up(db) {
     .addColumn('created_by', 'integer', (col) =>
       col.references('users.id').onDelete('set null')
     )
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -258,7 +260,7 @@ export async function up(db) {
     .addColumn('created_by', 'integer', (col) =>
       col.references('users.id').onDelete('set null')
     )
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -278,7 +280,7 @@ export async function up(db) {
   ];
   for (const table of newTables) {
     await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    try { await sql`GRANT USAGE ON ${sql.id(table + '_id_seq')} TO deborah_runtime`.execute(db); } catch (_) { /* serial emas — seq yo'q */ }
     await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 }

@@ -31,8 +31,8 @@ export async function up(db) {
     .addColumn('domain', 'varchar(255)')
     .addColumn('settings', 'jsonb', (col) => col.defaultTo('{}'))
     .addColumn('is_active', 'boolean', (col) => col.notNull().defaultTo(true))
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // ── 2. Users (tenant-scoped) ──
@@ -51,8 +51,8 @@ export async function up(db) {
     .addColumn('avatar_url', 'varchar(500)')
     .addColumn('is_active', 'boolean', (col) => col.notNull().defaultTo(true))
     .addColumn('metadata', 'jsonb', (col) => col.defaultTo('{}'))
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // Unique: username is unique within a tenant
@@ -69,7 +69,7 @@ export async function up(db) {
     .on('users')
     .columns(['tenant_id', 'email'])
     .unique()
-    .where('email is not null')
+    .where(sql`email is not null`)
     .execute();
 
   // ── 3. Roles (platform-defined) ──
@@ -79,7 +79,7 @@ export async function up(db) {
     .addColumn('name', 'varchar(50)', (col) => col.notNull().unique())
     .addColumn('description', 'varchar(255)')
     .addColumn('is_system', 'boolean', (col) => col.notNull().defaultTo(false))
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // Seed platform roles
@@ -98,7 +98,7 @@ export async function up(db) {
     .addColumn('action', 'varchar(100)', (col) => col.notNull().unique())
     .addColumn('description', 'varchar(255)')
     .addColumn('resource_type', 'varchar(50)') // 'test', 'course', 'user', 'system'
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // Seed standard permissions
@@ -131,7 +131,7 @@ export async function up(db) {
     .addColumn('permission_id', 'integer', (col) =>
       col.references('permissions.id').onDelete('cascade').notNull()
     )
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .addPrimaryKeyConstraint('pk_role_permissions', ['role_id', 'permission_id'])
     .execute();
 
@@ -194,7 +194,7 @@ export async function up(db) {
     )
     .addColumn('scope_type', 'varchar(50)') // 'tenant', 'course', 'assessment'
     .addColumn('scope_id', 'integer') // FK to the scoped entity
-    .addColumn('granted_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('granted_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('expires_at', 'timestamptz')
     .addColumn('revoked_at', 'timestamptz')
     .execute();
@@ -210,8 +210,8 @@ export async function up(db) {
     .addColumn('name', 'varchar(255)', (col) => col.notNull())
     .addColumn('description', 'text')
     .addColumn('is_active', 'boolean', (col) => col.notNull().defaultTo(true))
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // ── 8. Audit Log ──
@@ -230,7 +230,7 @@ export async function up(db) {
     .addColumn('details', 'jsonb', (col) => col.defaultTo('{}'))
     .addColumn('ip_address', 'varchar(45)')
     .addColumn('user_agent', 'varchar(500)')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // Index for audit queries
@@ -262,7 +262,7 @@ export async function up(db) {
   // Runtime: SELECT, INSERT, UPDATE on all tenant tables
   for (const table of ['tenants', 'users', 'roles', 'permissions', 'role_permissions', 'user_roles', 'courses', 'audit_log']) {
     await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    try { await sql`GRANT USAGE ON ${sql.id(table + '_id_seq')} TO deborah_runtime`.execute(db); } catch (_) { /* serial emas — seq yo'q */ }
   }
 
   // Migration: ALL permissions (including DDL)

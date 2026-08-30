@@ -56,9 +56,9 @@ export async function up(db) {
     .addColumn('language', 'varchar(16)', (col) => col.notNull().defaultTo('uz'))
     // 50/30/20: easy=floor(N*0.5), medium=floor(N*0.3), hard=N-easy-medium
     .addColumn('target_count', 'integer', (col) => col.notNull())
-    .addColumn('easy_ratio', 'numeric(3,2)', (col) => col.notNull().defaultTo(0.5))
-    .addColumn('medium_ratio', 'numeric(3,2)', (col) => col.notNull().defaultTo(0.3))
-    .addColumn('hard_ratio', 'numeric(3,2)', (col) => col.notNull().defaultTo(0.2))
+    .addColumn('easy_ratio', sql`numeric(3,2)`, (col) => col.notNull().defaultTo(0.5))
+    .addColumn('medium_ratio', sql`numeric(3,2)`, (col) => col.notNull().defaultTo(0.3))
+    .addColumn('hard_ratio', sql`numeric(3,2)`, (col) => col.notNull().defaultTo(0.2))
     .addColumn('item_types', 'jsonb', (col) => col.notNull().defaultTo('["single_choice"]'))
     .addColumn('model', 'varchar(64)', (col) => col.notNull().defaultTo('unknown'))
     .addColumn('model_version', 'varchar(32)')
@@ -66,7 +66,7 @@ export async function up(db) {
     .addColumn('status', 'varchar(12)', (col) => col.notNull().defaultTo('draft'))
     // draft → running → completed | failed
     .addColumn('created_by', 'integer')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('completed_at', 'timestamptz')
     .execute();
 
@@ -94,7 +94,7 @@ export async function up(db) {
     .addColumn('status', 'varchar(12)', (col) => col.notNull().defaultTo('queued'))
     // queued → running → completed | failed
     .addColumn('error', 'varchar(500)')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('completed_at', 'timestamptz')
     .execute();
 
@@ -139,8 +139,8 @@ export async function up(db) {
     .addColumn('status', 'varchar(16)', (col) => col.notNull().defaultTo('ai_draft'))
     // ai_draft → reviewed → approved → published | rejected | retired
     .addColumn('input_hash', 'varchar(64)')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -169,7 +169,7 @@ export async function up(db) {
     // duplicate | language | accessibility | difficulty
     .addColumn('ok', 'boolean', (col) => col.notNull())
     .addColumn('note', 'varchar(500)')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await sql`
@@ -194,7 +194,7 @@ export async function up(db) {
     .addColumn('edited_options', 'jsonb')
     .addColumn('published_item_id', 'integer')
     .addColumn('reviewer_id', 'integer')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -213,7 +213,7 @@ export async function up(db) {
   ];
   for (const table of newTables) {
     await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    try { await sql`GRANT USAGE ON ${sql.id(table + '_id_seq')} TO deborah_runtime`.execute(db); } catch (_) { /* serial emas — seq yo'q */ }
     await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 }

@@ -24,18 +24,21 @@ export async function up(db) {
   for (const table of tables) {
     // Enable RLS
     try {
-      await db.schema.alterTable(table).enableRowLevelSecurity().execute();
+      // S30 fix: kysely 0.29'da enableRowLevelSecurity() yo'q — raw SQL
+      await sql`ALTER TABLE ${sql.id(table)} ENABLE ROW LEVEL SECURITY`.execute(db);
     } catch (err) {
       console.warn(`RLS enable skipped for ${table}: ${err.message}`);
     }
 
     // Create tenant isolation policy
     try {
-      await db.schema
-        .createPolicy(table, `tenant_isolation_${table}`)
-        .forAll()
-        .using(sql`tenant_id = current_setting('app.tenant_id')::integer`)
-        .execute();
+      // S30 fix: kysely 0.29'da createPolicy() yo'q — raw SQL
+      const policy = `tenant_isolation_${table}`;
+      await sql`DROP POLICY IF EXISTS ${sql.id(policy)} ON ${sql.id(table)}`.execute(db);
+      await sql`CREATE POLICY ${sql.id(policy)} ON ${sql.id(table)}
+        FOR ALL
+        USING (tenant_id = current_setting('app.tenant_id')::integer)
+        WITH CHECK (tenant_id = current_setting('app.tenant_id')::integer)`.execute(db);
     } catch (err) {
       console.warn(`RLS policy creation skipped for ${table}: ${err.message}`);
     }

@@ -79,8 +79,8 @@ export async function up(db) {
     .addColumn('submitted_at', 'timestamptz')
     .addColumn('decided_at', 'timestamptz')
     .addColumn('created_by', 'integer')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await sql`
@@ -107,12 +107,12 @@ export async function up(db) {
     // medical | certificate | statement | other
     .addColumn('file_name', 'varchar(255)')
     .addColumn('data_encrypted', 'jsonb', (col) => col.notNull())
-    // { ciphertext, iv, tag } — AES-256-GCM; marker/proctor cannot read
+    // { ciphertext, iv, tag } — AES-256-GCM.execute() marker/proctor cannot read
     .addColumn('access_role', 'varchar(24)', (col) => col.notNull().defaultTo('institution_admin'))
     .addColumn('retention_until', 'timestamptz')
     .addColumn('last_accessed_at', 'timestamptz')
     .addColumn('created_by', 'integer')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -137,7 +137,7 @@ export async function up(db) {
     // Human decider identifier (admin username or user id string) — AI
     // case hukmi chiqarmaydi (§15): the service refuses 'ai'/'system' etc.
     .addColumn('decided_by', 'varchar(64)')
-    .addColumn('decided_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('decided_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -180,7 +180,7 @@ export async function up(db) {
     .addColumn('status', 'varchar(16)', (col) => col.notNull().defaultTo('scheduled'))
     // scheduled → completed | voided
     .addColumn('created_by', 'integer')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -216,7 +216,7 @@ export async function up(db) {
     .addColumn('frozen_at', 'timestamptz')
     .addColumn('resolved_at', 'timestamptz')
     .addColumn('created_by', 'integer')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -241,10 +241,10 @@ export async function up(db) {
     .addColumn('attempt_id', 'integer', (col) =>
       col.references('attempts.id').onDelete('cascade')
     )
-    .addColumn('score_before', 'decimal(8,2)')
-    .addColumn('score_after', 'decimal(8,2)')
-    .addColumn('delta', 'decimal(8,2)')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('score_before', sql`decimal(8,2)`)
+    .addColumn('score_after', sql`decimal(8,2)`)
+    .addColumn('delta', sql`decimal(8,2)`)
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await sql`
@@ -270,15 +270,15 @@ export async function up(db) {
     )
     .addColumn('status', 'varchar(12)', (col) => col.notNull().defaultTo('queued'))
     // queued → running → completed | failed
-    .addColumn('score_before', 'decimal(8,2)')
-    .addColumn('score_after', 'decimal(8,2)')
+    .addColumn('score_before', sql`decimal(8,2)`)
+    .addColumn('score_after', sql`decimal(8,2)`)
     .addColumn('amendment_id', 'integer')
     // grade_amendments.id — grade change via Ledger (§71.6)
     .addColumn('result_json', 'jsonb')
     .addColumn('error', 'varchar(1000)')
     .addColumn('completed_at', 'timestamptz')
     .addColumn('created_by', 'integer')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await sql`
@@ -298,7 +298,7 @@ export async function up(db) {
   ];
   for (const table of newTables) {
     await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    try { await sql`GRANT USAGE ON ${sql.id(table + '_id_seq')} TO deborah_runtime`.execute(db); } catch (_) { /* serial emas — seq yo'q */ }
     await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 }

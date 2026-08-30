@@ -66,7 +66,7 @@ export async function up(db) {
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
     .addColumn('updated_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
-    .addUniqueConstraint('external_connections_tenant_provider_uniq', ['tenant_id', 'provider']);
+    .addUniqueConstraint('external_connections_tenant_provider_uniq', ['tenant_id', 'provider']).execute()
 
   // ── 2. external_sync_jobs ──
   await db.schema
@@ -95,7 +95,7 @@ export async function up(db) {
     .addColumn('created_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
     .addColumn('updated_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
     .addColumn('completed_at', 'timestamptz')
-    .addUniqueConstraint('external_sync_jobs_tenant_idem_uniq', ['tenant_id', 'idempotency_key']);
+    .addUniqueConstraint('external_sync_jobs_tenant_idem_uniq', ['tenant_id', 'idempotency_key']).execute()
 
   // ── 3. external_field_maps ──
   await db.schema
@@ -116,7 +116,7 @@ export async function up(db) {
     .addColumn('created_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
     .addUniqueConstraint('external_field_maps_tenant_key_uniq', [
       'tenant_id', 'provider', 'entity', 'source_field', 'target_field',
-    ]);
+    ]).execute()
 
   // ── 4. token_vault ──
   await db.schema
@@ -140,7 +140,7 @@ export async function up(db) {
     .addColumn('revoked_at', 'timestamptz')
     .addColumn('revoked_by', 'varchar(120)')
     .addColumn('created_by', 'varchar(120)')
-    .addColumn('created_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull());
+    .addColumn('created_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull()).execute()
 
   // ── 5. external_identities (OneID account links) ──
   await db.schema
@@ -163,7 +163,7 @@ export async function up(db) {
     .addColumn('linked_at', 'timestamptz')
     .addColumn('revoked_at', 'timestamptz')
     .addColumn('revoked_by', 'varchar(120)')
-    .addColumn('created_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull());
+    .addColumn('created_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull()).execute()
 
   // Partial unique index — har user+provider uchun faqat bitta ACTIVE
   // (pending|linked) link bo'lishi mumkin; revoked row audit trail sifatida

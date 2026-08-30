@@ -883,3 +883,35 @@ Kod o'zgarishi NOLTA. Da'vo qilingan lekin TURLIGAN topilmalar (repository'da ha
      (visual 80/80). Repo: +24MB baseline (umumiy <100MB chegarada).
   4) YAKUNIY REGRESS: vitest TO'LIQ 7111/7111 ✅ (birinchi marta nolda),
      playwright auth-e2e 5/5 ✅, design:check:full PASS ✅.
+
+── ✅ S30 (AI-A, 2026-08-30): POSTGRESQL ULANISHI + ADMIN MFA IXTIYORIY ENROLL ──
+  1) "PostgreSQL talab qilinadi" (user hisoboti): AI-modul sahifalari
+     (academic, accessibility, ai-*, api-contracts — 26k satr) PG saqlashini
+     kutadi, lekin 55 migratsiya HECH QACHON ishlamagan edi:
+     a) kysely 0.29'da migrator 'kysely/migration' subpath'da (import xato);
+     b) 206× db.fn.now() — 0.29'da yo'q → sql`now()`;
+     c) 82 createTable .execute() SIZ (jadvallar umuman yaratilmagan);
+     d) text[]/numeric(5,4)/decimal(8,2) tiplar string emas sql`` kerak;
+     e) sql.identifier→sql.id, sql.table(x)_id_seq→sql.id(x+'_id_seq'),
+        createPolicy/enableRowLevelSecurity yo'q → raw SQL (RLS tiklandi);
+     f) 042-044 addIndex createTable ichida → alohida createIndex;
+     g) 050-052 dublikat addColumn'lar (hemis_id, telegram_id, email,
+        email_verified 049'da bor) → olib tashlandi/no-op.
+     FIX natija: scripts/db-migrate.js (oddiy ketma-ket runner, aniq xato,
+     --status/--down) + npm run db:migrate/db:status. Lokal PG 17 da
+     55/55 migratsiya ✅. Isbot: DATABASE_URL bilan server + admin panel
+     sahifalari "PostgreSQL required" XATOSIZ 200 ✅.
+  2) HUJJAT: README 9.1 (Neon/Supabase free tier yoki lokal PG + 3 qadam),
+     .env.example izohli DATABASE_URL bloki.
+  3) ADMIN MFA (user: "profilimda MFA yo'q, kalitlar chiqmayapti"):
+     a) mandatory-off'da enroll umuman yo'q edi → GET /admin/mfa/enroll
+        endi logged-in admin uchun IXTIYORIY (QR+secret+CSRF);
+     b) POST /api/admin/mfa/enable voluntary branch — sessiya saqlanadi;
+     c) LOGIN TESHIGI YOPILDI: MFA active bo'lsa mandatory flag'dan qat'i
+        nazar challenge (aks holda ixtiyoriy MFA login'da bypass edi);
+     d) /admin/profile mfaEnrolled endi DB statusidan (getMfaStatus).
+     Isbot (probe 4657): enroll 200+QR → enable {ok,voluntary,backupCodes×12}
+     → yangi login 302 /admin/mfa?challenge → verify → dashboard + profile
+     "MFA yoqilgan" ✅. Regress: tests/integration/admin-mfa-voluntary.test.js
+     5/5 (afterAll DB cleanup — shared temp DBni bulg'amaslik uchun).
+  4) YAKUNIY: vitest TO'LIQ 7116/7116 ✅ (496 fayl), playwright auth-e2e 5/5 ✅.

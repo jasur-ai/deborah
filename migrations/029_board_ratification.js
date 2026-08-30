@@ -57,7 +57,7 @@ export async function up(db) {
     .addColumn('status', 'varchar(12)', (col) => col.notNull().defaultTo('active'))
     // active | inactive
     .addColumn('created_by', 'integer')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await sql`
@@ -87,13 +87,13 @@ export async function up(db) {
     .addColumn('status', 'varchar(12)', (col) => col.notNull().defaultTo('scheduled'))
     // scheduled → open → ratified | rejected
     .addColumn('required_quorum', 'integer', (col) => col.notNull().defaultTo(3))
-    .addColumn('required_approval_ratio', 'decimal(4,3)', (col) => col.notNull().defaultTo(0.6))
+    .addColumn('required_approval_ratio', sql`decimal(4,3)`, (col) => col.notNull().defaultTo(0.6))
     .addColumn('policy_snapshot', 'jsonb', (col) => col.defaultTo('{}'))
     // { holdingGrade, releasePolicy, maxAmendmentsPerRun }
     .addColumn('held_at', 'timestamptz')
     .addColumn('closed_at', 'timestamptz')
     .addColumn('created_by', 'integer')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -122,7 +122,7 @@ export async function up(db) {
     .addColumn('vote', 'varchar(8)')
     // approve | reject | abstain
     .addColumn('voted_at', 'timestamptz')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await sql`
@@ -146,16 +146,16 @@ export async function up(db) {
     .addColumn('user_id', 'integer', (col) =>
       col.references('users.id').onDelete('cascade').notNull()
     )
-    .addColumn('provisional_final', 'decimal(8,2)', (col) => col.notNull())
+    .addColumn('provisional_final', sql`decimal(8,2)`, (col) => col.notNull())
     .addColumn('grade_label', 'varchar(4)')
-    .addColumn('ratified_final', 'decimal(8,2)')
+    .addColumn('ratified_final', sql`decimal(8,2)`)
     // set on approval — the FROZEN final grade
     .addColumn('snapshot_hash', 'varchar(64)', (col) => col.notNull())
     // deterministic sha256 of gradebook snapshot (immutable evidence)
     .addColumn('decision', 'varchar(10)', (col) => col.notNull())
     // ratified | rejected
     .addColumn('decided_by', 'integer')
-    .addColumn('decided_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('decided_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await sql`
@@ -179,11 +179,11 @@ export async function up(db) {
       col.references('grade_calculation_runs.id').onDelete('cascade').notNull()
     )
     .addColumn('amendment_no', 'integer', (col) => col.notNull())
-    .addColumn('old_final', 'decimal(8,2)', (col) => col.notNull())
-    .addColumn('new_final', 'decimal(8,2)', (col) => col.notNull())
+    .addColumn('old_final', sql`decimal(8,2)`, (col) => col.notNull())
+    .addColumn('new_final', sql`decimal(8,2)`, (col) => col.notNull())
     .addColumn('reason', 'varchar(1000)', (col) => col.notNull())
     .addColumn('changed_by', 'integer')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await sql`
@@ -216,7 +216,7 @@ export async function up(db) {
     .addColumn('last_error', 'varchar(1000)')
     .addColumn('sent_at', 'timestamptz')
     .addColumn('reconciled_at', 'timestamptz')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await sql`
@@ -240,7 +240,7 @@ export async function up(db) {
   ];
   for (const table of newTables) {
     await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    try { await sql`GRANT USAGE ON ${sql.id(table + '_id_seq')} TO deborah_runtime`.execute(db); } catch (_) { /* serial emas — seq yo'q */ }
     await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 }

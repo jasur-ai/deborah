@@ -51,7 +51,7 @@ export async function up(db) {
     .addColumn('updated_by', 'varchar(120)')
     .addColumn('created_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
     .addColumn('updated_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
-    .addUniqueConstraint('a11y_settings_tenant_user_uniq', ['tenant_id', 'user_key']);
+    .addUniqueConstraint('a11y_settings_tenant_user_uniq', ['tenant_id', 'user_key']).execute()
 
   await db.schema
     .createTable('a11y_audits')
@@ -70,7 +70,7 @@ export async function up(db) {
     .addColumn('needs_review', 'boolean', (col) => col.notNull().defaultTo(false))
     .addColumn('blocker_count', 'integer', (col) => col.notNull().defaultTo(0))
     .addColumn('run_by', 'varchar(120)')
-    .addColumn('run_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull());
+    .addColumn('run_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull()).execute()
 
   await db.schema
     .createTable('a11y_gaps')
@@ -93,7 +93,7 @@ export async function up(db) {
     .addColumn('verified_at', 'timestamptz')
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
-    .addColumn('updated_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull());
+    .addColumn('updated_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull()).execute()
 
   await db.schema
     .createTable('a11y_artifact_checks')
@@ -111,7 +111,7 @@ export async function up(db) {
     .addColumn('status', 'varchar(20)', (col) => col.notNull().defaultTo('checked'))
     .addColumn('checked_by', 'varchar(120)')
     .addColumn('checked_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
-    .addUniqueConstraint('a11y_artifact_uniq', ['tenant_id', 'artifact_type', 'artifact_id']);
+    .addUniqueConstraint('a11y_artifact_uniq', ['tenant_id', 'artifact_type', 'artifact_id']).execute()
 }
 
 /**

@@ -58,10 +58,10 @@ export async function up(db) {
     .addColumn('status', 'varchar(12)', (col) => col.notNull().defaultTo('queued'))
     // queued → running → completed | failed
     .addColumn('run_count', 'integer', (col) => col.notNull().defaultTo(0))
-    .addColumn('total_score', 'numeric(10,2)')
+    .addColumn('total_score', sql`numeric(10,2)`)
     .addColumn('created_by', 'integer')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -90,15 +90,15 @@ export async function up(db) {
     // reproducible — bir xil input → bir xil hash
     .addColumn('status', 'varchar(12)', (col) => col.notNull().defaultTo('queued'))
     // queued → running → completed | failed
-    .addColumn('total_score', 'decimal(8,2)')
-    .addColumn('confidence', 'decimal(4,2)')
+    .addColumn('total_score', sql`decimal(8,2)`)
+    .addColumn('confidence', sql`decimal(4,2)`)
     // routing_decision: auto_draft | grading_queue | human_review (§7.5)
     .addColumn('routing_decision', 'varchar(16)')
     .addColumn('provider_response', 'jsonb')
     .addColumn('error', 'varchar(500)')
     .addColumn('started_at', 'timestamptz')
     .addColumn('completed_at', 'timestamptz')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // Idempotency: bitta job + bitta work item → bitta shadow run
@@ -126,14 +126,14 @@ export async function up(db) {
       col.references('rubric_criteria.id').onDelete('cascade')
     )
     .addColumn('criterion_name', 'varchar(255)')
-    .addColumn('score', 'decimal(8,2)', (col) => col.notNull())
+    .addColumn('score', sql`decimal(8,2)`, (col) => col.notNull())
     // rubric level mappingdan — model erkin raqam chiqara olmaydi
     .addColumn('level', 'integer')
-    .addColumn('confidence', 'decimal(4,2)')
+    .addColumn('confidence', sql`decimal(4,2)`)
     .addColumn('missing_concepts', 'jsonb', (col) => col.defaultTo('[]'))
     .addColumn('contradictions_found', 'jsonb', (col) => col.defaultTo('[]'))
     .addColumn('feedback', 'varchar(2000)')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -159,7 +159,7 @@ export async function up(db) {
     .addColumn('span_start', 'integer', (col) => col.notNull())
     .addColumn('span_end', 'integer', (col) => col.notNull())
     .addColumn('span_text', 'varchar(600)')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -181,11 +181,11 @@ export async function up(db) {
     .addColumn('work_item_id', 'integer', (col) =>
       col.references('marking_work_items.id').onDelete('cascade')
     )
-    .addColumn('ai_total_score', 'decimal(8,2)', (col) => col.notNull())
-    .addColumn('overridden_score', 'decimal(8,2)', (col) => col.notNull())
+    .addColumn('ai_total_score', sql`decimal(8,2)`, (col) => col.notNull())
+    .addColumn('overridden_score', sql`decimal(8,2)`, (col) => col.notNull())
     .addColumn('reason', 'varchar(1000)')
     .addColumn('teacher_id', 'integer', (col) => col.notNull())
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -204,7 +204,7 @@ export async function up(db) {
   ];
   for (const table of newTables) {
     await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    try { await sql`GRANT USAGE ON ${sql.id(table + '_id_seq')} TO deborah_runtime`.execute(db); } catch (_) { /* serial emas — seq yo'q */ }
     await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
   }
 }

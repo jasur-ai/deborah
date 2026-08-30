@@ -44,7 +44,7 @@ export async function up(db) {
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('terminology_version_tenant_name_version', ['tenant_id', 'name', 'version']);
+    .addUniqueConstraint('terminology_version_tenant_name_version', ['tenant_id', 'name', 'version']).execute()
 
   await db.schema
     .createTable('terminology_terms')
@@ -69,8 +69,8 @@ export async function up(db) {
     .addColumn('search_key', 'varchar(200)')
     // cross-script search normalization key (Latn canonical base)
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addIndex('terminology_terms_version_idx', ['version_id'])
-    .addIndex('terminology_terms_search_idx', ['search_key']);
+    
+    
 
   await db.schema
     .createTable('content_translations')
@@ -97,8 +97,8 @@ export async function up(db) {
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addIndex('content_translations_content_idx', ['content_type', 'content_id'])
-    .addIndex('content_translations_lang_idx', ['source_lang', 'target_lang']);
+    
+    
 
   await db.schema
     .createTable('proper_names')
@@ -117,7 +117,7 @@ export async function up(db) {
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addUniqueConstraint('proper_name_tenant_type_key', ['tenant_id', 'identity_type', 'identity_key'])
-    .addIndex('proper_names_search_idx', ['search_key']);
+    
 
   await db.schema
     .createTable('translation_reviews')
@@ -133,7 +133,7 @@ export async function up(db) {
     // construct_equivalent | needs_review | not_equivalent
     .addColumn('notes', 'text')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addIndex('translation_reviews_translation_idx', ['translation_id']);
+    
 }
 
 /**
@@ -141,6 +141,12 @@ export async function up(db) {
  */
 export async function down(db) {
   await db.schema.dropTable('translation_reviews');
+  await db.schema.createIndex('translation_reviews_translation_idx').on('translation_reviews').columns(['translation_id']).execute();
+  await db.schema.createIndex('proper_names_search_idx').on('proper_names').columns(['search_key']).execute();
+  await db.schema.createIndex('content_translations_lang_idx').on('content_translations').columns(['source_lang', 'target_lang']).execute();
+  await db.schema.createIndex('content_translations_content_idx').on('content_translations').columns(['content_type', 'content_id']).execute();
+  await db.schema.createIndex('terminology_terms_search_idx').on('terminology_terms').columns(['search_key']).execute();
+  await db.schema.createIndex('terminology_terms_version_idx').on('terminology_terms').columns(['version_id']).execute();
   await db.schema.dropTable('proper_names');
   await db.schema.dropTable('content_translations');
   await db.schema.dropTable('terminology_terms');

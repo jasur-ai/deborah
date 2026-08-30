@@ -48,15 +48,15 @@ export async function up(db) {
     .addColumn('granted_by', 'integer', (col) =>
       col.references('users.id').onDelete('set null')
     )
-    .addColumn('granted_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('granted_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('revoked_by', 'integer', (col) =>
       col.references('users.id').onDelete('set null')
     )
     .addColumn('revoked_at', 'timestamptz')
     .addColumn('revoke_reason', 'text')
     .addColumn('version', 'integer', (col) => col.notNull().defaultTo(1))
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -89,7 +89,7 @@ export async function up(db) {
       col.references('users.id').onDelete('set null')
     )
     .addColumn('change_reason', 'text')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -118,7 +118,7 @@ export async function up(db) {
     // Null if manually assigned during publish
     .addColumn('snapshot_version', 'integer', (col) => col.notNull())
     .addColumn('is_active', 'boolean', (col) => col.notNull().defaultTo(true))
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -132,7 +132,7 @@ export async function up(db) {
 
   for (const table of newTables) {
     await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    try { await sql`GRANT USAGE ON ${sql.id(table + '_id_seq')} TO deborah_runtime`.execute(db); } catch (_) { /* serial emas — seq yo'q */ }
   }
 
   console.log('Accommodation structure created: 3 tables');

@@ -13,11 +13,10 @@
  * @param {import('kysely').Kysely<any>} db
  */
 export async function up(db) {
-  await db.schema
-    .alterTable('users')
-    .addColumn('email', 'text', (col) => col.unique())
-    .addColumn('email_verified', 'boolean', (col) => col.notNull().defaultTo(false))
-    .execute();
+  // S30 fix: email/email_verified 049_users_final_schema'da allaqachon qo'shilgan
+  // (email TEXT, email_verified BOOLEAN default false). Bu migratsiya no-op —
+  // run tarixida saqlanadi (konsistentlik).
+  console.log('  052: users email maydonlari 049 da mavjud — no-op');
 }
 
 /**

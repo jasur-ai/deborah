@@ -45,7 +45,7 @@ export async function up(db) {
     .addColumn('retention_days', 'integer', (col) => col.notNull().defaultTo(30))
     .addColumn('consent_version', 'integer', (col) => col.notNull().defaultTo(1))
     .addColumn('updated_by', 'integer')
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -113,7 +113,7 @@ export async function up(db) {
     .addColumn('disposition', 'varchar(20)', (col) => col.notNull())
     .addColumn('note', 'text')
     .addColumn('reviewed_by', 'integer', (col) => col.notNull())
-    .addColumn('reviewed_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('reviewed_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema

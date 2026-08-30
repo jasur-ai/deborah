@@ -29,7 +29,7 @@ export async function up(db) {
     .addColumn('subject_area', 'varchar(100)')
     .addColumn('type', 'varchar(20)', (col) => col.notNull().defaultTo('analytic'))
     // analytic | holistic | single_point | checklist
-    .addColumn('max_points', 'numeric(6,2)', (col) => col.notNull().defaultTo(0))
+    .addColumn('max_points', sql`numeric(6,2)`, (col) => col.notNull().defaultTo(0))
     .addColumn('current_version_id', 'integer')
     .addColumn('owner_id', 'integer', (col) =>
       col.references('users.id').onDelete('set null')
@@ -37,8 +37,8 @@ export async function up(db) {
     .addColumn('is_template', 'boolean', (col) => col.notNull().defaultTo(false))
     .addColumn('usage_count', 'integer', (col) => col.notNull().defaultTo(0))
     .addColumn('metadata', 'jsonb', (col) => col.defaultTo('{}'))
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -69,7 +69,7 @@ export async function up(db) {
     .addColumn('created_by', 'integer', (col) =>
       col.references('users.id').onDelete('set null')
     )
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -98,8 +98,8 @@ export async function up(db) {
     )
     .addColumn('name', 'varchar(255)', (col) => col.notNull())
     .addColumn('description', 'text')
-    .addColumn('max_points', 'numeric(6,2)', (col) => col.notNull().defaultTo(0))
-    .addColumn('weight', 'numeric(3,2)', (col) => col.notNull().defaultTo(1.00))
+    .addColumn('max_points', sql`numeric(6,2)`, (col) => col.notNull().defaultTo(0))
+    .addColumn('weight', sql`numeric(3,2)`, (col) => col.notNull().defaultTo(1.00))
     .addColumn('sort_order', 'integer', (col) => col.defaultTo(0))
     .addColumn('required_concepts', 'jsonb', (col) => col.defaultTo('[]'))
     // [{ concept: "photosynthesis", weight: 1, synonyms: ["photosintesis", "fotosintez"] }]
@@ -115,8 +115,8 @@ export async function up(db) {
     //  { points: 2, descriptor: "qisman tushuncha" },
     //  { points: 1, descriptor: "alohida terminlar, bog'liqlik yo'q" },
     //  { points: 0, descriptor: "noto'g'ri yoki aloqasiz" }]
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -140,7 +140,7 @@ export async function up(db) {
     )
     .addColumn('title', 'varchar(255)')
     .addColumn('response_text', 'text', (col) => col.notNull())
-    .addColumn('expected_score', 'numeric(6,2)', (col) => col.notNull())
+    .addColumn('expected_score', sql`numeric(6,2)`, (col) => col.notNull())
     .addColumn('expected_level', 'integer') // Which level this anchors
     .addColumn('rationale', 'text') // Why this response gets this score
     .addColumn('evidence_spans', 'jsonb', (col) => col.defaultTo('[]'))
@@ -152,7 +152,7 @@ export async function up(db) {
     .addColumn('created_by', 'integer', (col) =>
       col.references('users.id').onDelete('set null')
     )
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -174,7 +174,7 @@ export async function up(db) {
     .addColumn('tenant_id', 'integer', (col) =>
       col.references('tenants.id').onDelete('cascade').notNull()
     )
-    .addColumn('pinned_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('pinned_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('pinned_by', 'integer', (col) =>
       col.references('users.id').onDelete('set null')
     )
@@ -196,7 +196,7 @@ export async function up(db) {
   const newTables = ['rubrics', 'rubric_versions', 'rubric_criteria', 'rubric_anchors', 'item_rubric_pins'];
   for (const table of newTables) {
     await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    try { await sql`GRANT USAGE ON ${sql.id(table + '_id_seq')} TO deborah_runtime`.execute(db); } catch (_) { /* serial emas — seq yo'q */ }
     await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
     await sql`GRANT SELECT ON ${sql.table(table)} TO deborah_scoring`.execute(db);
   }

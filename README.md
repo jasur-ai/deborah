@@ -128,7 +128,35 @@ npm run dev            # yoki: node server.js
 ```
 
 Muhim env (`.env`): `SESSION_SECRET`, `ADMIN_USER`, `ADMIN_PASS`, `FIREBASE_SERVICE_ACCOUNT`, `FIREBASE_DATABASE_URL`, `BASE_URL`.
-Ixtiyoriy: `GEMINI_API_KEY`+`GEMINI_MODEL` (AI), `GOOGLE_CLIENT_ID/SECRET/REDIRECT_URI` (OIDC), `CANVA_CLIENT_ID/SECRET`, `SMTP_*`/`POSTMARK_SERVER_TOKEN` (email), `EMAIL_PROVIDER=smtp|postmark|ses|mock`.
+Ixtiyoriy: `GEMINI_API_KEY`+`GEMINI_MODEL` (AI), `GOOGLE_CLIENT_ID/SECRET/REDIRECT_URI` (OIDC), `CANVA_CLIENT_ID/SECRET`, `SMTP_*`/`POSTMARK_SERVER_TOKEN` (email), `EMAIL_PROVIDER=smtp|postmark|ses|mock`, `DATABASE_URL` (PostgreSQL, quyida).
+
+### 9.1 PostgreSQL (ixtiyoriy — AI-modul sahifalari uchun)
+
+Admin panelning ayrim modul sahifalari (academic, accessibility, ai-grading /
+ai-mlops / ai-question-gen, api-contracts va h.k.) ma'lumotlarni PostgreSQL'da
+saqlaydi. `DATABASE_URL` sozlanmasa bu sahifalar cheklangan rejimda ishlaydi
+(yozishlar `PostgreSQL required` xatosini qaytaradi), ilovaning qolgan qismi
+to'liq ishlaydi.
+
+Ulash (bitta daqiqada, free tier bilan ham):
+
+```bash
+# 1) DB — Neon (neon.tech, free) yoki Supabase'dan connection string oling,
+#    yoki lokal:
+sudo apt install postgresql && sudo -u postgres createdb deborah
+
+# 2) .env ga yozing:
+#    DATABASE_URL=postgres://deborah:parol@127.0.0.1:5432/deborah
+
+# 3) Migratsiyalar (55 ta — jadvallar, RBAC, RLS):
+npm run db:migrate
+
+# Tekshirish:
+npm run db:status
+```
+
+Shundan keyin admin paneldagi shu modul sahifalari to'liq ma'lumot
+yuklaydi.
 
 ## 10. Manzillar (konsollar uchun)
 

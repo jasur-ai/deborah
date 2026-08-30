@@ -45,8 +45,8 @@ export async function up(db) {
     .addColumn('created_by', 'integer', (col) =>
       col.references('users.id').onDelete('set null')
     )
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -77,7 +77,7 @@ export async function up(db) {
     .addColumn('created_by', 'integer', (col) =>
       col.references('users.id').onDelete('set null')
     )
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   await db.schema
@@ -116,10 +116,10 @@ export async function up(db) {
     // domain | competency | sub_competency | learning_outcome | skill | knowledge | attitude
     .addColumn('cognitive_level', 'varchar(20)') // remember | understand | apply | analyze | evaluate | create
     .addColumn('difficulty', 'varchar(10)') // easy | medium | hard
-    .addColumn('keywords', 'text[]') // Searchable keywords/tags
+    .addColumn('keywords', sql`text[]`) // Searchable keywords/tags
     .addColumn('translations', 'jsonb', (col) => col.defaultTo('{}'))
     // { uz: { name, description }, ru: { ... }, en: { ... } }
-    .addColumn('alias', 'text[]') // Alternative names/synonyms
+    .addColumn('alias', sql`text[]`) // Alternative names/synonyms
     .addColumn('terminology', 'jsonb', (col) => col.defaultTo('{}'))
     // { preferred: "term", also_known_as: ["alt1", "alt2"] }
     .addColumn('sort_order', 'integer', (col) => col.defaultTo(0))
@@ -130,8 +130,8 @@ export async function up(db) {
     .addColumn('created_by', 'integer', (col) =>
       col.references('users.id').onDelete('set null')
     )
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // Self-referencing FK for parent_id
@@ -176,12 +176,12 @@ export async function up(db) {
     .addColumn('relation_type', 'varchar(30)', (col) => col.notNull())
     // prerequisite | corequisite | cross_reference | replaces | similar_to | extends
     // assesses | requires | teaches | reinforces
-    .addColumn('strength', 'numeric(3,2)') // 0.00–1.00 correlation weight
+    .addColumn('strength', sql`numeric(3,2)`) // 0.00–1.00 correlation weight
     .addColumn('metadata', 'jsonb', (col) => col.defaultTo('{}'))
     .addColumn('created_by', 'integer', (col) =>
       col.references('users.id').onDelete('set null')
     )
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // Prevent duplicate relations
@@ -217,21 +217,21 @@ export async function up(db) {
     )
     .addColumn('mapping_status', 'varchar(20)', (col) => col.notNull().defaultTo('manual'))
     // manual | ai_suggested | reviewed | approved
-    .addColumn('coverage_weight', 'numeric(5,2)', (col) => col.defaultTo(0))
+    .addColumn('coverage_weight', sql`numeric(5,2)`, (col) => col.defaultTo(0))
     // How much of this competency is covered by the course (0.00–100.00)
     .addColumn('assessment_count', 'integer', (col) => col.defaultTo(0))
     .addColumn('mapped_by', 'integer', (col) =>
       col.references('users.id').onDelete('set null')
     )
     .addColumn('ai_suggested_at', 'timestamptz') // When AI suggested this mapping
-    .addColumn('ai_confidence', 'numeric(4,3)') // 0.000–1.000
+    .addColumn('ai_confidence', sql`numeric(4,3)`) // 0.000–1.000
     .addColumn('reviewed_at', 'timestamptz')
     .addColumn('reviewed_by', 'integer', (col) =>
       col.references('users.id').onDelete('set null')
     )
     .addColumn('notes', 'text')
-    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
-    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(db.fn.now()))
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // A competency can only be mapped once per course offering
@@ -263,7 +263,7 @@ export async function up(db) {
 
   for (const table of newTables) {
     await sql`GRANT SELECT, INSERT, UPDATE ON ${sql.table(table)} TO deborah_runtime`.execute(db);
-    await sql`GRANT USAGE ON ${sql.table(table)}_id_seq TO deborah_runtime`.execute(db);
+    try { await sql`GRANT USAGE ON ${sql.id(table + '_id_seq')} TO deborah_runtime`.execute(db); } catch (_) { /* serial emas — seq yo'q */ }
     await sql`GRANT DELETE ON ${sql.table(table)} TO deborah_migration`.execute(db);
     await sql`GRANT SELECT ON ${sql.table(table)} TO deborah_scoring`.execute(db);
   }

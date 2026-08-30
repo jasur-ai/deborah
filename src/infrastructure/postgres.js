@@ -106,7 +106,10 @@ export async function runMigrations() {
   }
 
   try {
-    const { Migrator, FileMigrationProvider } = await import('kysely');
+    // S30 fix: kysely 0.29'da migrator alohida subpath'da ('kysely'),
+    // 'kysely/migration'da — asl import Migrator'siz kelib, migratsiya
+    // runneri hech qachon ishlamagan (FileMigrationProvider is not a constructor).
+    const { Migrator, FileMigrationProvider } = await import('kysely/migration');
     const fs = await import('fs');
     const path = await import('path');
     const { fileURLToPath } = await import('url');

@@ -19,7 +19,8 @@
 export async function up(db) {
   await db.schema
     .alterTable('users')
-    .addColumn('hemis_id', 'text', (col) => col.unique())
+    // S30 fix: hemis_id 049_users_final_schema'da qo'silgan (varchar(64));
+    // bu yerda faqat UNIQUE index kifoya (pastda).
     .addColumn('hemis_linked_at', 'timestamptz')
     .addColumn('hemis_profile', 'jsonb')
     .execute();

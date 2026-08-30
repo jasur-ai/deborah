@@ -55,7 +55,7 @@ export async function up(db) {
     // { create: true, poll: true, cancel: true, webhook: false, previewIframe: true, embeddedEdit: false }
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('provider_configs_tenant_provider_model', ['tenant_id', 'provider', 'model']);
+    .addUniqueConstraint('provider_configs_tenant_provider_model', ['tenant_id', 'provider', 'model']).execute()
 
   // ── 2. provider_jobs — unified async provider job ──
   await db.schema
@@ -91,7 +91,7 @@ export async function up(db) {
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('provider_jobs_tenant_hash', ['tenant_id', 'request_hash']);
+    .addUniqueConstraint('provider_jobs_tenant_hash', ['tenant_id', 'request_hash']).execute()
 
   // ── 3. provider_job_events — unified job progress/event log ──
   await db.schema
@@ -106,7 +106,7 @@ export async function up(db) {
     // webhook_received | webhook_verified | artifact_copied | follow_up_sent | error
     .addColumn('payload', 'jsonb', (col) => col.defaultTo(sql`'{}'::jsonb`))
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('provider_job_events_job_seq', ['job_id', 'seq']);
+    .addUniqueConstraint('provider_job_events_job_seq', ['job_id', 'seq']).execute()
 
   // ── 4. provider_circuit_breakers — retry/circuit per tenant+provider ──
   await db.schema
@@ -121,7 +121,7 @@ export async function up(db) {
     .addColumn('open_until', 'timestamp')
     .addColumn('last_error', 'text')
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('provider_circuit_tenant_provider_model', ['tenant_id', 'provider', 'model']);
+    .addUniqueConstraint('provider_circuit_tenant_provider_model', ['tenant_id', 'provider', 'model']).execute()
 
   // ── 5. provider_dead_letters — qayta ishlamaydigan failure'lar ──
   await db.schema
@@ -137,7 +137,7 @@ export async function up(db) {
     .addColumn('attempt', 'integer', (col) => col.notNull().defaultTo(1))
     .addColumn('error', 'text')
     .addColumn('payload', 'jsonb', (col) => col.defaultTo(sql`'{}'::jsonb`))
-    .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`));
+    .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`)).execute()
 
   // ── 6. provider_artifacts — expiring artifact → object storage copy ──
   await db.schema
@@ -161,7 +161,7 @@ export async function up(db) {
     .addColumn('source_url', 'text')
     .addColumn('copied_at', 'timestamp')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('provider_artifacts_job_kind', ['provider', 'job_id', 'kind']);
+    .addUniqueConstraint('provider_artifacts_job_kind', ['provider', 'job_id', 'kind']).execute()
 }
 
 /**

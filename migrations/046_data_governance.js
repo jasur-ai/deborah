@@ -51,7 +51,7 @@ export async function up(db) {
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
     .addColumn('updated_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
-    .addUniqueConstraint('data_assets_tenant_name_store_uniq', ['tenant_id', 'asset_name', 'store_name']);
+    .addUniqueConstraint('data_assets_tenant_name_store_uniq', ['tenant_id', 'asset_name', 'store_name']).execute()
 
   await db.schema
     .createTable('legal_holds')
@@ -68,7 +68,7 @@ export async function up(db) {
     .addColumn('started_by', 'varchar(120)')
     .addColumn('started_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
     .addColumn('released_by', 'varchar(120)')
-    .addColumn('released_at', 'timestamptz');
+    .addColumn('released_at', 'timestamptz').execute()
 
   // Partial unique index — faqat bitta ACTIVE hold bo'lishi mumkin; released
   // row'lar cheksiz bo'lishi mumkin (re-hold after release + re-release
@@ -96,7 +96,7 @@ export async function up(db) {
     .addColumn('requested_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
     .addColumn('fulfilled_by', 'varchar(120)')
     .addColumn('fulfilled_at', 'timestamptz')
-    .addColumn('notes', 'text');
+    .addColumn('notes', 'text').execute()
 
   await db.schema
     .createTable('deletion_receipts')
@@ -115,7 +115,7 @@ export async function up(db) {
     .addColumn('backup_expiry', 'timestamptz')
     .addColumn('receipt_hash', 'varchar(64)')
     .addColumn('notes', 'text')
-    .addUniqueConstraint('deletion_receipts_asset_store_uniq', ['tenant_id', 'asset_id', 'store_name']);
+    .addUniqueConstraint('deletion_receipts_asset_store_uniq', ['tenant_id', 'asset_id', 'store_name']).execute()
 }
 
 /**

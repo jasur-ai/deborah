@@ -55,11 +55,11 @@ export async function up(db) {
     .addColumn('status', 'varchar(20)', (col) => col.notNull().defaultTo('draft'))
     // draft | published | archived
     .addColumn('provider', 'jsonb', (col) => col.defaultTo(sql`'{}'::jsonb`))
-    // { name, jobId } — canonical only; raw response hech qachon emas
+    // { name, jobId } — canonical job'gina (raw provider javobi saqlanmaydi)
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('presentations_tenant_title', ['tenant_id', 'title']);
+    .addUniqueConstraint('presentations_tenant_title', ['tenant_id', 'title']).execute();
 
   // ── 2. presentation_versions — version history (immutable publish) ──
   await db.schema
@@ -76,7 +76,7 @@ export async function up(db) {
     .addColumn('comment', 'text')
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('presentation_versions_pres_no', ['presentation_id', 'version_no']);
+    .addUniqueConstraint('presentation_versions_pres_no', ['presentation_id', 'version_no']).execute()
 
   // ── 3. presentation_slides — structured slide rows ──
   await db.schema
@@ -95,7 +95,7 @@ export async function up(db) {
     .addColumn('citations', 'jsonb', (col) => col.defaultTo(sql`'[]'::jsonb`))
     .addColumn('quiz_concepts', 'jsonb', (col) => col.defaultTo(sql`'[]'::jsonb`))
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('presentation_slides_pres_idx', ['presentation_id', 'version_id', 'slide_index']);
+    .addUniqueConstraint('presentation_slides_pres_idx', ['presentation_id', 'version_id', 'slide_index']).execute()
 
   // ── 4. presentation_blocks — structured blocks ──
   await db.schema
@@ -109,7 +109,7 @@ export async function up(db) {
     // text | heading | bullets | image | chart | table
     .addColumn('content', 'jsonb', (col) => col.notNull().defaultTo(sql`'{}'::jsonb`))
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('presentation_blocks_slide_idx', ['slide_id', 'block_index']);
+    .addUniqueConstraint('presentation_blocks_slide_idx', ['slide_id', 'block_index']).execute()
 
   // ── 5. presentation_comments — co-teacher comments ──
   await db.schema
@@ -130,7 +130,7 @@ export async function up(db) {
     .addColumn('author', 'varchar(120)', (col) => col.notNull())
     .addColumn('body', 'text', (col) => col.notNull())
     .addColumn('resolved', 'boolean', (col) => col.notNull().defaultTo(false))
-    .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`));
+    .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`)).execute()
 
   // ── 6. presentation_assets — image/chart assets ──
   await db.schema
@@ -147,7 +147,7 @@ export async function up(db) {
     .addColumn('alt_text', 'text')
     .addColumn('storage_ref', 'varchar(255)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('presentation_assets_pres_key', ['tenant_id', 'presentation_id', 'asset_key']);
+    .addUniqueConstraint('presentation_assets_pres_key', ['tenant_id', 'presentation_id', 'asset_key']).execute()
 
   // ── 7. presentation_exports — PPTX/PDF worker skeleton ──
   await db.schema
@@ -167,7 +167,7 @@ export async function up(db) {
     .addColumn('error', 'text')
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('presentation_exports_pres_format', ['presentation_id', 'version_id', 'format']);
+    .addUniqueConstraint('presentation_exports_pres_format', ['presentation_id', 'version_id', 'format']).execute()
 
   // ── 8. presentation_qa — AI design QA (§35.5) ──
   await db.schema
@@ -181,7 +181,7 @@ export async function up(db) {
     .addColumn('ok', 'boolean', (col) => col.notNull().defaultTo(true))
     .addColumn('detail', 'text')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('presentation_qa_slide_check', ['slide_id', 'check_type']);
+    .addUniqueConstraint('presentation_qa_slide_check', ['slide_id', 'check_type']).execute()
 }
 
 /**

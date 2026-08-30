@@ -52,7 +52,7 @@ export async function up(db) {
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addUniqueConstraint('curriculum_map_tenant_name_version', ['tenant_id', 'name', 'version']);
+    .addUniqueConstraint('curriculum_map_tenant_name_version', ['tenant_id', 'name', 'version']).execute()
 
   await db.schema
     .createTable('curriculum_map_entries')
@@ -76,8 +76,8 @@ export async function up(db) {
     // how many assessment points touch this outcome in this course
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addUniqueConstraint('curriculum_map_entry_course_outcome', ['map_id', 'course_id', 'outcome_id'])
-    .addIndex('curriculum_map_entries_map_idx', ['map_id'])
-    .addIndex('curriculum_map_entries_outcome_idx', ['outcome_id']);
+    
+    
 
   await db.schema
     .createTable('evidence_aggregations')
@@ -98,15 +98,15 @@ export async function up(db) {
     .addColumn('sample_size', 'integer', (col) => col.notNull().defaultTo(0))
     .addColumn('min_cell_size', 'integer', (col) => col.notNull().defaultTo(5))
     // below this → cell suppressed (null in aggregate)
-    .addColumn('observed_pct', 'numeric(6,3)')
+    .addColumn('observed_pct', sql`numeric(6,3)`)
     // null when suppressed
-    .addColumn('benchmark_target_pct', 'numeric(6,3)')
+    .addColumn('benchmark_target_pct', sql`numeric(6,3)`)
     .addColumn('is_suppressed', 'boolean', (col) => col.notNull().defaultTo(false))
     .addColumn('aggregate_meta', 'jsonb', (col) => col.defaultTo(sql`'{}'::jsonb`))
     // { raters, coursesIncluded, languageMix, anonymized: true } — no raw PII
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addIndex('evidence_aggregations_map_outcome_idx', ['map_id', 'outcome_id']);
+    
 
   await db.schema
     .createTable('program_findings')
@@ -120,15 +120,15 @@ export async function up(db) {
     .addColumn('outcome_id', 'integer', (col) => col.notNull())
     .addColumn('outcome_code', 'varchar(60)')
     .addColumn('title', 'varchar(300)', (col) => col.notNull())
-    .addColumn('target_pct', 'numeric(6,3)', (col) => col.notNull())
-    .addColumn('observed_pct', 'numeric(6,3)')
+    .addColumn('target_pct', sql`numeric(6,3)`, (col) => col.notNull())
+    .addColumn('observed_pct', sql`numeric(6,3)`)
     .addColumn('review_notes', 'text')
     .addColumn('status', 'varchar(20)', (col) => col.notNull().defaultTo('open'))
     // open | in_progress | resolved
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addIndex('program_findings_map_idx', ['map_id']);
+    
 
   await db.schema
     .createTable('improvement_actions')
@@ -148,7 +148,7 @@ export async function up(db) {
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
     .addColumn('updated_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addIndex('improvement_actions_finding_idx', ['finding_id']);
+    
 
   await db.schema
     .createTable('follow_up_evidence')
@@ -167,7 +167,7 @@ export async function up(db) {
     .addColumn('notes', 'text')
     .addColumn('collected_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addIndex('follow_up_evidence_action_idx', ['action_id']);
+    
 
   await db.schema
     .createTable('accreditation_exports')
@@ -185,7 +185,7 @@ export async function up(db) {
     .addColumn('manifest_hash', 'varchar(64)', (col) => col.notNull())
     .addColumn('exported_by', 'varchar(120)')
     .addColumn('created_at', 'timestamp', (col) => col.notNull().defaultTo(sql`now()`))
-    .addIndex('accreditation_exports_map_idx', ['map_id']);
+    
 }
 
 /**
@@ -193,6 +193,13 @@ export async function up(db) {
  */
 export async function down(db) {
   await db.schema.dropTable('accreditation_exports');
+  await db.schema.createIndex('accreditation_exports_map_idx').on('accreditation_exports').columns(['map_id']).execute();
+  await db.schema.createIndex('follow_up_evidence_action_idx').on('follow_up_evidence').columns(['action_id']).execute();
+  await db.schema.createIndex('improvement_actions_finding_idx').on('improvement_actions').columns(['finding_id']).execute();
+  await db.schema.createIndex('program_findings_map_idx').on('program_findings').columns(['map_id']).execute();
+  await db.schema.createIndex('evidence_aggregations_map_outcome_idx').on('evidence_aggregations').columns(['map_id', 'outcome_id']).execute();
+  await db.schema.createIndex('curriculum_map_entries_outcome_idx').on('curriculum_map_entries').columns(['outcome_id']).execute();
+  await db.schema.createIndex('curriculum_map_entries_map_idx').on('curriculum_map_entries').columns(['map_id']).execute();
   await db.schema.dropTable('follow_up_evidence');
   await db.schema.dropTable('improvement_actions');
   await db.schema.dropTable('program_findings');

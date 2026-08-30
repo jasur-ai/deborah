@@ -61,7 +61,7 @@ export async function up(db) {
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
     .addColumn('updated_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
-    .addUniqueConstraint('api_route_registry_tenant_method_path_uniq', ['tenant_id', 'method', 'path', 'version']);
+    .addUniqueConstraint('api_route_registry_tenant_method_path_uniq', ['tenant_id', 'method', 'path', 'version']).execute()
 
   // ── 2. api_contracts ──
   await db.schema
@@ -84,7 +84,7 @@ export async function up(db) {
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
     .addColumn('updated_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
-    .addUniqueConstraint('api_contracts_tenant_name_ver_uniq', ['tenant_id', 'contract_name', 'version']);
+    .addUniqueConstraint('api_contracts_tenant_name_ver_uniq', ['tenant_id', 'contract_name', 'version']).execute()
 
   // ── 3. socket_event_contracts (allowlist) ──
   await db.schema
@@ -104,7 +104,7 @@ export async function up(db) {
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
     .addColumn('updated_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
-    .addUniqueConstraint('socket_event_contracts_tenant_event_ver_uniq', ['tenant_id', 'event_name', 'version']);
+    .addUniqueConstraint('socket_event_contracts_tenant_event_ver_uniq', ['tenant_id', 'event_name', 'version']).execute()
 
   // ── 4. webhook_events (replay/out-of-order ledger) ──
   await db.schema
@@ -124,7 +124,7 @@ export async function up(db) {
     .addColumn('status', 'varchar(20)', (col) => col.notNull().defaultTo('received'))
     // received | processed | rejected | out_of_order
     .addColumn('error', 'text')
-    .addUniqueConstraint('webhook_events_tenant_event_id_uniq', ['tenant_id', 'provider', 'event_id']);
+    .addUniqueConstraint('webhook_events_tenant_event_id_uniq', ['tenant_id', 'provider', 'event_id']).execute()
 
   // ── 5. outbox_messages (transactional outbox + consumer idempotency) ──
   await db.schema
@@ -148,7 +148,7 @@ export async function up(db) {
     .addColumn('created_by', 'varchar(120)')
     .addColumn('created_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
     .addColumn('updated_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
-    .addUniqueConstraint('outbox_messages_tenant_consumer_uniq', ['tenant_id', 'consumer_key']);
+    .addUniqueConstraint('outbox_messages_tenant_consumer_uniq', ['tenant_id', 'consumer_key']).execute()
 }
 
 /**

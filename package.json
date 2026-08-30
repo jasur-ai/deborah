@@ -62,7 +62,9 @@
     "test:anskey": "node scripts/answer-key-scan.js",
     "test:security-guard": "vitest run tests/unit/security-guard.test.js tests/integration/security-guard.test.js tests/e2e/security-guard-redteam.test.js",
     "test": "npm run typecheck && npm run test:ci && npm run test:security && npm run test:vip",
-    "verify:all": "npm run typecheck && npm run test:ci && npm run test:security && npm run test:reliability && node scripts/release-signoff.js --rehearsal && node scripts/final-migration.js --rehearsal"
+    "verify:all": "npm run typecheck && npm run test:ci && npm run test:security && npm run test:reliability && node scripts/release-signoff.js --rehearsal && node scripts/final-migration.js --rehearsal",
+    "db:migrate": "node scripts/db-migrate.js",
+    "db:status": "node scripts/db-migrate.js --status"
   },
   "dependencies": {
     "@aws-sdk/client-kms": "^3.1112.0",
