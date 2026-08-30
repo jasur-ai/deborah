@@ -68,15 +68,14 @@ body::before{content:'';position:fixed;inset:0;z-index:9997;pointer-events:none;
 .lang button+button{border-left:1px solid var(--line)}
 .lang button:hover{color:var(--ivory)}
 .lang button.on{background:var(--ld-gold);color:var(--on-gold)}
-.hbtn{width:34px;height:34px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color .2s,color .2s}
+.hbtn{width:32px;height:32px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color .2s,color .2s}
 .hbtn:hover{border-color:var(--ld-gold);color:var(--ld-gold2)}
-.hbtn svg{width:17px;height:17px;display:block}
-/* ── Admin (faqat login — ro'yxatdan o'tish yo'q) ── */
-.abtn{display:inline-flex;align-items:center;gap:7px;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
-  padding:8px 14px;border:1px solid var(--line2);background:transparent;color:var(--ld-gold2);cursor:pointer;transition:all .2s;white-space:nowrap}
-.abtn:hover{border-color:var(--ld-gold);color:var(--ivory);transform:translateY(-2px);box-shadow:0 0 18px rgba(201,164,92,.18)}
-.abtn svg{width:13px;height:13px;display:block}
-@media(max-width:520px){.abtn span{display:none}.abtn{padding:8px 10px}}
+.hbtn svg{width:16px;height:16px;display:block}
+/* S31: KIRISH — oltin tugma (user namunasi .btn-gold.btn-sm), lang+temadan keyin */
+.kbtn{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.62rem;letter-spacing:.11em;text-transform:uppercase;font-weight:700;
+  padding:8px 14px;border:1px solid var(--ld-gold);background:var(--ld-gold);color:var(--on-gold);cursor:pointer;transition:all .2s;display:inline-block;white-space:nowrap;text-decoration:none}
+.kbtn:hover{background:var(--ld-gold2);border-color:var(--ld-gold2);color:var(--on-gold);box-shadow:0 0 22px rgba(201,164,92,.28);transform:translateY(-2px)}
+@media(max-width:520px){.kbtn{padding:8px 11px;font-size:.58rem}}
 .admin-overlay{position:fixed;inset:0;z-index:985;display:flex;align-items:center;justify-content:center;padding:20px;
   background:rgba(10,8,5,.62);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .28s}
 .admin-overlay.open{opacity:1;pointer-events:auto}
@@ -99,7 +98,7 @@ body::before{content:'';position:fixed;inset:0;z-index:9997;pointer-events:none;
 .admin-err{display:none;font-size:.8rem;color:var(--crimson);text-align:center;margin:4px 0 12px}
 .admin-err.show{display:block}
 .admin-card .btn-gold{width:100%}
-.hmenu{position:fixed;top:62px;left:18px;z-index:950;min-width:200px;border:1px solid var(--line);background:var(--panel-a);backdrop-filter:blur(10px);box-shadow:var(--shadow);padding:8px;opacity:0;transform:translateY(-6px);pointer-events:none;transition:all .22s}
+.hmenu{position:fixed;top:62px;right:18px;z-index:950;min-width:200px;border:1px solid var(--line);background:var(--panel-a);backdrop-filter:blur(10px);box-shadow:var(--shadow);padding:8px;opacity:0;transform:translateY(-6px);pointer-events:none;transition:all .22s}
 .hmenu.open{opacity:1;transform:none;pointer-events:auto}
 .hmenu a{display:block;padding:11px 14px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--mut);transition:all .15s}
 .hmenu a:hover{color:var(--ivory);background:var(--card-bg)}

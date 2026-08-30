@@ -915,3 +915,13 @@ Kod o'zgarishi NOLTA. Da'vo qilingan lekin TURLIGAN topilmalar (repository'da ha
      "MFA yoqilgan" ✅. Regress: tests/integration/admin-mfa-voluntary.test.js
      5/5 (afterAll DB cleanup — shared temp DBni bulg'amaslik uchun).
   4) YAKUNIY: vitest TO'LIQ 7116/7116 ✅ (496 fayl), playwright auth-e2e 5/5 ✅.
+
+── ✅ S31 (AI-A, 2026-08-30): LANDING HEADER — user namunasi (o'ng menyu) ──
+  User namunasi (uploads/index.html) + aniq talab: chap burger O'LDI;
+  header: logo chap · nav markaz (Cast/Hujjatlar/Ro'yxat) · o'ng ctrls:
+  UZ/RU/EN → light/dark → KIRISH (oltin .kbtn → /ustoz, niqob) → ⋮ menyu.
+  Admin FAQAT menyu ichida (tashqi abtn tugmasi o'ldi); .hmenu endi
+  O'NG tepada (right:18px). Tartib: lang → tema → Kirish → menyu.
+  Regress: landing.test HEADER yangilandi (kbtn/ustoz, adminBtn yo'q,
+  themeBtn<kbtn, ⋮ ctrls ichida), landing+copy 38/38 ✓, visual critical
+  update+verify 70/70 ✓, design:check:full 8/8 PASS ✓.

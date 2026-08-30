@@ -297,17 +297,22 @@ describe('Landing — HTTP routing (CAST demo 1:1 — tasdiqlangan cast.html por
     expect(html).toContain('data-i18n="auth.loginId"');
   });
 
-  it('LANDING HMENU — burger: O\'qituvchi kirishi + Admin ichida (S27 user qarori)', async () => {
+  it('LANDING HEADER — o\'ng menyu: Kirish(/ustoz) + Admin FAQAT ichida (S31 user namunasi)', async () => {
     const html = await (await fetch(`${serverUrl}/`)).text();
     const m = html.match(/<div class="hmenu"[^>]*>[\s\S]*?<\/div>/) || [''];
-    expect(m[0]).toContain('href="/admin/login"'); // BUG-028: alohida page (modal emas)
-    // S27: burger'dagi Kirish endi O'QITUVCHI maydoniga (/ustoz); top nav Kirish → #auth
+    // Admin menyu ICHIDA (BUG-028: alohida page), tashqarida ko'rinmaydi
+    expect(m[0]).toContain('href="/admin/login"');
+    expect(html).not.toContain('id="adminBtn"'); // S31: tashqi Admin tugmasi o'ldi
+    // Kirish — /ustoz (niqob), menyu ichida ham
     expect(m[0]).toContain('href="/ustoz"');
-    expect(m[0]).not.toContain('href="#auth"');
-    const nav = html.match(/<nav class="nav">[\s\S]*?<\/nav>/) || [''];
-    expect(nav[0]).toContain('href="#auth"'); // oddiy/VIP user login-register
-    // burger chap yuqori burchakda (logo'dan oldin)
-    expect(html.indexOf('id="hbtn"')).toBeLessThan(html.indexOf('class="logo"'));
+    // Oltin Kirish tugmasi ctrls ichida (lang + temadan KEYIN)
+    const ctrls = html.match(/<div class="ctrls">[\s\S]*?<\/header>/) || [''];
+    expect(ctrls[0]).toContain('class="kbtn" href="/ustoz"');
+    expect(ctrls[0].indexOf('id="themeBtn"')).toBeLessThan(ctrls[0].indexOf('class="kbtn"'));
+    expect(ctrls[0]).toContain('data-lang="ru"'); // UZ/RU/EN
+    // ⋮ menyu tugmasi ham ctrls ichida (chap burger yo'q)
+    expect(ctrls[0]).toContain('id="hbtn"');
+    expect(html.indexOf('class="logo"')).toBeLessThan(html.indexOf('id="hbtn"'));
     // footer kontakt anchor (demo #kontakt)
     expect(html).toContain('<footer class="ftr" id="kontakt">');
   });
