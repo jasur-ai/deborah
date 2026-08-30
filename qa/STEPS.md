@@ -172,3 +172,4 @@
 - ✅ STEP 132-144 — yakunlandi (2026-08-30): BUG-230db134-150 — 🔴🔴 DIRECTOR host-socket O'LIK (WS OPEN→CLOSE, 20s Ulanish), BUG-049 RESOLVED (sahifa), BUG-052 RESOLVED (join), cast create E2E ✅, BUG-230hz167 re-confirm#3 🔴, /arena 2 rolda ✅
 - ✅ STEP 145-156 — yakunlandi (2026-08-30): BUG-230db151-177 — CSP 14/14 YO'Q re-confirm#5, dark 10/10 ✅ (BUG-080 fixed), mobile 0px ✅ (BUG-105 fixed), method matritsa 40/40 ✅, auth matritsa 40×3, upload fuzz ✅, open redirect YO'Q ✅
 - ✅ STEP 157-163 — yakunlandi (2026-08-30): BUG-230db178-188 — /cast o'lik havola 🔴, BUG-090 re-confirm#3 (restart sessiya o'chiradi — aniq dalil), publish.js unmounted re-confirm, Node 20 vs 26 drift, perf 50×140ms ✅
+- ✅ STEP 164-170 — yakunlandi (2026-08-30): BUG-230db189-200 — BUG-230hz43 RESOLVED ✅✅ (landing register link), BUG-230hz11/010 regression YO'Q ✅, admin izolyatsiya 10/10 ✅, type-confusion 🟡, webhook CSRF design 🟠

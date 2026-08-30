@@ -4743,3 +4743,53 @@ Performance: GET p95=136ms · br · cache ✅
 
 ### BUG-230db188: ℹ️ Loyiha masshtabi
 - DALIL: 86 route modul, 112 EJS view, 32 dependency + 16 devDep
+
+## STEP 164 — Type-confusion fuzz (2026-08-30)
+
+### BUG-230db189: 🟡 Title maydoni TUR TEKSHIRUVSIZ: array/object/number/bool hammasi QABUL
+- DALIL: `title=["array"]` → 200, `title={"obj":1}` → 200, `title=12345` → 200, `title=true` → 200 (4 ta item yaratildi, ID'lar bilan) — faqat null rad (400)
+- TA'SIR: DB'ga noto'g'ri turdagi qiymatlar yoziladi — boshqa modullarda davolashsiz ishlashda crash xavfi
+- FILE: routes/portfolio.js:115-127 (addItem title filter yo'q)
+
+### BUG-230db190: ✅ validate/email tur xatolari rad (PASS)
+- DALIL: email=array/null → 400 required
+
+### BUG-230db191: ℹ️ 100KB body va 200-darajali nesting — server omon qoldi
+- DALIL: ping 100KB → 204; deep nesting → 204 (crash yo'q)
+
+## STEP 165 — Regressiya probes (2026-08-30)
+
+### BUG-230db192: ✅ BUG-230hz11 regression YO'Q — __SETTINGS_PROFILE__ parse OK (PASS)
+### BUG-230db193: 🟠 BUG-011 regression EMAS — mfa/setup'dagi crash panel-layout :1089 bug'i (BUG-230db126 bilan bir xil)
+- DALIL: `Cannot read properties of null (reading 'addEventListener')` — mfa/setup panel layoutini ishlatadi, panel.ejs:1089 'search-inp' null
+
+### BUG-230db194: ✅ BUG-010 regression YO'Q — create-test script leak YO'Q (PASS)
+
+### BUG-230db195: ✅✅ BUG-230hz43 RESOLVED — landing'da /user/register havola ENDI BOR (PASS, yangi deployda)
+- DALIL: landing HTML'da `href="/user/register"` ×2 (CTA + auth panel) + /user/login ×1 — avval 4 marta re-confirm qilingan "register havola YO'Q" muammosi TUZATILGAN
+
+## STEP 166 — Admin API izolyatsiyasi (2026-08-30)
+
+### BUG-230db196: ✅ 10/10 admin endpoint teacher uchun 401 (PASS — izolyatsiya ideal)
+- DALIL: /api/admin/mfa/stepup, /api/admin/users, /admin, /api/admin/audit, /api/admin/observability, /admin/users, /admin/audit, /api/admin/command-center, /api/admin/data-governance — hammasi 401 (teacher sessiya bilan)
+
+## STEP 167 — Webhooklar (2026-08-30)
+
+### BUG-230db197: 🟠 Webhook endpointlar CSRF ortida — tashqi provayderlar 403 OLADI
+- DALIL: /api/email-webhook/inbound, /api/telegram/webhook, /api/hemis/webhook, /api/email-webhook/bounce — signature'siz POST → 403 CSRF ( SendGrid/Telegram serverlari CSRF token yubora olmaydi)
+- IZO: himoya "fail-closed" — xavfsiz, LEKIN webhook funksiyasi real provayderlar bilan ISHLAMAYDI (env yo'qligi bilan birga — integratsiyalar umuman o'chirilgan holatda)
+
+## STEP 168 — SW/Offline (2026-08-30)
+
+### BUG-230db198: ✅ Service worker tirik + /offline sahifa bor (PASS)
+- DALIL: /service-worker.js 200 (9.6KB, fetch/cache handlerlar); /offline → 200
+
+## STEP 169 — Attempt API invalid ID (2026-08-30)
+
+### BUG-230db199: ✅ 5/5 invalid ID 401 (actorId bug qamrovi) (PASS xavfsizlik nuqtai nazardan)
+- DALIL: brief 999999/abc/0/-1 va attempt start → hammasi 401 "Authentication required" (BUG-230db119 actorId — hamma so'rovlar rad, IDOR riski ham YO'Q)
+
+## STEP 170 — Katta payload (2026-08-30)
+
+### BUG-230db200: 🟡 100KB title QABUL qilindi (HTTP 200, DB'ga yozildi)
+- DALIL: title 100K belgi → 200 itemId — server-side uzunlik limiti YO'Q (DOM maxlength=100/200 bilan ziddiyat; DB hajm o'sish riski)
