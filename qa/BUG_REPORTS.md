@@ -5155,3 +5155,23 @@ CSP ✅ / /metrics 404 ✅ / QTI 401 ✅ / minlength 8 ✅ / logout-csrf (cookie
 | 2560 4K | 0 | 54px | 33.6px | 820px | 960px |
 
 Hamburger → Cast → join overlay telefonda ochiladi ✅ (158_phone_join_overlay.png)
+
+---
+# ═══ STEP 213 — IMKONIYATLAR 3×3 GRID + KARTA QAYTISH FIX (2026-09-02, 981ac8e + ed100aa) ═══
+> FOYDALANUVCHI: "imkoniyatlar ketma-ket tepadan-pastga bo'lib qolgan, 3 ta 3 ta qilib 3 qator edi; bosilsa kattalashsin, yana bosilsa AYNAN joyiga qaytsin — hozir boshqa tepaga qaytyapti"
+
+## 3 ta ildiz va fixlar
+
+| # | Ildiz | Fix | Fayl |
+|---|---|---|---|
+| 1 | `.grid3` asosiy desktop qoidasi landing.css'da UMUMAN YO'Q edi (faqat @media'lar) → grid yo'q = kartalar blok-ustun tepadan pastga | `.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}` (namuna qiymati) | landing.css |
+| 2 | closeCard oxirida `transform:translate(-50%,-50%) scale(1)` QOLIB KETARDI → karta yopilgach vizual 50% chapga-yuqoriga surilgan ("boshqa tepaga qaytyapti") | FLIP animatsiya oxirida `transform:''` tozalanadi | landing.js |
+| 3 | `.reveal{translateY(26px)}` — ochilmagan karta yopilgach reveal-transformga qaytardi (+26px) | openCard'da `classList.add('in')` (ko'rilgan karta qayta yashirinmaydi) | landing.js |
+
+## Live verifikatsiya (1440px, /ustoz)
+- GRID: 3 ustun × 3 qator = 9 karta ✅ (qatorlar: [1,2,3],[4,5,6],[7,8,9])
+- KARTA-1: qaytish farqi dx=0.0 dy=0.0 ✅
+- KARTA-5: dx=0.0 dy=0.0 ✅
+- KARTA-2: dx=0.7 dy=0.4 ✅ (sub-piksel — anti-aliasing)
+- KARTA-8: dx=0.7 dy=0.4 ✅
+- Skrinshot: 162_grid_final.png (karta-5 o'z o'rnida kattalashgan, qolganlar blur)
