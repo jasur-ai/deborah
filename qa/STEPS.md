@@ -178,3 +178,4 @@
 - ✅ STEP 195-206 — yakunlandi (2026-08-30): BUG-230db222-233 — /metrics ANON OCHIQ 🟠🔴, BUG-008 re-confirm#5, BUG-044 ✅, og:image ✅
 - ✅ STEP 207 — QATOR 2 YAKUNIY XULOSA: 100 step (108-207), 233 yozuv (13🔴/14🟠/30🟡/100✅), 12 commit, ~19MB. 14 eski bug TUZATILGANI tasdiqlandi, 8 Critical ochiq. Platforma 7/10.
 - ✅ STEP 208 — RE-VERIFY ALL (2026-08-30): 26 tekshiruv — 0 yangi fix deploy bo'lgan; 19 bug YANA BOR (XSS hanuz ijro etiladi!), 3 fix barqaror; repo audit: debugging fix'lar main'ga merge qilinmagan, s32 (ai-studio) ustida ish ketayapti
+- ✅ STEP 209 — FIX PUSH (2026-08-30): FOYDALANUVCHI buyrug'i bilan 11 bug main'ga to'g'rilandi (c3c95e9, 14 fayl) — XSS/actorId/QTI-auth/metrics/CSP/logout-csrf/minlength/title/crash/nav

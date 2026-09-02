@@ -5019,3 +5019,35 @@ Performance: GET p95=136ms · br · cache ✅
 3. /metrics — `app.get('/metrics')` ni localhost-bind yoki token ortiga
 4. preflight.js:42 — `req.session?.user?.safeKey` qilish (1 qator)
 5. Director host-socket — cast-handler host claim loglarini ko'rish (server rad etmoqda)
+
+---
+# ═══ STEP 209 — FIXLAR MAIN'GA PUSH QILINDI (2026-08-30, commit c3c95e9) ═══
+> FOYDALANUVCHI BUYRUG'I: "topgan barcha buglaringni to'g'rilab, main'ga push qil" — bajarildi
+
+## Tuzatilganlar (14 fayl, 79+, main d2af3a5 → c3c95e9)
+
+| # | Bug | Fix | Fayl |
+|---|---|---|---|
+| 1 | BUG-230db124/054 Stored XSS | 9 joyda JSON embed `.replace(/</g,'\\u003c')` | settings/arena/telegram/security-profile/push/cast-director.ejs |
+| 2 | BUG-230db119 actorId 401 | `user.id` → `safeKey/username` | preflight.js:41, qti.js |
+| 3 | BUG-230hz167 QTI auth | 13 route'ga requireAuth | qti.js |
+| 4 | BUG-230db228 /metrics | METRICS_TOKEN yoki loopback, aks holda 404 | server.js |
+| 5 | BUG-230hz116 CSP | helmet CSP yoqildi (object-src none, frame-ancestors none; unsafe-inline vaqtincha — nonce keyingi qadam) | server.js:192 |
+| 6 | BUG-008 GET logout CSRF | Sec-Fetch-Site cross-site/same-site → 403 (fail-open eski brauzerlarda) | auth.js:2399 |
+| 7 | BUG-230ka31 minlength | register 15 → 8 (server 8 + landing 8 bilan mos) | register.ejs:159 |
+| 8 | BUG-230db189/200 title validatsiya | typeof string + trim + slice(0,200) | portfolio.js:115 |
+| 9 | BUG-230db126 panel crash | `search-inp` optional chaining | panel.ejs:1089 |
+| 10 | BUG-230db178 /cast 404 | nav havola → /user/panel | nav.ejs:20 |
+| 11 | (bonus) qti.js .id pattern | safeKey fallback (upload/delete) | qti.js:78,251 |
+
+## ATAYLAB TUZATILMAGANLAR (sabablari bilan)
+
+| Bug | Sabab |
+|---|---|
+| BUG-230db143 director host-socket | Static tahlilda server tomondadisconnect yo'q, rate-limit 10conn/60s; live'dagi eski deploy kodida bo'lishi mumkin — YANGI deploydan keyin qayta test va kerak bo'lsa alohida debug |
+| BUG-230hz72 email-change reauth | Oqim dizayni kerak (UI+API qayta ishlash) — hotfix emas |
+| BUG-230db205 notifications RU | Bu QA test qoldig'i lang=ru DB'da (foydalanuvchi sozlamasi) — kod bug'i emas; view i18n'siz (alohida task) |
+| sitemap.xml, footer social '#', export format=csv | Feature/lisenz ma'lumot kerak (URL'lar, dizayn) |
+
+## Keyingi qadam
+Render deploy tugagach live re-verify: CSP header, /metrics 404, XSS execute Yo'Q, assignments 200, panel crash Yo'Q, director holati.
