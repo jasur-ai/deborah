@@ -5423,3 +5423,28 @@ Login (parol) → 2FA sahifa → ikki variant:
 - variantlar: linear-gradient(135deg, rgb(74,58,34), rgb(45,36,19)) ✅
 - grid 300px 300px (2×2) ✅, to'g'ri javob yashil ✅
 - Skrinshot: 184_ct_vintage.png
+
+---
+# ═══ STEP 224 — CREATE-TEST TO'LIQ I18N + DARK/LIGHT + SINOV→PRACTICE (2026-09-02, 598712c) ═══
+
+## 1. RU/EN to'liq (yarim emas)
+- routes/user.js: BL lug'at (uz/ru/en) — 26 kalit: title, placeholder, labellar, tugmalar, hint'lar, empty states
+- views/user/create-test.ejs: barcha matnlar `bc.*` bilan; test-builder.js `window.__TB_COPY` + `T()` helper
+- LIVE: RU "Название теста (например: Математика 2024)" ✅, EN "Test name (e.g.: Math 2024)" ✅ (185/186 skrinshotlar)
+
+## 2. DARK/LIGHT to'liq — oq qolgan joylar yo'q
+- Qattiq ranglar (oq karta, jigarrang inputlar) → CSS o'zgaruvchilar (--tb-bg/card/text/input-bg/opt-bg/...)
+- `[data-theme="light"]`: och vintage fon (#ece3d0) + shisha outline
+- Dark: qora-jigar (default) — ikkala temada ham to'liq ko'rinadi
+
+## 3. "Invalid data" → professional aniq xabarlar
+- Server: "Test nomini kiriting — testga nom qoying" (field:name) / "Kamida 1 ta savol qo'shing" (field:questions)
+- Klient: RU/EN lug'atda xato matnlar ham tarjima qilinadi
+
+## 4. "Sinov" → YAKKA MASHQ (/user/practice) — ARENA EMAS
+- panel.ejs: openStartModal URL'lar test-arena'dan practice'ga o'zgartirildi (user/mock/pre)
+- Vaqt tanlanadi → URL `time=15` param bilan (practice sahifada ko'rinadi)
+
+## 5. "Ko'rish" tugma tuzatildi
+- Saqlanmagan bo'lsa avval avtosave, keyin `/user/practice?source=user&key=` (Yakka mashq)
+- Eski versiya: Arena'ga yuborardi yoki yangi testda /user/panel'ga (ishlamasdi)

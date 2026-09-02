@@ -193,3 +193,4 @@
 - ✅ STEP 221 — TEST BUILDER KAHOOT-STYLE (3b9c13e): binafsha gradient fon, Kahoot ranglari (A-D qizil/ko'k/sariq/yashil), avtosave "Invalid data" fix (nom bo'sh bo'lsa yubormaydi)
 - ✅ STEP 222 — KAHOOT STRUKTURA (ee7d7b9+a82703b): 2×2 grid + bir xil binafsha + shakl belgilar + variant bosish=to'g'ri; qizil FAQAT xato uchun — live isbot
 - ✅ STEP 223 — TEST BUILDER VINTAGE (87a407a): binafsha → malla-jigarrang palitra (fon/editor/variantlar/gold tugma), struktura 2×2+shape saqlanadi — live isbot
+- ✅ STEP 224 — CREATE-TEST I18N+TEMA+PRACTICE (598712c): RU/EN to'liq (26 kalit bc+T()), dark/light CSS var, Sinov→/user/practice, Ko'rish→saqla+practice, "Invalid data"→aniq xabarlar — live RU/EN ✅
