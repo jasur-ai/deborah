@@ -809,6 +809,7 @@
   }
   function openCard(c){
     if(activeCard){closeCard();if(activeCard===c)return;}
+    c.classList.add('in'); /* BUG fix: reveal translateY(26px) keyinroq qaytmasin — karta 'ko'rilgan' hisoblanadi */
     grid3.classList.add('has-active');
     var first=c.getBoundingClientRect();
     c.classList.add('active');
