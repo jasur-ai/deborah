@@ -417,6 +417,9 @@ app.get('/health', (req, res) => {
   app.use('/', indexRoutes);
   app.use('/', authRoutes);
   app.use('/admin', adminRoutes);
+  // S34e: Admin profil API (passkey/sessiya/API-kalit/loglar) — to'liq yo'llar bilan
+  const { default: profileAdminRoutes } = await import('./routes/admin/profile.js');
+  app.use(profileAdminRoutes);
   // Public auth routes — userRoutes (requireAuth) OLDIN mount qilinadi,
   // aks holda /user/reset va /user/mfa requireAuth'ga tushib 401 qaytaradi.
   app.use('/', mfaRoutes);

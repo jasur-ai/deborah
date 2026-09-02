@@ -439,6 +439,34 @@ export async function requireEmailVerified(req, res, next) {
  * AUTH A-30 §07: admin session — SameSite=Strict, qisqa Max-Age (8 soat),
  * absolute timeout, remember-me yo'q (high-privilege).
  */
+/* S34e: admin sessiya revoke nazorati — 60s memo-cache (fb.get har requestda yo'q) */
+const _adminSidCache = new Map(); // sid -> { checkedAt, revoked }
+function checkAdminSessionRevoked(req, res) {
+  const sid = req.sessionID;
+  if (!sid) return;
+  const hit = _adminSidCache.get(sid);
+  const now = Date.now();
+  if (hit && now - hit.checkedAt < 60_000) {
+    if (hit.revoked) {
+      req.session.destroy(() => {});
+      const isApi = req.originalUrl.startsWith('/api/');
+      if (isApi) res.status(401).json({ error: 'Sessiya bekor qilingan', redirect: '/admin/login' });
+      else res.redirect('/admin/login');
+      return;
+    }
+    return; // cache: revoked emas
+  }
+  import('../firebase/admin.js').then(({ fb }) => fb.get(`admin_sessions/${sid}/revoked`))
+    .then((snap) => {
+      const revoked = !!(snap && snap.exists && snap.exists() && snap.val() === true);
+      _adminSidCache.set(sid, { checkedAt: now, revoked });
+      if (revoked) {
+        req.session.destroy(() => {});
+      }
+    })
+    .catch(() => _adminSidCache.set(sid, { checkedAt: now, revoked: false }));
+}
+
 export function requireAdmin(req, res, next) {
   if (req.session && req.session.admin) {
     // ── Privileged session hardening (A-30 §07) ──
@@ -451,6 +479,8 @@ export function requireAdmin(req, res, next) {
         req.session.cookie.maxAge = adminTtl;
       }
     }
+    // ── S34e: DB'dan revoke tekshiruv (60s memo-cache — har requestda fb.get yo'q) ──
+    checkAdminSessionRevoked(req, res);
     // Absolute timeout — login'dan boshlab 8 soat (qisqa, high-privilege)
     const adminTtl = CONFIG.ADMIN_SESSION_TTL_MS || 8 * 60 * 60 * 1000;
     if (req.session.adminLoggedInAt && Date.now() - req.session.adminLoggedInAt > adminTtl) {

@@ -290,6 +290,15 @@ function grantAdminSession(req, res, { viaMfa = false } = {}) {
         lastCity: cityFromIp(req.ip) || null,
         lastDeviceFp: req.body?.device_fp || null,
       }).catch(() => {});
+      // S34e: admin sessiyasini DB'da kuzatish — Profilda ro'yxat + revoke mumkin
+      fb.set(`admin_sessions/${req.sessionID}`, {
+        username: CONFIG.ADMIN_USER,
+        ip: req.ip || null,
+        userAgent: String(req.headers['user-agent'] || '').slice(0, 180),
+        loginAt: Date.now(),
+        lastSeen: Date.now(),
+        revoked: false,
+      }).catch(() => {});
       logAuthEvent({
         action: AUDIT_ACTIONS.ADMIN_LOGIN,
         outcome: 'success',
@@ -731,6 +740,11 @@ router.get('/admin/logout', (req, res) => {
 });
 
 router.post('/admin/logout', (req, res) => {
+  // S34e: chiqishda sessiya yozuvini revoke qilish (Profildagi sessiyalar ro'yxati uchun)
+  if (req.sessionID) {
+    fb.set(`admin_sessions/${req.sessionID}/revoked`, true).catch(() => {});
+    fb.set(`admin_sessions/${req.sessionID}/revokedAt`, Date.now()).catch(() => {});
+  }
   req.session.destroy(() => {
     res.clearCookie(sessionCookieName());
     res.redirect('/admin/login');
