@@ -5129,3 +5129,29 @@ CSP ✅ / /metrics 404 ✅ / QTI 401 ✅ / minlength 8 ✅ / logout-csrf (cookie
 8. 0 JS xato ✅
 + OneID/HEMIS tugmalari ikkala sahifada YO'Q (faqat hujjat izohida) ✅
 + robots.txt Disallow: /ustoz ✅
+
+---
+# ═══ STEP 212 — FLEKSIBIL O'LCHAMLAR: TELEFON ↔ KATTA EKRAN (2026-09-02, c86fb00 + b899db7) ═══
+> FOYDALANUVCHI: "telefonda yoki katta ekranli PC da kirilsa katta yoki kichkina bo'lib qolyapti"
+
+## O'lchangan 2 ta ildiz
+1. **Telefon:** design/foundations/responsive.css:164 — iOS anti-zoom `font-size:max(16px,1em)!important` (0,8,1 selektor) barcha inputlarni 16px qilardi → join-kod maydoni juda kichik. FIX: `#jcode` (ID, 1,0,0) `max(20px,1.15rem)!important`
+2. **Katta ekran:** .page 760px'da qotgan edi — 1920/4K monitorda hamma narsa kichik ko'rinardi. FIX: ≥1440 va ≥2000 breakpointlar
+
+## landing.css S34b bloki (commit c86fb00 + b899db7)
+- `.jcode` fluid: `clamp(1.25rem, 1rem+1.6vw, 2.1rem)`; telefonda 20px! (overlay skrinshot: 158)
+- ≥1440px: page 960px, h1 3.2rem, screen 740px, auth-card 860px
+- ≥2000px: page 1140px, h1 3.4rem, screen 820px, auth-card 960px
+- ≤480px: siqiq padding (96px 14px), h1 `clamp(1.5rem,6.6vw,1.95rem)`, auth-card 24/16px
+- Cache-bust: landing.css?v=s34c
+
+## Yakuniy o'lchovlar (live)
+| Ekran | ovf | H1 | jcode | screen | auth |
+|---|---|---|---|---|---|
+| 360 telefon | 0 | 24px | **20px** ✅ | 332px | 332px |
+| 414 | 0 | 27px | **20px** ✅ | 386px | 386px |
+| 1366 laptop | 0 | 43px | 33.6px | 620px | 708px |
+| 1920 PC | 0 | **51px** ✅ | 33.6px | **740px** ✅ | **860px** ✅ |
+| 2560 4K | 0 | 54px | 33.6px | 820px | 960px |
+
+Hamburger → Cast → join overlay telefonda ochiladi ✅ (158_phone_join_overlay.png)

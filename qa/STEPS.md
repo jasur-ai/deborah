@@ -181,3 +181,4 @@
 - ✅ STEP 209 — FIX PUSH (2026-08-30): FOYDALANUVCHI buyrug'i bilan 11 bug main'ga to'g'rilandi (c3c95e9, 14 fayl) — XSS/actorId/QTI-auth/metrics/CSP/logout-csrf/minlength/title/crash/nav
 - ✅ STEP 210 — DEBUG SESIYA (2026-08-30): 5 commit main'ga — 3 ASOSIY ILDIZ tuzatildi (namespace xato, sendCommand TDZ, director xona) — CAST TO'LIQ ISHLAYDI: director kod✅ student join✅ live count✅
 - ✅ STEP 211 — CAST LANDING (2026-09-02): uploads/cast.html 1:1 amalga oshirildi (5ca6ba3) — / hammaga ko'rinadi, /ustoz = o'qituvchi landing (yashirin), OneID/HEMIS'siz, live 8/8 PASS
+- ✅ STEP 212 — FLEKSIBIL (2026-09-02): 360-2560px 6 breakpoint o'lchandi — telefon jcode 16→20px (ID selektor responsive.css !important yengildi), ≥1440/≥2000 katta ekran scale-up, ovf=0 hamma joyda (c86fb00+b899db7)
