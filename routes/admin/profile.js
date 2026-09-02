@@ -17,6 +17,7 @@ import {
   verifyRegistrationResponseFlow,
   listPasskeys,
   removePasskey,
+  rpFromRequest,
 } from '../../src/modules/auth/webauthn.js';
 import { getMfaStatus, ADMIN_MFA_ACCOUNT_FALLBACK } from './profile-helpers.js';
 import { logAuthEvent, AUDIT_ACTIONS } from '../../src/modules/auth/audit.js';
@@ -39,7 +40,10 @@ router.get('/api/admin/profile/passkeys', requireAdmin, async (req, res) => {
 
 router.post('/api/admin/profile/passkey/options', requireAdmin, requireRecentAdminAuth, async (req, res) => {
   try {
-    const rp = undefined; // webauthn.js Host header'dan deriv qiladi (env ustun)
+    // BUG fix (RP ID): rpFromRequest(req) Host header'dan to'g'ri RP ID/origin oladi —
+    // undefined yuborilsa webauthn 'localhost' fallback'ga tushardi va brauzer
+    // "relying party ID is not a registrable domain suffix" xatosi berardi.
+    const rp = rpFromRequest(req);
     const options = await generateRegistrationChallenge(req.session, {
       userId: adminUserId(req),
       userName: adminName(req),
@@ -53,7 +57,7 @@ router.post('/api/admin/profile/passkey/options', requireAdmin, requireRecentAdm
 
 router.post('/api/admin/profile/passkey/verify', requireAdmin, requireRecentAdminAuth, async (req, res) => {
   try {
-    const result = await verifyRegistrationResponseFlow(req.session, req.body || {});
+    const result = await verifyRegistrationResponseFlow(req.session, req.body || {}, rpFromRequest(req));
     if (!result.ok) return res.status(400).json({ ok: false, error: result.error || 'verify_failed' });
     logAuthEvent({
       action: 'admin_passkey_added', outcome: 'success', method: 'webauthn',

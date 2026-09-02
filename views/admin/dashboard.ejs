@@ -32,7 +32,7 @@
       <a href="/admin/profile" class="admin-side-btn"><span class="admin-side-ico"><%- icon('user', 16) %></span>Profilim</a>
       <a href="/admin/users" class="admin-side-btn"><span class="admin-side-ico"><%- icon('users', 16) %></span>Userlar boshqaruvi</a>
       <a href="/admin/index" class="admin-side-btn"><span class="admin-side-ico"><%- icon('grid', 16) %></span>Barcha funksiyalar</a> <!-- BUG-029: bir ko'rinish indeks -->
-      <button class="admin-side-btn <%= activeTab === 'danger' ? 'active' : '' %>" onclick="switchTab('danger')" style="--c:var(--deborah-semantic-color-action-primary);--cbg:rgba(37,99,235,.14)"><span class="admin-side-ico"><%- icon('alertTriangle', 16) %></span><%= (adminCopy.navUsers || 'Foydalanuvchilar') %></button>
+      <a href="/admin/users" class="admin-side-btn"><span class="admin-side-ico"><%- icon('alertTriangle', 16) %></span><%= (adminCopy.navUsers || 'Foydalanuvchilar') %></a>
       <button class="admin-side-btn <%= activeTab === 'fans' ? 'active' : '' %>" onclick="switchTab('fans')"><span class="admin-side-ico"><%- icon('book', 16) %></span><%= (adminCopy.navFans || 'Namuna fanlar') %></button>
       <button class="admin-side-btn <%= activeTab === 'pre' ? 'active' : '' %>" onclick="switchTab('pre')" style="--c:var(--accent-purple);--cbg:rgba(100,116,139,.14)"><span class="admin-side-ico"><%- icon('layers', 16) %></span><%= (adminCopy.navPre || 'Tayyor testlar') %></button>
       <button class="admin-side-btn <%= activeTab === 'results' ? 'active' : '' %>" onclick="switchTab('results')"><span class="admin-side-ico"><%- icon('trophy', 16) %></span><%= (adminCopy.navResults || 'Natijalar') %></button>
@@ -97,7 +97,7 @@
       <h1 class="sr-only">Admin panel</h1>
       <!-- Stats Row — S33.07: actionable (click'da tegishli bo'lim ochiladi) -->
       <div class="admin-stats-row" id="stats-row">
-        <button type="button" class="stat-card" data-go="danger"><div class="stat-ico"><%- icon('users', 20) %></div><div><div class="stat-num" id="s-users" ><%= stats.usersCount %></div><div class="stat-lbl"><%= (adminCopy.kpiUsers || 'Foydalanuvchilar') %></div></div></button>
+        <a class="stat-card" href="/admin/users" style="text-decoration:none"><div class="stat-ico"><%- icon('users', 20) %></div><div><div class="stat-num" id="s-users" ><%= stats.usersCount %></div><div class="stat-lbl"><%= (adminCopy.kpiUsers || 'Foydalanuvchilar') %></div></div></a>
         <button type="button" class="stat-card" data-go="results"><div class="stat-ico"><%- icon('gamepad', 20) %></div><div><div class="stat-num" id="s-games" ><%= stats.gamesCount %></div><div class="stat-lbl"><%= (adminCopy.kpiGames || 'O\'yinlar') %></div></div></button>
         <button type="button" class="stat-card" data-go="fans"><div class="stat-ico"><%- icon('edit', 20) %></div><div><div class="stat-num" id="s-tests" ><%= stats.testsCount %></div><div class="stat-lbl"><%= (adminCopy.kpiTests || 'Testlar') %></div></div></button>
         <button type="button" class="stat-card" data-go="fans" style="--c:var(--accent-purple);--cbg:rgba(100,116,139,.12)"><div class="stat-ico"><%- icon('book', 20) %></div><div><div class="stat-num" id="s-fans" style="color:var(--accent-purple)"><%= stats.fansCount %></div><div class="stat-lbl"><%= (adminCopy.kpiFans || 'Namuna fanlar') %></div></div></button>
