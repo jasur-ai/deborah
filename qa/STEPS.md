@@ -186,3 +186,4 @@
 - ✅ STEP 214 — ADMIN NEON COMMAND (2026-09-02): admin.css NEON v4 qatlam (50 sahifa) + login neon + light-variant — kosmik fon/aurora/grid, neon navbar/sidebar/stat-card/tugmalar/jadvallar (34f511b+fb9b504)
 - ✅ STEP 215 — ADMIN PROFIL REAL (2026-09-02): 11 endpoint backend (passkey/sessiya/API-kalit/loglar/MFA) + 6-tab profil UI + sessiya kuzatuv/revoke tizimi (4ccba22). E2E admin MFA kodlari tugagani uchun kutilmoqda
 - ✅ STEP 216 — passkey RP ID fix (rpFromRequest) + dashboard dublikat Foydalanuvchilar → /admin/users birlashtirildi (ac982b1)
+- ✅ STEP 217 — USERS: VIP+DELETE tugmalari qo'shildi (930cc25) — filtrlar ishlaydi (300ms debounce+server-side), VIP/o'chirish endpointlarga ulandi

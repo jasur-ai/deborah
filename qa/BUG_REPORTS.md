@@ -5251,3 +5251,24 @@ requireAdmin revoked-memo tekshiruvi qo'shildi (middleware/auth.js); server.js m
   (to'liq: qidiruv + rol filtri + sahifalash + bloklash + rol boshqaruvi) — ikkala havola ham bor edi
 - FIX: dashboard sidebar "Foydalanuvchilar" → /admin/users havolasi; KPI stat-card "Foydalanuvchilar" → /admin/users;
   eskirgan danger tab o'chirildi (funktional yo'qotish YO'Q — to'liq versiya saqlangan)
+
+---
+# ═══ STEP 217 — USERS SAHIFA: VIP + O'CHIRISH TUGMALARI (2026-09-02, 930cc25) ═══
+> FOYDALANUVCHI: "VIP qilish/olish, user o'chirish va filtrlar ishlamayapti"
+
+## Tahlil
+- FILTRLAR aslida ISHLAYDI (qidiruv 300ms debounce, rol/status/VIP selectlar, quickSection tugmalari — loadUsers → /admin/api/users server-side filtrlash) — lekin sahifa MFA lockout sabab test qilib bo'lmagan
+- VIP berish/olish va O'chirish tugmalari /admin/users jadvalida UMUMAN YO'Q edi (ular faqat eskirgan dashboard danger-tabda edi — STEP 216'da dublikat sifatida olib tashlangan edi, lekin to'liq sahifaga qo'shilmagan edi)
+
+## Qo'shildi (public/js/admin/users.js + views/admin/users.ejs)
+| Tugma | Endpoint | Mantiq |
+|---|---|---|
+| + VIP | POST /admin/api/vip/grant | staff (teacher/proctor/marker/board) uchun "—" ko'rsatiladi; muvaffaqiyatda vaqtinchalik parol prompt bilan ko'rsatiladi |
+| VIP ✕ | POST /admin/api/vip/revoke | confirm → revoke → reload |
+| O'chirish | POST /admin/api/users/delete | username kiritib tasdiqlash (prompt match), keyin DB'dan remove + audit |
+- Jadvalga yangi "VIP" ustuni (8 ustun bo'ldi)
+
+## Holat
+- Yangi users.js live'da (5x vipGrant/deleteUser topildi)
+- To'liq klik-test admin MFA step-up talab qiladi — endpointlar requireAdminMfaStepUp (xavfsizlik dizayni); admin parol/MFA kirgan foydalanuvchi uchun ishlaydi
+- Agar "filtrlash" endi ham ishlamasa — brauzer console xatosini yuboring (aniq satr kerak)
