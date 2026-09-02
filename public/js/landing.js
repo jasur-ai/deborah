@@ -791,17 +791,21 @@
     if(!activeCard)return;
     var c=activeCard; activeCard=null;
     grid3.classList.remove('has-active');
-    var first=c.getBoundingClientRect();
-    c.classList.remove('active');
-    var last=c.getBoundingClientRect();
+    var first=c.getBoundingClientRect(); /* fixed markazdagi (katta) holat */
+    c.classList.remove('active');        /* grid oqimiga qaytadi */
+    var last=c.getBoundingClientRect();  /* o'z katakchasidagi (kichik) holat */
     var dx=first.left-last.left, dy=first.top-last.top;
     var sx=first.width/last.width, sy=first.height/last.height;
+    /* FLIP: katta holatdan o'z katakchasiga qaytish.
+       BUG fix: oxirgi transform 'translate(-50%,-50%) scale(1)' qolib ketardi —
+       karta gridga qaytgach 50% chapga-yuqoriga surilgan ko'rinardi
+       ("boshqa tepaga qaytyapti"). Endi animatsiya tugagach transform TOZALANADI. */
     c.style.transition='none';
-    c.style.transform='translate(calc(-50% + '+dx+'px), calc(-50% + '+dy+'px)) scale('+sx+','+sy+')';
+    c.style.transform='translate('+dx+'px,'+dy+'px) scale('+sx+','+sy+')';
     void c.offsetWidth;
     c.style.transition='transform .4s cubic-bezier(.22,.61,.36,1)';
-    c.style.transform='translate(-50%,-50%) scale(1)';
-    setTimeout(function(){c.style.transition='';},420);
+    c.style.transform='translate(0,0) scale(1,1)';
+    setTimeout(function(){c.style.transition='';c.style.transform='';},420);
   }
   function openCard(c){
     if(activeCard){closeCard();if(activeCard===c)return;}

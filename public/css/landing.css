@@ -287,6 +287,9 @@ input#rUser.err{border-color:#c98a5c}
 .sec-h h2 em{font-style:italic;color:var(--ld-gold2)}
 .sec-h p{color:var(--ld-mut);max-width:38em;margin-top:12px;font-size:.96rem}
 .sec-h .cite{margin-top:14px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.62rem;letter-spacing:.1em;color:var(--ld-dim)}
+/* S34c: IMKONIYATLAR GRID — 3x3 (namuna: repeat(3,1fr), gap:18px).
+   Asosiy qoida tushib qolgan edi — kartalar tepadan-pastga ketardi. */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .f-card{border:1px solid var(--line);padding:22px;background:var(--ld-card-bg);transition:all .45s cubic-bezier(.22,.61,.36,1);overflow:hidden;position:relative;cursor:pointer}
 .f-card:hover{border-color:var(--line2);transform:scale(1.03);z-index:4}
 .grid3:hover .f-card:not(.active):not(:hover){filter:blur(3px);opacity:.38;transform:scale(.95)}
