@@ -58,6 +58,54 @@
       btn.addEventListener('click', submit);
       codeInp.addEventListener('keydown', function (e) { if (e.key === 'Enter') submit(); });
 
+      /* ── S34g: PASSKEY VARIANTI — passkey mavjud bo'lsa ko'rsatiladi ── */
+      var pkBtn = document.getElementById('pkBtn');
+      var pkSep = document.getElementById('pkSep');
+      function b64ToBuf(s){var b=s.replace(/-/g,'+').replace(/_/g,'/');while(b.length%4)b+='=';var bin=atob(b);var u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u.buffer;}
+      function bufToB64(buf){var u=new Uint8Array(buf),s='';for(var i=0;i<u.length;i++)s+=String.fromCharCode(u[i]);return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
+      function pkShowErr(m){err.textContent=m;err.classList.add('show');}
+      fetch('/api/admin/mfa/passkey/status',{credentials:'same-origin'})
+        .then(function(r){return r.json();})
+        .then(function(d){
+          if (d && d.ok && d.available && window.PublicKeyCredential) {
+            pkSep.style.display='flex';
+            pkBtn.style.display='flex';
+          }
+        }).catch(function(){});
+      pkBtn.addEventListener('click', async function(){
+        pkBtn.disabled = true;
+        err.classList.remove('show');
+        try {
+          var o = await fetch('/api/admin/mfa/passkey/options',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CSRF-Token':window.__CSRF_TOKEN||''},body:'{}'});
+          var od = await o.json();
+          if (!od.ok || !od.options) { pkShowErr('Passkey boshlashda xatolik: ' + (od.error || o.status)); pkBtn.disabled=false; return; }
+          var opts = od.options;
+          opts.challenge = b64ToBuf(opts.challenge);
+          if (opts.allowCredentials) opts.allowCredentials.forEach(function(c){c.id=b64ToBuf(c.id);});
+          opts.userVerification = opts.userVerification || 'required';
+          var cred = await navigator.credentials.get({ publicKey: opts });
+          if (!cred) { pkBtn.disabled=false; return; }
+          var transports = [];
+          try { transports = cred.response.getTransports ? cred.response.getTransports() : []; } catch(_){}
+          var v = await fetch('/api/admin/mfa/passkey/verify',{
+            method:'POST',credentials:'same-origin',
+            headers:{'Content-Type':'application/json','X-CSRF-Token':window.__CSRF_TOKEN||''},
+            body: JSON.stringify({
+              id: cred.id, rawId: bufToB64(cred.rawId), type: cred.type,
+              response: { clientDataJSON: bufToB64(cred.response.clientDataJSON), authenticatorData: bufToB64(cred.response.authenticatorData), signature: bufToB64(cred.response.signature), userHandle: cred.response.userHandle ? bufToB64(cred.response.userHandle) : null },
+              clientExtensionResults: cred.getClientExtensionResults ? cred.getClientExtensionResults() : {}
+            })
+          });
+          var vd = await v.json();
+          if (v.ok && vd.ok) { window.location.href = '/admin/dashboard'; return; }
+          pkShowErr(vd.message || vd.error || 'Tasdiqlash rad etildi');
+          pkBtn.disabled = false;
+        } catch (e) {
+          if (!(e && (e.name === 'NotAllowedError' || e.name === 'AbortError'))) pkShowErr('Xatolik: ' + (e.message || e.name));
+          pkBtn.disabled = false;
+        }
+      });
+
       async function submit() {
         var code = codeInp.value.trim();
         if (code.length < 6) { showErr('Kodni to\u2019liq kiriting'); return; }

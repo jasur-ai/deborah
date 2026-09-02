@@ -658,6 +658,49 @@ router.get('/admin/mfa/stepup', requireAdmin, (req, res) => {
   });
 });
 
+// ── S34g: ADMIN PASSKEY 2FA — MFA bosqichida passkey bilan tasdiqlash ──
+// Login parol → MFA sahifada ikki variant: TOTP kod YOKI Passkey.
+// Passkey admin profilida ro'yxatdan o'tkazilgan bo'lishi shart.
+import { generateAuthenticationChallenge as genAdminPkAuth, verifyAuthenticationResponseFlow as verifyAdminPkAuth, rpFromRequest as adminPkRp, hasPasskeys as adminHasPasskeys } from '../src/modules/auth/webauthn.js';
+
+router.get('/api/admin/mfa/passkey/status', requireAdmin, async (req, res) => {
+  try {
+    const has = await adminHasPasskeys('admin:' + (req.session.admin?.username || 'admin'));
+    return res.json({ ok: true, available: !!has });
+  } catch (_) {
+    return res.json({ ok: true, available: false });
+  }
+});
+
+router.post('/api/admin/mfa/passkey/options', requireAdmin, async (req, res) => {
+  try {
+    const options = await genAdminPkAuth(req.session, { userId: 'admin:' + (req.session.admin?.username || 'admin') }, adminPkRp(req));
+    if (!options) return res.status(400).json({ ok: false, error: 'options_failed' });
+    return res.json({ ok: true, options });
+  } catch (e) {
+    return res.status(500).json({ ok: false, error: 'server' });
+  }
+});
+
+router.post('/api/admin/mfa/passkey/verify', requireAdmin, async (req, res) => {
+  try {
+    const result = await verifyAdminPkAuth(req.session, req.body || {}, adminPkRp(req));
+    if (!result.ok) {
+      return res.status(403).json({ ok: false, error: result.error || 'assertion_invalid', message: result.message });
+    }
+    if (result.userId !== 'admin:' + (req.session.admin?.username || 'admin')) {
+      return res.status(403).json({ ok: false, error: 'wrong_owner', message: 'Bu passkey boshqa hisobga tegishli' });
+    }
+    // MFA step-up muvaffaqiyati — TOTP bilan bir xil grant yo'li
+    req.session.adminMfaAt = Date.now();
+    req.mfaFactor = 'passkey';
+    await grantAdminSession(req, res, { viaMfa: true });
+    return res.json({ ok: true });
+  } catch (e) {
+    return res.status(500).json({ ok: false, error: 'server' });
+  }
+});
+
 // ── POST /api/admin/mfa/stepup — fresh MFA (30 daqiqa marker) ──
 router.post('/api/admin/mfa/stepup', requireAdmin, async (req, res) => {
   try {
