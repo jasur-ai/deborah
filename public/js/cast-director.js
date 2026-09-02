@@ -33,6 +33,17 @@
   });
 
   let code = (window.__BOOT__ && window.__BOOT__.joinCode) || '—'; // BUG-230db143b: boot'dan boshlang'ich kod
+  // BUG-230db143b fix: boot kodini DOM'ga darhol yozamiz (updateControls faqat eventda yozardi)
+  (function renderInitCode() {
+    if (code && code !== '—') {
+      const cv = document.getElementById('dir-code-val');
+      const cb = document.getElementById('dir-code-big');
+      const jl = document.getElementById('dir-join-link');
+      if (cv) cv.textContent = code;
+      if (cb) cb.textContent = code;
+      if (jl) jl.textContent = 'https://' + location.host + '/play?code=' + code;
+    }
+  })();
   let phase = 'LOBBY_OPEN';
   let timerInterval = null;
   let closesAt = null;

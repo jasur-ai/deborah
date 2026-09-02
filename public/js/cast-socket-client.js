@@ -69,13 +69,20 @@
         sentAtClient: Date.now(),
       };
 
+      // BUG-052/230db143c ROOT FIX: avvalgi kodda `{ promise, ... }` shorthand
+      // `promise` const TDZ'da bo'lganda yozilardi → HAR BIR sendCommand
+      // "Cannot access 'promise' before initialization" throw qilardi.
       return new Promise((resolve, reject) => {
-        if (this.pendingAcks.has(commandId)) {
+        const existing = this.pendingAcks.get(commandId);
+        if (existing && existing.promise) {
           // Same command in flight → return existing promise
-          return this.pendingAcks.get(commandId).promise;
+          return existing.promise.then(resolve, reject);
         }
 
-        const timeout = setTimeout(() => {
+        const record = { promise: null, resolve: null, reject: null, timer: null };
+        this.pendingAcks.set(commandId, record);
+
+        record.timer = setTimeout(() => {
           this.pendingAcks.delete(commandId);
           // Retry same commandId (idempotent server-side)
           if (!opts.noRetry) {
@@ -86,9 +93,10 @@
         }, opts.ackTimeout || ACK_TIMEOUT_MS);
 
         const promise = new Promise((res, rej) => {
-          this.pendingAcks.set(commandId, { promise, resolve: res, reject: rej, timer: timeout });
+          record.resolve = res;
+          record.reject = rej;
           this.socket.emit(type, envelope, (ack) => {
-            clearTimeout(timeout);
+            clearTimeout(record.timer);
             this.pendingAcks.delete(commandId);
             if (ack && ack.ok) {
               if (typeof ack.newRevision === 'number') this.revision = ack.newRevision;
@@ -103,8 +111,8 @@
           });
         });
 
-        this.pendingAcks.get(commandId).promise = promise;
-        return promise;
+        record.promise = promise;
+        promise.then(resolve, reject);
       });
     }
 
