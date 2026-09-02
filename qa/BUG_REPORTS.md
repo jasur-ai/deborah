@@ -5235,3 +5235,19 @@ requireAdmin revoked-memo tekshiruvi qo'shildi (middleware/auth.js); server.js m
 ## Admin UI/UX qo'shimcha (oldingi commitlarda)
 - Neon Command v4 (34f511b+fb9b504): navbar/sidebar/stat-card/jadval/inputlar neon texnik qatlam
 - Bu rang emas — layout elementlari (sidebar active holat, section labellar, hover holatlar) ham qayta ishlangan
+
+---
+# ═══ STEP 216 — PASSKEY RP ID + DUBLIKAT BO'LIM FIX (2026-09-02, ac982b1) ═══
+> FOYDALANUVCHI: (1) passkey "relying party ID..." xatosi; (2) "Userlar boshqaruvi" va "Foydalanuvchilar" bir xil 2 bo'lim
+
+## FIX 1: Passkey RP ID xatosi (admin profil)
+- ILDIZ: profil router `rp = undefined` yuborgan → webauthn.js `RP_CONFIG.id || 'localhost'` fallback →
+  brauzer "The relying party ID is not a registrable domain suffix" (localhost ≠ deborah-ncj.onrender.com)
+- FIX: `rpFromRequest(req)` — Host header'dan to'g'ri RP ID/origin (options ham, verify ham)
+- Natija: passkey qo'shish endi real domenda ishlaydi (Touch ID/Face ID/USB kalit)
+
+## FIX 2: Dublikat "Foydalanuvchilar" bo'limi
+- ILDIZ: dashboard'da ESKIRGAN "danger" tab (faqat ro'yxat + o'chirish) VA alohida /admin/users sahifa
+  (to'liq: qidiruv + rol filtri + sahifalash + bloklash + rol boshqaruvi) — ikkala havola ham bor edi
+- FIX: dashboard sidebar "Foydalanuvchilar" → /admin/users havolasi; KPI stat-card "Foydalanuvchilar" → /admin/users;
+  eskirgan danger tab o'chirildi (funktional yo'qotish YO'Q — to'liq versiya saqlangan)

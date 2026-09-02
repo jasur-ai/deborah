@@ -185,3 +185,4 @@
 - ✅ STEP 213 — IMKONIYATLAR 3×3 (2026-09-02): grid3 asosiy qoidasi + closeCard transform tozalash + reveal .in — karta bosilganda kattalashadi, yana bosilganda AYNAN joyiga qaytadi (dx/dy≈0, live isbot) (981ac8e+ed100aa)
 - ✅ STEP 214 — ADMIN NEON COMMAND (2026-09-02): admin.css NEON v4 qatlam (50 sahifa) + login neon + light-variant — kosmik fon/aurora/grid, neon navbar/sidebar/stat-card/tugmalar/jadvallar (34f511b+fb9b504)
 - ✅ STEP 215 — ADMIN PROFIL REAL (2026-09-02): 11 endpoint backend (passkey/sessiya/API-kalit/loglar/MFA) + 6-tab profil UI + sessiya kuzatuv/revoke tizimi (4ccba22). E2E admin MFA kodlari tugagani uchun kutilmoqda
+- ✅ STEP 216 — passkey RP ID fix (rpFromRequest) + dashboard dublikat Foydalanuvchilar → /admin/users birlashtirildi (ac982b1)
