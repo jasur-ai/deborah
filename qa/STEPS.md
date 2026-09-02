@@ -192,3 +192,4 @@
 - ✅ STEP 220 — CONSENT DUP BUG (6625919): cast-landing+ustoz ro'yxatdan o'tish 100% buzil edi (2x consent=on → massiv → zod rad) — hidden olib tashlandi, live register ✅; passkey 2FA tugma requirePendingAdminMfa bilan tuzatildi
 - ✅ STEP 221 — TEST BUILDER KAHOOT-STYLE (3b9c13e): binafsha gradient fon, Kahoot ranglari (A-D qizil/ko'k/sariq/yashil), avtosave "Invalid data" fix (nom bo'sh bo'lsa yubormaydi)
 - ✅ STEP 222 — KAHOOT STRUKTURA (ee7d7b9+a82703b): 2×2 grid + bir xil binafsha + shakl belgilar + variant bosish=to'g'ri; qizil FAQAT xato uchun — live isbot
+- ✅ STEP 223 — TEST BUILDER VINTAGE (87a407a): binafsha → malla-jigarrang palitra (fon/editor/variantlar/gold tugma), struktura 2×2+shape saqlanadi — live isbot

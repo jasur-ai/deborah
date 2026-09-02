@@ -5401,3 +5401,25 @@ Login (parol) → 2FA sahifa → ikki variant:
 - 2-karta bosildi → is-correct ✅ (yashil + "✓ To'g'ri" badge)
 - 0 JS xato ✅
 - Skrinshot: 183_ct_kahoot_struct.png
+
+---
+# ═══ STEP 223 — TEST BUILDER VINTAGE PALITRA (2026-09-02, 87a407a) ═══
+> FOYDALANUVCHI: "rangi eski malla jigarrang bo'lishi kerak, ko'k (binafsha) emas"
+
+## Barcha binafsha (Kahoot purple) → VINTAGE malla-jigarrang palitra
+| Element | Rang |
+|---|---|
+| Fon | qora-jigar gradient (#241f18 → #1c1813) — asosiy brend |
+| Editor karta | issiq qog'oz (#f7f1e3) + gold border (#c2a06a) |
+| Variantlar | to'q jigarrang gradient (#4a3a22 → #2d2413) + gold border |
+| Shape belgilar | gold (#d6bd8c) |
+| To'g'ri javob | xashmat yashil (#7d9670) halqa + badge |
+| Saqlash tugma | gold gradient (#c2a06a → #d6bd8c) |
+| Xato | terakota (#b0522d) — FAQAT xatolarda |
+| Label lar | to'q qahva (#4b3a8f → #4b3a18) |
+
+## Live isbot
+- fon: linear-gradient(160deg, rgb(36,31,24), rgb(46,36,24), rgb(28,24,19)) ✅
+- variantlar: linear-gradient(135deg, rgb(74,58,34), rgb(45,36,19)) ✅
+- grid 300px 300px (2×2) ✅, to'g'ri javob yashil ✅
+- Skrinshot: 184_ct_vintage.png
