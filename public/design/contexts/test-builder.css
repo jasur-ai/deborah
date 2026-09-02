@@ -605,9 +605,7 @@
   box-shadow: 0 3px 10px rgba(0,0,0,.18);
   transition: all .15s; cursor: pointer;
 }
-.tb-opt:nth-of-type(6), .tb-opt[data-opt="5"] { background: #b35c00 !important; }
 .tb-opt:hover { transform: scale(1.02); filter: brightness(1.1); }
-.tb-opt .inp {
   background: transparent !important; border: none !important;
   color: #fff !important; font-weight: 600 !important; font-size: 1rem !important;
   border-bottom: 2px dashed rgba(255,255,255,.4) !important;
