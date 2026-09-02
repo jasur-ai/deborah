@@ -5098,3 +5098,34 @@ Render deploy tugagach live re-verify: CSP header, /metrics 404, XSS execute Yo'
 CSP ✅ / /metrics 404 ✅ / QTI 401 ✅ / minlength 8 ✅ / logout-csrf (cookie bilan 403) ✅
 
 ## Teacher backup kodlar: 2 ta qoldi (1b5d87defc, fe83eba4cc)
+
+---
+# ═══ STEP 211 — CAST LANDING AMALGA OSHIRILDI (2026-09-02, commit 5ca6ba3) ═══
+> FOYDALANUVCHI: uploads/cast.html + index.html namunalarini o'rganib, xuddi shuni amaliy qilish (OneID/HEMIS'siz)
+
+## Maska/mantiq tahlili (namuna tuzilishi)
+- **index.html** = o'qituvchi landing (AI yordamchi, hero+stats+feat+qadam+signal+auth) — boshqa AI S33 buni allaqachon views/index.ejs qilgan edi (/ da)
+- **cast.html** = Hammaga ko'rinadigan sahifa: cast demo ekrani (EDK-4821 "jonli" maska) + join overlay (kod) + kirish/ro'yxatdan o'tish
+- **Maska mantiqi:** demo screen vizual ko'rgazma (soxta javoblar %) — mahsulot nima qilishini ko'rsatadi; join overlay = talabaning REAL kirish nuqtasi; auth = REAL akkaunt
+- Namunadagi OneID/Google tugmalari va "HEMIS / OneID" cred — dekorativ (faqqat msg ko'rsatadi); bizda Google real (OIDC), OneID/HEMIS qo'shilmadi (buyruq bo'yicha)
+
+## Bajarildi (main: 5ca6ba3)
+| O'zgarish | Fayl |
+|---|---|
+| NEW: cast landing (namuna 1:1, REAL auth/join, OneID/HEMIS'siz) | views/cast-landing.ejs |
+| `/` (+/ru /en /uz-cyrl) → CAST LANDING (hammaga ko'rinadi) | routes/index.js |
+| `/ustoz` → TO'LIQ o'qituvchi landing (views/index.ejs) — ochiq ko'rinmaydi | routes/auth.js |
+| robots.txt: Disallow /ustoz + kanonik / (qidiruvda ko'rinmaydi) | public/robots.txt |
+| ustoz.ejs fail-soft fallback sifatida saqlandi | views/ustoz.ejs |
+
+## LIVE VERIFIKATSIYA (deploy 5ca6ba3) — 8/8 PASS
+1. `/` h1: "Savol — ekranda. Javob — telefonda." ✅ (namuna bilan bir xil)
+2. Demo screen EDK-4821 + jonli + beam ✅
+3. Nav "Cast" → join overlay ochiladi ✅
+4. Kod kiritilsa → /play?code=ABC123 (REAL) ✅
+5. Login xato parol → "Parol noto'g'ri." joyida ✅ (REAL /user/login)
+6. `/ustoz` h1: "O'qituvchi ishi — yengil. Dars — samarali." ✅
+7. /ustoz formalar (login+register) ✅
+8. 0 JS xato ✅
++ OneID/HEMIS tugmalari ikkala sahifada YO'Q (faqat hujjat izohida) ✅
++ robots.txt Disallow: /ustoz ✅
