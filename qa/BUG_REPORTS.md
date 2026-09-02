@@ -5051,3 +5051,50 @@ Performance: GET p95=136ms · br · cache ✅
 
 ## Keyingi qadam
 Render deploy tugagach live re-verify: CSP header, /metrics 404, XSS execute Yo'Q, assignments 200, panel crash Yo'Q, director holati.
+
+---
+# ═══ STEP 210 — DEBUG SESSIYASI: 5 COMMITSIZ MAIN'GA FIXLAR (2026-08-30) ═══
+> FOYDALANUVCHI: "sen bilan davom ettiramiz, o'zimiz debug qilamiz" — local'da tuzatildi, har push buyruq bilan
+
+## Push tarixi (main)
+
+| Commit | Nima |
+|---|---|
+| `c3c95e9` | 11 ta QA bug fix (XSS 9 joy, actorId, QTI auth, /metrics, CSP, logout-csrf, minlength, title valid, panel crash, /cast nav) |
+| `5428bb2` | 🔥 DIRECTOR ROOT: io('/socket.io') NAMESPACE xatosi → io({path}) — 4 fayl |
+| `a612379` | directorJoin ack joinCode + boot.joinCode |
+| `8698a34` | 🔥 BUG-052 ROOT: sendCommand TDZ ("Cannot access 'promise' before initialization") |
+| `a2e0f4f` | director live-events (asosiy xonaga join) + ack participants + klient render |
+
+## TOPILGAN 3 TA ASOSIY ILDIZ (texnik tafsilot)
+
+### 1. io('/socket.io') — NAMESPACE xatosi (BUG-230db143)
+- Socket.io klientda birinchi argument PATH emas, NAMESPACE
+- Director/participant/projector '/socket.io' NOMLI namespace'ga ulanardi → server "Invalid namespace" → WS OPEN→CLOSE (20s "Ulanish…")
+- DALIL: WS frame log `S:'40/socket.io,' R:'44/socket.io,{"message":"Invalid namespace"}'`
+- FIX: `io({ path: '/socket.io', ... })` — 4 joyda
+
+### 2. sendCommand TDZ (BUG-052 haqiqiy ildizi)
+- `{ promise, ... }` shorthand `promise` const hali initsializatsiya qilinmagan holda yozilardi
+- → HAR BIR sendCommand `Cannot access 'promise' before initialization` throw qilardi
+- → join/answer/directorJoin — HAMMASI o'lik (socket ulanardi lekin hech narsa ishlamasdi)
+- FIX: record obyekti bilan qayta yozildi (cast-socket-client.js)
+
+### 3. Director xona arxitekturasi
+- participantJoined/phase eventlar `cast:{id}` (asosiy) xonaga ketardi
+- director esa FAQAT `cast:{id}:director`da — live eventlarni eshitmasdi
+- FIX: director asosiy xonaga ham qo'shiladi + ack'da boshlang'ich participants
+
+## YAKUNIY E2E (grand_e2e, deploy a2e0f4f)
+
+```
+1-DIRECTOR: stuck=False | kod=RUD8HX          ✅
+2-STUDENT: "Qo'shildingiz! Siz: QA Talaba"     ✅
+3-DIRECTOR LIVE: ishtirokchi=1, ism=True       ✅ (real-time)
+4-DIRECTOR refresh: ishtirokchi=1, ism=True    ✅ (boshlang'ich ro'yxat)
+```
+
+## Regressiya tekshiruvi (oxirgi deployda)
+CSP ✅ / /metrics 404 ✅ / QTI 401 ✅ / minlength 8 ✅ / logout-csrf (cookie bilan 403) ✅
+
+## Teacher backup kodlar: 2 ta qoldi (1b5d87defc, fe83eba4cc)
