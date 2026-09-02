@@ -114,10 +114,15 @@ router.get('/api/user/portfolio', requireAuth, async (req, res) => {
 /** POST /api/user/portfolio/items — add evidence (default-private). */
 router.post('/api/user/portfolio/items', requireAuth, async (req, res) => {
   try {
+    // BUG-230db189/200 fix: title tur va uzunlik validatsiyasi (array/object/number/100KB qabul qilinardi)
+    const rawTitle = req.body?.title;
+    if (typeof rawTitle !== 'string' || !rawTitle.trim()) {
+      return res.status(400).json({ error: 'title required' });
+    }
     const r = await addItem({
       userId: uid(req),
       kind: req.body?.kind || 'draft',
-      title: req.body?.title || '',
+      title: rawTitle.trim().slice(0, 200),
       contentMeta: req.body?.contentMeta || {},
       evidence: req.body?.evidence || {},
     });

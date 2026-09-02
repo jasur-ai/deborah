@@ -156,7 +156,7 @@
 
           <label class="lbl" for="reg-password"><%= copy.login.password %></label>
           <div class="pw-wrap">
-            <input class="inp" id="reg-password" name="password" type="password" placeholder="<%= copy.register.passwordPh %>" autocomplete="new-password" inputmode="text" minlength="15" maxlength="128" required aria-required="true" aria-describedby="caps-hint-reg pw-strength" aria-invalid="false" data-pw-check="1" style="padding-right:52px">
+            <input class="inp" id="reg-password" name="password" type="password" placeholder="<%= copy.register.passwordPh %>" autocomplete="new-password" inputmode="text" minlength="8" maxlength="128" required aria-required="true" aria-describedby="caps-hint-reg pw-strength" aria-invalid="false" data-pw-check="1" style="padding-right:52px">
             <div class="caps-hint" id="caps-hint-reg" hidden><%- icon('alertTriangle', 12) %> <span>CAPS LOCK</span></div>
             <button type="button" class="pw-toggle" data-pw-toggle="reg-password" data-label-show="<%= copy.login.show %>" data-label-hide="<%= copy.login.hide %>" aria-label="<%= copy.login.show %>" aria-pressed="false">
               <span data-pw-toggle-label><%- icon('eye', 16) %></span>

@@ -204,7 +204,7 @@
   <script src="/js/account-settings.js" defer></script>
   <script>
     // AUTH A-29: account copy (i18n) — account-settings.js ishlatadi
-    window.__ACCOUNT_COPY__ = <%- JSON.stringify(accountCopy?.account || {}) %>;
+    window.__ACCOUNT_COPY__ = <%- JSON.stringify(accountCopy?.account || {}) .replace(/</g, '\\u003c') %>;
   </script>
 </body>
 </html>

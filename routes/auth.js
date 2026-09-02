@@ -2398,6 +2398,14 @@ router.post('/user/forgot', redirectIfAuth, async (req, res) => {
 // (E-03 push service-worker link) faqat o'z tokenini o'chiradi.
 router.get('/user/logout', async (req, res) => {
   if (!req.session?.user) return res.redirect('/');
+  // BUG-008/230db222 fix (yengil): cross-site GET logout blok (logout CSRF).
+  // Sec-Fetch-Site yuborgan brauzerlarda cross-site/same-site so'rovlar rad;
+  // to'g'ridan-to'g'ri manzil satridan kirish ('none') va same-origin ruxsat.
+  // Eski brauzerlar header yubormasligi mumkin — fail-open (UI POST+CSRF ishlatadi).
+  const sfs = String(req.headers['sec-fetch-site'] || '').toLowerCase();
+  if (sfs === 'cross-site' || sfs === 'same-site') {
+    return res.status(403).send('Cross-site logout blocked');
+  }
   // A-25 §07: remember token revoke (DB)
   try {
     const cookieVal = parseCookies(req.headers.cookie)[rememberCookieName()];

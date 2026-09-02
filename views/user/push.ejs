@@ -56,7 +56,7 @@
   <script>
     window.__PUSH_INIT__ = {
       enabled: <%- enabled ? 'true' : 'false' %>,
-      vapidKey: <%- JSON.stringify(vapidKey || '') %>,
+      vapidKey: <%- JSON.stringify(vapidKey || '') .replace(/</g, '\\u003c') %>,
       subscriptionCount: <%- subscriptionCount || 0 %>,
       csrf: <%- JSON.stringify(csrf || '') %>,
       copy: {

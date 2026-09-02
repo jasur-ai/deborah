@@ -193,7 +193,7 @@ const $id = id => document.getElementById(id);
 const CHAR_PATH = '/characters';
 const BOT_PREFIX = 'Bot';
 
-const CARTOON_CHARS = <%- JSON.stringify(characters || []) %>;
+const CARTOON_CHARS = <%- JSON.stringify(characters || []) .replace(/</g, '\\u003c') %>;
 
 let curCode = null, curBotCount = 15, processedQIdx = -1;
 let stateUnsub = null, botTimeouts = [];

@@ -10,6 +10,7 @@
  */
 
 import { Router } from 'express';
+import { requireAuth } from '../middleware/auth.js'; // BUG-230hz167 fix
 import multer from 'multer';
 import fs from 'fs';
 import os from 'os';
@@ -70,14 +71,14 @@ const upload = multer({
 /**
  * POST /api/qti/upload — Upload a QTI package with security validation.
  */
-router.post('/api/qti/upload', upload.single('file'), async (req, res) => {
+router.post('/api/qti/upload', requireAuth, upload.single('file'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
     const filePath = req.file.path;
     const originalName = req.file.originalname;
     const mimeType = req.file.mimetype;
-    const userId = req.session?.user?.id || req.session?.admin?.id;
+    const userId = req.session?.user?.safeKey || req.session?.user?.username || req.session?.admin?.id;
     const targetBankId = req.body.target_bank_id ? parseInt(req.body.target_bank_id) : null;
 
     // ── 1. Security validation ──
@@ -224,7 +225,7 @@ router.post('/api/qti/upload', upload.single('file'), async (req, res) => {
 // PACKAGE LISTING & DETAILS
 // ═══════════════════════════════════════════════════════════════════
 
-router.get('/api/qti/packages', async (req, res) => {
+router.get('/api/qti/packages', requireAuth, async (req, res) => {
   try {
     const packages = await listQtiPackages({
       status: req.query.status,
@@ -237,7 +238,7 @@ router.get('/api/qti/packages', async (req, res) => {
   }
 });
 
-router.get('/api/qti/packages/:id', async (req, res) => {
+router.get('/api/qti/packages/:id', requireAuth, async (req, res) => {
   try {
     const pkg = await getQtiPackage(parseInt(req.params.id));
     if (!pkg) return res.status(404).json({ error: 'Package not found' });
@@ -247,11 +248,11 @@ router.get('/api/qti/packages/:id', async (req, res) => {
   }
 });
 
-router.delete('/api/qti/packages/:id', async (req, res) => {
+router.delete('/api/qti/packages/:id', requireAuth, async (req, res) => {
   try {
     const result = await deleteQtiPackage(
       parseInt(req.params.id),
-      req.session?.user?.id || req.session?.admin?.id
+      req.session?.user?.safeKey || req.session?.user?.username || req.session?.admin?.id
     );
     res.json(result);
   } catch (err) {
@@ -263,7 +264,7 @@ router.delete('/api/qti/packages/:id', async (req, res) => {
 // STAGING ITEMS
 // ═══════════════════════════════════════════════════════════════════
 
-router.get('/api/qti/packages/:id/staging', async (req, res) => {
+router.get('/api/qti/packages/:id/staging', requireAuth, async (req, res) => {
   try {
     const items = await getStagingItems(parseInt(req.params.id));
     res.json(items);
@@ -272,7 +273,7 @@ router.get('/api/qti/packages/:id/staging', async (req, res) => {
   }
 });
 
-router.get('/api/qti/staging/:id', async (req, res) => {
+router.get('/api/qti/staging/:id', requireAuth, async (req, res) => {
   try {
     const item = await getStagingItem(parseInt(req.params.id));
     if (!item) return res.status(404).json({ error: 'Staging item not found' });
@@ -282,12 +283,12 @@ router.get('/api/qti/staging/:id', async (req, res) => {
   }
 });
 
-router.put('/api/qti/staging/:id/review', async (req, res) => {
+router.put('/api/qti/staging/:id/review', requireAuth, async (req, res) => {
   try {
     const result = await updateStagingItemReview(parseInt(req.params.id), {
       reviewStatus: req.body.review_status,
       reviewNotes: req.body.review_notes,
-      userId: req.session?.user?.id || req.session?.admin?.id,
+      userId: req.session?.user?.safeKey || req.session?.user?.username || req.session?.admin?.id,
     });
     res.json(result);
   } catch (err) {
@@ -295,7 +296,7 @@ router.put('/api/qti/staging/:id/review', async (req, res) => {
   }
 });
 
-router.post('/api/qti/staging/batch-review', async (req, res) => {
+router.post('/api/qti/staging/batch-review', requireAuth, async (req, res) => {
   try {
     const items = (req.body.items || []).map(item => ({
       id: parseInt(item.id),
@@ -304,7 +305,7 @@ router.post('/api/qti/staging/batch-review', async (req, res) => {
     }));
     const results = await batchUpdateStagingReviews(
       items,
-      req.session?.user?.id || req.session?.admin?.id
+      req.session?.user?.safeKey || req.session?.user?.username || req.session?.admin?.id
     );
     res.json({ results });
   } catch (err) {
@@ -316,7 +317,7 @@ router.post('/api/qti/staging/batch-review', async (req, res) => {
 // COMMIT TO ITEM BANK
 // ═══════════════════════════════════════════════════════════════════
 
-router.post('/api/qti/packages/:id/commit', async (req, res) => {
+router.post('/api/qti/packages/:id/commit', requireAuth, async (req, res) => {
   try {
     const packageId = parseInt(req.params.id);
     const targetBankId = req.body.target_bank_id
@@ -330,7 +331,7 @@ router.post('/api/qti/packages/:id/commit', async (req, res) => {
     const result = await commitQtiStaging(
       packageId,
       targetBankId,
-      req.session?.user?.id || req.session?.admin?.id
+      req.session?.user?.safeKey || req.session?.user?.username || req.session?.admin?.id
     );
     res.json(result);
   } catch (err) {
@@ -342,7 +343,7 @@ router.post('/api/qti/packages/:id/commit', async (req, res) => {
 // STAGING REPORT
 // ═══════════════════════════════════════════════════════════════════
 
-router.get('/api/qti/packages/:id/report', async (req, res) => {
+router.get('/api/qti/packages/:id/report', requireAuth, async (req, res) => {
   try {
     const report = await generateStagingReport(parseInt(req.params.id));
     if (!report) return res.status(404).json({ error: 'Package not found' });
@@ -356,7 +357,7 @@ router.get('/api/qti/packages/:id/report', async (req, res) => {
 // EXPORT
 // ═══════════════════════════════════════════════════════════════════
 
-router.post('/api/qti/export/item', async (req, res) => {
+router.post('/api/qti/export/item', requireAuth, async (req, res) => {
   try {
     const xml = exportItemToQti(req.body.item, {
       includePrivateKey: req.body.include_private_key === true,
@@ -367,7 +368,7 @@ router.post('/api/qti/export/item', async (req, res) => {
   }
 });
 
-router.post('/api/qti/export/assessment', async (req, res) => {
+router.post('/api/qti/export/assessment', requireAuth, async (req, res) => {
   try {
     const xml = exportAssessmentToQti(req.body.assessment);
     res.type('application/xml').send(xml);
@@ -376,7 +377,7 @@ router.post('/api/qti/export/assessment', async (req, res) => {
   }
 });
 
-router.post('/api/qti/export/manifest', async (req, res) => {
+router.post('/api/qti/export/manifest', requireAuth, async (req, res) => {
   try {
     const xml = generateManifest(req.body.manifest);
     res.type('application/xml').send(xml);

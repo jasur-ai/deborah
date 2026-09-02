@@ -39,7 +39,9 @@ import {
 const router = Router();
 
 function actorId(req) {
-  return req.session?.user?.id || req.session?.admin?.id || null;
+  // BUG-230db119 fix: session'da `id` YO'Q — safeKey/username bor (auth.js session.user shakli).
+  // Avvalgi kod faqat `user.id` o'qirdi → logged-in studentlar uchun ham hammasi 401 edi.
+  return req.session?.user?.safeKey || req.session?.user?.username || req.session?.admin?.id || null;
 }
 
 /** GET /api/student/assignments — list authorized assignments. */

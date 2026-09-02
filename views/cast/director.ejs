@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="/design/foundations/motion.css">
   <link rel="stylesheet" href="/design/components/charts.css">
   <script>
-    window.__BOOT__ = <%- JSON.stringify(boot) %>;
+    window.__BOOT__ = <%- JSON.stringify(boot).replace(/</g, '\\u003c') %>;
     window.__CSRF_TOKEN = '<%= boot.csrfToken %>';
   </script>
 </head>

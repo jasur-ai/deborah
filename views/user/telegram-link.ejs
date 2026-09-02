@@ -70,7 +70,7 @@
   </div>
 
   <script>
-    window.__CSRF__ = <%- JSON.stringify(csrf || '') %>;
+    window.__CSRF__ = <%- JSON.stringify(csrf || '') .replace(/</g, '\\u003c') %>;
     document.addEventListener('DOMContentLoaded', function () {
       var status = document.getElementById('status');
       var show = function (cls, txt) {

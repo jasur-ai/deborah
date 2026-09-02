@@ -307,8 +307,8 @@
 
   <script>
     // D-09 kontrakt: ps `settings.js` shu ob'ektdan o'qiydi (hardcode 0).
-    window.__SETTINGS_COPY__ = <%- JSON.stringify(settingsCopy || {}) %>;
-    window.__SETTINGS_PROFILE__ = <%- JSON.stringify(profile || {}) %>;
+    window.__SETTINGS_COPY__ = <%- JSON.stringify(settingsCopy || {}) .replace(/</g, '\\u003c') %>;
+    window.__SETTINGS_PROFILE__ = <%- JSON.stringify(profile || {}) .replace(/</g, '\\u003c') %>;
     // AUTH D-25 §11/§12: consent grant/revoke (CSRF — head.ejs fetch patch avtomatik)
     (function () {
       var msg = document.querySelector('[data-consent-msg]');
@@ -341,7 +341,7 @@
           btn.disabled = false;
         }
       }
-      var label = <%- JSON.stringify(((profile && profile.lang) === 'ru' ? { reauth: 'Для безопасности подтвердите пароль заново', ok: 'Сохранено', fail: 'Ошибка — попробуйте снова' } : (profile && profile.lang) === 'en' ? { reauth: 'For security, re-confirm your password', ok: 'Saved', fail: 'Error — please try again' } : (profile && profile.lang) === 'uz-cyrl' ? { reauth: 'Хавфсизлик учун паролни қайта тасдиқланг', ok: 'Сақланган', fail: 'Хатолик — қайта уриниб кўринг' } : { reauth: 'Xavfsizlik uchun parolni qayta tasdiqlang', ok: 'Saqlangan', fail: 'Xatolik — qayta urinib ko\u2018ring' })) %>;
+      var label = <%- JSON.stringify(((profile && profile.lang) === 'ru' ? { reauth: 'Для безопасности подтвердите пароль заново', ok: 'Сохранено', fail: 'Ошибка — попробуйте снова' } : (profile && profile.lang) === 'en' ? { reauth: 'For security, re-confirm your password', ok: 'Saved', fail: 'Error — please try again' } : (profile && profile.lang) === 'uz-cyrl' ? { reauth: 'Хавфсизлик учун паролни қайта тасдиқланг', ok: 'Сақланган', fail: 'Хатолик — қайта уриниб кўринг' } : { reauth: 'Xavfsizlik uchun parolni qayta tasdiqlang', ok: 'Saqlangan', fail: 'Xatolik — qayta urinib ko\u2018ring' })).replace(/</g, '\\u003c') %>;
       document.querySelectorAll('[data-consent-revoke],[data-consent-grant]').forEach(function (btn) {
         btn.addEventListener('click', function () {
           var url = btn.hasAttribute('data-consent-revoke') ? '/api/consent/revoke' : '/api/consent/grant';

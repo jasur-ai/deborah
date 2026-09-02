@@ -712,7 +712,7 @@
       }
     });
 
-    document.getElementById('search-inp').addEventListener('keydown', e => {
+    document.getElementById('search-inp')?.addEventListener('keydown', e => {
       if (e.key === 'Enter') doSearch();
     });
   </script>

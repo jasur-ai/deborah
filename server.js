@@ -188,7 +188,28 @@ export async function createApp() {
 
   // ── Security & parsing middleware ──
   app.use(helmet({
-    contentSecurityPolicy: false,
+    // BUG-230hz116 fix: CSP yoqildi (avval ataylab false edi). Inline script/style
+    // hali ko'p (52+ inline style) — shuning uchun 'unsafe-inline' saqlanadi, LEKIN
+    // object-src 'none', base-uri, form-action, frame-ancestors eng xavfli vektorlarni yopadi.
+    // Keyingi qadam: nonce-based CSP (unsafe-inline'siz) — inline tozalangach.
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        "default-src": ["'self'"],
+        "script-src": ["'self'", "'unsafe-inline'", "https://challenges.cloudflare.com"],
+        "style-src": ["'self'", "'unsafe-inline'"],
+        "img-src": ["'self'", "data:", "blob:"],
+        "font-src": ["'self'", "data:"],
+        "connect-src": ["'self'", "wss:", "ws:", "https://challenges.cloudflare.com"],
+        "media-src": ["'self'", "blob:"],
+        "object-src": ["'none'"],
+        "base-uri": ["'self'"],
+        "form-action": ["'self'"],
+        "frame-ancestors": ["'none'"],
+        "frame-src": ["'self'", "https://challenges.cloudflare.com"],
+        "upgrade-insecure-requests": [],
+      },
+    },
     crossOriginEmbedderPolicy: false,
   }));
   app.use(compression());
@@ -357,6 +378,16 @@ export async function createApp() {
   // ── Health / Readiness endpoints ──
     // AUTH D-06: /metrics — Prometheus exposition (PII yo'q)
   app.get('/metrics', (req, res) => {
+    // BUG-230db228 fix: /metrics hamma uchun ochiq edi (Prometheus exposition oshkor).
+    // Siyosat: METRICS_TOKEN env bo'lsa token talab qilinadi; bo'lmasa faqat loopback.
+    const mt = process.env.METRICS_TOKEN;
+    const ip = String(req.ip || '');
+    const loopback = ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(ip);
+    if (mt) {
+      if (req.query.token !== mt && req.get('x-metrics-token') !== mt) return res.status(404).end();
+    } else if (!loopback) {
+      return res.status(404).end();
+    }
     res.set('Content-Type', 'text/plain; version=0.0.4; charset=utf-8');
     res.send(prometheusText());
   });
