@@ -5198,3 +5198,40 @@ Hamburger → Cast → join overlay telefonda ochiladi ✅ (158_phone_join_overl
 ## Izoh
 - Admin MFA kodlari tugaganligi sababli dashboard ichini skrinshot qilib bo'lmadi — lekin NEON qatlam admin.css'da bo'lgani uchun barcha 50 sahifa (dashboard/users/audit/...) avtomatik qamrab olinadi (bir xil class nomlari)
 - Hech qanday view/class o'zgarmadi — faqat CSS qatlam (regressiya xavfi 0)
+
+---
+# ═══ STEP 215 — ADMIN PROFIL: REAL FUNSKIYALAR (2026-09-02, commit 4ccba22) ═══
+> FOYDALANUVCHI: "rang emas — UI/UX + admin profil yaroqsiz: passkey qo'shish, kalitlar, loglar, sessiyalar kerak"
+
+## Yangi backend — routes/admin/profile.js (11 endpoint, hammasi requireAdmin)
+
+| Bo'lim | Endpoint | Real mexanizm |
+|---|---|---|
+| 🔐 Passkeylar | GET /api/admin/profile/passkeys | WebAuthn (simplewebauthn v13), `admin:{username}` identifikatori |
+| | POST .../passkey/options + /verify | generateRegistrationChallenge + verifyRegistrationResponseFlow (requireRecentAdminAuth) |
+| | POST .../passkey/remove | removePasskey (owner-only) |
+| 💻 Sessiyalar | GET .../sessions | DB `admin_sessions/{sid}` — grantAdminSession har kirishda yozadi (IP, UA, loginAt) |
+| | POST .../sessions/revoke | sid/all revoke; requireAdmin 60s memo-cache bilan revoke tekshiradi → sessiya o'ladi |
+| 🔑 API kalitlar | GET/POST .../api-keys + /revoke | `dba_`+24B; DB'da FAQAT sha256 hash + prefix; to'liq kalit FAQAT yaratishda; audit yoziladi |
+| 📜 Loglar | GET .../logs?format=csv\|json | o'z audit yozuvlari, file-download (CSV BOM bilan Excel uchun) |
+| 🛡 MFA | GET .../mfa | TOTP holati + backup kodlar havolasi (/admin/mfa) |
+
+Integratsiya o'zgarishlari: grantAdminSession sessiya yozadi; /admin/logout revoke belgilaydi;
+requireAdmin revoked-memo tekshiruvi qo'shildi (middleware/auth.js); server.js mount.
+
+## UI — views/admin/profile.ejs to'liq qayta yozildi
+- 6 tab neon komanda markazi: Umumiy / Passkeylar / MFA kalitlar / API kalitlar / Sessiyalar / Loglar
+- Real fetch JS: WebAuthn native (base64url↔ArrayBuffer), 403 reauth_required → modal (POST /api/admin/reauth) → avtomatik retry
+- Passkey qo'shish: navigator.credentials.create → verify → ro'yxat yangilanadi
+- API kalit: nom kiritilsa yaratiladi, to'liq kalit 1 marta ko'rsatiladi + "Nusxa olish"
+- Sessiyalar: brauzer aniqlash, joriy belgisi, bittasin yopish / barchasini yopish
+- Loglar: live jadval + CSV/JSON yuklab olish tugmalari
+
+## Verifikatsiya holati
+- Server barqaror (deploydan keyin crash yo'q), 5 endpoint guruhi 401 (requireAdmin faol) ✅
+- Dashboard ichidan E2E TO'SIQLI: admin login lockout (15 daq) + MFA backup kodlari TUGAGAN
+  → yangi admin MFA kodlari berilsa to'liq live test bajariladi
+
+## Admin UI/UX qo'shimcha (oldingi commitlarda)
+- Neon Command v4 (34f511b+fb9b504): navbar/sidebar/stat-card/jadval/inputlar neon texnik qatlam
+- Bu rang emas — layout elementlari (sidebar active holat, section labellar, hover holatlar) ham qayta ishlangan
