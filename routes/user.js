@@ -177,10 +177,14 @@ router.get('/panel', async (req, res) => {
       consentStale = !(await hasCurrentConsent(user.safeKey));
     } catch (_) { /* fail-soft — banner ko'rsatilmaydi */ }
 
+    const _panelCopy = AUTH_COPY[resolveAuthLang(plang)];
     res.render('user/panel', {
       title: 'Mening Panelim',
       active: 'panel',
       panelLang: plang,
+      // S34h (BUG fix): sidebar RU/EN lug'ati — oldin berilmagan, sidebar doim uz fallback'da qolardi
+      fullCopy: _panelCopy,
+      copy: { sidebar: _panelCopy.sidebar, header: _panelCopy.header },
       // AUTH A-18: limited mode banner — email verify'siz summative blok
       emailVerified: user.emailVerified === true,
       userEmail: user.email || null,
@@ -233,6 +237,8 @@ router.get('/panel', async (req, res) => {
       title: 'Mening Panelim',
       active: 'panel',
       panelLang: 'uz',
+      fullCopy: AUTH_COPY.uz,
+      copy: { sidebar: AUTH_COPY.uz.sidebar, header: AUTH_COPY.uz.header },
       tests: [], fans: [], preGroups: [],
       characters: [],
       username: user.username,

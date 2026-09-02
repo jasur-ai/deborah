@@ -163,7 +163,7 @@
 
     <div class="topbar">
       <div>
-        <h1>Ish maydonim</h1>
+        <h1 data-i18n="ws.title">Ish maydonim</h1>
         <div class="ws-header-sub">Salom, <%= username %> — testlaringizni yarating, Cast qiling va natijalarni kuzating.</div>
       </div>
       <div class="ws-actions">
@@ -177,9 +177,9 @@
           <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
           <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5 5l1.6 1.6M17.4 17.4 19 19M19 5l-1.6 1.6M6.6 17.4 5 19"/></svg>
         </button>
-        <a href="/user/create-test" class="btn btn-primary" data-analytics="ws_new_test"><%- icon('plus', 15) %> Yangi test</a>
-        <a href="/user/create-test?quick=1" class="btn btn-quiet" data-analytics="ws_quick_prompt"><%- icon('sparkles', 15) %> Quick Prompt</a>
-        <a href="/user/profile" class="btn btn-quiet" data-analytics="ws_profile"><%- icon('user', 15) %> Profilim</a>
+        <a href="/user/create-test" class="btn btn-primary" data-analytics="ws_new_test"><%- icon('plus', 15) %> <span data-i18n="ws.newTest">Yangi test</span></a>
+        <a href="/user/create-test?quick=1" class="btn btn-quiet" data-analytics="ws_quick_prompt"><%- icon('sparkles', 15) %> <span data-i18n="ws.quick">Quick Prompt</span></a>
+        <a href="/user/profile" class="btn btn-quiet" data-analytics="ws_profile"><%- icon('user', 15) %> <span data-i18n="ws.profile">Profilim</span></a>
       </div>
     </div>
 
@@ -195,7 +195,7 @@
         </div>
         <div class="ws-resume-actions">
           <% if (!isVip) { %>
-          <button type="button" class="btn btn-primary" data-source="user" data-key="<%= tests[0].key %>"><%- icon('gamepad', 15) %> Cast qilish</button>
+          <button type="button" class="btn btn-primary" data-source="user" data-key="<%= tests[0].key %>"><%- icon('gamepad', 15) %> <span data-i18n="ws.cast">Cast qilish</span></button>
           <% } %>
           <button type="button" class="btn btn-quiet" onclick="openStartModal('<%= tests[0].name.replace(/'/g, "\\'") %>', <%= tests[0].count %>, '/user/test-arena?source=user&key=<%= tests[0].key %>')"><%- icon('zap', 15) %> Sinov</button>
         </div>
@@ -208,8 +208,8 @@
           <p class="ws-resume-meta">Bir necha daqiqada boshlang — savollarni kiriting yoki Quick Prompt bilan tez yarating.</p>
         </div>
         <div class="ws-resume-actions">
-          <a href="/user/create-test" class="btn btn-primary"><%- icon('plus', 15) %> Yangi test</a>
-          <a href="/user/create-test?quick=1" class="btn btn-quiet"><%- icon('sparkles', 15) %> Quick Prompt</a>
+          <a href="/user/create-test" class="btn btn-primary"><%- icon('plus', 15) %> <span data-i18n="ws.newTest">Yangi test</span></a>
+          <a href="/user/create-test?quick=1" class="btn btn-quiet"><%- icon('sparkles', 15) %> <span data-i18n="ws.quick">Quick Prompt</span></a>
         </div>
       </div>
     <% } %>
@@ -219,7 +219,7 @@
       <a class="ws-metric" href="/user/create-test" data-analytics="ws_metric_new">
         <span class="ws-metric-ico ws-metric-ico--draft"><%- icon('edit', 17) %></span>
         <span class="ws-metric-body">
-          <span class="ws-metric-label">Testlarim</span>
+          <span class="ws-metric-label" data-i18n="ws.myTests">Testlarim</span>
           <span class="ws-metric-value"><%= tests.length %></span>
           <span class="ws-metric-hint">Yangi test yaratish</span>
         </span>
@@ -227,7 +227,7 @@
       <a class="ws-metric" href="/user/test-arena?source=user" data-analytics="ws_metric_practice">
         <span class="ws-metric-ico ws-metric-ico--evidence"><%- icon('zap', 17) %></span>
         <span class="ws-metric-body">
-          <span class="ws-metric-label">Sinov rejimi</span>
+          <span class="ws-metric-label" data-i18n="ws.practice">Sinov rejimi</span>
           <span class="ws-metric-value"><%= tests.filter(t => t.isPublic).length %></span>
           <span class="ws-metric-hint">Ommaviy testlar sinov uchun</span>
         </span>
@@ -258,8 +258,8 @@
 
     <!-- ════ Test Library (S26) ════ -->
     <div class="ws-sec-hd" style="margin-top:28px">
-      <h2 class="ws-sec-title">Testlar kutubxonasi</h2>
-      <a href="/user/create-test" class="ws-sec-action"><%- icon('plus', 13) %> Yangi test</a>
+      <h2 class="ws-sec-title" data-i18n="ws.library">Testlar kutubxonasi</h2>
+      <a href="/user/create-test" class="ws-sec-action"><%- icon('plus', 13) %> <span data-i18n="ws.newTest">Yangi test</span></a>
     </div>
 
     <!-- S26.06: Filter toolbar (STEP 18 filter-bar asosida) -->
@@ -300,7 +300,7 @@
 
     <!-- S26.10: empty / filtered-none / rows -->
     <div id="lib-empty" class="ws-lib-empty" hidden>
-      <div class="ws-lib-empty-title">Hali testlar yo'q</div>
+      <div class="ws-lib-empty-title" data-i18n="ws.empty">Hali testlar yo'q</div>
       <div class="ws-lib-empty-sub">Birinchi testingizni yarating — 5 soniyada boshlang.</div>
       <a href="/user/create-test" class="ws-state-action" style="margin-top:12px"><%- icon('plus', 14) %> Birinchi testni yaratish</a>
     </div>
@@ -485,6 +485,46 @@
   <script src="/js/workspace-library.js" defer></script>
   <script src="/js/push.js" defer></script>
   <script defer>
+  /* ── S34h: PANEL I18N — UZ/RU/EN client-side (sidebar+workspace) ── */
+  (function(){
+    var PL = {
+      ru: {
+        'ws.title':'Моё рабочее место','ws.newTest':'Новый тест','ws.quick':'Quick Prompt',
+        'ws.profile':'Мой профиль','ws.cast':'Транслировать','ws.myTests':'Мои тесты',
+        'ws.practice':'Пробный режим','ws.library':'Библиотека тестов','ws.empty':'Тестов пока нет',
+        'menu.myPanel':'Моя панель','menu.calendar':'Календарь','menu.portfolio':'Портфолио',
+        'menu.security':'Безопасность','menu.profile':'Мой профиль','menu.logout':'Выйти'
+      },
+      en: {
+        'ws.title':'My workspace','ws.newTest':'New test','ws.quick':'Quick Prompt',
+        'ws.profile':'My profile','ws.cast':'Cast','ws.myTests':'My tests',
+        'ws.practice':'Practice mode','ws.library':'Test library','ws.empty':'No tests yet',
+        'menu.myPanel':'My panel','menu.calendar':'Calendar','menu.portfolio':'Portfolio',
+        'menu.security':'Security','menu.profile':'My profile','menu.logout':'Log out'
+      }
+    };
+    function apply(l){
+      var d = PL[l]; if(!d) return;
+      document.querySelectorAll('[data-i18n]').forEach(function(el){
+        var k = el.getAttribute('data-i18n');
+        if (d[k] !== undefined) el.innerHTML = d[k];
+      });
+    }
+    var group = document.getElementById('panelLangGroup');
+    if (group) {
+      group.querySelectorAll('button').forEach(function(b){
+        b.addEventListener('click', function(){
+          var l = b.getAttribute('data-plang');
+          if (b.classList.contains('on')) return;
+          /* client-side darhol (reload'gacha) */
+          apply(l);
+          fetch('/user/api/settings/profile',{method:'PATCH',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({lang:l})})
+            .then(function(r){ if(r.ok){ location.reload(); } else { console.warn('lang save failed'); } })
+            .catch(function(){});
+        });
+      });
+    }
+  })();
   /* ── Demo 1:1: topbar til + tema (real API bilan) ── */
   (function(){
     var group=document.getElementById('panelLangGroup');
