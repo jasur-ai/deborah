@@ -5328,3 +5328,25 @@ Login (parol) → 2FA sahifa → ikki variant:
   eskirgan cookie bilan har HTTP POST 403 "CSRF token validation failed" beradi (token sessiyada bo'sh)
 - TEKSHIRUV: yangi login bilan kod join ✅ (STEP 210-213 to'liq E2E PASS)
 - DOIMIY YECHIM: Redis session store (BUG-090) — Render'da Redis qo'shish kerak (env yoki upstash)
+
+---
+# ═══ STEP 220 — RO'YXATDAN O'TISH DUBLICATE-CONSENT BUG + PASSKEY 2FA TUGMA (2026-09-02, 6625919) ═══
+
+## 1. 🔴 CAST-LANDING RO'YXATDAN O'TISH 100% BUZIL EDI — TASDIQLANDI VA TUZATILDI
+- Simptom: foydalanuvchi "Tarmoq xatosi — qayta urinib ko'ring" va boshqa noto'g'ri xatolar
+- ILDIZ: forma `hidden consent=on` + checkbox `consent` — ikkala qiymat yuborilardi →
+  express `consent = ['on','on']` (massiv) → zod `z.union([boolean,string])` RAD →
+  `firstErrorKey` → 'required' → noto'g'ri matn "Ism va parolni kiriting."
+- CURL ISBOT: bitta consent → 200 ok; ikki consent → 401 "Ism va parolni kiriting."
+- FIX: hidden consent olib tashlandi (cast-landing.ejs + index.ejs /ustoz)
+- LIVE: register 200 → /user/panel ✅ (qa_final2 akkaunt yaratildi)
+
+## 2. Admin 2FA passkey tugma ko'rinmasdi — ildiz: requireAdmin 401
+- Login MFA bosqichida `req.session.admin` HANUZ yo'q (faqat pendingAdminMfa) →
+  passkey/status 401 → tugma hech qachon ko'rinmasdi
+- FIX: `requirePendingAdminMfa` (pendingAdminMfa.challengeId) + verify'da challenge consume
+- "Tarmoq xatosi" profildagi reauth paytida: fetch catch() — ba'zi hollarda sessiya jarayonida yo'qolgan
+
+## Qolgan holat
+- RU/EN panel: live "Моя панель/Календарь" ✅ (STEP 219)
+- Vaqtinchalik QA akkauntlar: qa_final_*, qa_final2_* (o'chirish kerak)
