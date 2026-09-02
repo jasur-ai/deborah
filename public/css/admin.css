@@ -704,3 +704,317 @@ body.admin-nav-open .admin-nav-hamburger span:nth-child(3) { transform: translat
 /* S25: VIP bo'limi — o'qituvchilar alohida eslatmasi */
 .vip-staff-note{background:rgba(37,99,235,.07);border:1px solid rgba(37,99,235,.18);border-radius:10px;padding:10px 14px;font-size:.8rem;color:#475569;margin-bottom:12px}
 .vip-staff-note a{color:#2563eb;font-weight:700}
+
+/* ═══════════════════════════════════════════════════════════════
+   NEON COMMAND v4.0 — Admin muhit uchun texnik neon-gradient qatlam
+   (S34d): chuqur kosmik fon + neon cyan/violet/magenta gradientlar,
+   glow chegara va scanline grid. Barcha admin sahifalariga ta'sir
+   qiladi (admin.css oxirida — bir xil selektorlar bilan ustun).
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  --n-bg0: #04060f;
+  --n-bg1: #090d1d;
+  --n-bg2: #0d1228;
+  --n-line: rgba(148,163,255,.14);
+  --n-cyan: #22d3ee;
+  --n-violet: #818cf8;
+  --n-magenta: #e879f9;
+  --n-green: #34d399;
+  --n-amber: #fbbf24;
+  --n-grad: linear-gradient(120deg, var(--n-cyan), var(--n-violet) 48%, var(--n-magenta));
+  --n-grad-soft: linear-gradient(120deg, rgba(34,211,238,.16), rgba(129,140,248,.16) 48%, rgba(232,121,249,.16));
+  --n-glow: 0 0 22px rgba(99,140,255,.28), 0 0 60px rgba(139,92,246,.12);
+  --n-glow-strong: 0 0 18px rgba(34,211,238,.45), 0 0 70px rgba(232,121,249,.18);
+}
+
+/* ── Sahifa fonlari: chuqur kosmos + neon aurora + texnik grid ── */
+body:has(.admin-navbar),
+body:has(.admin-panel) {
+  background:
+    radial-gradient(1100px 520px at 12% -8%, rgba(34,211,238,.10), transparent 60%),
+    radial-gradient(900px 500px at 88% 0%, rgba(232,121,249,.09), transparent 55%),
+    radial-gradient(1000px 700px at 50% 115%, rgba(129,140,248,.08), transparent 60%),
+    var(--n-bg0) !important;
+}
+body:has(.admin-navbar)::before,
+body:has(.admin-panel)::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(148,163,255,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148,163,255,.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse at 50% 0%, black 30%, transparent 78%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 0%, black 30%, transparent 78%);
+}
+.admin-layout, .admin-navbar, .admin-panel { position: relative; z-index: 1; }
+
+/* ── Navbar: qora shisha + neon neon chiziq ── */
+.admin-navbar {
+  background: linear-gradient(180deg, rgba(7,10,25,.92), rgba(6,8,20,.88)) !important;
+  border-bottom: 1px solid rgba(148,163,255,.16) !important;
+  box-shadow: 0 10px 40px rgba(3,5,15,.55), inset 0 -1px 0 rgba(34,211,238,.22);
+}
+.admin-navbar::after {
+  content: '';
+  position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
+  background: var(--n-grad);
+  opacity: .85;
+  filter: drop-shadow(0 0 8px rgba(99,140,255,.65));
+}
+.admin-nav-logo img { filter: drop-shadow(0 0 10px rgba(99,140,255,.45)); }
+.admin-nav-badge {
+  background: linear-gradient(120deg, rgba(34,211,238,.16), rgba(232,121,249,.16)) !important;
+  border: 1px solid rgba(129,140,248,.45) !important;
+  color: #c7d2fe !important;
+  text-shadow: 0 0 12px rgba(129,140,248,.8);
+  box-shadow: inset 0 0 14px rgba(99,140,255,.14);
+}
+.admin-nav-btn {
+  background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)) !important;
+  border: 1px solid rgba(148,163,255,.22) !important;
+  color: #cbd5f5 !important;
+  transition: all .18s ease !important;
+}
+.admin-nav-btn:hover {
+  border-color: rgba(34,211,238,.55) !important;
+  color: #e0f2fe !important;
+  box-shadow: 0 0 16px rgba(34,211,238,.25), inset 0 0 12px rgba(34,211,238,.08);
+  transform: translateY(-1px);
+}
+
+/* ── Sidebar: neon komandir paneli ── */
+.admin-sidebar {
+  background: linear-gradient(180deg, rgba(9,13,29,.92), rgba(7,10,22,.88)) !important;
+  border-right: 1px solid rgba(148,163,255,.14) !important;
+  box-shadow: inset -1px 0 0 rgba(34,211,238,.08), 0 0 60px rgba(3,5,15,.5);
+}
+.admin-side-label {
+  color: #7c8bb8 !important;
+  font-size: .58rem !important;
+  letter-spacing: .22em !important;
+  text-transform: uppercase;
+  display: flex; align-items: center; gap: 8px;
+}
+.admin-side-label::before {
+  content: '';
+  width: 14px; height: 1px;
+  background: var(--n-grad);
+  box-shadow: 0 0 8px rgba(99,140,255,.6);
+}
+.admin-side-btn {
+  border: 1px solid transparent !important;
+  border-left: 2px solid rgba(148,163,255,.16) !important;
+  background: linear-gradient(90deg, rgba(255,255,255,.028), transparent 60%) !important;
+  color: #aab4dd !important;
+  border-radius: 8px !important;
+  margin: 2px 8px !important;
+  transition: all .16s ease !important;
+}
+.admin-side-btn:hover {
+  border-left-color: var(--n-cyan) !important;
+  color: #e0f2fe !important;
+  background: linear-gradient(90deg, rgba(34,211,238,.10), rgba(34,211,238,.02) 55%) !important;
+  box-shadow: inset 0 0 18px rgba(34,211,238,.06);
+  transform: translateX(2px);
+}
+.admin-side-btn.active {
+  border-left-color: var(--n-magenta) !important;
+  border-color: rgba(129,140,248,.35) !important;
+  border-left-width: 2px !important;
+  background: var(--n-grad-soft) !important;
+  color: #f1f5ff !important;
+  box-shadow: var(--n-glow), inset 0 0 20px rgba(129,140,248,.10);
+  text-shadow: 0 0 14px rgba(129,140,248,.55);
+}
+.admin-side-btn.active .admin-side-ico { filter: drop-shadow(0 0 6px rgba(232,121,249,.8)); }
+
+/* ── Panel/kartalar: texnik shisha + neon bosh qirra ── */
+.admin-panel {
+  background: linear-gradient(180deg, rgba(13,18,40,.55), rgba(9,13,29,.35)) !important;
+  border: 1px solid rgba(148,163,255,.16) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 24px 70px rgba(3,5,15,.5), inset 0 1px 0 rgba(148,163,255,.08);
+  backdrop-filter: blur(10px);
+}
+.admin-panel::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--n-grad);
+  border-radius: 14px 14px 0 0;
+  opacity: .9;
+  filter: drop-shadow(0 0 10px rgba(99,140,255,.5));
+  pointer-events: none;
+}
+.admin-sec-hd { border-bottom: 1px solid rgba(148,163,255,.14) !important; }
+.admin-sec-title {
+  background: var(--n-grad) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  filter: drop-shadow(0 0 12px rgba(99,140,255,.35));
+}
+.admin-tab-pane.active { animation: nFadeUp .35s cubic-bezier(.22,.61,.36,1); }
+@keyframes nFadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+/* ── Stat kartalar: neon pulsatsiya ── */
+.stat-card {
+  background: linear-gradient(180deg, rgba(13,18,40,.72), rgba(9,13,29,.5)) !important;
+  border: 1px solid rgba(148,163,255,.18) !important;
+  border-radius: 12px !important;
+  position: relative;
+  overflow: hidden;
+  transition: all .22s ease !important;
+}
+.stat-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--n-grad);
+  opacity: .85;
+}
+.stat-card::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(240px 90px at 18% -20%, rgba(34,211,238,.14), transparent 70%);
+  pointer-events: none;
+}
+.stat-card:hover { transform: translateY(-3px); border-color: rgba(34,211,238,.45) !important; box-shadow: var(--n-glow-strong); }
+.stat-num {
+  background: var(--n-grad) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  filter: drop-shadow(0 0 10px rgba(99,140,255,.45));
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Element kartalar (fan/pre/result) ── */
+.admin-fan-item, .admin-pre-item, .admin-res-card {
+  background: linear-gradient(180deg, rgba(13,18,40,.6), rgba(9,13,29,.42)) !important;
+  border: 1px solid rgba(148,163,255,.16) !important;
+  border-radius: 12px !important;
+  transition: all .2s ease !important;
+}
+.admin-fan-item:hover, .admin-pre-item:hover, .admin-res-card:hover {
+  border-color: rgba(129,140,248,.42) !important;
+  box-shadow: var(--n-glow);
+}
+.admin-fan-item-name, .admin-pre-item-name, .admin-res-title { color: #e2e8ff !important; }
+.admin-fan-item-meta, .admin-pre-item-meta, .admin-res-meta { color: #8b97c9 !important; }
+
+/* ── Tugmalar: neon gradient ── */
+.admin-panel button,
+.admin-panel .admin-edit-btn, .admin-panel .admin-del-btn, .admin-panel .btn-warning {
+  border-radius: 9px !important;
+  transition: all .18s ease !important;
+}
+.admin-panel .admin-edit-btn {
+  background: var(--n-grad-soft) !important;
+  border: 1px solid rgba(34,211,238,.4) !important;
+  color: #a5f3fc !important;
+}
+.admin-panel .admin-edit-btn:hover {
+  box-shadow: 0 0 16px rgba(34,211,238,.35) !important;
+  transform: translateY(-1px);
+  border-color: rgba(34,211,238,.7) !important;
+}
+.admin-panel .admin-del-btn {
+  background: rgba(232,121,249,.08) !important;
+  border: 1px solid rgba(232,121,249,.32) !important;
+  color: #f5d0fe !important;
+}
+.admin-panel .admin-del-btn:hover {
+  box-shadow: 0 0 16px rgba(232,121,249,.3) !important;
+  border-color: rgba(232,121,249,.6) !important;
+}
+.admin-panel .btn-warning, .admin-panel button.primary, .admin-panel .admin-refresh-btn {
+  background: var(--n-grad) !important;
+  border: none !important;
+  color: #04060f !important;
+  font-weight: 900 !important;
+  box-shadow: 0 4px 18px rgba(99,140,255,.35) !important;
+}
+.admin-panel .btn-warning:hover, .admin-panel button.primary:hover, .admin-panel .admin-refresh-btn:hover {
+  filter: brightness(1.14);
+  box-shadow: 0 6px 26px rgba(99,140,255,.5) !important;
+  transform: translateY(-1px);
+}
+
+/* ── Jadvallar va inputlar ── */
+.admin-panel table { border-collapse: separate; border-spacing: 0; }
+.admin-panel th {
+  background: linear-gradient(180deg, rgba(34,211,238,.10), rgba(129,140,248,.06)) !important;
+  color: #c7d2fe !important;
+  border-bottom: 1px solid rgba(148,163,255,.25) !important;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  font-size: .68rem !important;
+}
+.admin-panel tr { transition: background .15s ease; }
+.admin-panel tbody tr:hover { background: rgba(34,211,238,.05) !important; }
+.admin-panel td { border-bottom: 1px solid rgba(148,163,255,.09) !important; }
+.admin-panel .inp, .admin-panel input[type="text"], .admin-panel input[type="number"], .admin-panel input[type="search"], .admin-panel select, .admin-panel textarea {
+  background: rgba(4,6,15,.6) !important;
+  border: 1px solid rgba(148,163,255,.22) !important;
+  color: #e2e8ff !important;
+  border-radius: 9px !important;
+}
+.admin-panel .inp:focus, .admin-panel input:focus, .admin-panel select:focus, .admin-panel textarea:focus {
+  outline: none !important;
+  border-color: rgba(34,211,238,.65) !important;
+  box-shadow: 0 0 0 3px rgba(34,211,238,.14), 0 0 18px rgba(34,211,238,.15) !important;
+}
+
+/* ── Xabar/holat chiplari ── */
+.admin-status--info { border-color: rgba(34,211,238,.4) !important; color: #a5f3fc !important; background: rgba(34,211,238,.08) !important; }
+.admin-status--warn { border-color: rgba(251,191,36,.4) !important; color: #fde68a !important; background: rgba(251,191,36,.08) !important; }
+.admin-status--danger { border-color: rgba(232,121,249,.4) !important; color: #f5d0fe !important; background: rgba(232,121,249,.08) !important; }
+.admin-msg.err { border-color: rgba(232,121,249,.4) !important; background: rgba(232,121,249,.07) !important; color: #f5d0fe !important; }
+.admin-empty {
+  border: 1px dashed rgba(148,163,255,.3) !important;
+  color: #8b97c9 !important;
+  background: rgba(9,13,29,.4) !important;
+  border-radius: 12px !important;
+}
+.admin-top-chip {
+  background: var(--n-grad-soft) !important;
+  border: 1px solid rgba(129,140,248,.4) !important;
+  color: #c7d2fe !important;
+}
+.admin-rank-medal { filter: drop-shadow(0 0 8px rgba(251,191,36,.5)); }
+
+/* ── Scrollbar: neon ── */
+body:has(.admin-panel) ::-webkit-scrollbar { width: 10px; height: 10px; }
+body:has(.admin-panel) ::-webkit-scrollbar-track { background: rgba(4,6,15,.5); }
+body:has(.admin-panel) ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(34,211,238,.5), rgba(232,121,249,.5));
+  border-radius: 8px;
+  border: 2px solid rgba(4,6,15,.9);
+}
+body:has(.admin-panel) ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, var(--n-cyan), var(--n-magenta)); }
+
+/* ── Drawer overlay (mobil) ── */
+.admin-drawer-overlay { background: rgba(3,5,14,.66) !important; backdrop-filter: blur(6px); }
+
+/* ── Light tema: neon saqlanadi, sirt o'qiladigan ── */
+[data-theme="light"] body:has(.admin-panel),
+body.theme-light:has(.admin-panel) {
+  background:
+    radial-gradient(1100px 520px at 12% -8%, rgba(34,211,238,.14), transparent 60%),
+    radial-gradient(900px 500px at 88% 0%, rgba(232,121,249,.10), transparent 55%),
+    #eef1fb !important;
+}
+[data-theme="light"] .admin-navbar { background: rgba(240,242,252,.92) !important; }
+[data-theme="light"] .admin-sidebar { background: rgba(240,242,252,.94) !important; }
+[data-theme="light"] .admin-panel {
+  background: rgba(255,255,255,.78) !important;
+  border-color: rgba(99,112,255,.22) !important;
+}
+[data-theme="light"] .stat-card { background: rgba(255,255,255,.85) !important; }
+[data-theme="light"] .admin-side-btn { color: #3b4470 !important; background: linear-gradient(90deg, rgba(99,112,255,.05), transparent 60%) !important; }
+[data-theme="light"] .admin-side-btn.active { color: #1e1b4b !important; background: var(--n-grad-soft) !important; }
+[data-theme="light"] .admin-panel td { border-color: rgba(99,112,255,.14) !important; }
+[data-theme="light"] .admin-panel .inp, [data-theme="light"] .admin-panel input, [data-theme="light"] .admin-panel select { background: rgba(255,255,255,.9) !important; color: #1e293b !important; }

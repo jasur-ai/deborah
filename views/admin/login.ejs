@@ -16,10 +16,81 @@
     .admin-topbar .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:.9rem;}
     .admin-topbar .brand img{height:26px;width:auto;}
     .theme-segmented{transform:none;}
+    /* ── S34d NEON COMMAND: admin login ── */
+    body.admin-login-neon{
+      background:
+        radial-gradient(900px 480px at 14% -6%, rgba(34,211,238,.13), transparent 60%),
+        radial-gradient(820px 460px at 86% 2%, rgba(232,121,249,.11), transparent 55%),
+        radial-gradient(1000px 700px at 50% 118%, rgba(129,140,248,.10), transparent 60%),
+        #04060f;
+      min-height:100vh;
+    }
+    body.admin-login-neon::before{
+      content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+      background-image:linear-gradient(rgba(148,163,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(148,163,255,.055) 1px,transparent 1px);
+      background-size:44px 44px;
+      -webkit-mask-image:radial-gradient(ellipse at 50% 0%,black 28%,transparent 76%);
+      mask-image:radial-gradient(ellipse at 50% 0%,black 28%,transparent 76%);
+    }
+    body.admin-login-neon .admin-topbar{
+      position:relative;z-index:1;
+      background:linear-gradient(180deg,rgba(7,10,25,.92),rgba(6,8,20,.86));
+      border-bottom:1px solid rgba(148,163,255,.16);
+      box-shadow:inset 0 -1px 0 rgba(34,211,238,.2);
+    }
+    body.admin-login-neon .admin-topbar::after{
+      content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;
+      background:linear-gradient(120deg,#22d3ee,#818cf8 48%,#e879f9);
+      filter:drop-shadow(0 0 8px rgba(99,140,255,.6));
+    }
+    body.admin-login-neon .auth-box{
+      position:relative;z-index:1;
+      background:linear-gradient(180deg,rgba(13,18,40,.72),rgba(9,13,29,.5));
+      border:1px solid rgba(148,163,255,.18);
+      border-radius:16px;
+      box-shadow:0 24px 70px rgba(3,5,15,.55), 0 0 40px rgba(99,140,255,.10);
+      backdrop-filter:blur(12px);
+      padding-top:26px;
+    }
+    body.admin-login-neon .auth-box::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(120deg,#22d3ee,#818cf8 48%,#e879f9);
+      border-radius:16px 16px 0 0;
+      filter:drop-shadow(0 0 10px rgba(99,140,255,.5));
+    }
+    body.admin-login-neon .auth-title{
+      background:linear-gradient(120deg,#22d3ee,#818cf8 48%,#e879f9);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      filter:drop-shadow(0 0 12px rgba(99,140,255,.4));
+    }
+    body.admin-login-neon .auth-admin-flag{
+      background:linear-gradient(120deg,rgba(34,211,238,.18),rgba(232,121,249,.18));
+      border:1px solid rgba(129,140,248,.5);
+      color:#c7d2fe;text-shadow:0 0 12px rgba(129,140,248,.7);
+      box-shadow:inset 0 0 14px rgba(99,140,255,.12);
+    }
+    body.admin-login-neon .inp{
+      background:rgba(4,6,15,.6);border:1px solid rgba(148,163,255,.24);color:#e2e8ff;border-radius:10px;
+    }
+    body.admin-login-neon .inp:focus{
+      outline:none;border-color:rgba(34,211,238,.65);
+      box-shadow:0 0 0 3px rgba(34,211,238,.14),0 0 18px rgba(34,211,238,.16);
+    }
+    body.admin-login-neon .auth-form button[type="submit"],body.admin-login-neon .auth-submit{
+      background:linear-gradient(120deg,#22d3ee,#818cf8 48%,#e879f9)!important;
+      border:none!important;color:#04060f!important;font-weight:900!important;
+      box-shadow:0 6px 22px rgba(99,140,255,.4)!important;
+      transition:filter .18s ease, transform .18s ease, box-shadow .18s ease;
+    }
+    body.admin-login-neon .auth-form button[type="submit"]:hover{
+      filter:brightness(1.15);transform:translateY(-1px);
+      box-shadow:0 8px 30px rgba(99,140,255,.55)!important;
+    }
+    body.admin-login-neon .lbl{color:#9aa8d8!important;}
   </style>
   <link rel="stylesheet" href="/design/admin-command.css">
 </head>
-<body>
+<body class="admin-login-neon">
   <a href="#main" class="skip-link">Kirish →</a>
   <div class="admin-topbar">
     <span class="brand"><img src="/images/logo-vintage.png" alt="Deborah"> Deborah</span>
