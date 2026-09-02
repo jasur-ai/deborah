@@ -5350,3 +5350,32 @@ Login (parol) → 2FA sahifa → ikki variant:
 ## Qolgan holat
 - RU/EN panel: live "Моя панель/Календарь" ✅ (STEP 219)
 - Vaqtinchalik QA akkauntlar: qa_final_*, qa_final2_* (o'chirish kerak)
+
+---
+# ═══ STEP 221 — TEST YARATISH KAHOOT-STYLE (2026-09-02, 3b9c13e) ═══
+> FOYDALANUVCHI: "test yaratish rasvo va ishlamayapti, 'noto'g'ri data' deyapti, struktura va UI xuddi Kahoot bilan bir xil bo'lishi kerak"
+
+## Asl muammolar
+1. **"Invalid data" xato toast** — nom/savol to'ldirilmagan holatda avtosave 400 qaytarardi (autosave darhol yuborardi)
+2. **UI detskiy/xira** — kulrang bejir fon, oq-kulrang variantlar, Kahoot'dek yorqin emas
+3. Save funksionalligining o'zi ISHLAYDI (200, key yaratiladi) — muammo vizual + UX
+
+## KAHoot-STYLE QAYTA DIZAYN (design/contexts/test-builder.css S34k)
+- Fon: chuqur binafsha gradient (#46178f → #3d1580) — Kahoot brendi rangida
+- **Variantlar KAHOOT RANGLARIDA:** A=qizil, B=ko'k, C=sariq, D=yashil, E=binafsha, F=to'q sariq — har variant o'z rangida, oq matn, hover scale, to'g'ri javob sariq halqa + ✓
+- Editor: oq karta (20px radius), savol matni binafsha 2px border, katta font
+- Outline: yorqin hover, active oltin; invalid qizil dashed border
+- Topbar: qora shisha, yashil katta Saqlash tugmasi
+- Status: saved=yashil, pending=oltin, error=qizil
+- Mobil: outline yuqorida, editor to'liq kenglik
+
+## AUTOSAVE FIX (test-builder.js)
+- Nom bo'sh YOKI kamida 1 savol to'ldirilmagan bo'lsa yangi testda avtosave YUBORILMAYDI
+  → endi 400 "Invalid data" toast chiqmaydi, o'rniga "To'ldirilmagan maydonlar bor" statusi
+- Tahrirlash rejimida (editKey bor) avtosave ishlayveradi (avvaldan saqlangan)
+
+## Live verifikatsiya
+- KAHOOT gradient fon faol ✅ (linear-gradient(160deg, rgb(70,23,143)...))
+- Variant ranglari: rgb(226,27,60) qizil, rgb(19,104,206) ko'k, rgb(216,158,0) sariq, rgb(38,137,12) yashil ✅
+- Nom-only save → POST YO'Q ✅ (400 yo'q)
+- Skrinshotlar: 181_ct_kahoot.png (variantlar rangli, fon binafsha)

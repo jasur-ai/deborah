@@ -190,3 +190,4 @@
 - ✅ STEP 218 — ADMIN 2FA PASSKEY VARIANT (2026-09-02): 3 endpoint + 2FA sahifada "Passkey bilan tasdiqlash" tugma (passkey mavjud bo'lsa avtomatik chiqadi) (4ef7eba)
 - ✅ STEP 219 — PANEL RU/EN FIX (365d981): sidebar fullCopy yetib bormagan (2 render) + panel data-i18n + RU/EN client lug'at — live "Моя панель|Календарь"/"My panel|Calendar" ✅; quick-links/cast ✅; CSRF — sessiya restart (BUG-090) ehtimoli, /play csrfToken keyingi patch
 - ✅ STEP 220 — CONSENT DUP BUG (6625919): cast-landing+ustoz ro'yxatdan o'tish 100% buzil edi (2x consent=on → massiv → zod rad) — hidden olib tashlandi, live register ✅; passkey 2FA tugma requirePendingAdminMfa bilan tuzatildi
+- ✅ STEP 221 — TEST BUILDER KAHOOT-STYLE (3b9c13e): binafsha gradient fon, Kahoot ranglari (A-D qizil/ko'k/sariq/yashil), avtosave "Invalid data" fix (nom bo'sh bo'lsa yubormaydi)
