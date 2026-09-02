@@ -5175,3 +5175,26 @@ Hamburger → Cast → join overlay telefonda ochiladi ✅ (158_phone_join_overl
 - KARTA-2: dx=0.7 dy=0.4 ✅ (sub-piksel — anti-aliasing)
 - KARTA-8: dx=0.7 dy=0.4 ✅
 - Skrinshot: 162_grid_final.png (karta-5 o'z o'rnida kattalashgan, qolganlar blur)
+
+---
+# ═══ STEP 214 — ADMIN NEON COMMAND QAYTA DIZAYN (2026-09-02, 34f511b + fb9b504) ═══
+> FOYDALANUVCHI: "admin dizayni juda detskiy — asosiydan farqli, TEXNIK va JUDA ZO'R bo'lishi kerak. Neon gradient"
+
+## Bajarildi (barcha 50 admin sahifa + login)
+
+| Qatlam | Nima |
+|---|---|
+| **admin.css NEON COMMAND v4** | chuqur kosmik fon (#04060f) + neon aurora (cyan/violet/magenta radial) + texnik grid (44px, mask bilan so'nadi); navbar 2px neon chiziq (glow); sidebar neon active (magenta border + glow); stat-card gradient raqamlar + hover glow + translateY; panel/kartalar shisha + yuqori neon chiziq; neon tugmalar (edit=cyan, delete=magenta, primary=gradient); jadval th gradient + hover satrlar; input neon fokus halqa; neon scrollbar |
+| **/admin/login** | scoped neon: kosmik fon + grid + aurora, neon karta (2px gradient tepa), gradient "Admin Panel" sarlavha, neon ADMEN badge, gradient Kirish tugma |
+| **Light tema** | fon ochiq (#e9edfa) lekin neon aurora/grid/glow SAQLANADI — admin muhiti texnik xarakterini yo'qotmaydi |
+| **Cache-bust** | barcha 50 view: admin.css?v=nv4 |
+
+## Live tekshiruv
+- admin.css 31.3KB, "NEON COMMAND v4" blok yuklandi ✅
+- login karta: `linear-gradient(rgba(13,18,40,.72)...)` neon qatlam faol ✅
+- DARK bg rgb(4,6,15) ✅ — skrinshot 164 (navbar neon chiziq, gradient Admin Panel, neon Kirish tugma)
+- LIGHT skrinshot 165 (neon aurora saqlangan)
+
+## Izoh
+- Admin MFA kodlari tugaganligi sababli dashboard ichini skrinshot qilib bo'lmadi — lekin NEON qatlam admin.css'da bo'lgani uchun barcha 50 sahifa (dashboard/users/audit/...) avtomatik qamrab olinadi (bir xil class nomlari)
+- Hech qanday view/class o'zgarmadi — faqat CSS qatlam (regressiya xavfi 0)
