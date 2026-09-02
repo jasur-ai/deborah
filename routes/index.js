@@ -11,6 +11,21 @@ import { isOAuthConfigured as isHemisOAuthConfigured } from '../src/modules/auth
 
 const router = Router();
 
+// S34: CAST LANDING — hammaga ko'rinadigan bosh sahifa (uploads/cast.html namunasi 1:1,
+// OneID/HEMIS'siz, REAL auth + REAL join). O'qituvchi landing'i /ustoz'da (ochiq ko'rinmaydi).
+async function renderCastLanding(req, res) {
+  res.render('cast-landing', {
+    title: 'Deborah — savolni sinf ekraniga uzatish',
+    description: "Bir tugma bilan savol sinf ekraniga uzatiladi. Javoblar real vaqtda yig'iladi.",
+    siteUrl: '',
+    path: '/',
+    lang: 'uz',
+    csrfToken: req.session?.csrfToken || '',
+    oidcEnabled: isOidcEnabled(),
+    hemisEnabled: false,
+  });
+}
+
 async function renderLanding(req, res, langKey) {
   const lang = resolveLandingLang(langKey);
   const path = lang === 'uz' ? '/' : `/${lang}`;
@@ -36,12 +51,19 @@ async function renderLanding(req, res, langKey) {
 }
 
 router.get('/', (req, res) => {
-  renderLanding(req, res, 'uz').catch((e) => res.status(500).send(String(e?.message || e)));
+  renderCastLanding(req, res).catch((e) => res.status(500).send(String(e?.message || e)));
 });
 
-router.get('/ru', (req, res) => renderLanding(req, res, 'ru').catch((e) => res.status(500).send(String(e?.message || e))));
-router.get('/en', (req, res) => renderLanding(req, res, 'en').catch((e) => res.status(500).send(String(e?.message || e))));
-router.get('/uz-cyrl', (req, res) => renderLanding(req, res, 'uz-cyrl').catch((e) => res.status(500).send(String(e?.message || e))));
+// Til yo'llari ham cast landing'ga (client-side i18n: uz/ru/en + uz-cyrl)
+router.get('/ru', (req, res) => renderCastLanding(req, res).catch((e) => res.status(500).send(String(e?.message || e))));
+router.get('/en', (req, res) => renderCastLanding(req, res).catch((e) => res.status(500).send(String(e?.message || e))));
+router.get('/uz-cyrl', (req, res) => renderCastLanding(req, res).catch((e) => res.status(500).send(String(e?.message || e))));
+
+// S34: O'QITUVCHI LANDING (uploads/index.html 1:1) — /ustoz'da (ochiq ko'rinmaydi).
+// renderLanding() endi faqat /ustoz uchun ishlatiladi (redirectIfAuth auth.js'da).
+router.get('/ustoz-landing', (req, res) => {
+  renderLanding(req, res, 'uz').catch((e) => res.status(500).send(String(e?.message || e)));
+});
 
 // ═══════════════════════════════════════════════════════════
 // STEP 21 S21.08 — Legal / trust hujjat sahifalari

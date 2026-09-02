@@ -766,15 +766,35 @@ router.get('/user/register', redirectIfAuth, (req, res) => {
 // ── S27: O'qituvchilar maydoni (/ustoz) — landing burger'idagi yashirin kirish ──
 // Login (mode=login) va ariza (mode=reg&role=teacher) POST /user/login'ga
 // boradi — A-faza himoyalari (CSRF/honeypot/limiter/HIBP) to'liq qayta ishlanadi.
-router.get('/ustoz', redirectIfAuth, (req, res) => {
+router.get('/ustoz', redirectIfAuth, async (req, res) => {
   try {
     recordMetric('auth.ustoz.view', 1, { type: 'counter', labels: { lang: 'uz' } });
   } catch (_) {}
-  res.render('ustoz', {
-    title: "O'qituvchilar uchun — Deborah",
-    csrfToken: req.session.csrfToken || '',
-    error: null,
-  });
+  // S34: /ustoz endi TO'LIQ o'qituvchi landing'ini ko'rsatadi (uploads/index.html 1:1 —
+  // views/index.ejs). Cast landing (/) hammaga ko'rinadi; o'qituvchi maydoni shu yerda —
+  // robots.txt Disallow + kanonik / → qidiruv tizimlarida ochiq ko'rinmaydi.
+  try {
+    const { LANDING_COPY } = await import('../data/landing.js');
+    const { isOidcEnabled } = await import('../src/modules/auth/oidc.js');
+    return res.render('index', {
+      title: LANDING_COPY.uz.meta.title,
+      description: LANDING_COPY.uz.meta.description,
+      copy: LANDING_COPY.uz,
+      lang: 'uz',
+      path: '/',
+      csrfToken: req.session.csrfToken || '',
+      oidcEnabled: isOidcEnabled(),
+      hemisEnabled: false,
+      opendata: null,
+    });
+  } catch (e) {
+    // fail-soft: eski ustoz maydoni sahifasi
+    return res.render('ustoz', {
+      title: "O'qituvchilar uchun — Deborah",
+      csrfToken: req.session.csrfToken || '',
+      error: null,
+    });
+  }
 });
 
 // ── AUTH B-05: email real-time validatsiya (blur) ──

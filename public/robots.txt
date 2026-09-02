@@ -8,5 +8,7 @@ Disallow: /play
 Disallow: /sessions
 Disallow: /onboarding
 Disallow: /cast/
+Disallow: /ustoz
+
 
 # Ommaviy hujjatlar indekslanadi: /, /privacy, /terms, /cookies, /legal
