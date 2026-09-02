@@ -5379,3 +5379,25 @@ Login (parol) → 2FA sahifa → ikki variant:
 - Variant ranglari: rgb(226,27,60) qizil, rgb(19,104,206) ko'k, rgb(216,158,0) sariq, rgb(38,137,12) yashil ✅
 - Nom-only save → POST YO'Q ✅ (400 yo'q)
 - Skrinshotlar: 181_ct_kahoot.png (variantlar rangli, fon binafsha)
+
+---
+# ═══ STEP 222 — TEST BUILDER KAHOOT STRUKTURA (2026-09-02, ee7d7b9+a82703b) ═══
+> FOYDALANUVCHI: "ranglarni demadim — UI TUZILISHI dedi; qizil hech qayerda ishlatilmasin, faqat xatolikda"
+
+## Tuzatishlar
+| # | O'zgarish | Fayl |
+|---|---|---|
+| 1 | Variantlar **2×2 GRID** (Kahoot kabi) — vertikal ro'yxat emas; mobil 1 ustun | test-builder.css |
+| 2 | Variantlar ranglari **BIR XIL binafsha gradient** — qizil/ko'k/sariq/yashil variant ranglari OLIB TASHLANDI | test-builder.css |
+| 3 | **Shakl belgilari** (▲◆●■★⬢) har variantda — Kahoot belgilari | test-builder.js + css |
+| 4 | **Alohida "To'g'ri javob radio" bloki OLIB TASHLANDI** — variant kartasini bosish = to'g'ri deb belgilash (Kahoot mantiqi) | test-builder.js |
+| 5 | To'g'ri javob = **yashil halqa + "✓ To'g'ri" badge** | test-builder.css |
+| 6 | Klaviatura: Enter/Space bilan belgilash, role="radio", aria-checked | test-builder.js |
+| 7 | **QIZIL FAQAT xatoda:** error summary, invalid outline, xato matn borderi | test-builder.css |
+
+## Live verifikatsiya
+- 4 variant hammasi binafsha gradient (rgb(91,44,171)) ✅
+- grid-template-columns: 301px 301px = 2 ustun ✅
+- 2-karta bosildi → is-correct ✅ (yashil + "✓ To'g'ri" badge)
+- 0 JS xato ✅
+- Skrinshot: 183_ct_kahoot_struct.png
