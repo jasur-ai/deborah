@@ -5272,3 +5272,30 @@ requireAdmin revoked-memo tekshiruvi qo'shildi (middleware/auth.js); server.js m
 - Yangi users.js live'da (5x vipGrant/deleteUser topildi)
 - To'liq klik-test admin MFA step-up talab qiladi — endpointlar requireAdminMfaStepUp (xavfsizlik dizayni); admin parol/MFA kirgan foydalanuvchi uchun ishlaydi
 - Agar "filtrlash" endi ham ishlamasa — brauzer console xatosini yuboring (aniq satr kerak)
+
+---
+# ═══ STEP 218 — ADMIN 2FA: PASSKEY BILAN TASDIQLASH (2026-09-02, 4ef7eba) ═══
+> FOYDALANUVCHI: "passkey kiritgandan keyin 2FA da 'passkey bilan kirish' qismi chiqsin"
+
+## Yangi oqim
+Login (parol) → 2FA sahifa → ikki variant:
+1. TOTP/backup kod (avvalgidek)
+2. **"Passkey bilan tasdiqlash"** — agar admin profilida passkey ro'yxatdan o'tkazilgan bo'lsa avtomatik ko'rinadi
+
+## Yangi endpointlar (routes/auth.js)
+| Endpoint | Ish |
+|---|---|
+| GET /api/admin/mfa/passkey/status | passkey mavjudligini tekshiradi (`admin:{username}` identifikatori) — ko'rsatish/ko'rsatmaslik uchun |
+| POST /api/admin/mfa/passkey/options | authentication challenge (allowCredentials — faqat admin passkeylari) |
+| POST /api/admin/mfa/passkey/verify | assertion tekshiruv + **owner tekshiruv** (boshqa hisob passkeyi rad) + `adminMfaAt=now` + `grantAdminSession(viaMfa)` — TOTP bilan bir xil grant yo'li |
+
+## UI (views/admin/mfa.ejs)
+- Passkey mavjud bo'lsa "— yoki —" ajratgich + "🔑 Passkey bilan tasdiqlash" neon tugma chiqadi
+- Bosilganda: challenge → native biometric (Touch ID/Face ID/Windows Hello/USB) → verify → /admin/dashboard
+- Mavjud bo'lsa xato: aniq matn (rad etildi/challenge muddati/kod owner mismatch)
+
+## Xavfsizlik
+- userVerification: 'required' (AAL2+ — biometric/PIN majbur)
+- counter replay/regression himoyasi webauthn.js'da mavjud (o'zgarmadi)
+- Owner mismatch tekshiruvi qo'shildi (boshqa user passkeyi bilan 2FA o'tib bo'lmaydi)
+- Audit: passkey:authenticate hodisalari jurnalga tushadi

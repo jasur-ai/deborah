@@ -187,3 +187,4 @@
 - ✅ STEP 215 — ADMIN PROFIL REAL (2026-09-02): 11 endpoint backend (passkey/sessiya/API-kalit/loglar/MFA) + 6-tab profil UI + sessiya kuzatuv/revoke tizimi (4ccba22). E2E admin MFA kodlari tugagani uchun kutilmoqda
 - ✅ STEP 216 — passkey RP ID fix (rpFromRequest) + dashboard dublikat Foydalanuvchilar → /admin/users birlashtirildi (ac982b1)
 - ✅ STEP 217 — USERS: VIP+DELETE tugmalari qo'shildi (930cc25) — filtrlar ishlaydi (300ms debounce+server-side), VIP/o'chirish endpointlarga ulandi
+- ✅ STEP 218 — ADMIN 2FA PASSKEY VARIANT (2026-09-02): 3 endpoint + 2FA sahifada "Passkey bilan tasdiqlash" tugma (passkey mavjud bo'lsa avtomatik chiqadi) (4ef7eba)
