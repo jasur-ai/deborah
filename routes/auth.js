@@ -663,18 +663,26 @@ router.get('/admin/mfa/stepup', requireAdmin, (req, res) => {
 // Passkey admin profilida ro'yxatdan o'tkazilgan bo'lishi shart.
 import { generateAuthenticationChallenge as genAdminPkAuth, verifyAuthenticationResponseFlow as verifyAdminPkAuth, rpFromRequest as adminPkRp, hasPasskeys as adminHasPasskeys } from '../src/modules/auth/webauthn.js';
 
-router.get('/api/admin/mfa/passkey/status', requireAdmin, async (req, res) => {
+/* S34j FIX: login MFA bosqichida req.session.admin HANUZ YO'Q (faqat pendingAdminMfa bor)
+   — requireAdmin 401 berardi va passkey tugma HECH QACHON ko'rinmasdi.
+   Endi: pendingAdminMfa.challengeId mavjudligi tekshiriladi (login jarayonida). */
+function requirePendingAdminMfa(req, res, next) {
+  if (req.session?.pendingAdminMfa?.challengeId || req.session?.admin) return next();
+  return res.status(401).json({ ok: false, error: 'no_pending_challenge' });
+}
+
+router.get('/api/admin/mfa/passkey/status', requirePendingAdminMfa, async (req, res) => {
   try {
-    const has = await adminHasPasskeys('admin:' + (req.session.admin?.username || 'admin'));
+    const has = await adminHasPasskeys('admin:' + ADMIN_MFA_ACCOUNT);
     return res.json({ ok: true, available: !!has });
   } catch (_) {
     return res.json({ ok: true, available: false });
   }
 });
 
-router.post('/api/admin/mfa/passkey/options', requireAdmin, async (req, res) => {
+router.post('/api/admin/mfa/passkey/options', requirePendingAdminMfa, async (req, res) => {
   try {
-    const options = await genAdminPkAuth(req.session, { userId: 'admin:' + (req.session.admin?.username || 'admin') }, adminPkRp(req));
+    const options = await genAdminPkAuth(req.session, { userId: 'admin:' + ADMIN_MFA_ACCOUNT }, adminPkRp(req));
     if (!options) return res.status(400).json({ ok: false, error: 'options_failed' });
     return res.json({ ok: true, options });
   } catch (e) {
@@ -682,14 +690,19 @@ router.post('/api/admin/mfa/passkey/options', requireAdmin, async (req, res) => 
   }
 });
 
-router.post('/api/admin/mfa/passkey/verify', requireAdmin, async (req, res) => {
+router.post('/api/admin/mfa/passkey/verify', requirePendingAdminMfa, async (req, res) => {
   try {
     const result = await verifyAdminPkAuth(req.session, req.body || {}, adminPkRp(req));
     if (!result.ok) {
       return res.status(403).json({ ok: false, error: result.error || 'assertion_invalid', message: result.message });
     }
-    if (result.userId !== 'admin:' + (req.session.admin?.username || 'admin')) {
+    if (result.userId !== 'admin:' + ADMIN_MFA_ACCOUNT) {
       return res.status(403).json({ ok: false, error: 'wrong_owner', message: 'Bu passkey boshqa hisobga tegishli' });
+    }
+    // Login MFA bosqichi: pending challenge iste'mol qilinadi (TOTP verify bilan bir xil)
+    if (req.session.pendingAdminMfa) {
+      await consumeMfaChallenge(req.session.pendingAdminMfa.challengeId).catch(() => {});
+      delete req.session.pendingAdminMfa;
     }
     // MFA step-up muvaffaqiyati — TOTP bilan bir xil grant yo'li
     req.session.adminMfaAt = Date.now();

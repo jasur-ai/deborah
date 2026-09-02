@@ -151,7 +151,8 @@
       <form id="fReg" action="/user/login" method="POST" style="display:none">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <input type="hidden" name="mode" value="reg">
-        <input type="hidden" name="consent" value="on">
+        <!-- S34i FIX: hidden consent OLIB TASHLANDI — checkbox bilan 2x consent=on
+             express'da massiv qilardi → zod union rad → "Ism va parolni kiriting." -->
         <input type="hidden" name="lang" value="uz" id="regLang">
         <div class="providers">
           <button class="provider provider-g" type="button" data-prov="google">
