@@ -78,6 +78,13 @@
       const btnBlock = esc(t('users.btnBlock', 'Bloklash'));
       const btnUnblock = esc(t('users.btnUnblock', 'Aktivlash'));
       const btnSessions = esc(t('users.btnSessions', 'Sessiyalar'));
+      const btnDelete = esc(t('users.btnDelete', "O'chirish"));
+      const isStaff = u.role === 'teacher' || u.role === 'proctor' || u.role === 'marker' || u.role === 'board';
+      const vipCell = isStaff
+        ? '<span class="badge badge-info" title="Xodimlar VIP bo\u2018la olmaydi">—</span>'
+        : (u.isVip
+          ? '<button type="button" class="admin-edit-btn" onclick="window.__adminUsers.vipRevoke(\'' + escAttr(uname) + '\')" style="min-height:44px" title="VIP ni olib tashlash">VIP ✕</button>'
+          : '<button type="button" class="admin-edit-btn" onclick="window.__adminUsers.vipGrant(\'' + escAttr(uname) + '\')" style="min-height:44px" title="VIP berish">+ VIP</button>');
       return (
         '<tr>' +
         '<td>' + ((currentPage - 1) * pageSize + i + 1) + '</td>' +
@@ -90,6 +97,7 @@
         'onchange="window.__adminUsers && window.__adminUsers.changeRole(this)">' + roleOptions + '</select>' +
         '</td>' +
         '<td>' + statusBadge(u.status) + '</td>' +
+        '<td>' + vipCell + '</td>' +
         '<td class="text-muted dt-ts" style="font-size:.76rem">' + fmtDate(u.created_at) + '</td>' +
         '<td class="dt-actions">' +
         '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
@@ -97,6 +105,7 @@
           ? '<button type="button" class="admin-edit-btn" onclick="window.__adminUsers.unblock(\'' + escAttr(u.key) + '\',\'' + escAttr(uname) + '\')" style="min-height:44px">' + btnUnblock + '</button>'
           : '<button type="button" class="admin-del-btn" onclick="window.__adminUsers.openBlock(\'' + escAttr(u.key) + '\',\'' + escAttr(uname) + '\')" style="min-height:44px">' + btnBlock + '</button>') +
         '<button type="button" class="admin-edit-btn" onclick="window.__adminUsers.revokeSessions(\'' + escAttr(u.key) + '\',\'' + escAttr(uname) + '\')" style="min-height:44px">' + btnSessions + '</button>' +
+        '<button type="button" class="admin-del-btn" onclick="window.__adminUsers.deleteUser(\'' + escAttr(u.key) + '\',\'' + escAttr(uname) + '\')" style="min-height:44px" title="Foydalanuvchini o\u2018chirish">' + btnDelete + '</button>' +
         '</div>' +
         '</td>' +
         '</tr>'
@@ -309,8 +318,67 @@
     }
   }
 
+  /* ── S34f: VIP grant/revoke + Delete (real endpointlar) ── */
+  async function vipGrant(username) {
+    if (!confirm(fmt(t('users.confirmVip', '{name} ga VIP berilsinmi? (vaqtinchalik parol yaratiladi)'), { name }))) return;
+    try {
+      const r = await fetch('/admin/api/vip/grant', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf() },
+        body: JSON.stringify({ username }),
+      });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || 'xato');
+      const pass = data.vipPlainPassword || data.vipPass || '';
+      if (pass) {
+        prompt('VIP berildi! Vaqtinchalik parol (nusxalab qo\'ying):', pass);
+      } else {
+        showAlert(fmt(t('users.vipOk', '{name} — VIP berildi'), { name }), true);
+      }
+      loadUsers(currentPage);
+    } catch (e) {
+      showAlert('VIP berish xato: ' + e.message, false);
+    }
+  }
+  async function vipRevoke(username) {
+    if (!confirm(fmt(t('users.confirmVipRevoke', '{name} dan VIP olinadi. Davom etasizmi?'), { name }))) return;
+    try {
+      const r = await fetch('/admin/api/vip/revoke', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf() },
+        body: JSON.stringify({ username }),
+      });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || 'xato');
+      showAlert(fmt(t('users.vipRevokeOk', '{name} — VIP olib tashlandi'), { name }), true);
+      loadUsers(currentPage);
+    } catch (e) {
+      showAlert('VIP olish xato: ' + e.message, false);
+    }
+  }
+  async function deleteUser(key, name) {
+    const typed = prompt('"' + name + '" foydalanuvchisini o\u2018chirish uchun username\u2018ni kiriting:', '');
+    if (typed === null) return;
+    if (typed !== name) { showAlert("Username mos kelmadi — bekor qilindi.", false); return; }
+    setRowBusy(key, true);
+    try {
+      const r = await fetch('/admin/api/users/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf() },
+        body: JSON.stringify({ key }),
+      });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || data.message || 'xato');
+      showAlert(fmt(t('users.deleteOk', '{name} o\u2018chirildi'), { name }), true);
+      loadUsers(currentPage);
+    } catch (e) {
+      setRowBusy(key, false);
+      showAlert("O'chirish xato: " + e.message, false);
+    }
+  }
+
   // Global — inline onclick uchun
-  window.__adminUsers = { openBlock, closeBlockModal, confirmBlock, unblock, changeRole, revokeSessions };
+  window.__adminUsers = { openBlock, closeBlockModal, confirmBlock, unblock, changeRole, revokeSessions, vipGrant, vipRevoke, deleteUser };
 
   // Enter qidiruv + debounce (D-10 §07: qidiruv debounce)
   document.addEventListener('DOMContentLoaded', function () {
