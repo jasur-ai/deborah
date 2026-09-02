@@ -2446,7 +2446,15 @@
   socket.on('connect', () => {
     setHealth('online');
     // Join director private room (teacher evidence channel)
-    client.sendCommand('cast:directorJoin', {}).catch(() => {});
+    client.sendCommand('cast:directorJoin', {}).then((ack) => {
+      // BUG-230db143d fix: ochilishda mavjud ishtirokchilar (refresh holati)
+      if (ack && Array.isArray(ack.participants) && ack.participants.length) {
+        ack.participants.forEach((p) => dirParticipants.set(p.participantId, { displayAlias: p.displayAlias || 'Ishtirokchi' }));
+        const cnt = $('dir-player-count');
+        if (cnt) cnt.textContent = String(dirParticipants.size);
+        renderDirParticipants();
+      }
+    }).catch(() => {});
     // Request snapshot to sync
     client.sendCommand('cast:getSnapshot', {}).then((res) => {
       if (res.state) {

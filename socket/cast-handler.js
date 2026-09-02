@@ -1067,7 +1067,13 @@ export function setupCastHandlers(io, socket) {
     // C3-10: moderator faqat moderation room'ga kiradi (scoped — evidence yo'q)
     const isModerator = role.role === 'moderator';
     socket.join(moderationRoom(sessionId));
-    if (!isModerator) socket.join(directorRoom(sessionId));
+    if (!isModerator) {
+      socket.join(directorRoom(sessionId));
+      // BUG-230db143d fix: director asosiy xonaga ham qo'shiladi —
+      // participantJoined/phase/answer stats 'cast:{id}' xonasiga ketadi,
+      // director faqat ':director' xonasida edi → live eventlarni eshitmasdi.
+      socket.join(rooms(sessionId));
+    }
     // C3-10: director presence + wall refresh
     socket.data.castDirectorSessions = socket.data.castDirectorSessions || [];
     if (!socket.data.castDirectorSessions.includes(sessionId)) {
@@ -1086,11 +1092,19 @@ export function setupCastHandlers(io, socket) {
     // BUG-230db143b fix: director JOIN KODINI ko'rmaydi (UI '—' qotardi) —
     // getSnapshot ham directorJoin ack ham joinCode qaytarmas edi.
     let joinCode = null;
+    let participants = [];
     try {
       const meta = await getSessionMeta(sessionId);
       joinCode = meta?.joinCode || null;
+      // BUG-230db143d fix: director ochilganda mavjud ishtirokchilar ro'yxati
+      const plist = await listParticipants(sessionId);
+      participants = Object.values(plist || {}).map((p) => ({
+        participantId: p.participantId,
+        displayAlias: p.displayAlias,
+        presence: p.presence || 'online',
+      }));
     } catch (_) {}
-    ackSend({ ok: true, commandId: cmd.commandId, joined: true, scoped: isModerator, joinCode });
+    ackSend({ ok: true, commandId: cmd.commandId, joined: true, scoped: isModerator, joinCode, participants });
   }
 
   // ── ANSWER ──
