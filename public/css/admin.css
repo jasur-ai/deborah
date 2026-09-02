@@ -1018,3 +1018,8 @@ body.theme-light:has(.admin-panel) {
 [data-theme="light"] .admin-side-btn.active { color: #1e1b4b !important; background: var(--n-grad-soft) !important; }
 [data-theme="light"] .admin-panel td { border-color: rgba(99,112,255,.14) !important; }
 [data-theme="light"] .admin-panel .inp, [data-theme="light"] .admin-panel input, [data-theme="light"] .admin-panel select { background: rgba(255,255,255,.9) !important; color: #1e293b !important; }
+[data-theme="light"] .admin-panel th { color: #3b4470 !important; }
+[data-theme="light"] .admin-nav-btn { color: #3b4470 !important; background: rgba(255,255,255,.65) !important; border-color: rgba(99,112,255,.3) !important; }
+[data-theme="light"] .admin-sec-title, [data-theme="light"] .stat-num { filter: drop-shadow(0 0 8px rgba(99,112,255,.25)); }
+[data-theme="light"] .admin-panel { box-shadow: 0 20px 50px rgba(70,80,180,.14), inset 0 1px 0 rgba(255,255,255,.7); }
+[data-theme="light"] body:has(.admin-panel)::before { background-image: linear-gradient(rgba(99,112,255,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(99,112,255,.07) 1px, transparent 1px); }

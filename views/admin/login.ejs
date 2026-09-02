@@ -87,6 +87,21 @@
       box-shadow:0 8px 30px rgba(99,140,255,.55)!important;
     }
     body.admin-login-neon .lbl{color:#9aa8d8!important;}
+    /* Light tema varianti: fon ochiq lekin neon aurora saqlanadi */
+    html[data-theme="light"] body.admin-login-neon, body.admin-login-neon:has(.theme-segmented [data-theme-option="light"].on){
+      background:
+        radial-gradient(900px 480px at 14% -6%, rgba(34,211,238,.20), transparent 60%),
+        radial-gradient(820px 460px at 86% 2%, rgba(232,121,249,.16), transparent 55%),
+        radial-gradient(1000px 700px at 50% 118%, rgba(129,140,248,.14), transparent 60%),
+        #e9edfa;
+    }
+    html[data-theme="light"] body.admin-login-neon .auth-box{
+      background:rgba(255,255,255,.82);
+      border-color:rgba(99,112,255,.28);
+    }
+    html[data-theme="light"] body.admin-login-neon .auth-sub{color:#475069!important;}
+    html[data-theme="light"] body.admin-login-neon .lbl{color:#4b5578!important;}
+    html[data-theme="light"] body.admin-login-neon .inp{background:rgba(255,255,255,.92)!important;color:#111a33!important;}
   </style>
   <link rel="stylesheet" href="/design/admin-command.css">
 </head>
