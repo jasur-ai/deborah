@@ -768,6 +768,7 @@ router.get('/cast/:sessionId/quality-lab', requireAuth, async (req, res) => {
       title: `Quality Lab — ${meta.title || sessionId}`,
       boot: {
         sessionId,
+        joinCode: meta.joinCode || null,
         actor: { id: actorId, role: role.role },
         csrfToken: req.session.csrfToken,
         title: meta.title || 'Cast',
@@ -837,6 +838,7 @@ router.get('/cast/:sessionId/director', requireAuth, async (req, res) => {
       title: `Cast — ${meta.title || sessionId}`,
       boot: {
         sessionId,
+        joinCode: meta.joinCode || null,
         actor: { id: actorId, role: role.role },
         csrfToken: req.session.csrfToken,
         // C4-05: UI locale config'dan
@@ -1164,6 +1166,7 @@ router.get('/cast/:sessionId/results', requireAuth, async (req, res) => {
       title: `Natijalar — ${meta.title || sessionId}`,
       boot: {
         sessionId,
+        joinCode: meta.joinCode || null,
         actor: { id: actorId, role: role.role },
         csrfToken: req.session.csrfToken,
         locale: config?.localization?.locale || 'uz-Latn',
@@ -1395,6 +1398,7 @@ router.get('/cast/:sessionId/replay', requireAuth, async (req, res) => {
       title: `Replay — ${meta.title || sessionId}`,
       boot: {
         sessionId,
+        joinCode: meta.joinCode || null,
         actor: { id: actorId, role: role.role },
         csrfToken: req.session.csrfToken,
         locale: config?.localization?.locale || 'uz-Latn',

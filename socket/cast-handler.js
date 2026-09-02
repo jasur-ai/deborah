@@ -1083,7 +1083,14 @@ export function setupCastHandlers(io, socket) {
       // C3-14: choreography dashboard — director join'da current/next state
       if (!isModerator) await emitChoreoState(sessionId);
     } catch (_) { /* non-critical */ }
-    ackSend({ ok: true, commandId: cmd.commandId, joined: true, scoped: isModerator });
+    // BUG-230db143b fix: director JOIN KODINI ko'rmaydi (UI '—' qotardi) —
+    // getSnapshot ham directorJoin ack ham joinCode qaytarmas edi.
+    let joinCode = null;
+    try {
+      const meta = await getSessionMeta(sessionId);
+      joinCode = meta?.joinCode || null;
+    } catch (_) {}
+    ackSend({ ok: true, commandId: cmd.commandId, joined: true, scoped: isModerator, joinCode });
   }
 
   // ── ANSWER ──

@@ -32,7 +32,7 @@
     transports: ['websocket', 'polling'],
   });
 
-  let code = '—';
+  let code = (window.__BOOT__ && window.__BOOT__.joinCode) || '—'; // BUG-230db143b: boot'dan boshlang'ich kod
   let phase = 'LOBBY_OPEN';
   let timerInterval = null;
   let closesAt = null;
