@@ -5448,3 +5448,21 @@ Login (parol) → 2FA sahifa → ikki variant:
 ## 5. "Ko'rish" tugma tuzatildi
 - Saqlanmagan bo'lsa avval avtosave, keyin `/user/practice?source=user&key=` (Yakka mashq)
 - Eski versiya: Arena'ga yuborardi yoki yangi testda /user/panel'ga (ishlamasdi)
+
+---
+# ═══ STEP 225 — DARK MODE OQ YO'Q + ORQAGA GUARD + TIMER (2026-09-02, 0774972) ═══
+> FOYDALANUVCHI: "dark modeda oq qolgan; RU/EN to'liq emas; Sinov hech nima qilmadi; o'chirish tasdiq oq; orqaga bosilsa avto saqlayapti — so'rashi kerak"
+
+## Tuzatishlar
+| # | Muammo | Fix |
+|---|---|---|
+| 1 | DARK'da OQ (editor karta, inputlar) | Qora-jigar palette: karta #2a2115, input rgba(15,12,8,.55), matn #f2ede3 — OQ YO'Q |
+| 2 | LIGHT/DARK CSS selektor xato | html[data-theme="light/dark"] .tb-shell — ikkala tema to'liq o'zgaruvchilar bilan |
+| 3 | Orqaga bosilsa avtosave | OLIB TASHLANDI (visibilitychange autosave) + tb-back SO'RASH: OK=saqla+chiqish / Cancel=saqlamasdan |
+| 4 | Sinov (KPI metrik) Arena'ga | 2 metrik karta ham /user/practice'ga |
+| 5 | practice'da vaqt ko'rinmasdi | URL time= → per-question taymer (⏱ 00:15), tugasa avtomatik keyingi |
+
+## Live
+- DARK create-test: karta rgb(42,33,21), input rgba(36,31,24,.6), matn #f2ede3 — OQ YO'Q ✅ (189 skrinshot)
+- RU: "Название теста", "Добавить вопрос", "Вопросы", "Сохранить" — to'liq RU ✅ (189 skrinshot RU'da)
+- LIGHT: rgb(253,249,239) karta ✅
