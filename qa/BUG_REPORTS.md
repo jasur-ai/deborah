@@ -5320,3 +5320,11 @@ Login (parol) → 2FA sahifa → ikki variant:
 - Ehtimollik #1: foydalanuvchining sessiyasi restartda o'lgan (BUG-090) → CSRF token sessiyada bo'sh → 403. Yechim: qayta kirish (yoki Redis)
 - Ehtimollik #2: /play sahifasining __BOOT__.csrfToken'i bo'sh — /play?code= cast/participant renderida csrfToken berilishini tekshirish kerak (keyingi patch)
 ## (4) Cast qilish CSRF — panel.ejs __CSRF_TOKEN to'la va castFetch header qo'yadi ✅ (live kod tekshirildi)
+
+## STEP 219-tavsif: "kod bilan kirishda CSRF failed" tahlili
+- /play?code= join — socket.io buyruq (cast:join), HTTP POST emas → CSRF umuman talab qilinmaydi
+- cast-landing Kirish formasi — FormData'da _csrf hidden bor (cast-landing.ejs:197) ✅
+- ENG KO'P EHTIMOL: foydalanuvchi sessiyasi server restartda o'chgan (BUG-090 MemoryStore) —
+  eskirgan cookie bilan har HTTP POST 403 "CSRF token validation failed" beradi (token sessiyada bo'sh)
+- TEKSHIRUV: yangi login bilan kod join ✅ (STEP 210-213 to'liq E2E PASS)
+- DOIMIY YECHIM: Redis session store (BUG-090) — Render'da Redis qo'shish kerak (env yoki upstash)
