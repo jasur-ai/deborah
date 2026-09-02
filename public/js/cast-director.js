@@ -23,7 +23,11 @@
     window.CastI18n.init({ locale: BOOT.locale || 'uz-Latn' }).then((api) => { t = api.t; });
   }
 
-  const socket = io(BOOT.socketPath || '/socket.io', {
+  const socket = io({
+    // BUG-230db143 ROOT FIX: io('/socket.io', ...) birinchi arg = NAMESPACE (path emas!)
+    // → server 'Invalid namespace' qaytarib socketni yopardi (director host-socket o'lik).
+    // To'g'risi: path opts ichida.
+    path: BOOT.socketPath || '/socket.io',
     withCredentials: true,
     transports: ['websocket', 'polling'],
   });

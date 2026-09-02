@@ -211,7 +211,7 @@
 
     // Init socket lazily on first join
     if (!socket) {
-      socket = io('/socket.io', { withCredentials: true, transports: ['websocket', 'polling'] });
+      socket = io({ path: '/socket.io', withCredentials: true, transports: ['websocket', 'polling'] }); // BUG-230db143 root fix (namespace xatosi)
       client = new CastSocketClient({ socket, onEvent: (ev, data) => handleEvent(ev, data), onError: () => setState(STATE.RETRYING) });
       socket.on('disconnect', () => updateNet('offline', 'Uzildi — qayta ulanmoqda'));
       socket.on('reconnect_attempt', () => updateNet('reconnecting', 'Qayta ulanmoqda…'));
@@ -1640,7 +1640,7 @@
     const ticket = savedTicket || sessionStorage.getItem('castTicket');
     if (!ticket) return;
     if (!socket) {
-      socket = io('/socket.io', { withCredentials: true, transports: ['websocket', 'polling'] });
+      socket = io({ path: '/socket.io', withCredentials: true, transports: ['websocket', 'polling'] }); // BUG-230db143 root fix (namespace xatosi)
       client = new CastSocketClient({ socket, onEvent: (ev, data) => handleEvent(ev, data), onError: () => setState(STATE.RETRYING) });
       socket.on('disconnect', () => updateNet('offline', 'Uzildi — qayta ulanmoqda'));
       socket.on('reconnect_attempt', () => updateNet('reconnecting', 'Qayta ulanmoqda…'));

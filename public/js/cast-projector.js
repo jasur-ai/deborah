@@ -10,7 +10,7 @@
   const BOOT = window.__BOOT__;
   if (!BOOT || !BOOT.sessionId) return;
 
-  const socket = io(BOOT.socketPath || '/socket.io', { withCredentials: true, transports: ['websocket', 'polling'] });
+  const socket = io({ path: BOOT.socketPath || '/socket.io', withCredentials: true, transports: ['websocket', 'polling'] }); // BUG-230db143 root fix
   const $ = (id) => document.getElementById(id);
   let closesAt = null;
   let timerInterval = null;
