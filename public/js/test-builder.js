@@ -13,6 +13,8 @@
   const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
 
   const init = window.__TB_INIT || { isEdit: false, editKey: '', name: '', questions: [] };
+  const BC = window.__TB_COPY || {}; // S34m: 3 til copy (serverdan)
+  const T = (k, fb) => (BC[k] !== undefined ? BC[k] : fb);
   const OPT_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
 
   // ── State ──
@@ -136,18 +138,18 @@
   // ── Validation (S27.08) ──
   function validate() {
     const errors = [];
-    if (!state.name.trim()) errors.push({ qId: null, msg: 'Test nomini kiriting' });
-    if (!state.questions.length) errors.push({ qId: null, msg: 'Kamida 1 ta savol qo‘shing' });
+    if (!state.name.trim()) errors.push({ qId: null, msg: T('nameRequired', 'Test nomini kiriting — testga nom qoying') });
+    if (!state.questions.length) errors.push({ qId: null, msg: T('addQuestion', "Kamida 1 ta savol qo'shing") });
     state.questions.forEach((q, i) => {
-      if (!q.text.trim()) errors.push({ qId: q.id, msg: `Savol ${i + 1}: matn kiritilmagan` });
+      if (!q.text.trim()) errors.push({ qId: q.id, msg: `${T('qText', 'Savol')} ${i + 1}: ${T('qTextReq', 'matn kiritilmagan')}` });
       if (q.type === 'short_answer') {
-        if (!(q.options[0] || '').trim()) errors.push({ qId: q.id, msg: `Savol ${i + 1}: to‘g‘ri javob kiritilmagan` });
+        if (!(q.options[0] || '').trim()) errors.push({ qId: q.id, msg: `${T('qText', 'Savol')} ${i + 1}: ${T('correct', 'to\u2018g\u2018ri javob')} kiritilmagan` });
         return;
       }
       const filled = q.options.filter(o => o.trim());
-      if (filled.length < 2) errors.push({ qId: q.id, msg: `Savol ${i + 1}: kamida 2 ta variant to‘ldiring` });
+      if (filled.length < 2) errors.push({ qId: q.id, msg: `${T('qText', 'Savol')} ${i + 1}: ${T('optionsMin', 'kamida 2 ta variant')}` });
       if (filled.length && q.correct >= q.options.length) {
-        errors.push({ qId: q.id, msg: `Savol ${i + 1}: to‘g‘ri javob noto‘g‘ri ko‘rsatilgan` });
+        errors.push({ qId: q.id, msg: `${T('qText', 'Savol')} ${i + 1}: ${T('correct', 'to\u2018g\u2018ri javob')} xato` });
       }
     });
     return errors;
@@ -193,7 +195,7 @@
       const active = q.id === state.activeId ? ' is-active' : '';
       return `<button type="button" class="tb-outline-item${active}" data-qid="${q.id}" data-outline="${q.id}">
         <span class="tb-outline-num">${i + 1}</span>
-        <span class="tb-outline-txt">${escHtml(q.text.trim() || 'Savolsiz')}</span>
+        <span class="tb-outline-txt">${escHtml(q.text.trim() || '···')}</span>
       </button>`;
     }).join('');
   }
@@ -206,9 +208,9 @@
       el.innerHTML = `<div class="tb-err-summary is-open" style="border-style:dashed">
         <span class="tb-err-summary-title">!</span>
       </div>`;
-      el.innerHTML = `<div class="ws-lib-empty"><div class="ws-lib-empty-title">Savol tanlanmagan</div>
-        <div class="ws-lib-empty-sub">Chapdagi ro'yxatdan savol tanlang yoki yangi qo'shing.</div>
-        <button type="button" class="btn btn-primary" id="tb-empty-add" style="margin-top:12px">+ Savol qo'shish</button></div>`;
+      el.innerHTML = `<div class="ws-lib-empty"><div class="ws-lib-empty-title">${T('noQuestion', 'Savol tanlanmagan')}</div>
+        <div class="ws-lib-empty-sub">${T('noQuestionSub', "Chapdagi ro'yxatdan savol tanlang yoki yangi qo'shing.")}</div>
+        <button type="button" class="btn btn-primary" id="tb-empty-add" style="margin-top:12px">+ ${T('addQuestion', "Savol qo'shish")}</button></div>`;
       const add = $('#tb-empty-add');
       if (add) add.addEventListener('click', addQuestion);
       return;
@@ -223,7 +225,7 @@
     const optsHtml = q.options.map((opt, oi) => `
       <div class="tb-opt${oi === q.correct ? ' is-correct' : ''}" data-opt-card="${oi}" role="radio" aria-checked="${oi === q.correct}" tabindex="0" title="Bosib to'g'ri javob deb belgilang">
         <span class="tb-opt-shape" aria-hidden="true">${SHAPES[oi] || '■'}</span>
-        <input class="inp" type="text" value="${escAttr(opt)}" placeholder="${OPT_LETTERS[oi]}) variant matni..." data-opt="${oi}" aria-label="Variant ${OPT_LETTERS[oi]}">
+        <input class="inp" type="text" value="${escAttr(opt)}" placeholder="${OPT_LETTERS[oi]}) ${T('optPh', 'variant matni...')}" data-opt="${oi}" aria-label="Variant ${OPT_LETTERS[oi]}">
         <button type="button" class="tb-opt-remove" data-opt-remove="${oi}" aria-label="Variantni o'chirish" title="Variantni o'chirish">×</button>
       </div>`).join('');
 
@@ -244,13 +246,13 @@
       </div>
 
       <div class="tb-field${q.text.trim() ? '' : ' is-error'}">
-        <label class="tb-field-label" for="tb-q-text">Savol matni <span class="tb-req">*</span></label>
-        <textarea class="inp" id="tb-q-text" rows="3" placeholder="Savol matnini kiriting..." data-q-text>${escHtml(q.text)}</textarea>
-        <span class="tb-field-err">Savol matni kiritilishi shart</span>
+        <label class="tb-field-label" for="tb-q-text">${T('qText', 'Savol matni')} <span class="tb-req">*</span></label>
+        <textarea class="inp" id="tb-q-text" rows="3" placeholder="${T('qTextPh', 'Savol matnini kiriting...')}" data-q-text>${escHtml(q.text)}</textarea>
+        <span class="tb-field-err">${T('qTextReq', 'Savol matni kiritilishi shart')}</span>
       </div>
 
       <div class="tb-field">
-        <label class="tb-field-label" for="tb-q-type">Savol turi</label>
+        <label class="tb-field-label" for="tb-q-type">${T('qType', 'Savol turi')}</label>
         <select class="inp" id="tb-q-type" data-q-type aria-label="Savol turi">
           <option value="single_choice"${q.type === 'single_choice' ? ' selected' : ''}>Yagona tanlov</option>
           <option value="true_false"${q.type === 'true_false' ? ' selected' : ''}>To'g'ri / Noto'g'ri</option>
@@ -258,18 +260,18 @@
           <option value="short_answer"${q.type === 'short_answer' ? ' selected' : ''}>Qisqa javob</option>
           <option value="exit_ticket"${q.type === 'exit_ticket' ? ' selected' : ''}>Exit ticket</option>
         </select>
-        <span class="tb-hint">Cast sessiyalarida ishlatiladigan savol turi</span>
+        <span class="tb-hint">${T('qTypeHint', 'Cast sessiyalarida ishlatiladigan savol turi')}</span>
         ${q.type === 'multiple_select' ? '<span class="tb-hint" data-multi-note>Eslatma: to\'g\'ri javob hozircha bitta radio orqali belgilanadi</span>' : ''}
       </div>
 
       <div class="tb-props-grid">
         <div class="tb-field">
-          <label class="tb-field-label" for="tb-q-timing">Vaqt (soniya)</label>
+          <label class="tb-field-label" for="tb-q-timing">${T('time', 'Vaqt (soniya)')}</label>
           <input class="inp" id="tb-q-timing" type="number" min="0" max="600" value="${q.timing || 0}" data-q-timing aria-label="Savol vaqti">
         </div>
         <div class="tb-field">
-          <label class="tb-field-label" for="tb-q-tags">Teglar (vergul bilan)</label>
-          <input class="inp" id="tb-q-tags" type="text" value="${escAttr(q.tags.join(', '))}" data-q-tags placeholder="masalan: algebra, kirish" aria-label="Teglar">
+          <label class="tb-field-label" for="tb-q-tags">${T('tags', 'Teglar (vergul bilan)')}</label>
+          <input class="inp" id="tb-q-tags" type="text" value="${escAttr(q.tags.join(', '))}" data-q-tags placeholder="${T('tagsPh', 'masalan: algebra, kirish')}" aria-label="Teglar">
         </div>
       </div>
 
@@ -281,10 +283,10 @@
         </div>
       ` : `
         <div class="tb-field">
-          <label class="tb-field-label">Variantlar <span class="tb-req">*</span> <span class="tb-hint">kamida 2 ta</span></label>
+          <label class="tb-field-label">${T('options', 'Variantlar')} <span class="tb-req">*</span> <span class="tb-hint">${T('optionsMin', 'kamida 2 ta')}</span></label>
           <div class="tb-options" data-opts-wrap>
             ${optsHtml}
-            ${q.options.length < 6 ? `<button type="button" class="btn btn-quiet" data-add-opt style="width:100%">+ Variant qo'shish</button>` : ''}
+            ${q.options.length < 6 ? `<button type="button" class="btn btn-quiet" data-add-opt style="width:100%">${T('addOption', '+ Variant qo\'shish')}</button>` : ''}
           </div>
         </div>
 
@@ -294,8 +296,8 @@
       `}
 
       <div class="tb-field">
-        <label class="tb-field-label" for="tb-q-exp">Tushuntirish (izoh)</label>
-        <textarea class="inp" id="tb-q-exp" rows="2" placeholder="Javob izohi (ixtiyoriy)" data-q-exp>${escHtml(q.explanation)}</textarea>
+        <label class="tb-field-label" for="tb-q-exp">${T('explanation', 'Tushuntirish (izoh)')}</label>
+        <textarea class="inp" id="tb-q-exp" rows="2" placeholder="${T('explanationPh', 'Javob izohi (ixtiyoriy)')}" data-q-exp>${escHtml(q.explanation)}</textarea>
       </div>
     `;
     wireEditorEvents(q);
@@ -519,12 +521,16 @@
   if (saveBtn) saveBtn.addEventListener('click', manualSave);
   const previewBtn = $('#tb-preview-btn');
   if (previewBtn) {
-    previewBtn.addEventListener('click', () => {
-      if (!state.questions.length) { showToast && showToast('Avval savol qo‘shing', 'err'); return; }
-      const key = init.editKey;
-      window.location.href = key
-        ? '/user/test-arena?source=user&key=' + encodeURIComponent(key)
-        : '/user/panel';
+    previewBtn.addEventListener('click', async () => {
+      if (!state.questions.length) { showToast && showToast(T('addQuestion', "Avval savol qo'shing"), 'err'); return; }
+      /* S34o: Ko'rish = YAKKA MASHQ (arena emas). Saqlanmagan bo'lsa avval saqlaymiz. */
+      if (state.dirty || !init.editKey) {
+        previewBtn.disabled = true;
+        await scheduleSave();
+        previewBtn.disabled = false;
+        if (!init.editKey) { showToast && showToast('Saqlashda xato', 'err'); return; }
+      }
+      window.location.href = '/user/practice?source=user&key=' + encodeURIComponent(init.editKey);
     });
   }
   const outlineOpen = $('#tb-outline-open');

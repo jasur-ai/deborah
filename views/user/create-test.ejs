@@ -18,14 +18,14 @@
     <header class="tb-topbar">
       <a href="/user/panel" class="tb-back"><%- icon('arrowLeft', 15) %> Panel</a>
       <div class="tb-title">
-        <input id="tb-name" type="text" placeholder="Test nomi (masalan: Matematika 2024)" maxlength="60" aria-label="Test nomi">
+        <input id="tb-name" type="text" placeholder="<%= bc.namePlaceholder %>" maxlength="60" aria-label="Test nomi">
       </div>
       <span class="tb-status" id="tb-status" data-save="saved" role="status" aria-live="polite">
         <span class="tb-status-dot" aria-hidden="true"></span><span id="tb-status-txt">Saqlandi</span>
       </span>
       <div class="tb-topbar-actions">
-        <button type="button" class="btn btn-quiet" id="tb-preview-btn" data-preview disabled><%- icon('eye', 15) %> <span class="tb-btn-label">Ko'rish</span></button>
-        <button type="button" class="btn btn-primary" id="tb-save-btn"><%- icon('save', 15) %> <span class="tb-btn-label">Saqlash</span></button>
+        <button type="button" class="btn btn-quiet" id="tb-preview-btn" data-preview disabled><%- icon('eye', 15) %> <span class="tb-btn-label"><%= bc.preview %></span></button>
+        <button type="button" class="btn btn-primary" id="tb-save-btn"><%- icon('save', 15) %> <span class="tb-btn-label"><%= bc.save %></span></button>
       </div>
     </header>
 
@@ -33,11 +33,11 @@
     <div class="tb-body">
       <aside class="tb-outline" id="tb-outline" aria-label="Savollar ro'yxati">
         <div class="tb-outline-hd">
-          <span class="tb-outline-title">Savollar</span>
+          <span class="tb-outline-title"><%= bc.questionsTitle %></span>
           <button type="button" class="tb-move tb-outline-toggle" id="tb-outline-close" aria-label="Outline yopish"><%- icon('x', 14) %></button>
         </div>
         <div class="tb-outline-list" id="tb-outline-list"></div>
-        <button type="button" class="btn btn-quiet" id="tb-add-outline" style="width:100%;margin-top:10px"><%- icon('plus', 13) %> Savol qo'shish</button>
+        <button type="button" class="btn btn-quiet" id="tb-add-outline" style="width:100%;margin-top:10px"><%- icon('plus', 13) %> <%= bc.addQuestion %></button>
       </aside>
 
       <main class="tb-editor" id="tb-editor">
@@ -45,15 +45,15 @@
 
         <!-- S27.08: error summary -->
         <div class="tb-err-summary" id="tb-err-summary">
-          <span class="tb-err-summary-title"><%- icon('alertTriangle', 15) %> Diqqat talab qiladigan maydonlar</span>
+          <span class="tb-err-summary-title"><%- icon('alertTriangle', 15) %> <%= bc.errSummary %></span>
           <ul class="tb-err-summary-list" id="tb-err-list"></ul>
         </div>
 
         <div id="tb-q-editor"></div>
 
         <div style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap">
-          <button type="button" class="btn btn-secondary" id="tb-add-question"><%- icon('plus', 14) %> Savol qo'shish</button>
-          <button type="button" class="btn btn-quiet" id="tb-import-btn"><%- icon('upload', 14) %> Excel import</button>
+          <button type="button" class="btn btn-secondary" id="tb-add-question"><%- icon('plus', 14) %> <%= bc.addQuestion %></button>
+          <button type="button" class="btn btn-quiet" id="tb-import-btn"><%- icon('upload', 14) %> <%= bc.excelImport %></button>
         </div>
       </main>
 
@@ -77,7 +77,7 @@
 
       <div class="tb-import-pane is-active" data-pane="1">
         <p class="tb-import-desc">Shablonda har bir qator bitta savol: Savol, A-D variantlar, to'g'ri javob indeksi (0-3).</p>
-        <button type="button" class="btn btn-secondary" id="tb-template-btn" style="width:100%"><%- icon('download', 14) %> Excel shablon yuklab olish</button>
+        <button type="button" class="btn btn-secondary" id="tb-template-btn" style="width:100%"><%- icon('download', 14) %> <%= bc.excelTemplate %></button>
         <div class="tb-import-next">
           <button type="button" class="btn btn-primary" id="tb-import-next1"><%- icon('arrowRight', 14) %> Davom etish</button>
         </div>
@@ -118,6 +118,7 @@
     // STEP 27 — server-side initial state (test-builder.js o'qiydi)
     // XSS: JSON'dagi `<` `\u003c` ga aylantiriladi — `<\/script>` breakout'ning oldi olinadi
     window.__CSRF_TOKEN = <%- JSON.stringify(csrfToken || '') %>;
+    window.__TB_COPY = <%- JSON.stringify(bc || {}) %>; // S34m: 3 til
     window.__TB_INIT = {
       isEdit: <%= isEdit ? 'true' : 'false' %>,
       editKey: <%- JSON.stringify((editKey || '').replace(/</g, '\\u003c')) %>,

@@ -528,10 +528,10 @@
 
 /* Yorqin gradient fon */
 .tb-shell {
-  background: linear-gradient(160deg, #241f18 0%, #2e2418 50%, #1c1813 100%);
+  background: var(--tb-bg);
 }
 .tb-topbar {
-  background: rgba(28,24,19,.94);
+  background: color-mix(in srgb, rgba(28,24,19,.94) 100%, transparent); background: rgba(28,24,19,.94);
   border-bottom: 1px solid rgba(194,160,106,.35);
   backdrop-filter: blur(14px);
 }
@@ -545,14 +545,14 @@
 
 /* Savollar outline — yorqin */
 .tb-outline {
-  background: rgba(36,31,24,.55);
+  background: var(--tb-outline-bg);
   border-right: 1px solid rgba(194,160,106,.18);
   backdrop-filter: blur(8px);
 }
 .tb-outline-item {
   color: #e9e1d2;
   border-radius: 12px;
-  background: rgba(194,160,106,.07);
+  background: var(--tb-outline-item);
   margin: 3px 0;
   transition: all .15s;
 }
@@ -569,8 +569,8 @@
 
 /* Savol editor katta karta */
 .tb-q-editor-card, #tb-q-editor {
-  background: #f7f1e3;
-  border: 1px solid rgba(194,160,106,.35);
+  background: var(--tb-card);
+  border: 1px solid var(--tb-card-border);
   border-radius: 20px;
   box-shadow: 0 8px 32px rgba(0,0,0,.3);
   padding: 28px;
@@ -580,8 +580,8 @@
 /* Savol matni — katta input */
 .tb-q-text, #tb-q-editor textarea.inp {
   font-size: 1.15rem !important; font-weight: 600 !important;
-  border: 2px solid #c2a06a !important; border-radius: 14px !important;
-  background: #fffdf8 !important; color: #2d2413 !important;
+  border: 2px solid var(--tb-input-border) !important; border-radius: 14px !important;
+  background: var(--tb-input-bg) !important; color: var(--tb-text) !important;
   padding: 14px 16px !important; min-height: 80px !important;
 }
 .tb-q-text:focus, #tb-q-editor textarea.inp:focus {
@@ -591,8 +591,8 @@
 
 /* Savol turi select */
 .tb-q-type-select, #tb-q-editor select.inp {
-  border: 2px solid #d9c9a3 !important; border-radius: 12px !important;
-  background: #fffdf8 !important; color: #2d2413 !important; font-weight: 600 !important;
+  border: 2px solid var(--tb-input-border) !important; border-radius: 12px !important;
+  background: var(--tb-input-bg) !important; color: var(--tb-text) !important; font-weight: 600 !important;
 }
 
 /* VAARIANTLAR — Kahoot ranglari */
@@ -600,9 +600,9 @@
 .tb-opt {
   display: flex; align-items: center; gap: 10px;
   padding: 14px 16px !important; border-radius: 14px !important;
-  border: none !important; margin: 0 !important;
-  background: linear-gradient(135deg, #4a3a22, #2d2413) !important;
-  color: #fff !important; font-weight: 600 !important;
+  border: 1px solid var(--tb-opt-border) !important; margin: 0 !important;
+  background: var(--tb-opt-bg) !important;
+  color: var(--tb-opt-text) !important; font-weight: 600 !important;
   box-shadow: 0 3px 10px rgba(0,0,0,.18);
   transition: all .15s; cursor: pointer;
 }
@@ -668,8 +668,34 @@
 
 /* ═══════════════════════════════════════════════════════════════
    S34l — KAHOOT STRUKTURA: 2x2 GRID + shakl belgilar + bir xil rang
-   Qizil FAQAT xato/xulosada. To'g'ri javob = yashil halqa.
+   S34n: DARK/LIGHT to'liq qo'llab-quvvatlash (tema o'zgaruvchilari)
    ═══════════════════════════════════════════════════════════════ */
+.tb-shell {
+  --tb-bg: linear-gradient(160deg, #241f18 0%, #2e2418 50%, #1c1813 100%);
+  --tb-card: #f7f1e3;
+  --tb-card-border: rgba(194,160,106,.35);
+  --tb-text: #2d2413;
+  --tb-label: #4b3a18;
+  --tb-input-bg: #fffdf8;
+  --tb-input-border: #c2a06a;
+  --tb-opt-bg: linear-gradient(135deg, #4a3a22, #2d2413);
+  --tb-opt-border: rgba(194,160,106,.4);
+  --tb-opt-text: #f2ede3;
+  --tb-shape-bg: rgba(194,160,106,.28);
+  --tb-shape-text: #d6bd8c;
+  --tb-gold: var(--ld-gold, #c2a06a);
+  --tb-green-bg: linear-gradient(135deg, #2f5c2a, #1d3d1a);
+  --tb-green-ring: #7d9670;
+  --tb-outline-bg: rgba(36,31,24,.55);
+  --tb-outline-item: rgba(194,160,106,.07);
+}
+[data-theme="dark"] .tb-shell, .tb-shell[data-theme="dark"] { }
+[data-theme="light"] .tb-shell {
+  --tb-bg: linear-gradient(160deg, #ece3d0 0%, #e0d4bb 50%, #d4c6a4 100%);
+  --tb-outline-bg: rgba(255,252,245,.75);
+  --tb-outline-item: rgba(122,90,30,.08);
+}
+/* Dark temada ham vintage qorong'i (default) — light o'z qiymatlarini oladi */
 /* Variantlar 2x2 GRID (Kahoot kabi) */
 .tb-options[data-opts-wrap] {
   display: grid !important;
@@ -684,7 +710,7 @@
 .tb-opt .tb-opt-shape {
   width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
-  background: rgba(194,160,106,.28); font-size: 1.05rem; color: #d6bd8c;
+  background: var(--tb-shape-bg); font-size: 1.05rem; color: var(--tb-shape-text);
 }
 .tb-opt:hover { transform: translateY(-2px); filter: brightness(1.08); }
 .tb-opt .inp { background: transparent !important; border: none !important; border-bottom: 2px dashed rgba(214,189,140,.45) !important; color: #f2ede3 !important; }

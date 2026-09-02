@@ -285,11 +285,128 @@ router.get('/create-test', async (req, res) => {
     } catch (_) {}
   }
 
+  // S34m: create-test 3 til (uz/ru/en) — foydalanuvchi settings/lang asosida
+  let bLang = 'uz';
+  try {
+    const ls = await fb.get(`users/${req.session.user.safeKey}/settings/lang`);
+    if (ls.exists() && ls.val()) bLang = ls.val();
+  } catch (_) {}
+  const BL = {
+    uz: {
+      title: editKey ? 'Testni tahrirlash' : 'Yangi test yaratish',
+      namePlaceholder: 'Test nomi (masalan: Matematika 2024)',
+      nameRequired: 'Test nomini kiriting — testga nom qoying',
+      questionsTitle: 'Savollar',
+      addQuestion: "Savol qo'shish",
+      excelImport: 'Excel import',
+      excelTemplate: 'Excel shablon yuklab olish',
+      preview: "Ko'rish",
+      save: 'Saqlash',
+      qText: 'Savol matni',
+      qTextReq: 'Savol matnini kiriting — savolga nom bering',
+      qTextPh: 'Savol matnini kiriting...',
+      qType: 'Savol turi',
+      qTypeHint: 'Cast sessiyalarida ishlatiladigan savol turi',
+      time: 'Vaqt (soniya)',
+      tags: 'Teglar (vergul bilan)',
+      tagsPh: 'masalan: algebra, kirish',
+      options: 'Variantlar',
+      optionsMin: 'kamida 2 ta',
+      optPh: 'variant matni...',
+      addOption: "+ Variant qo'shish",
+      correct: "To'g'ri javob",
+      correctHint: "✓ To'g'ri javob: variant kartasini bosib belgilanadi (yashil halqa)",
+      explanation: 'Tushuntirish (izoh)',
+      explanationPh: 'Javob izohi (ixtiyoriy)',
+      noQuestion: 'Savol tanlanmagan',
+      noQuestionSub: "Chapdagi ro'yxatdan savol tanlang yoki yangi qo'shing.",
+      empty: "Hali testlar yo'q",
+      errSummary: 'Diqqat talab qiladigan maydonlar',
+      outlineTitle: 'Savollar',
+      questionsList: "Savollar ro'yxati",
+      duplicate: 'Nusxalash',
+      del: "O'chirish",
+    },
+    ru: {
+      title: editKey ? 'Редактирование теста' : 'Новый тест',
+      namePlaceholder: 'Название теста (например: Математика 2024)',
+      nameRequired: 'Введите название теста — дайте тесту имя',
+      questionsTitle: 'Вопросы',
+      addQuestion: 'Добавить вопрос',
+      excelImport: 'Импорт Excel',
+      excelTemplate: 'Скачать шаблон Excel',
+      preview: 'Просмотр',
+      save: 'Сохранить',
+      qText: 'Текст вопроса',
+      qTextReq: 'Введите текст вопроса — дайте вопросу имя',
+      qTextPh: 'Введите текст вопроса...',
+      qType: 'Тип вопроса',
+      qTypeHint: 'Тип вопроса, используемый в cast-сессиях',
+      time: 'Время (сек)',
+      tags: 'Теги (через запятую)',
+      tagsPh: 'например: алгебра, введение',
+      options: 'Варианты',
+      optionsMin: 'минимум 2',
+      optPh: 'текст варианта...',
+      addOption: '+ Добавить вариант',
+      correct: 'Правильный ответ',
+      correctHint: '✓ Правильный ответ: отметьте, нажав на карточку варианта (зелёная рамка)',
+      explanation: 'Пояснение',
+      explanationPh: 'Пояснение к ответу (необязательно)',
+      noQuestion: 'Вопрос не выбран',
+      noQuestionSub: 'Выберите вопрос из списка слева или добавьте новый.',
+      empty: 'Тестов пока нет',
+      errSummary: 'Поля, требующие внимания',
+      outlineTitle: 'Вопросы',
+      questionsList: 'Список вопросов',
+      duplicate: 'Дублировать',
+      del: 'Удалить',
+    },
+    en: {
+      title: editKey ? 'Edit test' : 'New test',
+      namePlaceholder: 'Test name (e.g.: Math 2024)',
+      nameRequired: 'Enter the test name — give your test a title',
+      questionsTitle: 'Questions',
+      addQuestion: 'Add question',
+      excelImport: 'Excel import',
+      excelTemplate: 'Download Excel template',
+      preview: 'Preview',
+      save: 'Save',
+      qText: 'Question text',
+      qTextReq: 'Enter the question text — give your question a title',
+      qTextPh: 'Enter the question text...',
+      qType: 'Question type',
+      qTypeHint: 'Question type used in cast sessions',
+      time: 'Time (seconds)',
+      tags: 'Tags (comma separated)',
+      tagsPh: 'e.g.: algebra, intro',
+      options: 'Options',
+      optionsMin: 'at least 2',
+      optPh: 'option text...',
+      addOption: '+ Add option',
+      correct: 'Correct answer',
+      correctHint: '✓ Correct answer: click the option card to mark it (green ring)',
+      explanation: 'Explanation',
+      explanationPh: 'Answer explanation (optional)',
+      noQuestion: 'No question selected',
+      noQuestionSub: 'Pick a question from the list on the left or add a new one.',
+      empty: 'No tests yet',
+      errSummary: 'Fields that need attention',
+      outlineTitle: 'Questions',
+      questionsList: 'Question list',
+      duplicate: 'Duplicate',
+      del: 'Delete',
+    },
+  };
+  const bc = BL[bLang] || BL.uz;
+
   res.render('user/create-test', {
-    title: editKey ? 'Testni tahrirlash' : 'Yangi test yaratish',
+    title: bc.title + ' — Deborah',
     editKey,
     testData,
     isEdit: !!editKey,
+    bc, // S34m: create-test 3 til copy
+    bLang,
   });
 });
 
@@ -307,8 +424,12 @@ router.post('/api/tests/save', async (req, res) => {
   try {
     const { name, questions, editKey } = req.body;
     const user = req.session.user;
-    if (!name || !questions?.length) {
-      return res.status(400).json({ error: 'Invalid data' });
+    // S34m: aniq xabar — "Invalid data" emas, aynan nima yetishmayotganini aytish
+    if (!name || !String(name).trim()) {
+      return res.status(400).json({ error: 'Test nomini kiriting — testga nom qoying', field: 'name' });
+    }
+    if (!Array.isArray(questions) || !questions.length) {
+      return res.status(400).json({ error: "Kamida 1 ta savol qo'shing — bo'sh test saqlanmaydi", field: 'questions' });
     }
     // BUG-014 + S15 BUG-093/095/096: server-side input bounds + kalit whitelist
     if (String(name).trim().length > 300 || questions.length > 300) {
