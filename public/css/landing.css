@@ -381,8 +381,8 @@ input#rUser.err{border-color:#c98a5c}
 /* Join kod maydoni — har o'lchamda yirik (asosiy amal); >16px = iOS zoom'siz */
 .jcode{font-size:clamp(1.25rem, 1rem + 1.6vw, 2.1rem);letter-spacing:.36em}
 @media (max-width:640px){
-  /* responsive.css'dagi 16px !important'dan keyin (landing.css oxirida) — g'alaba */
-  .jcode{font-size:max(20px, 1.15rem) !important;letter-spacing:.3em;max-width:236px;padding:13px 8px 13px 17px}
+  /* responsive.css input:not(...) zanjiri (0,8,1)!important'dan kuchliroq — ID bilan yengamiz */
+  #jcode{font-size:max(20px, 1.15rem) !important;letter-spacing:.3em;max-width:236px;padding:13px 8px 13px 17px}
 }
 /* Katta ekran (≥1440): kontent kengayadi, proporsiyalar o'sadi */
 @media (min-width:1440px){
