@@ -66,6 +66,23 @@
     const seq = ++saveSeq;
     const ok = await navigator.onLine;
     if (!ok) { setStatus('offline', 'Oflayn — ulanish kutilmoqda'); return; }
+    /* S34k FIX: yaroqsiz holatda avtosave 400 'Invalid data' qaytarardi
+       (nom bo'sh yoki savollar bo'sh/hammasi bo'sh). Avtosave faqat
+       yakka savol holatda ham yuboradi, lekin server-side limit buzilmasa. */
+    const _errors = validate();
+    const blocking = _errors.filter(e => {
+      if (e.qId === null) return true; // nom/kamida 1 savol
+      return true;
+    });
+    if (blocking.length) {
+      // Tahrirlash rejimida (editKey bor) saqlab qolish OK (avvaldan saqlangan);
+      // yangi testda esa yubormaslik — server 400 bermasligi uchun.
+      if (!init.isEdit) {
+        setStatus('error', 'To\u2018ldirilmagan maydonlar bor');
+        renderErrors();
+        return;
+      }
+    }
     try {
       const res = await fetch('/user/api/tests/save', {
         method: 'POST',
