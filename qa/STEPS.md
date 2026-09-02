@@ -188,3 +188,4 @@
 - ✅ STEP 216 — passkey RP ID fix (rpFromRequest) + dashboard dublikat Foydalanuvchilar → /admin/users birlashtirildi (ac982b1)
 - ✅ STEP 217 — USERS: VIP+DELETE tugmalari qo'shildi (930cc25) — filtrlar ishlaydi (300ms debounce+server-side), VIP/o'chirish endpointlarga ulandi
 - ✅ STEP 218 — ADMIN 2FA PASSKEY VARIANT (2026-09-02): 3 endpoint + 2FA sahifada "Passkey bilan tasdiqlash" tugma (passkey mavjud bo'lsa avtomatik chiqadi) (4ef7eba)
+- ✅ STEP 219 — PANEL RU/EN FIX (365d981): sidebar fullCopy yetib bormagan (2 render) + panel data-i18n + RU/EN client lug'at — live "Моя панель|Календарь"/"My panel|Calendar" ✅; quick-links/cast ✅; CSRF — sessiya restart (BUG-090) ehtimoli, /play csrfToken keyingi patch

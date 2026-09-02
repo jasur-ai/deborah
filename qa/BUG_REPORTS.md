@@ -5299,3 +5299,24 @@ Login (parol) → 2FA sahifa → ikki variant:
 - counter replay/regression himoyasi webauthn.js'da mavjud (o'zgarmadi)
 - Owner mismatch tekshiruvi qo'shildi (boshqa user passkeyi bilan 2FA o'tib bo'lmaydi)
 - Audit: passkey:authenticate hodisalari jurnalga tushadi
+
+---
+# ═══ STEP 219 — PANEL RU/EN + QUICK-LINKS + CSRF TEKSHIRUV (2026-09-02, 365d981) ═══
+> FOYDALANUVCHI: (1) "oddiy user — ru en ishlamiyapti" (2) "Quick Prompt/Profilim/Testlarim/Sinov bosilsa login'ga o'tkazyapti" (3) "kod bilan kirishda + Cast qilishda CSRF validation failed"
+
+## (1) RU/EN panel — ILDIZ: panel.ejs sidebar'ga fullCopy BERILMAGAN
+- DALIL: role/student.ejs renderida `fullCopy: copy` bor (S14 BUG-087), panel.ejs renderida YO'Q edi → sidebar doim uz fallback
+- FIX: user.js panel render (2 joyda) `fullCopy + copy:{sidebar,header}` qo'shildi; panel.ejs asosiy matnlarga data-i18n + client-side RU/EN lug'at (reload'gacha instant)
+- LIVE: RU → "Моя панель | Календарь" ✅, EN → "My panel | Calendar" ✅ (isbot: 173_panel_ru_fixed.png)
+- Kengaytirish kerak: h1/ws quick-link lug'atlari (kalitlar qo'yilgan, RU/EN qiymatlar keyingi patchda)
+
+## (2) Quick-linklar login'ga o'tkazishi — TASDIQLANMADI (jar eskirgan edi)
+- Foydalanuvchining jar'ida sessiya o'lgan (server restart BUG-090) → barcha havolalar login'ga qaytardi — BU sessiya yo'qolishi, quick-link bug'i EMAS
+- Yangi sessiya bilan test: "Testlarim" → /user/create-test ✅ (to'g'ri), "Sinov" → modal ochiladi ✅, "Boshlash" → /user/test-arena ✅ (171 screenshot), "Cast qilish" → Cast Studio (modal) ✅
+- Agar user kirgan holda yana login'ga o'tsa — brauzer cookie'larini tozalab qayta kirsin (MemoryStore restart har safar sessiyalarni o'chiradi — BUG-090 Redis talab)
+
+## (3) "Kod bilan kirishda CSRF validation failed" — /play?code= join
+- Tekshiruv: panel csrfToken to'la (cbbb74de...), castFetch X-CSRF-Token qo'shadi ✅
+- Ehtimollik #1: foydalanuvchining sessiyasi restartda o'lgan (BUG-090) → CSRF token sessiyada bo'sh → 403. Yechim: qayta kirish (yoki Redis)
+- Ehtimollik #2: /play sahifasining __BOOT__.csrfToken'i bo'sh — /play?code= cast/participant renderida csrfToken berilishini tekshirish kerak (keyingi patch)
+## (4) Cast qilish CSRF — panel.ejs __CSRF_TOKEN to'la va castFetch header qo'yadi ✅ (live kod tekshirildi)
