@@ -586,7 +586,7 @@
 }
 .tb-q-text:focus, #tb-q-editor textarea.inp:focus {
   outline: none; border-color: var(--ld-gold) !important;
-  box-shadow: 0 0 0 4px rgba(194,160,106,.2) !important;
+  box-shadow: 0 0 0 4px rgba(194,160,106,.25) !important;
 }
 
 /* Savol turi select */
@@ -670,32 +670,44 @@
    S34l — KAHOOT STRUKTURA: 2x2 GRID + shakl belgilar + bir xil rang
    S34n: DARK/LIGHT to'liq qo'llab-quvvatlash (tema o'zgaruvchilari)
    ═══════════════════════════════════════════════════════════════ */
+/* S34p: DARK = vintage qora-jigar (oq YO'Q); LIGHT = och qog'oz */
 .tb-shell {
+  /* DARK (default) — malla qora-jigar */
   --tb-bg: linear-gradient(160deg, #241f18 0%, #2e2418 50%, #1c1813 100%);
-  --tb-card: #f7f1e3;
-  --tb-card-border: rgba(194,160,106,.35);
-  --tb-text: #2d2413;
-  --tb-label: #4b3a18;
-  --tb-input-bg: #fffdf8;
-  --tb-input-border: #c2a06a;
-  --tb-opt-bg: linear-gradient(135deg, #4a3a22, #2d2413);
-  --tb-opt-border: rgba(194,160,106,.4);
+  --tb-card: #2a2115;
+  --tb-card-border: rgba(194,160,106,.4);
+  --tb-text: #f2ede3;
+  --tb-label: #d6bd8c;
+  --tb-input-bg: rgba(15,12,8,.55);
+  --tb-input-border: rgba(194,160,106,.45);
+  --tb-opt-bg: linear-gradient(135deg, #3d3120, #241c10);
+  --tb-opt-border: rgba(194,160,106,.5);
   --tb-opt-text: #f2ede3;
-  --tb-shape-bg: rgba(194,160,106,.28);
+  --tb-shape-bg: rgba(194,160,106,.24);
   --tb-shape-text: #d6bd8c;
-  --tb-gold: var(--ld-gold, #c2a06a);
   --tb-green-bg: linear-gradient(135deg, #2f5c2a, #1d3d1a);
   --tb-green-ring: #7d9670;
-  --tb-outline-bg: rgba(36,31,24,.55);
-  --tb-outline-item: rgba(194,160,106,.07);
+  --tb-outline-bg: rgba(20,16,10,.65);
+  --tb-outline-item: rgba(194,160,106,.1);
+  --tb-hint: #b3a488;
 }
-[data-theme="dark"] .tb-shell, .tb-shell[data-theme="dark"] { }
-[data-theme="light"] .tb-shell {
+html[data-theme="light"] .tb-shell {
+  /* LIGHT — och qog'oz vintage */
   --tb-bg: linear-gradient(160deg, #ece3d0 0%, #e0d4bb 50%, #d4c6a4 100%);
-  --tb-outline-bg: rgba(255,252,245,.75);
-  --tb-outline-item: rgba(122,90,30,.08);
+  --tb-card: #fdf9ef;
+  --tb-card-border: rgba(122,90,30,.35);
+  --tb-text: #2d2413;
+  --tb-label: #6b5420;
+  --tb-input-bg: #fffdf6;
+  --tb-input-border: #b99a63;
+  --tb-opt-bg: linear-gradient(135deg, #574325, #3d2f18);
+  --tb-opt-border: rgba(122,90,30,.5);
+  --tb-opt-text: #f5efe0;
+  --tb-shape-bg: rgba(122,90,30,.3);
+  --tb-shape-text: #ecd9a8;
+  --tb-outline-bg: rgba(252,248,238,.8);
+  --tb-outline-item: rgba(122,90,30,.1);
 }
-/* Dark temada ham vintage qorong'i (default) — light o'z qiymatlarini oladi */
 /* Variantlar 2x2 GRID (Kahoot kabi) */
 .tb-options[data-opts-wrap] {
   display: grid !important;
@@ -731,7 +743,7 @@
 }
 
 /* Eski "To'g'ri javob radio" paneli olib tashilganda hint joyida */
-[data-correct-hint] { display: block; margin-top: 4px; font-size: .8rem; color: #7c8bb8; }
+[data-correct-hint] { display: block; margin-top: 4px; font-size: .8rem; color: var(--tb-hint, #8b97c9); }
 
 /* Xato xulosasi FAQAT qizil — boshqa joyda qizil yo'q */
 .tb-err-summary { background: #fdf2ef !important; border: 2px solid #b0522d !important; color: #6b2c14 !important; }
@@ -744,6 +756,6 @@
 .tb-editor, #tb-editor { max-width: 780px; margin: 0 auto; width: 100%; }
 
 /* Savol matni katta, oq karta ichida */
-#tb-q-editor .tb-field-label { font-size: .78rem; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; color: #4b3a8f; }
+#tb-q-editor .tb-field-label { font-size: .78rem; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; color: var(--tb-label); }
 #tb-q-editor textarea.inp { min-height: 96px; font-size: 1.08rem; }
 

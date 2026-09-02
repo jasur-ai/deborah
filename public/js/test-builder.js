@@ -492,12 +492,31 @@
     e.returnValue = '';
   }
   window.addEventListener('beforeunload', guardUnload);
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden' && state.dirty) {
-      clearTimeout(saveTimer);
-      scheduleSave();
-    }
-  });
+  /* S34p: sahifa yashirilganda AVTOSAVE YO'Q — foydalanuvchi xohlaganda saqlasin
+     ("orqaga bosilsa avto saqlayapti bunday emas") */
+
+  /* ── Orqaga havolasi: dirty bo'lsa SO'RASH — Saqla / Yo'q qilish ── */
+  const backLink = $('.tb-back');
+  if (backLink) {
+    backLink.addEventListener('click', (e) => {
+      if (!state.dirty) return; // saqlangan — to'g'ridan-to'g'ri
+      e.preventDefault();
+      const choice = confirm(
+        T('unsavedQ', 'Saqlanmagan o\u2018zgarishlar bor. Saqlaysizmi?\n\nOK = saqla va chiqish\nCancel = saqlamasdan chiqish')
+      );
+      if (choice) {
+        // Saqla va chiqish
+        state.dirty = false; // guardUnload yana ishga tushmasin
+        setStatus('pending', T('saving', 'Saqlanmoqda...'));
+        scheduleSave().then(() => { window.location.href = '/user/panel'; });
+      } else {
+        // Saqlamasdan chiqish
+        state.dirty = false;
+        clearTimeout(saveTimer);
+        window.location.href = '/user/panel';
+      }
+    });
+  }
 
   // ── Outline events (delegation) ──
   const outlineList = $('#tb-outline-list');

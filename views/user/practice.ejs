@@ -47,6 +47,7 @@
   </div>
   <div class="pr-wrap">
     <div class="pr-meta">Javob kaliti serverda saqlanadi — yakunda baho va tushuntirishlar ko'rasiz.</div>
+    <div class="pr-timer" id="qtimer" style="font-family:ui-monospace,monospace;font-weight:800;font-size:1rem;color:#c2a06a;margin-bottom:10px;min-height:24px"></div>
     <div class="pr-dots" id="dots"></div>
     <div id="quiz"></div>
     <div id="result" hidden></div>
@@ -58,8 +59,32 @@
     const SOURCE = <%- JSON.stringify(source) %>;
     const KEY = <%- JSON.stringify(key) %>;
     const CHUNK = <%- JSON.stringify(chunk) %>;
+    /* S34o: URL'dan vaqt (soniya) — panel Sinov modalida tanlangan */
+    const PER_Q_TIME = Math.max(0, parseInt(new URLSearchParams(location.search).get('time'), 10) || 0);
     const answers = new Array(QUESTIONS.length).fill(-1);
     let cur = 0;
+    let timeLeft = PER_Q_TIME;
+    let timerIv = null;
+    function startTimer() {
+      clearInterval(timerIv);
+      if (!PER_Q_TIME) return; // vaqt o'chirilgan — cheklovsiz
+      timeLeft = PER_Q_TIME;
+      const el = document.getElementById('qtimer');
+      if (!el) return;
+      const tick = () => {
+        el.textContent = '⏱ ' + String(Math.floor(timeLeft / 60)).padStart(2, '0') + ':' + String(timeLeft % 60).padStart(2, '0');
+        if (timeLeft <= 0) {
+          clearInterval(timerIv);
+          /* vaqt tugadi — javobsiz bo'lsa -1 qoldiriladi, keyingi savol */
+          if (cur < QUESTIONS.length - 1) { cur++; renderQ(); renderDots(); }
+          else finish();
+          return;
+        }
+        timeLeft--;
+      };
+      tick();
+      timerIv = setInterval(tick, 1000);
+    }
 
     const dots = document.getElementById('dots');
     function renderDots() {
@@ -70,6 +95,7 @@
 
     const quiz = document.getElementById('quiz');
     function renderQ() {
+      startTimer();
       const q = QUESTIONS[cur];
       quiz.innerHTML = `
         <div class="pr-card">
