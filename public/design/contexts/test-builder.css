@@ -595,19 +595,16 @@
 }
 
 /* VAARIANTLAR — Kahoot ranglari */
+/* S34l: variant BIR XIL rangda (binafsha) — qizil FAQAT xato uchun */
 .tb-opt {
   display: flex; align-items: center; gap: 10px;
   padding: 14px 16px !important; border-radius: 14px !important;
-  border: none !important; margin-bottom: 10px !important;
+  border: none !important; margin: 0 !important;
+  background: linear-gradient(135deg, #5b2cab, #3d1580) !important;
   color: #fff !important; font-weight: 600 !important;
-  box-shadow: 0 3px 10px rgba(0,0,0,.12);
-  transition: all .15s;
+  box-shadow: 0 3px 10px rgba(0,0,0,.18);
+  transition: all .15s; cursor: pointer;
 }
-.tb-opt:nth-of-type(1), .tb-opt[data-opt="0"] { background: var(--k-red) !important; }
-.tb-opt:nth-of-type(2), .tb-opt[data-opt="1"] { background: var(--k-blue) !important; }
-.tb-opt:nth-of-type(3), .tb-opt[data-opt="2"] { background: var(--k-yellow) !important; }
-.tb-opt:nth-of-type(4), .tb-opt[data-opt="3"] { background: var(--k-green) !important; }
-.tb-opt:nth-of-type(5), .tb-opt[data-opt="4"] { background: var(--k-purple) !important; }
 .tb-opt:nth-of-type(6), .tb-opt[data-opt="5"] { background: #b35c00 !important; }
 .tb-opt:hover { transform: scale(1.02); filter: brightness(1.1); }
 .tb-opt .inp {
@@ -668,3 +665,58 @@
   .tb-outline { position: static; width: 100%; max-height: 200px; overflow-y: auto; }
   .tb-q-editor-card, #tb-q-editor { padding: 18px; border-radius: 16px; }
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   S34l — KAHOOT STRUKTURA: 2x2 GRID + shakl belgilar + bir xil rang
+   Qizil FAQAT xato/xulosada. To'g'ri javob = yashil halqa.
+   ═══════════════════════════════════════════════════════════════ */
+/* Variantlar 2x2 GRID (Kahoot kabi) */
+.tb-options[data-opts-wrap] {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 12px !important;
+}
+@media (max-width: 640px) { .tb-options[data-opts-wrap] { grid-template-columns: 1fr !important; } }
+.tb-options [data-add-opt] { grid-column: 1 / -1; }
+
+/* Har variant: binafsha gradient, shape ikonkasi chapda */
+.tb-opt .tb-opt-letter { display: none !important; }
+.tb-opt .tb-opt-shape {
+  width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.18); font-size: 1.05rem; color: #fff;
+}
+.tb-opt:hover { transform: translateY(-2px); filter: brightness(1.08); }
+.tb-opt .inp { background: transparent !important; border: none !important; border-bottom: 2px dashed rgba(255,255,255,.35) !important; }
+.tb-opt .inp:focus { border-bottom-color: #fff !important; box-shadow: none !important; }
+.tb-opt .inp::placeholder { color: rgba(255,255,255,.55); }
+
+/* To'g'ri javob = yashil halqa + belgi (qizil EMAS!) */
+.tb-opt.is-correct {
+  background: linear-gradient(135deg, #26890c, #1a6b06) !important;
+  box-shadow: 0 0 0 3px #6ee7b7, 0 4px 14px rgba(38,137,12,.4) !important;
+}
+.tb-opt.is-correct::after {
+  content: '✓ To\'g\'ri';
+  margin-left: auto; font-weight: 900; font-size: .78rem;
+  background: #6ee7b7; color: #053b21;
+  padding: 3px 10px; border-radius: 999px; flex-shrink: 0;
+}
+
+/* Eski "To'g'ri javob radio" paneli olib tashilganda hint joyida */
+[data-correct-hint] { display: block; margin-top: 4px; font-size: .8rem; color: #7c8bb8; }
+
+/* Xato xulosasi FAQAT qizil — boshqa joyda qizil yo'q */
+.tb-err-summary { background: #fff5f5 !important; border: 2px solid #e21b3c !important; }
+.tb-err-summary-title { background: #e21b3c !important; color: #fff !important; }
+.tb-field.is-error textarea { border-color: #e21b3c !important; }
+.tb-outline-item.is-invalid { border-color: #e21b3c !important; }
+.tb-outline-item.is-invalid .tb-outline-num { background: #e21b3c !important; color: #fff !important; }
+
+/* Savol kartasi markazda, kattaroq (Kahoot max 720px) */
+.tb-editor, #tb-editor { max-width: 780px; margin: 0 auto; width: 100%; }
+
+/* Savol matni katta, oq karta ichida */
+#tb-q-editor .tb-field-label { font-size: .78rem; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; color: #4b3a8f; }
+#tb-q-editor textarea.inp { min-height: 96px; font-size: 1.08rem; }

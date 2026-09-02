@@ -216,9 +216,13 @@
 
     const idx = state.questions.indexOf(q);
     const qNum = idx + 1;
+    /* S34l KAHOOT: har variant shakl belgisi bilan (uchburchak/romb/doira/kvadrat),
+       ranglar BIR XIL (binafsha) — qizil FAQAT xato uchun. Variant karta o'zini
+       bosish = to'g'ri javob belgilash (Kahoot mantiqi), alohida radio YO'Q. */
+    const SHAPES = ['▲', '◆', '●', '■', '★', '⬢'];
     const optsHtml = q.options.map((opt, oi) => `
-      <div class="tb-opt${oi === q.correct ? ' is-correct' : ''}">
-        <span class="tb-opt-letter">${OPT_LETTERS[oi]}</span>
+      <div class="tb-opt${oi === q.correct ? ' is-correct' : ''}" data-opt-card="${oi}" role="radio" aria-checked="${oi === q.correct}" tabindex="0" title="Bosib to'g'ri javob deb belgilang">
+        <span class="tb-opt-shape" aria-hidden="true">${SHAPES[oi] || '■'}</span>
         <input class="inp" type="text" value="${escAttr(opt)}" placeholder="${OPT_LETTERS[oi]}) variant matni..." data-opt="${oi}" aria-label="Variant ${OPT_LETTERS[oi]}">
         <button type="button" class="tb-opt-remove" data-opt-remove="${oi}" aria-label="Variantni o'chirish" title="Variantni o'chirish">×</button>
       </div>`).join('');
@@ -285,14 +289,7 @@
         </div>
 
         <div class="tb-field">
-          <label class="tb-field-label" id="tb-correct-label">To'g'ri javob <span class="tb-req">*</span></label>
-          <div class="tb-correct" role="radiogroup" aria-labelledby="tb-correct-label" data-correct-wrap>
-            ${q.options.map((opt, oi) => `
-              <label class="tb-correct-opt${oi === q.correct ? ' is-correct' : ''}">
-                <input type="radio" name="tb-correct" value="${oi}" ${oi === q.correct ? 'checked' : ''} data-correct="${oi}">
-                <span class="tb-correct-txt">${OPT_LETTERS[oi]}) ${escHtml(opt.trim() || 'Bosh variant')}</span>
-              </label>`).join('')}
-          </div>
+          <span class="tb-hint" data-correct-hint>✓ To'g'ri javob: variant kartasini bosib belgilanadi (yashil halqa)</span>
         </div>
       `}
 
@@ -353,6 +350,25 @@
         q.options[oi] = inp.value;
         markDirty();
         renderErrors();
+      });
+    });
+
+    /* S34l KAHOOT: variant KARTASINI bosish = to'g'ri javob belgilash */
+    $$('[data-opt-card]', $('.tb-editor')).forEach(cardEl => {
+      cardEl.addEventListener('click', (ev) => {
+        if (ev.target.closest('input, button')) return; /* input/tugmaga tegsa aralashmaymiz */
+        const oi = parseInt(cardEl.dataset.optCard, 10);
+        if (q.correct === oi) return;
+        q.correct = oi;
+        markDirty();
+        render();
+      });
+      cardEl.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter' || ev.key === ' ') {
+          ev.preventDefault();
+          const oi = parseInt(cardEl.dataset.optCard, 10);
+          if (q.correct !== oi) { q.correct = oi; markDirty(); render(); }
+        }
       });
     });
 
