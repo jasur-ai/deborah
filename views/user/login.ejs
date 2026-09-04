@@ -98,7 +98,7 @@
 
         <!-- AUTH A-27: Passkey bilan kirish — Conditional UI + modal tugma (faqat login tab) -->
         <div class="passkey-login" id="passkey-login" hidden
-             data-copy='<%= JSON.stringify({ error: copy.login.passkeyError, rate: copy.login.passkeyRate }) %>'>
+             data-copy='<%= JSON.stringify({ error: copy.login.passkeyError, rate: copy.login.passkeyRate, none: copy.login.passkeyNone }) %>'>
           <div class="oidc-divider"><span><%= copy.login.or %></span></div>
           <button type="button" id="passkey-login-btn" class="passkey-btn" data-analytics="login_passkey_start">
             <%- icon('key', 17) %> <span><%= copy.login.passkey %></span>

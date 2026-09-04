@@ -7,9 +7,11 @@
  *   2. Modal tugma "Passkey bilan kirish" — platform authenticator
  *      (YubiKey / boshqa qurilma / cross-device) uchun.
  *
- * Feature detection:
- *   - isConditionalMediationAvailable() → Conditional UI
- *   - isUserVerifyingPlatformAuthenticatorAvailable() → modal tugma
+ * S35: Tugma endi WebAuthn qo'llab-quvvatlanadigan HAR QANDAY qurilmada
+ * ko'rinadi (login tab) — passkey boshqa qurilmada bo'lishi mumkin
+ * (cross-device/hybrid), shuning uchun platform-authenticator gati olib
+ * tashlandi. Passkey ro'yxatdan o'tkazish faqat Sozlamalar → Xavfsizlikda
+ * qilinadi (3-qaror: login'da o'rnatish taklifi YO'Q).
  *
  * Server JSON options ishlatiladi (simplewebauthn v13 formati); native
  * WebAuthn API base64url → ArrayBuffer konvertatsiyasini talab qiladi.
@@ -35,6 +37,7 @@
   try { copy = JSON.parse(container.getAttribute('data-copy') || '{}'); } catch (_) {}
   copy.error = copy.error || 'Kirishda xatolik. Parol bilan urinib ko\'ring.';
   copy.rate = copy.rate || 'Ko\'p urinishlar — biroz kuting.';
+  copy.none = copy.none || 'Bu qurilmada passkey topilmadi yoki bekor qilindi. Parol bilan kirishingiz mumkin.';
 
   var inFlight = false;
 
@@ -93,6 +96,15 @@
 
   function msg(text) { if (hint) hint.textContent = text; }
 
+  // Yumshoq eslatma — 4 soniyadan so'ng o'z-o'zidan o'chadi (UX toza qoladi)
+  function msgSoft(text) {
+    if (!hint) return;
+    hint.textContent = text;
+    setTimeout(function () {
+      if (hint.textContent === text) hint.textContent = '';
+    }, 4000);
+  }
+
   async function passkeyAuth(conditional) {
     if (inFlight) return;
     inFlight = true;
@@ -124,8 +136,12 @@
       if (v.ok && vd.ok) { window.location.href = vd.redirect || '/user/panel'; return; }
       msg((vd && vd.message) || copy.error);
     } catch (e) {
-      // AbortError = user autofill'da bekor qildi — jim o'tamiz
-      if (!(e && (e.name === 'AbortError' || e.name === 'NotAllowedError'))) {
+      if (e && (e.name === 'AbortError' || e.name === 'NotAllowedError')) {
+        // AbortError/NotAllowedError = user bekor qildi YOKI bu qurilmada
+        // passkey yo'q. Conditional (autofill) da jim o'tamiz; tugma bosilganda
+        // yumshoq yo'l ko'rsatamiz — "buzildi" degan taassurot qolmasin.
+        if (!conditional) msgSoft(copy.none);
+      } else {
         msg(copy.error);
       }
     } finally {
@@ -142,8 +158,17 @@
   });
   if (tabReg) tabReg.addEventListener('click', syncVisibility);
 
-  // ── Feature detection + init ──
+  // ── Init (S35) ──
+  // WebAuthn qo'llab-quvvatlanadigan har qanday qurilmada tugma DOIM ko'rinadi
+  // (login tab'ida) — passkey qaysi qurilmada o'rnatilganini oldindan bilmaymiz
+  // va u boshqa qurilmada (cross-device) bo'lishi mumkin. Oldingi
+  // platform-authenticator gati passkeyli foydalanuvchilarni ham yashirardi.
   (async function init() {
+    syncVisibility();
+
+    // Conditional UI qo'llab-quvvatlansa — username maydonida autofill taklifi
+    // (passkey o'rnatgan foydalanuvchi hech narsa bosmaydi, brauzer o'zi taklif
+    // qiladi). Qo'llab-quvvatlanmasa — oddiy tugma yo'li ochiq.
     var conditionalSupported = false;
     try {
       if (window.PublicKeyCredential.isConditionalMediationAvailable) {
@@ -151,19 +176,6 @@
       }
     } catch (_) { /* ignore */ }
 
-    if (conditionalSupported) {
-      // Login tab faol bo'lsa darhol Conditional UI ishga tushadi
-      if (isLoginTabActive()) passkeyAuth(true);
-      else syncVisibility();
-      return;
-    }
-
-    // Modal tugma — platform authenticator (biometrik / YubiKey) bormi
-    try {
-      if (window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable) {
-        var avail = await window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-        if (avail && isLoginTabActive()) container.hidden = false;
-      }
-    } catch (_) { /* ignore */ }
+    if (conditionalSupported && isLoginTabActive()) passkeyAuth(true);
   })();
 })();

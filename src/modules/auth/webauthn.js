@@ -250,16 +250,27 @@ export async function verifyRegistrationResponseFlow(session, response, rp) {
  * user's passkeys; when omitted the request is userless/discoverable
  * (required for Conditional UI).
  *
+ * `userId` may also be an ARRAY of userIds (e.g. admin current + legacy
+ * accounts) — passkeys registered under ANY of the listed ids are merged
+ * into allowCredentials so each can be used to sign in.
+ *
  * @param {Object} session
- * @param {{ userId?: string }} [opts]
+ * @param {{ userId?: string | string[] }} [opts]
  * @param {{ id: string, origin: string }} [rp]
  * @returns {Promise<Object|null>} PublicKeyCredentialRequestOptionsJSON
  */
 export async function generateAuthenticationChallenge(session, { userId } = {}, rp) {
   const rpId = (rp && rp.id) || RP_CONFIG.id || 'localhost';
+  const userIds = Array.isArray(userId) ? userId.filter(Boolean) : (userId ? [userId] : []);
   let allowCredentials;
-  if (userId) {
-    const creds = await getIndex(userId);
+  if (userIds.length) {
+    const creds = [];
+    for (const id of userIds) {
+      try {
+        const userCreds = await getIndex(id);
+        if (userCreds.length) creds.push(...userCreds);
+      } catch (_) { /* bitta index xatosi qolganlarini buzmasin */ }
+    }
     allowCredentials = creds.map((c) => ({ id: c.id, transports: c.transports || [] }));
   }
   const { generateAuthenticationOptions } = await swa();
@@ -273,7 +284,7 @@ export async function generateAuthenticationChallenge(session, { userId } = {}, 
   session.webauthnChallenge = {
     challenge: options.challenge,
     type: 'authentication',
-    userId: userId || null,
+    userId: userIds.length ? userIds[0] : null,
     createdAt: Date.now(),
   };
   return options;

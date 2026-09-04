@@ -44,6 +44,8 @@
 
   <script>
     (function () {
+      /* S35 FIX: __CSRF_TOKEN aniqlanmagan edi → step-up POST 403 qaytarardi */
+      window.__CSRF_TOKEN = '<%= typeof csrfToken !== "undefined" ? csrfToken : "" %>';
       var btn = document.getElementById('btn');
       var codeInp = document.getElementById('code');
       var err = document.getElementById('err');

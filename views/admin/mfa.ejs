@@ -17,6 +17,13 @@
     .verify-btn:disabled{opacity:.55;cursor:not-allowed;transform:none;}
     .err{display:none;margin-top:14px;border-radius:10px;padding:11px 14px;font-size:.78rem;font-weight:700;color:var(--deborah-semantic-color-danger);background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.3);}
     .err.show{display:block;}
+    /* S35: passkey varianti — separator + ikkinchi darajali tugma */
+    .pk-sep{display:none;align-items:center;gap:12px;margin:20px 0 2px;color:var(--deborah-semantic-color-text-muted);font-size:.72rem;font-weight:700;letter-spacing:.02em;}
+    .pk-sep .pk-line{flex:1;height:1px;background:var(--deborah-semantic-color-border-default);}
+    .pk-btn{background:transparent!important;color:var(--deborah-semantic-color-action-primary)!important;border:2px solid var(--deborah-semantic-color-action-primary)!important;margin-top:10px;font-weight:800;}
+    .pk-btn:hover{background:rgba(2,132,199,.06)!important;box-shadow:none!important;color:var(--deborah-semantic-color-action-primary)!important;}
+    .pk-btn:disabled{opacity:.55;cursor:not-allowed;transform:none;}
+    .pk-btn svg{width:17px;height:17px;flex-shrink:0;}
     .hint{margin-top:18px;font-size:.72rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;text-align:center;line-height:1.6;}
     .back{margin-top:10px;text-align:center;}
     .back a{font-size:.78rem;color:var(--deborah-semantic-color-text-muted);font-weight:700;text-decoration:none;}
@@ -41,6 +48,11 @@
       <span class="spinner" id="spinner"></span>
       <span id="btn-label">Tasdiqlash</span>
     </button>
+    <div class="pk-sep" id="pkSep"><span class="pk-line"></span><span>yoki</span><span class="pk-line"></span></div>
+    <button class="verify-btn pk-btn" id="pkBtn" type="button">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 2-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.78 7.78 5.5 5.5 0 0 1 7.78-7.78zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+      <span>Passkey bilan tasdiqlash</span>
+    </button>
     <div class="err" id="err" role="alert"></div>
     <div class="hint">Kod 90 soniya davomida amal qiladi. 5 marta xato kiritilsa, 15 daqiqa bloklanasiz.</div>
     <div class="back"><a href="/admin/login">← Orqaga</a></div>
@@ -48,6 +60,10 @@
 
   <script>
     (function () {
+      /* S35 FIX: __CSRF_TOKEN hech qayerda o'rnatilmagan edi → barcha POST'lar
+         (TOTP verify + passkey verify) 403 "CSRF token validation failed" qaytarardi.
+         Token serverdan beriladi (res.locals.csrfToken — global middleware). */
+      window.__CSRF_TOKEN = '<%= typeof csrfToken !== "undefined" ? csrfToken : "" %>';
       var challengeId = '<%= typeof challengeId !== "undefined" ? challengeId : "" %>';
       var btn = document.getElementById('btn');
       var codeInp = document.getElementById('code');

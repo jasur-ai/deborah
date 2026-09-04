@@ -151,6 +151,16 @@
 
           <button type="submit" class="btn btn-primary auth-submit" style="margin-top:14px"><span class="auth-spinner" aria-hidden="true"></span><%- icon('logIn', 14) %> Kirish</button>
         </form>
+
+        <!-- S35: Passkey bilan kirish — admin profilida passkey qo'shilgan bo'lsa ko'rsatiladi -->
+        <div class="passkey-login" id="admin-passkey-login" hidden
+             data-copy='<%= JSON.stringify({ error: "Passkey xatosi. Qayta urinib ko'ring.", rate: "Juda ko'p urinish. Bir ozdan keyin qayta urinib ko'ring.", none: "Bu qurilmada passkey topilmadi yoki bekor qilindi. Parol bilan kirishingiz mumkin." }) %>'>
+          <div class="oidc-divider"><span>yoki</span></div>
+          <button type="button" id="admin-passkey-login-btn" class="passkey-btn" data-analytics="admin_login_passkey_start">
+            <%- icon('key', 17) %> <span>Passkey bilan kirish</span>
+          </button>
+          <p class="passkey-hint" id="admin-passkey-login-hint" role="status" aria-live="polite"></p>
+        </div>
       </div>
       <div class="footer-links">
         <a href="/" class="footer-link">← Bosh sahifaga qaytish</a>
@@ -176,5 +186,6 @@
   </script>
   <% } %>
   <script src="/js/auth.js" defer></script>
+  <script src="/js/admin-passkey-login.js" defer></script>
 </body>
 </html>

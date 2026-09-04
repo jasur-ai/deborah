@@ -302,14 +302,14 @@ function grantAdminSession(req, res, { viaMfa = false } = {}) {
       logAuthEvent({
         action: AUDIT_ACTIONS.ADMIN_LOGIN,
         outcome: 'success',
-        method: viaMfa ? 'mfa' : 'password',
+        method: viaMfa ? (req.mfaFactor === 'passkey' ? 'passkey' : 'mfa') : 'password',
         actorId: CONFIG.ADMIN_USER,
         ipAddress: req.ip,
         userAgent: req.headers['user-agent'],
         details: viaMfa ? { factor: req.mfaFactor || 'totp' } : {},
       }).catch(() => {});
       // C-07 §20: admin_login metric (privileged trace — D-06 bilan)
-      try { recordMetric('auth.admin_login', 1, { type: 'counter', labels: { method: viaMfa ? 'mfa' : 'password' } }); } catch (_) {}
+      try { recordMetric('auth.admin_login', 1, { type: 'counter', labels: { method: viaMfa ? (req.mfaFactor === 'passkey' ? 'passkey' : 'mfa') : 'password' } }); } catch (_) {}
       return resolve();
     });
   });
@@ -658,10 +658,17 @@ router.get('/admin/mfa/stepup', requireAdmin, (req, res) => {
   });
 });
 
-// ── S34g: ADMIN PASSKEY 2FA — MFA bosqichida passkey bilan tasdiqlash ──
-// Login parol → MFA sahifada ikki variant: TOTP kod YOKI Passkey.
-// Passkey admin profilida ro'yxatdan o'tkazilgan bo'lishi shart.
-import { generateAuthenticationChallenge as genAdminPkAuth, verifyAuthenticationResponseFlow as verifyAdminPkAuth, rpFromRequest as adminPkRp, hasPasskeys as adminHasPasskeys } from '../src/modules/auth/webauthn.js';
+// ── ADMIN PASSKEY (S34g + S35): MFA bosqichi (2FA) + to'g'ridan-to'g'ri login ──
+// 1) MFA sahifada (/admin/mfa): parol → TOTP kod YOKI Passkey bilan tasdiqlash.
+// 2) /admin/login sahifasida: parolsiz "Passkey bilan kirish" (passkey = AAL2,
+//    phishing-resistant — to'liq admin sessiya grant qiladi, viaMfa marker bilan).
+// Passkey admin profilida ro'yxatdan o'tkazilgan bo'lishi shart (admin:{username}).
+import {
+  generateAuthenticationChallenge as genAdminPkAuth,
+  verifyAuthenticationResponseFlow as verifyAdminPkAuth,
+  rpFromRequest as adminPkRp,
+  listPasskeys as adminListPasskeys,
+} from '../src/modules/auth/webauthn.js';
 
 /* S34j FIX: login MFA bosqichida req.session.admin HANUZ YO'Q (faqat pendingAdminMfa bor)
    — requireAdmin 401 berardi va passkey tugma HECH QACHON ko'rinmasdi.
@@ -671,10 +678,49 @@ function requirePendingAdminMfa(req, res, next) {
   return res.status(401).json({ ok: false, error: 'no_pending_challenge' });
 }
 
+/* S35 FIX (BUG): admin passkeylar admin:{username} ga bog'lanadi (routes/admin/profile.js
+   adminUserId — CONFIG.ADMIN_USER), lekin 2FA tekshiruvi qat'iy 'admin:'+ADMIN_MFA_ACCOUNT
+   ('admin:admin') qidirardi → ADMIN_USER !== 'admin' bo'lsa passkey HECH QACHON topilmasdi.
+   Endi joriy id + legacy id ('admin:admin') birga qidiriladi (eski yozuvlar ham ishlaydi). */
+const adminPasskeyIds = () => {
+  const ids = ['admin:' + CONFIG.ADMIN_USER];
+  if (CONFIG.ADMIN_USER !== ADMIN_MFA_ACCOUNT) ids.push('admin:' + ADMIN_MFA_ACCOUNT);
+  return ids;
+};
+
+async function adminHasAnyPasskey() {
+  const ids = adminPasskeyIds();
+  for (const id of ids) {
+    const list = await adminListPasskeys(id).catch(() => []);
+    if (list.length) return true;
+  }
+  return false;
+}
+
+/* Admin passkey login/verify — IP asosida rate limit (10 so'rov / 15 daqiqa).
+   Parol yo'lidagi kabi: challenge single-use + 5 daqiqa TTL session'da; verify
+   faqat haqiqiy credential bilan o'tadi — bu qatlam DoS/spamni cheklaydi. */
+const ADMIN_PK_MAX = 10;
+const ADMIN_PK_WINDOW_MS = 15 * 60 * 1000;
+const adminPkHits = new Map();
+function adminPkRateLimited(key) {
+  const now = Date.now();
+  const rec = adminPkHits.get(key);
+  if (!rec || rec.resetAt <= now) {
+    adminPkHits.set(key, { count: 1, resetAt: now + ADMIN_PK_WINDOW_MS });
+    return false;
+  }
+  rec.count += 1;
+  if (rec.count > ADMIN_PK_MAX) return true;
+  return false;
+}
+
+/* ── 1) MFA sahifadagi passkey (parol → 2FA bosqichi) ── */
+
 router.get('/api/admin/mfa/passkey/status', requirePendingAdminMfa, async (req, res) => {
   try {
-    const has = await adminHasPasskeys('admin:' + ADMIN_MFA_ACCOUNT);
-    return res.json({ ok: true, available: !!has });
+    const has = await adminHasAnyPasskey();
+    return res.json({ ok: true, available: has });
   } catch (_) {
     return res.json({ ok: true, available: false });
   }
@@ -682,7 +728,7 @@ router.get('/api/admin/mfa/passkey/status', requirePendingAdminMfa, async (req, 
 
 router.post('/api/admin/mfa/passkey/options', requirePendingAdminMfa, async (req, res) => {
   try {
-    const options = await genAdminPkAuth(req.session, { userId: 'admin:' + ADMIN_MFA_ACCOUNT }, adminPkRp(req));
+    const options = await genAdminPkAuth(req.session, { userId: adminPasskeyIds() }, adminPkRp(req));
     if (!options) return res.status(400).json({ ok: false, error: 'options_failed' });
     return res.json({ ok: true, options });
   } catch (e) {
@@ -696,7 +742,7 @@ router.post('/api/admin/mfa/passkey/verify', requirePendingAdminMfa, async (req,
     if (!result.ok) {
       return res.status(403).json({ ok: false, error: result.error || 'assertion_invalid', message: result.message });
     }
-    if (result.userId !== 'admin:' + ADMIN_MFA_ACCOUNT) {
+    if (!adminPasskeyIds().includes(result.userId)) {
       return res.status(403).json({ ok: false, error: 'wrong_owner', message: 'Bu passkey boshqa hisobga tegishli' });
     }
     // Login MFA bosqichi: pending challenge iste'mol qilinadi (TOTP verify bilan bir xil)
@@ -704,12 +750,106 @@ router.post('/api/admin/mfa/passkey/verify', requirePendingAdminMfa, async (req,
       await consumeMfaChallenge(req.session.pendingAdminMfa.challengeId).catch(() => {});
       delete req.session.pendingAdminMfa;
     }
-    // MFA step-up muvaffaqiyati — TOTP bilan bir xil grant yo'li
+    // MFA muvaffaqiyati — TOTP bilan bir xil grant yo'li
     req.session.adminMfaAt = Date.now();
     req.mfaFactor = 'passkey';
     await grantAdminSession(req, res, { viaMfa: true });
     return res.json({ ok: true });
   } catch (e) {
+    return res.status(500).json({ ok: false, error: 'server' });
+  }
+});
+
+/* ── 2) /admin/login sahifasidan PASSKEY BILAN TO'G'RIDAN-TO'G'RI KIRISH (S35) ──
+   Oqim: tugma → options (allowCredentials = admin passkeylari) → brauzer
+   tasdiqlaydi (biometriya / YubiKey / boshqa qurilma) → verify → admin sessiya.
+   Passkey = phishing-resistant AAL2+ faktor (NIST) — TOTP kabi mustaqil 2-faktor,
+   shuning uchun viaMfa=true grant qilinadi (parol shart emas).
+   Xavfsizlik: CSRF (global) + IP rate limit + IP allowlist + breach flag + audit. */
+
+/* Login sahifasi tugmani ko'rsatish uchun so'raydi (admin passkey bormi?).
+   GET — CSRF shart emas; oshkor ma'lumot ahamiyatsiz ("parolni unutdingizmi" kabi). */
+router.get('/api/admin/passkey/login/status', async (req, res) => {
+  try {
+    const has = await adminHasAnyPasskey();
+    return res.json({ ok: true, available: has });
+  } catch (_) {
+    return res.json({ ok: true, available: false });
+  }
+});
+
+router.post('/api/admin/passkey/login/options', async (req, res) => {
+  if (adminPkRateLimited(`opts:${req.ip}`)) {
+    return res.status(429).json({ ok: false, error: 'rate-limited' });
+  }
+  try {
+    if (!(await adminHasAnyPasskey())) {
+      return res.status(400).json({ ok: false, error: 'not_setup', message: 'Admin passkey o\'rnatilmagan. Avval admin profilida passkey qo\'shing.' });
+    }
+    const options = await genAdminPkAuth(req.session, { userId: adminPasskeyIds() }, adminPkRp(req));
+    if (!options) return res.status(400).json({ ok: false, error: 'options_failed' });
+    return res.json({ ok: true, options, rpId: (adminPkRp(req) || {}).id, origin: (adminPkRp(req) || {}).origin });
+  } catch (e) {
+    console.error('[admin-passkey-login] options:', e.message);
+    return res.status(500).json({ ok: false, error: 'server' });
+  }
+});
+
+router.post('/api/admin/passkey/login/verify', async (req, res) => {
+  if (adminPkRateLimited(`verify:${req.ip}`)) {
+    return res.status(429).json({ ok: false, error: 'rate-limited' });
+  }
+  try {
+    // Parol yo'lidagi admin qatlamlari (IP allowlist + breach flag) passkey yo'liga ham
+    // qo'llanadi — bir xil himoya siyosati, faktor qanday bo'lishidan qat'i nazar.
+    if (!adminIpAllowed(req.ip, adminIpAllowlist())) {
+      logAuthEvent({
+        action: AUDIT_ACTIONS.ADMIN_IP_BLOCKED, outcome: 'blocked', method: 'passkey',
+        actorId: CONFIG.ADMIN_USER, ipAddress: req.ip, userAgent: req.headers['user-agent'],
+      }).catch(() => {});
+      return res.status(403).json({ ok: false, error: 'ip_not_allowed', message: 'Ruxsat etilmagan IP manzil' });
+    }
+    const sec = await getAdminSecurity();
+    if (sec.breachFlagged) {
+      logAuthEvent({
+        action: AUDIT_ACTIONS.ADMIN_BREACH_BLOCKED, outcome: 'blocked', method: 'passkey',
+        actorId: CONFIG.ADMIN_USER, ipAddress: req.ip, userAgent: req.headers['user-agent'],
+      }).catch(() => {});
+      return res.status(403).json({ ok: false, error: 'breach_blocked', message: 'Xavfsizlik nuqtasi tufayli hisob bloklandi.' });
+    }
+
+    const result = await verifyAdminPkAuth(req.session, req.body || {}, adminPkRp(req));
+    if (!result.ok) {
+      logAuthEvent({
+        action: AUDIT_ACTIONS.AUTH_LOGIN_FAIL, outcome: 'failed', method: 'passkey',
+        actorId: 'admin:' + CONFIG.ADMIN_USER, ipAddress: req.ip,
+        userAgent: req.headers['user-agent'], details: { reason: result.error || 'assertion_invalid' },
+      }).catch(() => {});
+      return res.status(401).json({ ok: false, error: result.error || 'assertion_invalid', message: result.message });
+    }
+    if (!adminPasskeyIds().includes(result.userId)) {
+      logAuthEvent({
+        action: AUDIT_ACTIONS.AUTH_LOGIN_FAIL, outcome: 'failed', method: 'passkey',
+        actorId: 'admin:' + CONFIG.ADMIN_USER, ipAddress: req.ip,
+        userAgent: req.headers['user-agent'], details: { reason: 'wrong_owner' },
+      }).catch(() => {});
+      return res.status(403).json({ ok: false, error: 'wrong_owner', message: 'Bu passkey boshqa hisobga tegishli' });
+    }
+
+    // Eski pending MFA challenge bo'lsa tozalanadi (xavfsiz holat)
+    if (req.session.pendingAdminMfa) {
+      await consumeMfaChallenge(req.session.pendingAdminMfa.challengeId).catch(() => {});
+      delete req.session.pendingAdminMfa;
+    }
+    req.mfaFactor = 'passkey';
+    await grantAdminSession(req, res, { viaMfa: true });
+    await audit({
+      action: AUDIT_ACTIONS.PASSKEY_AUTH, userId: 'admin:' + CONFIG.ADMIN_USER,
+      resourceType: 'passkey', details: { credentialId: `${result.credential.id.slice(0, 12)}…`, via: 'admin-login' },
+    }).catch(() => {});
+    return res.json({ ok: true, redirect: '/admin/dashboard' });
+  } catch (e) {
+    console.error('[admin-passkey-login] verify:', e.message);
     return res.status(500).json({ ok: false, error: 'server' });
   }
 });

@@ -81,6 +81,7 @@ export const AUTH_COPY = {
       passkey: 'Passkey bilan kirish',
       passkeyError: 'Passkey xatosi. Qayta urinib ko\'ring.',
       passkeyRate: 'Juda ko\'p urinish. Bir ozdan keyin qayta urinib ko\'ring.',
+      passkeyNone: 'Bu qurilmada passkey topilmadi yoki bekor qilindi. Parol bilan kirishingiz mumkin.',
       trust: 'Hisobingiz shifrlangan va O\'zbekistonda xavfsiz saqlanadi.',
     },
     register: {
@@ -601,6 +602,7 @@ export const AUTH_COPY = {
       passkey: 'Passkey билан кириш',
       passkeyError: 'Passkey хатоси. Қайта уриниб кўринг.',
       passkeyRate: 'Жуда кўп уриниш. Бир оздан кейин қайта уриниб кўринг.',
+      passkeyNone: 'Бу қурилмада passkey топилмади ёки бекор қилинди. Парол билан киришингиз мумкин.',
       trust: 'Ҳисобингиз шифрланган ва хавфсиз сақланади.',
     },
     register: {
@@ -1122,6 +1124,7 @@ export const AUTH_COPY = {
       passkey: 'Войти по passkey',
       passkeyError: 'Ошибка passkey. Попробуйте ещё раз.',
       passkeyRate: 'Слишком много попыток. Попробуйте позже.',
+      passkeyNone: 'Passkey на этом устройстве не найден, или действие отменено. Вы можете войти по паролю.',
       trust: 'Ваши данные надёжно защищены.',
     },
     register: {
@@ -1641,6 +1644,7 @@ export const AUTH_COPY = {
       passkey: 'Sign in with a passkey',
       passkeyError: 'Passkey error. Try again.',
       passkeyRate: 'Too many attempts. Try again later.',
+      passkeyNone: 'No passkey found on this device, or the request was cancelled. You can still sign in with your password.',
       trust: 'Your data is encrypted and stored securely in Uzbekistan.',
     },
     register: {
