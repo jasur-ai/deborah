@@ -5,6 +5,7 @@ The following font families are self-hosted in this directory and are
 licensed under the SIL Open Font License, Version 1.1:
 
   - Source Sans 3 (Google Fonts) — © 2010-2023 Adobe / Paul D. Hunt
+  - Source Serif 4 (Google Fonts) — © 2010-2023 Adobe / Paul D. Hunt
   - Manrope (Google Fonts) — © 2018-2023 Mikhail Sharanda
   - IBM Plex Mono (Google Fonts) — © 2017 IBM Corp.
 

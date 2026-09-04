@@ -745,12 +745,30 @@
     if(cycles<MAX_CYCLES){timers.push(setTimeout(run,T.total));}
   }
   var t=84;
-  setInterval(function(){
+  var tick=function(){
     t--;if(t<0)t=0;
     var m=('0'+Math.floor(t/60)).slice(-2),s=('0'+(t%60)).slice(-2);
     document.getElementById('scTime').textContent=m+':'+s;
-  },1000);
-  setTimeout(run,700);
+  };
+  function freezeDemo(){
+    /* PW/S33 determinizm: animatsiyasiz yakuniy holat — har run bir xil shot.
+       (setTimeout/setInterval'lar visual testlarda o'chirilgan; boshlang'ich
+       state hech qanday timer'ga bog'liq bo'lmasligi kerak.) */
+    reset();
+    q.classList.add('in');
+    optEls.forEach(function(o){o.classList.add('in');});
+    cap.classList.add('in');
+    bars.forEach(function(b){b.style.width=b.getAttribute('data-w')+'%';});
+    cells.forEach(function(c){c.style.opacity=1;c.style.transitionDelay='0s';});
+    devnote.style.opacity=1;
+    beam.style.opacity=0;
+    var el=document.getElementById('scTime');if(el)el.textContent='01:24';
+  }
+  if (window.__PW_FREEZE__) { freezeDemo(); }
+  else {
+    setInterval(tick,1000);
+    setTimeout(run,700);
+  }
 
   /* ═══ S33 (uploads/index.html): Reveal ═══ */
   var rio = ('IntersectionObserver' in window) ? new IntersectionObserver(function(es){
