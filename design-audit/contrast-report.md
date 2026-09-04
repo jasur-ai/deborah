@@ -1,6 +1,6 @@
 # Deborah Contrast Report (S06.12)
 
-Generated: 2026-08-29T18:59:03.952Z
+Generated: 2026-09-04T13:03:48.070Z
 Pair check: 40 | PASS: 40 | FAIL: 0 (buffer 0.2–0.5 near threshold)
 
 | Theme | Pair | FG | BG | Ratio | Target | Status |

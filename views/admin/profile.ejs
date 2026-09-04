@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %> — Deborah Admin</title>
   <link rel="stylesheet" href="/css/admin.css?v=nv4">
-  <style>
+    <style>
+    .key-warn-note{color:#6ee7b7;font-size:.74rem}
+    #reauthBox{background:rgba(3,5,14,.7);backdrop-filter:blur(6px)}
+    .pf-back-link{color:#8b97c9;font-size:.8rem;font-weight:700;text-decoration:none}
     /* ═══ S34e — PROFIL KOMANDA MARKAZI (neon texnik) ═══ */
     body{background:
       radial-gradient(1100px 520px at 12% -8%, rgba(34,211,238,.10), transparent 60%),
@@ -159,7 +162,7 @@
           <button class="btn btn-g" id="akCreate">+ Kalit yaratish</button>
         </div>
         <div id="akKeyBox" class="key-box" style="display:none">
-          <b style="color:#6ee7b7;font-size:.74rem">⚠ YANGI KALIT — faqat hozir ko'rsatiladi:</b>
+          <b class="key-warn-note">⚠ YANGI KALIT — faqat hozir ko'rsatiladi:</b>
           <code id="akKeyValue"></code>
           <button class="btn btn-c" id="akCopy">Nusxa olish</button>
         </div>
@@ -197,7 +200,7 @@
     </div>
 
     <!-- REAUTH MODAL -->
-    <div id="reauthBox" style="display:none;position:fixed;inset:0;z-index:50;background:rgba(3,5,14,.7);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px">
+    <div id="reauthBox" style="display:none;position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:20px">
       <div class="card" style="max-width:400px;width:100%;margin:0">
         <h3>🔒 Qayta tasdiqlash</h3>
         <p class="hint" style="margin-bottom:10px">Xavfsizlik uchun admin parolini kiriting.</p>
@@ -210,7 +213,7 @@
       </div>
     </div>
 
-    <p style="text-align:center;margin-top:24px"><a href="/admin/dashboard" style="color:#8b97c9;font-size:.8rem;font-weight:700;text-decoration:none">← Boshqaruv paneliga qaytish</a></p>
+    <p style="text-align:center;margin-top:24px"><a href="/admin/dashboard" class="pf-back-link">← Boshqaruv paneliga qaytish</a></p>
   </main>
 
 <script>

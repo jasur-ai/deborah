@@ -151,7 +151,7 @@ describe('AUTH B-03 — Register forma', () => {
     expect(res.status).toBe(200);
     expect(res.text).toContain('role-grid'); // register sahifasi
     expect(res.text).toContain('data-field="name"');
-    expect(res.text).not.toContain('/user/panel');
+    // (nav'da /user/panel bor — S34; role-grid + data-field xato-sahifa ekanini isbotlaydi)
     const snap = await fb.get(`users/${safeKey(username)}`);
     expect(snap.exists()).toBe(false);
   });

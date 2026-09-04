@@ -774,10 +774,10 @@ body:has(.admin-panel)::before {
   box-shadow: inset 0 0 14px rgba(99,140,255,.14);
 }
 .admin-nav-btn {
-  background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)) !important;
+  background: rgba(255,255,255,.035) !important;
   border: 1px solid rgba(148,163,255,.22) !important;
   color: #cbd5f5 !important;
-  transition: all .18s ease !important;
+  transition: border-color .18s ease, color .18s ease, box-shadow .18s ease, transform .18s ease !important;
 }
 .admin-nav-btn:hover {
   border-color: rgba(34,211,238,.55) !important;
@@ -808,16 +808,16 @@ body:has(.admin-panel)::before {
 .admin-side-btn {
   border: 1px solid transparent !important;
   border-left: 2px solid rgba(148,163,255,.16) !important;
-  background: linear-gradient(90deg, rgba(255,255,255,.028), transparent 60%) !important;
+  background: rgba(255,255,255,.02) !important;
   color: #aab4dd !important;
   border-radius: 8px !important;
   margin: 2px 8px !important;
-  transition: all .16s ease !important;
+  transition: border-left-color .16s ease, color .16s ease, background-color .16s ease, box-shadow .16s ease, transform .16s ease !important;
 }
 .admin-side-btn:hover {
   border-left-color: var(--n-cyan) !important;
   color: #e0f2fe !important;
-  background: linear-gradient(90deg, rgba(34,211,238,.10), rgba(34,211,238,.02) 55%) !important;
+  background: rgba(34,211,238,.06) !important;
   box-shadow: inset 0 0 18px rgba(34,211,238,.06);
   transform: translateX(2px);
 }
@@ -867,7 +867,7 @@ body:has(.admin-panel)::before {
   border-radius: 12px !important;
   position: relative;
   overflow: hidden;
-  transition: all .22s ease !important;
+  transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease !important;
 }
 .stat-card::before {
   content: '';
@@ -896,7 +896,7 @@ body:has(.admin-panel)::before {
   background: linear-gradient(180deg, rgba(13,18,40,.6), rgba(9,13,29,.42)) !important;
   border: 1px solid rgba(148,163,255,.16) !important;
   border-radius: 12px !important;
-  transition: all .2s ease !important;
+  transition: border-color .2s ease, box-shadow .2s ease !important;
 }
 .admin-fan-item:hover, .admin-pre-item:hover, .admin-res-card:hover {
   border-color: rgba(129,140,248,.42) !important;
@@ -909,7 +909,7 @@ body:has(.admin-panel)::before {
 .admin-panel button,
 .admin-panel .admin-edit-btn, .admin-panel .admin-del-btn, .admin-panel .btn-warning {
   border-radius: 9px !important;
-  transition: all .18s ease !important;
+  transition: background-color .18s ease, border-color .18s ease, color .18s ease, box-shadow .18s ease, transform .18s ease !important;
 }
 .admin-panel .admin-edit-btn {
   background: var(--n-grad-soft) !important;
@@ -1014,7 +1014,7 @@ body.theme-light:has(.admin-panel) {
   border-color: rgba(99,112,255,.22) !important;
 }
 [data-theme="light"] .stat-card { background: rgba(255,255,255,.85) !important; }
-[data-theme="light"] .admin-side-btn { color: #3b4470 !important; background: linear-gradient(90deg, rgba(99,112,255,.05), transparent 60%) !important; }
+[data-theme="light"] .admin-side-btn { color: #3b4470 !important; background: rgba(99,112,255,.03) !important; }
 [data-theme="light"] .admin-side-btn.active { color: #1e1b4b !important; background: var(--n-grad-soft) !important; }
 [data-theme="light"] .admin-panel td { border-color: rgba(99,112,255,.14) !important; }
 [data-theme="light"] .admin-panel .inp, [data-theme="light"] .admin-panel input, [data-theme="light"] .admin-panel select { background: rgba(255,255,255,.9) !important; color: #1e293b !important; }

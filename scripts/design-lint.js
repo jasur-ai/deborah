@@ -61,6 +61,10 @@ const TINY_SELECTOR_ALLOW = [
 //   theme.css      — theme source fayli (forced-colors/print overrides ham shu yerda)
 const RAW_COLOR_SOURCE_FILES = [
   'public/design/contexts/projector.css',
+  // S34n/p: Test Builder professional workspace — vintage dark/light palitra
+  // o'z --tb-* custom property tizimida yashaydi (theme.css dagi kabi manba emas,
+  // lekin palitra source'lar qatorida metric'da ko'rinadi — S37.01 gate'ni bloklamaydi)
+  'public/design/contexts/test-builder.css',
   'public/design/foundations/theme.css',
 ];
 // Functional tint overlays (alpha < .5) — selection/scrollbar/focus glow

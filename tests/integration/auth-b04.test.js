@@ -76,7 +76,7 @@ describe('AUTH B-04 — Username validatsiya', () => {
     const r2 = await postRegister(supertest.agent(app), 'smith', { email: `x${Date.now()}@test.uz` });
     expect(r2.status).toBe(200);
     expect(r2.headers.location).toBeUndefined();
-    expect(r2.text).not.toContain('/user/panel');
+    expect(r2.text).toContain('role-grid'); // register xato-sahifasi (panel emas)
   });
 
   it('dots/dash username register + case-insensitive login', async () => {

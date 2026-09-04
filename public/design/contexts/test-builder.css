@@ -554,7 +554,7 @@
   border-radius: 12px;
   background: var(--tb-outline-item);
   margin: 3px 0;
-  transition: all .15s;
+  transition: background-color .15s ease, color .15s ease, transform .15s ease;
 }
 .tb-outline-item:hover { background: rgba(194,160,106,.16); transform: translateX(3px); }
 .tb-outline-item.is-active { background: var(--ld-gold, #c2a06a); color: #141006; font-weight: 800; }
@@ -604,7 +604,7 @@
   background: var(--tb-opt-bg) !important;
   color: var(--tb-opt-text) !important; font-weight: 600 !important;
   box-shadow: 0 3px 10px rgba(0,0,0,.18);
-  transition: all .15s; cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease, transform .15s ease; cursor: pointer;
 }
 .tb-opt:hover { transform: scale(1.02); filter: brightness(1.1); }
   background: transparent !important; border: none !important;
@@ -631,7 +631,7 @@
 /* To'g'ri javob radio */
 .tb-q-correct-item {
   border-radius: 12px !important; padding: 10px 14px !important;
-  transition: all .15s;
+  transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease;
 }
 .tb-q-correct-item:hover { background: rgba(91,44,171,.06); }
 

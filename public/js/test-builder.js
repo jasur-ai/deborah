@@ -284,7 +284,7 @@
       ` : `
         <div class="tb-field">
           <label class="tb-field-label">${T('options', 'Variantlar')} <span class="tb-req">*</span> <span class="tb-hint">${T('optionsMin', 'kamida 2 ta')}</span></label>
-          <div class="tb-options" data-opts-wrap>
+          <div class="tb-options" data-opts-wrap role="radiogroup" aria-label="Variantlar">
             ${optsHtml}
             ${q.options.length < 6 ? `<button type="button" class="btn btn-quiet" data-add-opt style="width:100%">${T('addOption', '+ Variant qo\'shish')}</button>` : ''}
           </div>

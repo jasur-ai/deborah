@@ -735,8 +735,10 @@ describe('S27 — Test Builder professional authoring workspace', () => {
     expect(js).toContain('navigator.onLine');
     expect(js).toContain('data-move="up"');
     expect(js).toContain('data-move="down"');
+    // S34l: native radio YO'Q — variant kartalari role="radio" (Kahoot modeli)
     expect(js).toContain('role="radiogroup"');
-    expect(js).toContain('type="radio"');
+    expect(js).toContain('role="radio"');
+    expect(js).toContain('aria-checked=');
   });
 });
 

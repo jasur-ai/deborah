@@ -91,10 +91,12 @@ describe('AUTH B-01 — Users final schema', () => {
     // Same username, boshqa agent/IP → register rad etiladi
     const agent2 = supertest.agent(app);
     const r2 = await register(agent2, username);
-    // Register re-render (panelga redirect emas) + error marker
+    // Register re-render (panelga redirect emas) + duplicate error marker.
+    // Eslatma: sahifa nav'ida /user/panel havolasi bor (S34 Cast menyusi) —
+    // shuning uchun 'panel so'zi yo'q' emas, balki xato xabari tekshiriladi.
     expect(r2.status).toBe(200);
     expect(r2.headers.location).toBeUndefined();
-    expect(r2.text).not.toContain('/user/panel');
+    expect(r2.text).toContain('Bunday hisob allaqachon mavjud.');
     // Email index'da yangi user yo'q
     const snap = await fb.get(`users/${safeKey(username)}`);
     expect(snap.exists()).toBe(true);

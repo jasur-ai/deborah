@@ -80,25 +80,29 @@ describe('Landing — copy bank (data/landing.js)', () => {
 });
 
 describe('Landing — HTTP routing (CAST demo 1:1 — tasdiqlangan cast.html port)', () => {
-  it('GET / (uz) — S33 namuna: hero H1 (bitta) + jonli cast ekrani', async () => {
+  it('GET / — CAST landing: hero H1 (bitta) + jonli cast ekrani', async () => {
     const res = await fetch(`${serverUrl}/`);
     expect(res.status).toBe(200);
     const html = await res.text();
-    // Namuna (uploads/index.html) hero nusxasi
-    expect(html).toContain('O\'qituvchi ishi — <em>yengil</em>.<br>Dars — samarali.');
-    expect(html).toContain("O'qituvchilar uchun · AI yordamchi bilan");
-    expect(html).toContain('Bepul boshlash');
+    // S34: / — CAST landing (uploads/cast.html namunasi 1:1) hero nusxasi
+    expect(html).toContain('Savol — <em>ekranda</em>. Javob — telefonda.');
+    expect(html).toContain('Bir tugma bilan savol sinf ekraniga uzatiladi.');
     // Bitta H1
     const h1s = html.match(/<h1[\s>]/g) || [];
     expect(h1s).toHaveLength(1);
-    // Jonli cast ekrani (hero ichida)
+    // Jonli cast ekrani (hero ichida, no-JS statik kontent)
     expect(html).toContain('EDK-4821');
     expect(html).toContain('Response mosaic · 42 javob');
     expect(html).toContain('SELECT DISTINCT');
+    // O'qituvchi landing (S33 index namunasi) /ustoz'da — o'z hero nusxasi bilan
+    const t = await (await fetch(`${serverUrl}/ustoz`)).text();
+    expect(t).toContain('O\'qituvchi ishi — <em>yengil</em>.<br>Dars — samarali.');
+    expect(t).toContain('Bepul boshlash');
   });
 
-  it('S33 — tartib: hero → stats → feat → qadam → signal → auth → cred → cta', async () => {
-    const html = await (await fetch(`${serverUrl}/`)).text();
+  it('S33 — tartib: hero → stats → feat → qadam → signal → auth → cred → cta (/ustoz)', async () => {
+    // S34: bu struktura o'qituvchi landing'ida (index.ejs) — /ustoz'da; / esa cast landing
+    const html = await (await fetch(`${serverUrl}/ustoz`)).text();
     const pos = (needle) => html.indexOf(needle);
     expect(pos('id="top"')).toBeGreaterThan(-1);
     expect(pos('class="stats"')).toBeGreaterThan(pos('id="top"'));
@@ -174,7 +178,8 @@ describe('Landing — HTTP routing (CAST demo 1:1 — tasdiqlangan cast.html por
     // Register — mode=reg, consent, username email'dan (server normalize qiladi)
     expect(html).toMatch(/<form id="fReg" action="\/user\/login"[^>]*>/);
     expect(html).toContain('name="mode" value="reg"');
-    expect(html).toContain('name="consent" value="on"');
+    // S34i: rozilik checkbox (hidden consent olib tashlangan) — browser "on" yuboradi
+    expect(html).toContain('name="consent" id="rConsent"');
     expect(html).toContain('id="rUser"');
     // Providerlar — REAL endpointlar (JS __AUTH_PROVIDERS bilan guard)
     expect(html).toContain('data-prov="google"');
@@ -252,7 +257,7 @@ describe('Landing — HTTP routing (CAST demo 1:1 — tasdiqlangan cast.html por
     // Demo 1:1: header'dagi klassik oy/quyosh tugmasi (segmented EMAS)
     expect(html).toContain('class="tbtn" id="themeBtn"');
     expect(html).not.toContain('data-theme-state-btn');
-    expect(html).toContain('class="screen reveal"'); // S33: hero ichida, reveal animatsiya bilan
+    expect(html).toContain('class="screen" id="cast"'); // S34: cast demo — no-JS statik kontent
     // Cast screen statik kontenti server HTML'da (JS'siz ko'rinadi)
     expect(html).toContain('SELECT DISTINCT');
     expect(html).toContain('data-opt');
@@ -304,7 +309,8 @@ describe('Landing — HTTP routing (CAST demo 1:1 — tasdiqlangan cast.html por
   });
 
   it('LANDING HEADER — o\'ng menyu: Kirish + Admin FAQAT ichida (S31/S33 user namunasi)', async () => {
-    const html = await (await fetch(`${serverUrl}/`)).text();
+    // S34: o'qituvchi landing (index.ejs) /ustoz'da — S31 header kontrakti shu yerda
+    const html = await (await fetch(`${serverUrl}/ustoz`)).text();
     const m = html.match(/<div class="hmenu"[^>]*>[\s\S]*?<\/div>/) || [''];
     // Admin menyu ICHIDA (BUG-028: alohida page), tashqarida ko'rinmaydi
     expect(m[0]).toContain('href="/admin/login"');
@@ -321,8 +327,12 @@ describe('Landing — HTTP routing (CAST demo 1:1 — tasdiqlangan cast.html por
     expect(html.indexOf('class="logo"')).toBeLessThan(html.indexOf('id="hbtn"'));
     // footer kontakt anchor (demo #kontakt)
     expect(html).toContain('<footer class="ftr" id="kontakt">');
+    // Umumiy `/` (cast landing) — admin hech qayerda ko'rinmaydi (faqat o'qituvchi menyusida)
+    const pub = await (await fetch(`${serverUrl}/`)).text();
+    expect(pub).not.toContain('/admin/login');
+    expect(pub).not.toContain('id="adminBtn"');
+    expect(pub).toContain('<div class="hmenu" id="hmenu"');
   });
-
   it('CAST — landing.js: i18n (uz/ru/en) + tema + real provider/join/admin mantiqi', async () => {
     const js = await (await fetch(`${serverUrl}/js/landing.js`)).text();
     expect(js).toContain('I18N');
