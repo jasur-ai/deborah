@@ -85,13 +85,19 @@ describe('STYLE STEP 05 — Brand assets', () => {
   });
 
   describe('S05.09-11 — Policy + alt', () => {
-    it('logo-icon.svg — oltin DEBORAH favicon (2026-09 qarori: legacy cobalt o\'rniga)', () => {
+    it('logo-icon.svg — oltin DEBORAH favicon, alohida "D" olamati YO\'Q (2026-09 qarori)', () => {
       const s = readFileSync(join(ROOT, 'public', 'images', 'logo-icon.svg'), 'utf8');
       // Eski ko'k evidence-mark chiqarildi — endi oltin/jigarrang brending
       expect(s).not.toContain('#1746D1');
       expect(s).toMatch(/#E3C98F/); // oltin harf gradienti
-      expect(s).toMatch(/#8A6228|#5E4317/); // to'q jigarrang asos
-      expect(s).toContain('Deborah');
+      expect(s).toMatch(/#8A6228/); // to'q jigarrang asos/ramka
+      expect(s).toContain('Deborah'); // aria-label
+      // So'z belgisi (wordmark): DEBORAH matni bor...
+      expect(s).toMatch(/font-size=\s*"22"[^>]*>[^<]*DEBORAH</);
+      expect(s).toMatch(/>DEBORAH</);
+      // ...va alohida bitta-harf D olamati yo'q
+      expect(s).not.toMatch(/>D<\/text>/);
+      expect(s).not.toMatch(/>[^<]{0,3}<\/text>/);
     });
 
     it('barcha logo img alt="Deborah" (hech qanday alt="E")', () => {

@@ -1,18 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Deborah">
-  <!-- Deborah favicon/app mark — oltin vintage uslub (2026-09 qarori: ko'k legacy
-       evidence mark o'rniga issiq oltin/jigarrang DEBORAH belgisi). -->
+  <!-- Deborah favicon/app mark — oltin DEBORAH yozuvli belgi (2026-09 qarori:
+       alohida "D" harfi-olamati yo'q — so'z belgisi (wordmark) ishlatiladi). -->
   <defs>
-    <linearGradient id="gGold" x1="0" y1="0" x2="0.6" y2="1">
-      <stop offset="0%" stop-color="#8A6228"/>
-      <stop offset="100%" stop-color="#5E4317"/>
+    <linearGradient id="gTile" x1="0" y1="0" x2="0.6" y2="1">
+      <stop offset="0%" stop-color="#2B1F10"/>
+      <stop offset="100%" stop-color="#1B130A"/>
     </linearGradient>
-    <linearGradient id="gD" x1="0" y1="0" x2="0.6" y2="1">
+    <linearGradient id="gWord" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#F0D9A6"/>
       <stop offset="55%" stop-color="#E3C98F"/>
       <stop offset="100%" stop-color="#B98E4F"/>
     </linearGradient>
   </defs>
-  <rect x="4" y="4" width="120" height="120" rx="26" fill="url(#gGold)"/>
-  <rect x="6.5" y="6.5" width="115" height="115" rx="23.5" fill="none" stroke="#D9B465" stroke-opacity="0.55" stroke-width="2"/>
-  <text x="64" y="92" font-family="Georgia,'Times New Roman',serif" font-size="78" font-weight="700" fill="url(#gD)" text-anchor="middle">D</text>
+  <rect x="4" y="4" width="120" height="120" rx="26" fill="url(#gTile)"/>
+  <rect x="6.5" y="6.5" width="115" height="115" rx="23.5" fill="none" stroke="#8A6228" stroke-opacity="0.6" stroke-width="2"/>
+  <!-- DEBORAH so'z belgisi — alohida D-olamati yo'q -->
+  <text x="64" y="77" font-family="Georgia,'Times New Roman',serif" font-size="22" font-weight="700" letter-spacing="1.5" fill="url(#gWord)" text-anchor="middle">DEBORAH</text>
+  <line x1="34" y1="90" x2="94" y2="90" stroke="#B98E4F" stroke-opacity="0.55" stroke-width="1.6" stroke-linecap="round"/>
+  <circle cx="34" cy="90" r="1.8" fill="#C9A065" opacity="0.9"/>
+  <circle cx="94" cy="90" r="1.8" fill="#C9A065" opacity="0.9"/>
 </svg>
