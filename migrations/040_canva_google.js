@@ -11,8 +11,7 @@
  *
  *   - canva_connections: Canva Connect OAuth (PKCE) token vault —
  *     refresh_token va access_token ENCRYPTED (AES-256-GCM, key env'da);
- *     design_id, scope (faqat design:create:edit, design:content:read,
- *     design:export — full account scope YO'Q), callback mapping.
+ *     design_id, scope (faqat minimal Connect scopes — full account scope YO'Q), callback mapping.
  *   - google_connections: Google Slides OAuth token vault — scope faqat
  *     'drive.file' (minimum scope; full Drive restricted scope default
  *     olinmaydi — research §9.9), presentation_id, drive_file_id,
@@ -50,7 +49,7 @@ export async function up(db) {
     .addColumn('refresh_token_enc', 'text')
     .addColumn('token_expires_at', 'timestamp')
     .addColumn('scope', 'jsonb', (col) => col.defaultTo(sql`'[]'::jsonb`))
-    // faqat design:create:edit, design:content:read, design:export
+    // faqat minimal Connect scopes
     .addColumn('status', 'varchar(20)', (col) => col.notNull().defaultTo('active'))
     .addColumn('last_callback', 'jsonb', (col) => col.defaultTo(sql`'{}'::jsonb`))
     // { onDesignOpen, onDesignPublish, designUrl, editUrl }

@@ -171,7 +171,7 @@ describe('canva — link flow (Prompt 59 §9.8/§15)', () => {
     const session = {};
     const r = await mod.startCanvaLink({ session });
     expect(r.ok).toBe(true);
-    expect(r.url).toMatch(/canva\.com\/api\/oauth2\/authorize/);
+    expect(r.url).toMatch(/canva\.com\/api\/oauth\/authorize\?/);
     expect(r.url).toMatch(/code_challenge=.*S256/);
     expect(session.canvaOAuthState).toBeTruthy();
     expect(session.canvaVerifier).toBeTruthy();

@@ -16,7 +16,14 @@ import { encryptToken, decryptToken } from '../auth/token-vault.js';
 export { encryptToken, decryptToken };
 
 const CANVA_API = 'https://api.canva.com/rest';
-const CANVA_AUTH = 'https://www.canva.com/api/oauth2/authorize';
+const CANVA_TOKEN = 'https://api.canva.com/rest/v1/oauth/token';
+const CANVA_REVOKE = 'https://api.canva.com/rest/v1/oauth/revoke';
+
+/** Basic auth header (Canva Connect docs: base64(client_id:client_secret)). */
+function basicAuth(c) {
+  return `Basic ${Buffer.from(`${c.clientId}:${c.clientSecret}`).toString('base64')}`;
+}
+const CANVA_AUTH = 'https://www.canva.com/api/oauth/authorize';
 
 function getConfig() {
   return {
@@ -53,9 +60,9 @@ export function getCanvaAuthUrl({ state = '', challenge = '' } = {}) {
 export async function canvaExchangeCode({ code = '', verifier = '', fetchImpl = null } = {}) {
   const fn = fetchImpl || globalThis.fetch;
   const c = getConfig();
-  const res = await fn('https://api.canva.com/oauth2/token', {
+  const res = await fn(CANVA_TOKEN, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded', Authorization: basicAuth(c) },
     body: new URLSearchParams({
       grant_type: 'authorization_code',
       code,
@@ -81,9 +88,9 @@ export async function canvaExchangeCode({ code = '', verifier = '', fetchImpl = 
 export async function canvaRefreshToken({ refreshToken = '', fetchImpl = null } = {}) {
   const fn = fetchImpl || globalThis.fetch;
   const c = getConfig();
-  const res = await fn('https://api.canva.com/oauth2/token', {
+  const res = await fn(CANVA_TOKEN, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded', Authorization: basicAuth(c) },
     body: new URLSearchParams({
       grant_type: 'refresh_token',
       refresh_token: refreshToken,
@@ -103,9 +110,9 @@ export async function canvaRevoke({ accessToken = '', refreshToken = '', fetchIm
   const fn = fetchImpl || globalThis.fetch;
   const c = getConfig();
   if (refreshToken) {
-    await fn('https://api.canva.com/oauth2/revoke', {
+    await fn(CANVA_REVOKE, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', Authorization: basicAuth(c) },
       body: new URLSearchParams({
         client_id: c.clientId,
         client_secret: c.clientSecret,

@@ -44,7 +44,7 @@ import {
 
 export const CANVA_META = {
   configured: false,
-  scopes: ['design:create:edit', 'design:content:read', 'design:export'],
+  scopes: ['design:content:read', 'design:content:write', 'design:meta:read'],
   buttonCallbacks: ['onDesignOpen', 'onDesignPublish'],
   supports: { modal: true, connect: true, importPptx: true, importPdf: true, importDocx: true, export: true, tempEditUrl: true },
 };
@@ -83,7 +83,7 @@ export async function completeCanvaLink({ session = null, code = '', state = '',
   // maydoni qaytmaydi, shuning uchun haqiqiy himoya authorize URL'ning
   // minimal scope'lari (buildAuthUrlParams → CANVA_SCOPES). Bu faqat
   // future dev'lar minimal scope'ni kengaytirmasligi uchun qo'riqchi.
-  const scopeOk = assertCanvaScope(['design:create:edit', 'design:content:read', 'design:export']);
+  const scopeOk = assertCanvaScope(['design:content:read', 'design:content:write', 'design:meta:read']);
   if (!scopeOk.ok) return { ok: false, error: scopeOk.reason };
 
   const db = getDb();
@@ -101,7 +101,7 @@ export async function completeCanvaLink({ session = null, code = '', state = '',
       access_token_enc: encryptToken(t.accessToken),
       refresh_token_enc: encryptToken(t.refreshToken),
       token_expires_at: expiresAt,
-      scope: JSON.stringify(['design:create:edit', 'design:content:read', 'design:export']),
+      scope: JSON.stringify(['design:content:read', 'design:content:write', 'design:meta:read']),
       status: 'active',
     })
     .onConflict((oc) => oc.columns(['tenant_id', 'user_id']).doUpdateSet({
@@ -183,7 +183,7 @@ export async function handleButtonCallback({ payload = {}, actorId = null } = {}
       tenant_id: tenantId,
       user_id: userId,
       design_id: v.designId,
-      scope: JSON.stringify(['design:create:edit', 'design:content:read', 'design:export']),
+      scope: JSON.stringify(['design:content:read', 'design:content:write', 'design:meta:read']),
       status: 'active',
       last_callback: JSON.stringify({ type: v.type, designId: v.designId, designUrl: v.designUrl, editUrl: v.editUrl }),
     })

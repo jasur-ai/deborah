@@ -14,8 +14,8 @@
  *   - validateButtonCallback: Canva Button onDesignOpen/onDesignPublish
  *     payload validation (designId, state, timestamp).
  *   - mapDesignToArtifact: design → canonical artifact version mapping.
- *   - assertCanvaScope: faqat minimal scopes (design:create:edit,
- *     design:content:read, design:export) — full account scope YO'Q.
+ *   - assertCanvaScope: faqat minimal scopes (design:content:read,
+ *     design:content:write, design:meta:read) — full account scope YO'Q.
  *   - buildConnectTokenRequest: PKCE token exchange params.
  *   - mapImportArtifact: imported PPTX/PDF/DOCX → artifact kind.
  *   - validateCallbackState: state (CSRF) timing-safe tekshiruvi.
@@ -32,11 +32,11 @@
 
 import { createHash } from 'crypto';
 
-/** Minimal Canva Connect scopes (research §9.8 — full account scope yo'q). */
+/** Minimal Canva Connect scopes — Connect API'da ro'yxatdan o'tgan scopes (2026-09: design:create:edit/design:export legacy nomlar o'rniga joriy Connect scopes). */
 export const CANVA_SCOPES = [
-  'design:create:edit',
   'design:content:read',
-  'design:export',
+  'design:content:write',
+  'design:meta:read',
 ];
 
 /** Button callback types. */

@@ -38,7 +38,7 @@ describe('canva — PKCE (Prompt 59 §9.8)', () => {
 });
 
 describe('canva — auth URL params', () => {
-  it('includes only minimal scopes (design:create:edit etc.)', () => {
+  it('includes only minimal Connect scopes', () => {
     const p = buildAuthUrlParams({ clientId: 'c1', redirectUri: 'http://x/cb', state: 's1', challenge: 'ch1' });
     const scope = p.get('scope');
     expect(scope).toBe(CANVA_SCOPES.join(' '));
@@ -112,17 +112,17 @@ describe('canva — design → artifact mapping', () => {
 
 describe('canva — scope allowlist guard (§15)', () => {
   it('accepts minimal scopes', () => {
-    expect(assertCanvaScope(['design:create:edit', 'design:export']).ok).toBe(true);
+    expect(assertCanvaScope(['design:content:read', 'design:meta:read']).ok).toBe(true);
   });
 
   it('rejects full account scope', () => {
-    const r = assertCanvaScope(['design:create:edit', 'account:read']);
+    const r = assertCanvaScope(['design:content:read', 'account:read']);
     expect(r.ok).toBe(false);
     expect(r.reason).toMatch(/non-minimal/i);
   });
 
   it('handles space-separated string input', () => {
-    const r = assertCanvaScope('design:create:edit account:read');
+    const r = assertCanvaScope('design:content:read account:read');
     expect(r.ok).toBe(false);
     expect(r.invalid).toContain('account:read');
   });
