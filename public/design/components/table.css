@@ -137,6 +137,19 @@
   .dt-wrap.is-reflow .dt .dt-cell-actions {
     grid-column: 2; grid-row: 1; display: flex; align-items: center; gap: 4px;
   }
+  /* rev.4: JS-render qilingan (klasssiz) qatorlar ham karta bo'lsin —
+     aks holda admin jadvallari telefonda gorizontal siljiydi. */
+  .dt-wrap.is-reflow .dt tbody tr:not(.dt-row) {
+    display: grid; grid-template-columns: 1fr; gap: 4px; padding: 10px 12px; margin-bottom: 8px; white-space: normal;
+    border: 1px solid var(--deborah-semantic-color-border-default, var(--deborah-semantic-color-border-subtle));
+    border-radius: var(--deborah-radius-md, 12px); background: var(--deborah-semantic-color-surface-raised);
+  }
+  .dt-wrap.is-reflow .dt tbody tr:not(.dt-row) td {
+    display: block; border: none; padding: 0; white-space: normal; text-align: left !important; font-size: .8rem; line-height: 1.5;
+  }
+  .dt-wrap.is-reflow .dt tbody tr:not(.dt-row) td:first-child { display: none; }
+  .dt-wrap.is-reflow .dt tbody tr:not(.dt-row) td:last-child { margin-top: 4px; }
+  .dt-wrap.is-reflow .dt tbody td[data-label]::before { content: attr(data-label) ": "; opacity: .65; font-weight: 700; font-size: .75rem; }
   .dt-wrap.is-reflow .dt .dt-cell-meta {
     grid-column: 1 / -1; font-size: .72rem; color: var(--deborah-semantic-color-text-muted, var(--deborah-semantic-color-text-muted));
     display: flex; flex-wrap: wrap; gap: 4px 12px;

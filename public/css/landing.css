@@ -417,3 +417,38 @@ input#rUser.err{border-color:#c98a5c}
   .screen .sc-body{padding:16px 13px}
   .ftr{padding:34px 16px 22px}
 }
+
+/* ═══ rev.4 MOBIL (≤640px) — landing: kontrollar ≥44px, matn ≥12px ═══
+   (eski mobile.css "7. Landing" qoidalari — !important'siz; blok fayl oxirida,
+   teng spetsifikada tartib bo'yicha yutadi. .hmenu a: flex (stack saqlanadi)) */
+@media (max-width: 640px) {
+  .hero h1, .h1 { font-size: clamp(1.6rem, 8.5vw, 2.3rem); line-height: 1.18; }
+  .lang button, .lang .lbtn { min-width: 44px; min-height: 44px; font-size: .8rem; padding: 6px 4px; }
+  .join-card .close, #joinClose { min-width: 44px; min-height: 44px; }
+  .join-card a, .join-card button, .join-card .btn, .hmenu button { min-height: 44px; display: inline-flex; align-items: center; }
+  .hmenu a { min-height: 44px; min-width: 44px; display: flex; align-items: center; font-size: .82rem; }
+  .nav a, .hdr nav a { min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; font-size: .82rem; }
+  /* Landing mikro-yorliqlari ≥12px */
+  .k, .sc-code, .sc-meta, .steps .k, .roles .k, .signal .k,
+  #scTime, .beam .k, .mock .k, .phone .k { font-size: .75rem; }
+  /* (0,2,0) raqiblar (.join-head .k, .beam .tx, .opt .k/.pct) — teng spec, tartib yutadi */
+  .join-head .k, .auth-head .k, .admin-head .k,
+  .beam .tx, .opt .k, .opt .pct { font-size: .75rem; }
+  .feat .t, .steps .t, .signal .t { font-size: .78rem; }
+  /* Demo/sahna maket markaplari ≥12px */
+  .sc-foot span, .sc-head span, .beam span,
+  .hero-mock span, .sc-live, .sc-live span { font-size: .75rem; }
+  /* Auth karta label'lari (.fld label .56rem raqib — teng spec, tartib yutadi) */
+  .fld label, .afld label { font-size: .75rem; }
+  /* Auth karta tablari */
+  .tabs button, .tabs a { min-height: 44px; font-size: .85rem; }
+  /* Footer */
+  .ftr a, .foot a, .foot-col a, .ftr-col a { min-height: 44px; display: inline-flex; align-items: center; font-size: .82rem; }
+  .ftr p, .ftr span, .ftr small, .ftr-copy { font-size: .78rem; }
+  .ftr h4, .ftr h3 { font-size: .82rem; letter-spacing: .04em; }
+  .foot-cols { flex-direction: column; gap: 18px; }
+  .tbtn, .hbtn { min-width: 44px; min-height: 44px; }
+  .kbtn { min-height: 44px; display: inline-flex; align-items: center; padding: 10px 16px; font-size: .9rem; }
+  .logo-word { font-size: .82rem; letter-spacing: .34em; }
+  .btn-gold, .btn { min-height: 44px; font-size: .92rem; }
+}

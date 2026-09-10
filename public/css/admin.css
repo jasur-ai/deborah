@@ -1025,3 +1025,28 @@ body.theme-light:has(.admin-panel) {
 [data-theme="light"] body:has(.admin-panel)::before { background-image: linear-gradient(rgba(99,112,255,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(99,112,255,.07) 1px, transparent 1px); }
 /* C4-10 rev.4: env kalitlari ko'rsatish */
 .adm-env-pre{background:#10151c;color:#f0e6d2;padding:8px 10px;border-radius:8px;margin:4px 0;font-size:.8rem;line-height:1.7;overflow-x:auto;border:1px solid #2a3441}
+
+/* ═══ rev.4 MOBIL (≤640px) — admin panel telefonda ham ishlashi ═══ */
+@media (max-width: 640px) {
+  /* Gorizontal overflow'ni to'xtatish: flex bolalari qisqarishi shart */
+  .adm-shell, .admin-layout, .adm-main, .admin-main, main { min-width: 0; max-width: 100%; }
+  .adm-row, .admin-stats-row, .adm-form .adm-row { flex-wrap: wrap; gap: 10px; }
+  .adm-card, .admin-panel, .adm-sidebar, .admin-sidebar { max-width: 100%; box-sizing: border-box; }
+  img, svg, table { max-width: 100%; }
+  /* Uzun jadval/kontent — sahifa emas, o'zi gorizontal scroll bo'lsin */
+  .adm-main table, .admin-panel table, .table-wrap { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .adm-main pre, .admin-panel pre { overflow-x: auto; }
+  /* Topbar va tugmalar ≥44px */
+  .admin-navbar { height: auto; min-height: 56px; flex-wrap: wrap; row-gap: 6px; padding: 8px 12px; }
+  .admin-navbar > div { flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+  .admin-nav-btn, .adm-btn, .admin-edit-btn, .admin-del-btn, .admin-refresh-btn { min-height: 44px; padding: 11px 13px; }
+  .admin-refresh-btn { min-width: 44px; }
+  .adm-sidebar a, .admin-sidebar a { min-height: 44px; display: flex; align-items: center; }
+  .input, .inp, select.input, input.input, .adm-form input, .adm-form select { min-height: 44px !important; font-size: .88rem !important; }
+  /* Matnlar 12px'dan kichik bo'lmasin */
+  .admin-nav-badge, .adm-side-label, .stat-lbl, .admin-page-sub, .text-muted, .sr-only,
+  .badge, .admin-badge, .chip, .adm-chip { font-size: .75rem !important; }
+  .admin-del-btn, .admin-edit-btn, .admin-page-sub { font-size: .78rem !important; }
+  .adm-hint, .adm-hint li, .adm-card li, .adm-card p { font-size: .78rem !important; }
+  .admin-page-title, .adm-topbar h1 { font-size: 1.05rem; }
+}

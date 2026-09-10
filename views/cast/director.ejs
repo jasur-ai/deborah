@@ -15,6 +15,7 @@
     window.__BOOT__ = <%- JSON.stringify(boot).replace(/</g, '\\u003c') %>;
     window.__CSRF_TOKEN = '<%= boot.csrfToken %>';
   </script>
+  <%- include('../partials/critical-mobile-css') %>
 </head>
 <% const SIMPLE = !!(boot && boot.simple); %>
 <body class="cast-page<% if (SIMPLE) { %> cast-simple<% } %>" data-cast-theme="focus_dark">

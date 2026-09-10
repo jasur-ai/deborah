@@ -49,7 +49,14 @@
     .warn-box{background:rgba(217,119,6,.09);border:1px solid rgba(217,119,6,.3);border-radius:12px;padding:12px 14px;font-size:.78rem;font-weight:700;color:#b45309;margin-top:12px;line-height:1.5;}
     .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
     @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important;}}
-  </style>
+  
+    /* rev.4 mobil */
+    @media (max-width: 640px){
+      .role-badge{font-size:.75rem;padding:4px 12px;}
+      .btn, .btn-quiet{min-height:44px;}
+      .nav-btn{min-height:44px;}
+    }
+</style>
 </head>
 <% /* Profil sahifasi i18n (4 til) — USER_PAGES.profile + pageLang (route) */
    const _PC = typeof pageCopy !== 'undefined' ? pageCopy : null;

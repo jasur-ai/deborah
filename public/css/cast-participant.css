@@ -1640,3 +1640,19 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
 .part-brand{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:12px}
 .part-brand .part-title{margin:0}
 .part-brand-emblem{height:64px;width:auto;border-radius:12px;box-shadow:0 6px 16px rgba(0,0,0,.25)}
+
+/* ═══ rev.4 MOBIL (≤640px) — ishtirokchi sahifasi telefon-first ═══ */
+@media (max-width: 640px) {
+  /* a11y bar (fixed, o'ng-yuqori) topbar'dagi ulanish chipi ustiga tushmasin:
+     topbar'ga o'ng tomondan joy ajratamiz (bar ≈ 2×44 + gap). */
+  .part-topbar { padding-inline-end: 108px; gap: 8px; }
+  .part-netstatus, .part-status { max-width: 42vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cast-a11y-bar { top: calc(8px + env(safe-area-inset-top, 0px)); right: 10px; gap: 6px; }
+  .cast-a11y-bar .cast-icon-btn { width: 44px; height: 44px; }
+  /* Matnlar ≥12px */
+  .join-step-num { font-size: .78rem; }
+  .join-step-text, .join-hint, .part-hint { font-size: .8rem; }
+  .part-timer { font-size: 1.35rem; }
+  /* Javob variantlari barmoq uchun kattaroq */
+  .part-option, .part-answer-btn { min-height: 56px; font-size: .95rem; }
+}

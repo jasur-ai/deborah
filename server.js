@@ -27,6 +27,7 @@ import { Server } from 'socket.io';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { existsSync, readFileSync } from 'fs'; // rev.4: kritik mobil CSS'ni bir marta o'qish uchun
 
 // ── Deborah config modules ──
 import CONFIG from './src/config/env.js';
@@ -284,11 +285,27 @@ export async function createApp() {
   app.set('authRateLimiter', authRateLimiter);
 
   // ── CSRF token generation ──
+  // ── Kritik mobil CSS (rev.4) — public/css/mobile.css inline qilinadi ──
+  // Mobil-first sahifalarda render-blocking so'rov bo'lmasin; manba fayl
+  // scripts/mobile-audit.mjs bilan tekshiriladi (21 sahifa).
+  const mobileCssFile = join(__dirname, 'public', 'css', 'mobile.css');
+  const mobileCriticalCss = existsSync(mobileCssFile) ? readFileSync(mobileCssFile, 'utf8') : '';
+  app.use((req, res, next) => {
+    res.locals.mobileCriticalCss = mobileCriticalCss;
+    next();
+  });
+
   app.use((req, res, next) => {
     if (!req.session.csrfToken) {
       req.session.csrfToken = crypto.randomBytes(32).toString('hex');
     }
     res.locals.csrfToken = req.session.csrfToken;
+    // C4-10 rev.4: route'lar ko'p joyda `csrfToken: req.csrfToken?.()` bilan
+    // render qiladi. Ilgari bu metod yo'q edi → locals'ni `undefined` bilan
+    // bosib ketardi va sahifadagi `const CSRF = ''` bo'lib qolardi (admin
+    // formalaridagi POST'lar 403 "CSRF token validation failed" berardi).
+    // Bu yerda yagona manba: js-express `req.csrfToken()` bilan mos API.
+    req.csrfToken = () => req.session.csrfToken;
     next();
   });
 

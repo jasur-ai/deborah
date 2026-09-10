@@ -1,0 +1,5 @@
+<%# rev.4: mobil normalizator qatlami (public/css/mobile.css) — inline kritik CSS.
+    Nega inline: (a) mobil-first sahifalarda render-blocking so'rov yo'q;
+    (b) app-shell CSS byudjeti (S38.02 ≤60KB) bekorga oshmaydi.
+    Manba: public/css/mobile.css — serverda bir marta o'qiladi (res.locals). %>
+<% if (typeof mobileCriticalCss !== 'undefined' && mobileCriticalCss) { %><style<%= typeof mobileCssNonce !== 'undefined' && mobileCssNonce ? ' nonce="' + mobileCssNonce + '"' : '' %>><%- mobileCriticalCss %></style><% } %>

@@ -178,7 +178,18 @@
       body{background:#fff;color:#000;}
       .qcard,.res-card,.pr-review{box-shadow:none;background:#fff;color:#000;border:1px solid #bbb;}
     }
-  </style>
+  
+    /* rev.4 mobil: savol nuqtalari va variant harflari telefonda qulay */
+    @media (max-width: 640px){
+      .pr-dot{min-width:44px;min-height:44px;}
+      .pr-dot.cur{transform:scaleY(1.15);}
+      .pr-dots{gap:8px;}
+      .qtile .qt-let{font-size:.8rem;}
+      .qtile{min-height:56px;}
+      .pr-badge{font-size:.78rem;}
+      .pr-back{min-height:44px;display:inline-flex;align-items:center;}
+    }
+</style>
 </head>
 <body>
   <header class="pr-top">

@@ -69,7 +69,10 @@ function read(rel) {
 }
 
 function gzipKb(publicRel) {
-  const abs = join(ROOT, 'public', publicRel.replace(/^\//, ''));
+  // rev.4 fix: cache-buster query (?v=...) va fragment (#...) fayl yo'lidan
+  // tozalanadi — aks holda mavjud asset "missing" deb noto'g'ri sanaladi.
+  const clean = publicRel.replace(/^\//, '').split(/[?#]/, 1)[0];
+  const abs = join(ROOT, 'public', clean);
   if (!existsSync(abs)) return { missing: true, kb: 0 };
   return { missing: false, kb: Math.round(zlib.gzipSync(readFileSync(abs)).length / 1024) };
 }

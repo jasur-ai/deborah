@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/admin.css?v=nv4">
   <link rel="stylesheet" href="/design/admin-command.css">
+  <%- include('../partials/critical-mobile-css') %>
 </head>
 <body class="adm-body">
   <div class="adm-shell">
@@ -50,6 +51,21 @@ CANVA_REDIRECT_URI=https://deborah-ncj.onrender.com/api/admin/canva/callback</pr
             So‘ng serverni qayta ishga tushiring — bu sahifada «Configured ✓» chiqadi va «Link Canva (OAuth)» ishlay boshlaydi.
           </li>
         </ol>
+      </section>
+      <section class="adm-card">
+        <h2>Kalitlarni shu yerdan kiritish (server .env shart emas)</h2>
+        <p class="adm-hint">Canva Connect app'dan olingan qiymatlarni kiriting — ular serverda <b>shifrlangan</b> holda saqlanadi (AES-256-GCM) va darhol ishlaydi. Maydonlarni bo'sh qoldirsangiz — mavjud qiymat saqlanib qoladi.</p>
+        <div class="adm-form">
+          <div class="adm-row">
+            <div class="field"><label>Client ID</label><input class="input" id="cred-client-id" placeholder="OC-…" autocomplete="off"></div>
+            <div class="field"><label>Client Secret</label><input class="input" id="cred-client-secret" type="password" placeholder="•••••••" autocomplete="new-password"></div>
+          </div>
+          <div class="adm-row">
+            <div class="field" style="flex:2"><label>Redirect URI</label><input class="input" id="cred-redirect-uri" placeholder="https://SIZNING-DOMAIN/api/admin/canva/callback"></div>
+            <button class="btn btn-primary" id="btnSaveCreds">Saqlash</button>
+          </div>
+          <span class="adm-hint" id="credStatus"></span>
+        </div>
       </section>
       <section class="adm-card">
         <h2>Canva Button / Connect</h2>
@@ -104,6 +120,40 @@ CANVA_REDIRECT_URI=https://deborah-ncj.onrender.com/api/admin/canva/callback</pr
   const CSRF = '<%= csrfToken || "" %>';
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  // ── C4-10 rev.4: kalitlarni shu yerdan saqlash ──
+  async function loadCredStatus() {
+    try {
+      const r = await api('/api/admin/canva/status');
+      const c = r.credentials || {};
+      if ($('cred-client-id')) $('cred-client-id').placeholder = c.clientIdMasked || 'OC-…';
+      if ($('cred-redirect-uri') && c.redirectUri) $('cred-redirect-uri').value = c.redirectUri;
+      if ($('credStatus')) $('credStatus').textContent = c.configured
+        ? `Sozlangan ✓ (manba: ${c.source === 'env' ? 'server env' : 'admin panel'})`
+        : 'Hozircha sozlanmagan — Client ID va Secret kiriting.';
+    } catch (_) { /* jim */ }
+  }
+
+  document.getElementById('btnSaveCreds')?.addEventListener('click', async () => {
+    const btn = $('btnSaveCreds');
+    btn.disabled = true;
+    try {
+      const r = await api('/api/admin/canva/credentials', {
+        method: 'POST',
+        body: {
+          clientId: $('cred-client-id').value.trim(),
+          clientSecret: $('cred-client-secret').value,
+          redirectUri: $('cred-redirect-uri').value.trim(),
+        },
+      });
+      $('credStatus').textContent = 'Saqlandi ✓ — endi «Link Canva (OAuth)» ishlaydi.';
+      $('cred-client-secret').value = '';
+      loadCredStatus();
+    } catch (e) {
+      $('credStatus').textContent = 'Xato: ' + (e.message || e);
+    } finally { btn.disabled = false; }
+  });
+  loadCredStatus();
 
   async function api(path, opts = {}) {
     const res = await fetch(path, {

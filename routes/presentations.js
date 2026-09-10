@@ -19,6 +19,7 @@
 import { Router } from 'express';
 import { fb } from '../firebase/admin.js';
 import { requireAuth } from '../middleware/auth.js';
+import { isProviderConfigured } from '../src/modules/integrations/credentials.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -219,8 +220,8 @@ router.get('/presentations', async (req, res) => {
     fmtDate: (ts) => new Date(ts || Date.now()).toLocaleDateString(localeOf(lang)),
     username: user.username,
     // C4-10 rev.3: rasmiy (OAuth) integratsiya holati — env kalitlariga qarab
-    canvaConfigured: Boolean(process.env.CANVA_CLIENT_ID && process.env.CANVA_CLIENT_SECRET && process.env.CANVA_REDIRECT_URI),
-    googleSlidesConfigured: Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_REDIRECT_URI),
+    canvaConfigured: isProviderConfigured('canva'),
+    googleSlidesConfigured: isProviderConfigured('google-slides'),
     canManageProviders: ['admin', 'board'].includes(user.role),
   });
 });

@@ -31,6 +31,20 @@ function actorId(req) {
   return req.session?.admin?.id || req.session?.admin?.username || req.session?.user?.id || 0;
 }
 
+/** POST /api/admin/google-slides/credentials — kalitlarni shifrlab saqlash. */
+router.post('/api/admin/google-slides/credentials', requireAdmin, async (req, res, next) => {
+  try {
+    const { saveProviderConfig, getProviderStatus } = await import('../src/modules/integrations/credentials.js');
+    const r = saveProviderConfig('google-slides', {
+      clientId: req.body?.clientId,
+      clientSecret: req.body?.clientSecret,
+      redirectUri: req.body?.redirectUri,
+    });
+    if (!r.ok) return res.status(400).json({ error: r.error });
+    res.json({ ok: true, status: getProviderStatus('google-slides') });
+  } catch (e) { next(e); }
+});
+
 /** GET /api/admin/google-slides/status — config/scope status. */
 router.get('/api/admin/google-slides/status', requireAdmin, (req, res) => {
   res.json({ ...GOOGLE_SLIDES_META, configured: Boolean(process.env.GOOGLE_CLIENT_ID) });

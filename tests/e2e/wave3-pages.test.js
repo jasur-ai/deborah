@@ -28,17 +28,15 @@ afterAll(async () => { if (ctx) await ctx.close().catch(() => {}); await stopE2E
 
 describe('C4-10 rev.3 sahifalar', () => {
   it('hub banner + yakka mashq 2×2 iliq grid + panel faqat-bitta-kengayadi va iliq/dark ranglar', async () => {
-    // ── Hub: rasmiy ulanish holati ──
+    // ── Hub: rev.4 — "rasmiy ulanish" banneri OLIB TASHLANDI (talab) ──
     const hub = await newPage(ctx);
     await hub.goto(`${serverUrl}/user/presentations`, { waitUntil: 'domcontentloaded' });
     const iconHref = await hub.locator('link[rel="icon"]').first().getAttribute('href');
     expect(iconHref, 'favicon yangi logo').toContain('logo-icon.svg');
-    await hub.waitForSelector('.ps-prov', { timeout: 8000 });
-    const provText = await hub.locator('.ps-prov').innerText();
-    expect(provText, 'banner Canva kalit holati').toContain('kalitlar kiritilmagan');
-    expect(provText, 'banner Google kalit holati').toContain('GOOGLE_CLIENT_ID');
-    expect(await hub.locator('.ps-prov a[href*="/admin/"]').count(), 'student uchun admin havola yo‘q').toBe(0);
-    await hub.screenshot({ path: `${SHOTS}/hub-provider-banner.png` }).catch(() => {});
+    expect(await hub.locator('.ps-prov').count(), 'rasmiy-ulanish banneri yo‘q').toBe(0);
+    const hubText = await hub.locator('.ps-hub').innerText();
+    expect(hubText, 'kalit haqidagi gap yo‘q').not.toContain('kalitlar kiritilmagan');
+    await hub.screenshot({ path: `${SHOTS}/hub-presentations.png`, fullPage: false }).catch(() => {});
     await hub.close().catch(() => {});
 
     // ── Yakka mashq: ut1 (eski shakl: {text,isCorrect} variantlar) ──

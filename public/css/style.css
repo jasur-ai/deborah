@@ -1,12 +1,6 @@
-/* ═══════════════════════════════════════════════════════════════
-   Deborah — Premium Design System v3.0
-   Inspired by Stripe, Linear, Vercel, Apple, Resend
-   Dark/light transitions: 800ms buttery smooth
-   ═══════════════════════════════════════════════════════════════ */
+/* Deborah — Premium Design System v3.0 (Stripe/Linear/Vercel/Apple/Resend inspired) */
 
-/* ═══════════════════════════════════════════════════════════════
-   1. DESIGN TOKENS — CSS Custom Properties
-   ═══════════════════════════════════════════════════════════════ */
+/* ── 1. DESIGN TOKENS ── */
 
 :root {
   /* ── Background System ──
@@ -302,10 +296,6 @@ body.theme-light .btn-ghost:hover:not(:disabled) {
    qaytarmaydi; reduced-motion'da instant. `data-theme-transition` LEGACY
    attribute — eski kutubxonalar uchun inert, hech qanday transition yozmaydi.
    ═══════════════════════════════════════════════════════════════ */
-[data-theme-transition] {
-  /* eski API — endi hech narsa qilmaydi (S07.06 migration) */
-}
-
 
 /* ═══════════════════════════════════════════════════════════════
    2. RESET & BASE
@@ -721,7 +711,7 @@ tbody tr:hover td { background: rgba(59,130,246,.03); }
   .box-title { font-size: 1rem; }
   .ct-header { flex-direction: column; gap: 8px; align-items: flex-start; }
   .btn { padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-4, 16px) font-size: .85rem; min-height: 44px; } /* S36.09: WCAG 2.5.8 touch target */
-  .inp { padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-3, 12px) font-size: .85rem; min-height: 42px; }
+  .inp { padding: var(--deborah-spacing-3, 12px) var(--deborah-spacing-3, 12px) font-size: .85rem; min-height: 44px; }
   .q-card { padding: 12px; }
   .q-row { flex-direction: column; }
   .opt-row { flex-wrap: wrap; }
@@ -917,3 +907,17 @@ body.shell-open .shell-sidebar { transform: translateX(0); }
 .pwa-install-close{min-height:44px;min-width:44px;border:none;background:transparent;color:var(--deborah-semantic-color-text-muted,#8b93a7);font-size:1.3rem;cursor:pointer;flex-shrink:0;border-radius:8px;}
 .pwa-install-close:hover{background:rgba(255,255,255,.08);color:var(--deborah-semantic-color-text-primary);}
 @media(max-width:480px){.pwa-install-banner{flex-wrap:wrap;}.pwa-install-btn{flex:1;}}
+
+/* ═══════════════════════════════════════════════════════════════════
+   rev.4 MOBIL (≤640px) — global qatlam: /css/mobile.css (head.ejs oxirida,
+   barcha sahifalarga ulanadi). Bu yerda faqat shu view'ga xos qismi:
+   drawer ichidagi tafsilotlar va topbar o'lchamlari.
+   ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .shell-burger, .shell-close { padding: 10px; }
+  .shell-nav-sec { padding: 14px 12px 6px; }
+  .shell-nav-ico svg { width: 18px; height: 18px; }
+  .shell-role-chip { margin: 4px 10px 10px; padding: 10px 12px; }
+  .nav-btn { padding: 11px 14px; font-size: .85rem; }
+  .nav-logo-img, .nav-logo .logo-img { height: 34px; }
+}

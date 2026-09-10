@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/admin.css?v=nv4">
   <link rel="stylesheet" href="/design/admin-command.css">
+  <%- include('../partials/critical-mobile-css') %>
 </head>
 <body class="adm-body">
   <div class="adm-shell">
@@ -37,6 +38,22 @@
         <h1>Google Slides Adapter</h1>
         <span class="adm-chip" id="connStatus">Tekshirilmoqda…</span>
       </header>
+      <section class="adm-card">
+        <h2>Kalitlarni shu yerdan kiritish (server .env shart emas)</h2>
+        <p class="adm-hint">Google Cloud OAuth client qiymatlarini kiriting — serverda <b>shifrlangan</b> holda saqlanadi (AES-256-GCM). Bo'sh maydon — mavjud qiymat saqlanib qoladi.</p>
+        <div class="adm-form">
+          <div class="adm-row">
+            <div class="field"><label>Client ID</label><input class="input" id="gs-client-id" placeholder="…apps.googleusercontent.com" autocomplete="off"></div>
+            <div class="field"><label>Client Secret</label><input class="input" id="gs-client-secret" type="password" placeholder="•••••••" autocomplete="new-password"></div>
+          </div>
+          <div class="adm-row">
+            <div class="field" style="flex:2"><label>Redirect URI</label><input class="input" id="gs-redirect-uri" placeholder="https://SIZNING-DOMAIN/api/admin/google-slides/callback"></div>
+            <button class="btn btn-primary" id="btnSaveCredsGs">Saqlash</button>
+          </div>
+          <span class="adm-hint" id="gsCredStatus"></span>
+        </div>
+      </section>
+
 
 
       <section class="adm-card">
@@ -143,6 +160,37 @@ GOOGLE_REDIRECT_URI=https://deborah-ncj.onrender.com/api/admin/google-slides/cal
   });
 
   loadStatus();
+})();
+</script>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  async function loadGsStatus() {
+    try {
+      const r = await fetch('/api/admin/google-slides/status', { credentials: 'same-origin' });
+      const j = await r.json();
+      const c = j.credentials || {};
+      if ($('gs-client-id')) $('gs-client-id').placeholder = c.clientIdMasked || '…apps.googleusercontent.com';
+      if ($('gs-redirect-uri') && c.redirectUri) $('gs-redirect-uri').value = c.redirectUri;
+      if ($('gsCredStatus')) $('gsCredStatus').textContent = c.configured
+        ? `Sozlangan ✓ (manba: ${c.source === 'env' ? 'server env' : 'admin panel'})`
+        : 'Hozircha sozlanmagan — Client ID va Secret kiriting.';
+    } catch (_) {}
+  }
+  $('btnSaveCredsGs')?.addEventListener('click', async () => {
+    const csrf = '<%= csrfToken || "" %>';
+    try {
+      const r = await fetch('/api/admin/google-slides/credentials', {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrf },
+        body: JSON.stringify({ clientId: $('gs-client-id').value.trim(), clientSecret: $('gs-client-secret').value, redirectUri: $('gs-redirect-uri').value.trim() }),
+      });
+      const j = await r.json().catch(() => ({}));
+      $('gsCredStatus').textContent = r.ok ? 'Saqlandi ✓' : ('Xato: ' + (j.error || r.status));
+      if (r.ok) { $('gs-client-secret').value = ''; loadGsStatus(); }
+    } catch (e) { $('gsCredStatus').textContent = 'Xato: ' + e.message; }
+  });
+  loadGsStatus();
 })();
 </script>
 </body>

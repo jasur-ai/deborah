@@ -23,6 +23,8 @@
     "test:ci": "vitest run",
     "test:watch": "vitest",
     "test:views": "node scripts/test-views.js",
+    "audit:mobile": "NODE_ENV=test node scripts/mobile-audit.mjs",
+    "test:mobile": "NODE_ENV=test npx vitest run tests/e2e/mobile-smoke.test.js",
     "test:views:http": "node scripts/test-views-http.js",
     "test:visual": "playwright test",
     "test:visual:update": "playwright test --update-snapshots",

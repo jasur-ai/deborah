@@ -64,3 +64,12 @@ jobs:
         run: npm run test:vip
         env:
           PORT: 3458
+
+      # C4-10 rev.4 — foydalanuvchilarning aksari telefonda: mobil regressiya
+      # darvozasi (390×844). Gorizontal siljish, <44px nishon, <12px matn.
+      # To'liq 21-sahifa auditi: `npm run audit:mobile` (qo'lda ishlatiladi).
+      - name: Mobile smoke (390×844)
+        run: npm run test:mobile
+        env:
+          NODE_ENV: test
+          SESSION_SECRET: ci-secret-for-testing

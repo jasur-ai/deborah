@@ -11,6 +11,10 @@ data/db.json
 data/*.json
 data/backups/
 data/uploads/
+# Integratsiya kalitlari (Canva/Google) — AES-256-GCM bilan shifrlangan bo'lsa ham
+# repo'ga chiqmaydi: kalit qo'lda/admin panelda kiritiladi (C4-10 rev.4)
+data/*.enc
+data/integration-credentials.json.enc
 # Firebase service account (maxfiy kalit — hech qachon commit qilinmaydi)
 *-firebase-adminsdk-*.json
 firebase-service-account.json

@@ -35,7 +35,15 @@
     .status-msg.ok{color:var(--green);}
     .status-msg.fail{color:var(--deborah-semantic-color-action-primary);}
     @media(max-width:600px){.toggle-row{align-items:flex-start;}.save-bar{flex-direction:column;}.save-btn{width:100%;justify-content:center;}}
-  </style>
+  
+    /* rev.4 mobil */
+    @media (max-width: 640px){
+      .toggle-desc{font-size:.78rem;}
+      .locked-note{font-size:.75rem;padding:4px 9px;}
+      .toggle-row, .toggle-item{min-height:56px;}
+      .switch, .toggle{min-width:52px;min-height:44px;}
+    }
+</style>
 </head>
 <body>
   <a href="#main" class="skip-link"><%= notifCopy.skip || 'Asosiy qismga o\u2019tish →' %></a>

@@ -12,6 +12,7 @@
 
 import { CANVA_SCOPES } from './canva.schema.js';
 import { encryptToken, decryptToken } from '../auth/token-vault.js';
+import { getProviderConfig } from '../integrations/credentials.js';
 
 export { encryptToken, decryptToken };
 
@@ -26,11 +27,9 @@ function basicAuth(c) {
 const CANVA_AUTH = 'https://www.canva.com/api/oauth/authorize';
 
 function getConfig() {
-  return {
-    clientId: process.env.CANVA_CLIENT_ID || '',
-    clientSecret: process.env.CANVA_CLIENT_SECRET || '',
-    redirectUri: process.env.CANVA_REDIRECT_URI || '',
-  };
+  // C4-10 rev.4: env ustuvor; bo'lmasa admin panelda kiritilgan (shifrlangan)
+  // kalitlar ishlatiladi — Render dashboard'siz ham ulanish ishlaydi.
+  return getProviderConfig('canva');
 }
 
 export function isCanvaConfigured() {

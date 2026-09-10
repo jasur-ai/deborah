@@ -198,11 +198,17 @@ body.shell-open { overflow: hidden; }
     border-left: 1px solid var(--deborah-semantic-color-border-default);
     padding: calc(var(--deborah-spacing-4, 16px) + env(safe-area-inset-top, 0px))
              var(--deborah-spacing-3, 12px) calc(var(--deborah-spacing-4, 16px) + env(safe-area-inset-bottom, 0px));
-    transform: translateX(100%); transition: transform .3s ease;
+    transform: translateX(100%); visibility: hidden; /* yopiq drawer sahifani siljitmasin */
+    transition: transform .3s ease, visibility 0s linear .3s;
   }
-  body.nav-open .nav-links { transform: translateX(0); }
-  .nav-links .nav-link { padding: 11px 10px; font-size: .84rem; }
+  body.nav-open .nav-links { transform: none; visibility: visible; transition: transform .3s ease, visibility 0s; }
+  .nav-links .nav-link { padding: 11px 10px; font-size: .84rem; min-height: 48px; display: flex; align-items: center; }
   .nav-toggle .nav-burger { display: inline-flex; }
+  /* rev.4: topbar tor ekranda siljimasin + burger 44px */
+  .nav-inner, .nav-toggle { flex-wrap: wrap; row-gap: 6px; }
+  .nav-toggle { justify-content: flex-end; gap: 6px; max-width: 100%; }
+  .nav-toggle > * { min-width: 0; }
+  .nav-burger { min-width: 44px; min-height: 44px; align-items: center; justify-content: center; }
 }
 .nav-burger { display: none; }
 

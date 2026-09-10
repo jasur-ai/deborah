@@ -35,12 +35,33 @@ function actorId(req) {
   return req.session?.admin?.id || req.session?.admin?.username || req.session?.user?.id || 0;
 }
 
+/**
+ * POST /api/admin/canva/credentials — kalitlarni serverda (shifrlangan) saqlash.
+ * C4-10 rev.4: Render/CI'da .env tahrirlash imkoni bo'lmasa ham ulanish yoqiladi.
+ * Bo'sh maydon — mavjud qiymat saqlanadi (secret qayta yozilmaydi).
+ */
+router.post('/api/admin/canva/credentials', requireAdmin, async (req, res, next) => {
+  try {
+    const { saveProviderConfig, getProviderStatus } = await import('../src/modules/integrations/credentials.js');
+    const r = saveProviderConfig('canva', {
+      clientId: req.body?.clientId,
+      clientSecret: req.body?.clientSecret,
+      redirectUri: req.body?.redirectUri,
+    });
+    if (!r.ok) return res.status(400).json({ error: r.error });
+    res.json({ ok: true, status: getProviderStatus('canva') });
+  } catch (e) { next(e); }
+});
+
 /** GET /api/admin/canva/status — config/scope status. */
 router.get('/api/admin/canva/status', requireAdmin, async (req, res, next) => {
   // BUG-022: status faqat CLIENT_ID'ni tekshirardi, link esa clientId+clientSecret+redirectUri
   // talab qilardi → "configured ✓" + "Canva not configured" qarama-qarshiligi. Yagona manba:
   const { isCanvaConfigured } = await import('../src/modules/canva/canva.client.js');
-  try { res.json({ ...CANVA_META, configured: isCanvaConfigured() }); } catch (e) { next(e); }
+  try {
+    const { getProviderStatus } = await import('../src/modules/integrations/credentials.js');
+    res.json({ ...CANVA_META, configured: isCanvaConfigured(), credentials: getProviderStatus('canva') });
+  } catch (e) { next(e); }
 });
 
 /** POST /api/admin/canva/link — start OAuth (returns authorize URL). */

@@ -603,3 +603,9 @@
 .stage-cd[hidden],
 .part-leaderboard[hidden],
 .proj-leaderboard[hidden] { display: none !important; }
+
+/* ═══ rev.4 MOBIL (≤640px) ═══ */
+@media (max-width: 640px) {
+  .toplink { min-height: 44px; display: inline-flex; align-items: center; padding: 8px 10px; }
+  .proj-qr { max-width: 78vw; height: auto; }
+}

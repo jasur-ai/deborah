@@ -54,7 +54,16 @@
     .loading{text-align:center;padding:30px;color:var(--deborah-semantic-color-text-muted);font-weight:600;font-size:.84rem;}
     .empty{text-align:center;padding:26px;color:var(--deborah-semantic-color-text-muted);font-weight:700;font-size:.8rem;background:var(--deborah-semantic-color-surface-input);border-radius:14px;border:1px dashed var(--deborah-semantic-color-border-default);}
     @media(max-width:600px){.badge-card{flex-direction:column;}.verify-row{flex-direction:column;}.verify-btn{width:100%;justify-content:center;}}
-  </style>
+  
+    /* rev.4 mobil: inline font-size'li tavsif qatorlari ≥12px */
+    @media (max-width: 640px){
+      .panel div[style*="font-size"], .mfa-card div[style*="font-size"],
+      .badge-card div[style*="font-size"], .passkey-card div[style*="font-size"],
+      .panel span[style*="font-size"], .mfa-card span[style*="font-size"] { font-size: .78rem !important; }
+      .verify-btn, .ec-change-link { min-height: 44px !important; }
+      #passkey-list div { font-size: .78rem !important; }
+    }
+</style>
 </head>
 <% const _PC = typeof pageCopy !== 'undefined' ? pageCopy : null;
    const _PL = typeof pageLang !== 'undefined' ? pageLang : 'uz';

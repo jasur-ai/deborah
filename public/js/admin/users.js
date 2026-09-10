@@ -86,20 +86,20 @@
           ? '<button type="button" class="admin-edit-btn" onclick="window.__adminUsers.vipRevoke(\'' + escAttr(uname) + '\')" style="min-height:44px" title="VIP ni olib tashlash">VIP ✕</button>'
           : '<button type="button" class="admin-edit-btn" onclick="window.__adminUsers.vipGrant(\'' + escAttr(uname) + '\')" style="min-height:44px" title="VIP berish">+ VIP</button>');
       return (
-        '<tr>' +
-        '<td>' + ((currentPage - 1) * pageSize + i + 1) + '</td>' +
+        '<tr class="dt-row">' +
+        '<td data-label="#">' + ((currentPage - 1) * pageSize + i + 1) + '</td>' +
         '<td class="dt-cell-main"><span class="font-bold">' + esc(uname) + '</span>' +
         (u.name && u.name !== uname ? '<div class="text-muted" style="font-size:.72rem">' + esc(u.name) + '</div>' : '') +
         '</td>' +
-        '<td class="text-muted" style="font-size:.78rem">' + esc(u.email || '—') + '</td>' +
-        '<td>' +
+        '<td class="text-muted" data-label="Email" style="font-size:.78rem">' + esc(u.email || '—') + '</td>' +
+        '<td data-label="Rol">' +
         '<select data-role-key="' + escAttr(u.key) + '" data-prev-role="' + escAttr(u.role || 'student') + '" class="inp" aria-label="' + roleLabel + '" style="min-width:110px;padding:4px 8px;font-size:.75rem" ' +
         'onchange="window.__adminUsers && window.__adminUsers.changeRole(this)">' + roleOptions + '</select>' +
         '</td>' +
-        '<td>' + statusBadge(u.status) + '</td>' +
-        '<td>' + vipCell + '</td>' +
-        '<td class="text-muted dt-ts" style="font-size:.76rem">' + fmtDate(u.created_at) + '</td>' +
-        '<td class="dt-actions">' +
+        '<td data-label="Status">' + statusBadge(u.status) + '</td>' +
+        '<td data-label="VIP">' + vipCell + '</td>' +
+        '<td class="text-muted dt-ts" data-label="Sana" style="font-size:.76rem">' + fmtDate(u.created_at) + '</td>' +
+        '<td class="dt-actions dt-cell-actions" data-label="Amallar">' +
         '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
         (u.status === 'blocked'
           ? '<button type="button" class="admin-edit-btn" onclick="window.__adminUsers.unblock(\'' + escAttr(u.key) + '\',\'' + escAttr(uname) + '\')" style="min-height:44px">' + btnUnblock + '</button>'

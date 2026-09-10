@@ -9,16 +9,14 @@
  */
 
 import { SLIDES_API, buildExportRequest } from './google-slides.schema.js';
+import { getProviderConfig } from '../integrations/credentials.js';
 
 const GOOGLE_AUTH = 'https://oauth2.googleapis.com';
 const GOOGLE_DRIVE = 'https://www.googleapis.com/drive/v3';
 
 function getConfig() {
-  return {
-    clientId: process.env.GOOGLE_CLIENT_ID || '',
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-    redirectUri: process.env.GOOGLE_REDIRECT_URI || '',
-  };
+  // C4-10 rev.4: env ustuvor; bo'lmasa admin panelda kiritilgan kalitlar.
+  return getProviderConfig('google-slides');
 }
 
 export function isGoogleConfigured() {
