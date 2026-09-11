@@ -17,7 +17,8 @@ import { CastError, CAST_ERROR_CODES } from './errors.js';
 import { upsertParticipant, getState, getPrivateQuestion, listParticipants, markPresence, removeParticipant } from './session-store.js';
 import { submitAnswer } from './answer-service.js';
 import { freezeWall } from './moderation-service.js';
-import { isRehearsal, REHEARSAL_ENV } from './rehearsal-service.js';
+import { isRehearsal } from './rehearsal-service.js';
+import { REHEARSAL_ENV } from './rehearsal-env.js';
 
 // ── Dedicated namespace (item 4) ──
 export const BOT_NAMESPACE = 'bot:';

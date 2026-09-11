@@ -257,3 +257,35 @@ html[data-theme="dark"] .ps-prov-ico{background:#5a4522;color:#f0d9a6;border-col
 .ps-prov-acts a{font-size:.78rem;font-weight:800;color:#7c5a1d;text-decoration:none;display:inline-flex;gap:5px;align-items:center}
 .ps-prov-acts a:hover{text-decoration:underline}
 html[data-theme="dark"] .ps-prov-acts a{color:#e0c98d}
+
+/* ═══ EDITOR — mobil (≤640px): stacked — sahna birinchi, slaydlar gorizontal lenta ═══ */
+@media (max-width: 640px) {
+  .ps-ed { height: auto; min-height: 100dvh; overflow: visible; }
+  .ps-ed-top { flex-wrap: wrap; gap: 8px; padding: 8px 10px; }
+  .ps-ed-back span:last-child { display: none; }
+  .ps-ed-back { padding: 8px 10px; }
+  .ps-ed-name { flex: 1 1 120px; min-width: 0; max-width: none; font-size: .92rem; }
+  .ps-ed-status { min-width: 0; font-size: .74rem; }
+  .ps-ed-export { padding: 8px 10px; font-size: .82rem; }
+  .ps-ed-present { padding: 8px 12px; font-size: .82rem; }
+  .ps-ed-spacer { display: none; }
+  .ps-ed-cols { flex-direction: column; overflow: visible; }
+  /* Sahna birinchi — Canva-mobile uslubi */
+  .ps-ed-center { order: -1; padding: 12px; min-height: 40vh; overflow: hidden; }
+  .ps-frame { max-width: 100%; }
+  /* Slaydlar paneli — gorizontal lenta */
+  .ps-ed-left { flex: none; width: 100%; border-right: 0; border-top: 1px solid var(--deborah-semantic-color-border-default); }
+  .ps-add-slide { margin: 10px 12px 6px; }
+  .ps-thumbs { flex-direction: row; overflow-x: auto; overflow-y: hidden; padding: 2px 12px 10px; }
+  .ps-thumb { flex: 0 0 132px; }
+  .ps-left-foot { border-top: 1px solid var(--deborah-semantic-color-border-subtle); }
+  /* Inspektor — pastda, sahifa bilan skrollanadi */
+  .ps-ed-right { flex: none; width: 100%; border-left: 0; border-top: 1px solid var(--deborah-semantic-color-border-default);
+    overflow: visible; padding: 12px 12px 30px; }
+  .ps-ed-right .ps-r-ins-grid { grid-template-columns: repeat(3, 1fr); }
+  .ps-r-textarea { min-height: 70px; }
+  /* Viewer — mobil xavfsizlik */
+  .ps-v-bar { gap: 8px; padding: 10px 12px; }
+  .ps-v-name { max-width: 44vw; font-size: .82rem; }
+  .ps-v-hint { display: none; }
+}

@@ -1170,6 +1170,7 @@ router.get('/cast/:sessionId/results', requireAuth, async (req, res) => {
     const meta = await getSessionMeta(sessionId);
     if (!meta) return res.redirect('/user/panel');
     const config = await getConfig(sessionId);
+    const { isRehearsal } = await import('../services/cast/rehearsal-service.js');
     res.render('cast/results', {
       title: `Natijalar — ${meta.title || sessionId}`,
       boot: {
@@ -1398,6 +1399,7 @@ router.get('/cast/:sessionId/replay', requireAuth, async (req, res) => {
     const meta = await getSessionMeta(sessionId);
     if (!meta) return res.redirect('/user/panel');
     const config = await getConfig(sessionId);
+    const { isRehearsal } = await import('../services/cast/rehearsal-service.js');
     const postCast = config?.postCast || {};
     if (postCast.eventReplay === false) {
       return res.redirect('/user/panel'); // feature o'chirilgan

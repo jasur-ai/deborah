@@ -150,7 +150,7 @@
 
 /* Lobby */
 .lobby-code-card { position: relative; padding: 24px 170px 24px 24px; margin-bottom: 20px; }
-@media (max-width: 640px){ .lobby-code-card{ padding:24px; } .lobby-qr-wrap{ position:static; margin:10px auto 0; } }
+@media (max-width: 640px){ .lobby-code-card{ padding:24px; } }
 .lobby-label { font-size: 0.8rem; letter-spacing: 2px; color: var(--cast-muted-text); }
 .lobby-code {
   font-size: var(--cast-code-size);
@@ -661,7 +661,8 @@
 
 /* Responsive */
 @media (max-width: 900px) {
-  .dir-layout { grid-template-columns: 1fr; }
+  /* grid-template-areas'siz 'main pane' 2-ustunli qolib, zonalar ustma-ust tushardi */
+  .dir-layout { grid-template-columns: 1fr; grid-template-areas: 'main' 'pane' 'rail'; }
   .dir-rail { flex-direction: row; flex-wrap: wrap; }
   .dir-rail .rail-group { flex: 1; min-width: 140px; }
 }
@@ -1027,4 +1028,19 @@
   .dir-btn, .dir-actions button { min-height: 48px; font-size: .92rem; }
   .dir-qr-img { max-width: 62vw; height: auto; }
   .dir-topbar { flex-wrap: wrap; row-gap: 6px; }
+  /* QR kod tagiga tushadi (static) — absolute holatda kod matni bilan ustma-ust tushardi */
+  .lobby-qr-wrap { position: static; margin: 12px auto 0; }
+  .lobby-code-card { padding: 20px 16px; }
+  .dir-main { padding: 16px; min-height: auto; }
+  .dir-layout { gap: 12px; }
+  /* Rail tugmalari 2 ustunda, to'liq enli */
+  .dir-rail .rail-group { min-width: calc(50% - 6px); }
+  .rail-group .cast-btn { width: 100%; }
+  /* summary content-box + width:100% + padding = 34px chetga chiqish (audit) */
+  .rail-addtime > summary.cast-btn { box-sizing: border-box; max-width: 100%; }
+  /* Jonli savol: variantlar 1 ustunda + kenglik qisqichi (auto-fit minmax
+     intrinsic 868px berib main'ni viewport'dan chiqarib yuborardi) */
+  .dir-q-options { grid-template-columns: 1fr; }
+  .dir-main, #dir-question, .dir-pane { min-width: 0; max-width: 100%; }
+  .dir-q-text { overflow-wrap: break-word; }
 }

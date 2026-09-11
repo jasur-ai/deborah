@@ -594,4 +594,8 @@ body[data-ws-density="compact"] .ws-metric { padding: var(--deborah-spacing-3, 1
   .ws-lib-filter select { min-width: 100%; }
   .ws-upgrade { flex-direction: column; }
   .ws-tax-hd { flex-direction: column; gap: 2px; }
+  /* Kutubxona qatori (mobil): amallar to'liq en bilan pastga tushadi */
+  .ws-lib-row { grid-template-columns: 44px minmax(0, 1fr); row-gap: 12px; }
+  .ws-lib-actions { grid-column: 1 / -1; flex-wrap: wrap; row-gap: 8px; }
+  .ws-lib-actions .btn { flex: 1 1 auto; white-space: nowrap; }
 }

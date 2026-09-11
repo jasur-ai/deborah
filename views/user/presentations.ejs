@@ -43,6 +43,18 @@
     .ps-sec-hd { display: flex; align-items: center; gap: 10px; margin: 30px 0 0; }
     .ps-sec-hd h2 { font-size: .86rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; margin: 0; color: var(--deborah-semantic-color-text-secondary); }
     .ps-sec-line { flex: 1; height: 1px; background: var(--deborah-semantic-color-border-subtle); }
+    /* rev.4 mobil: karta menyusi — pastki panel (bottom-sheet). Sababi:
+       .ps-card overflow:hidden absolute menyuni kesib tashlardi va
+       O'chirish ko'rinmasdi. hover transform ham o'chiriladi (sticky hover). */
+    @media (max-width: 640px) {
+      .ps-card:hover { transform: none; }
+      .ps-pop {
+        position: fixed; top: auto; right: 12px; left: 12px;
+        bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+        z-index: 500; min-width: 0; max-height: 70vh; overflow-y: auto;
+      }
+      .ps-pop button { min-height: 44px; font-size: .9rem; }
+    }
   </style>
 </head>
 <body>

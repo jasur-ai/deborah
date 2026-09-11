@@ -16,9 +16,10 @@ import { initialState } from './state-machine.js';
 import { commitEvent } from './event-store.js';
 import { getState, getSessionMeta, listParticipants, endSession } from './session-store.js';
 import { listBots, removeAllBots, isBot } from './bot-simulator.js';
+import { REHEARSAL_ENV as ENV_SIM, PRODUCTION_ENV as ENV_PROD } from './rehearsal-env.js';
 
-export const REHEARSAL_ENV = 'simulation';
-export const PRODUCTION_ENV = 'production';
+export const REHEARSAL_ENV = ENV_SIM;
+export const PRODUCTION_ENV = ENV_PROD;
 
 /** Rehearsal session ekanini aniqlash (meta). */
 export function isRehearsal(meta) {
