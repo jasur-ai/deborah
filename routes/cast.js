@@ -11,6 +11,7 @@
  */
 
 import { Router } from 'express';
+import { fb } from '../firebase/admin.js';
 import crypto from 'crypto';
 import { requireAuth, requireAdmin } from '../middleware/auth.js';
 import { admissionPolicyForTier, TIER_SESSION_CAP, CAST_TIERS } from '../config/realtime.js';
