@@ -9,6 +9,14 @@
     .ps-hub-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
     .ps-hub-title { margin: 0; font-size: 1.5rem; font-weight: 900; letter-spacing: -.01em; }
     .ps-hub-sub { margin: 4px 0 0; color: var(--deborah-semantic-color-text-muted); font-weight: 600; font-size: .92rem; }
+    .ps-int-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+    .ps-int-chip { font-size: .74rem; font-weight: 800; border-radius: 50px; padding: 5px 11px;
+      background: var(--deborah-semantic-color-surface-nested); color: var(--deborah-semantic-color-text-muted);
+      border: 1px solid var(--deborah-semantic-color-border-subtle); white-space: nowrap; }
+    .ps-int-chip.on { color: var(--deborah-semantic-color-status-success, #1e8a3c);
+      border-color: color-mix(in srgb, var(--deborah-semantic-color-status-success, #1e8a3c) 45%, transparent); }
+    .ps-int-link { font-size: .76rem; font-weight: 800; color: var(--deborah-semantic-color-action-primary);
+      min-height: 44px; display: inline-flex; align-items: center; padding: 0 6px; }
     .ps-hub-cta { background: linear-gradient(135deg,#d9b465,#a37f3a); color: #1a1305; border: 0; border-radius: 14px;
       padding: 12px 20px; font-weight: 800; font-size: .94rem; cursor: pointer; display: inline-flex; gap: 8px; align-items: center;
       box-shadow: 0 6px 0 rgba(90,64,22,.35); min-height: 46px; font-family: inherit; text-decoration: none; }
@@ -64,6 +72,11 @@
       <div>
         <h1 class="ps-hub-title" data-i18n="hubTitle"><%= pCopy.hubTitle %></h1>
         <p class="ps-hub-sub" data-i18n="hubSub"><%= pCopy.hubSub %></p>
+        <div class="ps-int-row" role="status" aria-label="Integratsiyalar">
+          <span class="ps-int-chip<%= canvaConfigured ? ' on' : '' %>">Canva: <%= canvaConfigured ? pCopy.intConnected : pCopy.intMissing %></span>
+          <span class="ps-int-chip<%= googleSlidesConfigured ? ' on' : '' %>">Google Slides: <%= googleSlidesConfigured ? pCopy.intConnected : pCopy.intMissing %></span>
+          <% if (canManageProviders) { %><a class="ps-int-link" href="/admin/canva"><%= pCopy.intSetup %> →</a><% } %>
+        </div>
       </div>
       <button type="button" class="ps-hub-cta" id="prs-create-open"><span>+</span> <%= pCopy.newDeck %></button>
     </div>
