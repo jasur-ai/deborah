@@ -100,7 +100,10 @@
             <input class="inp" id="inv-email" name="email" type="email" placeholder="<%= copy.invite.emailPh %>" autocomplete="email" autocapitalize="off" spellcheck="false" inputmode="email" <%= inviteInfo.email ? 'disabled' : 'required aria-required="true"' %> value="<%= inviteInfo.email || (typeof prevEmail !== 'undefined' && prevEmail ? prevEmail : '') %>">
 
             <label class="lbl" for="inv-password"><%= copy.invite.password %></label>
-            <input class="inp" id="inv-password" name="password" type="password" placeholder="<%= copy.invite.passwordPh %>" autocomplete="new-password" inputmode="text" minlength="8" required aria-required="true" aria-invalid="false" style="padding-right:52px" data-inline-error="err-inv-password">
+            <div class="pw-wrap">
+              <input class="inp" id="inv-password" name="password" type="password" placeholder="<%= copy.invite.passwordPh %>" autocomplete="new-password" inputmode="text" minlength="8" required aria-required="true" aria-invalid="false" style="padding-right:52px" data-inline-error="err-inv-password">
+              <button type="button" class="pw-toggle" data-pw-toggle="inv-password" aria-label="Parolni ko'rsatish" aria-pressed="false"><span data-pw-toggle-label>👁</span></button>
+            </div>
 
             <div id="inv-alert" class="msg err" role="alert" aria-live="assertive" style="display:none"></div>
 

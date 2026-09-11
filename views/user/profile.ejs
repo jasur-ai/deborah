@@ -56,6 +56,11 @@
       .btn, .btn-quiet{min-height:44px;}
       .nav-btn{min-height:44px;}
     }
+/* Parol ko'rsatish tugmasi (universal pw-toggle) */
+.pw-wrap{position:relative}
+.pw-wrap>input{padding-right:52px !important;box-sizing:border-box;width:100%}
+.pw-toggle{position:absolute;right:4px;top:50%;transform:translateY(-50%);min-width:44px;min-height:44px;border:0;background:transparent;cursor:pointer;font-size:1.05rem;line-height:1;color:inherit;opacity:.7;border-radius:10px}
+.pw-toggle:hover{opacity:1}
 </style>
 </head>
 <% /* Profil sahifasi i18n (4 til) — USER_PAGES.profile + pageLang (route) */
@@ -148,7 +153,10 @@
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="reauth-title">
       <h3 id="reauth-title"><%- icon('lock', 16) %> <%= _pt('reauthTitle') %></h3>
       <div class="hint"><%= _pt('reauthHint') %></div>
-      <input class="inp" id="reauth-pass" type="password" placeholder="<%= p.isAdminSession ? _pt('phAdmin') : _pt('phCurrent') %>" autocomplete="current-password">
+      <div class="pw-wrap">
+        <input class="inp" id="reauth-pass" type="password" placeholder="<%= p.isAdminSession ? _pt('phAdmin') : _pt('phCurrent') %>" autocomplete="current-password">
+        <button type="button" class="pw-toggle" data-pw-toggle="reauth-pass" aria-label="Parolni ko'rsatish" aria-pressed="false"><span data-pw-toggle-label>👁</span></button>
+      </div>
       <div class="msg" id="reauth-msg"></div>
       <div class="actions">
         <button class="btn btn-primary" id="reauth-submit" type="button"><%= _pt('btnSubmit') %></button>
@@ -245,5 +253,30 @@
       }
     })();
   </script>
+<script>
+/* Universal parol ko'rsatish/yashirish (auth.js yuklanmagan sahifalar uchun) */
+(function(){
+  if (window.__pwToggleInit) return; window.__pwToggleInit = true;
+  function bind(scope){
+    (scope || document).querySelectorAll('[data-pw-toggle]').forEach(function(btn){
+      if (btn.__pwBound) return;
+      var input = document.getElementById(btn.getAttribute('data-pw-toggle'));
+      if (!input) return;
+      btn.__pwBound = true;
+      btn.addEventListener('click', function(){
+        var show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        btn.setAttribute('aria-pressed', show ? 'true' : 'false');
+        var l = btn.querySelector('[data-pw-toggle-label]');
+        if (l) l.textContent = show ? '\uD83D\uDE48' : '\uD83D\uDC41';
+        try { input.focus({ preventScroll: true }); } catch (e) { input.focus(); }
+      });
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ bind(); });
+  else bind();
+})();
+</script>
+
 </body>
 </html>

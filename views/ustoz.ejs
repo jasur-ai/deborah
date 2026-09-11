@@ -50,7 +50,12 @@
     .uz-switch{font-size:.78rem;color:var(--mut,#b3aa98);text-align:center;margin-top:14px}
     .uz-switch a{color:var(--ld-gold,#c2a06a);font-weight:700;text-decoration:none}
     @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-  </style>
+  /* Parol ko'rsatish tugmasi (universal pw-toggle) */
+.pw-wrap{position:relative}
+.pw-wrap>input{padding-right:52px !important;box-sizing:border-box;width:100%}
+.pw-toggle{position:absolute;right:4px;top:50%;transform:translateY(-50%);min-width:44px;min-height:44px;border:0;background:transparent;cursor:pointer;font-size:1.05rem;line-height:1;color:inherit;opacity:.7;border-radius:10px}
+.pw-toggle:hover{opacity:1}
+</style>
   <%- include('partials/critical-mobile-css') %>
 </head>
 <body class="uz-page" id="top">
@@ -92,7 +97,10 @@
           </div>
           <div class="uz-fld">
             <label for="ul-pass">Parol</label>
-            <input class="uz-inp" id="ul-pass" name="password" type="password" autocomplete="current-password" required>
+            <div class="pw-wrap">
+              <input class="uz-inp" id="ul-pass" name="password" type="password" autocomplete="current-password" required>
+              <button type="button" class="pw-toggle" data-pw-toggle="ul-pass" aria-label="Parolni ko'rsatish" aria-pressed="false"><span data-pw-toggle-label>👁</span></button>
+            </div>
           </div>
           <button class="uz-btn" type="submit">Kirish</button>
           <div class="uz-switch">Arizangiz tasdiqlanganini kutyapsizmi? <a href="/user/teacher-approval">Ariza holati →</a></div>
@@ -125,7 +133,10 @@
           </div>
           <div class="uz-fld">
             <label for="ur-pass">Parol (kamida 15 belgi)</label>
-            <input class="uz-inp" id="ur-pass" name="password" type="password" autocomplete="new-password" minlength="15" maxlength="128" required>
+            <div class="pw-wrap">
+              <input class="uz-inp" id="ur-pass" name="password" type="password" autocomplete="new-password" minlength="15" maxlength="128" required>
+              <button type="button" class="pw-toggle" data-pw-toggle="ur-pass" aria-label="Parolni ko'rsatish" aria-pressed="false"><span data-pw-toggle-label>👁</span></button>
+            </div>
           </div>
           <div class="uz-row">
             <div class="uz-fld">
@@ -161,5 +172,30 @@
     (function () { var hp = document.getElementById('uz-hp'); if (hp) hp.setAttribute('aria-hidden', 'true'); })();
   </script>
   <script src="/js/icon-kit.js"></script>
+<script>
+/* Universal parol ko'rsatish/yashirish (auth.js yuklanmagan sahifalar uchun) */
+(function(){
+  if (window.__pwToggleInit) return; window.__pwToggleInit = true;
+  function bind(scope){
+    (scope || document).querySelectorAll('[data-pw-toggle]').forEach(function(btn){
+      if (btn.__pwBound) return;
+      var input = document.getElementById(btn.getAttribute('data-pw-toggle'));
+      if (!input) return;
+      btn.__pwBound = true;
+      btn.addEventListener('click', function(){
+        var show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        btn.setAttribute('aria-pressed', show ? 'true' : 'false');
+        var l = btn.querySelector('[data-pw-toggle-label]');
+        if (l) l.textContent = show ? '\uD83D\uDE48' : '\uD83D\uDC41';
+        try { input.focus({ preventScroll: true }); } catch (e) { input.focus(); }
+      });
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ bind(); });
+  else bind();
+})();
+</script>
+
 </body>
 </html>

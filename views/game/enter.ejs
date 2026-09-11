@@ -357,8 +357,8 @@
   window.checkCode = function() {
     const v = $('code-inp').value.trim().toUpperCase();
     $('code-inp').value = v;
-    if (/^[A-Z0-9]{6}$/.test(v) && !/^\d{6}$/.test(v)) {
-      /* Cast kodi (6 belgi, harf bor) — /play?code= orqali server resolve */
+    if (/^[A-Z0-9]{6}$/.test(v)) {
+      /* Cast kodi (6 belgi — raqamli ham bo'ladi, JOIN_CODE_ALPHABET=0-9) — /play?code= orqali server resolve */
       window.location.href = '/play?code=' + encodeURIComponent(v);
       return;
     }

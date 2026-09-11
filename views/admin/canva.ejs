@@ -9,6 +9,13 @@
   <link rel="stylesheet" href="/css/admin.css?v=nv4">
   <link rel="stylesheet" href="/design/admin-command.css">
   <%- include('../partials/critical-mobile-css') %>
+<style>
+/* Parol ko'rsatish tugmasi (universal pw-toggle) */
+.pw-wrap{position:relative}
+.pw-wrap>input{padding-right:52px !important;box-sizing:border-box;width:100%}
+.pw-toggle{position:absolute;right:4px;top:50%;transform:translateY(-50%);min-width:44px;min-height:44px;border:0;background:transparent;cursor:pointer;font-size:1.05rem;line-height:1;color:inherit;opacity:.7;border-radius:10px}
+.pw-toggle:hover{opacity:1}
+</style>
 </head>
 <body class="adm-body">
   <div class="adm-shell">
@@ -58,7 +65,7 @@ CANVA_REDIRECT_URI=https://deborah-ncj.onrender.com/api/admin/canva/callback</pr
         <div class="adm-form">
           <div class="adm-row">
             <div class="field"><label>Client ID</label><input class="input" id="cred-client-id" placeholder="OC-…" autocomplete="off"></div>
-            <div class="field"><label>Client Secret</label><input class="input" id="cred-client-secret" type="password" placeholder="•••••••" autocomplete="new-password"></div>
+<div class="field"><label>Client Secret</label><div class="pw-wrap"><input class="input" id="cred-client-secret" type="password" placeholder="•••••••" autocomplete="new-password"><button type="button" class="pw-toggle" data-pw-toggle="cred-client-secret" aria-label="Parolni ko'rsatish" aria-pressed="false"><span data-pw-toggle-label>👁</span></button></div></div>
           </div>
           <div class="adm-row">
             <div class="field" style="flex:2"><label>Redirect URI</label><input class="input" id="cred-redirect-uri" placeholder="https://SIZNING-DOMAIN/api/admin/canva/callback"></div>
@@ -220,5 +227,30 @@ CANVA_REDIRECT_URI=https://deborah-ncj.onrender.com/api/admin/canva/callback</pr
   loadStatus();
 })();
 </script>
+<script>
+/* Universal parol ko'rsatish/yashirish (auth.js yuklanmagan sahifalar uchun) */
+(function(){
+  if (window.__pwToggleInit) return; window.__pwToggleInit = true;
+  function bind(scope){
+    (scope || document).querySelectorAll('[data-pw-toggle]').forEach(function(btn){
+      if (btn.__pwBound) return;
+      var input = document.getElementById(btn.getAttribute('data-pw-toggle'));
+      if (!input) return;
+      btn.__pwBound = true;
+      btn.addEventListener('click', function(){
+        var show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        btn.setAttribute('aria-pressed', show ? 'true' : 'false');
+        var l = btn.querySelector('[data-pw-toggle-label]');
+        if (l) l.textContent = show ? '\uD83D\uDE48' : '\uD83D\uDC41';
+        try { input.focus({ preventScroll: true }); } catch (e) { input.focus(); }
+      });
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ bind(); });
+  else bind();
+})();
+</script>
+
 </body>
 </html>

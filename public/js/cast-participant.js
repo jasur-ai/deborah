@@ -126,7 +126,8 @@
   function show(view) {
     const prevActive = document.activeElement;
     ['part-join', 'part-waiting', 'part-question', 'part-reveal', 'part-poe-obs', 'part-poe-exp', 'part-poe-analysis', 'part-orb'].forEach((id) => {
-      $(id).hidden = id !== view;
+      const el = $(id);
+      if (el) el.hidden = id !== view;
     });
     // C4-04 (item 24): focus phase o'zgarganda userni kutilmagan joyga ko'chirmaslik —
     // faqat hozirgi focus hidden bo'lib qolsa view ichidagi birinchi interactive'ga o'tkazamiz.
@@ -345,6 +346,7 @@
     $('part-q-meta').textContent = phase === 'REVOTE_OPEN' ? 'Qayta ovoz berish' : 'Savol';
     $('part-q-text').textContent = q.text;
     const wrap = $('part-options');
+    if (!wrap) return;
     wrap.innerHTML = '';
     wrap.hidden = false;
     const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -364,7 +366,8 @@
     });
     closesAt = q.closesAt || null;
     startTimer();
-    $('part-submit').hidden = true;
+    const submitEl = $('part-submit');
+    if (submitEl) submitEl.hidden = true;
     // C3-04: askConfidence bo'lsa confidence prompt ko'rsatiladi (inline)
     confidenceLevel = null;
     document.querySelectorAll('.conf-btn').forEach((b) => b.classList.remove('selected'));
@@ -386,7 +389,8 @@
     setState(selectedIds.size > 0 ? STATE.SELECTED : STATE.OPEN);
     // Single-choice: show submit when one selected; multi-select: always show
     const isMulti = currentQuestion && currentQuestion.type === 'multiple_select';
-    $('part-submit').hidden = selectedIds.size === 0;
+    const submitBtn = $('part-submit');
+    if (submitBtn) submitBtn.hidden = selectedIds.size === 0;
   }
 
   // ── C4-08: staging countdown (savol ochilguncha ko'rinadigan 3-2-1) ──
@@ -767,10 +771,12 @@
     const el = $('part-team');
     if (!el || !myTeam) { if (el) el.hidden = true; return; }
     el.hidden = false;
-    $('part-team-badge').textContent = `👥 ${myTeam.teamName || myTeam.teamId}`;
-    $('part-team-meta').textContent = `${myTeam.activeMemberCount ?? myTeam.memberCount} a'zo`;
+    const badgeEl = $('part-team-badge');
+    if (badgeEl) badgeEl.textContent = `👥 ${myTeam.teamName || myTeam.teamId}`;
+    const metaEl = $('part-team-meta');
+    if (metaEl) metaEl.textContent = `${myTeam.activeMemberCount ?? myTeam.memberCount} a'zo`;
     const rep = $('part-team-reporter');
-    rep.hidden = !myTeam.isReporter;
+    if (rep) rep.hidden = !myTeam.isReporter;
   }
 
   function startTeamTalkTimer(data) {

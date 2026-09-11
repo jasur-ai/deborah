@@ -79,7 +79,12 @@
     .topbar a{color:#aab4dd;font-size:.74rem;font-weight:800;text-decoration:none;padding:7px 12px;border:1px solid rgba(148,163,255,.22);border-radius:9px}
     .topbar a:hover{border-color:rgba(34,211,238,.5);color:#e0f2fe}
     @media(max-width:600px){.pf{padding:16px 10px 50px}.card{padding:16px 13px}}
-  </style>
+  /* Parol ko'rsatish tugmasi (universal pw-toggle) */
+.pw-wrap{position:relative}
+.pw-wrap>input{padding-right:52px !important;box-sizing:border-box;width:100%}
+.pw-toggle{position:absolute;right:4px;top:50%;transform:translateY(-50%);min-width:44px;min-height:44px;border:0;background:transparent;cursor:pointer;font-size:1.05rem;line-height:1;color:inherit;opacity:.7;border-radius:10px}
+.pw-toggle:hover{opacity:1}
+</style>
   <%- include('../partials/critical-mobile-css') %>
 </head>
 <body>
@@ -205,7 +210,10 @@
       <div class="card" style="max-width:400px;width:100%;margin:0">
         <h3>🔒 Qayta tasdiqlash</h3>
         <p class="hint" style="margin-bottom:10px">Xavfsizlik uchun admin parolini kiriting.</p>
-        <input class="inp" type="password" id="reauthPw" placeholder="Admin paroli" autocomplete="current-password">
+        <div class="pw-wrap">
+          <input class="inp" type="password" id="reauthPw" placeholder="Admin paroli" autocomplete="current-password">
+          <button type="button" class="pw-toggle" data-pw-toggle="reauthPw" aria-label="Parolni ko'rsatish" aria-pressed="false"><span data-pw-toggle-label>👁</span></button>
+        </div>
         <div id="reauthErr" class="msg err"></div>
         <div style="display:flex;gap:8px;margin-top:12px">
           <button class="btn btn-g" id="reauthGo" style="flex:1">Tasdiqlash</button>
@@ -457,5 +465,30 @@
   loadPasskeys(); loadKeys(); loadSessions(); loadLogs();
 })();
 </script>
+<script>
+/* Universal parol ko'rsatish/yashirish (auth.js yuklanmagan sahifalar uchun) */
+(function(){
+  if (window.__pwToggleInit) return; window.__pwToggleInit = true;
+  function bind(scope){
+    (scope || document).querySelectorAll('[data-pw-toggle]').forEach(function(btn){
+      if (btn.__pwBound) return;
+      var input = document.getElementById(btn.getAttribute('data-pw-toggle'));
+      if (!input) return;
+      btn.__pwBound = true;
+      btn.addEventListener('click', function(){
+        var show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        btn.setAttribute('aria-pressed', show ? 'true' : 'false');
+        var l = btn.querySelector('[data-pw-toggle-label]');
+        if (l) l.textContent = show ? '\uD83D\uDE48' : '\uD83D\uDC41';
+        try { input.focus({ preventScroll: true }); } catch (e) { input.focus(); }
+      });
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ bind(); });
+  else bind();
+})();
+</script>
+
 </body>
 </html>

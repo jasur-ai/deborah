@@ -13,6 +13,13 @@
 <html lang="<%= lang === 'ru' ? 'ru' : lang === 'en' ? 'en' : lang === 'uz-cyrl' ? 'uz-Cyrl' : 'uz' %>" data-theme="dark" dir="ltr">
 <head>
   <%- include('partials/landing-head', { title: 'Deborah — o\'qituvchilar uchun AI yordamchi', description: copy.meta.description, siteUrl: (typeof siteUrl !== 'undefined' ? siteUrl : ''), path: path, lang: lang }) %>
+<style>
+/* Parol ko'rsatish tugmasi (universal pw-toggle) */
+.pw-wrap{position:relative}
+.pw-wrap>input{padding-right:52px !important;box-sizing:border-box;width:100%}
+.pw-toggle{position:absolute;right:4px;top:50%;transform:translateY(-50%);min-width:44px;min-height:44px;border:0;background:transparent;cursor:pointer;font-size:1.05rem;line-height:1;color:inherit;opacity:.7;border-radius:10px}
+.pw-toggle:hover{opacity:1}
+</style>
 </head>
 <body>
 <script>
@@ -242,7 +249,7 @@
             </div>
             <div class="sep"><span data-i18n="auth.or">yoki email bilan</span></div>
             <div class="fld"><label for="lEmail" data-i18n="auth.loginId">Email yoki username</label><input id="lEmail" name="username" type="text" autocomplete="username" required></div>
-            <div class="fld"><label for="lPass" data-i18n="auth.pass">Parol</label><input id="lPass" name="password" type="password" autocomplete="current-password" required></div>
+            <div class="fld"><label for="lPass" data-i18n="auth.pass">Parol</label><span class="pw-wrap" style="display:block;position:relative"><input id="lPass" name="password" type="password" autocomplete="current-password" required><button type="button" class="pw-toggle" data-pw-toggle="lPass" aria-label="Parolni ko'rsatish" aria-pressed="false"><span data-pw-toggle-label>👁</span></button></span></div>
             <button class="btn btn-gold auth-submit" type="submit" data-i18n="auth.login">Kirish</button>
             <div class="auth-msg" id="doneLogin"></div>
           </form>
@@ -262,7 +269,7 @@
             <div class="fld"><label for="rName" data-i18n="auth.name">Ism va familiya</label><input id="rName" name="name" type="text" autocomplete="name" required></div>
             <div class="fld"><label for="rEmail" data-i18n="auth.email">Email</label><input id="rEmail" name="email" type="email" autocomplete="email" required></div>
             <div class="fld"><label for="rUser" data-i18n="auth.username">Username</label><input id="rUser" name="username" type="text" autocomplete="username" spellcheck="false" minlength="2" maxlength="50" required><div class="fld-hint" id="rUserHint" aria-live="polite"></div></div>
-            <div class="fld"><label for="rPass" data-i18n="auth.pass">Parol</label><input id="rPass" name="password" type="password" autocomplete="new-password" minlength="8" required><div class="fld-hint dim" data-i18n="auth.passHint">Kamida 8 belgi — harf va raqam</div></div>
+            <div class="fld"><label for="rPass" data-i18n="auth.pass">Parol</label><span class="pw-wrap" style="display:block;position:relative"><input id="rPass" name="password" type="password" autocomplete="new-password" minlength="8" required><button type="button" class="pw-toggle" data-pw-toggle="rPass" aria-label="Parolni ko'rsatish" aria-pressed="false"><span data-pw-toggle-label>👁</span></button></span><div class="fld-hint dim" data-i18n="auth.passHint">Kamida 8 belgi — harf va raqam</div></div>
             <% // BUG-035: rol tanlash (server role=teacher'ni qabul qiladi; university/subject
                // bo'lmasa to'liq /user/register formaga prefilled o'tadi — mavjud mantiq) %>
             <div class="fld">
@@ -352,5 +359,30 @@
 </svg>
 
 <script src="/js/landing.js?v=s34d" defer></script>
+<script>
+/* Universal parol ko'rsatish/yashirish (auth.js yuklanmagan sahifalar uchun) */
+(function(){
+  if (window.__pwToggleInit) return; window.__pwToggleInit = true;
+  function bind(scope){
+    (scope || document).querySelectorAll('[data-pw-toggle]').forEach(function(btn){
+      if (btn.__pwBound) return;
+      var input = document.getElementById(btn.getAttribute('data-pw-toggle'));
+      if (!input) return;
+      btn.__pwBound = true;
+      btn.addEventListener('click', function(){
+        var show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        btn.setAttribute('aria-pressed', show ? 'true' : 'false');
+        var l = btn.querySelector('[data-pw-toggle-label]');
+        if (l) l.textContent = show ? '\uD83D\uDE48' : '\uD83D\uDC41';
+        try { input.focus({ preventScroll: true }); } catch (e) { input.focus(); }
+      });
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ bind(); });
+  else bind();
+})();
+</script>
+
 </body>
 </html>

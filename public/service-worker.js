@@ -11,7 +11,7 @@
 
 // S34.07: cache version — design asset hash bilan boshqariladi.
 // Tokens.css o'zgarganda version avtomatik yangilanadi (stale CSS/new HTML mismatch oldini oladi).
-const CACHE_VERSION = 'v2.2.0-f55da49b';  // landing.css/js o'zgardi — eski statik kesh yangilanadi
+const CACHE_VERSION = 'v2.3.0-39f141a8';  // mobil+cast fix'lar (director/editor/results CSS) — eski statik kesh yangilanadi
 const STATIC_CACHE  = 'deborah-static-' + CACHE_VERSION;
 const PAGE_CACHE    = 'deborah-pages-' + CACHE_VERSION;
 const FONT_CACHE    = 'deborah-fonts-' + CACHE_VERSION;
