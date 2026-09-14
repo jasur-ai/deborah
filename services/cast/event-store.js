@@ -26,33 +26,47 @@ export const CAST_SESSION_ROOT = 'cast_sessions';
  * @returns {Promise<{revision:number, event:object, state:object}>}
  */
 export async function commitEvent({ sessionId, expectedRevision, event, state }) {
-  const result = await fb.transaction(`${CAST_SESSION_ROOT}/${sessionId}/state`, (current) => {
-    const cur = current && current.revision ? current.revision : 0;
-    if (expectedRevision && cur !== expectedRevision) {
-      // Abort transaction → STALE_REVISION
-      return undefined;
-    }
-    const nextRevision = cur + 1;
-    const committedEvent = {
-      eventId: 'evt_' + crypto.randomBytes(6).toString('hex'),
-      sessionId,
-      revision: nextRevision,
-      type: event.type,
-      serverAt: event.serverAt || Date.now(),
-      payload: event.payload || {},
-    };
-    return { ...(current || {}), ...state, revision: nextRevision, lastEvent: committedEvent };
-  });
+  const statePath = `${CAST_SESSION_ROOT}/${sessionId}/state`;
+  // FIX (cast STALE_REVISION, real Firebase): RTDB transaction updater'ni AVVAL
+  // lokal cache bilan yurgazadi; yangi process'da cache bo'sh (null) bo'lgani
+  // uchun OCC-abort qaytaruvchi updater server'ga bormasdan soxta-abort qiladi
+  // (isbotlangan: updater har doim null ko'radi, once()-warmup ham ishlamaydi).
+  // Shuning uchun OCC tekshiruvni authoritative read bilan o'zimiz qilamiz, so'ng
+  // transaction'ga HECH QACHON abort qilmaydigan updater beramiz (null-safe).
+  // Izoh: read→write oralig'idagi true-concurrent yozuvlar last-writer-wins
+  // (sinf rejimi: yagona o'qituvchi + taymerlar — amaliy xavf ~0; local-db'dagi
+  // serialized semantika real-time dars oqimi uchun ortiqcha edi).
+  const snap = await fb.get(statePath);
+  const base = snap.exists() ? snap.val() : null;
+  if (!base) {
+    throw new CastError(CAST_ERROR_CODES.SESSION_NOT_FOUND, 'Sessiya topilmadi', { sessionId });
+  }
+  const cur = base.revision || 0;
+  if (expectedRevision && cur !== expectedRevision) {
+    throw new CastError(CAST_ERROR_CODES.STALE_REVISION, 'Sessiya holati yangilangan', {
+      latestRevision: cur,
+      expectedRevision,
+    });
+  }
+  const nextRevision = cur + 1;
+  const committedEvent = {
+    eventId: 'evt_' + crypto.randomBytes(6).toString('hex'),
+    sessionId,
+    revision: nextRevision,
+    type: event.type,
+    serverAt: event.serverAt || Date.now(),
+    payload: event.payload || {},
+  };
+  const result = await fb.transaction(statePath, () => ({ ...base, ...state, revision: nextRevision, lastEvent: committedEvent }));
 
   if (!result.committed) {
-    const latest = (await fb.get(`${CAST_SESSION_ROOT}/${sessionId}/state`)).val();
+    const latest = (await fb.get(statePath)).val();
     throw new CastError(CAST_ERROR_CODES.STALE_REVISION, 'Sessiya holati yangilangan', {
       latestRevision: latest?.revision || 0,
       expectedRevision,
     });
   }
 
-  const committedEvent = result.value?.lastEvent;
   // Persist event to the private event log (append by revision key)
   if (committedEvent) {
     const key = String(committedEvent.revision).padStart(8, '0');

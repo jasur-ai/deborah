@@ -1044,3 +1044,15 @@
   .dir-main, #dir-question, .dir-pane { min-width: 0; max-width: 100%; }
   .dir-q-text { overflow-wrap: break-word; }
 }
+
+/* Buyruq xatosi banneri — ko'rinadigan (announce faqat screen-reader uchun edi) */
+.dir-err {
+  margin: 10px 16px 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--cast-red) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cast-red) 45%, transparent);
+  color: var(--cast-red);
+  font-weight: 800;
+  font-size: .86rem;
+}

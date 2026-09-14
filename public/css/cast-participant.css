@@ -1656,3 +1656,10 @@ body.part-pref-contrast .part-state-banner { border-width: 2px; }
   /* Javob variantlari barmoq uchun kattaroq */
   .part-option, .part-answer-btn { min-height: 56px; font-size: .95rem; }
 }
+
+/* QR join: avtomatik kod qulflangan — vizual belgi (o'yinchi faqat ism yozadi) */
+#join-code.is-locked {
+  opacity: .75;
+  cursor: not-allowed;
+  border-style: dashed;
+}

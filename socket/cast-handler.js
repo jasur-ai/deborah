@@ -1277,15 +1277,18 @@ export function setupCastHandlers(io, socket) {
     });
 
     if (thinkMs > 0) {
-      // Schedule open after think time
+      // Schedule open after think time (opened keyin broadcast orqali keladi)
       setTimeout(async () => {
         await openQuestionNow(cmd.sessionId, questionId, res.revision);
       }, thinkMs);
+      ackSend({ ok: true, commandId: cmd.commandId, newRevision: res.revision, questionId });
     } else {
-      await openQuestionNow(cmd.sessionId, questionId, res.revision);
+      const opened = await openQuestionNow(cmd.sessionId, questionId, res.revision);
+      // FIX: ack'da FINAL revision (opened) qaytadi — preview rev (res) emas.
+      // Aks holda ack broadcast'dan keyin kelib, client revision'ni orqaga
+      // qaytaradi → keyingi buyruq STALE_REVISION (director qotib qoladi).
+      ackSend({ ok: true, commandId: cmd.commandId, newRevision: (opened && opened.revision) || res.revision, questionId });
     }
-
-    ackSend({ ok: true, commandId: cmd.commandId, newRevision: res.revision, questionId });
   }
 
   async function openQuestionNow(sessionId, questionId, afterRevision) {
@@ -1336,8 +1339,10 @@ export function setupCastHandlers(io, socket) {
           },
         });
       }
+      return res;
     } catch (err) {
       console.error('[Cast] openQuestionNow error:', err.message);
+      return null;
     }
   }
 
@@ -2257,15 +2262,16 @@ export function setupCastHandlers(io, socket) {
       if (!fallbackText) return ackSend({ ok: false, commandId: cmd.commandId, error: { code: 'INVALID_OPTION' } });
       const event = { type: 'poe:mediaFailed', payload: { fallbackText }, serverAt: Date.now() };
       const next = applyEvent(state, event);
-      await commitEvent({ sessionId: cmd.sessionId, expectedRevision: cmd.expectedRevision, event, state: next });
+      const resFb = await commitEvent({ sessionId: cmd.sessionId, expectedRevision: cmd.expectedRevision, event, state: next });
       io.to(rooms(cmd.sessionId)).emit(CAST_EVENTS.POE_OBSERVATION_STARTED, {
+        revision: resFb.revision,
         flowId: contract.flowId,
         media: { type: 'live_note', text: fallbackText },
         fallback: true,
         serverAt: Date.now(),
       });
       await writeAudit(cmd.sessionId, { action: 'poe:media_fallback', flowId: contract.flowId, actorId: actor?.actorId, safe: true });
-      return ackSend({ ok: true, commandId: cmd.commandId, action });
+      return ackSend({ ok: true, commandId: cmd.commandId, action, newRevision: resFb.revision });
     }
     // skip → explanation'ga to'g'ridan-to'g'ri (force)
     return handlePoeStartExplanation(cmd, actor, ackSend, { force: true });
@@ -3428,6 +3434,7 @@ export function setupCastHandlers(io, socket) {
       const elapsedMs = chor.blockStartedAt ? Math.max(0, Date.now() - chor.blockStartedAt) : 0;
       const remainingMs = cur && cur.config?.seconds ? Math.max(0, Number(cur.config.seconds) * 1000 - elapsedMs) : null;
       io.to(directorRoom(sessionId)).emit(CAST_EVENTS.CHOREO_STATE, {
+        revision: state.revision,
         current: cur ? { id: cur.id, type: cur.type, config: cur.config } : null,
         next: next ? { id: next.id, type: next.type } : null,
         currentIndex: chor.currentIndex,

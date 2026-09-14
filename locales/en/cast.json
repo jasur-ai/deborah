@@ -61,6 +61,7 @@
   "director.close": "Close question",
   "director.reveal": "Show results",
   "director.next": "Next question",
+  "director.openQuestion": "Open question ▶",
   "director.discuss": "Discuss",
   "director.revote": "Revote",
   "proj.join": "JOIN THE QUESTION",

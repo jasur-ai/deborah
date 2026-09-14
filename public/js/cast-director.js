@@ -20,7 +20,7 @@
   // C4-05: i18n
   let t = (k, v) => k;
   if (window.CastI18n) {
-    window.CastI18n.init({ locale: BOOT.locale || 'uz-Latn' }).then((api) => { t = api.t; });
+    window.CastI18n.init({ locale: BOOT.locale || 'uz-Latn' }).then((api) => { t = api.t; try { updateControls(); } catch (_) {} });
   }
 
   const socket = io({
@@ -97,6 +97,21 @@
   function announce(msg, assertive) {
     const el = assertive ? $('alert-live') : $('status-live');
     el.textContent = msg;
+  }
+
+  // Buyruq xatosi — ham screen-reader'ga (announce), ham KO'RINADIGAN banner'ga.
+  // Sababi: faqat announce bo'lsa, tugma bosilganda hech narsa yuz bermagandek
+  // tuyuladi ("cast boshlanmayapti" shikoyatining bir qismi shu edi).
+  let _errTimer = null;
+  function showCmdError(e) {
+    const msg = (e && e.message) || 'Xatolik';
+    announce(msg, true);
+    const box = $('dir-error');
+    if (!box) return;
+    box.textContent = msg;
+    box.hidden = false;
+    if (_errTimer) clearTimeout(_errTimer);
+    _errTimer = setTimeout(() => { box.hidden = true; }, 6000);
   }
 
   // C5-07 (item 10): degraded health indicator — teacherga simple signal
@@ -194,7 +209,16 @@
     applyDisabled(resume, !(phase === 'QUESTION_OPEN' && document.body.dataset.paused === '1'), 'cast:questionResume');
     applyDisabled(close, !['QUESTION_OPEN', 'REVOTE_OPEN'].includes(phase), 'cast:questionClose');
     applyDisabled(reveal, !['QUESTION_OPEN', 'QUESTION_LOCKED'].includes(phase), 'cast:questionReveal');
-    applyDisabled(next, !['REVEAL', 'LEADERBOARD', 'QUESTION_LOCKED', 'DISCUSSION', 'REVOTE_OPEN'].includes(phase), 'cast:questionNext');
+    // FIX (mobil): THINK_TIME'da "Keyingi" o'rniga "Savolni ochish" — desktop'da bu
+    // Space shortcut edi, mobilda tugmasiz Q2+ ni ochib bo'lmasdi (director qotardi).
+    applyDisabled(next, !['REVEAL', 'LEADERBOARD', 'QUESTION_LOCKED', 'DISCUSSION', 'REVOTE_OPEN', 'THINK_TIME'].includes(phase), 'cast:questionNext');
+    if (next) {
+      const wantKey = phase === 'THINK_TIME' ? 'director.openQuestion' : 'director.next';
+      if (next.dataset.i18n !== wantKey) {
+        next.dataset.i18n = wantKey;
+        next.textContent = t(wantKey);
+      }
+    }
     // C3-03: Muhokama faqat yopilgandan keyin; Revote faqat muhokama/REVEAL'da
     applyDisabled(discuss, !['QUESTION_LOCKED', 'REVEAL'].includes(phase), 'cast:startDiscussion');
     applyDisabled(revote, !['DISCUSSION', 'REVEAL'].includes(phase), 'cast:openRevote');
@@ -294,7 +318,7 @@
           }
           dirParticipants.delete(pid);
           renderDirParticipants();
-        } catch (e) { announce(e.message || 'Xatolik', true); }
+        } catch (e) { showCmdError(e); }
       });
     });
   }
@@ -416,7 +440,7 @@
         // Server savollar bo'lmasa sessiyani o'zi yakunlaydi.
         if (!_autoOpenedFirst) {
           _autoOpenedFirst = true;
-          try { send('cast:questionOpen', {}).catch(() => {}); } catch (_) { /* noop */ }
+          try { send('cast:questionOpen', {}).catch((e) => showCmdError(e && e.message ? 'Birinchi savol ochilmadi: ' + e.message : 'Birinchi savol ochilmadi')); } catch (_) { /* noop */ }
         }
         break;
       case 'cast:questionPreview': {
@@ -895,7 +919,7 @@
             });
             btn.disabled = true;
             btn.textContent = '✓ Saqlandi';
-          } catch (e) { announce(e.message || 'Xatolik', true); }
+          } catch (e) { showCmdError(e); }
         });
         actions.appendChild(btn);
       });
@@ -978,7 +1002,7 @@
             card.dataset.state = action === 'approve' ? 'APPROVED' : action === 'redact' ? 'REDACTED' : action === 'reject' ? 'REJECTED' : 'PROJECTED';
             card.querySelector('.rsn-state').textContent = card.dataset.state;
             card.querySelector('.rsn-actions').innerHTML = '<span class="ev-chip">' + card.dataset.state + '</span>';
-          } catch (e) { announce(e.message || 'Xatolik', true); }
+          } catch (e) { showCmdError(e); }
         });
       });
       list.appendChild(card);
@@ -1010,7 +1034,7 @@
             await send('cast:signalAck', { signal: sig });
             chip.classList.add('acked');
             chip.textContent = `${labels[sig] || sig} — ${count} ✓`;
-          } catch (e) { announce(e.message || 'Xatolik', true); }
+          } catch (e) { showCmdError(e); }
         });
       }
       chips.appendChild(chip);
@@ -1058,7 +1082,7 @@
             card.dataset.done = '1';
             card.querySelector('.rsn-state').textContent = action.toUpperCase();
             card.querySelector('.wall-actions').innerHTML = '<span class="ev-chip">' + action.toUpperCase() + '</span>';
-          } catch (e) { announce(e.message || 'Xatolik', true); }
+          } catch (e) { showCmdError(e); }
         });
       });
       list.appendChild(card);
@@ -1097,7 +1121,7 @@
           questionId: window.__lastQuestion?.id || null,
         });
         box.querySelector('.misconception-actions').innerHTML = '<span class="ev-chip">✅ Tasdiqlangan</span>';
-      } catch (e) { announce(e.message || 'Xatolik', true); }
+      } catch (e) { showCmdError(e); }
     });
     box.querySelector('.misconception-reject').addEventListener('click', async () => {
       try {
@@ -1108,7 +1132,7 @@
           questionId: window.__lastQuestion?.id || null,
         });
         box.querySelector('.misconception-actions').innerHTML = '<span class="ev-chip">✕ Rad etilgan</span>';
-      } catch (e) { announce(e.message || 'Xatolik', true); }
+      } catch (e) { showCmdError(e); }
     });
     parentEl.appendChild(box);
   }
@@ -1162,7 +1186,7 @@
         refreshJoinQr();
         announce('Kod yangilandi: ' + code, true);
       }
-    } catch (e) { announce(e.message || 'Xatolik', true); }
+    } catch (e) { showCmdError(e); }
   });
 
   // S29.02: topbar overflow menu (Natijalar/Replay endi menyuda)
@@ -1191,15 +1215,15 @@
   }
 
   $('btn-start-session').addEventListener('click', async () => {
-    try { await send('cast:sessionStart', {}); } catch (e) { announce(e.message || 'Xatolik', true); }
+    try { await send('cast:sessionStart', {}); } catch (e) { showCmdError(e); }
   });
 
   $('btn-pause').addEventListener('click', async () => {
-    try { await send('cast:questionPause', {}); } catch (e) { announce(e.message || 'Xatolik', true); }
+    try { await send('cast:questionPause', {}); } catch (e) { showCmdError(e); }
   });
 
   $('btn-resume').addEventListener('click', async () => {
-    try { await send('cast:questionResume', {}); } catch (e) { announce(e.message || 'Xatolik', true); }
+    try { await send('cast:questionResume', {}); } catch (e) { showCmdError(e); }
   });
 
   // S29.09: Add Time — keyboard-safe guard + avtomatik yopish
@@ -1216,7 +1240,7 @@
   document.querySelectorAll('.rail-time-btn').forEach((btn) => {
     btn.addEventListener('click', async () => {
       const sec = Number(btn.dataset.sec);
-      try { await send('cast:addTime', { seconds: sec }); } catch (e) { announce(e.message || 'Xatolik', true); }
+      try { await send('cast:addTime', { seconds: sec }); } catch (e) { showCmdError(e); }
       const wrap = btn.closest('.rail-addtime');
       if (wrap) wrap.open = false;
     });
@@ -1230,23 +1254,26 @@
     });
   }
   $('btn-close').addEventListener('click', async () => {
-    try { await send('cast:questionClose', {}); } catch (e) { announce(e.message || 'Xatolik', true); }
+    try { await send('cast:questionClose', {}); } catch (e) { showCmdError(e); }
   });
 
   $('btn-reveal').addEventListener('click', async () => {
-    try { await send('cast:questionReveal', {}); } catch (e) { announce(e.message || 'Xatolik', true); }
+    try { await send('cast:questionReveal', {}); } catch (e) { showCmdError(e); }
   });
 
   $('btn-discuss').addEventListener('click', async () => {
-    try { await send('cast:startDiscussion', { seconds: 60 }); } catch (e) { announce(e.message || 'Xatolik', true); }
+    try { await send('cast:startDiscussion', { seconds: 60 }); } catch (e) { showCmdError(e); }
   });
 
   $('btn-revote').addEventListener('click', async () => {
-    try { await send('cast:openRevote', {}); } catch (e) { announce(e.message || 'Xatolik', true); }
+    try { await send('cast:openRevote', {}); } catch (e) { showCmdError(e); }
   });
 
   $('btn-next').addEventListener('click', async () => {
-    try { await send('cast:questionNext', {}); } catch (e) { announce(e.message || 'Xatolik', true); }
+    try {
+      if (phase === 'THINK_TIME') await send('cast:questionOpen', {});
+      else await send('cast:questionNext', {});
+    } catch (e) { showCmdError(e); }
   });
 
   // ── Quick Prompt Composer (C3-06) ──
@@ -1556,7 +1583,7 @@
   });
 
   $('btn-lock-lobby').addEventListener('click', async () => {
-    try { await send('cast:lockLobby', { locked: true }); announce('Lobbi qulflandi'); } catch (e) { announce(e.message || 'Xatolik', true); }
+    try { await send('cast:lockLobby', { locked: true }); announce('Lobbi qulflandi'); } catch (e) { showCmdError(e); }
   });
 
   // End session — two-step confirmation
@@ -1564,7 +1591,7 @@
   $('btn-end-cancel').addEventListener('click', () => { $('end-modal').hidden = true; });
   $('btn-end-confirm').addEventListener('click', async () => {
     $('end-modal').hidden = true;
-    try { await send('cast:sessionEnd', {}); } catch (e) { announce(e.message || 'Xatolik', true); }
+    try { await send('cast:sessionEnd', {}); } catch (e) { showCmdError(e); }
   });
 
   // Keyboard shortcuts (disabled while typing)
@@ -1584,7 +1611,7 @@
       const startBtn = $('btn-start-session');
       const nextBtn = $('btn-next');
       if (startBtn && !startBtn.disabled) startBtn.click();
-      else if (phase === 'THINK_TIME') { try { send('cast:questionOpen', {}).catch(() => {}); } catch (_) {} }
+      else if (phase === 'THINK_TIME') { try { send('cast:questionOpen', {}).catch((e) => showCmdError(e)); } catch (_) {} }
       else if (nextBtn && !nextBtn.disabled) nextBtn.click();
       return;
     }
@@ -1707,7 +1734,7 @@
           if (newText === null) return;
           payload.redactedText = newText;
         }
-        try { await send('cast:poeModerateExemplar', payload); } catch (e) { announce(e.message || 'Xatolik', true); }
+        try { await send('cast:poeModerateExemplar', payload); } catch (e) { showCmdError(e); }
       });
     });
   }
@@ -1754,27 +1781,27 @@
   });
 
   $('#btn-poe-close-pred').addEventListener('click', async () => {
-    try { await send('cast:poeClosePrediction', {}); } catch (e) { announce(e.message || 'Xatolik', true); }
+    try { await send('cast:poeClosePrediction', {}); } catch (e) { showCmdError(e); }
   });
   $('#btn-poe-start-exp').addEventListener('click', async () => {
-    try { await send('cast:poeStartExplanation', {}); } catch (e) { announce(e.message || 'Xatolik', true); }
+    try { await send('cast:poeStartExplanation', {}); } catch (e) { showCmdError(e); }
   });
   $('#btn-poe-close-exp').addEventListener('click', async () => {
-    try { await send('cast:poeCloseExplanation', {}); } catch (e) { announce(e.message || 'Xatolik', true); }
+    try { await send('cast:poeCloseExplanation', {}); } catch (e) { showCmdError(e); }
   });
   $('#btn-poe-analysis').addEventListener('click', async () => {
-    try { await send('cast:poeShowAnalysis', {}); } catch (e) { announce(e.message || 'Xatolik', true); }
+    try { await send('cast:poeShowAnalysis', {}); } catch (e) { showCmdError(e); }
   });
   $('#btn-poe-media-retry').addEventListener('click', async () => {
-    try { await send('cast:poeMediaAction', { action: 'retry' }); } catch (e) { announce(e.message || 'Xatolik', true); }
+    try { await send('cast:poeMediaAction', { action: 'retry' }); } catch (e) { showCmdError(e); }
   });
   $('#btn-poe-media-skip').addEventListener('click', async () => {
-    try { await send('cast:poeMediaAction', { action: 'skip' }); } catch (e) { announce(e.message || 'Xatolik', true); }
+    try { await send('cast:poeMediaAction', { action: 'skip' }); } catch (e) { showCmdError(e); }
   });
   $('#btn-poe-media-fallback').addEventListener('click', async () => {
     const fallbackText = prompt('Fallback matn (media ishlamasa):');
     if (fallbackText === null) return;
-    try { await send('cast:poeMediaAction', { action: 'fallback', fallbackText }); } catch (e) { announce(e.message || 'Xatolik', true); }
+    try { await send('cast:poeMediaAction', { action: 'fallback', fallbackText }); } catch (e) { showCmdError(e); }
   });
 
   // ── C3-12 Open-Response Semantic Board ──
@@ -1932,13 +1959,13 @@
     }
   });
   $('#btn-orb-close').addEventListener('click', async () => {
-    try { await send('cast:orbClose', {}); } catch (e) { announce(e.message || 'Xatolik', true); }
+    try { await send('cast:orbClose', {}); } catch (e) { showCmdError(e); }
   });
   $('#btn-orb-cluster').addEventListener('click', async () => {
-    try { await send('cast:orbRunCluster', {}); } catch (e) { announce(e.message || 'Xatolik', true); }
+    try { await send('cast:orbRunCluster', {}); } catch (e) { showCmdError(e); }
   });
   $('#btn-orb-end').addEventListener('click', async () => {
-    try { await send('cast:orbEnd', {}); } catch (e) { announce(e.message || 'Xatolik', true); }
+    try { await send('cast:orbEnd', {}); } catch (e) { showCmdError(e); }
   });
   $('#btn-orb-merge').addEventListener('click', async () => {
     if (orbSelected.size < 2) return;
@@ -1948,7 +1975,7 @@
       orbSelected.clear();
       updateMergeButton();
       $('#orb-merge-label').value = '';
-    } catch (e) { announce(e.message || 'Xatolik', true); }
+    } catch (e) { showCmdError(e); }
   });
 
   // ── C3-17 Power-ups wiring ──
@@ -2072,7 +2099,7 @@
         renderSpPanel();
         announce('🏁 Poyga boshlandi');
       }
-    } catch (e) { announce(e.message || 'Xatolik', true); }
+    } catch (e) { showCmdError(e); }
   });
   const spPauseBtn = $('#btn-sp-pause');
   if (spPauseBtn) spPauseBtn.addEventListener('click', async () => {
@@ -2083,7 +2110,7 @@
         renderSpPanel();
         announce('⏸ Poyga pauza qilindi');
       }
-    } catch (e) { announce(e.message || 'Xatolik', true); }
+    } catch (e) { showCmdError(e); }
   });
   const spResumeBtn = $('#btn-sp-resume');
   if (spResumeBtn) spResumeBtn.addEventListener('click', async () => {
@@ -2094,7 +2121,7 @@
         renderSpPanel();
         announce('▶ Poyga davom ettirildi');
       }
-    } catch (e) { announce(e.message || 'Xatolik', true); }
+    } catch (e) { showCmdError(e); }
   });
   // Self-paced rejimni bilish: director-join snapshot'da SP active bo'lsa
   // (server SP_PROGRESS event'i bilan yangilanadi)
@@ -2130,7 +2157,7 @@
         const ack = await send('cast:teamAssign', { mode: 'random' });
         if (ack && ack.ok) { announce('🎲 Jamoalar taqsimlandi'); }
         else announce(ack?.error?.message || 'Taqsimlanmadi', true);
-      } catch (e) { announce(e.message || 'Xatolik', true); }
+      } catch (e) { showCmdError(e); }
     });
   }
   const teamTalkBtn = $('#btn-team-talk');
@@ -2141,7 +2168,7 @@
         const ack = await send('cast:teamTalkStart', { seconds: secs });
         if (ack && ack.ok) { announce(`🗣 Jamoa muhokamasi (${ack.seconds}s)`); }
         else announce(ack?.error?.message || 'Boshlanmadi', true);
-      } catch (e) { announce(e.message || 'Xatolik', true); }
+      } catch (e) { showCmdError(e); }
     });
   }
   // Render helpers
@@ -2247,7 +2274,7 @@
         } else {
           announce(ack?.error?.message || 'Tuzatilmadi', true);
         }
-      } catch (e) { announce(e.message || 'Xatolik', true); }
+      } catch (e) { showCmdError(e); }
     });
   }
   function currentQuestionId() {

@@ -198,6 +198,11 @@ class FirebaseWrapper {
   async transaction(path, updater) {
     if (this._useReal) {
       const ref = this._realDb.ref(path);
+      // OGOHLANTIRISH: RTDB client updater'ni avval lokal cache (bo'sh bo'lsa
+      // null) bilan yurgazadi — abort-qaytaruvchi updater'lar (OCC check) yangi
+      // process'da server'ga bormasdan soxta-abort qiladi. OCC kerak bo'lsa,
+      // tekshiruvni authoritative fb.get() bilan o'zingiz qiling va updater'ni
+      // HECH QACHON abort qilmaydigan yozing (namuna: commitEvent).
       return withFBTimeout(new Promise((resolve, reject) => {
         ref.transaction((current) => {
           // RTDB transaction abort uchun updater null/undefined qaytarishi kerak

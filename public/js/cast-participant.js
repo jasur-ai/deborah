@@ -218,11 +218,10 @@
     const code = $('join-code').value.trim();
     const name = $('join-name').value.trim();
     $('join-error').textContent = '';
-    if (!code || !name) { $('join-error').textContent = 'Kod va ism kiritilishi shart'; return; }
-
-    // Auto-fill code from URL if empty
-    const urlCode = new URLSearchParams(location.search).get('code');
+    // Auto-fill code from URL if empty (QR) — bo'shlik tekshiruvidan OLDIN
+    const urlCode = (new URLSearchParams(location.search).get('code') || '').trim();
     const joinCode = code || urlCode || '';
+    if (!joinCode || !name) { $('join-error').textContent = 'Kod va ism kiritilishi shart'; return; }
 
     // Init socket lazily on first join
     if (!socket) {
@@ -1056,7 +1055,11 @@
           verdictEl = document.createElement('div');
           verdictEl.className = 'part-reveal-verdict';
           verdictEl.id = 'part-reveal-verdict';
-          revealBox.insertBefore(verdictEl, revealBox.querySelector('h2'));
+          // FIX: h2 #part-reveal'ning bevosita farzandi emas (card ichida) —
+          // insertBefore NotFoundError berardi. Ota-elementga nisbatan qo'shamiz.
+          const h2 = revealBox.querySelector('h2');
+          if (h2 && h2.parentNode) h2.parentNode.insertBefore(verdictEl, h2);
+          else revealBox.appendChild(verdictEl);
         }
         verdictEl.textContent = wasCorrect ? '✓ To‘g‘ri javob' : '✗ Noto‘g‘ri';
         $('part-reveal-explanation').textContent = data.explanation || '';
@@ -1604,7 +1607,15 @@
 
   // ── Init ──
   const urlCode = new URLSearchParams(location.search).get('code');
-  if (urlCode) $('join-code').value = urlCode;
+  if (urlCode) {
+    // QR orqali kirganda: kod avtomatik + qulflangan — o'yinchi faqat ism yozadi
+    const codeInput = $('join-code');
+    codeInput.value = urlCode.trim().toUpperCase();
+    codeInput.setAttribute('readonly', 'readonly');
+    codeInput.classList.add('is-locked');
+    const nameInput = $('join-name');
+    if (nameInput) setTimeout(() => { try { nameInput.focus({ preventScroll: false }); } catch (_) { nameInput.focus(); } }, 350);
+  }
   if (sessionStorage.getItem('castTicket')) {
     tryRejoin();
   }

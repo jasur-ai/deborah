@@ -61,6 +61,7 @@
   "director.close": "Закрыть вопрос",
   "director.reveal": "Показать результаты",
   "director.next": "Следующий вопрос",
+  "director.openQuestion": "Открыть вопрос ▶",
   "director.discuss": "Обсуждение",
   "director.revote": "Переголосовать",
   "proj.join": "ПРИСОЕДИНЯЙТЕСЬ",

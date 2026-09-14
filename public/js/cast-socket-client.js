@@ -99,7 +99,9 @@
             clearTimeout(record.timer);
             this.pendingAcks.delete(commandId);
             if (ack && ack.ok) {
-              if (typeof ack.newRevision === 'number') this.revision = ack.newRevision;
+              // FIX: revision faqat OLDINGA yuradi — multi-commit buyruqlarda eski
+              // ack broadcast'dan keyin kelib revision'ni orqaga qaytarmasligi uchun.
+              if (typeof ack.newRevision === 'number' && ack.newRevision > this.revision) this.revision = ack.newRevision;
               res(ack);
             } else {
               const err = ack && ack.error ? ack.error : { code: 'UNKNOWN' };
