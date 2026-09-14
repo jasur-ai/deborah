@@ -153,7 +153,8 @@ describe('T-05 cast-icons: jonli emoji→ikonka ko‘rik', () => {
       expect(/[\u{1F000}-\u{1FAFF}\u2600-\u27BF]/u.test(o.text), 'option emoji-fri').toBe(false);
       expect(o.text.length).toBeGreaterThan(3);
     });
-    await page.fill('#join-code', joinCode);
+    // QR join: ?code= bo'lsa input readonly+qulflangan — faqat bo'sh bo'lsa to'ldiramiz
+    if (!(await page.inputValue('#join-code'))) await page.fill('#join-code', joinCode);
     await page.fill('#join-name', 'BotIcon');
     await page.click('#join-form button[type="submit"], #join-form button');
     await page.waitForTimeout(1800);

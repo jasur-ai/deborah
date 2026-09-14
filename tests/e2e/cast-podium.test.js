@@ -61,7 +61,8 @@ async function joinPage(name, joinCode) {
   const page = await newPage(ctx);
   await page.goto(`${serverUrl}/play?code=${joinCode}`, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('#join-form');
-  await page.fill('#join-code', joinCode);
+  // QR join: ?code= bo'lsa input readonly+qulflangan — faqat bo'sh bo'lsa to'ldiramiz
+  if (!(await page.inputValue('#join-code'))) await page.fill('#join-code', joinCode);
   await page.fill('#join-name', name);
   await page.click('#join-form button[type="submit"], #join-form button');
   await page.waitForTimeout(2000);
