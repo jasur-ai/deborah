@@ -60,24 +60,24 @@ describe('probe3 rev4', () => {
     const errs2 = [];
     pr.on('pageerror', (e) => errs2.push('P:' + e.message.slice(0, 160)));
     await pr.goto(`${serverUrl}/user/practice?source=user&key=ut1`, { waitUntil: 'domcontentloaded' });
-    await pr.waitForSelector('.qtile');
+    // 09/2026 (user qarori): practice — qstage (.opt tugmalar), eski .qtile/.qcard yo'q
+    await pr.waitForSelector('.qstage .opt[data-j]');
     const WRONG = [0, 3];
     for (let n = 0; n < 5; n++) {
       await pr.waitForFunction(() => {
-        const q = document.querySelector('.qcard');
-        return q && !q.querySelector('.qtile.is-locked');
+        const q = document.querySelector('.qstage');
+        return q && !q.querySelector('.opt.is-locked');
       }, null, { timeout: 8000 });
-      const name = await pr.evaluate(() => {
-        const r = document.querySelector('.qcard input[name^="q"]');
-        return r ? r.name : null;
+      const idx = await pr.evaluate(() => {
+        const s = document.querySelector('.qstage');
+        return s ? parseInt(s.dataset.qidx, 10) : null;
       });
-      const idx = parseInt(String(name).slice(1), 10);
       await pr.evaluate(({ idx, wrong }) => {
-        const q = document.querySelector('.qcard');
-        const inputs = Array.from(q.querySelectorAll('.qtile input'));
+        const q = document.querySelector('.qstage');
+        const btns = Array.from(q.querySelectorAll('.opt[data-j]'));
         const c = QUESTIONS[idx] != null ? QUESTIONS[idx].correct : -1;
-        const pick = wrong.includes(idx) ? ((c + 1) % inputs.length) : c;
-        inputs[pick].click();
+        const pick = wrong.includes(idx) ? ((c + 1) % btns.length) : c;
+        btns[pick].click();
         return { picked: pick, c, qtext: QUESTIONS[idx] && QUESTIONS[idx].text };
       }, { idx, wrong: WRONG });
       await pr.waitForFunction(() => document.querySelector('.pr-fb'), null, { timeout: 6000 });
@@ -97,20 +97,19 @@ describe('probe3 rev4', () => {
     // retry: xatolarni qayta yechamiz (2 ta — hammasini to'g'ri)
     await pr.click('#retry-wrong');
     await pr.waitForFunction(() => {
-      const q = document.querySelector('.qcard');
-      return q && !q.querySelector('.qtile.is-locked');
+      const q = document.querySelector('.qstage');
+      return q && !q.querySelector('.opt.is-locked');
     }, null, { timeout: 8000 });
     for (let n = 0; n < 2; n++) {
-      const name = await pr.evaluate(() => {
-        const r = document.querySelector('.qcard input[name^="q"]');
-        return r ? r.name : null;
+      const idx = await pr.evaluate(() => {
+        const s = document.querySelector('.qstage');
+        return s ? parseInt(s.dataset.qidx, 10) : null;
       });
-      const idx = parseInt(String(name).slice(1), 10);
       await pr.evaluate((idx) => {
-        const q = document.querySelector('.qcard');
-        const inputs = Array.from(q.querySelectorAll('.qtile input'));
+        const q = document.querySelector('.qstage');
+        const btns = Array.from(q.querySelectorAll('.opt[data-j]'));
         const c = QUESTIONS[idx] != null ? QUESTIONS[idx].correct : 0;
-        inputs[Math.max(0, c)].click();
+        btns[Math.max(0, c)].click();
       }, idx);
       await pr.waitForFunction(() => document.querySelector('.pr-fb'), null, { timeout: 6000 });
       const hasNext = await pr.locator('#next').count();
@@ -129,7 +128,8 @@ describe('probe3 rev4', () => {
     const histCount = await pr.locator('.ph-card').count();
     const histTxt = await pr.locator('.ph-list').innerText();
     console.log('STEP4 history count=', histCount, ' head=', histTxt.slice(0, 200).replace(/\n/g, ' | '));
-    expect(histCount, 'tarixda kamida 2 ta yozuv').toBeGreaterThanOrEqual(2);
+    // 09/2026 (user qarori): xatolardan retry SAQLANMAYDI — tarixda faqat 1 yozuv (asosiy urinish)
+    expect(histCount, 'tarixda faqat asosiy urinish (retry saqlanmaydi)').toBe(1);
     await pr.screenshot({ path: '/home/user/shots/t4/history.png' }).catch(() => {});
     await pr.close().catch(() => {});
   }, 180000);

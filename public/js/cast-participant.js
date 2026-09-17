@@ -356,7 +356,8 @@
       btn.dataset.id = o.id;
       if (disabled) { btn.disabled = true; btn.setAttribute('aria-disabled', 'true'); }
       btn.innerHTML =
-        `<span class="k" aria-hidden="true">${LETTERS[i % 6]}</span>` +
+        // cast-opt-letter — S31 kontrakti uchun saqlanadi; vizual — qstage .k
+        `<span class="k cast-opt-letter" aria-hidden="true">${LETTERS[i % 6]}</span>` +
         `<span>${escapeHtml(o.text)}</span>` +
         `<span class="pct"></span>` +
         `<span class="track" aria-hidden="true"><i style="width:0%"></i></span>`;

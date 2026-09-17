@@ -990,7 +990,7 @@ describe('S30 — Projector classroom display', () => {
     expect(js).toContain('showCodeChip');
   });
 
-  it('S30.05/06 — solid options + timer num/label/ring, pulse yo\'q', async () => {
+  it('S30.05/06 — solid options + qstage timer num/label, pulse yo\'q', async () => {
     const fs = await import('node:fs');
     const pcss = fs.readFileSync('public/design/contexts/projector.css', 'utf8');
     const body = pcss.replace(/\/\*[\s\S]*?\*\//g, '');
@@ -999,7 +999,9 @@ describe('S30 — Projector classroom display', () => {
     const ejs = fs.readFileSync('views/cast/projector.ejs', 'utf8');
     expect(ejs).toContain('proj-timer-num');
     expect(ejs).toContain('proj-timer-label');
-    expect(ejs).toContain('proj-timer-ring');
+    // 09/2026 (user qarori): proyektor taymer halqasi (ring) olib tashlandi —
+    // o'rniga kirish dashboard'dagi qstage header taymeri (aynan o'zi).
+    expect(ejs).toContain('question-stage.css');
   });
 
   it('S30.07 — public distribution max 5, reveal keyin', async () => {

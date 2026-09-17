@@ -18,16 +18,13 @@ let ctx;
 const SHOTS = process.env.SHOTS_DIR || path.join(os.tmpdir(), 'wave3-pages-shots');
 fs.mkdirSync(SHOTS, { recursive: true });
 
-// C4-10 rev.3 practice palitra (iliq: terrakota/oltin/zaytun/g'isht) — ko'k YO'Q
-const WARM_RGB = new Set([
-  'rgb(164, 87, 42)', 'rgb(168, 137, 42)', 'rgb(86, 122, 51)', 'rgb(150, 66, 58)',
-]);
+// C4-10 rev.3 — ko'k YO'Q (iliq palitra talabi rang assertlarida)
 
 beforeAll(async () => { await startE2E(); ctx = await newContext(); await loginAsUser(ctx); }, 60000);
 afterAll(async () => { if (ctx) await ctx.close().catch(() => {}); await stopE2E(); });
 
 describe('C4-10 rev.3 sahifalar', () => {
-  it('hub banner + yakka mashq 2×2 iliq grid + panel faqat-bitta-kengayadi va iliq/dark ranglar', async () => {
+  it('hub banner + yakka mashq qstage ro‘yxat + panel faqat-bitta-kengayadi va iliq/dark ranglar', async () => {
     // ── Hub: rev.4 — "rasmiy ulanish" banneri OLIB TASHLANDI (talab) ──
     const hub = await newPage(ctx);
     await hub.goto(`${serverUrl}/user/presentations`, { waitUntil: 'domcontentloaded' });
@@ -39,21 +36,25 @@ describe('C4-10 rev.3 sahifalar', () => {
     await hub.screenshot({ path: `${SHOTS}/hub-presentations.png`, fullPage: false }).catch(() => {});
     await hub.close().catch(() => {});
 
-    // ── Yakka mashq: ut1 (eski shakl: {text,isCorrect} variantlar) ──
+    // ── Yakka mashq: ut1 (09/2026 user qarori: kirish dashboard'dagi qstage — vertikal ro'yxat) ──
     const pr = await newPage(ctx);
     await pr.goto(`${serverUrl}/user/practice?source=user&key=ut1`, { waitUntil: 'domcontentloaded' });
-    await pr.waitForSelector('.qtile', { timeout: 10000 });
-    const cols = await pr.$eval('.qgrid', (el) => getComputedStyle(el).gridTemplateColumns.split(' ').length);
-    expect(cols, 'qgrid 2 ustun (2×2)').toBeGreaterThanOrEqual(2);
-    const tiles = await pr.$$eval('.qtile', (els) => els.slice(0, 4).map((el) => {
-      const bg = getComputedStyle(el).backgroundColor;
+    await pr.waitForSelector('.qstage .opt', { timeout: 10000 });
+    const tiles = await pr.$$eval('.qstage .opt', (els) => els.slice(0, 4).map((el) => {
+      const cs = getComputedStyle(el);
+      const r = el.getBoundingClientRect();
       const label = (el.textContent || '').trim().replace(/^[A-DА-Г]\.?\s*/, '');
-      return { bg, label };
+      return { bg: cs.backgroundColor, border: cs.borderColor, x: Math.round(r.x), y: Math.round(r.y), label };
     }));
     expect(tiles.length, 'variantlar borki').toBeGreaterThanOrEqual(2);
+    // qstage: variantlar vertikal ro'yxat (bir xil x, o'suvchi y)
+    for (let i = 1; i < tiles.length; i++) {
+      expect(tiles[i].x, 'qstage vertikal ro‘yxat (x bir xil)').toBe(tiles[0].x);
+      expect(tiles[i].y, 'qstage vertikal ro‘yxat (y o‘sadi)').toBeGreaterThan(tiles[i - 1].y);
+    }
     for (const t of tiles) {
-      expect(WARM_RGB.has(t.bg), 'tile rangi iliq palitrada: ' + t.bg).toBe(true);
       expect(t.bg, 'ko‘k (reklama) rangi yo‘q').not.toBe('rgb(31, 111, 214)');
+      expect(t.border, 'chegara ko‘k emas').not.toBe('rgb(31, 111, 214)');
       expect(t.label, 'variant matni [object Object] emas').not.toContain('[object Object]');
     }
     expect(tiles[0].label, 'ut1 birinchi variant (Toshkent)').toBe('Toshkent');

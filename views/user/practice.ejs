@@ -351,7 +351,7 @@
         : `<button type="button" class="btn" id="next" ${isRev ? '' : 'disabled'}>${t('next', 'Keyingi →')}</button>`;
 
       quiz.innerHTML = `
-        <section class="qstage" aria-label="${esc(posLabel)}">
+        <section class="qstage" aria-label="${esc(posLabel)}" data-qidx="${cur}">
           <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
           <div class="sc-top"><span class="sc-code">Savol ${flowPos(cur) + 1} / ${flow.length}</span><span class="sc-live"><i></i>mashq</span><span>${UNTIMED ? '∞ vaqtsiz' : '⏱ savol vaqti'}</span></div>
           <div class="sc-body">
