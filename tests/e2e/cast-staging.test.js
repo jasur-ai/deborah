@@ -1,9 +1,10 @@
 /**
  * Deborah — Cast E2E: Staging (C4-08) 3-sekund qoidasi
  * -----------------------------------------------------
- * Savol ochilishida (think/preview): avval faqat savol matni + ko'rinadigan
- * countdown chip ko'rsatiladi; variantlar faqat questionOpened'dan keyin
- * ochiladi (server thinkSeconds). CLASSIC_LIVE preset'ida thinkSeconds=3.
+ * 09/2026 (user qarori): savol ochilishida (think/preview) SAVOL + VARIANTLAR
+ * darhol ko'rinadi ("3s" countdown yozuv yo'q — jimjit progress chiziq);
+ * variantlar questionOpened'dan keyin bosiladi (server thinkSeconds).
+ * CLASSIC_LIVE preset'ida thinkSeconds=3.
  */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { io } from 'socket.io-client';
@@ -17,7 +18,7 @@ beforeAll(async () => { await startE2E(); ctx = await newContext(); await loginA
 afterAll(async () => { if (ctx) await ctx.close().catch(() => {}); await stopE2E(); });
 
 describe('T-03 cast-staging: 3s rule', () => {
-  it('preview: faqat savol + countdown chip; opened: variantlar ochiladi', async () => {
+  it('preview: savol + variantlar (disabled); opened: variantlar active', async () => {
     const sessionId = generateSessionId();
     const joinCode = generateJoinCode();
     const qid = 'q_01';
@@ -56,34 +57,35 @@ describe('T-03 cast-staging: 3s rule', () => {
     expect((await emit('cast:sessionStart', {})).ok).toBe(true);
     expect((await emit('cast:questionOpen', {})).ok).toBe(true);
 
-    // Staging: savol matni ko'rinadi, variantlar yo'q, countdown chip yoniq
+    // Staging: savol matni + 4 variant KO'RINADI (bosilmaydi — disabled),
+    // "3s" countdown yozuv yo'q (jimjit progress chiziq)
     await page.waitForFunction(() => {
-      const el = document.getElementById('part-stage-cd');
       const qEl = document.getElementById('part-question');
-      return qEl && !qEl.hidden && el && !el.hidden && /^[123]$/.test((document.getElementById('part-stage-num') || {}).textContent || '');
+      return qEl && !qEl.hidden && document.querySelectorAll('#part-options .cast-option').length === 4;
     }, { timeout: 7000 });
     const during = await page.evaluate(() => ({
       qText: document.getElementById('part-q-text')?.textContent,
-      num: document.getElementById('part-stage-num')?.textContent,
-      chipHidden: document.getElementById('part-stage-cd')?.hidden,
       optBtns: document.querySelectorAll('#part-options .cast-option').length,
+      disabledBtns: document.querySelectorAll('#part-options .cast-option[disabled]').length,
+      noCountdownText: !(document.getElementById('part-question')?.textContent || '').match(/Fikrlash vaqti|^\s*[123]\s*$/m),
+      oldChipGone: !document.getElementById('part-stage-cd'),
     }));
     expect(during.qText).toContain('Staging test savol');
-    expect(during.num).toBeTruthy();
-    expect(during.chipHidden).toBe(false);
-    expect(during.optBtns).toBe(0);
+    expect(during.optBtns).toBe(4);
+    expect(during.disabledBtns).toBe(4);
+    expect(during.noCountdownText).toBe(true);
+    expect(during.oldChipGone).toBe(true);
 
-    // 3s o'tgach: chip yashirin, variantlar ochilgan
+    // 3s o'tgach: variantlar active (bosiladi), taymer yuradi
     await page.waitForFunction(() => {
-      const chip = document.getElementById('part-stage-cd');
-      return chip && chip.hidden === true && document.querySelectorAll('#part-options .cast-option').length === 4;
+      return document.querySelectorAll('#part-options .cast-option:not([disabled])').length === 4;
     }, { timeout: 9000 });
     const after = await page.evaluate(() => ({
-      chipHidden: document.getElementById('part-stage-cd')?.hidden,
-      optBtns: document.querySelectorAll('#part-options .cast-option').length,
+      activeBtns: document.querySelectorAll('#part-options .cast-option:not([disabled])').length,
+      timer: document.getElementById('part-timer')?.textContent,
     }));
-    expect(after.chipHidden).toBe(true);
-    expect(after.optBtns).toBe(4);
+    expect(after.activeBtns).toBe(4);
+    expect(after.timer).toBeTruthy();
     sock.disconnect();
     await page.close();
   }, 60000);

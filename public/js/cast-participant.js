@@ -29,6 +29,10 @@
 
   let state = STATE.WAITING;
   let sessionId = null;
+  // 09/2026: orqaga-confirm holati (joined + live → confirm; leaving → guard)
+  let partJoined = false;
+  let partOver = false;
+  let partLeaving = false;
   let participantId = null;
   let displayAlias = null;
   let currentQuestion = null;
@@ -253,6 +257,7 @@
       client.setRevision(ack.revision || 1);
       sessionStorage.setItem('castTicket', savedTicket);
       sessionStorage.setItem('castSessionId', sessionId);
+      partJoined = true;
       // S31.01: join stepper — 3-qadam (Lobbi) yakunlandi
       setJoinStep(3, true);
       // S31.08/09: player badge + preferences
@@ -337,32 +342,59 @@
   });
 
   // ── Question render ──
+  // Variant tugmalar quruvchi — preview (disabled) va opened (active) ikkalasi
+  // uchun BIR xil markup (09/2026: staging'da ham variantlar ko'rinadi).
+  function buildOptions(wrap, q, disabled) {
+    wrap.innerHTML = '';
+    wrap.hidden = false;
+    const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
+    (q.options || []).forEach((o, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      // cast-option — test selektorlari uchun saqlanadi; vizual — landing .opt
+      btn.className = 'cast-option opt step';
+      btn.dataset.id = o.id;
+      if (disabled) { btn.disabled = true; btn.setAttribute('aria-disabled', 'true'); }
+      btn.innerHTML =
+        `<span class="k" aria-hidden="true">${LETTERS[i % 6]}</span>` +
+        `<span>${escapeHtml(o.text)}</span>` +
+        `<span class="pct"></span>` +
+        `<span class="track" aria-hidden="true"><i style="width:0%"></i></span>`;
+      btn.addEventListener('click', () => toggleSelect(btn));
+      wrap.appendChild(btn);
+    });
+  }
+
+  // Kirish animatsiyasi (landing.js bilan bir xil tartib: beam → savol → variantlar)
+  function playEntrance() {
+    const beam = $('part-beam');
+    const qStep = $('part-q-text');
+    const opts = [...document.querySelectorAll('#part-options .opt')];
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (qStep) qStep.classList.remove('in');
+    opts.forEach((o) => o.classList.remove('in'));
+    if (reduce) {
+      if (beam) beam.style.opacity = 0;
+      if (qStep) qStep.classList.add('in');
+      opts.forEach((o) => o.classList.add('in'));
+      return;
+    }
+    if (beam) beam.style.opacity = 1;
+    setTimeout(() => { if (beam) beam.style.opacity = 0; if (qStep) qStep.classList.add('in'); }, 320);
+    opts.forEach((o, ix) => setTimeout(() => o.classList.add('in'), 460 + ix * 130));
+  }
+
   function renderQuestion(q, phase, preserveIds = null) {
     currentQuestion = q;
-    clearStageCountdown();
+    clearThinkBar();
     show('part-question');
     selectedIds = new Set(preserveIds || []);
     $('part-q-meta').textContent = phase === 'REVOTE_OPEN' ? 'Qayta ovoz berish' : 'Savol';
     $('part-q-text').textContent = q.text;
     const wrap = $('part-options');
     if (!wrap) return;
-    wrap.innerHTML = '';
-    wrap.hidden = false;
-    const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
-    q.options.forEach((o, i) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'cast-option';
-      btn.dataset.id = o.id;
-      const symbols = ['▲', '●', '◆', '★', '✦'];
-      // S31.04: shape + letter + text — rangga bog'liq emas
-      btn.innerHTML =
-        `<span class="cast-opt-letter" aria-hidden="true">${LETTERS[i % 6]}</span>` +
-        `<span class="cast-opt-symbol" aria-hidden="true">${symbols[i % 5]}</span>` +
-        `<span>${escapeHtml(o.text)}</span>`;
-      btn.addEventListener('click', () => toggleSelect(btn));
-      wrap.appendChild(btn);
-    });
+    buildOptions(wrap, q, false);
+    playEntrance();
     closesAt = q.closesAt || null;
     startTimer();
     const submitEl = $('part-submit');
@@ -384,7 +416,7 @@
     const id = btn.dataset.id;
     if (selectedIds.has(id)) selectedIds.delete(id);
     else selectedIds.add(id);
-    btn.classList.toggle('selected', selectedIds.has(id));
+    btn.classList.toggle('sel', selectedIds.has(id));
     setState(selectedIds.size > 0 ? STATE.SELECTED : STATE.OPEN);
     // Single-choice: show submit when one selected; multi-select: always show
     const isMulti = currentQuestion && currentQuestion.type === 'multiple_select';
@@ -392,26 +424,28 @@
     if (submitBtn) submitBtn.hidden = selectedIds.size === 0;
   }
 
-  // ── C4-08: staging countdown (savol ochilguncha ko'rinadigan 3-2-1) ──
+  // ── 09/2026 (user qarori): staging'da "3s" yozuv yo'q — variantlar darhol
+  // ko'rinadi (bosilmaydi), ochilishgacha jimjit oltin progress chiziq. ──
   let stageTimer = null;
-  function clearStageCountdown() {
+  function clearThinkBar() {
     if (stageTimer) { clearInterval(stageTimer); stageTimer = null; }
-    const el = $('part-stage-cd');
+    const el = $('part-thinkbar');
     if (el) el.hidden = true;
   }
-  function startStageCountdown(sec) {
-    clearStageCountdown();
-    const el = $('part-stage-cd');
-    const num = $('part-stage-num');
-    if (!el || !num || !sec) return;
-    num.textContent = String(sec);
+  function startThinkBar(sec) {
+    clearThinkBar();
+    const el = $('part-thinkbar');
+    const fill = $('part-thinkbar-fill');
+    if (!el || !fill || !(sec > 0)) return;
     el.hidden = false;
+    fill.style.width = '0%';
     const t0 = Date.now();
+    const total = sec * 1000;
     stageTimer = setInterval(() => {
-      const left = sec - Math.floor((Date.now() - t0) / 1000);
-      if (left <= 0) { num.textContent = '0'; clearStageCountdown(); }
-      else num.textContent = String(left);
-    }, 250);
+      const p = Math.min(1, (Date.now() - t0) / total);
+      fill.style.width = (p * 100).toFixed(1) + '%';
+      if (p >= 1) clearThinkBar();
+    }, 100);
   }
 
   // ── C3-04 Confidence buttons ──
@@ -918,11 +952,11 @@
     switch (eventName) {
       case 'cast:questionPreview': {
         hidePodium();
-        // C4-08 staging: 3-sekund qoidasi — avval faqat savol + ko'rinadigan countdown,
-        // keyin (questionOpened'da) variantlar ochiladi
+        // 09/2026 (user qarori): staging'da ham SAVOL + VARIANTLAR ko'rinadi
+        // ("3s" yozuv yo'q); variantlar ochilgunga qadar bosilmaydi.
         const think = Math.max(0, Math.round(Number(data.thinkSeconds) || 0));
         const q = data.question || null;
-        if (q && think > 0) {
+        if (q) {
           currentVoteRound = 1;
           currentQuestion = q;
           selectedIds = new Set();
@@ -931,10 +965,11 @@
           $('part-q-meta').textContent = 'Savol';
           $('part-q-text').textContent = q.text;
           const wrap = $('part-options');
-          if (wrap) { wrap.innerHTML = ''; wrap.hidden = true; }
+          if (wrap) buildOptions(wrap, q, true);
+          playEntrance();
           const sub = $('part-submit'); if (sub) sub.hidden = true;
           const conf = $('part-confidence'); if (conf) conf.hidden = true;
-          startStageCountdown(think);
+          startThinkBar(think);
         }
         setState(STATE.THINKING);
         renderState();
@@ -1292,6 +1327,7 @@
       }
       case 'cast:sessionEnded':
         stopTimer();
+        partOver = true;
         hidePodium(true);
         if (spSyncInterval) { clearInterval(spSyncInterval); spSyncInterval = null; }
         show('part-reveal');
@@ -1574,6 +1610,7 @@
         sessionId = ack.sessionId;
         participantId = ack.participantId;
         displayAlias = ack.displayAlias;
+        partJoined = true;
         client.sessionId = sessionId;
         client.actorId = participantId;
         if (ack.state && ack.state.phase === 'QUESTION_OPEN' && ack.question) {
@@ -1619,4 +1656,22 @@
   if (sessionStorage.getItem('castTicket')) {
     tryRejoin();
   }
+
+  // ── 09/2026 (user qarori): bir-step "Orqaga" — cast jarayonida confirm;
+  // "Ha" — yuborilmagan tanlov saqlanmasdan chiqish (chinakam discard:
+  // finish/submit chaqirilmaydi, socket unload'da uziladi).
+  function partLeaveMsg() { return 'Rostdan ham orqaga qaytmoqchimisiz? O‘zgarishlar saqlanmasligi mumkin'; }
+  function partNeedsConfirm() { return partJoined && !partOver; }
+  const partBackBtn = $('part-back');
+  if (partBackBtn) partBackBtn.addEventListener('click', () => {
+    if (partNeedsConfirm() && !confirm(partLeaveMsg())) return;
+    partLeaving = true;
+    try { if (socket) socket.disconnect(); } catch (_) {}
+    location.href = '/play';
+  });
+  window.addEventListener('beforeunload', (e) => {
+    if (partLeaving || !partNeedsConfirm()) return;
+    e.preventDefault();
+    e.returnValue = partLeaveMsg();
+  });
 })();

@@ -949,7 +949,7 @@ router.get('/practice-history', async (req, res) => {
   try {
     const snap = await fb.get(`users/${user.safeKey}/practice_history`);
     const all = Object.entries(snap.val() || {});
-    for (const [id, v] of all.sort((a, b) => ((b[1] && b[1].at) || 0) - ((a[1] && a[1].at) || 0)).slice(0, 200)) {
+    for (const [id, v] of all.sort((a, b) => ((b[1] && b[1].at) || 0) - ((a[1] && a[1].at) || 0)).slice(0, 10)) {
       const r = v || {};
       let official = null;
       if (r.source === 'public' && r.testOwner && r.key) {
@@ -1017,8 +1017,11 @@ router.post('/api/practice/grade', async (req, res) => {
   //   • Ommaviy test → o'z tarixida ham barcha urinish; «ommaviy/rasmiy» ball
   //     faqat BIRINCHI (to'liq) urinishdan yoziladi va hammaga ochiq
   //     public_scores reytingida saqlanadi (keyingi urinishlar uni o'zgartirmaydi).
+  //   • 09/2026 (user qarori): «retry» (faqat xatolar) — MASHQ, saqlanmaydi.
+  //   • 09/2026 (user qarori): shaxsiy tarixda faqat oxirgi 10 ta saqlanadi.
+  let saved = false;
   try {
-    if (user && String(req.body?.source || req.query.source || 'user') === 'user') {
+    if (kind !== 'retry' && user && String(req.body?.source || req.query.source || 'user') === 'user') {
       const ownSnap = await fb.get(`users/${user.safeKey}/tests/${testKey}`);
       const isOwn = ownSnap.exists();
       let testOwner = null;
@@ -1041,6 +1044,7 @@ router.post('/api/practice/grade', async (req, res) => {
         testOwner: testOwner || null,
       };
       await fb.set(`users/${user.safeKey}/practice_history/${histId}`, record);
+      saved = true;
       // Ommaviy «rasmiy» ball — faqat birinchi to'liq urinish (attempt #1)
       if (!isOwn && testOwner && kind === 'full' && user.safeKey !== testOwner) {
         const scorePath = `public_scores/${testOwner}__${testKey}/${user.safeKey}`;
@@ -1049,9 +1053,19 @@ router.post('/api/practice/grade', async (req, res) => {
           await fb.set(scorePath, { percent: record.percent, correct, total, at: record.at, username: user.username || user.safeKey });
         }
       }
+      // Oxirgi 10 tadan eskilarini tozalash (xotira chegarasi — user qarori)
+      try {
+        const hsnap = await fb.get(`users/${user.safeKey}/practice_history`);
+        const ids = Object.entries(hsnap.val() || {})
+          .sort((a, b) => ((b[1] && b[1].at) || 0) - ((a[1] && a[1].at) || 0))
+          .map(([id]) => id);
+        for (const oldId of ids.slice(10)) {
+          await fb.remove(`users/${user.safeKey}/practice_history/${oldId}`);
+        }
+      } catch (_) { /* non-critical */ }
     }
   } catch (_) { /* non-critical */ }
-  res.json({ ok: true, correct, total, percent: Math.round((correct / total) * 100), results });
+  res.json({ ok: true, saved, correct, total, percent: Math.round((correct / total) * 100), results });
 });
 
 export default router;

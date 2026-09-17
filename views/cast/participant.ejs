@@ -7,6 +7,7 @@
   <link rel="icon" type="image/svg+xml" href="/images/logo-icon.svg">
   <link rel="stylesheet" href="/css/cast-tokens.css">
   <link rel="stylesheet" href="/css/cast-participant.css">
+  <link rel="stylesheet" href="/css/question-stage.css">
   <link rel="stylesheet" href="/design/foundations/typography.css">
   <link rel="stylesheet" href="/design/foundations/layout.css">
   <link rel="stylesheet" href="/design/foundations/motion.css">
@@ -28,6 +29,8 @@
   <div class="part-screen">
     <!-- S31.08: player badge (top, safe-area aware) + network status (calm persistent) -->
     <div class="part-topbar">
+      <!-- 09/2026 (user qarori): bir-step "Orqaga" — cast jarayonida confirm bilan -->
+      <button type="button" class="cast-btn part-back-btn" id="part-back">← Orqaga</button>
       <div class="player-badge" id="player-badge" hidden>
         <span class="player-badge-avatar" id="player-badge-avatar">👤</span>
         <span class="player-badge-name" id="player-badge-name">—</span>
@@ -88,19 +91,23 @@
       </div>
     </div>
 
-    <!-- Question -->
+    <!-- Question — kirish dashboard'dagi SQL namunaning aynan o'zi (.qstage) -->
     <div id="part-question" class="part-center" hidden>
       <!-- S31.05: answer state banner (persistent, not toast-only) -->
       <div class="part-state-banner" id="part-state-banner" data-state="" aria-live="polite" hidden></div>
-      <div class="part-q-meta" id="part-q-meta">—</div>
-      <div class="part-q-text" id="part-q-text">—</div>
-      <div class="stage-cd" id="part-stage-cd" hidden aria-live="polite">
-        <span class="stage-cd-num" id="part-stage-num">3</span>
-        <span class="stage-cd-lbl" data-i18n="stage.think">Savolga tayyorlaning</span>
-      </div>
-      <div class="part-options" id="part-options"></div>
-      <div class="part-timer" id="part-timer">—</div>
-      <button class="cast-btn cast-btn-primary part-submit" id="part-submit" data-i18n="answer.send" hidden>Javobni yuborish</button>
+      <section class="qstage" aria-label="savol">
+        <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        <div class="sc-top"><span class="sc-code" id="part-q-meta">—</span><span class="sc-live"><i></i>jonli</span><span id="part-timer">—</span></div>
+        <div class="sc-body">
+          <div class="beam" id="part-beam" aria-hidden="true"><span class="tx">uzatilmoqda…</span><span class="ln"></span><span class="dot"></span></div>
+          <h2 class="step q" id="part-q-text">—</h2>
+          <!-- 09/2026: "3s" yozuv yo'q — ochilishgacha jimjit oltin chiziq (matnsiz). -->
+          <div class="thinkbar" id="part-thinkbar" hidden aria-hidden="true"><span class="thinkbar-fill" id="part-thinkbar-fill"></span></div>
+          <div class="opts" id="part-options"></div>
+          <button class="cast-btn cast-btn-primary part-submit" id="part-submit" data-i18n="answer.send" hidden>Javobni yuborish</button>
+        </div>
+        <div class="sc-foot"><span>cast</span><span>ishtirokchi</span></div>
+      </section>
 
       <!-- C3-04 Confidence Lens -->
       <div class="part-confidence" id="part-confidence" hidden>

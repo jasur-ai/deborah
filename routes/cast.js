@@ -906,6 +906,12 @@ router.get('/cast/:sessionId/projector', async (req, res) => {
     // BUG-074: bu brauzer sahifasi — xom JSON 403 o'rniga /play'ga redirect
     // (meta-missing/catch shoxlari bilan bir xil; API emas).
     if (!ok) return res.redirect('/play');
+    // 09/2026: projector socket join uchun session flag (one-time ticket
+    // allaqachon redeem qilingan — login'siz proyektor jonli event oladi).
+    try {
+      req.session.projectorOf = Array.isArray(req.session.projectorOf) ? req.session.projectorOf : [];
+      if (!req.session.projectorOf.includes(sessionId)) req.session.projectorOf.push(sessionId);
+    } catch (_) {}
 
     const meta = await getSessionMeta(sessionId);
     if (!meta) return res.redirect('/play');
@@ -1125,6 +1131,7 @@ router.get('/api/cast/sessions/:id/tombstones', requireAuth, async (req, res) =>
 
 // ── Projector ticket helpers (in-memory scoped; revoked after redeem) ──
 const projectorTickets = new Map(); // sessionId -> Set<ticket>
+export function __testUpsertProjectorTicket(sessionId, ticket) { upsertProjectorTicket(sessionId, ticket); }
 function upsertProjectorTicket(sessionId, ticket) {
   if (!projectorTickets.has(sessionId)) projectorTickets.set(sessionId, new Set());
   projectorTickets.get(sessionId).add(ticket);

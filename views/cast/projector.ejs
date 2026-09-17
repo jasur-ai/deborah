@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="/css/cast-tokens.css">
   <link rel="stylesheet" href="/design/contexts/projector.css">
   <link rel="stylesheet" href="/css/cast-projector.css">
+  <link rel="stylesheet" href="/css/question-stage.css">
   <link rel="stylesheet" href="/design/foundations/typography.css">
   <link rel="stylesheet" href="/design/foundations/layout.css">
   <link rel="stylesheet" href="/design/foundations/motion.css">
@@ -36,17 +37,20 @@
     <!-- S30.03: kod minimize chip — lobby'dan keyin kichik, teacher command bilan qayta katta -->
     <button class="proj-code-chip" id="proj-code-chip" hidden aria-label="Qo‘shilish kodi"><%- icon('qrcode', 18) %> <span id="proj-code-chip-val">—</span></button>
 
-    <!-- Question -->
+    <!-- Question — kirish dashboard'dagi SQL namunaning aynan o'zi (.qstage) -->
     <div id="proj-question" class="proj-question" hidden>
-      <div class="proj-q-meta" id="proj-q-meta">—</div>
-      <div class="proj-q-text" id="proj-q-text">—</div>
-      <div class="stage-cd proj-stage-cd" id="proj-stage-cd" hidden aria-live="polite">
-        <span class="stage-cd-num" id="proj-stage-num">3</span>
-        <span class="stage-cd-lbl" data-i18n="stage.think">Savolga tayyorlaning</span>
-      </div>
-      <div class="proj-options" id="proj-options"></div>
-      <div class="proj-timer" id="proj-timer" role="timer"><span class="proj-timer-num" id="proj-timer-num">—</span><span class="proj-timer-label" id="proj-timer-label"></span><span class="proj-timer-ring" id="proj-timer-ring" aria-hidden="true"></span></div>
-      <div class="proj-count" id="proj-answered"></div>
+      <section class="qstage" aria-label="savol">
+        <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        <div class="sc-top"><span class="sc-code" id="proj-q-meta">—</span><span class="sc-live"><i></i>jonli</span><span id="proj-timer" role="timer"><span id="proj-timer-num">—</span> <span id="proj-timer-label"></span></span></div>
+        <div class="sc-body">
+          <div class="beam" id="proj-beam" aria-hidden="true"><span class="tx">uzatilmoqda…</span><span class="ln"></span><span class="dot"></span></div>
+          <h2 class="step q" id="proj-q-text">—</h2>
+          <!-- 09/2026: "3s" yozuv yo'q — ochilishgacha jimjit oltin chiziq (matnsiz). -->
+          <div class="thinkbar proj-thinkbar" id="proj-thinkbar" hidden aria-hidden="true"><span class="thinkbar-fill" id="proj-thinkbar-fill"></span></div>
+          <div class="opts" id="proj-options"></div>
+        </div>
+        <div class="sc-foot"><span>cast</span><span id="proj-answered"></span></div>
+      </section>
     </div>
 
     <!-- Class Goal (aggregate only — no participant blame) -->

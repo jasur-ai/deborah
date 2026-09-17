@@ -90,17 +90,19 @@
     chip.hidden = false;
   }
 
+  function updateJoinCode(code) {
+    if (!code) return;
+    currentJoinCode = code;
+    $('proj-code').textContent = code;
+    $('proj-link').textContent = `https://${location.host}/play?code=${code}`;
+    renderQR(code);
+  }
   function renderLobby(data) {
     $('proj-lobby').hidden = false;
     $('proj-question').hidden = true;
     $('proj-reveal').hidden = true;
     $('proj-code-chip').hidden = true;
-    if (data.joinCode) {
-      currentJoinCode = data.joinCode;
-      $('proj-code').textContent = data.joinCode;
-      $('proj-link').textContent = `https://${location.host}/play?code=${data.joinCode}`;
-      renderQR(data.joinCode);
-    }
+    if (data.joinCode) updateJoinCode(data.joinCode);
   }
 
   // S30.04/10: font floor — uzun savol matnida o'lcham kichrayadi (ellipsis yo'q)
@@ -121,12 +123,33 @@
   const OPT_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
   function renderOptionRow(o, i, isCorrect) {
     const row = document.createElement('div');
-    row.className = 'proj-option' + (isCorrect ? ' correct' : '');
+    // Kirish dashboard'dagi .opt (aynan o'zi); to'g'ri javob — .ok
+    row.className = 'opt step' + (isCorrect ? ' ok' : '');
     row.innerHTML =
-      `<span class="opt-letter opt-sym-${(i % 5) + 1}" aria-hidden="true">${OPT_LETTERS[i % 6]}</span>` +
-      `<span class="symbol opt-sym-${(i % 5) + 1}" aria-hidden="true">${OPT_SHAPES[i % 5]}</span>` +
-      `<span>${escapeHtml(o.text)}</span>`;
+      `<span class="k" aria-hidden="true">${OPT_LETTERS[i % 6]}</span>` +
+      `<span>${escapeHtml(o.text)}</span>` +
+      `<span class="pct">${isCorrect ? '✓' : ''}</span>` +
+      `<span class="track" aria-hidden="true"><i style="width:${isCorrect ? '100%' : '0%'}"></i></span>`;
     return row;
+  }
+
+  // Kirish animatsiyasi (landing.js bilan bir xil tartib: beam → savol → variantlar)
+  function playProjEntrance() {
+    const beam = $('proj-beam');
+    const qStep = $('proj-q-text');
+    const opts = [...document.querySelectorAll('#proj-options .opt')];
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (qStep) qStep.classList.remove('in');
+    opts.forEach((o) => o.classList.remove('in'));
+    if (reduce) {
+      if (beam) beam.style.opacity = 0;
+      if (qStep) qStep.classList.add('in');
+      opts.forEach((o) => o.classList.add('in'));
+      return;
+    }
+    if (beam) beam.style.opacity = 1;
+    setTimeout(() => { if (beam) beam.style.opacity = 0; if (qStep) qStep.classList.add('in'); }, 320);
+    opts.forEach((o, ix) => setTimeout(() => o.classList.add('in'), 460 + ix * 130));
   }
 
   function renderQuestion(q, phase) {
@@ -140,6 +163,7 @@
     wrap.innerHTML = '';
     wrap.hidden = false;
     q.options.forEach((o, i) => { wrap.appendChild(renderOptionRow(o, i, false)); });
+    playProjEntrance();
     if (q.closesAt) { closesAt = q.closesAt; startTimer(); }
     else { stopTimer(); $('proj-timer-num').textContent = '—'; $('proj-timer-label').textContent = ''; }
     // S30.03: savol davrida kod kichik chip sifatida
@@ -174,12 +198,28 @@
     box.hidden = false;
   }
 
-  // C4-08: staging countdown (projector) — savol ochilishigacha ko'rinadigan soniya
+  // 09/2026 (user qarori): staging'da "3s" yozuv yo'q — savol + variantlar
+  // darhol ko'rinadi; ochilishgacha jimjit oltin progress chiziq.
   let projStageTimer = null;
-  function clearProjStageCountdown() {
+  function clearProjThinkBar() {
     if (projStageTimer) { clearInterval(projStageTimer); projStageTimer = null; }
-    const el = $('proj-stage-cd');
+    const el = $('proj-thinkbar');
     if (el) el.hidden = true;
+  }
+  function startProjThinkBar(sec) {
+    clearProjThinkBar();
+    const el = $('proj-thinkbar');
+    const fill = $('proj-thinkbar-fill');
+    if (!el || !fill || !(sec > 0)) return;
+    el.hidden = false;
+    fill.style.width = '0%';
+    const t0 = Date.now();
+    const total = sec * 1000;
+    projStageTimer = setInterval(() => {
+      const p = Math.min(1, (Date.now() - t0) / total);
+      fill.style.width = (p * 100).toFixed(1) + '%';
+      if (p >= 1) clearProjThinkBar();
+    }, 100);
   }
   // C4-09: shohsupa (auto-podium) — so'nggi public Top-N proyeksiya
   let podiumTopN = null;
@@ -190,20 +230,7 @@
     if (podiumHideTimer) { clearTimeout(podiumHideTimer); podiumHideTimer = null; }
   }
 
-  function startProjStageCountdown(sec) {
-    clearProjStageCountdown();
-    const el = $('proj-stage-cd');
-    const num = $('proj-stage-num');
-    if (!el || !num || !sec) return;
-    num.textContent = String(sec);
-    el.hidden = false;
-    const t0 = Date.now();
-    projStageTimer = setInterval(() => {
-      const left = sec - Math.floor((Date.now() - t0) / 1000);
-      if (left <= 0) { num.textContent = '0'; clearProjStageCountdown(); }
-      else num.textContent = String(left);
-    }, 250);
-  }
+  function clearProjStageCountdown() { clearProjThinkBar(); /* legacy alias */ }
 
   function renderReveal(data) {
     $('proj-lobby').hidden = true;
@@ -219,8 +246,7 @@
     const lastQ = window.__lastQuestion;
     (lastQ?.options || []).forEach((o, i) => {
       const row = renderOptionRow(o, i, correct.has(o.id));
-      const span = row.querySelector('span:last-child');
-      if (correct.has(o.id)) span.textContent = o.text + ' ✓';
+      row.classList.add('in');
       wrap.appendChild(row);
     });
     // S30.07: teacher reveal'dan keyin public distribution
@@ -246,26 +272,15 @@
       }
       case 'cast:questionPreview': {
         hidePodium();
-        // C4-08 staging: avval faqat savol + countdown; variantlar questionOpened'da
+        // 09/2026 (user qarori): "Fikrlash vaqti"/"3s" yozuvlari yo'q — aynan
+        // savol matni + variantlar darhol ko'rinadi.
         const think = Math.max(0, Math.round(Number(data.thinkSeconds) || 0));
         const q = data.question || null;
-        if (q && think > 0) {
+        if (q) {
           window.__lastQuestion = q;
-          $('proj-lobby').hidden = true;
-          $('proj-reveal').hidden = true;
-          $('proj-code-chip').hidden = true;
-          $('proj-question').hidden = false;
           $('proj-q-meta').textContent = 'Savol';
-          $('proj-q-text').textContent = q.text;
-          applyFontFloor($('proj-q-text'), 26);
-          const wrap = $('proj-options');
-          if (wrap) { wrap.innerHTML = ''; wrap.hidden = true; }
-          stopTimer();
-          $('proj-timer-num').textContent = '—';
-          $('proj-timer-label').textContent = '';
-          startProjStageCountdown(think);
-        } else if (think > 0) {
-          $('proj-q-meta').textContent = `Fikrlash vaqti: ${think}s`;
+          renderQuestion(q, 'THINK_TIME');
+          startProjThinkBar(think);
         }
         break;
       }
@@ -589,6 +604,26 @@
   }
 
   socket.on('connect', () => {
+    // 09/2026 FIX: proyektor sessiya xonasiga qo'shiladi (bo'lmasa jonli
+    // eventlar KELMASDI — lobby'da qotib qolardi) + lobby ma'lumoti.
+    client.sendCommand('cast:projectorJoin', {}).then((res) => {
+      // Kod/QR yangilanadi, lekin savol/reveal ochiq bo'lsa lobby QAYTA
+      // ko'rsatilmaydi (ack kechikib kelsa savol ustiga chiqmasligi uchun).
+      if (res && res.ok && res.joinCode) {
+        updateJoinCode(res.joinCode);
+        const qOpen = !$('proj-question').hidden || !$('proj-reveal').hidden;
+        if (!qOpen) {
+          $('proj-lobby').hidden = false;
+          $('proj-code-chip').hidden = true;
+        } else if (!$('proj-question').hidden) {
+          showCodeChip(res.joinCode);
+        }
+      }
+      if (res && res.ok && typeof res.participantCount === 'number') {
+        const c = $('proj-count');
+        if (c) c.textContent = t('proj.count', { n: res.participantCount });
+      }
+    }).catch(() => {});
     client.sendCommand('cast:getSnapshot', {}).then((res) => {
       if (res.state && res.state.phase !== 'LOBBY_OPEN' && res.question) {
         renderQuestion(res.question, res.state.phase);

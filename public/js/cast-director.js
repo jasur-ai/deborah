@@ -446,7 +446,9 @@
       case 'cast:questionPreview': {
         phase = 'THINK_TIME';
         $('dir-q-meta').textContent = `Savol ${(data.questionPosition ?? 0) + 1} / ${data.totalQuestions ?? '?'}`;
-        if (data.thinkSeconds) $('dir-q-text').textContent = `Fikrlash vaqti: ${data.thinkSeconds}s`;
+        // 09/2026 (user qarori): "Fikrlash vaqti: Ns" yozuv yo'q — aynan savol
+        // matni + variantlar ko'rinadi (o'qituvchi nima ochilayotganini ko'radi).
+        if (data.question && data.question.text) renderQuestion(data.question);
         // C3-01: yangi savolga o'tganda eski evidence tozalanadi
         $('dir-evidence').hidden = true;
         $('dir-ev-grid').innerHTML = '';
@@ -751,28 +753,69 @@
     updateControls();
   }
 
+  // Kirish animatsiyasi (landing.js bilan bir xil tartib: beam → savol → variantlar)
+  function playDirEntrance() {
+    const beam = $('dir-beam');
+    const qStep = $('dir-q-text');
+    const opts = [...document.querySelectorAll('#dir-q-options .opt')];
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (qStep) qStep.classList.remove('in');
+    opts.forEach((o) => o.classList.remove('in'));
+    if (reduce) {
+      if (beam) beam.style.opacity = 0;
+      if (qStep) qStep.classList.add('in');
+      opts.forEach((o) => o.classList.add('in'));
+      return;
+    }
+    if (beam) beam.style.opacity = 1;
+    setTimeout(() => { if (beam) beam.style.opacity = 0; if (qStep) qStep.classList.add('in'); }, 320);
+    opts.forEach((o, ix) => setTimeout(() => o.classList.add('in'), 460 + ix * 130));
+  }
+
   function renderQuestion(q) {
     window.__lastQuestion = q; // reveal/hinge questionId uchun
     window.__curQuestionId__ = q && q.id ? q.id : (q && q.questionId ? q.questionId : null);
     $('dir-q-text').textContent = q.text;
     const wrap = $('dir-q-options');
     wrap.innerHTML = '';
-    q.options.forEach((o) => {
-      const btn = document.createElement('div');
-      btn.className = 'cast-option dir-option';
-      btn.textContent = o.text;
-      wrap.appendChild(btn);
+    const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
+    (q.options || []).forEach((o, i) => {
+      const row = document.createElement('div');
+      row.className = 'opt step';
+      row.dataset.id = o.id;
+      row.innerHTML =
+        `<span class="k" aria-hidden="true">${LETTERS[i % 6]}</span>` +
+        `<span>${escapeHtml(o.text)}</span>` +
+        `<span class="pct"></span>` +
+        `<span class="track" aria-hidden="true"><i style="width:0%"></i></span>`;
+      wrap.appendChild(row);
     });
+    playDirEntrance();
   }
 
   function renderReveal(data) {
     const wrap = $('dir-q-options');
     const correct = new Set(data.correctOptionIds || []);
-    wrap.querySelectorAll('.dir-option').forEach((el, i) => {
-      const q = window.__lastQuestion;
-      if (q && q.options[i] && correct.has(q.options[i].id)) {
-        el.style.outline = '3px solid var(--cast-green)';
+    // distribution: optionId -> count (proyektor bilan bir xil payload)
+    const distMap = new Map();
+    let distTotal = 0;
+    if (Array.isArray(data.distribution)) {
+      for (const d of data.distribution) {
+        distMap.set(d.optionId, d.count || 0);
+        distTotal += d.count || 0;
       }
+    }
+    if (!distTotal && data.distributionTotal) distTotal = data.distributionTotal;
+    wrap.querySelectorAll('.opt').forEach((el, i) => {
+      const q = window.__lastQuestion;
+      const optId = (q && q.options[i] && q.options[i].id) || el.dataset.id;
+      if (optId && correct.has(optId)) el.classList.add('ok');
+      const cnt = distMap.get(optId) || 0;
+      const pct = distTotal > 0 ? Math.round((cnt / distTotal) * 100) : 0;
+      const pctEl = el.querySelector('.pct');
+      if (pctEl && distTotal > 0) pctEl.textContent = pct + '%';
+      const bar = el.querySelector('.track i');
+      if (bar && distTotal > 0) bar.style.width = pct + '%';
     });
     if (data.explanation) {
       const ex = document.createElement('div');
@@ -2438,5 +2481,28 @@
       const nx = $('btn-next');
       if (nx && !nx.disabled && !nx.hidden) { nx.click(); e.preventDefault(); }
     }
+  });
+
+  // ── 09/2026 (user qarori): bir-step "Orqaga" — live sessiyada confirm;
+  // "Ha" — panelga chiqish (sessiya serverda davom etadi; tugatish
+  // chaqirilmaydi → chinakam discard, hech narsa avtosaqlanmaydi).
+  let dirLeaving = false;
+  function dirNeedsConfirm() { return phase !== 'LOBBY_OPEN' && phase !== 'ENDED'; }
+  function dirLeaveMsg() { return 'Rostdan ham orqaga qaytmoqchimisiz? O‘zgarishlar saqlanmasligi mumkin'; }
+  const dirBackBtn = $('dir-back');
+  if (dirBackBtn) dirBackBtn.addEventListener('click', () => {
+    if (dirNeedsConfirm() && !confirm(dirLeaveMsg())) return;
+    dirLeaving = true;
+    location.href = '/user/panel';
+  });
+  // Brand (panel link) ham live'da confirm so'raydi
+  document.querySelectorAll('.dir-brand').forEach((a) => a.addEventListener('click', (e) => {
+    if (!dirLeaving && dirNeedsConfirm() && !confirm(dirLeaveMsg())) e.preventDefault();
+    else dirLeaving = true;
+  }));
+  window.addEventListener('beforeunload', (e) => {
+    if (dirLeaving || !dirNeedsConfirm()) return;
+    e.preventDefault();
+    e.returnValue = dirLeaveMsg();
   });
 })();

@@ -273,6 +273,7 @@ export const CAST_COMMANDS = {
   UNBLOCK_PARTICIPANT: 'cast:unblockParticipant',
   ROTATE_JOIN_CODE: 'cast:rotateJoinCode',
   DIRECTOR_JOIN: 'cast:directorJoin',
+  PROJECTOR_JOIN: 'cast:projectorJoin', // 09/2026: proyektor sessiya xonasiga qo'shilishi (one-time ticket HTTP'da redeem qilingan)
   HINGE_DECISION: 'cast:hingeDecision',
   START_DISCUSSION: 'cast:startDiscussion',
   OPEN_REVOTE: 'cast:openRevote',

@@ -2,6 +2,7 @@
 <html lang="<%= htmlLang %>" dir="ltr">
 <head>
   <%- include('../partials/head') %>
+  <link rel="stylesheet" href="/css/question-stage.css">
   <style>
     /* Yakka mashq (Sinov) — jonli sahna (C4-10 rev.2: reklama uslubi yo'q):
        katta maydon, iliq 2×2 javob plitalari, darhol natija, vaqt/vaqtsiz.
@@ -67,70 +68,48 @@
     }
     .pr-hint.show{opacity:1;transform:none;}
 
-    /* ── Savol kartasi ── */
-    .qcard{
-      background:#f7eeda;color:#241a0c;
-      border-radius:26px;padding:26px 26px 24px;
-      box-shadow:0 24px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.6);
-    }
-    .qtext{
-      margin:0 0 6px;font-size:clamp(1.15rem,2.6vw,1.7rem);line-height:1.35;font-weight:900;
-      text-align:center;word-break:break-word;
-    }
-    .qtype-line{text-align:center;font-size:.72rem;font-weight:700;color:#8a6a3a;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px;}
-
-    .qgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;margin:14px auto 0;max-width:900px}
-    @media (max-width:720px){.qgrid{grid-template-columns:1fr;max-width:520px}}
-    .qtile{
-      position:relative;display:flex;align-items:center;justify-content:center;gap:10px;
-      min-height:96px;padding:16px 18px;border-radius:18px;cursor:pointer;
-      font-size:clamp(.95rem,1.7vw,1.15rem);font-weight:800;color:#fff;
-      background:var(--tile, #7a5c2e);border:0;text-align:center;line-height:1.3;
-      box-shadow:0 8px 0 rgba(0,0,0,.28);
-      transition:transform .12s ease, box-shadow .12s ease, filter .12s ease;
-      user-select:none;overflow:hidden;word-break:break-word;
-      pointer-events:auto;
-    }
-    .qtile input{position:absolute;opacity:0;pointer-events:none;}
-    .qtile:hover{transform:translateY(-3px);box-shadow:0 11px 0 rgba(0,0,0,.3);filter:brightness(1.06);}
-    .qtile:active{transform:translateY(2px);box-shadow:0 3px 0 rgba(0,0,0,.3);}
-    .qtile .qt-let{
-      flex-shrink:0;font-size:.72rem;font-weight:900;letter-spacing:.06em;
-      background:rgba(0,0,0,.22);border-radius:9px;padding:4px 8px;
-    }
-    .qtile .qt-mark{position:absolute;top:8px;right:10px;font-size:1.05rem;opacity:0;}
-    /* Natijadan keyingi holatlar */
-    .qtile.is-locked{pointer-events:none;}
-    .qtile.is-right{background:#1e8a3c !important;box-shadow:0 8px 0 rgba(15,90,35,.5);animation:qpop .28s ease;}
-    .qtile.is-right .qt-mark{opacity:1;}
-    .qtile.is-wrong{background:#b13a2e !important;box-shadow:0 8px 0 rgba(90,20,12,.5);animation:qshake .3s ease;}
-    .qtile.is-wrong .qt-mark{opacity:1;}
-    .qtile.is-dim{filter:grayscale(.55) brightness(.78);box-shadow:0 6px 0 rgba(0,0,0,.18);}
-    @keyframes qpop{0%{transform:scale(1)}55%{transform:scale(1.05)}100%{transform:scale(1)}}
-    @keyframes qshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+    /* ── Savol kartasi: kirish dashboard'dagi SQL namunaning aynan o'zi
+       (.qstage — /css/question-stage.css). Faqat kenglik moslanadi. ── */
+    #quiz .qstage{max-width:860px;}
+    #quiz .qstage .q{font-size:clamp(1.05rem,2.2vw,1.35rem);}
+    #quiz .qstage .opt{font-size:clamp(.92rem,1.6vw,1.02rem);padding:11px 14px;cursor:pointer;}
+    #quiz .qstage .opt.is-locked{pointer-events:none;}
+    @keyframes qpop{0%{transform:scale(1)}55%{transform:scale(1.02)}100%{transform:scale(1)}}
+    #quiz .qstage .opt.is-right{animation:qpop .28s ease;}
+    #quiz .qstage .opt .qt-mark{margin-left:8px;font-weight:900;}
 
     .pr-fb{
-      margin:16px auto 2px;padding:12px 18px;border-radius:14px;
+      margin:14px auto 2px;padding:11px 16px;
       display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
-      font-weight:900;font-size:clamp(.9rem,1.6vw,1.05rem);text-align:center;
-      animation:qpop .22s ease;max-width:640px;
+      font-weight:700;font-size:clamp(.85rem,1.5vw,.98rem);text-align:center;
+      max-width:640px;border:1px solid;
+      font-family:'IBM Plex Mono',Consolas,monospace;letter-spacing:.02em;
     }
-    .pr-fb.is-ok{color:#146b2c;background:#d9efd8;border:1.5px solid #7cc98a;}
-    .pr-fb.is-bad{color:#8a2c14;background:#f4dcd2;border:1.5px solid #d99c7c;}
-    .pr-fb-correct{font-size:.78rem;font-weight:700;}
-    .pr-fb-correct b{color:#8a5a1e;}
+    .pr-fb.is-ok{color:#9fd3a5;background:rgba(125,150,112,.12);border-color:rgba(125,150,112,.5);}
+    .pr-fb.is-bad{color:#e0a98c;background:rgba(168,121,79,.12);border-color:rgba(168,121,79,.5);}
+    .pr-fb-correct{font-size:.78rem;font-weight:400;opacity:.9;}
+    .pr-fb-correct b{color:inherit;}
 
-    .pr-nav{display:flex;gap:12px;justify-content:space-between;align-items:center;margin-top:20px;}
-    .pr-nav button{border:0;border-radius:14px;padding:12px 22px;font-weight:800;font-size:.92rem;cursor:pointer;min-height:48px;}
-    #prev{background:#efe2c4;color:#5b4317;border:1px solid #d9c49a;}
-    #prev:hover:not(:disabled){background:#e6d5ae;}
-    #next,#finish{
-      margin-left:auto;
+    /* HUD: taymer yonidagi "Keyingisi" (09/2026 user qarori) */
+    .pr-hud-r{display:flex;align-items:center;gap:10px;}
+    #hud-next{
+      border:1px solid rgba(201,165,101,.55);border-radius:50px;cursor:pointer;
       background:linear-gradient(135deg,#d9b465,#a37f3a);color:#1a1305;
-      box-shadow:0 6px 0 rgba(90,64,22,.55);
+      font-weight:800;font-size:.82rem;padding:8px 18px;min-height:44px;white-space:nowrap;
     }
-    #next:hover:not(:disabled),#finish:hover:not(:disabled){filter:brightness(1.07);}
-    .btn[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none;}
+    #hud-next:hover:not(:disabled){filter:brightness(1.07);}
+    #hud-next:disabled{opacity:.45;cursor:not-allowed;}
+
+    .pr-nav{display:flex;gap:12px;justify-content:space-between;align-items:center;margin-top:18px;}
+    .pr-nav button{
+      font-family:'IBM Plex Mono',Consolas,monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;
+      border:1px solid rgba(242,237,227,.2);background:transparent;color:#f2ede3;
+      border-radius:0;padding:12px 20px;cursor:pointer;min-height:48px;
+    }
+    .pr-nav button:hover:not(:disabled){border-color:#c2a06a;color:#d6bd8c;}
+    #next,#finish{margin-left:auto;background:#c2a06a;border-color:#c2a06a;color:#141006;}
+    #next:hover:not(:disabled),#finish:hover:not(:disabled){background:#d6bd8c;border-color:#d6bd8c;color:#141006;}
+    .btn[disabled]{opacity:.4;cursor:not-allowed;}
 
     /* progress segmentlar */
     .pr-dots{display:flex;gap:6px;justify-content:center;margin-top:22px;flex-wrap:wrap;}
@@ -168,26 +147,24 @@
     .pr-rv-o.ok{color:#1e8a3c;font-weight:800;}
     .pr-rv-o.no{color:#b13a2e;}
     .pr-rv-e{font-size:.8rem;color:#8a6a3a;margin-top:8px;border-top:1px dashed #d9c49a;padding-top:8px;}
-    @media (max-width:600px){ .pr-stage{padding:16px 12px 50px;} .qcard{padding:18px 14px 16px;} .qtile{min-height:72px;} }
+    @media (max-width:600px){ .pr-stage{padding:16px 12px 50px;} }
     @media (prefers-reduced-motion: reduce){
-      .qtile,.pr-fb,.pr-dot{transition:none;animation:none;}
-      .qtile:hover{transform:none;}
+      .pr-fb,.pr-dot{transition:none;animation:none;}
     }
     @media print {
       .pr-top,.pr-hud,.pr-nav,.pr-dots,.pr-res-actions{display:none !important;}
       body{background:#fff;color:#000;}
-      .qcard,.res-card,.pr-review{box-shadow:none;background:#fff;color:#000;border:1px solid #bbb;}
+      #quiz .qstage,.res-card,.pr-review{box-shadow:none;background:#fff;color:#000;border:1px solid #bbb;}
     }
-  
-    /* rev.4 mobil: savol nuqtalari va variant harflari telefonda qulay */
+
+    /* rev.4 mobil: savol nuqtalari telefonda qulay */
     @media (max-width: 640px){
       .pr-dot{min-width:44px;min-height:44px;}
       .pr-dot.cur{transform:scaleY(1.15);}
       .pr-dots{gap:8px;}
-      .qtile .qt-let{font-size:.8rem;}
-      .qtile{min-height:56px;}
       .pr-badge{font-size:.78rem;}
       .pr-back{min-height:44px;display:inline-flex;align-items:center;}
+      #hud-next{padding:8px 14px;font-size:.78rem;}
     }
 </style>
 </head>
@@ -207,7 +184,11 @@
   <main class="pr-stage">
     <div class="pr-hud">
       <div class="pr-qpos" id="qpos"></div>
-      <div class="pr-timer" id="qtimer" aria-live="polite"></div>
+      <div class="pr-hud-r">
+        <div class="pr-timer" id="qtimer" aria-live="polite"></div>
+        <!-- 09/2026 (user qarori): sanalayotgan vaqt yonida "Keyingisi" + ENTER -->
+        <button type="button" id="hud-next" disabled>Keyingisi →</button>
+      </div>
     </div>
     <div class="pr-hint" id="pr-hint" role="status" aria-live="polite"></div>
     <div id="quiz"></div>
@@ -242,6 +223,7 @@
     // flow'ni xato savollar indekslariga toraytiramiz (retryMode).
     let flow = QUESTIONS.map((_, i) => i);
     let retryMode = false;
+    let finished = false; // natija ekrani ochiqmi (orqaga-confirm uchun)
     const flowPos = (i) => flow.indexOf(i);
 
     // Sahna plitalari uchun iliq ranglar (C4-10 rev.2: reklama uslubi olib
@@ -318,31 +300,38 @@
 
     const quiz = document.getElementById('quiz');
     const qpos = document.getElementById('qpos');
+    function goNext() {
+      const p = flowPos(cur);
+      const nxt = flow[p + 1];
+      if (revealed[cur] && nxt != null) { cur = nxt; renderQ(); renderDots(); }
+      else if (!revealed[cur]) hint(t('answerFirst', 'Avval savolga javob bering'));
+    }
     function renderQ() {
       startTimer();
-      if (qpos) qpos.textContent = (retryMode ? t('retryTag', 'Qayta: ') : '') + (flowPos(cur) + 1) + ' / ' + flow.length;
+      const posLabel = (retryMode ? t('retryTag', 'Qayta: ') : '') + (flowPos(cur) + 1) + ' / ' + flow.length;
+      if (qpos) qpos.textContent = posLabel;
       const q = QUESTIONS[cur];
       const qc = correctOf(cur);
       const isRev = revealed[cur];
       const chosen = answers[cur];
+      const isLast = flowPos(cur) === flow.length - 1;
       const typeLabel = q.type === 'true_false' ? 'To\u2018g\u2018ri / Noto\u2018g\u2018ri'
         : (q.type === 'short_answer' ? 'Qisqa javob' : '');
+      // Variantlar — kirish dashboard'dagi .opt (kalit doira + matn + belgi + oltin track)
       const opts = q.options.map((o, j) => {
         let st = '';
-        let dis = false;
         if (isRev) {
-          if (j === qc) st = 'is-right';
-          else if (j === chosen) st = 'is-wrong';
-          else st = 'is-dim';
-          dis = true;
-        } else if (j === chosen) st = '';
+          if (j === qc) st = 'ok is-right';
+          else if (j === chosen) st = 'bad';
+          else st = 'dim';
+        }
         const mark = isRev && j === qc ? '✓' : (isRev && j === chosen && j !== qc ? '✗' : '');
-        return `<label class="qtile ${st}${isRev ? ' is-locked' : ''}" style="--tile:${TILE_COLORS[j % TILE_COLORS.length]}">
-          <input type="radio" name="q${cur}" value="${j}" ${(j === chosen && !isRev) ? 'checked' : ''} ${isRev ? 'disabled tabindex="-1"' : ''}>
-          <span class="qt-let">${String.fromCharCode(65 + j)}</span>
+        return `<button type="button" class="opt step ${st}${isRev ? ' is-locked' : ''}" data-j="${j}" ${isRev ? 'disabled tabindex="-1"' : ''}>
+          <span class="k">${String.fromCharCode(65 + j)}</span>
           <span>${esc(o)}</span>
-          <span class="qt-mark">${mark}</span>
-        </label>`;
+          <span class="pct">${mark}</span>
+          <span class="track"><i style="width:0%"></i></span>
+        </button>`;
       }).join('');
 
       let fb = '';
@@ -357,25 +346,50 @@
         </div>`;
       }
 
-      const isLast = flowPos(cur) === flow.length - 1;
       const navBtn = isLast
         ? `<button type="button" class="btn" id="finish" ${isRev ? '' : 'disabled'}>${t('finish', '✅ Yakunlash')}</button>`
         : `<button type="button" class="btn" id="next" ${isRev ? '' : 'disabled'}>${t('next', 'Keyingi →')}</button>`;
 
       quiz.innerHTML = `
-        <section class="qcard" aria-label="${(retryMode ? t('retryTag', 'Qayta: ') : '')}${flowPos(cur) + 1} / ${flow.length}">
-          <h2 class="qtext">${esc(q.text)}</h2>
-          ${typeLabel ? `<div class="qtype-line">${typeLabel}</div>` : ''}
-          <div class="qgrid">${opts}</div>
-          ${fb}
-          <div class="pr-nav">
-            <button type="button" class="btn" id="prev" ${cur === 0 ? 'disabled' : ''}>${t('prev', '← Oldingi')}</button>
-            ${navBtn}
+        <section class="qstage" aria-label="${esc(posLabel)}">
+          <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+          <div class="sc-top"><span class="sc-code">Savol ${flowPos(cur) + 1} / ${flow.length}</span><span class="sc-live"><i></i>mashq</span><span>${UNTIMED ? '∞ vaqtsiz' : '⏱ savol vaqti'}</span></div>
+          <div class="sc-body">
+            <div class="beam" id="pr-beam"><span class="tx">${esc(t('beamTx', 'ko‘rsatilmoqda…'))}</span><span class="ln"></span><span class="dot"></span></div>
+            <h2 class="step q" id="pr-q">${esc(q.text)}</h2>
+            ${typeLabel ? `<div class="cap" style="margin:0 0 10px">${esc(typeLabel)}</div>` : ''}
+            <div class="opts">${opts}</div>
+            ${fb}
+            <div class="pr-nav">
+              <button type="button" class="btn" id="prev" ${flowPos(cur) === 0 ? 'disabled' : ''}>${t('prev', '← Oldingi')}</button>
+              ${navBtn}
+            </div>
           </div>
+          <div class="sc-foot"><span>sinov</span><span>${retryMode ? esc(t('retryTag', 'Qayta')) : 'yakka mashq'}</span></div>
         </section>`;
-      quiz.querySelectorAll('input[type=radio]').forEach((r) => r.addEventListener('change', () => {
+      // Kirish animatsiyasi (landing.js bilan bir xil tartib: beam → savol → variantlar → chiziqlar)
+      const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const beam = quiz.querySelector('#pr-beam');
+      const qStep = quiz.querySelector('#pr-q');
+      const optSteps = [...quiz.querySelectorAll('.opts .opt')];
+      const paintBars = () => optSteps.forEach((o) => {
+        const bar = o.querySelector('.track i');
+        if (bar) bar.style.width = (o.classList.contains('ok') || o.classList.contains('bad')) ? '100%' : '0%';
+      });
+      if (reduceMotion) {
+        if (beam) beam.remove();
+        if (qStep) qStep.classList.add('in');
+        optSteps.forEach((o) => o.classList.add('in'));
+        paintBars();
+      } else {
+        if (beam) beam.style.opacity = 1;
+        setTimeout(() => { if (beam) beam.style.opacity = 0; if (qStep) qStep.classList.add('in'); }, 320);
+        optSteps.forEach((o, ix) => setTimeout(() => o.classList.add('in'), 460 + ix * 130));
+        setTimeout(paintBars, 460 + optSteps.length * 130 + 120);
+      }
+      quiz.querySelectorAll('.opt[data-j]').forEach((b) => b.addEventListener('click', () => {
         if (revealed[cur]) return;
-        answers[cur] = +r.value;
+        answers[cur] = +b.dataset.j;
         missed[cur] = false;
         revealed[cur] = true;
         clearTimer();
@@ -390,13 +404,19 @@
         if (p > 0) { cur = flow[p - 1]; renderQ(); renderDots(); }
       });
       const next = quiz.querySelector('#next');
-      if (next) next.addEventListener('click', () => {
-        const p = flowPos(cur);
-        const nxt = flow[p + 1];
-        if (revealed[cur] && nxt != null) { cur = nxt; renderQ(); renderDots(); }
-      });
+      if (next) next.addEventListener('click', goNext);
       const fin = quiz.querySelector('#finish');
       if (fin) fin.addEventListener('click', () => { if (revealed[cur]) finish(); });
+      // HUD: taymer yonidagi "Keyingisi" (oxirgi savolda — "Yakunlash")
+      const hn = document.getElementById('hud-next');
+      if (hn) {
+        hn.textContent = isLast ? t('finish', '✅ Yakunlash') : t('next', 'Keyingi →');
+        hn.disabled = !isRev;
+        hn.onclick = () => {
+          if (!revealed[cur]) { hint(t('answerFirst', 'Avval savolga javob bering')); return; }
+          if (isLast) finish(); else goNext();
+        };
+      }
     }
 
     async function finish() {
@@ -420,6 +440,8 @@
     }
 
     function showResult(data) {
+      finished = true;
+      clearTimer();
       document.getElementById('quiz').hidden = true;
       dots.hidden = true;
       const el = document.getElementById('result');
@@ -436,7 +458,9 @@
           <div class="pr-res-wrap">
             <div class="pr-res-score">${data.percent}%</div>
             <div class="pr-res-sub">${fill('resSub', '{correct} / {total} to\u2018g\u2018ri javob', { correct, total })}</div>
-            <div class="pr-res-saved">✓ ${t('savedOk', 'Natija saqlandi')}</div>
+            ${data.saved === false
+              ? `<div class="pr-res-saved">↻ ${t('notSaved', 'Mashq rejimi — natija saqlanmadi')}</div>`
+              : `<div class="pr-res-saved">✓ ${t('savedOk', 'Natija saqlandi')}</div>`}
             <div class="pr-res-note">${esc(savedNote)}</div>
             <div class="pr-res-actions no-print">
               <button type="button" class="btn btn-quiet" data-print>${t('print', '🖨️ Chop etish')}</button>
@@ -469,6 +493,7 @@
     function beginRetry(wrongIdx) {
       if (!wrongIdx.length) return;
       retryMode = true;
+      finished = false;
       flow = wrongIdx.slice().sort((a, b) => a - b);
       answers.fill(-1);
       revealed.fill(false);
@@ -486,6 +511,37 @@
       renderDots();
       renderQ();
     }
+
+    // 09/2026 (user qarori): ENTER — keyingi savolga o'tish (savolni
+    // "tugatish" emas; oxirgi savolda yakunlamaydi — hint beradi).
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
+      const tag = (document.activeElement && document.activeElement.tagName) || '';
+      if (/INPUT|TEXTAREA|SELECT/.test(tag)) return;
+      const ae = document.activeElement;
+      if (ae && (ae.id === 'next' || ae.id === 'finish' || ae.id === 'hud-next' || ae.id === 'prev')) return; // native click
+      if (!document.getElementById('result').hidden) return;
+      if (document.getElementById('quiz').hidden) return;
+      e.preventDefault();
+      if (!revealed[cur]) { hint(t('answerFirst', 'Avval savolga javob bering')); return; }
+      if (flowPos(cur) === flow.length - 1) { hint(t('enterLastHint', 'Oxirgi savol — yakunlash uchun «Yakunlash» tugmasini bosing')); return; }
+      goNext();
+    });
+
+    // 09/2026 (user qarori): test jarayonida orqaga chiqishda ogohlantirish;
+    // "Ha" — saqlamasdan chiqish (finish chaqirilmaydi → chinakam discard).
+    function leaveMsg() { return t('leaveAsk', 'Rostdan ham orqaga qaytmoqchimisiz? O‘zgarishlar saqlanmasligi mumkin'); }
+    function quizStarted() { return !finished && revealed.some(Boolean); }
+    let prLeaving = false;
+    window.addEventListener('beforeunload', (e) => {
+      if (prLeaving || !quizStarted()) return;
+      e.preventDefault();
+      e.returnValue = leaveMsg();
+    });
+    document.querySelectorAll('.pr-back').forEach((a) => a.addEventListener('click', (e) => {
+      if (quizStarted() && !confirm(leaveMsg())) e.preventDefault();
+      else prLeaving = true;
+    }));
 
     paintModeChip();
     renderDots();

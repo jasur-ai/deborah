@@ -7,6 +7,7 @@
   <link rel="icon" type="image/svg+xml" href="/images/logo-icon.svg">
   <link rel="stylesheet" href="/css/cast-tokens.css">
   <link rel="stylesheet" href="/css/cast-director.css">
+  <link rel="stylesheet" href="/css/question-stage.css">
   <link rel="stylesheet" href="/design/foundations/typography.css">
   <link rel="stylesheet" href="/design/foundations/layout.css">
   <link rel="stylesheet" href="/design/foundations/motion.css">
@@ -30,6 +31,8 @@
 
   <header class="dir-topbar">
     <div class="dir-topbar-left">
+      <!-- 09/2026 (user qarori): bir-step "Orqaga" — live sessiyada confirm bilan -->
+      <button type="button" class="cast-btn dir-back-btn" id="dir-back">← Orqaga</button>
       <a class="dir-brand" href="/user/panel" aria-label="Deborah — Cast"><img class="brand-emblem" src="/images/logo-vintage.png" alt="Deborah"><span class="dir-brand-cast">Cast</span></a>
       <span class="dir-title" id="dir-title"><%= boot.title %></span>
       <span class="dir-code">Kod: <b id="dir-code-val">—</b></span>
@@ -85,9 +88,17 @@
       </div>
 
       <div id="dir-question" class="dir-question" hidden>
-        <div class="dir-q-meta" id="dir-q-meta">—</div>
-        <div class="dir-q-text" id="dir-q-text">—</div>
-        <div class="dir-q-options" id="dir-q-options"></div>
+        <!-- Savol kartasi — kirish dashboard'dagi SQL namunaning aynan o'zi (.qstage) -->
+        <section class="qstage" aria-label="savol">
+          <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+          <div class="sc-top"><span class="sc-code" id="dir-q-meta">—</span><span class="sc-live"><i></i>jonli</span><span>boshqaruv</span></div>
+          <div class="sc-body">
+            <div class="beam" id="dir-beam" aria-hidden="true"><span class="tx">uzatilmoqda…</span><span class="ln"></span><span class="dot"></span></div>
+            <h2 class="step q" id="dir-q-text">—</h2>
+            <div class="opts" id="dir-q-options"></div>
+          </div>
+          <div class="sc-foot"><span>cast</span><span>o‘qituvchi</span></div>
+        </section>
       </div>
 
       <!-- S29.03: teacher evidence + private panels (5 cols) -->

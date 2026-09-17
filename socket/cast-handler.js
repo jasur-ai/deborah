@@ -491,6 +491,11 @@ export function setupCastHandlers(io, socket) {
       if (type === CAST_COMMANDS.DIRECTOR_JOIN) {
         return await handleDirectorJoin(cmd, actor, ackSend);
       }
+      // ── Projector room join (one-time ticket HTTP'da redeem qilingan,
+      // session flag orqali; faqat PUBLIC eventlar xonasi) ──
+      if (type === CAST_COMMANDS.PROJECTOR_JOIN) {
+        return await handleProjectorJoin(cmd, ackSend);
+      }
       if (type === CAST_COMMANDS.GET_MY_ANSWER_STATUS) {
         const actor2 = resolveActor();
         if (!actor2?.participantId) return ackSend({ ok: false, error: { code: 'NOT_AUTHORIZED' } });
@@ -1031,18 +1036,24 @@ export function setupCastHandlers(io, socket) {
   async function handleGetSnapshot(cmd, actor, ackSend) {
     const sessionId = cmd.sessionId;
     if (!sessionId) return ackSend({ ok: false, error: { code: 'SESSION_NOT_FOUND' } });
-    if (!actor) {
+    // 09/2026: proyektor (ticket redeem qilingan, login'siz) — snapshot allaqachon
+    // faqat PUBLIC proyeksiyalar, shuning uchun ruxsat beriladi.
+    const isProjector = Array.isArray(socket.request?.session?.projectorOf) && socket.request.session.projectorOf.includes(sessionId);
+    if (!actor && !isProjector) {
       return ackSend({ ok: false, commandId: cmd.commandId, error: { code: 'NOT_AUTHORIZED', message: 'Avtorizatsiya talab qilinadi' } });
     }
-    // Participant ticket faqat shu sessiya uchun; rol egasi ham ruxsat
-    if (actor.actorRole === 'participant') {
-      if (actor.sessionId !== sessionId) {
-        return ackSend({ ok: false, commandId: cmd.commandId, error: { code: 'NOT_AUTHORIZED', message: 'Sessiyaga azolik talab qilinadi' } });
-      }
-    } else {
-      const role = await getRole(sessionId, actor.actorId);
-      if (!role || role.revokedAt) {
-        return ackSend({ ok: false, commandId: cmd.commandId, error: { code: 'NOT_AUTHORIZED', message: 'Sessiyaga azolik talab qilinadi' } });
+    // Participant ticket faqat shu sessiya uchun; rol egasi ham ruxsat.
+    // Proyektor (isProjector) — rol tekshiruvisiz (public proyeksiya).
+    if (!isProjector) {
+      if (actor.actorRole === 'participant') {
+        if (actor.sessionId !== sessionId) {
+          return ackSend({ ok: false, commandId: cmd.commandId, error: { code: 'NOT_AUTHORIZED', message: 'Sessiyaga azolik talab qilinadi' } });
+        }
+      } else {
+        const role = await getRole(sessionId, actor.actorId);
+        if (!role || role.revokedAt) {
+          return ackSend({ ok: false, commandId: cmd.commandId, error: { code: 'NOT_AUTHORIZED', message: 'Sessiyaga azolik talab qilinadi' } });
+        }
       }
     }
     const state = await getCurrentState(sessionId);
@@ -1055,6 +1066,22 @@ export function setupCastHandlers(io, socket) {
       state: publicStateProjection(state),
       question: q ? participantQuestionProjection(q, { phase: state.phase, openedAt: state.openedAt, closesAt: state.closesAt, revision: state.revision }) : null,
     });
+  }
+
+  // ── PROJECTOR JOIN (public room; one-time ticket HTTP'da redeem qilingan,
+  // session flag orqali tasdiqlanadi — login shart emas) ──
+  async function handleProjectorJoin(cmd, ackSend) {
+    const sessionId = cmd.sessionId;
+    const list = socket.request?.session?.projectorOf;
+    if (!sessionId || !Array.isArray(list) || !list.includes(sessionId)) {
+      return ackSend({ ok: false, commandId: cmd.commandId, error: { code: 'NOT_AUTHORIZED', message: 'Proyektor bileti talab qilinadi' } });
+    }
+    const meta = await getSessionMeta(sessionId).catch(() => null);
+    if (!meta) return ackSend({ ok: false, commandId: cmd.commandId, error: { code: 'SESSION_NOT_FOUND' } });
+    socket.join(rooms(sessionId));
+    let count = 0;
+    try { const plist = await listParticipants(sessionId); count = Object.keys(plist || {}).length; } catch (_) {}
+    ackSend({ ok: true, commandId: cmd.commandId, joined: true, joinCode: meta.joinCode || null, participantCount: count });
   }
 
   // ── DIRECTOR JOIN (private evidence room) ──

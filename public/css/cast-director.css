@@ -1056,3 +1056,22 @@
   font-weight: 800;
   font-size: .86rem;
 }
+
+/* ═══ 09/2026: savol kartasi — kirish dashboard'dagi .qstage (aynan o'zi) ═══ */
+#dir-question .qstage{width:100%;}
+#dir-question .qstage .opt .pct:empty{display:none;}
+
+/* 09/2026: bir-step "Orqaga" (topbar) */
+.dir-back-btn{flex-shrink:0;min-height:44px;font-weight:700;font-size:.82rem;white-space:nowrap;}
+/* 09/2026 mobil: topbar 1-qatorga sig'ishi uchun sessiya nomi yashiriladi
+   (kod + faza belgilari qoladi — ular muhim) */
+@media (max-width:640px){
+  .dir-topbar-left .dir-title{display:none;}
+  .dir-code{font-size:.78rem;white-space:nowrap;}
+  .dir-code b{font-size:.88rem;letter-spacing:.5px;}
+  .dir-back-btn{padding-left:12px;padding-right:12px;}
+  /* mobil: header ustun shaklida; chap guruh a11y bar zonasidan chetlanadi */
+  .dir-topbar{flex-direction:column;align-items:stretch;gap:8px;padding-right:12px;}
+  .dir-topbar-left{padding-right:96px;}
+  .dir-topbar-right{justify-content:flex-start;}
+}

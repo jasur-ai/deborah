@@ -567,11 +567,11 @@
 }
 
 /* C4-08/C4-09: staging countdown + shohsupa — vintage palitra (jigarrang/krem/malla; ko'k-sariq yo'q) */
-.stage-cd{position:absolute;top:12px;right:16px;z-index:30;display:inline-flex;align-items:center;gap:9px;padding:5px 14px 5px 6px;border-radius:999px;background:rgba(46,28,12,.9);color:#f6ecd9;border:1px solid rgba(201,165,101,.5);box-shadow:0 4px 14px rgba(27,15,6,.45);backdrop-filter:blur(8px)}
-.stage-cd-num{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;border-radius:50%;background:rgba(246,236,217,.16);color:#f6ecd9;font-weight:800;font-size:1rem;font-variant-numeric:tabular-nums}
-.stage-cd-lbl{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;opacity:.9;white-space:nowrap}
-.part-center .stage-cd{top:6px;right:0}
-.proj-stage-cd{top:-8px;right:10px}
+/* 09/2026 (user qarori): staging "3s" chip o'rniga — jimjit oltin progress chiziq (matnsiz) */
+.thinkbar{height:3px;border-radius:3px;background:rgba(242,237,227,.12);overflow:hidden;margin:10px auto 4px;max-width:420px}
+.thinkbar[hidden]{display:none !important}
+.thinkbar-fill{display:block;height:100%;width:0;border-radius:3px;background:linear-gradient(90deg,#c2a06a,#f3cf7d);transition:width .2s linear}
+.proj-thinkbar{max-width:560px;margin-top:14px}
 
 /* ── Shohsupa (podium) — vintage jigarrang/malla/krem ── */
 .part-podium{position:fixed;inset:0;z-index:70;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(120% 120% at 50% 0%,rgba(64,38,16,.92) 0%,rgba(30,16,6,.94) 70%);}
@@ -600,12 +600,30 @@
 /* C4-09: [hidden] himoyasi — overlay/chip display rejimlari hidden'dan ustun kelmasligi uchun */
 .part-podium[hidden],
 .proj-podium[hidden],
-.stage-cd[hidden],
+.thinkbar[hidden],
 .part-leaderboard[hidden],
-.proj-leaderboard[hidden] { display: none !important; }
+.proj-leaderboard[hidden],
+/* 09/2026 FIX: .proj-center{display:flex} UA [hidden]'ni yengib lobby'ni savol
+   ustida qoldirardi — proyektor jonlangach ko'rindi */
+.proj-center[hidden],
+.proj-question[hidden],
+.proj-reveal[hidden] { display: none !important; }
 
 /* ═══ rev.4 MOBIL (≤640px) ═══ */
 @media (max-width: 640px) {
   .toplink { min-height: 44px; display: inline-flex; align-items: center; padding: 8px 10px; }
   .proj-qr { max-width: 78vw; height: auto; }
+}
+
+/* ═══ 09/2026: savol ekrani — kirish dashboard'dagi .qstage (aynan o'zi;
+   proyektor keng ekran uchun kengroq + orqa qatordan o'qiladigan o'lcham) ═══ */
+#proj-question .qstage{width:100%;max-width:1100px;}
+#proj-question .qstage .q{font-size:clamp(1.3rem,3vw,2rem);}
+#proj-question .qstage .opt{font-size:clamp(1rem,1.8vw,1.3rem);padding:12px 16px;}
+#proj-question .qstage .opt .pct:empty{display:none;}
+#proj-question .sc-top #proj-timer{text-transform:none;font-variant-numeric:tabular-nums;white-space:nowrap;}
+#proj-question .sc-top #proj-timer.urgent,#proj-question .sc-top #proj-timer.is-critical{color:#e07856;}
+@media (min-width:900px){
+  #proj-question .qstage .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  #proj-question .qstage .opts .opt{margin-bottom:0;}
 }
