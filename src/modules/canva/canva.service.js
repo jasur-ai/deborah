@@ -14,11 +14,19 @@
  *   - Tokenlar DB'da encrypted (AES-256-GCM).
  *   - Callback state tekshiruvi (CSRF).
  *   - Har bir write path tenant-scoped + idempotent.
+ *
+ * 09/2026 (BUG-CANVA-01): vault PostgreSQL'dan Firebase'ga ko'chirildi
+ * (oauth-vault.js) — production'da Postgres yo'q edi va bu service
+ * haqiqatda hech qachon ishlamagan. Maydon nomlari (snake_case) bir xil.
  */
 
-import { getDb } from '../../infrastructure/postgres.js';
-import { getCurrentTenant } from '../auth/tenant-context.js';
 import { audit, AUDIT_ACTIONS } from '../auth/audit.js';
+import {
+  loadConnection,
+  saveConnection,
+  patchConnection,
+  deleteConnection,
+} from '../integrations/oauth-vault.js';
 import {
   isCanvaConfigured,
   getCanvaAuthUrl,
@@ -86,32 +94,17 @@ export async function completeCanvaLink({ session = null, code = '', state = '',
   const scopeOk = assertCanvaScope(['design:content:read', 'design:content:write', 'design:meta:read']);
   if (!scopeOk.ok) return { ok: false, error: scopeOk.reason };
 
-  const db = getDb();
-  if (!db) return { ok: false, error: 'PostgreSQL required' };
-  const tenantId = getCurrentTenant()?.id;
-  if (!tenantId) return { ok: false, error: 'tenant context is required' };
-  const userId = actorId || session?.user?.id || 0;
+  const userId = actorId ?? session?.user?.id ?? 'admin';
 
-  const expiresAt = new Date(Date.now() + (t.expiresIn || 3600) * 1000);
-  await db
-    .insertInto('canva_connections')
-    .values({
-      tenant_id: tenantId,
-      user_id: userId,
-      access_token_enc: encryptToken(t.accessToken),
-      refresh_token_enc: encryptToken(t.refreshToken),
-      token_expires_at: expiresAt,
-      scope: JSON.stringify(['design:content:read', 'design:content:write', 'design:meta:read']),
-      status: 'active',
-    })
-    .onConflict((oc) => oc.columns(['tenant_id', 'user_id']).doUpdateSet({
-      access_token_enc: encryptToken(t.accessToken),
-      refresh_token_enc: encryptToken(t.refreshToken),
-      token_expires_at: expiresAt,
-      status: 'active',
-      updated_at: new Date(),
-    }))
-    .execute();
+  const expiresAt = new Date(Date.now() + (t.expiresIn || 3600) * 1000).toISOString();
+  await saveConnection('canva', userId, {
+    user_id: userId,
+    access_token_enc: encryptToken(t.accessToken),
+    refresh_token_enc: encryptToken(t.refreshToken),
+    token_expires_at: expiresAt,
+    scope: ['design:content:read', 'design:content:write', 'design:meta:read'],
+    status: 'active',
+  });
 
   // Clear session OAuth temp values
   if (session) {
@@ -119,35 +112,23 @@ export async function completeCanvaLink({ session = null, code = '', state = '',
     delete session.canvaVerifier;
   }
 
-  await audit(AUDIT_ACTIONS.CANVA_LINK, { actorId: userId, tenantId, detail: { action: 'link' } });
+  await audit({ action: AUDIT_ACTIONS.CANVA_LINK, userId: String(userId), details: { action: 'link' } });
   return { ok: true, linked: true };
 }
 
 /** Unlink Canva account — revoke tokens + clear vault. */
 export async function unlinkCanvaAccount({ actorId = null, fetchImpl = null } = {}) {
-  const db = getDb();
-  if (!db) return { ok: false, error: 'PostgreSQL required' };
-  const tenantId = getCurrentTenant()?.id;
-  if (!tenantId) return { ok: false, error: 'tenant context is required' };
-  const userId = actorId || 0;
+  const userId = actorId ?? 'admin';
 
-  const conn = await db
-    .selectFrom('canva_connections')
-    .selectAll()
-    .where('tenant_id', '=', tenantId)
-    .where('user_id', '=', userId)
-    .executeTakeFirst();
+  const conn = await loadConnection('canva', userId);
   if (!conn) return { ok: true, linked: false };
 
   const refresh = decryptToken(conn.refresh_token_enc);
   await canvaRevoke({ refreshToken: refresh, fetchImpl }).catch(() => {});
 
-  await db.deleteFrom('canva_connections')
-    .where('tenant_id', '=', tenantId)
-    .where('user_id', '=', userId)
-    .execute();
+  await deleteConnection('canva', userId);
 
-  await audit(AUDIT_ACTIONS.CANVA_LINK, { actorId: userId, tenantId, detail: { action: 'unlink' } });
+  await audit({ action: AUDIT_ACTIONS.CANVA_LINK, userId: String(userId), details: { action: 'unlink' } });
   return { ok: true, linked: false };
 }
 
@@ -163,11 +144,7 @@ export async function handleButtonCallback({ payload = {}, actorId = null } = {}
   const v = validateButtonCallback(payload);
   if (!v.ok) return { ok: false, error: v.reason };
 
-  const db = getDb();
-  if (!db) return { ok: false, error: 'PostgreSQL required' };
-  const tenantId = getCurrentTenant()?.id;
-  if (!tenantId) return { ok: false, error: 'tenant context is required' };
-  const userId = actorId || 0;
+  const userId = actorId ?? 'admin';
 
   const mapped = mapDesignToArtifact({
     designId: v.designId,
@@ -177,28 +154,18 @@ export async function handleButtonCallback({ payload = {}, actorId = null } = {}
   });
 
   // Upsert connection with last callback
-  await db
-    .insertInto('canva_connections')
-    .values({
-      tenant_id: tenantId,
-      user_id: userId,
-      design_id: v.designId,
-      scope: JSON.stringify(['design:content:read', 'design:content:write', 'design:meta:read']),
-      status: 'active',
-      last_callback: JSON.stringify({ type: v.type, designId: v.designId, designUrl: v.designUrl, editUrl: v.editUrl }),
-    })
-    .onConflict((oc) => oc.columns(['tenant_id', 'user_id']).doUpdateSet({
-      design_id: v.designId,
-      last_callback: JSON.stringify({ type: v.type, designId: v.designId, designUrl: v.designUrl, editUrl: v.editUrl }),
-      status: 'active',
-      updated_at: new Date(),
-    }))
-    .execute();
+  await patchConnection('canva', userId, {
+    user_id: userId,
+    design_id: v.designId,
+    scope: ['design:content:read', 'design:content:write', 'design:meta:read'],
+    status: 'active',
+    last_callback: { type: v.type, designId: v.designId, designUrl: v.designUrl, editUrl: v.editUrl },
+  });
 
-  await audit(AUDIT_ACTIONS.CANVA_CALLBACK, {
-    actorId: userId,
-    tenantId,
-    detail: { type: v.type, designId: v.designId, mapped },
+  await audit({
+    action: AUDIT_ACTIONS.CANVA_CALLBACK,
+    userId: String(userId),
+    details: { type: v.type, designId: v.designId, mapped },
   });
   return { ok: true, ...mapped, type: v.type };
 }
@@ -217,22 +184,17 @@ export async function getCanvaTempUrl({ designId = '', kind = 'edit', actorId = 
   }
 
   // Otherwise resolve from vault — the edit URL is the design's edit link
-  const db = getDb();
-  if (!db) return { ok: false, error: 'PostgreSQL required' };
-  const tenantId = getCurrentTenant()?.id;
-  if (!tenantId) return { ok: false, error: 'tenant context is required' };
-  const userId = actorId || 0;
+  const userId = actorId ?? 'admin';
 
-  const conn = await db
-    .selectFrom('canva_connections')
-    .selectAll()
-    .where('tenant_id', '=', tenantId)
-    .where('user_id', '=', userId)
-    .where('design_id', '=', designId)
-    .executeTakeFirst();
-  if (!conn) return { ok: false, error: 'canva connection not found' };
+  const conn = await loadConnection('canva', userId);
+  if (!conn || (conn.design_id && conn.design_id !== designId)) {
+    return { ok: false, error: 'canva connection not found' };
+  }
 
-  const callback = conn.last_callback || {};
+  let callback = conn.last_callback || {};
+  if (typeof callback === 'string') {
+    try { callback = JSON.parse(callback); } catch { callback = {}; }
+  }
   const url = kind === 'edit' ? callback.editUrl : callback.designUrl;
   const vv = mapTempUrl({ url: url || '', kind });
   if (!vv.ok) return { ok: false, error: vv.reason };
@@ -241,18 +203,9 @@ export async function getCanvaTempUrl({ designId = '', kind = 'edit', actorId = 
 
 /** Create a Canva design (Connect API) from a title. */
 export async function createCanvaDesign({ title = '', actorId = null, fetchImpl = null } = {}) {
-  const db = getDb();
-  if (!db) return { ok: false, error: 'PostgreSQL required' };
-  const tenantId = getCurrentTenant()?.id;
-  if (!tenantId) return { ok: false, error: 'tenant context is required' };
-  const userId = actorId || 0;
+  const userId = actorId ?? 'admin';
 
-  const conn = await db
-    .selectFrom('canva_connections')
-    .selectAll()
-    .where('tenant_id', '=', tenantId)
-    .where('user_id', '=', userId)
-    .executeTakeFirst();
+  const conn = await loadConnection('canva', userId);
   if (!conn) return { ok: false, error: 'canva not linked' };
 
   const token = decryptToken(conn.access_token_enc);
@@ -261,13 +214,9 @@ export async function createCanvaDesign({ title = '', actorId = null, fetchImpl 
   const r = await canvaCreateDesign({ accessToken: token, title, fetchImpl });
   if (!r.ok) return { ok: false, error: r.error };
 
-  await db.updateTable('canva_connections')
-    .set({ design_id: r.designId, updated_at: new Date() })
-    .where('tenant_id', '=', tenantId)
-    .where('user_id', '=', userId)
-    .execute();
+  await patchConnection('canva', userId, { design_id: r.designId });
 
-  await audit(AUDIT_ACTIONS.CANVA_CREATE, { actorId: userId, tenantId, detail: { designId: r.designId } });
+  await audit({ action: AUDIT_ACTIONS.CANVA_CREATE, userId: String(userId), details: { designId: r.designId } });
   return { ok: true, designId: r.designId, designUrl: r.designUrl };
 }
 
@@ -276,18 +225,9 @@ export async function importDeckToCanva({ designId = '', fileType = 'pptx', file
   const map = mapImportArtifact({ fileType });
   if (!map.ok) return { ok: false, error: map.reason };
 
-  const db = getDb();
-  if (!db) return { ok: false, error: 'PostgreSQL required' };
-  const tenantId = getCurrentTenant()?.id;
-  if (!tenantId) return { ok: false, error: 'tenant context is required' };
-  const userId = actorId || 0;
+  const userId = actorId ?? 'admin';
 
-  const conn = await db
-    .selectFrom('canva_connections')
-    .selectAll()
-    .where('tenant_id', '=', tenantId)
-    .where('user_id', '=', userId)
-    .executeTakeFirst();
+  const conn = await loadConnection('canva', userId);
   if (!conn) return { ok: false, error: 'canva not linked' };
   const token = decryptToken(conn.access_token_enc);
   if (!token) return { ok: false, error: 'canva token unavailable' };
@@ -295,24 +235,15 @@ export async function importDeckToCanva({ designId = '', fileType = 'pptx', file
   const r = await canvaImportDesign({ accessToken: token, designId, fileType: map.format, fileBase64, fetchImpl });
   if (!r.ok) return { ok: false, error: r.error };
 
-  await audit(AUDIT_ACTIONS.CANVA_IMPORT, { actorId: userId, tenantId, detail: { designId, fileType: map.format } });
+  await audit({ action: AUDIT_ACTIONS.CANVA_IMPORT, userId: String(userId), details: { designId, fileType: map.format } });
   return { ok: true, designId, imported: true };
 }
 
 /** Export a Canva design to PPTX/PDF (result artifact saved by caller). */
 export async function exportFromCanva({ designId = '', exportType = 'pdf', actorId = null, fetchImpl = null } = {}) {
-  const db = getDb();
-  if (!db) return { ok: false, error: 'PostgreSQL required' };
-  const tenantId = getCurrentTenant()?.id;
-  if (!tenantId) return { ok: false, error: 'tenant context is required' };
-  const userId = actorId || 0;
+  const userId = actorId ?? 'admin';
 
-  const conn = await db
-    .selectFrom('canva_connections')
-    .selectAll()
-    .where('tenant_id', '=', tenantId)
-    .where('user_id', '=', userId)
-    .executeTakeFirst();
+  const conn = await loadConnection('canva', userId);
   if (!conn) return { ok: false, error: 'canva not linked' };
   const token = decryptToken(conn.access_token_enc);
   if (!token) return { ok: false, error: 'canva token unavailable' };
@@ -320,6 +251,6 @@ export async function exportFromCanva({ designId = '', exportType = 'pdf', actor
   const r = await canvaExportDesign({ accessToken: token, designId, exportType, fetchImpl });
   if (!r.ok) return { ok: false, error: r.error };
 
-  await audit(AUDIT_ACTIONS.CANVA_EXPORT, { actorId: userId, tenantId, detail: { designId, exportType } });
+  await audit({ action: AUDIT_ACTIONS.CANVA_EXPORT, userId: String(userId), details: { designId, exportType } });
   return { ok: true, designId, exportType, raw: r.raw };
 }

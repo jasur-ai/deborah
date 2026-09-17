@@ -13,12 +13,21 @@
  *   - Google token Canva/Gamma/Manus/Anthropic'ga berilmaydi (§22.8).
  *   - Tokenlar encrypted vault.
  *   - Har bir write path tenant-scoped + idempotent.
+ *
+ * 09/2026 (BUG-CANVA-01): vault PostgreSQL'dan Firebase'ga ko'chirildi
+ * (oauth-vault.js) — production'da Postgres yo'q edi va bu service
+ * haqiqatda hech qachon ishlamagan.
  */
 
-import { getDb } from '../../infrastructure/postgres.js';
-import { getCurrentTenant } from '../auth/tenant-context.js';
 import { audit, AUDIT_ACTIONS } from '../auth/audit.js';
 import { encryptToken, decryptToken } from '../auth/token-vault.js';
+import { getProviderConfig } from '../integrations/credentials.js';
+import {
+  loadConnection,
+  saveConnection,
+  patchConnection,
+  deleteConnection,
+} from '../integrations/oauth-vault.js';
 
 export { encryptToken, decryptToken };
 import {
@@ -62,9 +71,11 @@ export async function startGoogleLink({ session = null } = {}) {
     session.googleSlidesState = state;
     session.googleSlidesVerifier = verifier;
   }
+  // 09/2026: admin panelda kiritilgan kalitlar ham ishlaydi (faqat env emas)
+  const gc = getProviderConfig('google-slides');
   const params = buildGoogleAuthUrlParams({
-    clientId: process.env.GOOGLE_CLIENT_ID,
-    redirectUri: process.env.GOOGLE_REDIRECT_URI,
+    clientId: gc.clientId,
+    redirectUri: gc.redirectUri,
     state,
     challenge,
   });
@@ -86,69 +97,41 @@ export async function completeGoogleLink({ session = null, code = '', state = ''
   const scopeOk = assertDriveFileScope(t.scope);
   if (!scopeOk.ok) return { ok: false, error: scopeOk.reason };
 
-  const db = getDb();
-  if (!db) return { ok: false, error: 'PostgreSQL required' };
-  const tenantId = getCurrentTenant()?.id;
-  if (!tenantId) return { ok: false, error: 'tenant context is required' };
-  const userId = actorId || session?.user?.id || 0;
+  const userId = actorId ?? session?.user?.id ?? 'admin';
 
-  const expiresAt = new Date(Date.now() + (t.expiresIn || 3600) * 1000);
-  await db
-    .insertInto('google_connections')
-    .values({
-      tenant_id: tenantId,
-      user_id: userId,
-      google_email: null,
-      access_token_enc: encryptToken(t.accessToken),
-      refresh_token_enc: encryptToken(t.refreshToken),
-      token_expires_at: expiresAt,
-      scope: 'https://www.googleapis.com/auth/drive.file',
-      status: 'active',
-    })
-    .onConflict((oc) => oc.columns(['tenant_id', 'user_id']).doUpdateSet({
-      access_token_enc: encryptToken(t.accessToken),
-      refresh_token_enc: encryptToken(t.refreshToken),
-      token_expires_at: expiresAt,
-      scope: 'https://www.googleapis.com/auth/drive.file',
-      status: 'active',
-      updated_at: new Date(),
-    }))
-    .execute();
+  const expiresAt = new Date(Date.now() + (t.expiresIn || 3600) * 1000).toISOString();
+  await saveConnection('google-slides', userId, {
+    user_id: userId,
+    google_email: null,
+    access_token_enc: encryptToken(t.accessToken),
+    refresh_token_enc: encryptToken(t.refreshToken),
+    token_expires_at: expiresAt,
+    scope: 'https://www.googleapis.com/auth/drive.file',
+    status: 'active',
+  });
 
   if (session) {
     delete session.googleSlidesState;
     delete session.googleSlidesVerifier;
   }
 
-  await audit(AUDIT_ACTIONS.GOOGLE_LINK, { actorId: userId, tenantId, detail: { action: 'link', scope: t.scope } });
+  await audit({ action: AUDIT_ACTIONS.GOOGLE_LINK, userId: String(userId), details: { action: 'link', scope: t.scope } });
   return { ok: true, linked: true };
 }
 
 /** Unlink Google account — revoke + clear vault. */
 export async function unlinkGoogleAccount({ actorId = null, fetchImpl = null } = {}) {
-  const db = getDb();
-  if (!db) return { ok: false, error: 'PostgreSQL required' };
-  const tenantId = getCurrentTenant()?.id;
-  if (!tenantId) return { ok: false, error: 'tenant context is required' };
-  const userId = actorId || 0;
+  const userId = actorId ?? 'admin';
 
-  const conn = await db
-    .selectFrom('google_connections')
-    .selectAll()
-    .where('tenant_id', '=', tenantId)
-    .where('user_id', '=', userId)
-    .executeTakeFirst();
+  const conn = await loadConnection('google-slides', userId);
   if (!conn) return { ok: true, linked: false };
 
   const refresh = decryptToken(conn.refresh_token_enc);
   await googleRevoke({ token: refresh, fetchImpl }).catch(() => {});
 
-  await db.deleteFrom('google_connections')
-    .where('tenant_id', '=', tenantId)
-    .where('user_id', '=', userId)
-    .execute();
+  await deleteConnection('google-slides', userId);
 
-  await audit(AUDIT_ACTIONS.GOOGLE_LINK, { actorId: userId, tenantId, detail: { action: 'unlink' } });
+  await audit({ action: AUDIT_ACTIONS.GOOGLE_LINK, userId: String(userId), details: { action: 'unlink' } });
   return { ok: true, linked: false };
 }
 
@@ -165,18 +148,9 @@ export async function createFromCanonical({ title = '', document = null, actorId
   if (!document || !Array.isArray(document.slides)) {
     return { ok: false, error: 'canonical document required (with slides)' };
   }
-  const db = getDb();
-  if (!db) return { ok: false, error: 'PostgreSQL required' };
-  const tenantId = getCurrentTenant()?.id;
-  if (!tenantId) return { ok: false, error: 'tenant context is required' };
-  const userId = actorId || 0;
+  const userId = actorId ?? 'admin';
 
-  const conn = await db
-    .selectFrom('google_connections')
-    .selectAll()
-    .where('tenant_id', '=', tenantId)
-    .where('user_id', '=', userId)
-    .executeTakeFirst();
+  const conn = await loadConnection('google-slides', userId);
   if (!conn) return { ok: false, error: 'google not linked' };
 
   const token = decryptToken(conn.access_token_enc);
@@ -195,16 +169,12 @@ export async function createFromCanonical({ title = '', document = null, actorId
   if (!bu.ok) return { ok: false, error: bu.error };
 
   // 3. Persist presentation_id on connection
-  await db.updateTable('google_connections')
-    .set({ presentation_id: created.presentationId, updated_at: new Date() })
-    .where('tenant_id', '=', tenantId)
-    .where('user_id', '=', userId)
-    .execute();
+  await patchConnection('google-slides', userId, { presentation_id: created.presentationId });
 
-  await audit(AUDIT_ACTIONS.GOOGLE_CREATE, {
-    actorId: userId,
-    tenantId,
-    detail: { presentationId: created.presentationId, slides: mapped.slides.length, requests: requests.length },
+  await audit({
+    action: AUDIT_ACTIONS.GOOGLE_CREATE,
+    userId: String(userId),
+    details: { presentationId: created.presentationId, slides: mapped.slides.length, requests: requests.length },
   });
   return { ok: true, presentationId: created.presentationId, presentationUrl: created.presentationUrl, slides: mapped.slides.length };
 }
@@ -213,18 +183,9 @@ export async function createFromCanonical({ title = '', document = null, actorId
 export async function exportGooglePresentation({ presentationId = null, format = 'pptx', actorId = null, fetchImpl = null } = {}) {
   if (!presentationId) return { ok: false, error: 'presentationId is required' };
   if (!['pptx', 'pdf'].includes(format)) return { ok: false, error: 'format must be pptx or pdf' };
-  const db = getDb();
-  if (!db) return { ok: false, error: 'PostgreSQL required' };
-  const tenantId = getCurrentTenant()?.id;
-  if (!tenantId) return { ok: false, error: 'tenant context is required' };
-  const userId = actorId || 0;
+  const userId = actorId ?? 'admin';
 
-  const conn = await db
-    .selectFrom('google_connections')
-    .selectAll()
-    .where('tenant_id', '=', tenantId)
-    .where('user_id', '=', userId)
-    .executeTakeFirst();
+  const conn = await loadConnection('google-slides', userId);
   if (!conn) return { ok: false, error: 'google not linked' };
   const token = decryptToken(conn.access_token_enc);
   if (!token) return { ok: false, error: 'google token unavailable' };
@@ -235,6 +196,6 @@ export async function exportGooglePresentation({ presentationId = null, format =
   const r = await googleExportPresentation({ accessToken: token, fileId: presentationId, mimeType, fetchImpl });
   if (!r.ok) return { ok: false, error: r.error };
 
-  await audit(AUDIT_ACTIONS.GOOGLE_EXPORT, { actorId: userId, tenantId, detail: { presentationId, format, size: r.size } });
+  await audit({ action: AUDIT_ACTIONS.GOOGLE_EXPORT, userId: String(userId), details: { presentationId, format, size: r.size } });
   return { ok: true, buffer: r.buffer, size: r.size, mimeType: r.mimeType };
 }
