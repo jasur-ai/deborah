@@ -738,7 +738,12 @@ router.post('/api/admin/mfa/passkey/options', requirePendingAdminMfa, async (req
 
 router.post('/api/admin/mfa/passkey/verify', requirePendingAdminMfa, async (req, res) => {
   try {
-    const result = await verifyAdminPkAuth(req.session, req.body || {}, adminPkRp(req));
+    // BUG-ADMIN-PK01: login-page frontend {response: assertion} yuboradi,
+    // MFA-page esa yalang'och assertion. Ajratish: o'ramda top-level .id
+    // yo'q, ichkarida bor.
+    const _b = req.body || {};
+    const assertion = (!_b.id && _b.response?.id) ? _b.response : _b;
+    const result = await verifyAdminPkAuth(req.session, assertion, adminPkRp(req));
     if (!result.ok) {
       return res.status(403).json({ ok: false, error: result.error || 'assertion_invalid', message: result.message });
     }
@@ -818,7 +823,9 @@ router.post('/api/admin/passkey/login/verify', async (req, res) => {
       return res.status(403).json({ ok: false, error: 'breach_blocked', message: 'Xavfsizlik nuqtasi tufayli hisob bloklandi.' });
     }
 
-    const result = await verifyAdminPkAuth(req.session, req.body || {}, adminPkRp(req));
+    const _b2 = req.body || {}; // BUG-ADMIN-PK01: {response} unwrap (bare shakl buzilmaydi)
+    const assertion = (!_b2.id && _b2.response?.id) ? _b2.response : _b2;
+    const result = await verifyAdminPkAuth(req.session, assertion, adminPkRp(req));
     if (!result.ok) {
       logAuthEvent({
         action: AUDIT_ACTIONS.AUTH_LOGIN_FAIL, outcome: 'failed', method: 'passkey',

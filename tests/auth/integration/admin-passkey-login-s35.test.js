@@ -172,7 +172,7 @@ describe('S35 — admin passkey bilan to\'g\'ridan-to\'g\'ri kirish (to\'liq oqi
     });
 
     const verify = await fresh.post('/api/admin/passkey/login/verify')
-      .set('x-csrf-token', tok2).send(assert) // wrapper yo'q — to'g'ridan-to'g'ri assertion
+      .set('x-csrf-token', tok2).send({ response: assert }) // BUG-ADMIN-PK01: real frontend {response} yuboradi
       .set('x-forwarded-for', nextIp());
     expect(verify.status).toBe(200);
     expect(verify.body.ok).toBe(true);
@@ -242,7 +242,7 @@ describe('S35 — admin passkey bilan to\'g\'ridan-to\'g\'ri kirish (to\'liq oqi
       counter: 1,
     });
     const uverify = await fresh.post('/api/admin/passkey/login/verify')
-      .set('x-csrf-token', tok).send(uassert)
+      .set('x-csrf-token', tok).send({ response: uassert })
       .set('x-forwarded-for', nextIp());
     expect(uverify.status).toBe(403);
     expect(uverify.body.error).toBe('wrong_owner');
