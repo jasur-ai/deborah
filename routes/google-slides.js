@@ -63,14 +63,33 @@ router.post('/api/admin/google-slides/link', requireAdmin, async (req, res) => {
 
 /**
  * Google OAuth redirect — browser GET ?code=...&state=... bilan qaytadi.
- * GET (redirect) + POST (JSON body) ikkala yo'l ham qo'llab-quvvatlanadi.
+ * BUG-CANVA-02: GET callback PUBLIC — admin cookie SameSite=Strict bo'lgani
+ * uchun Google'dan qaytgan cross-site redirect'da sessiya kelmaydi. Himoya:
+ * taxminlab bo'lmas bir martalik state (pending store, 10 daq TTL).
  */
-const handleGoogleCallback = async (req, res) => {
+router.get('/api/admin/google-slides/callback', async (req, res) => {
+  if (req.query?.error) {
+    return res.redirect('/admin/google-slides?g=denied');
+  }
   try {
     const r = await completeGoogleLink({
       session: req.session,
-      code: req.body?.code || req.query?.code,
-      state: req.body?.state || req.query?.state,
+      code: req.query?.code,
+      state: req.query?.state,
+    });
+    if (!r.ok) return res.redirect(`/admin/google-slides?g=error&msg=${encodeURIComponent(String(r.error || 'unknown').slice(0, 120))}`);
+    res.redirect('/admin/google-slides?g=linked');
+  } catch (e) {
+    res.redirect(`/admin/google-slides?g=error&msg=${encodeURIComponent(String(e?.message || e).slice(0, 120))}`);
+  }
+});
+/** POST callback — JSON API (test/manual), sessiya bilan. */
+router.post('/api/admin/google-slides/callback', requireAdmin, async (req, res) => {
+  try {
+    const r = await completeGoogleLink({
+      session: req.session,
+      code: req.body?.code,
+      state: req.body?.state,
       actorId: actorId(req),
     });
     if (!r.ok) return res.status(400).json({ error: r.error });
@@ -78,9 +97,7 @@ const handleGoogleCallback = async (req, res) => {
   } catch (e) {
     res.status(500).json({ error: String(e?.message || e) });
   }
-};
-router.get('/api/admin/google-slides/callback', requireAdmin, handleGoogleCallback);
-router.post('/api/admin/google-slides/callback', requireAdmin, handleGoogleCallback);
+});
 
 /** POST /api/admin/google-slides/unlink — revoke + clear vault. */
 router.post('/api/admin/google-slides/unlink', requireAdmin, async (req, res) => {

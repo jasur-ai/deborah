@@ -67,7 +67,7 @@ router.get('/api/admin/canva/status', requireAdmin, async (req, res, next) => {
 /** POST /api/admin/canva/link — start OAuth (returns authorize URL). */
 router.post('/api/admin/canva/link', requireAdmin, async (req, res) => {
   try {
-    const r = await startCanvaLink({ session: req.session });
+    const r = await startCanvaLink({ session: req.session, actorId: actorId(req) });
     if (!r.ok) return res.status(400).json({ error: r.error });
     res.json({ ok: true, url: r.url });
   } catch (e) {
@@ -77,14 +77,35 @@ router.post('/api/admin/canva/link', requireAdmin, async (req, res) => {
 
 /**
  * Canva OAuth redirect — browser GET ?code=...&state=... bilan qaytadi.
- * GET (redirect) + POST (JSON body) ikkala yo'l ham qo'llab-quvvatlanadi.
+ * BUG-CANVA-02: GET callback PUBLIC — admin cookie SameSite=Strict bo'lgani
+ * uchun Canva'dan qaytgan cross-site redirect'da sessiya kelmaydi. Himoya:
+ * taxminlab bo'lmas bir martalik state (pending store, 10 daq TTL).
+ * Muvaffaqiyat/xato — /admin/canva'ga redirect (banner uchun ?canva=...).
  */
-const handleCanvaCallback = async (req, res) => {
+router.get('/api/admin/canva/callback', async (req, res) => {
+  // Canva rad etsa: ?error=access_denied&error_description=...
+  if (req.query?.error) {
+    return res.redirect('/admin/canva?canva=denied');
+  }
   try {
     const r = await completeCanvaLink({
       session: req.session,
-      code: req.body?.code || req.query?.code,
-      state: req.body?.state || req.query?.state,
+      code: req.query?.code,
+      state: req.query?.state,
+    });
+    if (!r.ok) return res.redirect(`/admin/canva?canva=error&msg=${encodeURIComponent(String(r.error || 'unknown').slice(0, 120))}`);
+    res.redirect('/admin/canva?canva=linked');
+  } catch (e) {
+    res.redirect(`/admin/canva?canva=error&msg=${encodeURIComponent(String(e?.message || e).slice(0, 120))}`);
+  }
+});
+/** POST callback — JSON API (test/manual), sessiya bilan. */
+router.post('/api/admin/canva/callback', requireAdmin, async (req, res) => {
+  try {
+    const r = await completeCanvaLink({
+      session: req.session,
+      code: req.body?.code,
+      state: req.body?.state,
       actorId: actorId(req),
     });
     if (!r.ok) return res.status(400).json({ error: r.error });
@@ -92,9 +113,7 @@ const handleCanvaCallback = async (req, res) => {
   } catch (e) {
     res.status(500).json({ error: String(e?.message || e) });
   }
-};
-router.get('/api/admin/canva/callback', requireAdmin, handleCanvaCallback);
-router.post('/api/admin/canva/callback', requireAdmin, handleCanvaCallback);
+});
 
 /** POST /api/admin/canva/button — handle Button callback. */
 router.post('/api/admin/canva/button', requireAdmin, async (req, res) => {

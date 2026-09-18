@@ -45,6 +45,11 @@
         <h1>Google Slides Adapter</h1>
         <span class="adm-chip" id="connStatus">Tekshirilmoqda…</span>
       </header>
+      <!-- BUG-CANVA-02: OAuth redirect natijasi (?g=linked|denied|error) -->
+      <div class="adm-card" id="oauthBanner" hidden style="border-left:4px solid var(--deborah-gold,#c9a227)">
+        <b id="oauthBannerTitle"></b>
+        <p class="adm-hint" id="oauthBannerText" style="margin:6px 0 0"></p>
+      </div>
       <section class="adm-card">
         <h2>Kalitlarni shu yerdan kiritish (server .env shart emas)</h2>
         <p class="adm-hint">Google Cloud OAuth client qiymatlarini kiriting — serverda <b>shifrlangan</b> holda saqlanadi (AES-256-GCM). Bo'sh maydon — mavjud qiymat saqlanib qoladi.</p>
@@ -109,6 +114,24 @@ GOOGLE_REDIRECT_URI=https://deborah-ncj.onrender.com/api/admin/google-slides/cal
   const CSRF = '<%= csrfToken || "" %>';
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  // ── BUG-CANVA-02: OAuth redirect natijasi banneri (?g=...) ──
+  (function oauthBanner() {
+    const q = new URLSearchParams(location.search);
+    const st = q.get('g');
+    if (!st) return;
+    const box = $('oauthBanner');
+    if (!box) return;
+    const map = {
+      linked: ['Google Slides ulandi ✓', 'Token vault\'da shifrlangan saqlandi (faqat drive.file).'],
+      denied: ['Ulanish rad etildi', 'Google oynasida ruxsat berilmadi. Qayta urinish uchun «Link» ni bosing.'],
+      error: ['Ulanishda xato', q.get('msg') || 'Noma’lum xato. Qayta urining.'],
+    };
+    const [t, x] = map[st] || map.error;
+    $('oauthBannerTitle').textContent = t;
+    $('oauthBannerText').textContent = x;
+    box.hidden = false;
+    history.replaceState(null, '', location.pathname);
+  })();
   // Demo canonical deck — admin panel'dan create tugmasini sinash uchun
   const DEMO_DECK = {
     title: 'Fotosintez',

@@ -19,6 +19,7 @@
  * haqiqatda hech qachon ishlamagan.
  */
 
+import { randomBytes } from 'crypto';
 import { audit, AUDIT_ACTIONS } from '../auth/audit.js';
 import { encryptToken, decryptToken } from '../auth/token-vault.js';
 import { getProviderConfig } from '../integrations/credentials.js';
@@ -27,6 +28,8 @@ import {
   saveConnection,
   patchConnection,
   deleteConnection,
+  savePendingOAuth,
+  consumePendingOAuth,
 } from '../integrations/oauth-vault.js';
 
 export { encryptToken, decryptToken };
@@ -63,10 +66,14 @@ const GOOGLE_AUTH = 'https://accounts.google.com/o/oauth2/v2/auth';
 // ═══════════════════════════════════════════════════════════════════
 
 /** Start Google Slides OAuth — returns authorize URL (drive.file only). */
-export async function startGoogleLink({ session = null } = {}) {
+export async function startGoogleLink({ session = null, actorId = null } = {}) {
   if (!isGoogleConfigured()) return { ok: false, error: 'Google not configured' };
-  const state = `g_${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`;
+  // BUG-CANVA-02: crypto state + server-side pending store (Strict cookie
+  // cross-site redirect'da kelmaydi — sessiya yetarli emas).
+  const state = `g_${randomBytes(24).toString('hex')}`;
   const { challenge, verifier } = buildPkcePair();
+  const linkUser = actorId ?? session?.user?.id ?? 'admin';
+  await savePendingOAuth('google-slides', { state, verifier, actorId: linkUser });
   if (session) {
     session.googleSlidesState = state;
     session.googleSlidesVerifier = verifier;
@@ -84,10 +91,20 @@ export async function startGoogleLink({ session = null } = {}) {
 
 /** Complete Google Slides OAuth — exchange code, persist encrypted vault. */
 export async function completeGoogleLink({ session = null, code = '', state = '', actorId = null, fetchImpl = null } = {}) {
+  // CSRF: avval sessiya, bo'lmasa pending store (BUG-CANVA-02, bir martalik).
+  let verifier = null;
+  let pendingActor = null;
   const expected = session?.googleSlidesState;
-  const vs = validateCallbackState({ state, expected });
-  if (!vs.ok) return { ok: false, error: vs.reason };
-  const verifier = session?.googleSlidesVerifier;
+  if (expected) {
+    const vs = validateCallbackState({ state, expected });
+    if (!vs.ok) return { ok: false, error: vs.reason };
+    verifier = session?.googleSlidesVerifier;
+  } else {
+    const p = await consumePendingOAuth('google-slides', state);
+    if (!p.ok) return { ok: false, error: p.expired ? 'OAuth state expired' : 'invalid OAuth state (CSRF)' };
+    verifier = p.verifier;
+    pendingActor = p.actorId;
+  }
   if (!verifier) return { ok: false, error: 'missing PKCE verifier' };
 
   const t = await googleExchangeCode({ code, verifier, fetchImpl });
@@ -97,7 +114,7 @@ export async function completeGoogleLink({ session = null, code = '', state = ''
   const scopeOk = assertDriveFileScope(t.scope);
   if (!scopeOk.ok) return { ok: false, error: scopeOk.reason };
 
-  const userId = actorId ?? session?.user?.id ?? 'admin';
+  const userId = actorId ?? session?.user?.id ?? pendingActor ?? 'admin';
 
   const expiresAt = new Date(Date.now() + (t.expiresIn || 3600) * 1000).toISOString();
   await saveConnection('google-slides', userId, {

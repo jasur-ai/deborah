@@ -20,12 +20,15 @@
  * haqiqatda hech qachon ishlamagan. Maydon nomlari (snake_case) bir xil.
  */
 
+import { randomBytes } from 'crypto';
 import { audit, AUDIT_ACTIONS } from '../auth/audit.js';
 import {
   loadConnection,
   saveConnection,
   patchConnection,
   deleteConnection,
+  savePendingOAuth,
+  consumePendingOAuth,
 } from '../integrations/oauth-vault.js';
 import {
   isCanvaConfigured,
@@ -61,11 +64,15 @@ export const CANVA_META = {
 // LINK (PKCE OAuth) — §59-09
 // ═══════════════════════════════════════════════════════════════════
 
-/** Start Canva Connect OAuth — returns authorize URL (state+PKCE in session). */
-export async function startCanvaLink({ session = null } = {}) {
+/** Start Canva Connect OAuth — returns authorize URL (state+PKCE in pending store + session). */
+export async function startCanvaLink({ session = null, actorId = null } = {}) {
   if (!isCanvaConfigured()) return { ok: false, error: 'Canva not configured' };
-  const state = `c_${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`;
+  // BUG-CANVA-02: crypto state + server-side pending store (Strict cookie
+  // cross-site redirect'da kelmaydi — sessiya yetarli emas).
+  const state = `c_${randomBytes(24).toString('hex')}`;
   const { challenge, verifier } = buildPkcePair();
+  const userId = actorId ?? session?.user?.id ?? 'admin';
+  await savePendingOAuth('canva', { state, verifier, actorId: userId });
   if (session) {
     session.canvaOAuthState = state;
     session.canvaVerifier = verifier;
@@ -77,11 +84,21 @@ export async function startCanvaLink({ session = null } = {}) {
 
 /** Complete Canva Connect OAuth — exchange code, persist encrypted token vault. */
 export async function completeCanvaLink({ session = null, code = '', state = '', actorId = null, fetchImpl = null } = {}) {
-  // CSRF state tekshiruvi
+  // CSRF state tekshiruvi: avval sessiya, bo'lmasa pending store (BUG-CANVA-02).
+  // Pending store bir martalik — topilsa O'CHIRILADI (replay yo'q).
+  let verifier = null;
+  let pendingActor = null;
   const expected = session?.canvaOAuthState;
-  const vs = validateCallbackState({ state, expected });
-  if (!vs.ok) return { ok: false, error: vs.reason };
-  const verifier = session?.canvaVerifier;
+  if (expected) {
+    const vs = validateCallbackState({ state, expected });
+    if (!vs.ok) return { ok: false, error: vs.reason };
+    verifier = session?.canvaVerifier;
+  } else {
+    const p = await consumePendingOAuth('canva', state);
+    if (!p.ok) return { ok: false, error: p.expired ? 'OAuth state expired' : 'invalid OAuth state (CSRF)' };
+    verifier = p.verifier;
+    pendingActor = p.actorId;
+  }
   if (!verifier) return { ok: false, error: 'missing PKCE verifier' };
 
   const t = await canvaExchangeCode({ code, verifier, fetchImpl });
@@ -94,7 +111,7 @@ export async function completeCanvaLink({ session = null, code = '', state = '',
   const scopeOk = assertCanvaScope(['design:content:read', 'design:content:write', 'design:meta:read']);
   if (!scopeOk.ok) return { ok: false, error: scopeOk.reason };
 
-  const userId = actorId ?? session?.user?.id ?? 'admin';
+  const userId = actorId ?? session?.user?.id ?? pendingActor ?? 'admin';
 
   const expiresAt = new Date(Date.now() + (t.expiresIn || 3600) * 1000).toISOString();
   await saveConnection('canva', userId, {

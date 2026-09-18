@@ -15,6 +15,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 // ── In-memory fake OAuth vault (real vaultPath kalit logikasi bilan) ──
 function makeFakeVault(seed = {}) {
   const store = { ...seed }; // vaultPath -> connection
+  const pending = {}; // `${provider}:${state}` -> { verifier, actorId, expiresAt }
   const factory = async (importOriginal) => {
     const actual = await importOriginal();
     return {
@@ -34,9 +35,22 @@ function makeFakeVault(seed = {}) {
         delete store[actual.vaultPath(provider, actorId)];
         return true;
       },
+      savePendingOAuth: async (provider, { state = '', verifier = '', actorId = 'admin' } = {}) => {
+        if (!state || !verifier) return { ok: false };
+        pending[`${provider}:${state}`] = { verifier, actorId, expiresAt: Date.now() + 600000 };
+        return { ok: true };
+      },
+      consumePendingOAuth: async (provider, state) => {
+        const k = `${provider}:${state}`;
+        const v = pending[k];
+        delete pending[k];
+        if (!v) return { ok: false };
+        if (Date.now() > v.expiresAt) return { ok: false, expired: true };
+        return { ok: true, verifier: v.verifier, actorId: v.actorId };
+      },
     };
   };
-  return { store, factory };
+  return { store, pending, factory };
 }
 
 function mockAudit() {
@@ -139,6 +153,16 @@ describe('google-slides — link flow (Prompt 59 §9.9/§15)', () => {
     expect(r.ok).toBe(true);
     expect(r.linked).toBe(false);
     expect(store[GP]).toBeUndefined();
+  });
+
+  it('pending: sessiyasiz complete linked (BUG-CANVA-02)', async () => {
+    const r0 = await mod.startGoogleLink({ session: null, actorId: 'boss' });
+    expect(r0.ok).toBe(true);
+    const state = new URL(r0.url).searchParams.get('state');
+    expect(state).toMatch(/^g_[0-9a-f]{48}$/);
+    const r = await mod.completeGoogleLink({ session: {}, code: 'c', state });
+    expect(r.ok).toBe(true);
+    expect(r.linked).toBe(true);
   });
 });
 

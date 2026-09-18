@@ -16,6 +16,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 // ── In-memory fake OAuth vault (real vaultPath kalit logikasi bilan) ──
 function makeFakeVault(seed = {}) {
   const store = { ...seed }; // vaultPath -> connection
+  const pending = {}; // `${provider}:${state}` -> { verifier, actorId, expiresAt }
   const factory = async (importOriginal) => {
     const actual = await importOriginal();
     return {
@@ -35,9 +36,22 @@ function makeFakeVault(seed = {}) {
         delete store[actual.vaultPath(provider, actorId)];
         return true;
       },
+      savePendingOAuth: async (provider, { state = '', verifier = '', actorId = 'admin' } = {}) => {
+        if (!state || !verifier) return { ok: false };
+        pending[`${provider}:${state}`] = { verifier, actorId, expiresAt: Date.now() + 600000 };
+        return { ok: true };
+      },
+      consumePendingOAuth: async (provider, state) => {
+        const k = `${provider}:${state}`;
+        const v = pending[k];
+        delete pending[k];
+        if (!v) return { ok: false };
+        if (Date.now() > v.expiresAt) return { ok: false, expired: true };
+        return { ok: true, verifier: v.verifier, actorId: v.actorId };
+      },
     };
   };
-  return { store, factory };
+  return { store, pending, factory };
 }
 
 function mockAudit() {
@@ -143,6 +157,66 @@ describe('canva — link flow (Prompt 59 §9.8/§15)', () => {
     const r = await mod.unlinkCanvaAccount({ actorId: 999 });
     expect(r.ok).toBe(true);
     expect(r.linked).toBe(false);
+  });
+});
+
+describe('canva — pending OAuth (BUG-CANVA-02: sessiyasiz cross-site callback)', () => {
+  let mod;
+  let store;
+  let pending;
+
+  beforeEach(async () => {
+    vi.resetModules();
+    process.env.CANVA_CLIENT_ID = 'cid';
+    process.env.CANVA_CLIENT_SECRET = 'csec';
+    process.env.CANVA_REDIRECT_URI = 'http://x/cb';
+    process.env.ENCRYPTION_KEY = 'test-encryption-key-for-vault-123456';
+
+    const fake = makeFakeVault({});
+    store = fake.store;
+    pending = fake.pending;
+
+    vi.doMock('../../src/modules/integrations/oauth-vault.js', fake.factory);
+    mockAudit();
+    vi.doMock('../../src/modules/canva/canva.client.js', async (importOriginal) => {
+      const actual = await importOriginal();
+      return {
+        ...actual,
+        canvaExchangeCode: vi.fn(async () => ({ ok: true, accessToken: 'at_p', refreshToken: 'rt_p', expiresIn: 3600 })),
+      };
+    });
+    mod = await import('../../src/modules/canva/index.js');
+  });
+
+  it('start saqlaydi pending; sessiyasiz complete linked (real redirect flow)', async () => {
+    const r0 = await mod.startCanvaLink({ session: null, actorId: 'boss' });
+    expect(r0.ok).toBe(true);
+    const state = new URL(r0.url).searchParams.get('state');
+    expect(state).toMatch(/^c_[0-9a-f]{48}$/);
+    expect(pending[`canva:${state}`]).toBeTruthy();
+    // Cross-site redirect: sessiya YO'Q (yangi bo'sh sessiya)
+    const r = await mod.completeCanvaLink({ session: {}, code: 'codeX', state });
+    expect(r.ok).toBe(true);
+    expect(r.linked).toBe(true);
+    const row = store['integrations/canva/connections/boss'];
+    expect(row).toBeTruthy();
+    expect(mod.decryptToken(row.access_token_enc)).toBe('at_p');
+  });
+
+  it('pending bir martalik — replay rad etiladi', async () => {
+    const r0 = await mod.startCanvaLink({ session: null, actorId: 'boss' });
+    const state = new URL(r0.url).searchParams.get('state');
+    const r1 = await mod.completeCanvaLink({ session: {}, code: 'codeX', state });
+    expect(r1.ok).toBe(true);
+    const r2 = await mod.completeCanvaLink({ session: {}, code: 'codeX', state });
+    expect(r2.ok).toBe(false);
+    expect(r2.error).toMatch(/CSRF|state/i);
+  });
+
+  it('noma’lum state + sessiyasiz → CSRF xato', async () => {
+    const r = await mod.completeCanvaLink({ session: {}, code: 'codeX', state: 'c_bogus' });
+    expect(r.ok).toBe(false);
+    expect(r.error).toMatch(/CSRF|state/i);
   });
 });
 

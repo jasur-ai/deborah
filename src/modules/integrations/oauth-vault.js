@@ -57,3 +57,51 @@ export async function deleteConnection(provider, actorId) {
   await fb.remove(vaultPath(provider, actorId));
   return true;
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// Kutilayotgan OAuth (state → verifier) — BUG-CANVA-02
+// ───────────────────────────────────────────────────────────────────
+// Muammo: admin sessiya cookie'si SameSite=Strict. Canva/Google'dan
+// qaytgan cross-site redirect'da cookie YUBORILMAYDI → requireAdmin
+// callback'da har doim yiqiladi va code yo'qoladi.
+// Yechim (standart OAuth pattern): state→verifier juftligi sessiyada
+// EMAS, server-side pending store'da (10 daqiqa TTL, bir martalik)
+// saqlanadi. GET callback public — himoya taxminlab bo'lmas state'da.
+// ═══════════════════════════════════════════════════════════════════
+
+const PENDING_TTL_MS = 10 * 60 * 1000;
+
+function pendingPath(provider, state) {
+  const s = String(state || '').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 128);
+  return `integrations/${provider}/pending/${s}`;
+}
+
+/** Pending OAuth boshlash: state → { verifier, actorId, expiresAt }. */
+export async function savePendingOAuth(provider, { state = '', verifier = '', actorId = 'admin' } = {}) {
+  if (!state || !verifier) return { ok: false };
+  await fb.set(pendingPath(provider, state), {
+    verifier,
+    actorId,
+    createdAt: new Date().toISOString(),
+    expiresAt: Date.now() + PENDING_TTL_MS,
+  });
+  return { ok: true };
+}
+
+/**
+ * Pending OAuth'ni bir martalik ishlatish: topilsa va muddati o'tmagan
+ * bo'lsa { verifier, actorId } qaytarib O'CHIRADI (replay yo'q).
+ */
+export async function consumePendingOAuth(provider, state) {
+  if (!state) return { ok: false };
+  try {
+    const snap = await fb.get(pendingPath(provider, state));
+    if (!snap || !snap.exists()) return { ok: false };
+    const v = snap.val() || {};
+    await fb.remove(pendingPath(provider, state)).catch(() => {});
+    if (!v.verifier || (v.expiresAt && Date.now() > v.expiresAt)) return { ok: false, expired: true };
+    return { ok: true, verifier: v.verifier, actorId: v.actorId ?? 'admin' };
+  } catch {
+    return { ok: false };
+  }
+}

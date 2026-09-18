@@ -45,6 +45,11 @@
         <h1>Canva Adapter</h1>
         <span class="adm-chip" id="connStatus">Tekshirilmoqda…</span>
       </header>
+      <!-- BUG-CANVA-02: OAuth redirect natijasi (?canva=linked|denied|error) -->
+      <div class="adm-card" id="oauthBanner" hidden style="border-left:4px solid var(--deborah-gold,#c9a227)">
+        <b id="oauthBannerTitle"></b>
+        <p class="adm-hint" id="oauthBannerText" style="margin:6px 0 0"></p>
+      </div>
 
       <section class="adm-card">
         <h2>Kalitlarni qanday to‘ldirish (3 qadam)</h2>
@@ -127,6 +132,25 @@ CANVA_REDIRECT_URI=https://deborah-ncj.onrender.com/api/admin/canva/callback</pr
   const CSRF = '<%= csrfToken || "" %>';
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  // ── BUG-CANVA-02: OAuth redirect natijasi banneri (?canva=...) ──
+  (function oauthBanner() {
+    const q = new URLSearchParams(location.search);
+    const st = q.get('canva');
+    if (!st) return;
+    const box = $('oauthBanner');
+    if (!box) return;
+    const map = {
+      linked: ['Canva ulandi ✓', 'Token vault\'da shifrlangan saqlandi. Endi Create/Import/Export ishlaydi.'],
+      denied: ['Ulanish rad etildi', 'Canva oynasida ruxsat berilmadi. Qayta urinish uchun «Link Canva (OAuth)» ni bosing.'],
+      error: ['Ulanishda xato', q.get('msg') || 'Noma’lum xato. Qayta urining.'],
+    };
+    const [t, x] = map[st] || map.error;
+    $('oauthBannerTitle').textContent = t;
+    $('oauthBannerText').textContent = x;
+    box.hidden = false;
+    history.replaceState(null, '', location.pathname);
+  })();
 
   // ── C4-10 rev.4: kalitlarni shu yerdan saqlash ──
   async function loadCredStatus() {
