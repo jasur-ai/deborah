@@ -3,6 +3,7 @@
 <head>
   <%- include('../partials/head') %>
   <link rel="stylesheet" href="/css/question-stage.css">
+  <link rel="stylesheet" href="/css/ai-assist.css?v=ai1">
   <style>
     /* Yakka mashq (Sinov) — jonli sahna (C4-10 rev.2: reklama uslubi yo'q):
        katta maydon, iliq 2×2 javob plitalari, darhol natija, vaqt/vaqtsiz.
@@ -448,6 +449,15 @@
       el.hidden = false;
       const correct = data.correct, total = data.total;
       const wrongList = (data.results || []).filter((r) => !r.isCorrect).map((r) => r.id);
+      // AI Assist v1: tahlil paneli uchun natija ma'lumoti (faqat o'qish)
+      try {
+        window.__PR_RESULT__ = {
+          percent: data.percent, correct, total,
+          wrong: (data.results || []).filter((r) => !r.isCorrect).map((r) => ({
+            text: (QUESTIONS[r.id] && QUESTIONS[r.id].text) || ('Savol ' + (r.id + 1)),
+          })),
+        };
+      } catch (_) {}
       const hasWrong = wrongList.length > 0;
       // C4-10 rev.4: yakun — natija saqlangani tasdig'i + qayta yechish + tarix
       const savedNote = hasWrong
@@ -466,6 +476,7 @@
               <button type="button" class="btn btn-quiet" data-print>${t('print', '🖨️ Chop etish')}</button>
               ${hasWrong ? `<button type="button" class="btn act-sinov" id="retry-wrong" style="margin:0">${fill('retryWrong', 'Qayta yechish — faqat xatolar ({n})', { n: wrongList.length })}</button>` : ''}
               <button type="button" class="btn btn-quiet" id="retry-all">${t('retryAll', 'Boshidan qayta yechish')}</button>
+              <button type="button" class="ai-trigger" id="pr-ai-analysis"><span class="ai-spark">✨</span> ${t('aiAnalysis', 'AI tahlil')}</button>
               <a class="btn btn-primary" href="/user/practice-history">${t('histOpen', 'Natijalarim')}</a>
               <a class="btn btn-quiet" href="/user/panel">${t('backPanel', '← Panelga qaytish')}</a>
             </div>
@@ -548,5 +559,6 @@
     renderQ();
   </script>
   <script src="/js/icon-kit.js"></script>
+  <script src="/js/ai-assist.js?v=ai1" defer></script>
 </body>
 </html>

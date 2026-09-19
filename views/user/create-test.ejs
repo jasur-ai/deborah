@@ -3,6 +3,7 @@
 <head>
   <%- include('../partials/head') %>
   <link rel="stylesheet" href="/design/contexts/test-builder.css?v=s34m">
+  <link rel="stylesheet" href="/css/ai-assist.css?v=ai1">
   <style>
     .tb-props-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
     @media (max-width: 640px) { .tb-props-grid { grid-template-columns: 1fr; } }
@@ -50,6 +51,8 @@
         <div style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap">
           <button type="button" class="btn btn-secondary" id="tb-add-question"><%- icon('plus', 14) %> <%= bc.addQuestion %></button>
           <button type="button" class="btn btn-quiet" id="tb-import-btn"><%- icon('upload', 14) %> <%= bc.excelImport %></button>
+          <!-- AI Assist v1 (frontend-only): builder'ga qo'shimcha, eskilar o'zgarmaydi -->
+          <button type="button" class="ai-trigger" id="tb-ai-generate"><span class="ai-spark">✨</span> AI bilan yaratish</button>
         </div>
       </main>
 
@@ -134,5 +137,6 @@
     };
   </script>
   <script src="/js/test-builder.js" defer></script>
+  <script src="/js/ai-assist.js?v=ai1" defer></script>
 </body>
 </html>

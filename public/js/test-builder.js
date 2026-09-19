@@ -805,4 +805,36 @@
   }
 
   render();
+
+  // ── AI Assist bridge (09/2026, v1) ──
+  // AI modal'dan kelgan savollarni builder'ga qo'shish. Mavjud funksiyalar
+  // o'zgarmaydi — faqat tashqi kirish nuqtasi.
+  window.__TB_AI_BRIDGE = {
+    insert: function (list) {
+      if (!Array.isArray(list) || !list.length) return 0;
+      var firstId = null;
+      list.forEach(function (q) {
+        var nq = normalize({
+          type: q.type === 'true_false' ? 'true_false' : 'single_choice',
+          text: String(q.text || ''),
+          options: Array.isArray(q.options) ? q.options.slice(0, 6).map(String) : [],
+          correct: typeof q.correct === 'number' ? q.correct : 0,
+          explanation: q.explanation || '',
+          tags: ['ai'],
+          timing: DEFAULT_QUESTION_TIME,
+        });
+        // bo'sh variantlarni to'ldirish (builder 2+ variant talab qiladi)
+        while (nq.options.length < 2) nq.options.push('');
+        if (nq.correct >= nq.options.length) nq.correct = 0;
+        state.questions.push(nq);
+        if (!firstId) firstId = nq.id;
+      });
+      state.activeId = firstId;
+      markDirty();
+      render();
+      focusQuestionText();
+      return list.length;
+    },
+    count: function () { return state.questions.length; },
+  };
 })();
