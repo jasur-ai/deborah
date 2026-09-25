@@ -774,8 +774,9 @@ describe('S27 — Test Builder professional authoring workspace', () => {
     expect(js).toContain('data-move="up"');
     expect(js).toContain('data-move="down"');
     // S34l: native radio YO'Q — variant kartalari role="radio" (jonli viktorina modeli)
+    // 09/2026 (Faza 1): single — radio, multi — checkbox (dinamik role)
     expect(js).toContain('role="radiogroup"');
-    expect(js).toContain('role="radio"');
+    expect(js).toContain('role="${isMulti ? \'checkbox\' : \'radio\'}"');
     expect(js).toContain('aria-checked=');
   });
 });
