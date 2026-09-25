@@ -167,6 +167,60 @@
       .pr-back{min-height:44px;display:inline-flex;align-items:center;}
       #hud-next{padding:8px 14px;font-size:.78rem;}
     }
+
+    /* 09/2026 (Faza 1): multi/short/fokus/review uslublari */
+    #quiz .qstage .opt.sel{border-color:#d9b465;background:rgba(201,165,101,.16);}
+    #quiz .qstage .opt.sel .k{background:#d9b465;color:#1a1305;}
+    .pr-confirm-wrap{display:flex;justify-content:center;margin-top:14px;}
+    .pr-confirm{
+      font-family:'IBM Plex Mono',Consolas,monospace;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;
+      border:1px solid #c2a06a;background:#c2a06a;color:#141006;border-radius:0;
+      padding:12px 26px;cursor:pointer;min-height:48px;
+    }
+    .pr-confirm:hover:not(:disabled){background:#d6bd8c;}
+    .pr-confirm:disabled{opacity:.45;cursor:not-allowed;}
+    .pr-short-wrap{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:6px;}
+    .pr-short-input{
+      flex:1;min-width:200px;max-width:440px;min-height:48px;
+      background:rgba(20,13,6,.6);border:1px solid rgba(201,165,101,.55);color:#f6ecd9;
+      border-radius:0;padding:12px 16px;font-size:1rem;font-family:inherit;
+    }
+    .pr-short-input:focus{outline:2px solid #d9b465;outline-offset:1px;}
+    .pr-short-given{
+      max-width:640px;margin:6px auto 0;padding:11px 16px;text-align:center;
+      background:rgba(201,165,101,.1);border:1px solid rgba(201,165,101,.4);
+      font-size:1rem;font-weight:700;
+    }
+    .pr-focus-btn{
+      border:1px solid rgba(201,165,101,.4);border-radius:50px;cursor:pointer;
+      background:rgba(201,165,101,.1);color:#e9d9b8;
+      font-weight:800;font-size:.78rem;padding:8px 14px;min-height:44px;white-space:nowrap;
+    }
+    .pr-focus-btn.on{background:linear-gradient(135deg,#d9b465,#a37f3a);color:#1a1305;border-color:#d9b465;}
+    .pr-rv-sec{font-size:.72rem;color:#8a6a3a;font-weight:600;}
+    .pr-res-meta{font-size:.82rem;color:#8a6a3a;font-weight:700;margin:4px 0 2px;}
+    /* Review & Submit oynasi */
+    .pr-review-ov{
+      position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;
+      background:rgba(10,6,2,.72);padding:16px;
+    }
+    .pr-review-box{
+      background:#f7eeda;color:#241a0c;border-radius:20px;padding:24px;width:100%;max-width:560px;
+      max-height:86vh;overflow:auto;box-shadow:0 24px 60px rgba(0,0,0,.5);
+    }
+    .pr-review-box h2{margin:0 0 4px;font-size:1.1rem;}
+    .pr-review-sub{font-size:.82rem;color:#8a6a3a;margin-bottom:12px;}
+    .pr-review-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px;margin-bottom:16px;}
+    .pr-review-item{
+      border:2px solid #d9c49a;border-radius:12px;background:#fff8e8;cursor:pointer;
+      padding:8px 4px;font-weight:800;font-size:.85rem;min-height:48px;color:#241a0c;
+    }
+    .pr-review-item small{display:block;font-weight:600;font-size:.68rem;color:#8a6a3a;}
+    .pr-review-item.is-ok{border-color:#7cc98a;background:#f1fae9;}
+    .pr-review-item.is-miss{border-color:#d99c7c;background:#fdf1ea;}
+    .pr-review-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;}
+    .pr-review-actions .btn{border:0;border-radius:14px;padding:12px 22px;font-weight:800;font-size:.9rem;cursor:pointer;min-height:48px;}
+    @media (max-width:640px){ .pr-short-wrap{flex-direction:column;} .pr-short-input{max-width:none;} }
 </style>
 </head>
 <body>
@@ -188,6 +242,8 @@
       <div class="pr-hud-r">
         <div class="pr-timer" id="qtimer" aria-live="polite"></div>
         <!-- 09/2026 (user qarori): sanalayotgan vaqt yonida "Keyingisi" + ENTER -->
+        <!-- 09/2026 (Faza 1): Fokus rejimi — fullscreen + chetga chiqishni sanash -->
+        <button type="button" id="pr-focus" class="pr-focus-btn" aria-pressed="false">🎯 Fokus</button>
         <button type="button" id="hud-next" disabled>Keyingisi →</button>
       </div>
     </div>
@@ -218,6 +274,18 @@
     const answers = new Array(QUESTIONS.length).fill(-1);
     const revealed = new Array(QUESTIONS.length).fill(false);
     const missed = new Array(QUESTIONS.length).fill(false);
+    // 09/2026 (Faza 1): har savolga sarflangan vaqt + multi vaqtinchalik tanlov +
+    // short darhol tekshirish + fokus rejimi
+    const spent = new Array(QUESTIONS.length).fill(0);
+    const shortOk = new Array(QUESTIONS.length).fill(false);
+    const shortPending = new Array(QUESTIONS.length).fill(false);
+    let multiStage = [];
+    let qStart = Date.now();
+    let focusOn = false;
+    let focusViol = 0;
+    function recordSpent() {
+      spent[cur] = Math.max(0, Math.min(3600, Math.round((Date.now() - qStart) / 1000)));
+    }
     let cur = 0;
     let timeLeft = PER_Q_TIME;
     let timerIv = null;
@@ -237,6 +305,26 @@
       const c = QUESTIONS[i] && QUESTIONS[i].correct;
       const n = QUESTIONS[i] && QUESTIONS[i].options ? QUESTIONS[i].options.length : 0;
       return Number.isInteger(c) && c >= 0 && c < n ? c : -1;
+    }
+    // 09/2026 (Faza 1): multi to'plami; short normalizatsiya (SERVER bilan bir xil!)
+    function correctMultiOf(i) {
+      const q = QUESTIONS[i] || {};
+      if (Array.isArray(q.correctMulti) && q.correctMulti.length) return q.correctMulti;
+      const c = correctOf(i);
+      return c >= 0 ? [c] : [];
+    }
+    function normShort(s) {
+      return String(s || '').replace(/[‘’ʼʻ`´]/g, "'").toLowerCase().trim().replace(/\s+/g, ' ');
+    }
+    async function sha256hex(s) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('deborah-short-v1|' + s));
+      return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
+    }
+    function isAnswered(i) {
+      const a = answers[i];
+      if (Array.isArray(a)) return a.length > 0;
+      if (typeof a === 'string') return a.trim().length > 0;
+      return Number.isInteger(a) && a >= 0;
     }
     function hint(msg) {
       const h = document.getElementById('pr-hint');
@@ -272,8 +360,11 @@
           el.textContent = '';
           if (!revealed[cur]) {
             missed[cur] = true;
-            answers[cur] = -1;
+            // 09/2026 (Faza 1): turga mos bo'sh javob
+            const qt = (QUESTIONS[cur] && QUESTIONS[cur].type) || 'single_choice';
+            answers[cur] = qt === 'multiple_select' ? [] : (qt === 'short_answer' ? '' : -1);
             revealed[cur] = true;
+            recordSpent();
             renderQ();
             renderDots();
           }
@@ -308,41 +399,121 @@
       if (revealed[cur] && nxt != null) { cur = nxt; renderQ(); renderDots(); }
       else if (!revealed[cur]) hint(t('answerFirst', 'Avval savolga javob bering'));
     }
+    // Qisqa javobni tasdiqlash: xesh orqali darhol tekshirish (javob matni serverda)
+    async function confirmShort(inp) {
+      if (revealed[cur]) return;
+      const val = inp ? inp.value.trim() : '';
+      if (!val) { hint(t('shortEmpty', 'Avval javobingizni yozing')); if (inp) inp.focus(); return; }
+      answers[cur] = val.slice(0, 300);
+      missed[cur] = false;
+      const q = QUESTIONS[cur];
+      const hashes = Array.isArray(q.answerHashes) ? q.answerHashes : [];
+      if (hashes.length && window.crypto && crypto.subtle) {
+        try {
+          const h = await sha256hex(normShort(val));
+          shortOk[cur] = hashes.includes(h);
+        } catch (_) { shortPending[cur] = true; }
+      } else {
+        shortPending[cur] = true;
+      }
+      revealed[cur] = true;
+      clearTimer();
+      recordSpent();
+      const qEl = document.getElementById('qtimer');
+      if (qEl) qEl.textContent = '';
+      renderQ();
+      renderDots();
+    }
     function renderQ() {
       startTimer();
+      // 09/2026 (Faza 1): turga mos sahna (single/multi/short)
+      const q = QUESTIONS[cur];
+      const qType = (q && q.type) || 'single_choice';
+      const isMulti = qType === 'multiple_select';
+      const isShort = qType === 'short_answer';
+      if (!revealed[cur]) { qStart = Date.now(); multiStage = []; }
       const posLabel = (retryMode ? t('retryTag', 'Qayta: ') : '') + (flowPos(cur) + 1) + ' / ' + flow.length;
       if (qpos) qpos.textContent = posLabel;
-      const q = QUESTIONS[cur];
       const qc = correctOf(cur);
+      const qcm = correctMultiOf(cur);
       const isRev = revealed[cur];
       const chosen = answers[cur];
       const isLast = flowPos(cur) === flow.length - 1;
-      const typeLabel = q.type === 'true_false' ? 'To\u2018g\u2018ri / Noto\u2018g\u2018ri'
-        : (q.type === 'short_answer' ? 'Qisqa javob' : '');
+      const typeLabel = qType === 'true_false' ? 'To\u2018g\u2018ri / Noto\u2018g\u2018ri'
+        : (isShort ? t('typeShort', 'Qisqa javob') : (isMulti ? t('typeMulti', 'Bir nechta javob: hammasini belgilang') : ''));
       // Variantlar — kirish dashboard'dagi .opt (kalit doira + matn + belgi + oltin track)
-      const opts = q.options.map((o, j) => {
-        let st = '';
-        if (isRev) {
-          if (j === qc) st = 'ok is-right';
-          else if (j === chosen) st = 'bad';
-          else st = 'dim';
+      // 09/2026 (Faza 1): multi — toggle + tasdiqlash; short — input + tasdiqlash
+      let opts = '';
+      let answerZone = '';
+      if (isShort) {
+        answerZone = isRev
+          ? `<div class="pr-short-given">✍️ ${esc(typeof chosen === 'string' && chosen ? chosen : '—')}</div>`
+          : `<div class="pr-short-wrap">
+              <input class="pr-short-input" id="pr-short" type="text" maxlength="300" autocomplete="off"
+                placeholder="${esc(t('shortPh', 'Javobingizni yozing…'))}" aria-label="${esc(t('typeShort', 'Qisqa javob'))}">
+              <button type="button" class="pr-confirm" id="pr-confirm">✓ ${esc(t('confirm', 'Tasdiqlash'))}</button>
+            </div>`;
+      } else {
+        opts = q.options.map((o, j) => {
+          let st = '';
+          let mark = '';
+          if (isRev) {
+            if (isMulti) {
+              const inC = qcm.includes(j);
+              const inG = Array.isArray(chosen) && chosen.includes(j);
+              if (inC && inG) { st = 'ok is-right'; mark = '✓'; }
+              else if (inC) { st = 'ok'; mark = '✓'; }
+              else if (inG) { st = 'bad'; mark = '✗'; }
+              else st = 'dim';
+            } else {
+              if (j === qc) st = 'ok is-right';
+              else if (j === chosen) st = 'bad';
+              else st = 'dim';
+              mark = j === qc ? '✓' : (j === chosen && j !== qc ? '✗' : '');
+            }
+          } else if (isMulti && multiStage.includes(j)) {
+            st = 'sel';
+          }
+          return `<button type="button" class="opt step ${st}${isRev ? ' is-locked' : ''}" data-j="${j}" ${isRev ? 'disabled tabindex="-1"' : ''}>
+            <span class="k">${String.fromCharCode(65 + j)}</span>
+            <span>${esc(o)}</span>
+            <span class="pct">${mark}</span>
+            <span class="track"><i style="width:0%"></i></span>
+          </button>`;
+        }).join('');
+        if (isMulti && !isRev) {
+          answerZone = `<div class="pr-confirm-wrap"><button type="button" class="pr-confirm" id="pr-confirm">✓ ${esc(t('confirm', 'Tasdiqlash'))} (<span id="pr-sel-n">0</span>)</button></div>`;
         }
-        const mark = isRev && j === qc ? '✓' : (isRev && j === chosen && j !== qc ? '✗' : '');
-        return `<button type="button" class="opt step ${st}${isRev ? ' is-locked' : ''}" data-j="${j}" ${isRev ? 'disabled tabindex="-1"' : ''}>
-          <span class="k">${String.fromCharCode(65 + j)}</span>
-          <span>${esc(o)}</span>
-          <span class="pct">${mark}</span>
-          <span class="track"><i style="width:0%"></i></span>
-        </button>`;
-      }).join('');
+      }
 
       let fb = '';
       if (isRev) {
-        const okTxt = qc >= 0 ? `${t('correctIs', 'To\u2018g\u2018ri javob')}: <b>${String.fromCharCode(65 + qc)}) ${esc(q.options[qc])}</b>` : '';
-        const who = missed[cur] ? 'miss' : (chosen === qc ? 'ok' : 'bad');
-        const head = missed[cur] ? '⏱ ' + t('timedOut', 'Vaqt tugadi')
-          : (chosen === qc ? '✅ ' + t('ok', 'To\u2018g\u2018ri!') : '❌ ' + t('notOk', 'Noto\u2018g\u2018ri'));
-        fb = `<div class="pr-fb is-${who === 'ok' ? 'ok' : 'bad'}" role="status" aria-live="polite">
+        let head = '';
+        let okTxt = '';
+        let who = 'bad';
+        if (missed[cur]) {
+          head = '⏱ ' + t('timedOut', 'Vaqt tugadi');
+        } else if (isMulti) {
+          const g = Array.isArray(chosen) ? chosen : [];
+          const ok = g.length === qcm.length && g.every((v) => qcm.includes(v));
+          who = ok ? 'ok' : 'bad';
+          head = ok ? '✅ ' + t('ok', 'To\u2018g\u2018ri!') : '❌ ' + t('notOk', 'Noto\u2018g\u2018ri');
+          okTxt = `${t('correctIs', 'To\u2018g\u2018ri javob')}: <b>${qcm.map((v) => String.fromCharCode(65 + v)).join(', ')}</b>`;
+        } else if (isShort) {
+          if (shortPending[cur]) {
+            who = 'ok';
+            head = '📩 ' + t('shortAccepted', 'Qabul qilindi — aniq natija yakunda');
+          } else {
+            who = shortOk[cur] ? 'ok' : 'bad';
+            head = shortOk[cur] ? '✅ ' + t('ok', 'To\u2018g\u2018ri!') : '❌ ' + t('notOk', 'Noto\u2018g\u2018ri');
+          }
+        } else {
+          const ok = chosen === qc;
+          who = ok ? 'ok' : 'bad';
+          head = ok ? '✅ ' + t('ok', 'To\u2018g\u2018ri!') : '❌ ' + t('notOk', 'Noto\u2018g\u2018ri');
+          okTxt = qc >= 0 ? `${t('correctIs', 'To\u2018g\u2018ri javob')}: <b>${String.fromCharCode(65 + qc)}) ${esc(q.options[qc])}</b>` : '';
+        }
+        fb = `<div class="pr-fb is-${who}" role="status" aria-live="polite">
           <span>${head}</span>
           ${okTxt ? `<span class="pr-fb-correct">${okTxt}</span>` : ''}
         </div>`;
@@ -360,7 +531,8 @@
             <div class="beam" id="pr-beam"><span class="tx">${esc(t('beamTx', 'ko‘rsatilmoqda…'))}</span><span class="ln"></span><span class="dot"></span></div>
             <h2 class="step q" id="pr-q">${esc(q.text)}</h2>
             ${typeLabel ? `<div class="cap" style="margin:0 0 10px">${esc(typeLabel)}</div>` : ''}
-            <div class="opts">${opts}</div>
+            ${opts ? `<div class="opts">${opts}</div>` : ''}
+            ${answerZone}
             ${fb}
             <div class="pr-nav">
               <button type="button" class="btn" id="prev" ${flowPos(cur) === 0 ? 'disabled' : ''}>${t('prev', '← Oldingi')}</button>
@@ -389,17 +561,50 @@
         optSteps.forEach((o, ix) => setTimeout(() => o.classList.add('in'), 460 + ix * 130));
         setTimeout(paintBars, 460 + optSteps.length * 130 + 120);
       }
-      quiz.querySelectorAll('.opt[data-j]').forEach((b) => b.addEventListener('click', () => {
-        if (revealed[cur]) return;
-        answers[cur] = +b.dataset.j;
-        missed[cur] = false;
-        revealed[cur] = true;
-        clearTimer();
-        const qEl = document.getElementById('qtimer');
-        if (qEl) qEl.textContent = '';
-        renderQ(); // darhol natija
-        renderDots();
-      }));
+      // 09/2026 (Faza 1): turga mos javob olish
+      if (isShort) {
+        const inp = quiz.querySelector('#pr-short');
+        const cf = quiz.querySelector('#pr-confirm');
+        if (cf) cf.addEventListener('click', () => confirmShort(inp));
+        if (inp) setTimeout(() => { try { inp.focus({ preventScroll: true }); } catch (_) { inp.focus(); } }, 60);
+      } else if (isMulti) {
+        quiz.querySelectorAll('.opt[data-j]').forEach((b) => b.addEventListener('click', () => {
+          if (revealed[cur]) return;
+          const j = +b.dataset.j;
+          const at = multiStage.indexOf(j);
+          if (at >= 0) multiStage.splice(at, 1); else multiStage.push(j);
+          b.classList.toggle('sel', at < 0);
+          const n = quiz.querySelector('#pr-sel-n');
+          if (n) n.textContent = multiStage.length;
+        }));
+        const cf = quiz.querySelector('#pr-confirm');
+        if (cf) cf.addEventListener('click', () => {
+          if (revealed[cur]) return;
+          if (!multiStage.length) { hint(t('multiPick', 'Kamida 1 ta variant belgilang')); return; }
+          answers[cur] = multiStage.slice().sort((a, b) => a - b);
+          missed[cur] = false;
+          revealed[cur] = true;
+          clearTimer();
+          recordSpent();
+          const qEl = document.getElementById('qtimer');
+          if (qEl) qEl.textContent = '';
+          renderQ();
+          renderDots();
+        });
+      } else {
+        quiz.querySelectorAll('.opt[data-j]').forEach((b) => b.addEventListener('click', () => {
+          if (revealed[cur]) return;
+          answers[cur] = +b.dataset.j;
+          missed[cur] = false;
+          revealed[cur] = true;
+          clearTimer();
+          recordSpent();
+          const qEl = document.getElementById('qtimer');
+          if (qEl) qEl.textContent = '';
+          renderQ(); // darhol natija
+          renderDots();
+        }));
+      }
       const prev = quiz.querySelector('#prev');
       if (prev) prev.addEventListener('click', () => {
         const p = flowPos(cur);
@@ -421,9 +626,54 @@
       }
     }
 
-    async function finish() {
-      const unanswered = flow.filter((i) => answers[i] < 0).length;
-      if (unanswered > 0 && !confirm(fill('finishAsk', '{n} ta savol javobsiz qoldi. Yakunlaymizmi?', { n: unanswered }))) return;
+    // 09/2026 (Faza 1): Review & Submit — yakunlashdan oldin ko'rib chiqish
+    function finish() {
+      openReview();
+    }
+    function openReview() {
+      const old = document.querySelector('.pr-review-ov');
+      if (old) old.remove();
+      const ov = document.createElement('div');
+      ov.className = 'pr-review-ov';
+      ov.setAttribute('role', 'dialog');
+      ov.setAttribute('aria-modal', 'true');
+      ov.setAttribute('aria-label', t('reviewTitle', 'Yakuniy ko‘rik'));
+      const items = flow.map((i) => {
+        const st = missed[i] ? 'miss' : (isAnswered(i) ? 'ok' : 'todo');
+        const ico = st === 'ok' ? '✓' : (st === 'miss' ? '⏱' : '·');
+        const cls = st === 'ok' ? ' is-ok' : (st === 'miss' ? ' is-miss' : '');
+        return `<button type="button" class="pr-review-item${cls}" data-rv="${i}">${flowPos(i) + 1} ${ico}<small>${spent[i] ? spent[i] + 's' : ''}</small></button>`;
+      }).join('');
+      const unanswered = flow.filter((i) => !isAnswered(i)).length;
+      ov.innerHTML = `
+        <div class="pr-review-box">
+          <h2>${esc(t('reviewTitle', 'Yakuniy ko‘rik'))}</h2>
+          <div class="pr-review-sub">${unanswered ? esc(fill('finishAsk', '{n} ta savol javobsiz qoldi. Yakunlaymizmi?', { n: unanswered })) : esc(t('reviewSub', 'Javoblaringizni ko‘rib chiqing — savolni bossangiz o‘sha yerga qaytasiz.'))}</div>
+          <div class="pr-review-list">${items}</div>
+          <div class="pr-review-actions">
+            <button type="button" class="btn btn-quiet" data-rv-close>${esc(t('reviewBack', 'Davom etish'))}</button>
+            <button type="button" class="btn btn-primary" data-rv-done>${esc(t('finish', '✅ Yakunlash'))}</button>
+          </div>
+        </div>`;
+      document.body.appendChild(ov);
+      const close = () => ov.remove();
+      ov.addEventListener('click', (e) => { if (e.target === ov) close(); });
+      ov.querySelector('[data-rv-close]').addEventListener('click', close);
+      ov.querySelector('[data-rv-done]').addEventListener('click', () => { close(); doGrade(); });
+      ov.querySelectorAll('[data-rv]').forEach((b) => b.addEventListener('click', () => {
+        const i = +b.dataset.rv;
+        close();
+        cur = i;
+        renderQ();
+        renderDots();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }));
+      const esc2 = (e) => {
+        if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc2); }
+      };
+      document.addEventListener('keydown', esc2);
+    }
+    async function doGrade() {
       try {
         const res = await fetch('/user/api/practice/grade', {
           method: 'POST',
@@ -433,6 +683,8 @@
             // C4-10 rev.4: retry — faqat xato savollar baholanadi va «retry» sifatida saqlanadi
             subset: retryMode ? flow : undefined,
             kind: retryMode ? 'retry' : 'full',
+            times: spent, // 09/2026 (Faza 1): savol tahlili (har savolga vaqt)
+            focusViolations: focusViol, // 09/2026 (Faza 1): fokus rejimi
           }),
         });
         const data = await res.json();
@@ -444,6 +696,8 @@
     function showResult(data) {
       finished = true;
       clearTimer();
+      // 09/2026 (Faza 1): fokus rejimidan chiqish
+      try { if (document.fullscreenElement) document.exitFullscreen(); } catch (_) {}
       document.getElementById('quiz').hidden = true;
       dots.hidden = true;
       const el = document.getElementById('result');
@@ -451,15 +705,30 @@
       const correct = data.correct, total = data.total;
       const wrongList = (data.results || []).filter((r) => !r.isCorrect).map((r) => r.id);
       // AI Assist v1: tahlil paneli uchun natija ma'lumoti (faqat o'qish)
+      // 09/2026: AI izoh uchun variantlar + indekslar (multi/short bilan)
       try {
         window.__PR_RESULT__ = {
           percent: data.percent, correct, total,
           wrong: (data.results || []).filter((r) => !r.isCorrect).map((r) => ({
             text: (QUESTIONS[r.id] && QUESTIONS[r.id].text) || ('Savol ' + (r.id + 1)),
+            type: r.type || 'single_choice',
+            options: (QUESTIONS[r.id] && QUESTIONS[r.id].options) || [],
+            correctIndex: (typeof r.correctIndex === 'number') ? r.correctIndex : -1,
+            givenIndex: (typeof r.given === 'number') ? r.given : -1,
           })),
         };
       } catch (_) {}
       const hasWrong = wrongList.length > 0;
+      // 09/2026 (Faza 1): savol tahlili xulosasi (vaqt + fokus)
+      const metaParts = [];
+      if (data.totalSec != null) metaParts.push('⏱ ' + data.totalSec + 's');
+      if (data.focusViolations > 0) metaParts.push('🎯 ' + t('focusMeta', 'chetga chiqish: ') + data.focusViolations);
+      const timed = (data.results || []).filter((r) => r.sec > 0);
+      if (timed.length > 1) {
+        const slow = timed.reduce((a, b) => (a.sec >= b.sec ? a : b));
+        metaParts.push(fill('slowNote', 'Eng ko‘p vaqt: {n}-savol ({m}s)', { n: slow.id + 1, m: slow.sec }));
+      }
+      const metaHtml = metaParts.length ? `<div class="pr-res-meta">${metaParts.map(esc).join(' · ')}</div>` : '';
       // C4-10 rev.4: yakun — natija saqlangani tasdig'i + qayta yechish + tarix
       const savedNote = hasWrong
         ? t('retryNote', 'Avvalgi xatolaringiz aynan shu savollardan qayta beriladi.')
@@ -473,6 +742,7 @@
               ? `<div class="pr-res-saved">↻ ${t('notSaved', 'Mashq rejimi — natija saqlanmadi')}</div>`
               : `<div class="pr-res-saved">✓ ${t('savedOk', 'Natija saqlandi')}</div>`}
             <div class="pr-res-note">${esc(savedNote)}</div>
+            ${metaHtml}
             <div class="pr-res-actions no-print">
               <button type="button" class="btn btn-quiet" data-print>${t('print', '🖨️ Chop etish')}</button>
               ${hasWrong ? `<button type="button" class="btn act-sinov" id="retry-wrong" style="margin:0">${fill('retryWrong', 'Qayta yechish — faqat xatolar ({n})', { n: wrongList.length })}</button>` : ''}
@@ -485,9 +755,26 @@
           ${data.results.map((r) => {
             const q = QUESTIONS[r.id];
             if (!q) return '';
+            // 09/2026 (Faza 1): turga mos ko'rinish + sarflangan vaqt
+            const secTag = r.sec > 0 ? ` <span class="pr-rv-sec">⏱ ${r.sec}s</span>` : '';
+            let body = '';
+            if (r.type === 'short_answer') {
+              body = `<div class="pr-rv-o${r.isCorrect ? ' ok' : ' no'}">✍️ ${esc(r.given || '—')}${r.isCorrect ? ' ✓' : ' ' + t('yourAnswer', '← sizning javobingiz')}</div>`
+                + (r.isCorrect ? '' : `<div class="pr-rv-o ok">✓ ${esc(r.correctText || '')}</div>`);
+            } else if (r.type === 'multiple_select') {
+              const g = Array.isArray(r.given) ? r.given : [];
+              const cm = Array.isArray(r.correctMulti) ? r.correctMulti : [r.correctIndex];
+              body = q.options.map((o, j) => {
+                const inC = cm.includes(j);
+                const inG = g.includes(j);
+                return `<div class="pr-rv-o${inC ? ' ok' : (inG ? ' no' : '')}">${String.fromCharCode(65 + j)}) ${esc(o)}${inC ? ' ✓' : (inG ? ' ' + t('yourAnswer', '← sizning javobingiz') : '')}</div>`;
+              }).join('');
+            } else {
+              body = q.options.map((o, j) => `<div class="pr-rv-o${j === r.correctIndex ? ' ok' : j === r.given ? ' no' : ''}">${String.fromCharCode(65 + j)}) ${esc(o)}${j === r.correctIndex ? ' ✓' : (j === r.given ? ' ' + t('yourAnswer', '← sizning javobingiz') : '')}</div>`).join('');
+            }
             return `<div class="pr-review ${r.isCorrect ? 'right' : 'wrong'}">
-              <div class="pr-rv-q">${r.id + 1}. ${esc(q.text)} ${r.isCorrect ? '✅' : '❌'}</div>
-              ${q.options.map((o, j) => `<div class="pr-rv-o${j === r.correctIndex ? ' ok' : j === r.given ? ' no' : ''}">${String.fromCharCode(65 + j)}) ${esc(o)}${j === r.correctIndex ? ' ✓' : (j === r.given ? ' ' + t('yourAnswer', '← sizning javobingiz') : '')}</div>`).join('')}
+              <div class="pr-rv-q">${r.id + 1}. ${esc(q.text)}${secTag} ${r.isCorrect ? '✅' : '❌'}</div>
+              ${body}
               ${r.explanation ? `<div class="pr-rv-e">💡 ${esc(r.explanation)}</div>` : ''}
             </div>`;
           }).join('')}
@@ -510,6 +797,10 @@
       answers.fill(-1);
       revealed.fill(false);
       missed.fill(false);
+      spent.fill(0);
+      shortOk.fill(false);
+      shortPending.fill(false);
+      multiStage = [];
       cur = flow[0];
       document.getElementById('result').hidden = true;
       const quizEl = document.getElementById('quiz');
@@ -529,13 +820,27 @@
     document.addEventListener('keydown', (e) => {
       if (e.key !== 'Enter') return;
       const tag = (document.activeElement && document.activeElement.tagName) || '';
-      if (/INPUT|TEXTAREA|SELECT/.test(tag)) return;
+      if (/INPUT|TEXTAREA|SELECT/.test(tag)) {
+        // 09/2026 (Faza 1): short input'da ENTER = tasdiqlash
+        if (document.activeElement && document.activeElement.id === 'pr-short') {
+          e.preventDefault();
+          const cf = document.getElementById('pr-confirm');
+          if (cf && !cf.disabled) cf.click();
+        }
+        return;
+      }
       const ae = document.activeElement;
       if (ae && (ae.id === 'next' || ae.id === 'finish' || ae.id === 'hud-next' || ae.id === 'prev')) return; // native click
       if (!document.getElementById('result').hidden) return;
       if (document.getElementById('quiz').hidden) return;
       e.preventDefault();
-      if (!revealed[cur]) { hint(t('answerFirst', 'Avval savolga javob bering')); return; }
+      // 09/2026 (Faza 1): multi'da ENTER = tasdiqlash
+      if (!revealed[cur]) {
+        const cf = document.getElementById('pr-confirm');
+        if (cf && !cf.disabled) { cf.click(); return; }
+        hint(t('answerFirst', 'Avval savolga javob bering'));
+        return;
+      }
       if (flowPos(cur) === flow.length - 1) { hint(t('enterLastHint', 'Oxirgi savol — yakunlash uchun «Yakunlash» tugmasini bosing')); return; }
       goNext();
     });
@@ -555,7 +860,38 @@
       else prLeaving = true;
     }));
 
+    // 09/2026 (Faza 1): Fokus rejimi — fullscreen + chetga chiqishni sanash
+    const focusBtn = document.getElementById('pr-focus');
+    function paintFocus() {
+      if (!focusBtn) return;
+      focusBtn.classList.toggle('on', focusOn);
+      focusBtn.setAttribute('aria-pressed', focusOn ? 'true' : 'false');
+      focusBtn.textContent = focusOn ? ('🎯 ' + t('focusOnLbl', 'Fokus') + ': ' + focusViol) : '🎯 ' + t('focusOnLbl', 'Fokus');
+    }
+    function focusWarn() {
+      focusViol++;
+      paintFocus();
+      hint(t('focusWarn', 'Diqqat: sahifadan chetga chiqdingiz! (') + focusViol + ')');
+    }
+    if (focusBtn) focusBtn.addEventListener('click', async () => {
+      focusOn = !focusOn;
+      if (focusOn) {
+        try { await document.documentElement.requestFullscreen(); } catch (_) {}
+        hint(t('focusOn', 'Fokus rejimi: sahifadan chiqish qayd etiladi'));
+      } else {
+        try { if (document.fullscreenElement) await document.exitFullscreen(); } catch (_) {}
+      }
+      paintFocus();
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (focusOn && !finished && document.hidden) focusWarn();
+    });
+    document.addEventListener('fullscreenchange', () => {
+      if (focusOn && !finished && !document.fullscreenElement) focusWarn();
+    });
+
     paintModeChip();
+    paintFocus();
     renderDots();
     renderQ();
   </script>

@@ -4,6 +4,7 @@
  */
 
 import { Router } from 'express';
+import crypto from 'crypto';
 import { fb } from '../firebase/admin.js';
 import { requireAuth } from '../middleware/auth.js';
 import { requireVip, isCurrentUserVip } from '../middleware/vip.js';
@@ -404,20 +405,32 @@ router.post('/api/tests/save', async (req, res) => {
 
     const testData = {
       name: name.trim(),
-      questions: questions.map(q => ({
-        text: q.text || '',
-        options: (q.options || []).map(o => String(o || '')),
+      questions: questions.map((q) => {
+        const qOpts = (q.options || []).map(o => String(o || ''));
+        const qType = ['single_choice', 'true_false', 'multiple_select', 'short_answer', 'exit_ticket'].includes(q.type) ? q.type : 'single_choice';
         // BUG-095: correct indeks int + [0..options-1] oralig'ida (999/-1/1.5 kelib qolmasin)
-        correct: Math.max(0, Math.min(
+        let qCorrect = Math.max(0, Math.min(
           Number.isFinite(+q?.correct) ? Math.floor(+q.correct) : 0,
-          Math.max(0, (q.options || []).length - 1),
-        )),
-        // S27: Test Builder draft maydonlari
-        type: ['single_choice', 'true_false', 'multiple_select', 'short_answer', 'exit_ticket'].includes(q.type) ? q.type : 'single_choice',
-        explanation: typeof q.explanation === 'string' ? q.explanation : '',
-        tags: Array.isArray(q.tags) ? q.tags.map(t => String(t)).filter(Boolean) : [],
-        timing: Math.max(0, Math.min(600, parseInt(q.timing, 10) || 0)),
-      })),
+          Math.max(0, qOpts.length - 1),
+        ));
+        // 09/2026 (Faza 1): multiple_select to'g'ri indekslar to'plami
+        const qCorrectMulti = Array.isArray(q?.correctMulti)
+          ? [...new Set(q.correctMulti.map((v) => Math.floor(+v)).filter((v) => Number.isFinite(v) && v >= 0 && v < qOpts.length))]
+          : [];
+        // Eski o'quvchilar (cast/single) uchun correct multi ichidan bo'lsin
+        if (qType === 'multiple_select' && qCorrectMulti.length && !qCorrectMulti.includes(qCorrect)) qCorrect = qCorrectMulti[0];
+        return {
+          text: q.text || '',
+          options: qOpts,
+          correct: qCorrect,
+          correctMulti: qCorrectMulti,
+          // S27: Test Builder draft maydonlari
+          type: qType,
+          explanation: typeof q.explanation === 'string' ? q.explanation : '',
+          tags: Array.isArray(q.tags) ? q.tags.map(t => String(t)).filter(Boolean) : [],
+          timing: Math.max(0, Math.min(600, parseInt(q.timing, 10) || 0)),
+        };
+      }),
       count: questions.length,
       created_at: createdAt,
       updated_at: Date.now(), // S15 BUG-097
@@ -833,7 +846,32 @@ function practiceOptionMeta(q) {
     const flag = opts.findIndex((o) => o && typeof o === 'object' && o.isCorrect === true);
     if (flag >= 0) correctIdx = flag;
   }
-  return { texts, correctIdx };
+  // 09/2026 (Faza 1): multiple_select to'plami (eski seed'larda isCorrect bayroq')
+  let correctMulti = [];
+  if (Array.isArray(q?.correctMulti)) {
+    correctMulti = [...new Set(q.correctMulti.map((v) => Math.floor(+v)).filter((v) => Number.isFinite(v) && v >= 0 && v < opts.length))];
+  } else {
+    const flags = [];
+    opts.forEach((o, i) => { if (o && typeof o === 'object' && o.isCorrect === true) flags.push(i); });
+    if (flags.length > 1) correctMulti = flags;
+  }
+  if (!correctMulti.length && correctIdx >= 0) correctMulti = [correctIdx];
+  const shortAnswer = String(opts[0] ?? '');
+  return { texts, correctIdx, correctMulti, shortAnswer };
+}
+
+/** Qisqa javob normalizatsiya — CLIENT (practice.ejs normShort) bilan aynan bir xil. */
+function normalizeShortAnswer(s) {
+  return String(s || '')
+    .replace(/[‘’ʼʻ`´]/g, "'") // ‘ ’ ʼ ʻ ` ´ → '
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, ' ');
+}
+
+/** Qisqa javob xeshi (javob matni clientga tushmasligi uchun). */
+function shortAnswerHash(normalized) {
+  return crypto.createHash('sha256').update('deborah-short-v1|' + normalized, 'utf8').digest('hex');
 }
 
 async function loadPracticeQuestions(req, res) {
@@ -897,10 +935,11 @@ router.get('/practice', async (req, res) => {
   if (loaded.err) return;
   const qs = (loaded.questions || []).map((q, i) => {
     const meta = practiceOptionMeta(q);
-    return {
+    const qType = ['single_choice', 'true_false', 'multiple_select', 'short_answer', 'exit_ticket'].includes(q?.type) ? q.type : 'single_choice';
+    const item = {
       id: i,
       text: String(q?.text || ''),
-      type: q?.type || 'single_choice',
+      type: qType,
       options: meta.texts,
       // 09/2026 (user qarori): har savoldan keyin darhol to'g'ri/noto'g'ri
       // natija chiqishi uchun correct clientga yuboriladi (jonli viktorina tarzi).
@@ -908,7 +947,21 @@ router.get('/practice', async (req, res) => {
       correct: meta.correctIdx,
       explanation: String(q?.explanation || ''),
     };
-  }).filter((q) => q.text && q.options.length >= 2);
+    // 09/2026 (Faza 1): multi to'plami clientga (darhol natija uchun);
+    // short javob matni TUSHMAYDI — faqat muqobil xeshlar.
+    if (qType === 'multiple_select') item.correctMulti = meta.correctMulti;
+    if (qType === 'short_answer') {
+      item.options = [];
+      item.correct = -1;
+      item.answerHashes = String(meta.shortAnswer || '')
+        .split('|')
+        .map((a) => normalizeShortAnswer(a))
+        .filter(Boolean)
+        .slice(0, 5)
+        .map(shortAnswerHash);
+    }
+    return item;
+  }).filter((q) => q.text && (q.type === 'short_answer' || q.options.length >= 2));
   if (!qs.length) return res.status(404).render('error', { title: '404', message: 'Savollar topilmadi', status: 404 });
 
   // Practice i18n: 4 til (uz/uz-cyrl/ru/en) — data/practice-i18n.js
@@ -994,21 +1047,50 @@ router.post('/api/practice/grade', async (req, res) => {
     ? req.body.subset.filter((v) => Number.isInteger(+v) && +v >= 0).map((v) => +v)
     : null;
   const testKey = String(req.body?.key || req.query.key || '');
+  const times = Array.isArray(req.body?.times) ? req.body.times : [];
   const results = [];
   let correct = 0;
   (loaded.questions || []).forEach((q, i) => {
     if (subset && !subset.includes(i)) return; // faqat xato savollar
     const meta = practiceOptionMeta(q);
+    const qType = ['single_choice', 'true_false', 'multiple_select', 'short_answer', 'exit_ticket'].includes(q?.type) ? q.type : 'single_choice';
     const correctIdx = Math.max(0, meta.correctIdx);
-    const given = Number.isInteger(answers[i]) ? answers[i] : -1;
-    const isCorrect = given === correctIdx;
+    const raw = answers[i];
+    const row = {
+      id: i,
+      type: qType,
+      explanation: String(q?.explanation || ''),
+      sec: Math.max(0, Math.min(3600, Math.floor(+times[i]) || 0)),
+    };
+    let given = -1;
+    let isCorrect = false;
+    if (qType === 'multiple_select') {
+      // 09/2026 (Faza 1): to'plam tengligi (cast'dagi kabi qat'iy)
+      const set = Array.isArray(raw)
+        ? [...new Set(raw.map((v) => Math.floor(+v)).filter((v) => Number.isFinite(v) && v >= 0))]
+        : (Number.isInteger(raw) && raw >= 0 ? [raw] : []);
+      given = set;
+      const exp = meta.correctMulti.length ? meta.correctMulti : [correctIdx];
+      isCorrect = set.length === exp.length && set.every((v) => exp.includes(v));
+      row.correctMulti = exp;
+    } else if (qType === 'short_answer') {
+      // 09/2026 (Faza 1): normalizatsiyalangan matn solishtirish ('|' muqobillar)
+      const givenText = typeof raw === 'string' ? raw : '';
+      given = givenText.slice(0, 300);
+      const norm = normalizeShortAnswer(givenText);
+      const alts = String(meta.shortAnswer || '').split('|').map((a) => normalizeShortAnswer(a)).filter(Boolean);
+      isCorrect = norm.length > 0 && alts.includes(norm);
+      row.correctText = String(meta.shortAnswer || '').split('|')[0].slice(0, 300);
+    } else {
+      given = Number.isInteger(raw) ? raw : -1;
+      isCorrect = given === correctIdx;
+    }
     if (isCorrect) correct++;
     results.push({
-      id: i,
+      ...row,
       correctIndex: correctIdx, // grade'dan KEYIN ochiq — o'quv ko'rinishi uchun
       given,
       isCorrect,
-      explanation: String(q?.explanation || ''),
     });
   });
   const total = results.length || 1;
@@ -1042,6 +1124,9 @@ router.post('/api/practice/grade', async (req, res) => {
         kind, // full | retry (qayta yechish)
         source: isOwn ? 'own' : 'public',
         testOwner: testOwner || null,
+        // 09/2026 (Faza 1): savol tahlili (umumiy vaqt) + fokus rejimi
+        totalSec: results.reduce((a, r) => a + (r.sec || 0), 0),
+        focusViolations: Math.max(0, Math.min(999, parseInt(req.body?.focusViolations, 10) || 0)),
       };
       await fb.set(`users/${user.safeKey}/practice_history/${histId}`, record);
       saved = true;
@@ -1065,7 +1150,15 @@ router.post('/api/practice/grade', async (req, res) => {
       } catch (_) { /* non-critical */ }
     }
   } catch (_) { /* non-critical */ }
-  res.json({ ok: true, saved, correct, total, percent: Math.round((correct / total) * 100), results });
+  res.json({
+    ok: true, saved, correct, total, percent: Math.round((correct / total) * 100), results,
+    // 09/2026 (Faza 1): savol tahlili + fokus aks-sadosi
+    totalSec: results.reduce((a, r) => a + (r.sec || 0), 0),
+    focusViolations: Math.max(0, Math.min(999, parseInt(req.body?.focusViolations, 10) || 0)),
+  });
 });
+
+// 09/2026 (Faza 1): unit testlar uchun sof funksiyalar
+export { practiceOptionMeta, normalizeShortAnswer, shortAnswerHash };
 
 export default router;

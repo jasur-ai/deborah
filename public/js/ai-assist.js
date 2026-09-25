@@ -360,7 +360,10 @@
           }).join('');
         // Har bir xato savol uchun "AI izoh" (real API bo'lganda)
         var wrong = (res && res.wrong) || [];
-        var explainable = wrong.filter(function (w) { return w && w.text && (w.options || []).length >= 2; });
+        // 09/2026 (Faza 1): short_answer'da variant yo'q — matn bo'lsa izoh beriladi
+        var explainable = wrong.filter(function (w) {
+          return w && w.text && ((w.options || []).length >= 2 || w.type === 'short_answer');
+        });
         if (explainable.length) {
           html += '<div class="ai-insight"><h3>💡 Savollar bo‘yicha AI izoh</h3><div>' +
             explainable.slice(0, 10).map(function (w, i) {

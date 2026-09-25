@@ -129,6 +129,7 @@
             text: q.text || '',
             options: Array.isArray(q.options) ? q.options.map(String) : [],
             correct: typeof q.correct === 'number' ? q.correct : 0,
+            correctMulti: Array.isArray(q.correctMulti) ? q.correctMulti : [],
             explanation: q.explanation || '',
             tags: Array.isArray(q.tags) ? q.tags : (q.tag ? [q.tag] : []),
             timing: q.timing || 0,

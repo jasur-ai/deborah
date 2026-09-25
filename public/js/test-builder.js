@@ -30,6 +30,18 @@
 
   let idSeq = 1;
   function nextId() { return 'q_' + (idSeq++); }
+  // 09/2026 (Faza 1): single — radio almashtirish; multi — toggle
+  function toggleCorrect(q, oi) {
+    if (q.type === 'multiple_select') {
+      const set = new Set(q.correctMulti || []);
+      if (set.has(oi)) set.delete(oi); else set.add(oi);
+      q.correctMulti = [...set].sort((a, b) => a - b);
+      if (q.correctMulti.length) q.correct = q.correctMulti[0]; // eski o'quvchilar uchun
+    } else {
+      if (q.correct === oi) return;
+      q.correct = oi;
+    }
+  }
   function normalize(q, i) {
     return {
       id: nextId(),
@@ -37,6 +49,8 @@
       text: q.text || '',
       options: Array.isArray(q.options) ? q.options.filter((o, j) => j < 6).map(String) : [],
       correct: typeof q.correct === 'number' ? q.correct : 0,
+      // 09/2026 (Faza 1): multiple_select to'g'ri indekslar to'plami
+      correctMulti: Array.isArray(q.correctMulti) ? [...new Set(q.correctMulti.map((v) => Math.floor(+v)).filter((v) => Number.isFinite(v) && v >= 0 && v < 6))] : [],
       explanation: q.explanation || '',
       tags: Array.isArray(q.tags) ? q.tags.map(String) : [],
       timing: q.timing || 0,
@@ -127,6 +141,7 @@
       text: q.text,
       options: q.options,
       correct: q.correct,
+      correctMulti: q.correctMulti || [],
       explanation: q.explanation,
       tags: q.tags,
       timing: q.timing,
@@ -153,6 +168,11 @@
       }
       const filled = q.options.filter(o => o.trim());
       if (filled.length < 2) errors.push({ qId: q.id, msg: `${T('qText', 'Savol')} ${i + 1}: ${T('optionsMin', 'kamida 2 ta variant')}` });
+      // 09/2026 (Faza 1): multi — kamida 1 ta belgilangan to'g'ri javob
+      if (q.type === 'multiple_select') {
+        const valid = (q.correctMulti || []).filter((v) => Number.isInteger(v) && v >= 0 && v < q.options.length);
+        if (!valid.length) errors.push({ qId: q.id, msg: `${T('qText', 'Savol')} ${i + 1}: ${T('multiNeed', "kamida 1 ta to'g'ri javob belgilang")}` });
+      }
       if (filled.length && q.correct >= q.options.length) {
         errors.push({ qId: q.id, msg: `${T('qText', 'Savol')} ${i + 1}: ${T('correct', 'to\u2018g\u2018ri javob')} xato` });
       }
@@ -265,12 +285,17 @@
        ranglar BIR XIL (binafsha) — qizil FAQAT xato uchun. Variant karta o'zini
        bosish = to'g'ri javob belgilash (jonli viktorina mantiqi), alohida radio YO'Q. */
     const SHAPES = ['▲', '◆', '●', '■', '★', '⬢'];
-    const optsHtml = q.options.map((opt, oi) => `
-      <div class="tb-opt${oi === q.correct ? ' is-correct' : ''}" data-opt-card="${oi}" role="radio" aria-checked="${oi === q.correct}" tabindex="0" title="${T('optCardTitle', "Bosib to'g'ri javob deb belgilang")}">
+    // 09/2026 (Faza 1): multi — checkbox toggle; single — radio
+    const isMulti = q.type === 'multiple_select';
+    const optsHtml = q.options.map((opt, oi) => {
+      const marked = isMulti ? (q.correctMulti || []).includes(oi) : oi === q.correct;
+      return `
+      <div class="tb-opt${marked ? ' is-correct' : ''}" data-opt-card="${oi}" role="${isMulti ? 'checkbox' : 'radio'}" aria-checked="${marked}" tabindex="0" title="${T('optCardTitle', "Bosib to'g'ri javob deb belgilang")}">
         <span class="tb-opt-shape" aria-hidden="true">${SHAPES[oi] || '■'}</span>
         <input class="inp" type="text" value="${escAttr(opt)}" placeholder="${OPT_LETTERS[oi]}) ${T('optPh', 'variant matni...')}" data-opt="${oi}" aria-label="${T('optAria', 'Variant')} ${OPT_LETTERS[oi]}">
         <button type="button" class="tb-opt-remove" data-opt-remove="${oi}" aria-label="${T('optRemoveAria', "Variantni o'chirish")}" title="${T('optRemoveAria', "Variantni o'chirish")}">×</button>
-      </div>`).join('');
+      </div>`;
+    }).join('');
 
     el.innerHTML = `
       <div class="tb-q-head">
@@ -304,7 +329,7 @@
           <option value="exit_ticket"${q.type === 'exit_ticket' ? ' selected' : ''}>${T('typeExit', 'Exit ticket')}</option>
         </select>
         <span class="tb-hint">${T('qTypeHint', 'Cast sessiyalarida ishlatiladigan savol turi')}</span>
-        ${q.type === 'multiple_select' ? '<span class="tb-hint" data-multi-note>' + T('multiNote', "Eslatma: to'g'ri javob hozircha bitta radio orqali belgilanadi") + '</span>' : ''}
+        ${q.type === 'multiple_select' ? '<span class="tb-hint" data-multi-note>' + T('multiNote', "Bir nechta to'g'ri javobni belgilang — o'quvchi hammasini topishi shart") + '</span>' : ''}
       </div>
 
       <div class="tb-props-grid">
@@ -335,7 +360,7 @@
 
         <div class="tb-dup-warn" id="tb-dup-warn" role="alert" hidden><span class="tb-dup-warn-ico">⚠</span><span id="tb-dup-warn-txt"></span></div>
         <div class="tb-field">
-          <span class="tb-hint" data-correct-hint>${T('correctHint', "✓ To'g'ri javob: variant kartasini bosib belgilanadi (yashil halqa)")}</span>
+          <span class="tb-hint" data-correct-hint>${isMulti ? T('multiHint', "✓ To'g'ri javoblar: bir nechta kartani belgilang (yashil halqa)") : T('correctHint', "✓ To'g'ri javob: variant kartasini bosib belgilanadi (yashil halqa)")}</span>
         </div>
       `}
 
@@ -357,7 +382,16 @@
     if (typeSel) typeSel.addEventListener('change', () => {
       const next = typeSel.value;
       if (next === q.type) return;
+      const prevType = q.type;
       q.type = next;
+      // 09/2026 (Faza 1): multi'ga o'tishda correct'dan urug'; multi'dan
+      // chiqishda correct = birinchi belgilangan (eski o'quvchilar uchun)
+      if (next === 'multiple_select' && prevType !== 'multiple_select') {
+        q.correctMulti = [Math.max(0, q.correct || 0)];
+      }
+      if (prevType === 'multiple_select' && next !== 'multiple_select' && next !== 'short_answer') {
+        q.correct = (q.correctMulti && q.correctMulti.length) ? q.correctMulti[0] : 0;
+      }
       if (next === 'true_false' && (q.options.filter(o => o.trim()).length < 2)) {
         q.options = ['To‘g‘ri', 'Noto‘g‘ri'];
         q.correct = 0;
@@ -400,13 +434,13 @@
       });
     });
 
-    /* S34l VIKTORINA: variant KARTASINI bosish = to'g'ri javob belgilash */
+    /* S34l VIKTORINA: variant KARTASINI bosish = to'g'ri javob belgilash
+       09/2026 (Faza 1): multi — toggle; single — radio */
     $$('[data-opt-card]', $('.tb-editor')).forEach(cardEl => {
       cardEl.addEventListener('click', (ev) => {
         if (ev.target.closest('input, button')) return; /* input/tugmaga tegsa aralashmaymiz */
         const oi = parseInt(cardEl.dataset.optCard, 10);
-        if (q.correct === oi) return;
-        q.correct = oi;
+        toggleCorrect(q, oi);
         markDirty();
         render();
       });
@@ -414,7 +448,9 @@
         if (ev.key === 'Enter' || ev.key === ' ') {
           ev.preventDefault();
           const oi = parseInt(cardEl.dataset.optCard, 10);
-          if (q.correct !== oi) { q.correct = oi; markDirty(); render(); }
+          toggleCorrect(q, oi);
+          markDirty();
+          render();
         }
       });
     });
@@ -433,6 +469,10 @@
         if (q.options.length <= 2) { showToast && showToast(T('minOptions', 'Kamida 2 ta variant bo‘lishi kerak'), 'err'); return; }
         q.options.splice(oi, 1);
         if (q.correct >= q.options.length) q.correct = 0;
+        // 09/2026 (Faza 1): multi indekslarni qayta xaritlash
+        if (Array.isArray(q.correctMulti)) {
+          q.correctMulti = q.correctMulti.map((v) => (v > oi ? v - 1 : v)).filter((v) => v !== oi);
+        }
         markDirty();
         render();
       });
@@ -483,7 +523,7 @@
 
   // ── Question ops ──
   function addQuestion() {
-    const q = { id: nextId(), text: '', options: ['', '', '', ''], correct: 0, explanation: '', tags: [], timing: DEFAULT_QUESTION_TIME };
+    const q = { id: nextId(), type: 'single_choice', text: '', options: ['', '', '', ''], correct: 0, correctMulti: [], explanation: '', tags: [], timing: DEFAULT_QUESTION_TIME };
     state.questions.push(q);
     state.activeId = q.id;
     markDirty();
@@ -704,16 +744,18 @@
           const emptyRow = !text && !String(r[1] || '').trim() && !String(r[2] || '').trim() && !String(r[3] || '').trim() && !String(r[4] || '').trim();
           if (emptyRow) continue; // bo'sh qator — shunchaki o'tkazib yuboriladi
           const opts = [String(r[1] || '').trim(), String(r[2] || '').trim(), String(r[3] || '').trim(), String(r[4] || '').trim()];
-          const correctIdx = parseInt(r[5], 10);
+          // 09/2026 (Faza 1): "0,2" → multiple_select; "1" → single (eski format)
+          const correctCell = String(r[5] ?? '').trim();
+          const uniqIdx = [...new Set(correctCell.split(/[,\s;]+/).map((v) => parseInt(v, 10)).filter((v) => !isNaN(v)))];
           const explanation = String(r[6] || '').trim();
           if (!text) { rowErrors.push({ row: i + 1, msg: T('impRowNoText', 'Savol matni bosh') }); continue; }
           if (opts.filter(Boolean).length < 2) { rowErrors.push({ row: i + 1, msg: T('impRowMinOpt', 'Kamida 2 variant') }); continue; }
-          if (isNaN(correctIdx) || correctIdx < 0 || correctIdx > 3) { rowErrors.push({ row: i + 1, msg: T('impRowIdx', "To'g'ri javob 0-3 oralig'ida") }); continue; }
+          if (!uniqIdx.length || uniqIdx.some((v) => v < 0 || v > 3)) { rowErrors.push({ row: i + 1, msg: T('impRowIdx', "To'g'ri javob 0-3 oralig'ida (ko'p bo'lsa vergul bilan: 0,2)") }); continue; }
           // bir xil variantlar (import'da ham) — ogohlantirish
           const seen = new Set(); const dups = [];
           opts.forEach((o) => { const k = o.toLowerCase(); if (o && seen.has(k) && !dups.includes(o)) dups.push(o); seen.add(k); });
           if (dups.length) { rowErrors.push({ row: i + 1, msg: T('impRowDup', 'Bir xil variantlar: {v}').split('{v}').join(dups.join(', ')) }); continue; }
-          parsed.push({ text, options: opts, correct: correctIdx, explanation });
+          parsed.push({ text, options: opts, correct: uniqIdx[0], correctMulti: uniqIdx.length > 1 ? uniqIdx : [], type: uniqIdx.length > 1 ? 'multiple_select' : 'single_choice', explanation });
         }
         importData = parsed;
         renderPreview(parsed, rowErrors);
@@ -737,14 +779,17 @@
     if (!parsed.length && !rowErrors.length) { wrap.innerHTML = '<div class="tb-ip-empty">' + T('impNoRows', 'Faylda savol topilmadi') + '</div>'; return; }
     // Karta ko'rinishi: har savol o'z kartasida; to'g'ri variant yashil halqa, xato qatorlar alohida
     const cards = parsed.map((p, i) => {
+      // 09/2026 (Faza 1): multi import'da bir nechta ✓
+      const marks = (p.type === 'multiple_select' && p.correctMulti && p.correctMulti.length) ? p.correctMulti : [p.correct];
+      const typeTag = p.type === 'multiple_select' ? `<span class="tb-ip-num" title="${T('typeMulti', 'Bir nechta tanlov')}">☑</span>` : '';
       const opts = p.options.map((o, oi) => {
-        const cls = oi === p.correct ? ' is-correct' : '';
-        const letter = p.correct === oi ? '✓' : OPT_LETTERS[oi];
+        const cls = marks.includes(oi) ? ' is-correct' : '';
+        const letter = marks.includes(oi) ? '✓' : OPT_LETTERS[oi];
         return `<li class="tb-ip-opt${cls}"><span class="tb-ip-opt-letter">${letter}</span><span class="tb-ip-opt-txt">${escHtml(o)}</span></li>`;
       }).join('');
       const exp = p.explanation ? `<div class="tb-ip-exp">${T('impExplainTag', 'Izoh')}: ${escHtml(p.explanation)}</div>` : '';
       return `<div class="tb-ip-card">
-        <div class="tb-ip-q"><span class="tb-ip-num">${i + 1}</span><span class="tb-ip-q-txt">${escHtml(p.text)}</span></div>
+        <div class="tb-ip-q"><span class="tb-ip-num">${i + 1}</span>${typeTag}<span class="tb-ip-q-txt">${escHtml(p.text)}</span></div>
         <ul class="tb-ip-opts">${opts}</ul>${exp}
       </div>`;
     }).join('');
@@ -815,10 +860,11 @@
       var firstId = null;
       list.forEach(function (q) {
         var nq = normalize({
-          type: q.type === 'true_false' ? 'true_false' : 'single_choice',
+          type: ['single_choice', 'true_false', 'multiple_select'].includes(q.type) ? q.type : 'single_choice',
           text: String(q.text || ''),
           options: Array.isArray(q.options) ? q.options.slice(0, 6).map(String) : [],
           correct: typeof q.correct === 'number' ? q.correct : 0,
+          correctMulti: Array.isArray(q.correctMulti) ? q.correctMulti : [],
           explanation: q.explanation || '',
           tags: ['ai'],
           timing: DEFAULT_QUESTION_TIME,

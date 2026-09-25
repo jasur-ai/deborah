@@ -87,6 +87,9 @@ describe('probe3 rev4', () => {
     // oxirgi savolda finish
     await pr.waitForFunction(() => document.querySelector('#finish'), null, { timeout: 6000 });
     await pr.click('#finish');
+    // 09/2026 (Faza 1): Review & Submit oynasi → tasdiqlash
+    await pr.waitForSelector('.pr-review-ov', { timeout: 6000 });
+    await pr.click('[data-rv-done]');
     // natija ekranini kutamiz
     await pr.waitForSelector('#result:not([hidden]) .res-card', { timeout: 15000 });
     const resultTxt = await pr.locator('#result').innerText();
@@ -117,6 +120,8 @@ describe('probe3 rev4', () => {
     }
     await pr.waitForFunction(() => document.querySelector('#finish'), null, { timeout: 6000 });
     await pr.click('#finish');
+    await pr.waitForSelector('.pr-review-ov', { timeout: 6000 });
+    await pr.click('[data-rv-done]');
     await pr.waitForSelector('#result:not([hidden]) .res-card', { timeout: 15000 });
     const retryTxt = await pr.locator('#result .pr-res-sub').innerText();
     console.log('STEP3b retry sub:', retryTxt, 'errs2=', JSON.stringify(errs2));
