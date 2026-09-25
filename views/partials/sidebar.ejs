@@ -138,6 +138,8 @@ const _nT = (k, fb) => {
       <a href="/user/tests" class="shell-nav-link<%= _active === 'tests' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('fileText', 16) %></span><span><%= _st('myTests', 'Testlar') %></span></a>
       <% /* 09/2026: Taqdimotlar bo'limi — Google Slides/Canva uslubi, sayt ichida */ %>
       <a href="/user/presentations" class="shell-nav-link<%= _active === 'presentations' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('monitor', 16) %></span><span><%= _st('presentations', 'Taqdimotlar') %></span></a>
+      <% /* 09/2026 user qarori: AI Studiya hamma userlarga (oddiy/VIP/teacher) */ %>
+      <a href="/user/ai-studio" class="shell-nav-link<%= _active === 'ai-studio' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('sparkles', 16) %></span><span><%= _st('aiStudio', 'AI Studiya') %></span></a>
     <% } else if (_role === 'proctor') { %>
       <div class="shell-nav-sec"><%= _st('roleProctor', 'Proktor') %></div>
       <a href="/proctor" class="shell-nav-link<%= _active === 'monitor' ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('monitor', 16) %></span><span><%= _st('liveMonitor', 'Jonli monitoring') %></span></a>

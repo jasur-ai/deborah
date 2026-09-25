@@ -80,6 +80,9 @@
           <input class="inp" id="q-topic" placeholder="Mavzu (masalan: Algebra — kvadrat tenglamalar)">
         </div>
         <div class="st-row">
+          <textarea id="q-text" placeholder="Manba matn (ixtiyoriy): darslik paragrafi yoki konspektni joylashtiring — savollar aynan shu matndan tuziladi" aria-label="Manba matn (ixtiyoriy)"></textarea>
+        </div>
+        <div class="st-row">
           <select id="q-count" aria-label="Savollar soni"><option value="3">3 ta savol</option><option value="5" selected>5 ta savol</option><option value="10">10 ta savol</option></select>
           <select id="q-type" aria-label="Turi"><option value="single_choice">Variantli</option><option value="true_false">To'g'ri / Xato</option></select>
           <select id="q-lang" aria-label="Til"><option value="uz">O'zbek</option><option value="ru">Русский</option><option value="en">English</option></select>
@@ -294,15 +297,23 @@
       return { res, data: await res.json().catch(() => ({})) };
     }
 
-    // ── Savol generator ──
+    // ── Savol generator (09/2026: manba matn bo'lsa — matndan tuzish) ──
     $('#q-go').addEventListener('click', async () => {
       const btn = $('#q-go'); btn.disabled = true; btn.textContent = '⏳ AI yozmoqda…';
       msg('q', 'Gemini generatsiya qilmoqda (5–15 soniya)…');
       try {
-        const { res, data } = await post('/api/ai/generate-questions', {
-          prompt: $('#q-topic').value.trim(), count: +$('#q-count').value,
-          lang: $('#q-lang').value, difficulty: 'mixed', type: $('#q-type').value,
-        });
+        const srcText = ($('#q-text').value || '').trim();
+        // Matn rejimida /assist/generate (topic+text), aksincha klassik endpoint.
+        // Ikkalasi ham correctIndex qaytaradi → renderQuestions o'zgarmaydi.
+        const { res, data } = srcText.length >= 20
+          ? await post('/api/ai/assist/generate', {
+              topic: $('#q-topic').value.trim(), text: srcText,
+              count: +$('#q-count').value, lang: $('#q-lang').value,
+            })
+          : await post('/api/ai/generate-questions', {
+              prompt: $('#q-topic').value.trim(), count: +$('#q-count').value,
+              lang: $('#q-lang').value, difficulty: 'mixed', type: $('#q-type').value,
+            });
         if (!res.ok || !data.ok) { msg('q', '⚠️ AI javob bermadi (' + (data.error || res.status) + ')', 'err'); return; }
         lastQuestionsName = $('#q-topic').value.trim().slice(0, 40) || 'AI test';
         renderQuestions($('#q-out'), data.questions);

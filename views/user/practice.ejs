@@ -200,6 +200,7 @@
   <script>
     const QUESTIONS = <%- JSON.stringify(questions).replace(/</g, '\\u003c') %>;
     const CSRF = <%- JSON.stringify(csrfToken || '') %>;
+    window.__CSRF_TOKEN = CSRF; // AI Assist (ai-assist.js) API chaqiruvlari uchun
     const SOURCE = <%- JSON.stringify(source) %>;
     const KEY = <%- JSON.stringify(key) %>;
     const CHUNK = <%- JSON.stringify(chunk) %>;
@@ -559,6 +560,6 @@
     renderQ();
   </script>
   <script src="/js/icon-kit.js"></script>
-  <script src="/js/ai-assist.js?v=ai1" defer></script>
+  <script src="/js/ai-assist.js?v=ai2" defer></script>
 </body>
 </html>

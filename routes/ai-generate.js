@@ -11,7 +11,6 @@
 import { Router } from 'express';
 import multer from 'multer';
 import { requireAuth } from '../middleware/auth.js';
-import { fb } from '../firebase/admin.js';
 import { isAiEnabled, aiGenerateQuestions, aiGenerateSlides, aiGenerateVision, aiGenerateText, extractJson } from '../src/modules/ai/gemini-client.js';
 import { recordMetric } from '../src/telemetry/index.js';
 import { buildPptx } from '../utils/minipptx.js';
@@ -81,24 +80,19 @@ export default router;
 
 
 // ═══════════════════════════════════════════════════════════════════
-// S22 — AI Studiya (VIP userlar + o'qituvchilar uchun)
-// Oddiy student: faqat Cast paytida AI (quick prompt) — studiya yopiq.
+// S22 — AI Studiya (09/2026 user qarori: HAMMA userlar uchun ochiq —
+// oddiy student, VIP va o'qituvchi. Admin sahifalari alohida qoladi.)
+// requireAuth'dan keyin keladi — sessiyali har qanday user kira oladi.
 // ═══════════════════════════════════════════════════════════════════
 
 async function isAiStudioMember(req) {
-  if (!req.session?.user) return false;
-  const role = req.session.user.role;
-  if (role === 'teacher' || role === 'admin' || role === 'board') return true;
-  try {
-    const snap = await fb.get(`users/${req.session.user.safeKey}/isVip`);
-    if (snap.exists() && snap.val() === true) return true;
-  } catch (_) {}
-  return false;
+  // 09/2026: VIP/o'qituvchi cheklovi olib tashlandi — barcha userlar.
+  return Boolean(req.session?.user);
 }
 
 async function requireStudio(req, res, next) {
   if (!(await isAiStudioMember(req))) {
-    return res.status(403).render('error', { title: '403', message: "AI Studiya VIP a'zolar va o'qituvchilar uchun", status: 403 });
+    return res.status(403).render('error', { title: '403', message: 'AI Studiya ro‘yxatdan o‘tgan foydalanuvchilar uchun', status: 403 });
   }
   next();
 }
@@ -413,5 +407,169 @@ router.post('/api/ai/export', requireAuth, requireStudio, async (req, res) => {
     return res.send(buf);
   } catch (err) {
     res.status(400).json({ ok: false, error: err.message });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// 09/2026 — AI Assist REAL backend (builder modal + tahlil panel).
+// Hamma userlar uchun (student/VIP/teacher) — requireAuth faqat.
+// AI sozlanmagan bo'lsa 503 not_configured → frontend mock'ga tushadi
+// (public/js/ai-assist.js AI_MODE='auto').
+// ═══════════════════════════════════════════════════════════════════
+
+/** AI savolini builder/ai-studio kontraktiga keltirish (ikkala kalit ham). */
+function normalizeAssistQuestion(q) {
+  if (!q || typeof q.text !== 'string' || !Array.isArray(q.options)) return null;
+  const options = q.options.map((o) => String(o).slice(0, 300)).slice(0, 6);
+  if (!String(q.text).trim() || options.length < 2) return null;
+  let ci = Number(q.correctIndex);
+  if (!Number.isInteger(ci)) ci = Number(q.correct);
+  if (!Number.isInteger(ci) || ci < 0 || ci >= options.length) ci = 0;
+  return {
+    type: 'single_choice',
+    text: String(q.text).slice(0, 800),
+    options,
+    correct: ci,
+    correctIndex: ci, // ai-studio renderQuestions shu kalitni o'qiydi
+    explanation: String(q.explanation || '').slice(0, 500),
+  };
+}
+
+// POST /api/ai/assist/generate {topic?,text?,count?,lang?} → {ok,questions[]}
+router.post('/api/ai/assist/generate', requireAuth, async (req, res) => {
+  const key = req.session?.user?.safeKey || req.ip || 'anon';
+  if (rateLimited(key)) return res.status(429).json({ ok: false, error: 'rate_limited', retryAfterSeconds: 60 });
+  if (!isAiEnabled()) return res.status(503).json({ ok: false, error: 'not_configured' });
+  const topic = String(req.body?.topic || '').trim().slice(0, 300);
+  const text = String(req.body?.text || '').trim().slice(0, 6000);
+  const count = Math.min(Math.max(Number(req.body?.count) || 5, 1), 10);
+  const lang = ['uz', 'ru', 'en'].includes(req.body?.lang) ? req.body.lang : 'uz';
+  if (!topic && text.length < 20) {
+    return res.status(400).json({ ok: false, error: 'input_required' });
+  }
+  try {
+    let raw;
+    let model = null;
+    if (text.length >= 20) {
+      const sys = 'Sen professional test muallifisan. Faqat ' + (LANG_NAME[lang]) + ' tilida javob ber.';
+      const usr = `Quyidagi matndan ${count} ta variantli test savoli tuz${topic ? ` (mavzu: "${topic}")` : ''}.\nJavob FAQAT JSON array: [{"text":"savol","options":["A","B","C","D"],"correctIndex":0,"explanation":"qisqa izoh"}]\n\nMATN:\n${text}`;
+      const r = await aiGenerateText(usr, { systemInstruction: sys, maxOutputTokens: 4096 });
+      if (!r.ok) {
+        const status = r.error === 'not_configured' ? 503 : r.error === 'rate_limited' ? 429 : 502;
+        return res.status(status).json({ ok: false, error: r.error });
+      }
+      model = r.model;
+      const arr = extractJson(r.text);
+      if (!Array.isArray(arr) || !arr.length) return res.status(502).json({ ok: false, error: 'bad_format' });
+      raw = arr.slice(0, count);
+    } else {
+      const r = await aiGenerateQuestions({ prompt: topic, count, lang, difficulty: 'mixed', type: 'single_choice' });
+      if (!r.ok) {
+        const status = r.error === 'not_configured' ? 503
+          : r.error === 'rate_limited' ? 429
+          : r.error === 'invalid_prompt' || r.error === 'bad_format' ? 502 : 500;
+        return res.status(status).json({ ok: false, error: r.error });
+      }
+      model = r.model;
+      raw = r.questions;
+    }
+    const questions = raw.map(normalizeAssistQuestion).filter(Boolean);
+    if (!questions.length) return res.status(502).json({ ok: false, error: 'bad_format' });
+    try {
+      recordMetric('ai.assist_generate', 1, { type: 'counter', labels: { lang, mode: text.length >= 20 ? 'text' : 'topic' } });
+    } catch (_) { /* telemetry fail-soft */ }
+    return res.json({ ok: true, questions, model, real: true });
+  } catch (e) {
+    return res.status(500).json({ ok: false, error: 'internal' });
+  }
+});
+
+/** Insight HTML sanitizer — faqat xavfsiz teglar, atributlar yo'q. */
+function sanitizeInsightHtml(html) {
+  let s = String(html || '').slice(0, 3000);
+  s = s.replace(/<script[\s\S]*?<\/script\s*>/gi, '');
+  s = s.replace(/<style[\s\S]*?<\/style\s*>/gi, '');
+  s = s.replace(/<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g, (m, tag) => {
+    const t = String(tag).toLowerCase();
+    if (['b', 'i', 'em', 'strong', 'ul', 'ol', 'li', 'p', 'br'].includes(t)) {
+      return m.startsWith('</') ? `</${t}>` : (t === 'br' ? '<br>' : `<${t}>`);
+    }
+    return '';
+  });
+  return s;
+}
+
+// POST /api/ai/assist/analyze {percent,correct,total,wrong:[{text}]} → {ok,insights[]}
+router.post('/api/ai/assist/analyze', requireAuth, async (req, res) => {
+  const key = req.session?.user?.safeKey || req.ip || 'anon';
+  if (rateLimited(key)) return res.status(429).json({ ok: false, error: 'rate_limited', retryAfterSeconds: 60 });
+  if (!isAiEnabled()) return res.status(503).json({ ok: false, error: 'not_configured' });
+  const percent = Math.max(0, Math.min(100, Number(req.body?.percent) || 0));
+  const correct = Math.max(0, Number(req.body?.correct) || 0);
+  const total = Math.max(1, Math.min(500, Number(req.body?.total) || 1));
+  const lang = ['uz', 'ru', 'en'].includes(req.body?.lang) ? req.body.lang : 'uz';
+  const wrong = Array.isArray(req.body?.wrong)
+    ? req.body.wrong.slice(0, 10).map((w) => String(w?.text || '').slice(0, 300)).filter(Boolean)
+    : [];
+  try {
+    const sys = 'Sen o\u2018quvchiga yordam beradigan mehribon murabbiysan. Faqat ' + (LANG_NAME[lang]) + ' tilida javob ber.';
+    const usr = `O'quvchi test natijasi: ${correct}/${total} to'g'ri (${percent}%).\n` +
+      (wrong.length ? `Xato savollar:\n${wrong.map((w, i) => `${i + 1}. ${w}`).join('\n')}\n` : 'Xato yo\u2018q — barchasi to\u2018g\u2018ri.\n') +
+      `3-4 ta qisqa insight ber. Javob FAQAT JSON: {"insights":[{"icon":"emoji","title":"sarlavha","html":"<p>...</p> matn"}]}. html'da faqat <b><i><ul><li><p> teglar bo'lsin.`;
+    const r = await aiGenerateText(usr, { systemInstruction: sys, maxOutputTokens: 2048 });
+    if (!r.ok) {
+      const status = r.error === 'not_configured' ? 503 : r.error === 'rate_limited' ? 429 : 502;
+      return res.status(status).json({ ok: false, error: r.error });
+    }
+    const parsed = extractJson(r.text);
+    const arr = parsed && Array.isArray(parsed.insights) ? parsed.insights : null;
+    if (!arr || !arr.length) return res.status(502).json({ ok: false, error: 'bad_format' });
+    const insights = arr.slice(0, 5).map((s) => ({
+      icon: String(s?.icon || '✨').slice(0, 8),
+      title: String(s?.title || 'Tahlil').slice(0, 120),
+      html: sanitizeInsightHtml(s?.html || ''),
+    })).filter((s) => s.html);
+    if (!insights.length) return res.status(502).json({ ok: false, error: 'bad_format' });
+    return res.json({ ok: true, insights, model: r.model, real: true });
+  } catch (e) {
+    return res.status(500).json({ ok: false, error: 'internal' });
+  }
+});
+
+// POST /api/ai/explain {text,options?,correctIndex?,givenIndex?,lang?} → {ok,explanation}
+router.post('/api/ai/explain', requireAuth, async (req, res) => {
+  const key = req.session?.user?.safeKey || req.ip || 'anon';
+  if (rateLimited(key)) return res.status(429).json({ ok: false, error: 'rate_limited', retryAfterSeconds: 60 });
+  if (!isAiEnabled()) return res.status(503).json({ ok: false, error: 'not_configured' });
+  const text = String(req.body?.text || '').trim().slice(0, 800);
+  if (text.length < 5) return res.status(400).json({ ok: false, error: 'input_required' });
+  const options = Array.isArray(req.body?.options)
+    ? req.body.options.slice(0, 6).map((o) => String(o).slice(0, 300))
+    : [];
+  const ci = Number(req.body?.correctIndex);
+  const gi = Number(req.body?.givenIndex);
+  const lang = ['uz', 'ru', 'en'].includes(req.body?.lang) ? req.body.lang : 'uz';
+  try {
+    const sys = 'Sen o\u2018quvchiga yordam beradigan mehribon murabbiysan. Faqat ' + (LANG_NAME[lang]) + ' tilida, 2-4 jumlada javob ber.';
+    let usr = `Savol: "${text}"\n`;
+    if (options.length >= 2) {
+      usr += `Variantlar:\n${options.map((o, i) => `${String.fromCharCode(65 + i)}) ${o}`).join('\n')}\n`;
+      if (Number.isInteger(ci) && ci >= 0 && ci < options.length) usr += `To'g'ri javob: ${String.fromCharCode(65 + ci)}\n`;
+      if (Number.isInteger(gi) && gi >= 0 && gi < options.length && gi !== ci) usr += `O'quvchi tanlagan (xato): ${String.fromCharCode(65 + gi)}\n`;
+    }
+    usr += `Nega to'g'ri javob to'g'ri ekanini qisqa tushuntir${Number.isInteger(gi) && gi !== ci ? " va o'quvchi xatosi sababini ayt" : ''}. Javob FAQAT JSON: {"explanation":"..."}`;
+    const r = await aiGenerateText(usr, { systemInstruction: sys, maxOutputTokens: 1024 });
+    if (!r.ok) {
+      const status = r.error === 'not_configured' ? 503 : r.error === 'rate_limited' ? 429 : 502;
+      return res.status(status).json({ ok: false, error: r.error });
+    }
+    const parsed = extractJson(r.text);
+    const explanation = parsed && typeof parsed.explanation === 'string'
+      ? parsed.explanation.slice(0, 1200)
+      : String(r.text || '').slice(0, 1200);
+    if (!explanation.trim()) return res.status(502).json({ ok: false, error: 'bad_format' });
+    return res.json({ ok: true, explanation: explanation.trim(), model: r.model, real: true });
+  } catch (e) {
+    return res.status(500).json({ ok: false, error: 'internal' });
   }
 });

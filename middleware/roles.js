@@ -116,6 +116,8 @@ export const ROLE_NAV = {
     { section: "Ish maydoni" },
     { href: '/user/panel', icon: 'grid', label: 'Panelim' },
     { href: '/user/create-test', icon: 'plus', label: 'Yangi test' },
+    // 09/2026 user qarori: AI Studiya hamma userlarga (oddiy/VIP/teacher)
+    { href: '/user/ai-studio', icon: 'sparkles', label: 'AI Studiya' },
   ],
 };
 

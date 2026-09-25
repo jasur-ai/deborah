@@ -1,15 +1,17 @@
 /* ═══════════════════════════════════════════════════════════════
-   Deborah — AI Assist UI (09/2026, v1: frontend-only)
-   - AI_MODE='mock': javoblar lokal AIMock'dan (backend keyin ulanadi).
-     Backend tayyor bo'lganda: AI_MODE='api' + AIBackend endpointlari —
-     UI o'zgarmaydi (shartnoma: {questions[]} va {insights[]}).
+   Deborah — AI Assist UI (09/2026, v2: real backend + mock fallback)
+   - AI_MODE='auto': avval real API (/api/ai/assist/*, Gemini) — ishlamasa
+     lokal AIMock (AI sozlanmagan/offline holatda ham UI sinmaydi).
+     'api' = faqat API (mock'siz), 'mock' = faqat lokal namuna.
    - Mavjud kodga tegilmaydi: builder'ga faqat window.__TB_AI_BRIDGE
      orqali yoziladi; natija paneli window.__PR_RESULT__ o'qiydi.
+   - Hamma userlar uchun (student/VIP/teacher) — sahifa o'zi ochiq bo'lsa,
+     AI tugmalari ham ishlaydi.
    ═══════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
 
-  var AI_MODE = 'mock'; // 'mock' | 'api' (backend keyin)
+  var AI_MODE = 'auto'; // 'auto' | 'api' | 'mock'
 
   /* ── Util ── */
   function esc(s) {
@@ -141,26 +143,63 @@
     }
   };
 
-  /* ═══════════════ BACKEND CLIENT (v2: backend ulanganda) ═══════════════
-     Shartnoma:
-       POST /api/ai/assist/generate {topic,text,count} → {questions:[{type,text,options,correct,explanation}]}
+  /* ═══════════════ BACKEND CLIENT (v2: real API + mock fallback) ═══════════════
+     Shartnoma (routes/ai-generate.js):
+       POST /api/ai/assist/generate {topic,text,count} → {questions:[{type,text,options,correct,correctIndex,explanation}]}
        POST /api/ai/assist/analyze  {percent,correct,total,wrong:[{text}]} → {insights:[{icon,title,html}]}
-     Hozir: AI_MODE='mock' → AIMock ishlaydi. Backend tayyor bo'lganda
-     faqat AI_MODE='api' qilinadi — UI va chaqiruv joylari o'zgarmaydi. */
+       POST /api/ai/explain {text,options,correctIndex,givenIndex} → {explanation}
+     Natija: {list, real} — real=false bo'lsa UI'da "offline namuna" belgisi. */
+  function csrfToken() {
+    try { return window.__CSRF_TOKEN || ''; } catch (_) { return ''; }
+  }
+  function postJSON(url, body) {
+    return fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken() },
+      body: JSON.stringify(body)
+    }).then(function (r) {
+      if (!r.ok) throw new Error('http_' + r.status);
+      return r.json();
+    });
+  }
   var AIBackend = {
     generate: function (opts) {
-      if (AI_MODE !== 'api') return Promise.resolve(AIMock.generateQuestions(opts));
-      return fetch('/api/ai/assist/generate', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(opts)
-      }).then(function (r) { return r.json(); }).then(function (d) { return d.questions || []; });
+      if (AI_MODE === 'mock') return Promise.resolve({ list: AIMock.generateQuestions(opts), real: false });
+      if (AI_MODE === 'api') {
+        return postJSON('/api/ai/assist/generate', opts).then(function (d) {
+          return { list: d.questions || [], real: true };
+        });
+      }
+      // auto: real API → xato bo'lsa mock
+      return postJSON('/api/ai/assist/generate', opts).then(function (d) {
+        if (d && d.ok && (d.questions || []).length) return { list: d.questions, real: true };
+        return { list: AIMock.generateQuestions(opts), real: false };
+      }).catch(function () {
+        return { list: AIMock.generateQuestions(opts), real: false };
+      });
     },
     analyze: function (res) {
-      if (AI_MODE !== 'api') return Promise.resolve(AIMock.analyzeResult(res));
-      return fetch('/api/ai/assist/analyze', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(res)
-      }).then(function (r) { return r.json(); }).then(function (d) { return d.insights || []; });
+      if (AI_MODE === 'mock') return Promise.resolve({ list: AIMock.analyzeResult(res), real: false });
+      if (AI_MODE === 'api') {
+        return postJSON('/api/ai/assist/analyze', res).then(function (d) {
+          return { list: d.insights || [], real: true };
+        });
+      }
+      return postJSON('/api/ai/assist/analyze', res).then(function (d) {
+        if (d && d.ok && (d.insights || []).length) return { list: d.insights, real: true };
+        return { list: AIMock.analyzeResult(res), real: false };
+      }).catch(function () {
+        return { list: AIMock.analyzeResult(res), real: false };
+      });
+    },
+    explain: function (w) {
+      if (AI_MODE === 'mock') return Promise.resolve(null);
+      return postJSON('/api/ai/explain', {
+        text: w.text, options: w.options || [],
+        correctIndex: w.correctIndex, givenIndex: w.givenIndex
+      }).then(function (d) {
+        return (d && d.ok && d.explanation) ? d.explanation : null;
+      }).catch(function () { return null; });
     }
   };
 
@@ -242,11 +281,12 @@
       var bar = out.querySelector('#ai-bar');
       var p = 0;
       var tick = setInterval(function () { p = Math.min(92, p + 14); if (bar) bar.style.width = p + '%'; }, 160);
-      // mock "o'ylash" pauzasi — API ulanganda real kutish bo'ladi
+      // mock rejimda qisqa "o'ylash" pauzasi; real API o'zi kutadi
       setTimeout(function () {
-        AIBackend.generate({ topic: topic, text: text, count: count }).then(function (qs) {
+        AIBackend.generate({ topic: topic, text: text, count: count }).then(function (res) {
           clearInterval(tick);
-          generated = qs || [];
+          generated = (res && res.list) || [];
+          var isReal = !!(res && res.real);
           if (!generated.length) { out.innerHTML = '<div class="ai-note">Hech narsa yaratilmadi. Boshqa mavzu sinang.</div>'; return; }
           out.innerHTML = generated.map(function (q, i) {
             var typeName = q.type === 'true_false' ? 'To‘g‘ri/Noto‘g‘ri' : 'Bitta javobli';
@@ -257,14 +297,16 @@
               '<span><span class="ai-preview-q">' + (i + 1) + '. ' + esc(q.text) + '</span>' +
               '<span class="ai-preview-type">' + typeName + '</span>' +
               '<span class="ai-preview-o" style="display:block;margin-top:4px">' + opts + '</span></span></label>';
-          }).join('') + '<span class="ai-mock-tag">✨ AI namuna (mock) — backend keyin ulanadi</span>';
+          }).join('') + (isReal
+            ? '<span class="ai-mock-tag">✨ Deborah AI — real generatsiya</span>'
+            : '<span class="ai-mock-tag">✨ AI offline namunasi — internet/AI kalit tekshirilsin</span>');
           foot.hidden = false;
           updateInsertTxt();
           out.querySelectorAll('input[type=checkbox]').forEach(function (c) {
             c.addEventListener('change', updateInsertTxt);
           });
         });
-      }, AI_MODE === 'api' ? 0 : 900);
+      }, AI_MODE === 'mock' ? 900 : 0);
       function updateInsertTxt() {
         var n = out.querySelectorAll('input[type=checkbox]:checked').length;
         overlay.querySelector('#ai-insert-txt').textContent = 'Tanlanganlarni qo‘shish (' + n + ')';
@@ -307,16 +349,50 @@
     panel.querySelector('[data-close]').addEventListener('click', close);
     var body = panel.querySelector('.ai-panel-body');
     setTimeout(function () {
-      AIBackend.analyze(res).then(function (insights) {
-        body.innerHTML =
+      AIBackend.analyze(res).then(function (out) {
+        var insights = (out && out.list) || [];
+        var isReal = !!(out && out.real);
+        var html =
           '<div class="ai-score-ring"><div class="ai-score-num">' + res.percent + '%</div>' +
           '<div class="ai-score-cap">' + res.correct + ' / ' + res.total + ' to‘g‘ri javob</div></div>' +
-          (insights || []).map(function (s) {
+          insights.map(function (s) {
             return '<div class="ai-insight"><h3>' + esc(s.icon || '✨') + ' ' + esc(s.title || '') + '</h3><div>' + (s.html || '') + '</div></div>';
-          }).join('') +
-          '<span class="ai-mock-tag">✨ AI namuna (mock) — backend keyin ulanadi</span>';
+          }).join('');
+        // Har bir xato savol uchun "AI izoh" (real API bo'lganda)
+        var wrong = (res && res.wrong) || [];
+        var explainable = wrong.filter(function (w) { return w && w.text && (w.options || []).length >= 2; });
+        if (explainable.length) {
+          html += '<div class="ai-insight"><h3>💡 Savollar bo‘yicha AI izoh</h3><div>' +
+            explainable.slice(0, 10).map(function (w, i) {
+              return '<div style="margin:8px 0;padding:8px 0;border-top:1px dashed rgba(0,0,0,.12)">' +
+                '<div style="font-size:.82rem;margin-bottom:6px">' + esc(w.text).slice(0, 160) + '</div>' +
+                '<button type="button" class="ai-trigger" data-explain="' + i + '" style="font-size:.75rem;padding:7px 12px;min-height:36px">💡 AI izoh olish</button>' +
+                '<div data-explain-out="' + i + '" style="font-size:.82rem;margin-top:6px"></div></div>';
+            }).join('') + '</div></div>';
+        }
+        html += isReal
+          ? '<span class="ai-mock-tag">✨ Deborah AI — real tahlil</span>'
+          : '<span class="ai-mock-tag">✨ AI offline namunasi — internet/AI kalit tekshirilsin</span>';
+        body.innerHTML = html;
+        // explain tugmalari
+        body.querySelectorAll('[data-explain]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var i = +btn.getAttribute('data-explain');
+            var w = explainable[i];
+            var box = body.querySelector('[data-explain-out="' + i + '"]');
+            if (!w || !box) return;
+            btn.disabled = true;
+            btn.textContent = '⏳ AI o‘ylamoqda…';
+            box.textContent = '';
+            AIBackend.explain(w).then(function (txt) {
+              btn.disabled = false;
+              btn.textContent = '💡 AI izoh olish';
+              box.textContent = txt || 'AI izoh bera olmadi — keyinroq urinib ko‘ring.';
+            });
+          });
+        });
       });
-    }, AI_MODE === 'api' ? 0 : 700);
+    }, AI_MODE === 'mock' ? 700 : 0);
   }
 
   /* ═══════════════ AUTO-MOUNT (mavjud sahifalarga qo'shilish) ═══════════════ */
