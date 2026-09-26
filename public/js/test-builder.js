@@ -15,10 +15,16 @@
   const init = window.__TB_INIT || { isEdit: false, editKey: '', name: '', questions: [] };
   const BC = window.__TB_COPY || {}; // S34m: 3 til copy (serverdan)
   const T = (k, fb) => (BC[k] !== undefined ? BC[k] : fb);
+  // 09/2026 (Faza 1b fix): showToast globali mavjud emas — xavfsiz o'ram (ReferenceError oldini oladi)
+  function toastErr(msg) { try { if (typeof showToast === 'function') showToast(msg, 'err'); } catch (_) {} }
   const OPT_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
   // Foydalanuvchi talabi (09/2026): har bir YANGI savol uchun default vaqt 20 soniya
   const DEFAULT_QUESTION_TIME = 20;
 
+  // 09/2026 (Faza 1b fix): state init → normalize → nextId chaqiradi, shuning
+  // uchun idSeq state'dan OLDIN bo'lishi shart (aks holda TDZ ReferenceError —
+  // savollari bor testni tahrirlashda builder bo'sh qolardi)
+  let idSeq = 1;
   // ── State ──
   const state = {
     name: init.name || '',
@@ -28,10 +34,11 @@
     saveStatus: 'saved', // saved | pending | error | offline
   };
 
-  let idSeq = 1;
   function nextId() { return 'q_' + (idSeq++); }
   // 09/2026 (Faza 1): single — radio almashtirish; multi — toggle
   function toggleCorrect(q, oi) {
+    // 09/2026 (Faza 1b): reorder/match'da correct belgilanmaydi
+    if (q.type === 'reorder' || q.type === 'match') return;
     if (q.type === 'multiple_select') {
       const set = new Set(q.correctMulti || []);
       if (set.has(oi)) set.delete(oi); else set.add(oi);
@@ -51,6 +58,8 @@
       correct: typeof q.correct === 'number' ? q.correct : 0,
       // 09/2026 (Faza 1): multiple_select to'g'ri indekslar to'plami
       correctMulti: Array.isArray(q.correctMulti) ? [...new Set(q.correctMulti.map((v) => Math.floor(+v)).filter((v) => Number.isFinite(v) && v >= 0 && v < 6))] : [],
+      // 09/2026 (Faza 1b): match juftliklari
+      pairs: Array.isArray(q.pairs) ? q.pairs.slice(0, 6).map((p) => ({ l: String(p?.l || ''), r: String(p?.r || '') })) : [],
       explanation: q.explanation || '',
       tags: Array.isArray(q.tags) ? q.tags.map(String) : [],
       timing: q.timing || 0,
@@ -127,7 +136,7 @@
         if (preview) preview.disabled = false;
       } else {
         setStatus('error', T('statusSaveErr', 'Saqlashda xato'));
-        showToast && showToast(T('toastErr', 'Xato: ') + (data.error || ''), 'err');
+        toastErr(T('toastErr', 'Xato: ') + (data.error || ''));
       }
     } catch (e) {
       if (seq !== saveSeq) return;
@@ -142,6 +151,7 @@
       options: q.options,
       correct: q.correct,
       correctMulti: q.correctMulti || [],
+      pairs: q.pairs || [],
       explanation: q.explanation,
       tags: q.tags,
       timing: q.timing,
@@ -164,6 +174,12 @@
       if (!q.text.trim()) errors.push({ qId: q.id, msg: `${T('qText', 'Savol')} ${i + 1}: ${T('qTextReq', 'matn kiritilmagan')}` });
       if (q.type === 'short_answer') {
         if (!(q.options[0] || '').trim()) errors.push({ qId: q.id, msg: `${T('qText', 'Savol')} ${i + 1}: ${T('correct', 'to\u2018g\u2018ri javob')} kiritilmagan` });
+        return;
+      }
+      // 09/2026 (Faza 1b): match — kamida 2 ta to'liq juftlik
+      if (q.type === 'match') {
+        const ok = (q.pairs || []).filter((p) => (p.l || '').trim() && (p.r || '').trim());
+        if (ok.length < 2) errors.push({ qId: q.id, msg: `${T('qText', 'Savol')} ${i + 1}: ${T('matchMin', 'kamida 2 ta to‘liq juftlik')}` });
         return;
       }
       const filled = q.options.filter(o => o.trim());
@@ -285,10 +301,11 @@
        ranglar BIR XIL (binafsha) — qizil FAQAT xato uchun. Variant karta o'zini
        bosish = to'g'ri javob belgilash (jonli viktorina mantiqi), alohida radio YO'Q. */
     const SHAPES = ['▲', '◆', '●', '■', '★', '⬢'];
-    // 09/2026 (Faza 1): multi — checkbox toggle; single — radio
+    // 09/2026 (Faza 1): multi — checkbox toggle; single — radio; reorder — belgisiz ro'yxat
     const isMulti = q.type === 'multiple_select';
+    const isReorder = q.type === 'reorder';
     const optsHtml = q.options.map((opt, oi) => {
-      const marked = isMulti ? (q.correctMulti || []).includes(oi) : oi === q.correct;
+      const marked = !isReorder && (isMulti ? (q.correctMulti || []).includes(oi) : oi === q.correct);
       return `
       <div class="tb-opt${marked ? ' is-correct' : ''}" data-opt-card="${oi}" role="${isMulti ? 'checkbox' : 'radio'}" aria-checked="${marked}" tabindex="0" title="${T('optCardTitle', "Bosib to'g'ri javob deb belgilang")}">
         <span class="tb-opt-shape" aria-hidden="true">${SHAPES[oi] || '■'}</span>
@@ -296,6 +313,14 @@
         <button type="button" class="tb-opt-remove" data-opt-remove="${oi}" aria-label="${T('optRemoveAria', "Variantni o'chirish")}" title="${T('optRemoveAria', "Variantni o'chirish")}">×</button>
       </div>`;
     }).join('');
+
+    // 09/2026 (Faza 1b): match juftliklar muharriri
+    const pairsHtml = (q.pairs || []).map((p, pi) => `
+      <div class="tb-pair" data-pair="${pi}" style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;margin-bottom:8px">
+        <input class="inp" type="text" value="${escAttr(p.l || '')}" placeholder="${T('pairLeftPh', 'Chap: masalan, 2+2')}" data-pair-l="${pi}" aria-label="${T('pairLeftAria', 'Chap')} ${pi + 1}">
+        <input class="inp" type="text" value="${escAttr(p.r || '')}" placeholder="${T('pairRightPh', 'O‘ng: masalan, 4')}" data-pair-r="${pi}" aria-label="${T('pairRightAria', 'O‘ng')} ${pi + 1}">
+        <button type="button" class="tb-opt-remove" data-pair-remove="${pi}" aria-label="${T('pairRemoveAria', 'Juftlikni o‘chirish')}" title="${T('pairRemoveAria', 'Juftlikni o‘chirish')}">×</button>
+      </div>`).join('');
 
     el.innerHTML = `
       <div class="tb-q-head">
@@ -326,6 +351,8 @@
           <option value="true_false"${q.type === 'true_false' ? ' selected' : ''}>${T('typeTrueFalse', "To'g'ri / Noto'g'ri")}</option>
           <option value="multiple_select"${q.type === 'multiple_select' ? ' selected' : ''}>${T('typeMulti', 'Bir nechta tanlov')}</option>
           <option value="short_answer"${q.type === 'short_answer' ? ' selected' : ''}>${T('typeShort', 'Qisqa javob')}</option>
+          <option value="match"${q.type === 'match' ? ' selected' : ''}>${T('typeMatch', 'Moslashtirish')}</option>
+          <option value="reorder"${q.type === 'reorder' ? ' selected' : ''}>${T('typeReorder', 'Tartiblash')}</option>
           <option value="exit_ticket"${q.type === 'exit_ticket' ? ' selected' : ''}>${T('typeExit', 'Exit ticket')}</option>
         </select>
         <span class="tb-hint">${T('qTypeHint', 'Cast sessiyalarida ishlatiladigan savol turi')}</span>
@@ -343,7 +370,14 @@
         </div>
       </div>
 
-      ${q.type === 'short_answer' ? `
+      ${q.type === 'match' ? `
+        <div class="tb-field">
+          <label class="tb-field-label">${T('pairs', 'Juftliklar')} <span class="tb-req">*</span> <span class="tb-hint">${T('pairsMin', 'kamida 2 ta')}</span></label>
+          ${pairsHtml}
+          ${(q.pairs || []).length < 6 ? `<button type="button" class="btn btn-quiet" data-add-pair style="width:100%;margin-top:4px">${T('addPair', '+ Juftlik qo‘shish')}</button>` : ''}
+          <span class="tb-hint">${T('pairsHint', 'Har bir chap element o‘ngidagi javobiga mos kelishi shart — o‘quvchiga o‘ng ustun aralashtirib ko‘rsatiladi')}</span>
+        </div>
+      ` : q.type === 'short_answer' ? `
         <div class="tb-field">
           <label class="tb-field-label" for="tb-q-answer">${T('shortLabel', "To'g'ri javob")} <span class="tb-req">*</span></label>
           <input class="inp" id="tb-q-answer" type="text" value="${escAttr(q.options[0] || '')}" data-q-answer placeholder="${T('shortPh', 'Kutilgan javob matni...')}" aria-label="${T('shortLabel', "To'g'ri javob")}">
@@ -360,7 +394,7 @@
 
         <div class="tb-dup-warn" id="tb-dup-warn" role="alert" hidden><span class="tb-dup-warn-ico">⚠</span><span id="tb-dup-warn-txt"></span></div>
         <div class="tb-field">
-          <span class="tb-hint" data-correct-hint>${isMulti ? T('multiHint', "✓ To'g'ri javoblar: bir nechta kartani belgilang (yashil halqa)") : T('correctHint', "✓ To'g'ri javob: variant kartasini bosib belgilanadi (yashil halqa)")}</span>
+          <span class="tb-hint" data-correct-hint>${isReorder ? T('reorderHint', '✓ Tartib: variantlarni TO‘G‘RI ketma-ketlikda yozing — o‘quvchiga aralashtirib ko‘rsatiladi') : (isMulti ? T('multiHint', "✓ To'g'ri javoblar: bir nechta kartani belgilang (yashil halqa)") : T('correctHint', "✓ To'g'ri javob: variant kartasini bosib belgilanadi (yashil halqa)"))}</span>
         </div>
       `}
 
@@ -392,6 +426,17 @@
       if (prevType === 'multiple_select' && next !== 'multiple_select' && next !== 'short_answer') {
         q.correct = (q.correctMulti && q.correctMulti.length) ? q.correctMulti[0] : 0;
       }
+      // 09/2026 (Faza 1b): match'ga o'tishda variantlar chap ustunga urug'lanadi;
+      // match'dan chiqishda chap ustun variantlarga tiklanadi
+      if (next === 'match' && prevType !== 'match') {
+        const fromOpts = q.options.filter((o) => (o || '').trim()).slice(0, 6);
+        q.pairs = fromOpts.length >= 2 ? fromOpts.map((o) => ({ l: o, r: '' })) : [{ l: '', r: '' }, { l: '', r: '' }];
+      }
+      if (prevType === 'match' && next !== 'match') {
+        const lefts = (q.pairs || []).map((p) => p.l || '').filter((s) => s.trim());
+        q.options = (lefts.length ? lefts : q.options).slice(0, 6);
+        while (q.options.length < 2) q.options.push('');
+      }
       if (next === 'true_false' && (q.options.filter(o => o.trim()).length < 2)) {
         q.options = ['To‘g‘ri', 'Noto‘g‘ri'];
         q.correct = 0;
@@ -410,6 +455,40 @@
     if (answer) answer.addEventListener('input', () => {
       q.options[0] = answer.value;
       markDirty();
+    });
+
+    // 09/2026 (Faza 1b): match juftliklar kiritish
+    $$('[data-pair-l]', $('.tb-editor')).forEach((inp) => {
+      inp.addEventListener('input', () => {
+        const pi = parseInt(inp.dataset.pairL, 10);
+        if (q.pairs && q.pairs[pi]) q.pairs[pi].l = inp.value;
+        markDirty();
+        renderErrors();
+      });
+    });
+    $$('[data-pair-r]', $('.tb-editor')).forEach((inp) => {
+      inp.addEventListener('input', () => {
+        const pi = parseInt(inp.dataset.pairR, 10);
+        if (q.pairs && q.pairs[pi]) q.pairs[pi].r = inp.value;
+        markDirty();
+        renderErrors();
+      });
+    });
+    const addPair = $('[data-add-pair]');
+    if (addPair) addPair.addEventListener('click', () => {
+      q.pairs = q.pairs || [];
+      if (q.pairs.length >= 6) return;
+      q.pairs.push({ l: '', r: '' });
+      markDirty();
+      render();
+    });
+    $$('[data-pair-remove]', $('.tb-editor')).forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (!q.pairs || q.pairs.length <= 2) { toastErr(T('minPairs', 'Kamida 2 ta juftlik bo‘lishi kerak')); return; }
+        q.pairs.splice(parseInt(btn.dataset.pairRemove, 10), 1);
+        markDirty();
+        render();
+      });
     });
 
     const timing = $('#tb-q-timing');
@@ -439,6 +518,7 @@
     $$('[data-opt-card]', $('.tb-editor')).forEach(cardEl => {
       cardEl.addEventListener('click', (ev) => {
         if (ev.target.closest('input, button')) return; /* input/tugmaga tegsa aralashmaymiz */
+        if (q.type === 'reorder') return; // 09/2026 (Faza 1b): tartibda belgilash yo'q
         const oi = parseInt(cardEl.dataset.optCard, 10);
         toggleCorrect(q, oi);
         markDirty();
@@ -447,6 +527,7 @@
       cardEl.addEventListener('keydown', (ev) => {
         if (ev.key === 'Enter' || ev.key === ' ') {
           ev.preventDefault();
+          if (q.type === 'reorder') return;
           const oi = parseInt(cardEl.dataset.optCard, 10);
           toggleCorrect(q, oi);
           markDirty();
@@ -466,7 +547,7 @@
     $$('[data-opt-remove]', $('.tb-editor')).forEach(btn => {
       btn.addEventListener('click', () => {
         const oi = parseInt(btn.dataset.optRemove, 10);
-        if (q.options.length <= 2) { showToast && showToast(T('minOptions', 'Kamida 2 ta variant bo‘lishi kerak'), 'err'); return; }
+        if (q.options.length <= 2) { toastErr(T('minOptions', 'Kamida 2 ta variant bo‘lishi kerak')); return; }
         q.options.splice(oi, 1);
         if (q.correct >= q.options.length) q.correct = 0;
         // 09/2026 (Faza 1): multi indekslarni qayta xaritlash
@@ -523,7 +604,7 @@
 
   // ── Question ops ──
   function addQuestion() {
-    const q = { id: nextId(), type: 'single_choice', text: '', options: ['', '', '', ''], correct: 0, correctMulti: [], explanation: '', tags: [], timing: DEFAULT_QUESTION_TIME };
+    const q = { id: nextId(), type: 'single_choice', text: '', options: ['', '', '', ''], correct: 0, correctMulti: [], pairs: [], explanation: '', tags: [], timing: DEFAULT_QUESTION_TIME };
     state.questions.push(q);
     state.activeId = q.id;
     markDirty();
@@ -627,13 +708,13 @@
   const previewBtn = $('#tb-preview-btn');
   if (previewBtn) {
     previewBtn.addEventListener('click', async () => {
-      if (!state.questions.length) { showToast && showToast(T('noFirstQuestion', "Avval savol qo'shing"), 'err'); return; }
+      if (!state.questions.length) { toastErr(T('noFirstQuestion', "Avval savol qo'shing")); return; }
       /* S34o: Ko'rish = YAKKA MASHQ (arena emas). Saqlanmagan bo'lsa avval saqlaymiz. */
       if (state.dirty || !init.editKey) {
         previewBtn.disabled = true;
         await scheduleSave();
         previewBtn.disabled = false;
-        if (!init.editKey) { showToast && showToast(T('statusSaveErr', 'Saqlashda xato'), 'err'); return; }
+        if (!init.editKey) { toastErr(T('statusSaveErr', 'Saqlashda xato')); return; }
       }
       window.location.href = '/user/practice?source=user&key=' + encodeURIComponent(init.editKey);
     });
@@ -812,7 +893,7 @@
   }
 
   function downloadTemplate() {
-    if (typeof XLSX === 'undefined') { showToast && showToast(T('impXlsxShort', 'XLSX kutubxonasi yuklanmadi'), 'err'); return; }
+    if (typeof XLSX === 'undefined') { toastErr(T('impXlsxShort', 'XLSX kutubxonasi yuklanmadi')); return; }
     const wb = XLSX.utils.book_new();
     const tplHead = T('impSheetHeader', ['Savol', 'Variant A', 'Variant B', 'Variant C', 'Variant D', "To'g'ri javob (0-3)", 'Izoh (ixtiyoriy)']);
     const samples = T('impSamples', [

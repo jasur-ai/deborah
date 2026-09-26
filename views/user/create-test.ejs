@@ -125,11 +125,12 @@
       name: <%- JSON.stringify((testData ? (testData.name || '') : '').replace(/</g, '\\u003c')) %>,
       questions: <%- JSON.stringify(testData && Array.isArray(testData.questions)
         ? testData.questions.map(q => ({
-            type: ['single_choice', 'true_false', 'multiple_select', 'short_answer', 'exit_ticket'].includes(q.type) ? q.type : 'single_choice',
+            type: ['single_choice', 'true_false', 'multiple_select', 'short_answer', 'exit_ticket', 'match', 'reorder'].includes(q.type) ? q.type : 'single_choice',
             text: q.text || '',
             options: Array.isArray(q.options) ? q.options.map(String) : [],
             correct: typeof q.correct === 'number' ? q.correct : 0,
             correctMulti: Array.isArray(q.correctMulti) ? q.correctMulti : [],
+            pairs: Array.isArray(q.pairs) ? q.pairs.slice(0, 6).map(p => ({ l: String(p && p.l || ''), r: String(p && p.r || '') })) : [],
             explanation: q.explanation || '',
             tags: Array.isArray(q.tags) ? q.tags : (q.tag ? [q.tag] : []),
             timing: q.timing || 0,

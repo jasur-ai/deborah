@@ -407,7 +407,7 @@ router.post('/api/tests/save', async (req, res) => {
       name: name.trim(),
       questions: questions.map((q) => {
         const qOpts = (q.options || []).map(o => String(o || ''));
-        const qType = ['single_choice', 'true_false', 'multiple_select', 'short_answer', 'exit_ticket'].includes(q.type) ? q.type : 'single_choice';
+        const qType = ['single_choice', 'true_false', 'multiple_select', 'short_answer', 'exit_ticket', 'match', 'reorder'].includes(q.type) ? q.type : 'single_choice';
         // BUG-095: correct indeks int + [0..options-1] oralig'ida (999/-1/1.5 kelib qolmasin)
         let qCorrect = Math.max(0, Math.min(
           Number.isFinite(+q?.correct) ? Math.floor(+q.correct) : 0,
@@ -419,11 +419,16 @@ router.post('/api/tests/save', async (req, res) => {
           : [];
         // Eski o'quvchilar (cast/single) uchun correct multi ichidan bo'lsin
         if (qType === 'multiple_select' && qCorrectMulti.length && !qCorrectMulti.includes(qCorrect)) qCorrect = qCorrectMulti[0];
+        // 09/2026 (Faza 1b): match juftliklari
+        const qPairs = Array.isArray(q?.pairs)
+          ? q.pairs.map((p) => ({ l: String(p?.l || '').slice(0, 300), r: String(p?.r || '').slice(0, 300) })).filter((p) => p.l.trim() && p.r.trim()).slice(0, 6)
+          : [];
         return {
           text: q.text || '',
           options: qOpts,
           correct: qCorrect,
           correctMulti: qCorrectMulti,
+          pairs: qPairs,
           // S27: Test Builder draft maydonlari
           type: qType,
           explanation: typeof q.explanation === 'string' ? q.explanation : '',
@@ -857,7 +862,11 @@ function practiceOptionMeta(q) {
   }
   if (!correctMulti.length && correctIdx >= 0) correctMulti = [correctIdx];
   const shortAnswer = String(opts[0] ?? '');
-  return { texts, correctIdx, correctMulti, shortAnswer };
+  // 09/2026 (Faza 1b): match juftliklari
+  const pairs = Array.isArray(q?.pairs)
+    ? q.pairs.map((p) => ({ l: String(p?.l || '').slice(0, 300), r: String(p?.r || '').slice(0, 300) })).filter((p) => p.l.trim() && p.r.trim()).slice(0, 6)
+    : [];
+  return { texts, correctIdx, correctMulti, shortAnswer, pairs };
 }
 
 /** Qisqa javob normalizatsiya — CLIENT (practice.ejs normShort) bilan aynan bir xil. */
@@ -872,6 +881,23 @@ function normalizeShortAnswer(s) {
 /** Qisqa javob xeshi (javob matni clientga tushmasligi uchun). */
 function shortAnswerHash(normalized) {
   return crypto.createHash('sha256').update('deborah-short-v1|' + normalized, 'utf8').digest('hex');
+}
+
+/** 09/2026 (Faza 1b): tartib/moslashtirish xeshleri (darhol tekshirish uchun). */
+function orderHash(arr) {
+  return crypto.createHash('sha256').update('deborah-order-v1|' + JSON.stringify(arr), 'utf8').digest('hex');
+}
+function matchHash(arr) {
+  return crypto.createHash('sha256').update('deborah-match-v1|' + JSON.stringify(arr), 'utf8').digest('hex');
+}
+/** Massivni aralashtirish (Fisher–Yates). */
+function shuffled(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
 }
 
 async function loadPracticeQuestions(req, res) {
@@ -935,7 +961,7 @@ router.get('/practice', async (req, res) => {
   if (loaded.err) return;
   const qs = (loaded.questions || []).map((q, i) => {
     const meta = practiceOptionMeta(q);
-    const qType = ['single_choice', 'true_false', 'multiple_select', 'short_answer', 'exit_ticket'].includes(q?.type) ? q.type : 'single_choice';
+    const qType = ['single_choice', 'true_false', 'multiple_select', 'short_answer', 'exit_ticket', 'match', 'reorder'].includes(q?.type) ? q.type : 'single_choice';
     const item = {
       id: i,
       text: String(q?.text || ''),
@@ -960,8 +986,27 @@ router.get('/practice', async (req, res) => {
         .slice(0, 5)
         .map(shortAnswerHash);
     }
+    // 09/2026 (Faza 1b): reorder — aralashtirilgan ro'yxat + xesh (tartib maxfiy)
+    if (qType === 'reorder') {
+      const rtexts = meta.texts.filter((t) => String(t).trim()).slice(0, 6);
+      if (rtexts.length < 2) { item._drop = true; return item; }
+      item.options = [];
+      item.correct = -1;
+      item.items = shuffled(rtexts);
+      item.orderHash = orderHash(rtexts);
+    }
+    // 09/2026 (Faza 1b): match — chap ustun + aralashtirilgan o'ng + xesh
+    if (qType === 'match') {
+      if (meta.pairs.length < 2) { item._drop = true; return item; }
+      item.options = [];
+      item.correct = -1;
+      item.lefts = meta.pairs.map((p) => p.l);
+      item.rights = shuffled(meta.pairs.map((p) => p.r));
+      item.matchHash = matchHash(meta.pairs.map((p) => p.r));
+    }
     return item;
-  }).filter((q) => q.text && (q.type === 'short_answer' || q.options.length >= 2));
+  }).filter((q) => q.text && !q._drop && (['short_answer', 'match', 'reorder'].includes(q.type) || q.options.length >= 2))
+    .map((q) => { delete q._drop; return q; });
   if (!qs.length) return res.status(404).render('error', { title: '404', message: 'Savollar topilmadi', status: 404 });
 
   // Practice i18n: 4 til (uz/uz-cyrl/ru/en) — data/practice-i18n.js
@@ -1053,7 +1098,7 @@ router.post('/api/practice/grade', async (req, res) => {
   (loaded.questions || []).forEach((q, i) => {
     if (subset && !subset.includes(i)) return; // faqat xato savollar
     const meta = practiceOptionMeta(q);
-    const qType = ['single_choice', 'true_false', 'multiple_select', 'short_answer', 'exit_ticket'].includes(q?.type) ? q.type : 'single_choice';
+    const qType = ['single_choice', 'true_false', 'multiple_select', 'short_answer', 'exit_ticket', 'match', 'reorder'].includes(q?.type) ? q.type : 'single_choice';
     const correctIdx = Math.max(0, meta.correctIdx);
     const raw = answers[i];
     const row = {
@@ -1081,6 +1126,21 @@ router.post('/api/practice/grade', async (req, res) => {
       const alts = String(meta.shortAnswer || '').split('|').map((a) => normalizeShortAnswer(a)).filter(Boolean);
       isCorrect = norm.length > 0 && alts.includes(norm);
       row.correctText = String(meta.shortAnswer || '').split('|')[0].slice(0, 300);
+    } else if (qType === 'reorder') {
+      // 09/2026 (Faza 1b): tartib aynan mos kelishi shart
+      const givenArr = Array.isArray(raw) ? raw.map((s) => String(s).slice(0, 300)).slice(0, 6) : [];
+      given = givenArr;
+      const exp = meta.texts.filter((t) => String(t).trim()).slice(0, 6);
+      isCorrect = givenArr.length === exp.length && exp.length >= 2 && givenArr.every((v, idx) => v === exp[idx]);
+      row.correctOrder = exp;
+    } else if (qType === 'match') {
+      // 09/2026 (Faza 1b): har bir chap elementga to'g'ri o'ng mos kelishi shart
+      const givenArr = Array.isArray(raw) ? raw.map((s) => String(s).slice(0, 300)).slice(0, 6) : [];
+      given = givenArr;
+      const exp = meta.pairs.map((p) => p.r);
+      isCorrect = givenArr.length === exp.length && exp.length >= 2 && givenArr.every((v, idx) => v === exp[idx]);
+      row.correctMap = exp;
+      row.lefts = meta.pairs.map((p) => p.l);
     } else {
       given = Number.isInteger(raw) ? raw : -1;
       isCorrect = given === correctIdx;
@@ -1159,6 +1219,6 @@ router.post('/api/practice/grade', async (req, res) => {
 });
 
 // 09/2026 (Faza 1): unit testlar uchun sof funksiyalar
-export { practiceOptionMeta, normalizeShortAnswer, shortAnswerHash };
+export { practiceOptionMeta, normalizeShortAnswer, shortAnswerHash, orderHash, matchHash };
 
 export default router;

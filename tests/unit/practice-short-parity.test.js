@@ -8,7 +8,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'fs';
 import { createHash } from 'crypto';
-import { practiceOptionMeta, normalizeShortAnswer, shortAnswerHash } from '../../routes/user.js';
+import { practiceOptionMeta, normalizeShortAnswer, shortAnswerHash, orderHash, matchHash } from '../../routes/user.js';
 
 describe('practice short_answer parity', () => {
   it('normalizes: trim + lowercase + space collapse', () => {
@@ -55,5 +55,51 @@ describe('practiceOptionMeta (Faza 1)', () => {
     const m = practiceOptionMeta({ options: ['a', 'b'], correct: 1 });
     expect(m.correctIdx).toBe(1);
     expect(m.correctMulti).toEqual([1]);
+  });
+});
+
+/**
+ * Deborah — Faza 1b: reorder/match server/client parity.
+ * Darhol tekshirish ketma-ketlik xeshiga tayanadi — salt + JSON.stringify
+ * ikkala tomonda aynan bir xil bo'lishi shart.
+ */
+describe('practice reorder/match parity', () => {
+  it('orderHash = sha256("deborah-order-v1|" + JSON.stringify(seq))', () => {
+    const seq = ['bir', 'ikki', 'uch'];
+    const expected = createHash('sha256').update('deborah-order-v1|' + JSON.stringify(seq), 'utf8').digest('hex');
+    expect(orderHash(seq)).toBe(expected);
+    expect(orderHash(seq)).toHaveLength(64);
+  });
+
+  it('matchHash = sha256("deborah-match-v1|" + JSON.stringify(rights))', () => {
+    const rights = ['4', '9', '16'];
+    const expected = createHash('sha256').update('deborah-match-v1|' + JSON.stringify(rights), 'utf8').digest('hex');
+    expect(matchHash(rights)).toBe(expected);
+    expect(matchHash(rights)).toHaveLength(64);
+  });
+
+  it('order matters: swapped sequence → different hash', () => {
+    expect(orderHash(['a', 'b'])).not.toBe(orderHash(['b', 'a']));
+    expect(matchHash(['x', 'y'])).not.toBe(matchHash(['y', 'x']));
+  });
+
+  it('practice.ejs client uses the same salts + JSON.stringify', () => {
+    const ejs = readFileSync(new URL('../../views/user/practice.ejs', import.meta.url), 'utf8');
+    expect(ejs).toContain('deborah-order-v1|');
+    expect(ejs).toContain('deborah-match-v1|');
+    expect(ejs).toContain('JSON.stringify(seq)');
+  });
+
+  it('practiceOptionMeta: match pairs sanitize (faqat to‘liq juftliklar)', () => {
+    const m = practiceOptionMeta({
+      type: 'match',
+      pairs: [{ l: '2+2', r: '4' }, { l: 'yarmi', r: '' }, { l: '', r: 'x' }, { l: '3+3', r: '6' }],
+    });
+    expect(m.pairs).toEqual([{ l: '2+2', r: '4' }, { l: '3+3', r: '6' }]);
+  });
+
+  it('practiceOptionMeta: reorder texts passthrough (bo‘shlar bilan)', () => {
+    const m = practiceOptionMeta({ type: 'reorder', options: ['a', '', 'b'] });
+    expect(m.texts).toEqual(['a', '', 'b']);
   });
 });
