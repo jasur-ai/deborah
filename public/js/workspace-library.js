@@ -279,17 +279,22 @@
       if (act === 'export') { window.location.href = '/user/api/tests/export?key=' + encodeURIComponent(key); return; }
       if (act === 'delete') {
         // S26.04: object-named danger confirm (i18n)
+        // 09/2026 fix: `await f && f()` ustuvorlik xatosi confirm'ni chetlab o'tardi
+        // (Promise truthy → darhol o'chirish); + CSRF header yo'qligi 403 berardi
         const name = item.dataset.name || 'test';
-        const ok = await window.showConfirm && window.showConfirm(
-          L('act.delTitle', 'Testni o\'chirish'),
-          L('act.delMsg', '«{name}» testi butunlay o\'chiriladi. Bu amalni ortga qaytarib bo\'lmaydi.').split('{name}').join(name),
-          L('act.delCta', 'O\'chirish'),
-          L('ui.cancel', 'Bekor')
-        );
+        const delMsg = L('act.delMsg', '«{name}» testi butunlay o\'chiriladi. Bu amalni ortga qaytarib bo\'lmaydi.').split('{name}').join(name);
+        const ok = (typeof window.showConfirm === 'function')
+          ? await window.showConfirm(
+            L('act.delTitle', 'Testni o\'chirish'),
+            delMsg,
+            L('act.delCta', 'O\'chirish'),
+            L('ui.cancel', 'Bekor')
+          )
+          : confirm(delMsg);
         if (!ok) return;
         const res = await fetch('/user/api/tests/delete', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': window.__CSRF_TOKEN || '' },
           body: JSON.stringify({ key }),
         });
         const data = await res.json();

@@ -434,6 +434,15 @@
     mo.observe(document.documentElement, { childList: true, subtree: true });
     setTimeout(function () { mo.disconnect(); }, 30000);
   } catch (_) {}
+  // 09/2026 fix: test 30 soniyadan ko'p davom etsa observer o'lgan bo'ladi va
+  // «AI tahlil» tugmasi ishlamay qolardi — delegation har doim ishlaydi
+  document.addEventListener('click', function (e) {
+    var b = e.target && e.target.closest ? e.target.closest('#pr-ai-analysis') : null;
+    if (!b || b.dataset.aiMounted) return;
+    var res = window.__PR_RESULT__;
+    if (!res) return;
+    openAnalysisPanel(res);
+  });
 
   // tashqi API (kelajakda boshqa sahifalar uchun)
   window.DeborahAI = { openGenerateModal: openGenerateModal, openAnalysisPanel: openAnalysisPanel, mode: AI_MODE };
