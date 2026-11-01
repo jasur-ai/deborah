@@ -6,34 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %> — Deborah Admin</title>
   <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/admin.css?v=nv4">
-  <link rel="stylesheet" href="/design/admin-command.css">
+  <link rel="stylesheet" href="/css/admin.css?v=nv6">
+  <link rel="stylesheet" href="/design/admin-command.css?v=admin-shell-20261101-r2">
   <%- include('../partials/critical-mobile-css') %>
 </head>
 <body class="adm-body">
-  <div class="adm-shell">
-    <aside class="adm-sidebar">
-      <div class="adm-brand">
-        <img src="/images/logo-vintage.png" alt="Deborah" class="logo-img" style="height:34px;width:auto">
-        <span>Deborah</span>
-      </div>
-      <nav class="adm-nav">
-        <a href="/admin/dashboard">Dashboard</a>
-        <a href="/admin/users">Users</a>
-        <a href="/admin/provider">Provider Adapters</a>
-        <a href="/admin/canva">Canva</a>
-        <a href="/admin/google-slides">Google Slides</a>
-        <a href="/admin/deck-export" class="active">Deck Export</a>
-        <a href="/admin/quiz-deck">Quiz from Deck</a>
-        <a href="/admin/claude">Claude Adapter</a>
-        <a href="/admin/vip">VIP</a>
-      </nav>
-      <div class="adm-side-foot">
-        <a href="/admin/logout">Chiqish</a>
-      </div>
-    </aside>
-
-    <main class="adm-main">
+  <%- include('../partials/sidebar', { role: 'admin', active: '/admin/deck-export', path: '/admin/deck-export', query: {} }) %>
+<main class="adm-main" id="main-content">
       <header class="adm-topbar">
         <h1>Deck Export</h1>
         <span class="adm-chip" id="exportStatus">Tayyor</span>
@@ -69,7 +48,6 @@
         </div>
       </section>
     </main>
-  </div>
 
 <script>
 (function () {

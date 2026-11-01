@@ -2,9 +2,11 @@
 <html lang="uz" dir="ltr" data-theme="dark">
 <head>
   <%- include('../partials/head', { title, user }) %>
+  <link rel="stylesheet" href="/css/admin.css?v=nv6">
   <style>
-    .rr-grid { display: grid; grid-template-columns: 300px 1fr; gap: 18px; }
-    .rr-panel { background: var(--deborah-semantic-color-surface-raised); border: 1px solid var(--deborah-semantic-color-border-default); border-radius: 12px; padding: 16px; }
+    .rr-grid { display: grid; grid-template-columns: minmax(260px, 300px) minmax(0, 1fr); gap: 18px; min-width: 0; }
+    .rr-grid > * { min-width: 0; }
+    .rr-panel { min-width: 0; max-width: 100%; box-sizing: border-box; background: var(--deborah-semantic-color-surface-raised); border: 1px solid var(--deborah-semantic-color-border-default); border-radius: 12px; padding: 16px; }
     .rr-panel h3 { margin: 0 0 12px; font-size: 14px; letter-spacing: .04em; color: var(--deborah-semantic-color-text-muted); text-transform: uppercase; }
     .field { margin-bottom: 12px; }
     .field label { display: block; font-size: 12px; color: var(--deborah-semantic-color-text-muted); margin-bottom: 4px; }
@@ -40,13 +42,19 @@
     table.rr-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     table.rr-table th, table.rr-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--deborah-semantic-color-border-default); }
     table.rr-table th { color: var(--deborah-semantic-color-text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
-    @media (max-width: 960px) { .rr-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 960px) { .rr-grid { grid-template-columns: minmax(0, 1fr); } }
+    @media (max-width: 640px) {
+      .rr-grid { width: 100%; max-width: 100%; }
+      .rr-panel { padding: 14px; }
+      .rr-panel table.rr-table { display: block; width: 100%; max-width: 100%; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+    }
   </style>
-  <link rel="stylesheet" href="/design/admin-command.css">
+  <link rel="stylesheet" href="/design/admin-command.css?v=admin-shell-20261101-r2">
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Asosiy kontentga o‘tish</a>
   <%- include('../partials/sidebar', { active: 'resource-reco', user }) %>
-  <main class="main">
+  <main class="main" id="main-content">
     <div class="topbar">
       <h1>Resource Recommendations</h1>
       <div class="topbar-right">

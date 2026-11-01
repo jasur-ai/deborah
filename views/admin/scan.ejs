@@ -51,19 +51,23 @@
     .chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
     .empty{text-align:center;color:var(--deborah-semantic-color-text-muted);padding:22px 0;font-size:.8rem;font-weight:700;}
   </style>
-  <link rel="stylesheet" href="/design/admin-command.css">
+  <link rel="stylesheet" href="/design/admin-command.css?v=admin-shell-20261101-r2">
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Asosiy kontentga o‘tish</a>
   <nav class="navbar">
-    <a href="/admin" class="nav-logo">Deborah Admin</a>
+    <button type="button" class="admin-nav-hamburger admin-sidebar-menu-trigger" aria-label="Admin menyusini ochish" aria-expanded="false" aria-controls="admin-sidebar"><span></span><span></span><span></span></button>
+    <a href="/admin/dashboard" class="nav-logo">Deborah Admin</a>
+      <a href="/admin/index" class="nav-logo" title="Barcha admin funksiyalari">Funksiyalar</a>
     <div class="nav-right">
       <a href="/admin/dashboard" class="nav-btn">Dashboard</a>
       <a href="/admin/paper" class="nav-btn">Paper</a>
       <a href="/admin/logout" class="nav-btn">Chiqish</a>
     </div>
   </nav>
+  <%- include('../partials/admin-sidebar', { activePath: '/admin/scan', activeTab: '', legacyShell: true }) %>
 
-  <main class="panel">
+  <main class="panel" id="main-content">
     <h1 class="greeting">Scan & Reconciliation</h1>
     <p class="greeting-sub">Skанирован paper sahifalarni silent loss'siz reconcile qilish — OMR/OCR + manual queue (research §52.5)</p>
 
@@ -230,7 +234,7 @@
           qrToken: $('qrToken').value || null,
           meta: JSON.parse($('metaJson').value || '{}'),
         });
-        showMsg('Sahifa qo'shildi: pageStatus=' + r.pageStatus + ' qrStatus=' + r.qrStatus + (r.idempotent ? ' (idempotent)' : ''), true);
+        showMsg("Sahifa qo'shildi: pageStatus=" + r.pageStatus + " qrStatus=" + r.qrStatus + (r.idempotent ? ' (idempotent)' : ''), true);
       } catch (e) { showMsg(e.message, false); }
     }
 
@@ -238,7 +242,7 @@
       try {
         const d = await api('/api/admin/scan/batches/' + Number($('queueBatchId').value) + '/queue');
         const list = $('queueList');
-        if (!d.tickets.length) { list.innerHTML = '<div class="empty">Queue bo'sh ✅</div>'; return; }
+        if (!d.tickets.length) { list.innerHTML = "<div class=\"empty\">Queue bo'sh ✅</div>"; return; }
         list.innerHTML = '<table><tr><th>ID</th><th>Kind</th><th>Packet</th><th>Page</th><th>Status</th><th>Action</th></tr>' +
           d.tickets.map((t) => `<tr>
             <td>${t.id}</td><td>${t.kind}</td><td class="mono">${t.packet_id || '—'}</td><td>${t.page_index ?? '—'}</td>
@@ -261,7 +265,7 @@
       try {
         const marks = JSON.parse($('omrMarks').value || '[]');
         const r = await api('/api/admin/scan/batches/' + Number($('aiBatchId').value) + '/omr', 'POST', { marks });
-        showMsg('OMR: ' + r.ingested + ' mark qo'shildi', true);
+        showMsg('OMR: ' + r.ingested + " mark qo'shildi", true);
       } catch (e) { showMsg(e.message, false); }
     }
 

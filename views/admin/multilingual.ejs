@@ -6,34 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %> — Deborah Admin</title>
   <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/admin.css?v=nv4">
-  <link rel="stylesheet" href="/design/admin-command.css">
+  <link rel="stylesheet" href="/css/admin.css?v=nv6">
+  <link rel="stylesheet" href="/design/admin-command.css?v=admin-shell-20261101-r2">
   <%- include('../partials/critical-mobile-css') %>
 </head>
 <body class="adm-body">
-  <div class="adm-shell">
-    <aside class="adm-sidebar">
-      <div class="adm-brand">
-        <img src="/images/logo-vintage.png" alt="Deborah" class="logo-img" style="height:34px;width:auto">
-        <span>Deborah</span>
-      </div>
-      <nav class="adm-nav">
-        <a href="/admin/dashboard">Dashboard</a>
-        <a href="/admin/multilingual" class="active">Multilingual</a>
-        <a href="/admin/program-quality">Program Quality</a>
-        <a href="/admin/credentials">Credentials</a>
-        <a href="/admin/ai-checkpoint">AI Checkpoint</a>
-        <a href="/admin/ai-grading">AI Grading</a>
-        <a href="/admin/ai-mlops">AI MLOps</a>
-        <a href="/admin/source-pack">Source Packs</a>
-        <a href="/admin/vip">VIP</a>
-      </nav>
-      <div class="adm-side-foot">
-        <a href="/admin/logout">Chiqish</a>
-      </div>
-    </aside>
-
-    <main class="adm-main">
+  <%- include('../partials/sidebar', { role: 'admin', active: '/admin/multilingual', path: '/admin/multilingual', query: {} }) %>
+<main class="adm-main" id="main-content">
       <header class="adm-topbar">
         <h1>Uzbek Latin/Cyrillic & Terminology</h1>
         <span class="adm-chip" id="mStatus">Yuklanmoqda…</span>
@@ -164,7 +143,6 @@
         </div>
       </section>
     </main>
-  </div>
 
 <script>
 (function () {

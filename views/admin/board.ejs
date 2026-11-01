@@ -56,11 +56,14 @@
     .ledger{font-family:'JetBrains Mono',monospace;font-size:.7rem;line-height:1.7;}
     .ledger b{color:var(--deborah-semantic-color-action-primary);}
   </style>
-  <link rel="stylesheet" href="/design/admin-command.css">
+  <link rel="stylesheet" href="/design/admin-command.css?v=admin-shell-20261101-r2">
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Asosiy kontentga o‘tish</a>
   <nav class="navbar">
-    <a href="/admin" class="nav-logo">Deborah Admin</a>
+    <button type="button" class="admin-nav-hamburger admin-sidebar-menu-trigger" aria-label="Admin menyusini ochish" aria-expanded="false" aria-controls="admin-sidebar"><span></span><span></span><span></span></button>
+    <a href="/admin/dashboard" class="nav-logo">Deborah Admin</a>
+      <a href="/admin/index" class="nav-logo" title="Barcha admin funksiyalari">Funksiyalar</a>
     <div class="nav-right">
       <a href="/admin/dashboard" class="nav-btn">Dashboard</a>
       <a href="/admin/grading" class="nav-btn">Grading</a>
@@ -68,8 +71,9 @@
       <a href="/admin/logout" class="nav-btn">Chiqish</a>
     </div>
   </nav>
+  <%- include('../partials/admin-sidebar', { activePath: '/admin/board', activeTab: '', legacyShell: true }) %>
 
-  <div class="panel">
+  <div class="panel" id="main-content">
     <h1 class="greeting">Board &amp; Ratification</h1>
     <p class="greeting-sub">Provisional → ratified final (immutable), release va append-only grade ledger</p>
 

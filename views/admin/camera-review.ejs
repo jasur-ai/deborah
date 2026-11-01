@@ -55,18 +55,22 @@
     @keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
     @media(max-width:600px){.panel{padding:16px 12px 60px;}.toolbar{flex-direction:column;align-items:stretch;}}
   </style>
-  <link rel="stylesheet" href="/design/admin-command.css">
+  <link rel="stylesheet" href="/design/admin-command.css?v=admin-shell-20261101-r2">
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Asosiy kontentga o‘tish</a>
   <nav class="navbar">
+    <button type="button" class="admin-nav-hamburger admin-sidebar-menu-trigger" aria-label="Admin menyusini ochish" aria-expanded="false" aria-controls="admin-sidebar"><span></span><span></span><span></span></button>
     <a href="/" class="nav-logo"><img src="/images/logo-vintage.png" alt="Deborah" class="logo-img" style="height:34px;width:auto"></a>
     <div class="nav-right">
       <a href="/admin/dashboard" class="nav-btn" style="text-decoration:none"><%- icon('shield', 14) %> Dashboard</a>
+      <a href="/admin/index" class="nav-btn" title="Barcha admin funksiyalari">Funksiyalar</a>
       <button type="button" class="nav-btn" data-theme-toggle title="Light mode"><%- icon('moon', 16) %></button>
     </div>
   </nav>
+  <%- include('../partials/admin-sidebar', { activePath: '/admin/camera-review', activeTab: '', legacyShell: true }) %>
 
-  <div class="panel">
+  <div class="panel" id="main-content">
     <div class="greeting"><%- icon('eye', 22) %> Kamera evidence review</div>
     <div class="greeting-sub">Human review — qarorlar faqat inson tomonidan qabul qilinadi, avtomatik misconduct yo‘q</div>
 

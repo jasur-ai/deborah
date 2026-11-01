@@ -54,11 +54,14 @@
     .mini-stat b{display:block;font-family:''Manrope'',cursive;font-size:1.25rem;color:var(--deborah-semantic-color-action-primary);}
     .mini-stat span{font-size:.66rem;font-weight:700;color:var(--deborah-semantic-color-text-muted);text-transform:uppercase;letter-spacing:.4px;}
   </style>
-  <link rel="stylesheet" href="/design/admin-command.css">
+  <link rel="stylesheet" href="/design/admin-command.css?v=admin-shell-20261101-r2">
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Asosiy kontentga o‘tish</a>
   <nav class="navbar">
-    <a href="/admin" class="nav-logo">Deborah Admin</a>
+    <button type="button" class="admin-nav-hamburger admin-sidebar-menu-trigger" aria-label="Admin menyusini ochish" aria-expanded="false" aria-controls="admin-sidebar"><span></span><span></span><span></span></button>
+    <a href="/admin/dashboard" class="nav-logo">Deborah Admin</a>
+      <a href="/admin/index" class="nav-logo" title="Barcha admin funksiyalari">Funksiyalar</a>
     <div class="nav-right">
       <a href="/admin/dashboard" class="nav-btn">Dashboard</a>
       <a href="/admin/grading" class="nav-btn">Grading</a>
@@ -66,8 +69,9 @@
       <a href="/admin/logout" class="nav-btn">Chiqish</a>
     </div>
   </nav>
+  <%- include('../partials/admin-sidebar', { activePath: '/admin/marking', activeTab: '', legacyShell: true }) %>
 
-  <div class="panel">
+  <div class="panel" id="main-content">
     <h1 class="greeting">Marking &amp; Moderation</h1>
     <p class="greeting-sub">Pseudonimli taqsimlash, kalibratsiya va kelishmovchilik moderatsiyasi</p>
 

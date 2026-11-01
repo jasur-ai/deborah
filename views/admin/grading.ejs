@@ -49,19 +49,23 @@
     .empty{text-align:center;color:var(--deborah-semantic-color-text-muted);padding:22px 0;font-size:.8rem;font-weight:700;}
     .pre{background:var(--deborah-semantic-color-surface-input);border:1px solid var(--deborah-semantic-color-border-default);border-radius:10px;padding:10px 12px;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--deborah-semantic-color-text-muted);white-space:pre-wrap;margin-top:8px;}
   </style>
-  <link rel="stylesheet" href="/design/admin-command.css">
+  <link rel="stylesheet" href="/design/admin-command.css?v=admin-shell-20261101-r2">
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Asosiy kontentga o‘tish</a>
   <nav class="navbar">
-    <a href="/admin" class="nav-logo">Deborah Admin</a>
+    <button type="button" class="admin-nav-hamburger admin-sidebar-menu-trigger" aria-label="Admin menyusini ochish" aria-expanded="false" aria-controls="admin-sidebar"><span></span><span></span><span></span></button>
+    <a href="/admin/dashboard" class="nav-logo">Deborah Admin</a>
+      <a href="/admin/index" class="nav-logo" title="Barcha admin funksiyalari">Funksiyalar</a>
     <div class="nav-right">
       <a href="/admin/dashboard" class="nav-btn">Dashboard</a>
       <a href="/admin/safe-submit" class="nav-btn">Safe Submit</a>
       <a href="/admin/logout" class="nav-btn">Chiqish</a>
     </div>
   </nav>
+  <%- include('../partials/admin-sidebar', { activePath: '/admin/grading', activeTab: '', legacyShell: true }) %>
 
-  <main class="panel">
+  <main class="panel" id="main-content">
     <h1 class="greeting">Grade Rules</h1>
     <p class="greeting-sub">Weighted, hurdle, late, exempt, resit va rounding qoidalari — versionlangan DSL, deterministik hisoblash (research §18, §72)</p>
 

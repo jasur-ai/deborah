@@ -2,6 +2,7 @@
 <html lang="uz" dir="ltr" data-theme="dark">
 <head>
   <%- include('../partials/head', { title, user }) %>
+  <link rel="stylesheet" href="/css/admin.css?v=nv6">
   <style>
     .pr-grid { display: grid; grid-template-columns: 320px 1fr; gap: 18px; }
     .pr-panel { background: var(--deborah-semantic-color-surface-raised); border: 1px solid var(--deborah-semantic-color-border-default); border-radius: 12px; padding: 16px; }
@@ -37,7 +38,7 @@
     .deck-preview { background: var(--deborah-semantic-color-surface-raised); border: 1px solid var(--deborah-semantic-color-border-default); border-radius: 10px; padding: 18px; min-height: 140px; }
     @media (max-width: 960px) { .pr-grid { grid-template-columns: 1fr; } }
   </style>
-  <link rel="stylesheet" href="/design/admin-command.css">
+  <link rel="stylesheet" href="/design/admin-command.css?v=admin-shell-20261101-r2">
 </head>
 <body>
   <%- include('../partials/sidebar', { active: 'presentations', user }) %>

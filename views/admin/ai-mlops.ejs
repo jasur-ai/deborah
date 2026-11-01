@@ -2,6 +2,7 @@
 <html lang="uz" dir="ltr" data-theme="dark">
 <head>
   <%- include('../partials/head', { title, user }) %>
+  <link rel="stylesheet" href="/css/admin.css?v=nv6">
   <style>
     .ml-grid { display: grid; grid-template-columns: 320px 1fr; gap: 18px; }
     .ml-panel { background: var(--deborah-semantic-color-surface-raised); border: 1px solid var(--deborah-semantic-color-border-default); border-radius: 12px; padding: 16px; }
@@ -46,7 +47,7 @@
     .checks .no { color: #f87171; }
     @media (max-width: 960px) { .ml-grid { grid-template-columns: 1fr; } }
   </style>
-  <link rel="stylesheet" href="/design/admin-command.css">
+  <link rel="stylesheet" href="/design/admin-command.css?v=admin-shell-20261101-r2">
 </head>
 <body>
   <%- include('../partials/sidebar', { active: 'ai-mlops', user }) %>

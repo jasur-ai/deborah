@@ -58,6 +58,7 @@ import hemisRoutes from './routes/hemis.js';
 import externalIntegrationRoutes from './routes/external-integration.js';
 import aiGenerateRoutes from './routes/ai-generate.js'; // REAL AI (Gemini)
 import profileRoutes from './routes/profile.js'; // "Profilim" — hamma rollar uchun
+import { ADMIN_SIDEBAR_GROUPS } from './data/admin-navigation.js';
 import emailWebhookRoutes from './routes/email-webhook.js'; // E-07/D-32 email budget webhook
 import passkeyRoutes from './routes/passkey.js'; // E-05 passkey (WebAuthn)
 import pushRoutes from './routes/push.js'; // E-03 push bildirishnomalar (FCM/VAPID)
@@ -376,6 +377,11 @@ export async function createApp() {
 
   // ── Locals for EJS views ──
   app.use(setLocals);
+  // Admin pages outside routes/admin.js also share the same navigation source.
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/admin')) res.locals.adminSidebarGroups = ADMIN_SIDEBAR_GROUPS;
+    next();
+  });
 
   // ── Static files ──
   app.use(express.static(join(__dirname, 'public'), {

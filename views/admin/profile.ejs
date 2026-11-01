@@ -4,7 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %> — Deborah Admin</title>
-  <link rel="stylesheet" href="/css/admin.css?v=nv4">
+  <link rel="stylesheet" href="/design/foundations/typography.css">
+  <link rel="stylesheet" href="/design/foundations/reset.css">
+  <link rel="stylesheet" href="/design/foundations/utilities.css">
+  <link rel="stylesheet" href="/css/admin.css?v=nv6">
     <style>
     .key-warn-note{color:#6ee7b7;font-size:.74rem}
     #reauthBox{background:rgba(3,5,14,.7);backdrop-filter:blur(6px)}
@@ -85,16 +88,21 @@
 .pw-toggle{position:absolute;right:4px;top:50%;transform:translateY(-50%);min-width:44px;min-height:44px;border:0;background:transparent;cursor:pointer;font-size:1.05rem;line-height:1;color:inherit;opacity:.7;border-radius:10px}
 .pw-toggle:hover{opacity:1}
 </style>
+  <link rel="stylesheet" href="/design/admin-command.css?v=admin-shell-20261101-r2">
   <%- include('../partials/critical-mobile-css') %>
 </head>
 <body>
+  <a href="#main" class="skip-link">Asosiy kontentga o‘tish</a>
   <%
     const fmt = (ts) => ts ? new Date(ts).toLocaleString('uz-UZ') : '—';
   %>
   <div class="topbar">
+    <button type="button" class="admin-nav-hamburger admin-sidebar-menu-trigger" aria-label="Admin menyusini ochish" aria-expanded="false" aria-controls="admin-sidebar"><span></span><span></span><span></span></button>
     <span class="brand">◈ Deborah — Admin Profili</span>
     <a href="/admin/dashboard">← Panelga qaytish</a>
+      <a href="/admin/index" title="Barcha admin funksiyalari">Funksiyalar</a>
   </div>
+  <%- include('../partials/admin-sidebar', { activePath: '/admin/profile', activeTab: '', legacyShell: true }) %>
   <main class="pf" id="main">
     <div class="pf-head">
       <div class="pf-avatar"><%= (profile.username || 'A').charAt(0).toUpperCase() %></div>
@@ -106,11 +114,11 @@
 
     <div class="pf-tabs" role="tablist">
       <button class="pf-tab on" data-pane="general">Umumiy</button>
-      <button class="pf-tab" data-pane="passkeys">🔐 Passkeylar <span id="pk-count"></span></button>
-      <button class="pf-tab" data-pane="mfa">🛡 MFA kalitlar</button>
-      <button class="pf-tab" data-pane="apikeys">🔑 API kalitlar</button>
-      <button class="pf-tab" data-pane="sessions">💻 Sessiyalar</button>
-      <button class="pf-tab" data-pane="logs">📜 Loglar</button>
+      <button class="pf-tab" data-pane="passkeys">Passkeylar <span id="pk-count"></span></button>
+      <button class="pf-tab" data-pane="mfa">MFA kalitlar</button>
+      <button class="pf-tab" data-pane="apikeys">API kalitlar</button>
+      <button class="pf-tab" data-pane="sessions">Sessiyalar</button>
+      <button class="pf-tab" data-pane="logs">Loglar</button>
     </div>
 
     <!-- UMUMIY -->

@@ -1,0 +1,74 @@
+<%
+  const navGroups = adminSidebarGroups || [];
+  const isLegacyShell = typeof legacyShell !== 'undefined' && Boolean(legacyShell);
+  const navPath = activePath || '';
+  const navTab = activeTab || '';
+  const navPathOnly = (href) => String(href || '').split('?')[0].split('#')[0];
+  const directNavMatch = navGroups.some((group) => group.items.some((item) => item.tab
+    ? navPath === '/admin/dashboard' && navTab === item.tab
+    : navPathOnly(item.href) === navPath));
+  const navIsActive = (item) => item.tab
+    ? navPath === '/admin/dashboard' && navTab === item.tab
+    : navPathOnly(item.href) === navPath || (item.id === 'all-tools' && !directNavMatch);
+%>
+<div class="admin-drawer-overlay" id="admin-drawer-overlay" aria-hidden="true"></div>
+<aside class="<%= isLegacyShell ? 'admin-sidebar admin-sidebar--legacy' : 'admin-sidebar' %>" id="admin-sidebar" aria-label="Admin navigatsiyasi">
+  <div class="admin-sidebar-brand">
+    <span class="admin-sidebar-brand-mark"><%- icon('shield', 15) %></span>
+    <div><strong>Admin</strong><small>Boshqaruv menyusi</small></div>
+    <% if (isLegacyShell) { %>
+      <button type="button" class="admin-sidebar-close" data-admin-close aria-label="Admin menyusini yopish"><%- icon('close', 14) %></button>
+    <% } %>
+  </div>
+  <% navGroups.forEach((group, index) => { const groupActive = group.items.some(navIsActive); %>
+    <details class="admin-nav-group" <%= (index === 0 || groupActive) ? 'open' : '' %>>
+      <summary class="admin-nav-group-title"><%= group.label %></summary>
+      <nav class="admin-nav-group-items" aria-label="<%= group.label %>">
+        <% group.items.forEach((item) => { const active = navIsActive(item); %>
+          <a href="<%= item.href %>"
+             class="admin-side-btn <%= active ? 'active' : '' %>"
+             <%= item.tab ? `data-admin-tab="${item.tab}"` : '' %>
+             <%= active ? 'aria-current="page"' : '' %>>
+            <span class="admin-side-ico"><%- icon(item.icon || 'grid', 16) %></span>
+            <span class="admin-side-label-text"><%= item.label %></span>
+          </a>
+        <% }); %>
+      </nav>
+    </details>
+  <% }); %>
+  <div class="admin-sidebar-footer">
+    <a href="/admin/profile"><%- icon('user', 14) %> Admin profili</a>
+    <form method="post" action="/admin/logout">
+      <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+      <button type="submit"><%- icon('logOut', 14) %> Chiqish</button>
+    </form>
+  </div>
+</aside>
+
+<script>
+(function () {
+  var triggers = Array.prototype.slice.call(document.querySelectorAll('[aria-controls="admin-sidebar"]'));
+  var overlay = document.getElementById('admin-drawer-overlay');
+  function sync(open) {
+    document.body.classList.toggle('admin-nav-open', open);
+    triggers.forEach(function (button) { button.setAttribute('aria-expanded', open ? 'true' : 'false'); });
+    if (overlay) overlay.setAttribute('aria-hidden', open ? 'false' : 'true');
+  }
+  if (typeof window.toggleAdminDrawer !== 'function') {
+    window.toggleAdminDrawer = function () { sync(!document.body.classList.contains('admin-nav-open')); };
+  }
+  triggers.forEach(function (button) {
+    button.addEventListener('click', function () {
+      window.toggleAdminDrawer();
+      sync(document.body.classList.contains('admin-nav-open'));
+    });
+  });
+  document.querySelectorAll('[data-admin-close]').forEach(function (button) {
+    button.addEventListener('click', function () { sync(false); });
+  });
+  if (overlay) overlay.addEventListener('click', function () { sync(false); });
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && document.body.classList.contains('admin-nav-open')) sync(false);
+  });
+})();
+</script>

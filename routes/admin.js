@@ -38,16 +38,28 @@ import {
   INSTITUTION_POLICY_PATH,
 } from '../services/cast/institution-policy.js';
 import { PRESET_REGISTRY } from '../services/cast/presets.js';
+import { ADMIN_DASHBOARD_TABS, ADMIN_SIDEBAR_GROUPS } from '../data/admin-navigation.js';
 
 const router = Router();
 
 router.use(requireAdmin);
+// Barcha asosiy admin sahifalarida yagona, qisqa va izchil sidebar.
+router.use((req, res, next) => {
+  res.locals.adminSidebarGroups = ADMIN_SIDEBAR_GROUPS;
+  next();
+});
 router.use(teacherRoutes);
 router.use(adminIndexRoutes); // GET /admin/index — BUG-029
 router.use(signupReviewRoutes);
 
+// Eski admin sahifalarida /admin ga qaytuvchi logotip/havolalar bor edi.
+// Barchasini aniq boshqaruv paneliga olib boramiz, 404 emas.
+router.get('/', (req, res) => res.redirect(302, '/admin/dashboard'));
+
 // ── Dashboard ──
 router.get('/dashboard', async (req, res) => {
+  const requestedTab = String(req.query.tab || 'overview');
+  const activeTab = ADMIN_DASHBOARD_TABS.has(requestedTab) ? requestedTab : 'overview';
   try {
     const [usersSnap, gamesSnap, fansSnap] = await Promise.all([
       fb.get(DB_PATHS.USERS),
@@ -86,7 +98,7 @@ router.get('/dashboard', async (req, res) => {
       fans: [],
       preGroups: [],
       results: [],
-      activeTab: req.query.tab || 'danger',
+      activeTab,
       // AUTH D-10 §13: 4 til admin copy (AUTH_COPY[lang].admin)
       adminCopy: await adminCopyFor(req),
     });
@@ -96,7 +108,7 @@ router.get('/dashboard', async (req, res) => {
       title: 'Admin Panel',
       stats: { usersCount: 0, gamesCount: 0, testsCount: 0, fansCount: 0 },
       users: [], fans: [], preGroups: [], results: [],
-      activeTab: 'danger',
+      activeTab,
       error: err.message,
       adminCopy: await adminCopyFor(req),
     });

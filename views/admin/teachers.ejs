@@ -2,7 +2,7 @@
 <html lang="uz" dir="ltr">
 <head>
   <%- include('../partials/head') %>
-  <link rel="stylesheet" href="/css/admin.css?v=nv4">
+  <link rel="stylesheet" href="/css/admin.css?v=nv6">
   <style>
     /* AUTH B-15 — filter tabs, pagination, accessible modal */
     .t-stats{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px;background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-default);border-radius:12px;padding:12px 16px;margin:12px 0}
@@ -50,13 +50,13 @@
     .t-reason-box{font-size:.75rem;color:var(--deborah-semantic-color-text-muted);max-width:180px;margin-top:4px}
     .t-exp{max-width:130px}
   </style>
-  <link rel="stylesheet" href="/design/admin-command.css">
+  <link rel="stylesheet" href="/design/admin-command.css?v=admin-shell-20261101-r2">
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to content →</a>
   <nav class="admin-navbar">
     <div class="admin-nav-left">
-      <button type="button" class="admin-nav-hamburger" aria-label="Menyu" aria-expanded="false" aria-controls="admin-sidebar" onclick="toggleAdminDrawer()"><span></span><span></span><span></span></button>
+      <button type="button" class="admin-nav-hamburger" aria-label="Menyu" aria-expanded="false" aria-controls="admin-sidebar"><span></span><span></span><span></span></button>
       <a href="/" class="admin-nav-brand">
         <span class="admin-nav-logo"><img src="/images/logo-vintage.png" alt="Deborah" class="logo-img" style="height:34px;width:auto"></span>
         <span class="admin-nav-badge">ADMIN</span>
@@ -69,14 +69,8 @@
   </nav>
 
   <div class="admin-layout">
-    <div class="admin-drawer-overlay" id="admin-drawer-overlay" onclick="toggleAdminDrawer()"></div>
-    <div class="admin-sidebar" id="admin-sidebar">
-      <div class="admin-side-label">Bo'limlar</div>
-      <a href="/admin/teachers" class="admin-side-btn" style="--c:var(--accent-glow);--cbg:rgba(100,116,139,.14)"><span class="admin-side-ico"><%- icon('bookOpen', 16) %></span>Teacher arizalari</a>
-      <a href="/admin/dashboard" class="admin-side-btn"><span class="admin-side-ico"><%- icon('grid', 16) %></span>Dashboard</a>
-    </div>
-
-    <div class="admin-panel" id="main">
+    <%- include('../partials/admin-sidebar', { activePath: '/admin/teachers', activeTab: '' }) %>
+        <div class="admin-panel" id="main">
       <div class="admin-sec-hd">
         <div class="admin-sec-title"><%- icon('bookOpen', 18) %> Teacher arizalari <span class="badge t-badge-primary"><%= pendingCount %> kutilmoqda</span></div>
       </div>

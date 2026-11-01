@@ -2,73 +2,132 @@
 <html lang="uz" dir="ltr">
 <head>
   <%- include('../partials/head') %>
-  <link rel="stylesheet" href="/design/admin-command.css">
+  <link rel="stylesheet" href="/css/admin.css?v=nv6">
+  <link rel="stylesheet" href="/design/admin-command.css?v=admin-shell-20261101-r2">
   <style>
-    /* BUG-029: Barcha funksiyalar — bir ko'rinish (grid + qidiruv) */
-    .ai-wrap{max-width:1200px;margin:0 auto;padding:20px 18px 60px}
-    .ai-head{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:14px}
-    .ai-head h1{font-family:''Manrope'',cursive;font-size:1.4rem;margin:0;color:var(--deborah-semantic-color-text-primary)}
-    .ai-count{font-size:.78rem;font-weight:700;color:var(--deborah-semantic-color-text-secondary);background:var(--deborah-semantic-color-action-primary-soft);border:1px solid var(--deborah-semantic-color-action-primary-border);padding:4px 10px;border-radius:99px}
-    .ai-back{margin-left:auto;border-radius:9px;border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-secondary);padding:8px 14px;font-size:.8rem;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px;min-height:36px}
-    .ai-search{position:relative;margin-bottom:16px}
-    .ai-search input{width:100%;max-width:420px;padding:11px 14px;border-radius:10px;border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-primary);font-size:.9rem;min-height:44px}
-    .ai-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
-    .ai-card{background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-default);border-radius:12px;padding:14px 16px}
-    .ai-card h2{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--deborah-semantic-color-text-muted);margin:0 0 10px}
-    .ai-card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
-    .ai-card a{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;color:var(--deborah-semantic-color-text-secondary);text-decoration:none;font-size:.86rem;font-weight:600;min-height:36px}
-    .ai-card a:hover{background:var(--deborah-semantic-color-action-primary-soft);color:var(--deborah-semantic-color-action-primary-hover)}
-    .ai-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-    .ai-empty{padding:40px 0;text-align:center;color:var(--deborah-semantic-color-text-muted);font-weight:600;display:none}
+    .ai-wrap{max-width:1480px;margin:0 auto;padding:2px 2px 26px}
+    .ai-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin:0 0 20px;padding:4px 2px 16px;border-bottom:1px solid var(--deborah-semantic-color-divider)}
+    .ai-eyebrow{margin:0 0 6px;color:#c9a565;font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+    .ai-head h1{margin:0;color:var(--deborah-semantic-color-text-primary);font-size:clamp(1.5rem,2.5vw,2rem);font-weight:750;letter-spacing:-.025em}
+    .ai-sub{margin:7px 0 0;color:var(--deborah-semantic-color-text-secondary);font-size:.92rem;line-height:1.5;max-width:650px}
+    .ai-count{flex:none;display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(201,165,101,.28);border-radius:999px;background:rgba(201,165,101,.08);color:var(--deborah-semantic-color-text-secondary);padding:8px 12px;font-size:.78rem;font-weight:700;white-space:nowrap}
+    .ai-count strong{color:#c9a565;font-size:.95rem}
+    .ai-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+    .ai-search{position:relative;flex:1 1 330px;max-width:560px}
+    .ai-search label{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--deborah-semantic-color-text-muted);pointer-events:none;display:flex}
+    .ai-search input{width:100%;min-height:46px;padding:10px 14px 10px 42px;border-radius:11px;border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-primary);font:inherit;font-size:.9rem;outline:none;box-sizing:border-box}
+    .ai-search input:focus{border-color:#c9a565;box-shadow:0 0 0 3px rgba(201,165,101,.15)}
+    .ai-clear{min-height:44px;padding:0 14px;border-radius:9px;border:1px solid var(--deborah-semantic-color-border-default);background:var(--deborah-semantic-color-surface-raised);color:var(--deborah-semantic-color-text-secondary);font:inherit;font-size:.8rem;font-weight:700;cursor:pointer}
+    .ai-clear:hover{border-color:rgba(201,165,101,.48);color:var(--deborah-semantic-color-text-primary)}
+    .ai-result-count{margin-left:auto;color:var(--deborah-semantic-color-text-muted);font-size:.78rem;font-weight:650}
+    .ai-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:14px;align-items:start}
+    .ai-card{min-width:0;background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-default);border-radius:13px;padding:15px;box-shadow:0 5px 18px rgba(10,8,4,.08);transition:border-color .16s ease,transform .16s ease,box-shadow .16s ease}
+    .ai-card:hover{border-color:rgba(201,165,101,.38);box-shadow:0 9px 25px rgba(10,8,4,.13);transform:translateY(-1px)}
+    .ai-card h2{display:flex;align-items:center;gap:9px;margin:0 0 11px;padding:0 0 10px;border-bottom:1px solid var(--deborah-semantic-color-divider);color:var(--deborah-semantic-color-text-primary);font-size:.9rem;font-weight:750;letter-spacing:.005em}
+    .ai-group-mark{width:29px;height:29px;display:grid;place-items:center;border:1px solid rgba(201,165,101,.25);border-radius:8px;background:rgba(201,165,101,.1);color:#c9a565;flex:none}
+    .ai-card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px}
+    .ai-card li{min-width:0}
+    .ai-card a{display:flex;align-items:center;gap:9px;min-height:42px;padding:7px 9px;border-radius:8px;color:var(--deborah-semantic-color-text-secondary);text-decoration:none;font-size:.84rem;font-weight:630;transition:background .14s ease,color .14s ease}
+    .ai-card a:hover,.ai-card a:focus-visible{background:rgba(201,165,101,.11);color:var(--deborah-semantic-color-text-primary);outline:none}
+    .ai-link-ico{width:24px;height:24px;display:grid;place-items:center;color:#b68b4a;flex:none}
+    .ai-link-label{min-width:0;flex:1;line-height:1.3}
+    .ai-link-arrow{display:flex;color:var(--deborah-semantic-color-text-muted);opacity:.7;flex:none}
+    .ai-empty{display:none;padding:40px 20px;text-align:center;color:var(--deborah-semantic-color-text-muted);border:1px dashed var(--deborah-semantic-color-border-default);border-radius:12px;font-weight:650}
+    .ai-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+    @media(max-width:700px){.ai-wrap{padding:0 0 18px}.ai-head{align-items:flex-start;flex-direction:column;gap:10px}.ai-count{align-self:flex-start}.ai-result-count{width:100%;margin-left:0}.ai-grid{grid-template-columns:1fr}.ai-card{padding:13px}}
+    [data-theme="light"] .ai-card{box-shadow:0 5px 18px rgba(55,42,20,.055)}
   </style>
 </head>
 <body>
-  <div class="ai-wrap">
-    <div class="ai-head">
-      <h1>Barcha funksiyalar</h1>
-      <span class="ai-count"><%= totalLinks %> funksiya · <%= catalog.length %> guruh</span>
-      <a href="/admin/dashboard" class="ai-back"><%- icon('arrowLeft', 14) %> Dashboard</a>
+  <a href="#main" class="skip-link">Kontentga o‘tish</a>
+  <nav class="admin-navbar" aria-label="Admin yuqori menyusi">
+    <div class="admin-nav-left">
+      <button type="button" class="admin-nav-hamburger" aria-label="Menyuni ochish" aria-expanded="false" aria-controls="admin-sidebar"><span></span><span></span><span></span></button>
+      <a href="/admin/dashboard" class="admin-nav-brand">
+        <span class="admin-nav-logo"><img src="/images/logo-vintage.png" alt="Deborah" class="logo-img" style="height:32px;width:auto"></span>
+        <span class="admin-nav-badge">ADMIN</span>
+      </a>
     </div>
-    <div class="ai-search">
-      <label for="ai-q" class="ai-sr">Funksiya qidirish</label>
-      <input id="ai-q" type="search" placeholder="Funksiya qidirish (masalan: teachers, grading…)" autocomplete="off">
+    <div class="flex items-center gap-8">
+      <a href="/admin/dashboard" class="admin-nav-btn"><%- icon('grid', 14) %> Umumiy ko‘rinish</a>
+      <%- include('../partials/theme-control') %>
+      <a href="/admin/logout" class="admin-nav-btn"><%- icon('logOut', 14) %> Chiqish</a>
     </div>
-    <div class="ai-grid" id="ai-grid">
-      <% for (const g of catalog) { %>
-        <section class="ai-card" data-group="<%= g.section.toLowerCase() %>">
-          <h2><%- g.section %></h2>
-          <ul>
-            <% for (const it of g.items) { %>
-              <li><a href="<%= it.href %>" data-name="<%= it.label.toLowerCase() %> <%= it.href.toLowerCase() %>"><%- it.label %></a></li>
-            <% } %>
-          </ul>
-        </section>
-      <% } %>
-    </div>
-    <div class="ai-empty" id="ai-empty">Hech narsa topilmadi — boshqa so'z bilan urinib ko'ring.</div>
+  </nav>
+
+  <div class="admin-layout">
+    <%- include('../partials/admin-sidebar', { activePath: '/admin/index', activeTab: '' }) %>
+    <main class="admin-panel" id="main" tabindex="-1">
+      <div class="ai-wrap">
+        <header class="ai-head">
+          <div>
+            <p class="ai-eyebrow">Admin markazi</p>
+            <h1>Barcha funksiyalar</h1>
+            <p class="ai-sub">Kerakli bo‘limni tanlang yoki nomi bo‘yicha qidiring. Har bir havola tegishli admin sahifasiga olib boradi.</p>
+          </div>
+          <div class="ai-count"><strong><%= totalLinks %></strong> funksiya <span aria-hidden="true">·</span> <%= catalog.length %> guruh</div>
+        </header>
+
+        <div class="ai-tools">
+          <div class="ai-search">
+            <label for="ai-q"><%- icon('search', 17) %><span class="ai-sr">Admin funksiyasini qidirish</span></label>
+            <input id="ai-q" type="search" placeholder="Qidirish: masalan, foydalanuvchi, Canva, baholash…" autocomplete="off">
+          </div>
+          <button class="ai-clear" id="ai-clear" type="button">Tozalash</button>
+          <span class="ai-result-count" id="ai-result-count" aria-live="polite"><%= totalLinks %> ta bo‘lim</span>
+        </div>
+
+        <div class="ai-grid" id="ai-grid">
+          <% for (const group of catalog) { %>
+            <section class="ai-card" data-group="<%= group.section.toLowerCase() %>">
+              <h2><span class="ai-group-mark"><%- icon('layers', 15) %></span><%= group.section %></h2>
+              <ul>
+                <% for (const item of group.items) { %>
+                  <li>
+                    <a href="<%= item.href %>" data-name="<%= `${item.label} ${group.section} ${item.href}`.toLowerCase() %>">
+                      <span class="ai-link-ico"><%- icon(item.icon || 'grid', 15) %></span>
+                      <span class="ai-link-label"><%= item.label %></span>
+                      <span class="ai-link-arrow" aria-hidden="true"><%- icon('arrowRight', 13) %></span>
+                    </a>
+                  </li>
+                <% } %>
+              </ul>
+            </section>
+          <% } %>
+        </div>
+        <div class="ai-empty" id="ai-empty" role="status">Hech narsa topilmadi. Boshqa so‘z bilan qidiring.</div>
+      </div>
+    </main>
   </div>
+
+  <script src="/js/admin/common.js" defer></script>
   <script>
-    // BUG-029: bir ko'rinish + tez qidiruv (server so'rovisiz)
     (function () {
-      var q = document.getElementById('ai-q');
-      var cards = document.querySelectorAll('.ai-card');
+      var input = document.getElementById('ai-q');
+      var clear = document.getElementById('ai-clear');
+      var cards = Array.prototype.slice.call(document.querySelectorAll('.ai-card'));
       var empty = document.getElementById('ai-empty');
-      q.addEventListener('input', function () {
-        var v = q.value.trim().toLowerCase();
-        var any = false;
+      var count = document.getElementById('ai-result-count');
+      var total = <%- JSON.stringify(totalLinks) %>;
+      function filter() {
+        var value = input.value.trim().toLocaleLowerCase('uz');
+        var visible = 0;
         cards.forEach(function (card) {
-          var links = card.querySelectorAll('a[data-name]');
+          var links = Array.prototype.slice.call(card.querySelectorAll('a[data-name]'));
           var shown = 0;
-          links.forEach(function (a) {
-            var hit = !v || a.getAttribute('data-name').indexOf(v) !== -1;
-            a.parentElement.style.display = hit ? '' : 'none';
-            if (hit) shown++;
+          links.forEach(function (link) {
+            var match = !value || link.getAttribute('data-name').toLocaleLowerCase('uz').indexOf(value) !== -1;
+            link.parentElement.hidden = !match;
+            if (match) shown++;
           });
-          card.style.display = shown ? '' : 'none';
-          if (shown) any = true;
+          card.hidden = shown === 0;
+          visible += shown;
         });
-        empty.style.display = any ? 'none' : 'block';
-      });
+        empty.style.display = visible ? 'none' : 'block';
+        count.textContent = value ? (visible + ' ta mos funksiya') : (total + ' ta funksiya');
+      }
+      input.addEventListener('input', filter);
+      clear.addEventListener('click', function () { input.value = ''; filter(); input.focus(); });
     })();
   </script>
 </body>

@@ -57,18 +57,22 @@
     .batch-row b{font-size:.84rem;}
     .batch-row .sub{font-size:.68rem;color:var(--deborah-semantic-color-text-muted);font-weight:600;margin-top:3px;}
   </style>
-  <link rel="stylesheet" href="/design/admin-command.css">
+  <link rel="stylesheet" href="/design/admin-command.css?v=admin-shell-20261101-r2">
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Asosiy kontentga o‘tish</a>
   <nav class="navbar">
+    <button type="button" class="admin-nav-hamburger admin-sidebar-menu-trigger" aria-label="Admin menyusini ochish" aria-expanded="false" aria-controls="admin-sidebar"><span></span><span></span><span></span></button>
     <a href="/" class="nav-logo">Deborah</a>
     <div class="nav-right">
       <a href="/admin/dashboard" class="nav-btn">Panel</a>
+      <a href="/admin/index" class="nav-btn" title="Barcha admin funksiyalari">Funksiyalar</a>
       <a href="/admin/logout" class="nav-btn">Chiqish</a>
     </div>
   </nav>
+  <%- include('../partials/admin-sidebar', { activePath: '/admin/paper', activeTab: '', legacyShell: true }) %>
 
-  <div class="panel">
+  <div class="panel" id="main-content">
     <div class="greeting">Qog'oz paketlar va custody</div>
     <div class="greeting-sub">Paper packet + signed QR + chain of custody (Prompt 42)</div>
 

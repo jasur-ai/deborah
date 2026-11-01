@@ -68,21 +68,25 @@
     .tab{padding:7px 14px;border-radius:9px;font-size:.74rem;font-weight:700;cursor:pointer;background:var(--deborah-semantic-color-surface-input);color:var(--deborah-semantic-color-text-muted);border:1px solid var(--deborah-semantic-color-border-default);transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s;font-family:'Source Sans 3',sans-serif;}
     .tab.active{background:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#041018);border-color:transparent;}
   </style>
-  <link rel="stylesheet" href="/design/admin-command.css">
+  <link rel="stylesheet" href="/design/admin-command.css?v=admin-shell-20261101-r2">
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Asosiy kontentga o‘tish</a>
   <nav class="navbar">
+    <button type="button" class="admin-nav-hamburger admin-sidebar-menu-trigger" aria-label="Admin menyusini ochish" aria-expanded="false" aria-controls="admin-sidebar"><span></span><span></span><span></span></button>
     <a href="/" class="nav-logo">Deborah</a>
     <div class="nav-right">
       <a href="/admin/dashboard" class="nav-btn">Dashboard</a>
+      <a href="/admin/index" class="nav-btn" title="Barcha admin funksiyalari">Funksiyalar</a>
       <a href="/admin/scheduler" class="nav-btn">Imtihon jadvali</a>
       <form action="/admin/logout" method="post" style="margin:0">
         <button class="nav-btn" type="submit">Chiqish</button>
       </form>
     </div>
   </nav>
+  <%- include('../partials/admin-sidebar', { activePath: '/admin/scheduler', activeTab: '', legacyShell: true }) %>
 
-  <div class="panel">
+  <div class="panel" id="main-content">
     <div class="greeting">Imtihon jadvali</div>
     <div class="greeting-sub">Explainable exam scheduling — period, room, student va proctor constraintlari (Prompt 39)</div>
 

@@ -623,6 +623,11 @@ body.admin-nav-open .admin-nav-hamburger span:nth-child(3) { transform: translat
     display: flex;
   }
 
+  /* style.css hides the dashboard rail at tablet widths; restore it as a drawer. */
+  .admin-sidebar {
+    display: flex;
+  }
+
   .admin-layout {
     flex-direction: column;
     padding-top: 12px;
@@ -706,25 +711,22 @@ body.admin-nav-open .admin-nav-hamburger span:nth-child(3) { transform: translat
 .vip-staff-note a{color:#2563eb;font-weight:700}
 
 /* ═══════════════════════════════════════════════════════════════
-   NEON COMMAND v4.0 — Admin muhit uchun texnik neon-gradient qatlam
-   (S34d): chuqur kosmik fon + neon cyan/violet/magenta gradientlar,
-   glow chegara va scanline grid. Barcha admin sahifalariga ta'sir
-   qiladi (admin.css oxirida — bir xil selektorlar bilan ustun).
+   Admin shell design tokens — neutral charcoal + warm gold
    ═══════════════════════════════════════════════════════════════ */
 :root {
-  --n-bg0: #04060f;
-  --n-bg1: #090d1d;
-  --n-bg2: #0d1228;
-  --n-line: rgba(148,163,255,.14);
-  --n-cyan: #22d3ee;
-  --n-violet: #818cf8;
-  --n-magenta: #e879f9;
+  --n-bg0: #0d0c09;
+  --n-bg1: #13110d;
+  --n-bg2: #19160f;
+  --n-line: rgba(201,165,101,.16);
+  --n-cyan: #c9a565; /* legacy alias; warm-gold token */
+  --n-violet: #d6c090;
+  --n-magenta: #a77c3d;
   --n-green: #34d399;
   --n-amber: #fbbf24;
-  --n-grad: linear-gradient(120deg, var(--n-cyan), var(--n-violet) 48%, var(--n-magenta));
-  --n-grad-soft: linear-gradient(120deg, rgba(34,211,238,.16), rgba(129,140,248,.16) 48%, rgba(232,121,249,.16));
-  --n-glow: 0 0 22px rgba(99,140,255,.28), 0 0 60px rgba(139,92,246,.12);
-  --n-glow-strong: 0 0 18px rgba(34,211,238,.45), 0 0 70px rgba(232,121,249,.18);
+  --n-grad: linear-gradient(120deg, var(--n-magenta), var(--n-violet) 48%, var(--n-cyan));
+  --n-grad-soft: linear-gradient(120deg, rgba(201,165,101,.14), rgba(214,192,144,.1));
+  --n-glow: 0 5px 18px rgba(20,15,8,.22);
+  --n-glow-strong: 0 8px 24px rgba(20,15,8,.28);
 }
 
 /* ── Sahifa fonlari: chuqur kosmos + neon aurora + texnik grid ── */

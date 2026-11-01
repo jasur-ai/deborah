@@ -83,18 +83,22 @@
     .modal h3{font-family:''Manrope'',cursive;font-size:1rem;margin:0 0 6px;}
     .modal p{font-size:.74rem;color:var(--deborah-semantic-color-text-muted);font-weight:700;margin:0 0 12px;}
   </style>
-  <link rel="stylesheet" href="/design/admin-command.css">
+  <link rel="stylesheet" href="/design/admin-command.css?v=admin-shell-20261101-r2">
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Asosiy kontentga o‘tish</a>
   <nav class="navbar">
+    <button type="button" class="admin-nav-hamburger admin-sidebar-menu-trigger" aria-label="Admin menyusini ochish" aria-expanded="false" aria-controls="admin-sidebar"><span></span><span></span><span></span></button>
     <a href="/" class="nav-logo">Deborah</a>
     <div class="nav-right">
       <a href="/admin/dashboard" class="nav-btn">Panel</a>
+      <a href="/admin/index" class="nav-btn" title="Barcha admin funksiyalari">Funksiyalar</a>
       <a href="/admin/logout" class="nav-btn">Chiqish</a>
     </div>
   </nav>
+  <%- include('../partials/admin-sidebar', { activePath: '/admin/command-center', activeTab: '', legacyShell: true }) %>
 
-  <div class="panel">
+  <div class="panel" id="main-content">
     <div class="greeting">Imtihon boshqaruv markazi</div>
     <div class="greeting-sub">Exam-day health, attendance va incidentlar — yagona auditable markaz (Prompt 41)</div>
 

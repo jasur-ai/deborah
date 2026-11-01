@@ -6,36 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %> — Deborah Admin</title>
   <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/admin.css?v=nv4">
-  <link rel="stylesheet" href="/design/admin-command.css">
+  <link rel="stylesheet" href="/css/admin.css?v=nv6">
+  <link rel="stylesheet" href="/design/admin-command.css?v=admin-shell-20261101-r2">
   <%- include('../partials/critical-mobile-css') %>
 </head>
 <body class="adm-body">
-  <div class="adm-shell">
-    <aside class="adm-sidebar">
-      <div class="adm-brand">
-        <img src="/images/logo-vintage.png" alt="Deborah" class="logo-img" style="height:34px;width:auto">
-        <span>Deborah</span>
-      </div>
-      <nav class="adm-nav">
-        <a href="/admin/dashboard">Dashboard</a>
-        <a href="/admin/data-governance" class="active">Data Governance</a>
-        <a href="/admin/accessibility">Accessibility</a>
-        <a href="/admin/multilingual">Multilingual</a>
-        <a href="/admin/program-quality">Program Quality</a>
-        <a href="/admin/credentials">Credentials</a>
-        <a href="/admin/ai-checkpoint">AI Checkpoint</a>
-        <a href="/admin/ai-grading">AI Grading</a>
-        <a href="/admin/ai-mlops">AI MLOps</a>
-        <a href="/admin/source-pack">Source Packs</a>
-        <a href="/admin/vip">VIP</a>
-      </nav>
-      <div class="adm-side-foot">
-        <a href="/admin/logout">Chiqish</a>
-      </div>
-    </aside>
-
-    <main class="adm-main">
+  <%- include('../partials/sidebar', { role: 'admin', active: '/admin/data-governance', path: '/admin/data-governance', query: {} }) %>
+<main class="adm-main" id="main-content">
       <header class="adm-topbar">
         <h1>Data Classification, Privacy, Retention &amp; Purge</h1>
         <span class="adm-chip" id="mStatus">Yuklanmoqda…</span>
@@ -109,7 +86,6 @@
         <div id="receiptsList">Yuklanmoqda…</div>
       </section>
     </main>
-  </div>
 
 <script>
 // ── Helpers ──
@@ -220,7 +196,7 @@ async function loadDsars() {
       btn.onclick = async () => {
         // Delete-type: purge all derived stores first via worker
         if (d.request_type === 'delete') {
-          setStatus('Delete DSAR: avval purge worker'ni ishga tushiring, keyin Fulfill');
+          setStatus("Delete DSAR: avval purge worker'ni ishga tushiring, keyin Fulfill");
           return;
         }
         await api('/api/admin/data-governance/dsar/' + d.id + '/status', { method: 'POST', body: JSON.stringify({ to: 'fulfilled' }) });
