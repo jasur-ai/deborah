@@ -28,17 +28,19 @@ describe('S35.03 — Term registry', () => {
 
 describe('S35.04 — Jargon approval', () => {
   it('jargon approved label/description ga ega', () => {
-    expect(JARGON.mock.label).toBe('Namuna fanlar');
-    expect(JARGON.pre.label).toBe('Tayyor testlar');
+    expect(JARGON.mock.label).toBe('Mock fanlar');
+    expect(JARGON.pre.label).toBe('Subtestlar');
     expect(JARGON.characters.label).toBe('Qahramonlar');
     expect(JARGON.realtime.label).toContain('Jonli');
     expect(JARGON.cast.label).toBe('Jonli sessiya');
   });
 
   it('approveJargon uzun jargon\'ni birinchi almashtiradi', () => {
-    expect(approveJargon('Mock Fanlar va PRE Testlar')).toBe('Namuna fanlar va Tayyor testlar');
-    expect(approveJargon('Mock')).toBe('Namuna fanlar');
-    expect(approveJargon('PRE Testlar')).toBe('Tayyor testlar');
+    expect(approveJargon('Mock Fanlar va PRE Testlar')).toBe('Mock fanlar va Subtestlar');
+    expect(approveJargon('Mock')).toBe('Mock fanlar');
+    expect(approveJargon('Mock fanlar')).toBe('Mock fanlar');
+    expect(approveJargon('PRE Testlar')).toBe('Subtestlar');
+    expect(approveJargon('Tayyor testlar')).toBe('Subtestlar');
     expect(approveJargon('Real-time Multiplayer rejimi')).toBe('Jonli ko\'p ishtirokchili o\'yin rejimi');
     expect(approveJargon('Hech qanday jargon yo\'q')).toBe('Hech qanday jargon yo\'q');
   });

@@ -35,8 +35,8 @@ export const ADMIN_NAVIGATION = [
     label: 'Testlar va natijalar',
     items: [
       tab('danger', 'Tezkor foydalanuvchi boshqaruvi', 'user'),
-      tab('fans', 'Namuna fanlar', 'book'),
-      tab('pre', 'Tayyor testlar', 'layers'),
+      tab('fans', 'Mock fanlar', 'book'),
+      tab('pre', 'Subtestlar', 'layers'),
       tab('results', 'O‘yin natijalari', 'trophy'),
       tab('stats', 'Statistika', 'barChart'),
       tab('vip', 'VIP tezkor amallari', 'shield'),
@@ -139,8 +139,8 @@ export const ADMIN_SIDEBAR_GROUPS = [
     label: 'Testlar va natijalar',
     items: [
       { id: 'quick-users', label: 'Tezkor user amallari', href: '/admin/dashboard?tab=danger', icon: 'user', tab: 'danger' },
-      { id: 'fans', label: 'Namuna fanlar', href: '/admin/dashboard?tab=fans', icon: 'book', tab: 'fans' },
-      { id: 'pre', label: 'Tayyor testlar', href: '/admin/dashboard?tab=pre', icon: 'layers', tab: 'pre' },
+      { id: 'fans', label: 'Mock fanlar', href: '/admin/dashboard?tab=fans', icon: 'book', tab: 'fans' },
+      { id: 'pre', label: 'Subtestlar', href: '/admin/dashboard?tab=pre', icon: 'layers', tab: 'pre' },
       { id: 'results', label: 'O‘yin natijalari', href: '/admin/dashboard?tab=results', icon: 'trophy', tab: 'results' },
       { id: 'stats', label: 'Statistika', href: '/admin/dashboard?tab=stats', icon: 'barChart', tab: 'stats' },
       { id: 'vip-quick', label: 'VIP tezkor amallari', href: '/admin/dashboard?tab=vip', icon: 'shield', tab: 'vip' },

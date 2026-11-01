@@ -3,21 +3,22 @@
 <head>
   <%- include('../partials/head') %>
   <link rel="stylesheet" href="/css/admin.css?v=nv6">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <link rel="stylesheet" href="/design/admin-command.css?v=admin-shell-20261101-r2">
+  <link rel="stylesheet" href="/css/admin-dashboard.css?v=20261101-r2">
+  <script src="/js/vendor/xlsx.full.min.js?v=0.18.5"></script>
 </head>
-<body>
+<body class="admin-dashboard-page">
   <a href="#main" class="skip-link">Skip to content →</a>
   <nav class="admin-navbar">
     <div class="admin-nav-left">
       <button type="button" class="admin-nav-hamburger" aria-label="Menyu" aria-expanded="false" aria-controls="admin-sidebar"><span></span><span></span><span></span></button>
-      <a href="/" class="admin-nav-brand">
+      <a href="/admin/dashboard" class="admin-nav-brand">
         <span class="admin-nav-logo"><img src="/images/logo-vintage.png" alt="Deborah" class="logo-img" style="height:34px;width:auto"></span>
         <span class="admin-nav-badge">ADMIN</span>
       </a>
     </div>
     <div class="flex items-center gap-8">
-      <button type="button" class="admin-nav-btn" onclick="refreshActiveTab()"><%- icon('refresh', 14) %> Yangilash</button>
+      <button type="button" class="admin-nav-btn" data-dashboard-action="refresh-current"><%- icon('refresh', 14) %> Yangilash</button>
       <%- include('../partials/theme-control') %>
       <a href="/admin/profile" class="admin-nav-btn"><%- icon('user', 14) %> Profilim</a>
       <a href="/admin/logout" class="admin-nav-btn"><%- icon('logOut', 14) %> <%= (adminCopy.logout || 'Chiqish') %></a>
@@ -28,14 +29,14 @@
     <%- include('../partials/admin-sidebar', { activePath: '/admin/dashboard', activeTab }) %>
 
     <!-- Panel -->
-    <main class="admin-panel" id="main">
+    <main class="admin-panel admin-dashboard" id="main">
       <h1 class="sr-only">Admin panel</h1>
       <!-- Stats Row — S33.07: actionable (click'da tegishli bo'lim ochiladi) -->
       <div class="admin-stats-row" id="stats-row">
         <a class="stat-card" href="/admin/users" style="text-decoration:none"><div class="stat-ico"><%- icon('users', 20) %></div><div><div class="stat-num" id="s-users" ><%= stats.usersCount %></div><div class="stat-lbl"><%= (adminCopy.kpiUsers || 'Foydalanuvchilar') %></div></div></a>
         <button type="button" class="stat-card" data-go="results"><div class="stat-ico"><%- icon('gamepad', 20) %></div><div><div class="stat-num" id="s-games" ><%= stats.gamesCount %></div><div class="stat-lbl"><%= (adminCopy.kpiGames || 'O\'yinlar') %></div></div></button>
-        <button type="button" class="stat-card" data-go="fans"><div class="stat-ico"><%- icon('edit', 20) %></div><div><div class="stat-num" id="s-tests" ><%= stats.testsCount %></div><div class="stat-lbl"><%= (adminCopy.kpiTests || 'Testlar') %></div></div></button>
-        <button type="button" class="stat-card" data-go="fans" style="--c:var(--accent-purple);--cbg:rgba(100,116,139,.12)"><div class="stat-ico"><%- icon('book', 20) %></div><div><div class="stat-num" id="s-fans" style="color:var(--accent-purple)"><%= stats.fansCount %></div><div class="stat-lbl"><%= (adminCopy.kpiFans || 'Namuna fanlar') %></div></div></button>
+        <button type="button" class="stat-card" data-go="pre"><div class="stat-ico"><%- icon('layers', 20) %></div><div><div class="stat-num" id="s-tests"><%= stats.testsCount %></div><div class="stat-lbl">Subtestlar</div></div></button>
+        <button type="button" class="stat-card" data-go="fans"><div class="stat-ico"><%- icon('book', 20) %></div><div><div class="stat-num" id="s-fans"><%= stats.fansCount %></div><div class="stat-lbl">Mock fanlar</div></div></button>
       </div>
 
       <!-- Power BI uslubidagi bosh sahifa: avval umumiy holat va tezkor yo'llar -->
@@ -51,15 +52,15 @@
           <a href="/admin/users" class="admin-overview-link"><span class="admin-overview-icon"><%- icon('users', 17) %></span><span><strong>Foydalanuvchilar</strong><small>Qidirish, rol va holat boshqaruvi</small></span><%- icon('arrowRight', 14) %></a>
           <a href="/admin/teachers" class="admin-overview-link"><span class="admin-overview-icon"><%- icon('bookOpen', 17) %></span><span><strong>O‘qituvchi arizalari</strong><small>Arizalarni ko‘rish va qaror qilish</small></span><%- icon('arrowRight', 14) %></a>
           <a href="/admin/vip" class="admin-overview-link"><span class="admin-overview-icon"><%- icon('shield', 17) %></span><span><strong>VIP boshqaruvi</strong><small>VIP huquqlarini boshqarish</small></span><%- icon('arrowRight', 14) %></a>
-          <a href="/admin/dashboard?tab=fans" class="admin-overview-link"><span class="admin-overview-icon"><%- icon('book', 17) %></span><span><strong>Namuna fanlar</strong><small>Fanlar va Excel importi</small></span><%- icon('arrowRight', 14) %></a>
-          <a href="/admin/dashboard?tab=pre" class="admin-overview-link"><span class="admin-overview-icon"><%- icon('layers', 17) %></span><span><strong>Tayyor testlar</strong><small>Test to‘plamlarini boshqarish</small></span><%- icon('arrowRight', 14) %></a>
+          <a href="/admin/dashboard?tab=fans" class="admin-overview-link"><span class="admin-overview-icon"><%- icon('book', 17) %></span><span><strong>Mock fanlar</strong><small>Fanlar va Excel importi</small></span><%- icon('arrowRight', 14) %></a>
+          <a href="/admin/dashboard?tab=pre" class="admin-overview-link"><span class="admin-overview-icon"><%- icon('layers', 17) %></span><span><strong>Subtestlar</strong><small>Subtest to‘plamlarini boshqarish</small></span><%- icon('arrowRight', 14) %></a>
           <a href="/admin/dashboard?tab=results" class="admin-overview-link"><span class="admin-overview-icon"><%- icon('trophy', 17) %></span><span><strong>Natijalar</strong><small>O‘yin natijalarini ko‘rish</small></span><%- icon('arrowRight', 14) %></a>
         </div>
       </section>
 
       <!-- TAB: Tezkor foydalanuvchilar -->
       <div class="admin-tab-pane <%= activeTab === 'danger' ? 'active' : '' %>" id="pane-danger">
-        <div class="admin-sec-hd"><div class="admin-sec-title"><%- icon('users', 18) %> Tezkor foydalanuvchi boshqaruvi <span class="badge badge-accent">TEZKOR AMALLAR</span></div><button type="button" class="admin-refresh-btn" onclick="loadUsers()"><%- icon('refresh', 12) %></button></div>
+        <div class="admin-sec-hd"><div class="admin-sec-title"><%- icon('users', 18) %> Tezkor foydalanuvchi boshqaruvi <span class="badge badge-accent">TEZKOR AMALLAR</span></div><button type="button" class="admin-refresh-btn" data-dashboard-action="refresh-users"><%- icon('refresh', 12) %></button></div>
         <div class="table-wrap dt-wrap is-reflow"><table class="dt" data-density="default"><thead><tr>
           <th scope="col">#</th>
           <th scope="col" data-sort="name">Login</th>
@@ -76,73 +77,122 @@
                 <td class="dt-num"><span class="badge badge-accent"><%= u.tests %> ta test</span></td>
                 <td>
                   <% if (u.isVip) { %>
-                    <span class="badge badge-success" style="cursor:pointer" onclick="quickRevokeVip('<%= u.username.replace(/'/g, "\\'") %>')" title="VIP ni olib tashlash">VIP</span>
+                    <button type="button" class="dashboard-action-btn dashboard-action-btn--secondary" data-dashboard-action="vip-revoke" data-username="<%= u.username %>" title="VIP ni olib tashlash"><%- icon('shield', 11) %> VIP</button>
                   <% } else { %>
-                    <button class="admin-edit-btn" onclick="quickGrantVip('<%= u.username.replace(/'/g, "\\'") %>')" style="background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.15);border-radius:7px;padding:4px 9px;color:var(--blue);font-size:.7rem;font-weight:600;cursor:pointer"><%- icon('shield', 11) %> VIP</button>
+                    <button type="button" class="dashboard-action-btn dashboard-action-btn--secondary" data-dashboard-action="vip-grant" data-username="<%= u.username %>"><%- icon('shield', 11) %> VIP</button>
                   <% } %>
                 </td>
-                <td><button class="admin-del-btn" onclick="deleteUser('<%= u.key %>','<%= u.username.replace(/'/g, "\\'") %>')"><%- icon('trash', 12) %> O'chirish</button></td>
+                <td><button type="button" class="dashboard-action-btn dashboard-action-btn--danger" data-dashboard-action="user-delete" data-key="<%= u.key %>" data-name="<%= u.username %>"><%- icon('trash', 12) %> O'chirish</button></td>
               </tr>
             <% }); %>
           <% } %>
         </tbody></table></div>
       </div>
 
-      <!-- TAB: Mock Fans -->
+      <!-- TAB: Mock fanlar -->
       <div class="admin-tab-pane <%= activeTab === 'fans' ? 'active' : '' %>" id="pane-fans">
-        <div class="admin-sec-hd"><div class="admin-sec-title"><%- icon('book', 18) %> Namuna fanlar <span class="badge badge-success">RANDOM 25</span></div>
-          <button type="button" class="admin-refresh-btn" onclick="loadFans()"><%- icon('refresh', 12) %></button>
+        <div class="admin-sec-hd">
+          <div class="admin-sec-title"><%- icon('book', 18) %> Mock fanlar <span class="dashboard-section-pill">Tasodifiy 25 savol</span></div>
+          <button type="button" class="admin-refresh-btn" data-dashboard-action="fans-refresh" aria-label="Mock fanlar ro‘yxatini yangilash"><%- icon('refresh', 12) %></button>
         </div>
-        <!-- Inline Excel upload for Fans -->
-        <div style="background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:14px;padding:16px;margin-bottom:14px">
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-            <input class="inp" id="fan-name" placeholder="Fan nomi (masalan: Matematika)" style="flex:1;min-width:140px;margin-bottom:0">
-            <div id="fan-drop-zone" onclick="document.getElementById('fan-excel-inp').click()" style="flex:1;min-width:140px;border:2px dashed rgba(56,189,248,.3);border-radius:10px;padding:10px;text-align:center;cursor:pointer;background:rgba(56,189,248,.04);transition:color .2s">,background-color .2s">,border-color .2s">,box-shadow .2s">,transform .2s">,opacity .2s">
-              <p id="fan-excel-lbl" style="color:var(--deborah-semantic-color-text-muted);font-size:.8rem;font-weight:700"><%- icon('upload', 14) %> Excel faylni yuklang</p>
+        <section class="dashboard-import-card" aria-labelledby="fan-import-title">
+          <div class="dashboard-import-heading">
+            <div>
+              <h3 id="fan-import-title">Mock fan qo‘shish</h3>
+              <p>Excel fayldan savollarni yuklang, ko‘rib chiqing va saqlang.</p>
             </div>
-            <button type="button" id="save-fan-btn" onclick="saveFanFromExcel()" style="background:linear-gradient(135deg,var(--deborah-semantic-color-action-primary),var(--deborah-semantic-color-action-primary-hover));border:none;border-radius:9px;padding:9px 18px;color:#fff;font-family:var(--font-body);font-size:.85rem;font-weight:700;cursor:pointer;white-space:nowrap"><%- icon('save', 14) %> Saqlash</button>
+            <span class="dashboard-required-note">* Majburiy maydonlar</span>
           </div>
-          <button type="button" onclick="downloadFanTemplate()" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:9px;padding:8px 14px;color:var(--deborah-semantic-color-text-muted);font-family:var(--font-body);font-size:.78rem;font-weight:600;cursor:pointer"><%- icon('download', 12) %> Excel shablon yuklab olish</button>
-        </div>
-        <input type="file" id="fan-excel-inp" accept=".xlsx,.xls" style="display:none">
-        <div id="fans-list"><div class="admin-empty">Yuklanmoqda...</div></div>
-        <div class="admin-msg" id="fan-msg"></div>
+          <div class="dashboard-import-grid">
+            <div class="dashboard-field">
+              <label for="fan-name">Mock fan nomi <span aria-hidden="true">*</span></label>
+              <input class="inp dashboard-text-input" id="fan-name" name="fanName" maxlength="100" autocomplete="off" placeholder="Masalan: Matematika, 7-sinf" aria-describedby="fan-name-help" required>
+              <p class="dashboard-field-help" id="fan-name-help">Fan nomini tushunarli va qisqa kiriting.</p>
+            </div>
+            <div class="dashboard-field">
+              <span class="dashboard-field-label">Excel savollar fayli <span aria-hidden="true">*</span></span>
+              <div class="dashboard-dropzone" id="fan-drop-zone" role="button" tabindex="0" aria-label="Mock fan uchun Excel fayl tanlash yoki shu yerga tashlash" aria-describedby="fan-drop-help">
+                <span class="dashboard-dropzone-icon"><%- icon('upload', 22) %></span>
+                <span class="dashboard-dropzone-copy">
+                  <strong>Faylni shu yerga tashlang</strong>
+                  <span id="fan-excel-lbl">yoki bosib fayl tanlang</span>
+                </span>
+                <span class="dashboard-dropzone-status" id="fan-excel-status">Fayl tanlanmagan</span>
+              </div>
+              <p class="dashboard-field-help" id="fan-drop-help">XLS yoki XLSX · 10 MB gacha · namunaviy shablon mavjud</p>
+            </div>
+          </div>
+          <div class="dashboard-import-actions">
+            <button type="button" class="dashboard-btn dashboard-btn--quiet" data-dashboard-action="excel-template"><%- icon('download', 14) %> Excel shablonini yuklab olish</button>
+            <button type="button" class="dashboard-btn dashboard-btn--primary" id="save-fan-btn" data-dashboard-action="fan-save" disabled><%- icon('save', 14) %> Mock fanni saqlash</button>
+          </div>
+          <div class="admin-msg" id="fan-msg" role="status" aria-live="polite"></div>
+        </section>
+        <input type="file" id="fan-excel-inp" accept=".xlsx,.xls,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="dashboard-file-input" tabindex="-1" aria-hidden="true">
+        <div class="dashboard-list" id="fans-list"><div class="admin-empty" role="status">Yuklanmoqda...</div></div>
       </div>
 
-      <!-- TAB: PRE Tests -->
+      <!-- TAB: Subtestlar -->
       <div class="admin-tab-pane <%= activeTab === 'pre' ? 'active' : '' %>" id="pane-pre">
-        <div class="admin-sec-hd"><div class="admin-sec-title"><%- icon('layers', 18) %> Tayyor testlar <span class="badge badge-purple">SUBTESTLAR</span></div>
-          <button type="button" class="admin-refresh-btn" onclick="loadPreGroups()"><%- icon('refresh', 12) %></button>
+        <div class="admin-sec-hd">
+          <div class="admin-sec-title"><%- icon('layers', 18) %> Subtestlar</div>
+          <button type="button" class="admin-refresh-btn" data-dashboard-action="pre-refresh" aria-label="Subtestlar ro‘yxatini yangilash"><%- icon('refresh', 12) %></button>
         </div>
-        <!-- Inline Excel upload for PRE -->
-        <div style="background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:14px;padding:16px;margin-bottom:14px">
-          <input class="inp" id="pre-title" placeholder="Guruh sarlavhasi (masalan: Fizika 2024)" style="margin-bottom:9px">
-          <div id="pre-drop-zone" onclick="document.getElementById('pre-excel-inp').click()" style="border:2px dashed rgba(100,116,139,.3);border-radius:10px;padding:12px;text-align:center;cursor:pointer;background:rgba(100,116,139,.04);transition:color .2s,background-color .2s,border-color .2s,box-shadow .2s,transform .2s,opacity .2s;margin-bottom:9px">
-            <p id="pre-excel-lbl" style="color:var(--deborah-semantic-color-text-muted);font-size:.8rem;font-weight:700"><%- icon('upload', 14) %> Excel faylni yuklang (25 savol = 1 subtest)</p>
+        <section class="dashboard-import-card" aria-labelledby="pre-import-title">
+          <div class="dashboard-import-heading">
+            <div>
+              <h3 id="pre-import-title">Subtestlar to‘plamini yaratish</h3>
+              <p>Excel fayldagi savollar 25 tadan subtestlarga ajratiladi.</p>
+            </div>
+            <span class="dashboard-required-note">* Majburiy maydonlar</span>
           </div>
-          <button type="button" onclick="downloadFanTemplate()" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:9px;padding:8px 14px;color:var(--deborah-semantic-color-text-muted);font-family:var(--font-body);font-size:.78rem;font-weight:600;cursor:pointer;margin-bottom:8px"><%- icon('download', 12) %> Excel shablon yuklab olish</button>
-          <div id="pre-preview" style="display:none;background:rgba(100,116,139,.07);border:1px solid rgba(100,116,139,.2);border-radius:10px;padding:11px 13px;margin-bottom:9px">
-            <div id="pre-preview-title" style="font-size:.78rem;font-weight:600;color:var(--accent-purple);margin-bottom:7px"></div>
-            <div id="pre-chunk-list"></div>
+          <div class="dashboard-import-grid dashboard-import-grid--subtests">
+            <div class="dashboard-field">
+              <label for="pre-title">To‘plam nomi <span aria-hidden="true">*</span></label>
+              <input class="inp dashboard-text-input" id="pre-title" name="subtestGroupName" maxlength="120" autocomplete="off" placeholder="Masalan: Fizika — 2024" aria-describedby="pre-title-help" required>
+              <p class="dashboard-field-help" id="pre-title-help">Bu nom ostida yaratilgan subtestlar birga saqlanadi.</p>
+            </div>
+            <div class="dashboard-field">
+              <span class="dashboard-field-label">Excel savollar fayli <span aria-hidden="true">*</span></span>
+              <div class="dashboard-dropzone" id="pre-drop-zone" role="button" tabindex="0" aria-label="Subtestlar uchun Excel fayl tanlash yoki shu yerga tashlash" aria-describedby="pre-drop-help">
+                <span class="dashboard-dropzone-icon"><%- icon('upload', 22) %></span>
+                <span class="dashboard-dropzone-copy">
+                  <strong>Faylni shu yerga tashlang</strong>
+                  <span id="pre-excel-lbl">yoki bosib fayl tanlang</span>
+                </span>
+                <span class="dashboard-dropzone-status" id="pre-excel-status">Fayl tanlanmagan</span>
+              </div>
+              <p class="dashboard-field-help" id="pre-drop-help">XLS yoki XLSX · 10 MB gacha · 25 savol = 1 subtest</p>
+            </div>
           </div>
-          <div id="pre-saving" style="display:none;align-items:center;gap:8px;font-size:.8rem;font-weight:700;color:var(--deborah-semantic-color-text-muted);margin-top:8px"><div class="spin-sm"></div><span>Saqlanmoqda...</span></div>
-          <div id="pre-prog-bar" style="display:none;background:rgba(255,255,255,.07);border-radius:50px;height:7px;margin-top:8px;overflow:hidden"><div id="pre-prog-fill" style="background:linear-gradient(90deg,var(--accent-purple),var(--accent-glow));height:100%;border-radius:50px;transition:width .3s;width:0%"></div></div>
-          <button type="button" id="save-pre-btn" onclick="savePreFromExcel()" style="width:100%;background:linear-gradient(135deg,var(--accent-purple),#7c3aed);border:none;border-radius:9px;padding:10px;color:#fff;font-family:var(--font-body);font-size:.88rem;font-weight:700;cursor:pointer"><%- icon('layers', 14) %> Barcha subtestlarni saqlash</button>
-          <div class="admin-msg" id="pre-msg"></div>
-        </div>
-        <input type="file" id="pre-excel-inp" accept=".xlsx,.xls" style="display:none">
-        <div id="pre-list"><div class="admin-empty">Yuklanmoqda...</div></div>
+          <div class="dashboard-import-actions">
+            <button type="button" class="dashboard-btn dashboard-btn--quiet" data-dashboard-action="excel-template"><%- icon('download', 14) %> Excel shablonini yuklab olish</button>
+            <button type="button" class="dashboard-btn dashboard-btn--primary" id="save-pre-btn" data-dashboard-action="pre-save" disabled><%- icon('layers', 14) %> Subtestlarni saqlash</button>
+          </div>
+          <div class="dashboard-preview" id="pre-preview" hidden>
+            <div class="dashboard-preview-heading">
+              <strong id="pre-preview-title"></strong>
+              <span>Tekshirib chiqing va so‘ng saqlang</span>
+            </div>
+            <div class="dashboard-subtest-list" id="pre-chunk-list"></div>
+          </div>
+          <div class="dashboard-saving" id="pre-saving" hidden><span class="dashboard-spinner" aria-hidden="true"></span><span>Subtestlar saqlanmoqda...</span></div>
+          <div class="dashboard-progress" id="pre-prog-bar" hidden><span id="pre-prog-fill"></span></div>
+          <div class="admin-msg" id="pre-msg" role="status" aria-live="polite"></div>
+        </section>
+        <input type="file" id="pre-excel-inp" accept=".xlsx,.xls,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="dashboard-file-input" tabindex="-1" aria-hidden="true">
+        <div class="dashboard-list" id="pre-list"><div class="admin-empty" role="status">Yuklanmoqda...</div></div>
       </div>
 
       <!-- TAB: Results -->
       <div class="admin-tab-pane <%= activeTab === 'results' ? 'active' : '' %>" id="pane-results">
-        <div class="admin-sec-hd"><div class="admin-sec-title"><%- icon('trophy', 18) %> O'yin Natijalari <span class="badge badge-gold">SHOXSUPA</span></div><button type="button" class="admin-refresh-btn" onclick="loadResults()"><%- icon('refresh', 12) %></button></div>
+        <div class="admin-sec-hd"><div class="admin-sec-title"><%- icon('trophy', 18) %> O'yin Natijalari <span class="badge badge-gold">SHOXSUPA</span></div><button type="button" class="admin-refresh-btn" data-dashboard-action="results-refresh"><%- icon('refresh', 12) %></button></div>
         <div id="results-wrap"><div class="admin-empty">Yuklanmoqda...</div></div>
       </div>
 
       <!-- TAB: Stats -->
       <div class="admin-tab-pane <%= activeTab === 'stats' ? 'active' : '' %>" id="pane-stats">
-        <div class="admin-sec-hd"><div class="admin-sec-title"><%- icon('barChart', 18) %> Statistika</div><button type="button" class="admin-refresh-btn" onclick="loadStats()"><%- icon('refresh', 12) %></button></div>
+        <div class="admin-sec-hd"><div class="admin-sec-title"><%- icon('barChart', 18) %> Statistika</div><button type="button" class="admin-refresh-btn" data-dashboard-action="stats-refresh"><%- icon('refresh', 12) %></button></div>
         <div id="stats-content"><div class="admin-empty">Yuklanmoqda...</div></div>
       </div>
 
@@ -150,7 +200,7 @@
       <div class="admin-tab-pane <%= activeTab === 'vip' ? 'active' : '' %>" id="pane-vip">
         <div class="admin-sec-hd">
           <div class="admin-sec-title"><%- icon('shield', 18) %> VIP Foydalanuvchilar <span class="badge badge-gold">MAXFIY</span></div>
-          <button type="button" class="admin-refresh-btn" onclick="loadVip()"><%- icon('refresh', 12) %></button>
+          <button type="button" class="admin-refresh-btn" data-dashboard-action="vip-refresh"><%- icon('refresh', 12) %></button>
         </div>
 
         <!-- Grant Form -->
@@ -164,7 +214,7 @@
               <% users.forEach(u => { %><option value="<%= u.username %>"><% }); %>
             </datalist>
           </div>
-          <button type="button" id="grant-vip-btn" onclick="grantVip()" class="btn btn-warning"><%- icon('shield', 14) %> VIP qilish</button>
+          <button type="button" id="grant-vip-btn" data-dashboard-action="vip-grant-manual" class="btn btn-warning"><%- icon('shield', 14) %> VIP qilish</button>
           </div>
           <div class="admin-msg" id="vip-msg"></div>
           <div id="vip-result" style="display:none;margin-top:10px;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.25);border-radius:10px;padding:12px 15px">
@@ -174,7 +224,7 @@
         </div>
 
         <!-- Search filter -->
-        <input class="inp" id="vip-search" placeholder="Qidirish..." oninput="filterVip()" style="margin-bottom:12px">
+        <input class="inp" id="vip-search" placeholder="Qidirish..." data-dashboard-action="vip-search" style="margin-bottom:12px">
 
         <!-- VIP Users Table (dynamic) -->
         <div id="vip-table-wrap"><div class="admin-empty">Yuklanmoqda...</div></div>
@@ -184,7 +234,7 @@
       <div class="admin-tab-pane <%= activeTab === 'governance' ? 'active' : '' %>" id="pane-governance">
         <div class="admin-sec-hd">
           <div class="admin-sec-title"><%- icon('shield', 18) %> Cast Governance <span class="badge badge-success">Institution</span></div>
-          <button type="button" class="admin-refresh-btn" onclick="loadGovernance()"><%- icon('refresh', 12) %></button>
+          <button type="button" class="admin-refresh-btn" data-dashboard-action="gov-refresh"><%- icon('refresh', 12) %></button>
         </div>
 
         <!-- Create policy form -->
@@ -199,7 +249,7 @@
               <label class="lbl">Approved presets (vergul bilan)</label>
               <input class="inp" id="gov-presets" placeholder="responsive_accuracy, formative_check" style="margin-bottom:0">
             </div>
-            <button type="button" onclick="createGovernance()" style="background:linear-gradient(135deg,#10b981,#059669);border:none;border-radius:9px;padding:11px 22px;color:#fff;font-family:var(--font-body);font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px"><%- icon('shield', 14) %> Yaratish</button>
+            <button type="button" data-dashboard-action="gov-create" class="dashboard-btn dashboard-btn--primary"><%- icon('shield', 14) %> Yaratish</button>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
             <div style="flex:1;min-width:260px">
@@ -221,7 +271,7 @@
   </div>
 
   <!-- Hidden file inputs for Excel import -->
-  <input type="file" id="fan-reset-inp" accept=".xlsx,.xls" style="display:none">
+  <input type="file" id="fan-reset-inp" accept=".xlsx,.xls" class="dashboard-file-input" tabindex="-1" aria-hidden="true">
 
   <script>
     // AUTH D-10 §13: 4 til admin copy (AUTH_COPY[lang].admin) — fallback bilan
@@ -268,8 +318,16 @@
     // ── S22 FIX (VIP tab yuklanmasligi): svgIcon 24 joyda ishlatilgan, lekin
     // HECH QAYERDA aniqlanmagan — har bir JS-render tab (VIP/fans/results...)
     // ReferenceError bilan 'Yuklab bo'lmadi'ga tushardi. esc ham xuddi shunday.
-    const __DASH_ICONS = <%- JSON.stringify(Object.fromEntries(["shield","check","upload","save","layers","book","zap","gamepad","monitor","refresh","alertTriangle","x","plus"].map((n) => [n, icon(n, 13)]))).replace(/</g, '\\u003c') %>;
-    function svgIcon(name, size) { return __DASH_ICONS[name] || ''; }
+    const __DASH_ICONS = <%- JSON.stringify(Object.fromEntries(["shield","check","upload","save","layers","book","zap","gamepad","monitor","refresh","alertTriangle","x","plus","award","users","edit","trophy","trash","user"].map((n) => [n, icon(n, 13)]))).replace(/</g, '\\u003c') %>;
+    function svgIcon(name, size) {
+      const markup = __DASH_ICONS[name] || '';
+      const dimension = Math.round(Number(size));
+      if (!markup || !Number.isFinite(dimension) || dimension < 1) return markup;
+      return markup.replace(/<svg\b([^>]*)>/, (tag, attributes) => {
+        const clean = attributes.replace(/\s(?:width|height)="[^"]*"/g, '');
+        return `<svg${clean} width="${dimension}" height="${dimension}">`;
+      });
+    }
     function esc(v) { return escHtml(v); }
 
     // ── Cast Governance (C4-08) ──
@@ -326,11 +384,11 @@
           return `
             <div style="background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-subtle);border-radius:14px;padding:14px 16px;margin-bottom:10px">
               <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-                <div style="font-size:.86rem;font-weight:600">${escHtml(p.policyId)} ${badge(p.status)} ${p.isEffective ? '<span class="badge badge-info" style="background:rgba(56,189,248,.15);color:#38bdf8">● Faol</span>' : ''}</div>
+                <div style="font-size:.86rem;font-weight:600">${escHtml(p.policyId)} ${badge(p.status)} ${p.isEffective ? '<span class="badge dashboard-governance-effective">● Faol</span>' : ''}</div>
                 <div style="display:flex;gap:6px;flex-wrap:wrap">
-                  ${p.status === 'DRAFT' ? `<button type="button" class="admin-mini-btn" onclick="publishGovernance('${p.policyId}')" style="background:linear-gradient(135deg,#10b981,#059669)">Publish</button>` : ''}
-                  ${p.status === 'PUBLISHED' ? `<button type="button" class="admin-mini-btn" onclick="deprecateGovernance('${p.policyId}')" style="background:rgba(239,68,68,.15);color:#ef4444">Deprecate</button>` : ''}
-                  <button type="button" class="admin-mini-btn" onclick="auditGovernance('${p.policyId}')">Audit</button>
+                  ${p.status === 'DRAFT' ? `<button type="button" class="dashboard-action-btn dashboard-action-btn--secondary" data-dashboard-action="gov-publish" data-policy-id="${escHtml(p.policyId)}">Publish</button>` : ''}
+                  ${p.status === 'PUBLISHED' ? `<button type="button" class="dashboard-action-btn dashboard-action-btn--danger" data-dashboard-action="gov-deprecate" data-policy-id="${escHtml(p.policyId)}">Deprecate</button>` : ''}
+                  <button type="button" class="dashboard-action-btn dashboard-action-btn--quiet" data-dashboard-action="gov-audit" data-policy-id="${escHtml(p.policyId)}">Audit</button>
                 </div>
               </div>
               <div style="font-size:.75rem;color:var(--deborah-semantic-color-text-secondary);margin-top:6px;line-height:1.7">
@@ -348,7 +406,7 @@
     async function publishGovernance(policyId) {
       if (!confirm('Bu policy\'ni PUBLISH qilishni tasdiqlaysizmi? (High-risk fieldlar darhol majburiy bo\'ladi)')) return;
       try {
-        const r = await fetch('/admin/api/cast/policies/' + policyId + '/publish', {
+        const r = await fetch('/admin/api/cast/policies/' + encodeURIComponent(policyId) + '/publish', {
           method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ confirm: true }),
         });
         const d = await r.json();
@@ -360,7 +418,7 @@
     async function deprecateGovernance(policyId) {
       if (!confirm('Bu policy\'ni DEPRECATE qilishni tasdiqlaysizmi?')) return;
       try {
-        const r = await fetch('/admin/api/cast/policies/' + policyId + '/deprecate', {
+        const r = await fetch('/admin/api/cast/policies/' + encodeURIComponent(policyId) + '/deprecate', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
         });
         const d = await r.json();
@@ -371,265 +429,447 @@
 
     async function auditGovernance(policyId) {
       try {
-        const r = await fetch('/admin/api/cast/policies/' + policyId + '/audit');
+        const r = await fetch('/admin/api/cast/policies/' + encodeURIComponent(policyId) + '/audit');
         const d = await r.json();
         if (!r.ok) { alert('⚠️ ' + (d.error || 'xato')); return; }
-        const lines = d.audit.audit.map(a => a.at + ' — ' + (a.by || '?') + ' — ' + a.action + ' (v' + a.version + ')').join('\n') || 'audit bo\'sh';
+        const auditRows = Array.isArray(d.audit?.audit) ? d.audit.audit : [];
+        const lines = auditRows.map(a => `${a.at || ''} — ${a.by || '?'} — ${a.action || ''} (v${a.version ?? ''})`).join('\n') || 'audit bo\'sh';
         alert('📜 Audit: ' + d.audit.policyId + ' v' + d.audit.version + ' [' + d.audit.status + ']\n\n' + lines);
       } catch (e) { alert('⚠️ ' + e.message); }
     }
 
-    // ── EXCEL IMPORT FUNCTIONS ──
+    // ── Excel import: one parser and one upload path for both modules ──
+    const MAX_EXCEL_BYTES = 10 * 1024 * 1024;
+    const MAX_QUESTIONS_PER_FILE = 2000;
     let fanPendingQs = null;
     let preChunks = [];
     let editPreKey = null;
-    
-    function setMsg(id, text, type) {
-      const el = document.getElementById(id);
-      if (el) {
-        // S33.08: status ranglar — info cyan / warn amber / danger red
-        const tone = type === 'err' ? 'admin-status--danger' : type === 'warn' ? 'admin-status--warn' : 'admin-status--info';
-        el.textContent = text;
-        el.className = 'admin-msg active ' + tone;
-      }
-    }
-    
-    function setZoneLoaded(zone, label, text) {
-      zone.style.borderColor = 'var(--green)';
-      zone.style.borderStyle = 'solid';
-      zone.style.background = 'rgba(56,189,248,.1)';
-      label.innerHTML = svgIcon('check', 14) + ' ' + text;
-    }
-    function setZoneIdle(zone, label, text) {
-      zone.style.borderColor = '';
-      zone.style.borderStyle = 'dashed';
-      zone.style.background = '';
-      label.innerHTML = svgIcon('upload', 14) + ' ' + text;
-    }
-    
-    // ── Drag & Drop Support ──
-    function setupDropZone(zoneId, inputId, fileHandler) {
-      const zone = document.getElementById(zoneId);
-      const inp = document.getElementById(inputId);
-      if (!zone || !inp) return;
-      // S33.10: keyboard access — zone focus'da bo'lsa Enter/Space file picker ochadi
-      zone.setAttribute('role', 'button');
-      zone.setAttribute('tabindex', '0');
-      zone.setAttribute('aria-label', 'Excel fayl yuklash');
-      zone.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); inp.click(); }
-      });
-      zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.borderColor = 'var(--accent-glow)'; zone.style.background = 'rgba(56,189,248,.14)'; zone.style.transform = 'scale(1.01)'; });
-      zone.addEventListener('dragleave', () => { zone.style.borderColor = ''; zone.style.background = ''; zone.style.transform = 'none'; });
-      zone.addEventListener('drop', e => {
-        e.preventDefault();
-        zone.style.borderColor = ''; zone.style.background = ''; zone.style.transform = 'none';
-        if (e.dataTransfer.files.length) {
-          const dt = new DataTransfer();
-          dt.items.add(e.dataTransfer.files[0]);
-          inp.files = dt.files;
-          const evt = new Event('change', { bubbles: true });
-          inp.dispatchEvent(evt);
-        }
-      });
-    }
-    setupDropZone('fan-drop-zone', 'fan-excel-inp');
-    setupDropZone('pre-drop-zone', 'pre-excel-inp');
 
-    // ── Fan Excel Import ──
-    document.getElementById('fan-excel-inp').addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const zone = document.getElementById('fan-drop-zone');
-      const label = document.getElementById('fan-excel-lbl');
-      const reader = new FileReader();
-      reader.onload = function(ev) {
-        try {
-          const wb = XLSX.read(ev.target.result, { type: 'binary' });
-          const qs = parseQuestionsFromWB(wb);
-          if (!qs || !qs.length) { setMsg('fan-msg', 'Savollar topilmadi!', 'err'); fanPendingQs = null; setZoneIdle(zone, label, 'Excel faylni yuklang'); if(e.target.value) e.target.value = ''; return; }
-          fanPendingQs = qs;
-          setZoneLoaded(zone, label, qs.length + ' ta savol yuklandi');
-          setMsg('fan-msg', qs.length + ' ta savol tayyor — Saqlash tugmasini bosing', 'ok');
-        } catch(err) { setMsg('fan-msg', 'Xato: ' + err.message, 'err'); }
-        if(e.target.value) e.target.value = '';
-      };
-      reader.readAsBinaryString(file);
-    });
-    
-    async function saveFanFromExcel() {
-      const name = document.getElementById('fan-name').value.trim();
-      if (!name) { setMsg('fan-msg', 'Fan nomini kiriting!', 'err'); return; }
-      if (!fanPendingQs || !fanPendingQs.length) { setMsg('fan-msg', 'Avval Excel faylni yuklang!', 'err'); return; }
-      const btn = document.getElementById('save-fan-btn');
-      btn.disabled = true; btn.textContent = 'Saqlanmoqda...';
-      try {
-        const slim = fanPendingQs.map(q => ({ num: q.num, text: q.text, correctLetter: q.correctLetter, correctText: q.correctText, options: q.options.map(o => ({ text: o.text, letter: o.letter, isCorrect: o.isCorrect })) }));
-        const res = await fetch('/admin/api/fans/save', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, questions: slim })
-        });
-        const data = await res.json();
-        if (data.success) {
-          setMsg('fan-msg', '"' + name + '" — ' + slim.length + ' ta savol saqlandi!', 'ok');
-          document.getElementById('fan-name').value = '';
-          setZoneIdle(document.getElementById('fan-drop-zone'), document.getElementById('fan-excel-lbl'), 'Excel faylni yuklang');
-          fanPendingQs = null;
-          loadFans();
-        } else setMsg('fan-msg', 'Xato: ' + (data.error || ''), 'err');
-      } catch(e) { setMsg('fan-msg', 'Saqlashda xatolik: ' + e.message, 'err'); }
-      btn.disabled = false; btn.textContent = svgIcon('save', 14) + ' Saqlash';
+    function setMsg(id, text, type = 'info') {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const tone = type === 'err'
+        ? 'admin-status--danger'
+        : type === 'warn'
+          ? 'admin-status--warn'
+          : type === 'ok'
+            ? 'dashboard-status--success'
+            : 'admin-status--info';
+      el.textContent = String(text || '');
+      el.className = 'admin-msg active ' + tone;
+      el.setAttribute('role', type === 'err' ? 'alert' : 'status');
+      el.setAttribute('aria-live', type === 'err' ? 'assertive' : 'polite');
     }
-    
-    function downloadFanTemplate() {
-      const wb = XLSX.utils.book_new();
-      const data = [
-        ['Savol', 'A) To\'g\'ri javob', 'B) Variant', 'C) Variant', 'D) Variant', 'To\'g\'ri harf (A/B/C/D)'],
-        ['Nyutonning 1-qonuni?', 'Inersiya', 'Dinamika', 'Ta`sir', 'Aks ta`sir', 'A'],
-        ['2+2 nechiga teng?', '3', '4', '5', '6', 'B'],
-      ];
-      const ws = XLSX.utils.aoa_to_sheet(data);
-      XLSX.utils.book_append_sheet(wb, ws, 'Savollar');
-      XLSX.writeFile(wb, 'deborah-fan-template.xlsx');
-    }
-    
-    function parseQuestionsFromWB(wb) {
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      const arr = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
-      const qs = [];
-      for (let i = 0; i < arr.length; i++) {
-        const r = arr[i];
-        const text = String(r[0] || '').trim();
-        if (!text) continue;
-        if (i === 0) {
-          const t = text.toLowerCase();
-          const opt1 = String(r[1] || '').trim().toLowerCase();
-          if ((t.includes('savol') || t.includes('question')) && (opt1.includes('variant') || opt1.includes('javob') || opt1.includes('to\'g\'ri'))) continue;
-        }
-        const options = [
-          { text: String(r[1] || '').trim(), letter: 'A', isCorrect: false },
-          { text: String(r[2] || '').trim(), letter: 'B', isCorrect: false },
-          { text: String(r[3] || '').trim(), letter: 'C', isCorrect: false },
-          { text: String(r[4] || '').trim(), letter: 'D', isCorrect: false },
-        ].filter(o => o.text);
-        if (options.length < 2) continue;
-        const correctLetter = String(r[5] || 'A').trim().toUpperCase();
-        const correctIdx = options.findIndex(o => o.letter === correctLetter);
-        if (correctIdx >= 0) options[correctIdx].isCorrect = true;
-        if (options.every(o => !o.isCorrect)) options[0].isCorrect = true;
-        qs.push({ num: qs.length + 1, text, correctLetter, correctText: options.find(o => o.isCorrect)?.text || options[0].text, options });
+
+    function setZoneState(kind, state, detail = '') {
+      const zone = document.getElementById(`${kind}-drop-zone`);
+      const label = document.getElementById(`${kind}-excel-lbl`);
+      const status = document.getElementById(`${kind}-excel-status`);
+      if (!zone || !label || !status) return;
+      zone.dataset.state = state;
+      if (state === 'loading') {
+        zone.setAttribute('aria-busy', 'true');
+        label.textContent = 'Fayl tekshirilmoqda…';
+        status.textContent = detail || 'Biroz kuting';
+      } else {
+        zone.removeAttribute('aria-busy');
+        label.textContent = state === 'loaded'
+          ? 'Boshqa fayl tanlash yoki almashtirish uchun bosing'
+          : 'yoki bosib fayl tanlang';
+        status.textContent = detail || (state === 'error' ? 'Faylni qayta tanlang' : 'Fayl tanlanmagan');
       }
-      return qs;
     }
-    
-    // ── PRE Excel Import ──
-    document.getElementById('pre-excel-inp').addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const zone = document.getElementById('pre-drop-zone');
-      const label = document.getElementById('pre-excel-lbl');
-      const reader = new FileReader();
-      reader.onload = function(ev) {
-        try {
-          const wb = XLSX.read(ev.target.result, { type: 'binary' });
-          const qs = parseQuestionsFromWB(wb);
-          if (!qs || !qs.length) { setMsg('pre-msg', 'Savollar topilmadi!', 'err'); setZoneIdle(zone, label, 'Excel faylni yuklang (25 savol = 1 subtest)'); if(e.target.value) e.target.value = ''; return; }
-          // Split into chunks of 25
-          preChunks = [];
-          const CHUNK_SIZE = 25;
-          for (let ci = 0; ci < qs.length; ci += CHUNK_SIZE) {
-            const chunk = qs.slice(ci, ci + CHUNK_SIZE);
-            preChunks.push({ name: (ci / CHUNK_SIZE + 1) + '-subtest', questions: chunk, id: Date.now().toString(36) + ci });
-          }
-          setZoneLoaded(zone, label, qs.length + ' ta savol, ' + preChunks.length + ' ta subtest');
-          showPrePreview();
-        } catch(err) { setMsg('pre-msg', 'Xato: ' + err.message, 'err'); }
-        if(e.target.value) e.target.value = '';
-      };
-      reader.readAsBinaryString(file);
-    });
-    
-    function showPrePreview() {
-      if (!preChunks.length) return;
-      document.getElementById('pre-preview').style.display = 'block';
-      document.getElementById('pre-preview-title').textContent = preChunks.length + ' ta subtest: ' + preChunks.reduce((s, c) => s + c.questions.length, 0) + ' ta savol';
-      document.getElementById('pre-chunk-list').innerHTML = preChunks.map((c, i) => 
-        '<div style="display:flex;justify-content:space-between;font-size:.78rem;font-weight:700;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)">' +
-        '<span>' + c.name + '</span><span >' + c.questions.length + ' ta savol</span></div>'
-      ).join('');
+
+    function getXlsx() {
+      const lib = window.XLSX;
+      if (!lib || typeof lib.read !== 'function' || !lib.utils) {
+        throw new Error('Excel moduli yuklanmadi. Sahifani yangilang va qayta urinib ko‘ring.');
+      }
+      return lib;
     }
-    
-    async function savePreFromExcel() {
-      const title = document.getElementById('pre-title').value.trim();
-      if (!title) { setMsg('pre-msg', 'Guruh sarlavhasini kiriting!', 'err'); return; }
-      if (!preChunks.length) { setMsg('pre-msg', 'Avval Excel faylni yuklang!', 'err'); return; }
-      const btn = document.getElementById('save-pre-btn');
-      btn.disabled = true; btn.textContent = 'Saqlanmoqda...';
-      document.getElementById('pre-prog-bar').style.display = 'block';
-      document.getElementById('pre-saving').style.display = 'flex';
-      try {
-        const res = await fetch('/admin/api/pre-groups/save', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title, chunks: preChunks, editKey: editPreKey })
+
+    function readFileAsArrayBuffer(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error('Faylni o‘qib bo‘lmadi. Boshqa XLS/XLSX faylni sinab ko‘ring.'));
+        reader.onabort = () => reject(new Error('Faylni o‘qish bekor qilindi.'));
+        reader.readAsArrayBuffer(file);
+      });
+    }
+
+    function normalizeExcelCell(value) {
+      return String(value == null ? '' : value)
+        .replace(/[\u2018\u2019\u02bb\u02bc`]/g, "'")
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase();
+    }
+
+    async function readExcelWorkbook(file) {
+      if (!file) throw new Error('Excel fayl tanlanmadi.');
+      if (!/\.(xlsx|xls)$/i.test(file.name || '')) {
+        throw new Error('Faqat .xlsx yoki .xls formatidagi Excel fayl qabul qilinadi.');
+      }
+      if (file.size > MAX_EXCEL_BYTES) {
+        throw new Error('Fayl hajmi 10 MB dan katta. Kichikroq Excel fayl tanlang.');
+      }
+      const data = await readFileAsArrayBuffer(file);
+      const xlsx = getXlsx();
+      const workbook = xlsx.read(data, { type: 'array' });
+      if (!workbook.SheetNames || !workbook.SheetNames.length) {
+        throw new Error('Excel faylda o‘qiladigan varaq topilmadi.');
+      }
+      return workbook;
+    }
+
+    function parseQuestionsFromWB(workbook) {
+      const xlsx = getXlsx();
+      const firstSheet = workbook?.SheetNames?.[0];
+      const sheet = firstSheet && workbook.Sheets?.[firstSheet];
+      if (!sheet) throw new Error('Excel faylning birinchi varag‘i bo‘sh yoki buzilgan.');
+      const rows = xlsx.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: false });
+      const questions = [];
+      const letters = ['A', 'B', 'C', 'D'];
+
+      for (let rowIndex = 0; rowIndex < rows.length; rowIndex += 1) {
+        const row = Array.isArray(rows[rowIndex]) ? rows[rowIndex] : [];
+        const text = String(row[0] ?? '').trim();
+        if (!text) continue;
+
+        if (rowIndex === 0) {
+          const firstCell = normalizeExcelCell(text);
+          const headerCells = row.slice(1, 6).map(normalizeExcelCell);
+          const isQuestionHeader = /^(savol|savol matni|question|question text|matn)$/i.test(firstCell);
+          const hasOptionHeaders = headerCells.some((cell) => /variant|javob|answer|option|correct|to'g'ri|^[a-d][).:\-]?$/i.test(cell));
+          if (isQuestionHeader && hasOptionHeaders) continue;
+        }
+
+        const options = row.slice(1, 5).map((value, index) => ({
+          text: String(value ?? '').trim(),
+          letter: letters[index],
+          isCorrect: false,
+        })).filter((option) => option.text);
+        if (options.length < 2) continue;
+
+        const answerCell = String(row[5] ?? '').trim();
+        const normalizedAnswer = normalizeExcelCell(answerCell);
+        const letterMatch = answerCell.match(/(?:^|[:=\-]\s*)([A-D])(?=$|[\s).:\-])/i);
+        let correctLetter = letterMatch ? letterMatch[1].toUpperCase() : '';
+        if (/^[1-4]$/.test(normalizedAnswer)) correctLetter = letters[Number(normalizedAnswer) - 1];
+        let correctOption = options.find((option) => option.letter === correctLetter);
+        if (!correctOption && normalizedAnswer) {
+          correctOption = options.find((option) => normalizeExcelCell(option.text) === normalizedAnswer);
+        }
+        if (!correctOption && normalizedAnswer) {
+          throw new Error(`To‘g‘ri javob ${rowIndex + 1}-qatorda A/B/C/D harfi yoki variant matni bo‘lishi kerak.`);
+        }
+        if (!correctOption) correctOption = options[0];
+        correctOption.isCorrect = true;
+        correctLetter = correctOption.letter;
+        questions.push({
+          num: questions.length + 1,
+          text,
+          correctLetter,
+          correctText: correctOption.text,
+          options,
         });
-        const data = await res.json();
-        if (data.success) {
-          setMsg('pre-msg', 'Tayyor test saqlandi!', 'ok');
-          document.getElementById('pre-title').value = '';
-          preChunks = []; editPreKey = null;
-          document.getElementById('pre-preview').style.display = 'none';
-          setZoneIdle(document.getElementById('pre-drop-zone'), document.getElementById('pre-excel-lbl'), 'Excel faylni yuklang (25 savol = 1 subtest)');
-          loadPreGroups();
-        } else setMsg('pre-msg', 'Xato: ' + (data.error || ''), 'err');
-      } catch(e) { setMsg('pre-msg', 'Xato: ' + e.message, 'err'); }
-      document.getElementById('pre-prog-bar').style.display = 'none';
-      document.getElementById('pre-saving').style.display = 'none';
-      btn.disabled = false; btn.innerHTML = svgIcon('layers', 14) + ' Barcha subtestlarni saqlash';
+      }
+
+      if (questions.length > MAX_QUESTIONS_PER_FILE) {
+        throw new Error(`Bir faylda ${MAX_QUESTIONS_PER_FILE} tadan ko‘p savol yuklab bo‘lmaydi.`);
+      }
+      return questions;
+    }
+
+    function setExcelButtonState(kind, enabled) {
+      const button = document.getElementById(kind === 'fan' ? 'save-fan-btn' : 'save-pre-btn');
+      if (button) button.disabled = !enabled;
+    }
+
+    async function handleExcelFile(kind, file) {
+      const messageId = kind === 'fan' ? 'fan-msg' : 'pre-msg';
+      if (kind === 'fan') fanPendingQs = null;
+      else preChunks = [];
+      setExcelButtonState(kind, false);
+      setZoneState(kind, 'loading', file?.name || 'Fayl o‘qilmoqda');
+      setMsg(messageId, 'Excel fayl tekshirilmoqda…', 'info');
+
+      try {
+        const workbook = await readExcelWorkbook(file);
+        const questions = parseQuestionsFromWB(workbook);
+        if (!questions.length) {
+          throw new Error('Savollar topilmadi. Shablondagi ustunlar tartibini tekshiring: Savol, A, B, C, D, to‘g‘ri javob.');
+        }
+
+        if (kind === 'fan') {
+          fanPendingQs = questions;
+          setZoneState('fan', 'loaded', `${file.name} · ${questions.length} ta savol`);
+          setExcelButtonState('fan', true);
+          setMsg('fan-msg', `${questions.length} ta savol tayyor. Mock fan nomini kiriting va saqlang.`, 'ok');
+        } else {
+          const chunkSize = 25;
+          preChunks = [];
+          for (let index = 0; index < questions.length; index += chunkSize) {
+            const part = questions.slice(index, index + chunkSize);
+            preChunks.push({
+              id: `${Date.now().toString(36)}-${index}`,
+              name: `Subtest ${preChunks.length + 1}`,
+              questions: part,
+            });
+          }
+          setZoneState('pre', 'loaded', `${file.name} · ${questions.length} ta savol`);
+          setExcelButtonState('pre', true);
+          showPrePreview();
+          setMsg('pre-msg', `${questions.length} ta savol ${preChunks.length} ta subtestga ajratildi. Saqlashdan oldin tekshiring.`, 'ok');
+        }
+      } catch (error) {
+        setZoneState(kind, 'error', 'Faylni qayta tanlang');
+        setExcelButtonState(kind, false);
+        setMsg(messageId, error?.message || 'Excel faylni o‘qib bo‘lmadi.', 'err');
+      }
+    }
+
+    // Drag/drop and file-picker use the same handler (no DataTransfer assignment required).
+    function setupDropZone(zoneId, inputId, kind) {
+      const zone = document.getElementById(zoneId);
+      const input = document.getElementById(inputId);
+      if (!zone || !input) return;
+      zone.addEventListener('click', () => {
+        input.value = '';
+        input.click();
+      });
+      zone.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          input.value = '';
+          input.click();
+        }
+      });
+      zone.addEventListener('dragenter', (event) => {
+        event.preventDefault();
+        zone.classList.add('is-dragover');
+      });
+      zone.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        if (event.dataTransfer) event.dataTransfer.dropEffect = 'copy';
+        zone.classList.add('is-dragover');
+      });
+      zone.addEventListener('dragleave', (event) => {
+        if (!event.relatedTarget || !zone.contains(event.relatedTarget)) zone.classList.remove('is-dragover');
+      });
+      zone.addEventListener('drop', (event) => {
+        event.preventDefault();
+        zone.classList.remove('is-dragover');
+        const files = Array.from(event.dataTransfer?.files || []);
+        if (!files.length) return;
+        if (files.length > 1) {
+          if (kind === 'fan') fanPendingQs = null;
+          else preChunks = [];
+          setExcelButtonState(kind, false);
+          setZoneState(kind, 'error', 'Bir vaqtda bitta fayl yuklang');
+          if (kind === 'pre') showPrePreview();
+          setMsg(kind === 'fan' ? 'fan-msg' : 'pre-msg', 'Bir vaqtda bitta Excel fayl yuklang.', 'warn');
+          return;
+        }
+        handleExcelFile(kind, files[0]);
+      });
+      input.addEventListener('change', () => {
+        const file = input.files?.[0];
+        input.value = '';
+        if (file) handleExcelFile(kind, file);
+      });
+    }
+    setupDropZone('fan-drop-zone', 'fan-excel-inp', 'fan');
+    setupDropZone('pre-drop-zone', 'pre-excel-inp', 'pre');
+
+    async function saveFanFromExcel() {
+      const nameInput = document.getElementById('fan-name');
+      const name = nameInput.value.trim();
+      if (!name) {
+        setMsg('fan-msg', 'Mock fan nomini kiriting.', 'err');
+        nameInput.focus();
+        return;
+      }
+      if (!fanPendingQs?.length) {
+        setMsg('fan-msg', 'Avval Excel faylni yuklang va tekshiring.', 'err');
+        document.getElementById('fan-drop-zone').focus();
+        return;
+      }
+
+      const button = document.getElementById('save-fan-btn');
+      const originalLabel = button.innerHTML;
+      button.disabled = true;
+      button.setAttribute('aria-busy', 'true');
+      button.textContent = 'Saqlanmoqda…';
+      try {
+        const questions = fanPendingQs.map((question) => ({
+          num: question.num,
+          text: question.text,
+          correctLetter: question.correctLetter,
+          correctText: question.correctText,
+          options: question.options.map((option) => ({ ...option })),
+        }));
+        const response = await fetch('/admin/api/fans/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, questions }),
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.success) throw new Error(data.error || `Saqlash muvaffaqiyatsiz (HTTP ${response.status}).`);
+
+        setMsg('fan-msg', `“${name}” mock fani saqlandi · ${questions.length} ta savol.`, 'ok');
+        nameInput.value = '';
+        fanPendingQs = null;
+        setZoneState('fan', 'idle');
+        await loadFans();
+      } catch (error) {
+        setMsg('fan-msg', error?.message || 'Mock fanni saqlashda xatolik yuz berdi.', 'err');
+      } finally {
+        button.removeAttribute('aria-busy');
+        button.innerHTML = originalLabel;
+        button.disabled = !fanPendingQs?.length;
+      }
+    }
+
+    function downloadFanTemplate() {
+      try {
+        const xlsx = getXlsx();
+        const workbook = xlsx.utils.book_new();
+        const rows = [
+          ['Savol matni', 'A-variant', 'B-variant', 'C-variant', 'D-variant', 'To‘g‘ri javob (A/B/C/D)'],
+          ['Nyutonning 1-qonuni?', 'Inersiya', 'Dinamika', 'Ta’sir', 'Aks ta’sir', 'A'],
+          ['2 + 2 nechiga teng?', '3', '4', '5', '6', 'B'],
+        ];
+        xlsx.utils.book_append_sheet(workbook, xlsx.utils.aoa_to_sheet(rows), 'Savollar');
+        xlsx.writeFile(workbook, 'deborah-excel-savollar-shabloni.xlsx');
+      } catch (error) {
+        setMsg(currentTab === 'pre' ? 'pre-msg' : 'fan-msg', error?.message || 'Excel shablonini yaratib bo‘lmadi.', 'err');
+      }
+    }
+
+    function showPrePreview() {
+      const preview = document.getElementById('pre-preview');
+      if (!preChunks.length) {
+        preview.hidden = true;
+        return;
+      }
+      preview.hidden = false;
+      const total = preChunks.reduce((sum, chunk) => sum + chunk.questions.length, 0);
+      document.getElementById('pre-preview-title').textContent = `${preChunks.length} ta subtest · ${total} ta savol`;
+      document.getElementById('pre-chunk-list').innerHTML = preChunks.map((chunk) => `
+        <div class="dashboard-subtest-row">
+          <span>${escHtml(chunk.name)}</span>
+          <span>${chunk.questions.length} ta savol</span>
+        </div>`).join('');
+    }
+
+    async function savePreFromExcel() {
+      const titleInput = document.getElementById('pre-title');
+      const title = titleInput.value.trim();
+      if (!title) {
+        setMsg('pre-msg', 'Subtestlar to‘plamiga nom kiriting.', 'err');
+        titleInput.focus();
+        return;
+      }
+      if (!preChunks.length) {
+        setMsg('pre-msg', 'Avval Excel faylni yuklang va tekshiring.', 'err');
+        document.getElementById('pre-drop-zone').focus();
+        return;
+      }
+
+      const button = document.getElementById('save-pre-btn');
+      const originalLabel = button.innerHTML;
+      button.disabled = true;
+      button.setAttribute('aria-busy', 'true');
+      button.textContent = 'Saqlanmoqda…';
+      document.getElementById('pre-prog-bar').hidden = false;
+      document.getElementById('pre-saving').hidden = false;
+      try {
+        const response = await fetch('/admin/api/pre-groups/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, chunks: preChunks, editKey: editPreKey }),
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.success) throw new Error(data.error || `Saqlash muvaffaqiyatsiz (HTTP ${response.status}).`);
+
+        setMsg('pre-msg', `“${title}” nomli subtestlar to‘plami saqlandi.`, 'ok');
+        titleInput.value = '';
+        preChunks = [];
+        editPreKey = null;
+        showPrePreview();
+        setZoneState('pre', 'idle');
+        await loadPreGroups();
+      } catch (error) {
+        setMsg('pre-msg', error?.message || 'Subtestlarni saqlashda xatolik yuz berdi.', 'err');
+      } finally {
+        document.getElementById('pre-prog-bar').hidden = true;
+        document.getElementById('pre-saving').hidden = true;
+        button.removeAttribute('aria-busy');
+        button.innerHTML = originalLabel;
+        button.disabled = !preChunks.length;
+      }
     }
 
     async function deleteUser(key, name) {
       if (!(await showConfirm('O\'chirish', name + ' foydalanuvchisini o\'chirishni tasdiqlaysizmi?'))) return;
-      await fetch('/admin/api/users/delete', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key })
-      });
-      location.reload();
+      try {
+        const response = await fetch('/admin/api/users/delete', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key }),
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || data.success === false) throw new Error(data.error || `O\'chirish muvaffaqiyatsiz (HTTP ${response.status}).`);
+        location.reload();
+      } catch (error) {
+        showToast(error?.message || 'Foydalanuvchini o\'chirib bo\'lmadi.', 'err');
+      }
     }
 
     async function loadFans() {
       const wrap = document.getElementById('fans-list');
+      wrap.innerHTML = '<div class="admin-empty" role="status">Mock fanlar yuklanmoqda…</div>';
       try {
-        const res = await fetch('/admin/api/fans');
-        const data = await res.json();
-        if (!data.fans?.length) {
-          wrap.innerHTML = '<div class="admin-empty">Hali fan qo\'shilmagan</div>';
+        const response = await fetch('/admin/api/fans');
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || `Yuklash muvaffaqiyatsiz (HTTP ${response.status}).`);
+        const fans = Array.isArray(data.fans) ? data.fans : [];
+        if (!fans.length) {
+          wrap.innerHTML = '<div class="admin-empty" role="status">Hali mock fan qo‘shilmagan. Birinchi fanni Excel orqali yarating.</div>';
           return;
         }
-        wrap.innerHTML = data.fans.map(f => {
-          const safeName = f.name.replace(/'/g,"\\'");
+        wrap.innerHTML = fans.map((fan) => {
+          const key = escHtml(fan.key);
+          const name = escHtml(fan.name);
           return `
-          <div class="admin-fan-item">
-            <div><div class="admin-fan-item-name">${svgIcon('book', 16)} ${f.name}</div><div class="admin-fan-item-meta">${f.count} ta savol</div></div>
-            <div class="admin-fan-btns">
-              <button class="fan-mock-btn" onclick="startFanMockup('${f.key}','${safeName}')" style="background:rgba(100,116,139,.14);border:1px solid rgba(100,116,139,.28);border-radius:7px;padding:5px 10px;color:var(--accent-purple);font-size:.72rem;font-weight:600;cursor:pointer">${svgIcon('zap', 11)} Namuna</button>
-              <button class="fan-cast-btn" onclick="startFanCast('${f.key}','${safeName}')" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);border-radius:7px;padding:5px 10px;color:var(--green);font-size:.72rem;font-weight:600;cursor:pointer">${svgIcon('gamepad', 11)} Cast</button>
-              <button onclick="window.open('/arena','_blank')" style="background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);border-radius:7px;padding:5px 10px;color:var(--green);font-size:.72rem;font-weight:600;cursor:pointer">${svgIcon('monitor', 11)} Arena</button>
-              <button class="fan-reset-btn" onclick="resetFan('${f.key}','${safeName}')" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);border-radius:7px;padding:5px 10px;color:var(--accent-glow);font-size:.72rem;font-weight:600;cursor:pointer">${svgIcon('refresh', 11)} Yangilash</button>
-              <button class="admin-del-btn" onclick="deleteFan('${f.key}','${safeName}')">${svgIcon('trash', 12)}</button>
-            </div>
-          </div>`;
+            <article class="admin-fan-item">
+              <div class="dashboard-item-copy">
+                <div class="admin-fan-item-name">${svgIcon('book', 16)} <span>${name}</span></div>
+                <div class="admin-fan-item-meta">${Number(fan.count) || 0} ta savol</div>
+              </div>
+              <div class="admin-fan-btns">
+                <button type="button" class="dashboard-action-btn dashboard-action-btn--quiet" data-dashboard-action="fan-mock" data-key="${key}" data-name="${name}">${svgIcon('zap', 14)} Mock sinovi</button>
+                <button type="button" class="dashboard-action-btn dashboard-action-btn--secondary" data-dashboard-action="fan-cast" data-key="${key}" data-name="${name}">${svgIcon('gamepad', 14)} Cast</button>
+                <button type="button" class="dashboard-action-btn dashboard-action-btn--quiet" data-dashboard-action="fan-arena">${svgIcon('monitor', 14)} Arena</button>
+                <button type="button" class="dashboard-action-btn dashboard-action-btn--quiet" data-dashboard-action="fan-reset" data-key="${key}" data-name="${name}">${svgIcon('refresh', 14)} Savollarni yangilash</button>
+                <button type="button" class="dashboard-icon-btn dashboard-icon-btn--danger" data-dashboard-action="fan-delete" data-key="${key}" data-name="${name}" aria-label="${name} mock fanini o‘chirish" title="O‘chirish">${svgIcon('trash', 14)}</button>
+              </div>
+            </article>`;
         }).join('');
-      } catch(e) {
-        wrap.innerHTML = '<div class="admin-empty" style="color:var(--deborah-semantic-color-action-primary)">Yuklab bo\'lmadi</div>';
+      } catch (error) {
+        wrap.innerHTML = `<div class="admin-empty dashboard-empty--error" role="alert">Mock fanlarni yuklab bo‘lmadi: ${escHtml(error?.message || 'Tarmoq xatosi')}</div>`;
       }
     }
-    
+
     function startFanMockup(key, name) {
-      window.location.href = '/host?source=mock&key=' + key + '&testName=' + encodeURIComponent('Namuna: ' + name);
+      const query = new URLSearchParams({ source: 'mock', key: String(key || ''), testName: 'Mock: ' + String(name || '') });
+      window.location.assign('/host?' + query.toString());
     }
-    
+
     function startFanCast(key, name) {
-      window.location.href = '/host?source=mock&key=' + key + '&testName=' + encodeURIComponent('Namuna: ' + name);
+      const query = new URLSearchParams({ source: 'mock', key: String(key || ''), testName: 'Mock: ' + String(name || '') });
+      window.location.assign('/host?' + query.toString());
     }
     
     let resetFanKey = null;
@@ -639,57 +879,85 @@
       document.getElementById('fan-reset-inp').click();
     }
     
-    document.getElementById('fan-reset-inp').addEventListener('change', async function(e) {
-      const file = e.target.files[0];
+    document.getElementById('fan-reset-inp').addEventListener('change', async function(event) {
+      const file = event.target.files?.[0];
+      event.target.value = '';
       if (!file || !resetFanKey) return;
-      const reader = new FileReader();
-      reader.onload = async function(ev) {
-        try {
-          const wb = XLSX.read(ev.target.result, { type: 'binary' });
-          const qs = parseQuestionsFromWB(wb);
-          if (!qs || !qs.length) { showToast('Savollar topilmadi!', 'err'); e.target.value = ''; return; }
-          const slim = qs.map(q => ({ num: q.num, text: q.text, correctLetter: q.correctLetter, correctText: q.correctText, options: q.options.map(o => ({ text: o.text, letter: o.letter, isCorrect: o.isCorrect })) }));
-          await fetch('/admin/api/fans/update', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ key: resetFanKey, questions: slim })
-          });
-          showToast(slim.length + ' ta savol yangilandi!', 'ok');
-          loadFans();
-        } catch(err) { showToast('Xato: ' + err.message, 'err'); }
-        e.target.value = '';
-      };
-      reader.readAsBinaryString(file);
+      const key = resetFanKey;
+      resetFanKey = null;
+      try {
+        const workbook = await readExcelWorkbook(file);
+        const questions = parseQuestionsFromWB(workbook);
+        if (!questions.length) throw new Error('Excel faylda savollar topilmadi.');
+        const response = await fetch('/admin/api/fans/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            key,
+            questions: questions.map((question) => ({
+              num: question.num,
+              text: question.text,
+              correctLetter: question.correctLetter,
+              correctText: question.correctText,
+              options: question.options.map((option) => ({ ...option })),
+            })),
+          }),
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.success) throw new Error(data.error || `Yangilash muvaffaqiyatsiz (HTTP ${response.status}).`);
+        showToast(`${questions.length} ta savol yangilandi.`, 'ok');
+        await loadFans();
+      } catch (error) {
+        showToast(error?.message || 'Mock fan savollarini yangilashda xatolik yuz berdi.', 'err');
+      }
     });
 
     async function deleteFan(key, name) {
-      if (!(await showConfirm('O\'chirish', name + ' fanini o\'chirishni tasdiqlaysizmi?'))) return;
-      await fetch('/admin/api/fans/delete', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key })
-      });
-      loadFans();
+      if (!(await showConfirm('Mock fanni o‘chirish', `“${name}” mock fanini va uning savollarini o‘chirishni tasdiqlaysizmi?`))) return;
+      try {
+        const response = await fetch('/admin/api/fans/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key }),
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.success) throw new Error(data.error || `O‘chirish muvaffaqiyatsiz (HTTP ${response.status}).`);
+        setMsg('fan-msg', `“${name}” mock fani o‘chirildi.`, 'ok');
+        await loadFans();
+      } catch (error) {
+        setMsg('fan-msg', error?.message || 'Mock fanni o‘chirib bo‘lmadi.', 'err');
+      }
     }
 
     async function loadPreGroups() {
       const wrap = document.getElementById('pre-list');
+      wrap.innerHTML = '<div class="admin-empty" role="status">Subtestlar yuklanmoqda…</div>';
       try {
-        const res = await fetch('/admin/api/pre-groups');
-        const data = await res.json();
-        if (!data.groups?.length) {
-          wrap.innerHTML = '<div class="admin-empty">Hali PRE testlar yo\'q</div>';
+        const response = await fetch('/admin/api/pre-groups');
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || `Yuklash muvaffaqiyatsiz (HTTP ${response.status}).`);
+        const groups = Array.isArray(data.groups) ? data.groups : [];
+        if (!groups.length) {
+          wrap.innerHTML = '<div class="admin-empty" role="status">Hali subtestlar to‘plami yo‘q. Excel fayl yuklab birinchi to‘plamni yarating.</div>';
           return;
         }
-        wrap.innerHTML = data.groups.map(g => `
-          <div class="admin-pre-item">
-            <div><div class="admin-pre-item-name">${svgIcon('layers', 16)} ${g.title}</div><div class="admin-pre-item-meta">${g.count} ta subtest &bull; ${g.total} ta savol</div></div>
-            <div class="admin-pre-btns">
-              <button class="admin-edit-btn" onclick="editPreGroup('${g.key}','${g.title.replace(/'/g,"\\'")}')" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);border-radius:7px;padding:5px 10px;color:var(--blue);font-size:.72rem;font-weight:600;cursor:pointer;transition:color .18s,background-color .18s,border-color .18s,box-shadow .18s,transform .18s,opacity .18s;">${svgIcon('edit', 12)} Tahrirlash</button>
-              <button class="admin-del-btn" onclick="deletePreGroup('${g.key}','${g.title.replace(/'/g,"\\'")}')">${svgIcon('trash', 12)} O'chirish</button>
-            </div>
-          </div>
-        `).join('');
-      } catch(e) {
-        wrap.innerHTML = '<div class="admin-empty" style="color:var(--deborah-semantic-color-action-primary)">Yuklab bo\'lmadi</div>';
+        wrap.innerHTML = groups.map((group) => {
+          const key = escHtml(group.key);
+          const title = escHtml(group.title);
+          return `
+            <article class="admin-pre-item">
+              <div class="dashboard-item-copy">
+                <div class="admin-pre-item-name">${svgIcon('layers', 16)} <span>${title}</span></div>
+                <div class="admin-pre-item-meta">${Number(group.count) || 0} ta subtest · ${Number(group.total) || 0} ta savol</div>
+              </div>
+              <div class="admin-pre-btns">
+                <button type="button" class="dashboard-action-btn dashboard-action-btn--quiet" data-dashboard-action="pre-edit" data-key="${key}" data-title="${title}">${svgIcon('edit', 14)} Tahrirlash</button>
+                <button type="button" class="dashboard-action-btn dashboard-action-btn--danger" data-dashboard-action="pre-delete" data-key="${key}" data-title="${title}">${svgIcon('trash', 14)} O‘chirish</button>
+              </div>
+            </article>`;
+        }).join('');
+      } catch (error) {
+        wrap.innerHTML = `<div class="admin-empty dashboard-empty--error" role="alert">Subtestlarni yuklab bo‘lmadi: ${escHtml(error?.message || 'Tarmoq xatosi')}</div>`;
       }
     }
 
@@ -702,21 +970,72 @@
     }
 
     async function deletePreGroup(key, title) {
-      if (!(await showConfirm('O\'chirish', title + ' guruhini o\'chirishni tasdiqlaysizmi?'))) return;
-      await fetch('/admin/api/pre-groups/delete', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key })
-      });
-      loadPreGroups();
+      if (!(await showConfirm('Subtestlar to‘plamini o‘chirish', `“${title}” to‘plamini o‘chirishni tasdiqlaysizmi?`))) return;
+      try {
+        const response = await fetch('/admin/api/pre-groups/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key }),
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.success) throw new Error(data.error || `O‘chirish muvaffaqiyatsiz (HTTP ${response.status}).`);
+        setMsg('pre-msg', `“${title}” subtestlar to‘plami o‘chirildi.`, 'ok');
+        await loadPreGroups();
+      } catch (error) {
+        setMsg('pre-msg', error?.message || 'Subtestlar to‘plamini o‘chirib bo‘lmadi.', 'err');
+      }
     }
+
+    // Dynamic list controls are delegated so newly loaded items always work.
+    document.addEventListener('click', (event) => {
+      const target = event.target instanceof Element ? event.target : null;
+      const button = target?.closest('[data-dashboard-action]');
+      if (!button || button.disabled) return;
+      const { dashboardAction: action, key, name, title, username, code, policyId } = button.dataset;
+      if (action === 'refresh-current') {
+        if (currentTab === 'overview' || currentTab === 'danger') window.location.reload();
+        else refreshActiveTab();
+      } else if (action === 'refresh-users') window.location.reload();
+      else if (action === 'fans-refresh') loadFans();
+      else if (action === 'pre-refresh') loadPreGroups();
+      else if (action === 'results-refresh') loadResults();
+      else if (action === 'stats-refresh') loadStats();
+      else if (action === 'vip-refresh') loadVip();
+      else if (action === 'gov-refresh') loadGovernance();
+      else if (action === 'excel-template') downloadFanTemplate();
+      else if (action === 'fan-save') saveFanFromExcel();
+      else if (action === 'pre-save') savePreFromExcel();
+      else if (action === 'vip-grant-manual') grantVip();
+      else if (action === 'gov-create') createGovernance();
+      else if (action === 'fan-mock') startFanMockup(key, name || '');
+      else if (action === 'fan-cast') startFanCast(key, name || '');
+      else if (action === 'fan-arena') window.open('/arena', '_blank', 'noopener,noreferrer');
+      else if (action === 'fan-reset') resetFan(key, name || '');
+      else if (action === 'fan-delete') deleteFan(key, name || '');
+      else if (action === 'pre-edit') editPreGroup(key, title || '');
+      else if (action === 'pre-delete') deletePreGroup(key, title || '');
+      else if (action === 'vip-grant') quickGrantVip(username || '');
+      else if (action === 'vip-revoke') quickRevokeVip(username || '');
+      else if (action === 'user-delete') deleteUser(key || '', name || '');
+      else if (action === 'result-delete') deleteResult(code || '');
+      else if (action === 'gov-publish') publishGovernance(policyId || '');
+      else if (action === 'gov-deprecate') deprecateGovernance(policyId || '');
+      else if (action === 'gov-audit') auditGovernance(policyId || '');
+    });
+    document.addEventListener('input', (event) => {
+      const target = event.target instanceof Element ? event.target : null;
+      if (target?.matches('[data-dashboard-action="vip-search"]')) filterVip();
+    });
 
     // ── VIP Management ──
     async function loadVip() {
       const wrap = document.getElementById('vip-table-wrap');
       try {
         const res = await fetch('/admin/api/users?excludeStaff=true');
-        const data = await res.json();
-        if (!data.users?.length) {
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || `Foydalanuvchilarni yuklash muvaffaqiyatsiz (HTTP ${res.status}).`);
+        const vipUsers = Array.isArray(data.users) ? data.users : [];
+        if (!vipUsers.length) {
           wrap.innerHTML = '<div class="admin-empty">Foydalanuvchilar yo\'q</div>';
           return;
         }
@@ -725,7 +1044,7 @@
           <div class="table-wrap"><table><thead><tr>
             <th>#</th><th>Username</th><th>VIP</th><th>Ro\'yxatdan o\'tgan</th><th>VIP berilgan</th><th>Admin</th><th>Amallar</th>
           </tr></thead><tbody>
-            ${data.users.map((u, i) => `
+            ${vipUsers.map((u, i) => `
               <tr class="vip-row">
                 <td>${i + 1}</td>
                 <td><span class="font-bold">${esc(u.username)}</span></td>
@@ -736,8 +1055,8 @@
                 <td>
                   <div class="admin-fan-btns" style="gap:4px">
                     ${u.isVip
-                      ? `<button class="admin-del-btn" onclick="quickRevokeVip('${esc(u.username)}')">${svgIcon('shield', 12)} Olib tashlash</button>`
-                      : `<button class="admin-edit-btn" onclick="quickGrantVip('${esc(u.username)}')" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);border-radius:7px;padding:5px 10px;color:var(--blue);font-size:.72rem;font-weight:600;cursor:pointer">${svgIcon('shield', 12)} VIP qilish</button>`
+                      ? `<button type="button" class="dashboard-action-btn dashboard-action-btn--danger" data-dashboard-action="vip-revoke" data-username="${escHtml(u.username)}">${svgIcon('shield', 12)} Olib tashlash</button>`
+                      : `<button type="button" class="dashboard-action-btn dashboard-action-btn--secondary" data-dashboard-action="vip-grant" data-username="${escHtml(u.username)}">${svgIcon('shield', 12)} VIP qilish</button>`
                     }
                   </div>
                 </td>
@@ -745,7 +1064,7 @@
             `).join('')}
           </tbody></table></div>`;
       } catch(e) {
-        wrap.innerHTML = '<div class="admin-empty" style="color:var(--deborah-semantic-color-action-primary)">Yuklab bo\'lmadi</div>';
+        wrap.innerHTML = `<div class="admin-empty dashboard-empty--error" role="alert">${escHtml(e?.message || 'VIP foydalanuvchilarini yuklab bo\'lmadi')}</div>`;
       }
     }
 
@@ -844,61 +1163,78 @@
       try {
         const res = await fetch('/admin/api/results');
         const data = await res.json();
-        if (!data.results?.length) {
+        if (!res.ok) throw new Error(data.error || `Natijalarni yuklash muvaffaqiyatsiz (HTTP ${res.status}).`);
+        const results = Array.isArray(data.results) ? data.results : [];
+        if (!results.length) {
           wrap.innerHTML = '<div class="admin-empty">Hali o\'yin natijalari yo\'q</div>';
           return;
         }
-        wrap.innerHTML = data.results.map(r => `
-          <div class="admin-res-card">
-            <div class="admin-res-head">
-              <div>
-                <div class="admin-res-title">${svgIcon('trophy', 16)} ${r.testName}</div>
-                <div class="admin-res-meta">${new Date(r.date).toLocaleString('uz-UZ')} &bull; ${r.totalPlayers} o'yinchi &bull; Kod: <a href="/arena?code=${r.code}&auto=1" target="_blank" class="arena-code-link" style="color:var(--green);font-weight:700;text-decoration:none;border-bottom:2px solid rgba(0,229,160,.25)">${r.code}</a></div>
+        wrap.innerHTML = results.map((result) => {
+          const code = String(result.code ?? '');
+          const codeText = escHtml(code);
+          const encodedCode = encodeURIComponent(code);
+          const testName = escHtml(result.testName || 'Test');
+          const date = result.date ? new Date(result.date).toLocaleString('uz-UZ') : '—';
+          const totalPlayers = Number(result.totalPlayers) || 0;
+          const leaderboard = Array.isArray(result.leaderboard) ? result.leaderboard : [];
+          return `
+            <div class="admin-res-card">
+              <div class="admin-res-head">
+                <div>
+                  <div class="admin-res-title">${svgIcon('trophy', 16)} ${testName}</div>
+                  <div class="admin-res-meta">${escHtml(date)} &bull; ${totalPlayers} o\'yinchi &bull; Kod: <a href="/arena?code=${encodedCode}&amp;auto=1" target="_blank" rel="noopener noreferrer" class="arena-code-link">${codeText}</a></div>
+                </div>
+                <button type="button" class="dashboard-icon-btn dashboard-icon-btn--danger" data-dashboard-action="result-delete" data-code="${codeText}" aria-label="${codeText} natijasini o\'chirish" title="O\'chirish">${svgIcon('trash', 12)}</button>
               </div>
-              <button class="admin-del-btn" onclick="deleteResult('${r.code}')">${svgIcon('trash', 12)}</button>
-            </div>
-            <div class="admin-top3">
-              ${(r.leaderboard || []).slice(0,3).map((p,i) => `
-                <span class="admin-top-chip"><span class="admin-rank-medal">${svgIcon(MEDAL_ICONS[i] || 'award', 14)} ${p.name} — ${p.score} ball</span></span>
-              `).join('')}
-            </div>
-          </div>
-        `).join('');
+              <div class="admin-top3">
+                ${leaderboard.slice(0, 3).map((player, index) => `
+                  <span class="admin-top-chip"><span class="admin-rank-medal">${svgIcon(MEDAL_ICONS[index] || 'award', 14)} ${escHtml(player.name || '')} — ${Number(player.score) || 0} ball</span></span>
+                `).join('')}
+              </div>
+            </div>`;
+        }).join('');
       } catch(e) {
-        wrap.innerHTML = '<div class="admin-empty" style="color:var(--deborah-semantic-color-action-primary)">Yuklab bo\'lmadi</div>';
+        wrap.innerHTML = `<div class="admin-empty dashboard-empty--error" role="alert">${escHtml(e?.message || 'O\'yin natijalarini yuklab bo\'lmadi')}</div>`;
       }
     }
 
     async function deleteResult(code) {
       if (!(await showConfirm('O\'chirish', 'Natijani o\'chirishni tasdiqlaysizmi?'))) return;
-      await fetch('/admin/api/results/delete', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code })
-      });
-      loadResults();
+      try {
+        const response = await fetch('/admin/api/results/delete', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code }),
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || data.success === false) throw new Error(data.error || `O\'chirish muvaffaqiyatsiz (HTTP ${response.status}).`);
+        await loadResults();
+      } catch (error) {
+        showToast(error?.message || 'Natijani o\'chirib bo\'lmadi.', 'err');
+      }
     }
 
     async function loadStats() {
       const wrap = document.getElementById('stats-content');
       try {
         const res = await fetch('/admin/api/stats');
-        const data = await res.json();
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || `Statistikani yuklash muvaffaqiyatsiz (HTTP ${res.status}).`);
         wrap.innerHTML = `
           <div class="admin-stats-row">
-            <div class="stat-card"><div class="stat-ico">${svgIcon('users', 20)}</div><div><div class="stat-num" >${data.userCount}</div><div class="stat-lbl">Foydalanuvchilar</div></div></div>
-            <div class="stat-card"><div class="stat-ico">${svgIcon('edit', 20)}</div><div><div class="stat-num" >${data.totalTests}</div><div class="stat-lbl">Testlar</div></div></div>
-            <div class="stat-card"><div class="stat-ico">${svgIcon('gamepad', 20)}</div><div><div class="stat-num" >${data.activeGames}</div><div class="stat-lbl">Faol o'yinlar</div></div></div>
-            <div class="stat-card"><div class="stat-ico">${svgIcon('trophy', 20)}</div><div><div class="stat-num">${data.resultsCount}</div><div class="stat-lbl">Natijalar</div></div></div>
-            <div class="stat-card"><div class="stat-ico">${svgIcon('user', 20)}</div><div><div class="stat-num">${data.totalPlayers}</div><div class="stat-lbl">Jami o'yinchilar</div></div></div>
+            <div class="stat-card"><div class="stat-ico">${svgIcon('users', 20)}</div><div><div class="stat-num" >${Number(data.userCount) || 0}</div><div class="stat-lbl">Foydalanuvchilar</div></div></div>
+            <div class="stat-card"><div class="stat-ico">${svgIcon('edit', 20)}</div><div><div class="stat-num" >${Number(data.totalTests) || 0}</div><div class="stat-lbl">Testlar</div></div></div>
+            <div class="stat-card"><div class="stat-ico">${svgIcon('gamepad', 20)}</div><div><div class="stat-num" >${Number(data.activeGames) || 0}</div><div class="stat-lbl">Faol o'yinlar</div></div></div>
+            <div class="stat-card"><div class="stat-ico">${svgIcon('trophy', 20)}</div><div><div class="stat-num">${Number(data.resultsCount) || 0}</div><div class="stat-lbl">Natijalar</div></div></div>
+            <div class="stat-card"><div class="stat-ico">${svgIcon('user', 20)}</div><div><div class="stat-num">${Number(data.totalPlayers) || 0}</div><div class="stat-lbl">Jami o'yinchilar</div></div></div>
           </div>
           ${(data.fanStats || []).map(f => `
             <div class="admin-fan-item">
-              <div><div class="admin-fan-item-name">${svgIcon('book', 16)} ${f.name}</div><div class="admin-fan-item-meta">${f.count} ta savol</div></div>
+              <div><div class="admin-fan-item-name">${svgIcon('book', 16)} ${escHtml(f.name || '')}</div><div class="admin-fan-item-meta">${Number(f.count) || 0} ta savol</div></div>
             </div>
           `).join('')}
         `;
       } catch(e) {
-        wrap.innerHTML = '<div class="admin-empty" style="color:var(--deborah-semantic-color-action-primary);">Yuklab bo\'lmadi</div>';
+        wrap.innerHTML = `<div class="admin-empty dashboard-empty--error" role="alert">${escHtml(e?.message || 'Statistikani yuklab bo\'lmadi')}</div>`;
       }
     }
 

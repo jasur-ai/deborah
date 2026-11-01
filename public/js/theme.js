@@ -132,15 +132,19 @@
         toggle();
       }
     });
-    // Bosilgan holatni markalash
-    document.addEventListener('themechange', function (e) {
-      var state = e.detail && e.detail.state;
+    // Holatni theme o‘zgarganda ham, sahifa ilk ochilganda ham sinxron tutamiz.
+    function syncControls(state) {
+      var activeState = state || readState();
       document.querySelectorAll('[data-theme-state-btn]').forEach(function (b) {
-        var on = b.getAttribute('data-theme-state-btn') === state;
+        var on = b.getAttribute('data-theme-state-btn') === activeState;
         b.setAttribute('aria-pressed', on ? 'true' : 'false');
         b.classList.toggle('is-active', on);
       });
+    }
+    document.addEventListener('themechange', function (e) {
+      syncControls(e.detail && e.detail.state);
     });
+    syncControls(document.documentElement.getAttribute('data-theme-state') || readState());
   }
 
   window.DeborahTheme = {

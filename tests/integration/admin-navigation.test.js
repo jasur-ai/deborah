@@ -64,7 +64,8 @@ describe('Admin navigation — catalog', () => {
     const userLink = response.text.match(/<a href="\/admin\/users" data-name="([^"]+)"/);
     expect(userLink?.[1]).toContain('foydalanuvchilar');
     expect(response.text).toContain('Barcha funksiyalar');
-    expect(response.text).toContain('Namuna fanlar');
+    expect(response.text).toContain('Mock fanlar');
+    expect(response.text).toContain('Subtestlar');
     expect(response.text).not.toContain('/admin/source-pack');
     expect(response.text).not.toContain('/admin/dashboard#pane-');
     expect(response.text).not.toContain('/user/profile');
@@ -96,6 +97,20 @@ describe('Admin navigation — catalog', () => {
       expect(response.text, `drawer trigger: ${path}`).toContain('aria-controls="admin-sidebar"');
       expect(response.text, `skip link: ${path}`).toContain('class="skip-link"');
     }
+  });
+
+  it('dashboard Excel tabs use the local parser, accessible dropzones, and no CSP-blocked inline handlers', async () => {
+    const agent = await adminAgent();
+    const response = await agent.get('/admin/dashboard?tab=fans');
+    expect(response.status).toBe(200);
+    expect(response.text).toContain('/js/vendor/xlsx.full.min.js');
+    expect(response.text).toContain('/css/admin-dashboard.css');
+    expect(response.text).not.toContain('cdnjs.cloudflare.com/ajax/libs/xlsx');
+    expect(response.text).toContain('id="fan-drop-zone" role="button" tabindex="0"');
+    expect(response.text).toContain('id="pre-drop-zone" role="button" tabindex="0"');
+    expect(response.text).toContain('Mock fanlar');
+    expect(response.text).toContain('Subtestlar');
+    expect(response.text).not.toMatch(/\s(?:onclick|oninput|onchange|onkeydown)=/i);
   });
 
   it('each dashboard shortcut opens its matching panel; invalid tabs safely return to overview', async () => {
