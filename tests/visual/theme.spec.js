@@ -110,9 +110,22 @@ test("theme landing -- segmented control yo'q, faqat #themeBtn", async ({ browse
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect(button).toHaveAttribute('aria-pressed', 'false');
   await expect(page.locator('html')).toHaveClass(/theme-transitioning/);
-  const veil = await page.locator('html').evaluate((element) => getComputedStyle(element, '::before').backgroundImage);
-  expect(veil).toContain('linear-gradient');
-  expect(veil).not.toContain('radial-gradient');
+  await page.waitForTimeout(130);
+  const veil = await page.locator('html').evaluate((element) => {
+    const style = getComputedStyle(element, '::before');
+    return {
+      image: style.backgroundImage,
+      animation: style.animationName,
+      durationMs: parseFloat(style.animationDuration) * (style.animationDuration.endsWith('ms') ? 1 : 1000),
+      opacity: Number(style.opacity),
+    };
+  });
+  expect(veil.image).toContain('linear-gradient');
+  expect(veil.image).not.toContain('radial-gradient');
+  expect(veil.image).toContain('0.78');
+  expect(veil.animation).toBe('theme-satin-sweep');
+  expect(veil.durationMs).toBeCloseTo(720, 0);
+  expect(veil.opacity).toBeGreaterThan(0.1);
   await expect(page.locator('html')).not.toHaveClass(/theme-transitioning/, { timeout: 1500 });
   await context.close();
 });
@@ -143,12 +156,23 @@ test('theme control -- icon-only, accessible, refined and reduced-motion aware',
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect(group.locator('[data-theme-state-btn="light"]')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('html')).toHaveClass(/theme-transitioning/);
+  await page.waitForTimeout(130);
   const veil = await page.locator('html').evaluate((element) => {
     const style = getComputedStyle(element, '::before');
-    return { image: style.backgroundImage, layer: Number(style.zIndex) };
+    return {
+      image: style.backgroundImage,
+      animation: style.animationName,
+      durationMs: parseFloat(style.animationDuration) * (style.animationDuration.endsWith('ms') ? 1 : 1000),
+      opacity: Number(style.opacity),
+      layer: Number(style.zIndex),
+    };
   });
   expect(veil.image).toContain('linear-gradient');
   expect(veil.image).not.toContain('radial-gradient');
+  expect(veil.image).toContain('0.78');
+  expect(veil.animation).toBe('theme-satin-sweep');
+  expect(veil.durationMs).toBeCloseTo(720, 0);
+  expect(veil.opacity).toBeGreaterThan(0.1);
   expect(veil.layer).toBeLessThan(1000);
   await expect(page.locator('html')).not.toHaveClass(/theme-transitioning/, { timeout: 1500 });
 
@@ -156,6 +180,8 @@ test('theme control -- icon-only, accessible, refined and reduced-motion aware',
   await group.locator('[data-theme-state-btn="dark"]').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await expect(page.locator('html')).not.toHaveClass(/theme-transitioning/);
+  const reducedSweep = await page.locator('html').evaluate((element) => getComputedStyle(element, '::before').animationName);
+  expect(reducedSweep).not.toBe('theme-satin-sweep');
   await context.close();
 });
 

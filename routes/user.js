@@ -21,6 +21,7 @@ import { builderCopyFor } from '../data/test-builder-i18n.js';
 import { practiceCopyFor } from '../data/practice-i18n.js';
 
 const router = Router();
+export const MOCK_PRACTICE_QUESTION_LIMIT = 25;
 
 // → All routes require auth
 router.use(requireAuth);
@@ -292,6 +293,7 @@ async function renderWorkspace(req, res, activeKey, viewName, fallbackTitle) {
       tests: testsList,
       mockFans: practiceCatalog.mockFans,
       preGroups: practiceCatalog.preGroups,
+      mockQuestionLimit: MOCK_PRACTICE_QUESTION_LIMIT,
       // C4-10 overview statistikasi
       testsCount: testsList.length,
       totalQuestions: testsList.reduce((a, t) => a + (Number(t.count) || 0), 0),
@@ -328,6 +330,7 @@ async function renderWorkspace(req, res, activeKey, viewName, fallbackTitle) {
       tests: [],
       mockFans: [],
       preGroups: [],
+      mockQuestionLimit: MOCK_PRACTICE_QUESTION_LIMIT,
       username: user.username,
       isVip: false,
       canExportJson: false,
@@ -969,6 +972,19 @@ function shuffled(arr) {
   return a;
 }
 
+/** Each Mock session gets a fresh, unbiased sample; smaller banks remain whole. */
+export function sampleMockPracticeQuestions(questions, limit = MOCK_PRACTICE_QUESTION_LIMIT) {
+  if (!Array.isArray(questions) || !questions.length) return [];
+  const safeLimit = Number.isInteger(limit) && limit > 0 ? limit : MOCK_PRACTICE_QUESTION_LIMIT;
+  if (questions.length <= safeLimit) return questions.slice();
+  const pool = questions.slice();
+  for (let i = 0; i < safeLimit; i++) {
+    const j = i + crypto.randomInt(pool.length - i);
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return pool.slice(0, safeLimit);
+}
+
 async function loadPracticeQuestions(req, res) {
   const source = String(req.query.source || req.body?.source || 'user');
   const key = String(req.query.key || req.body?.key || '');
@@ -1019,10 +1035,8 @@ async function loadPracticeQuestions(req, res) {
   return { err: res.status(400).json({ ok: false, error: 'invalid_source' }) };
 }
 
-router.get('/practice', async (req, res) => {
-  const loaded = await loadPracticeQuestions(req, res);
-  if (loaded.err) return;
-  const qs = (loaded.questions || []).map((q, i) => {
+function preparePracticeQuestions(rawQuestions) {
+  return (Array.isArray(rawQuestions) ? rawQuestions : []).map((q, i) => {
     const meta = practiceOptionMeta(q);
     const qType = ['single_choice', 'true_false', 'multiple_select', 'short_answer', 'exit_ticket', 'match', 'reorder'].includes(q?.type) ? q.type : 'single_choice';
     const item = {
@@ -1031,7 +1045,7 @@ router.get('/practice', async (req, res) => {
       type: qType,
       options: meta.texts,
       // 09/2026 (user qarori): har savoldan keyin darhol to'g'ri/noto'g'ri
-      // natija chiqishi uchun correct clientga yuboriladi (jonli viktorina tarzi).
+      // natija chiqishi uchun correct clientga uzatiladi (jonli viktorina tarzi).
       // Yakuniy baho baribir server (/user/api/practice/grade) hisoblaydi.
       correct: meta.correctIdx,
       explanation: String(q?.explanation || ''),
@@ -1070,6 +1084,31 @@ router.get('/practice', async (req, res) => {
     return item;
   }).filter((q) => q.text && !q._drop && (['short_answer', 'match', 'reorder'].includes(q.type) || q.options.length >= 2))
     .map((q) => { delete q._drop; return q; });
+}
+
+/** Keep Mock grade requests tied to the exact validated sample shown for that session. */
+export function selectMockPracticeQuestionIds(rawQuestions, requestedIds, limit = MOCK_PRACTICE_QUESTION_LIMIT) {
+  if (!Array.isArray(requestedIds) || requestedIds.length === 0) return [];
+  const safeLimit = Number.isInteger(limit) && limit > 0 ? limit : MOCK_PRACTICE_QUESTION_LIMIT;
+  if (requestedIds.length > safeLimit) return [];
+  const validIds = new Set(preparePracticeQuestions(rawQuestions).map((question) => question.id));
+  const selected = [];
+  const seen = new Set();
+  for (const value of requestedIds) {
+    const id = Number(value);
+    if (!Number.isInteger(id) || id < 0 || !validIds.has(id) || seen.has(id)) return [];
+    seen.add(id);
+    selected.push(id);
+  }
+  return selected;
+}
+
+router.get('/practice', async (req, res) => {
+  const loaded = await loadPracticeQuestions(req, res);
+  if (loaded.err) return;
+  let qs = preparePracticeQuestions(loaded.questions);
+  const source = String(req.query.source || 'user');
+  if (source === 'mock') qs = sampleMockPracticeQuestions(qs);
   if (!qs.length) return res.status(404).render('error', { title: '404', message: 'Savollar topilmadi', status: 404 });
 
   // Practice i18n: 4 til (uz/uz-cyrl/ru/en) — data/practice-i18n.js
@@ -1087,7 +1126,7 @@ router.get('/practice', async (req, res) => {
     pLang,
     htmlLang: htmlLangOf(pLang),
     pCopy,
-    source: String(req.query.source || 'user'),
+    source,
     key: String(req.query.key || ''),
     chunk: String(req.query.chunk || ''),
     questions: qs,
@@ -1147,6 +1186,14 @@ router.post('/api/practice/grade', async (req, res) => {
   const loaded = await loadPracticeQuestions(req, res);
   if (loaded.err) return;
   const user = req.session.user;
+  const source = String(req.query.source || req.body?.source || 'user');
+  const saveSource = String(req.body?.source || req.query.source || 'user');
+  const allQuestions = Array.isArray(loaded.questions) ? loaded.questions : [];
+  let questionIds = allQuestions.map((_, index) => index);
+  if (source === 'mock') {
+    questionIds = selectMockPracticeQuestionIds(allQuestions, req.body?.questionIds);
+    if (!questionIds.length) return res.status(400).json({ ok: false, error: 'invalid_question_sample' });
+  }
   const answers = Array.isArray(req.body?.answers) ? req.body.answers : [];
   const kind = req.body?.kind === 'retry' ? 'retry' : 'full';
   // C4-10 rev.4: qayta yechish (faqat xatolar) — subset shu orig-indekslar bo'yicha
@@ -1158,8 +1205,9 @@ router.post('/api/practice/grade', async (req, res) => {
   const times = Array.isArray(req.body?.times) ? req.body.times : [];
   const results = [];
   let correct = 0;
-  (loaded.questions || []).forEach((q, i) => {
+  questionIds.forEach((questionId, i) => {
     if (subset && !subset.includes(i)) return; // faqat xato savollar
+    const q = allQuestions[questionId];
     const meta = practiceOptionMeta(q);
     const qType = ['single_choice', 'true_false', 'multiple_select', 'short_answer', 'exit_ticket', 'match', 'reorder'].includes(q?.type) ? q.type : 'single_choice';
     const correctIdx = Math.max(0, meta.correctIdx);
@@ -1226,7 +1274,7 @@ router.post('/api/practice/grade', async (req, res) => {
   //   • 09/2026 (user qarori): shaxsiy tarixda faqat oxirgi 10 ta saqlanadi.
   let saved = false;
   try {
-    if (kind !== 'retry' && user && String(req.body?.source || req.query.source || 'user') === 'user') {
+    if (kind !== 'retry' && user && saveSource === 'user') {
       const ownSnap = await fb.get(`users/${user.safeKey}/tests/${testKey}`);
       const isOwn = ownSnap.exists();
       let testOwner = null;

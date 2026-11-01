@@ -10,8 +10,32 @@ test('Mock fanlar and Subtestlar are available in the personal library', async (
   const stamp = Date.now().toString(36);
   const mockName = `QA Mock ${stamp}`;
   const groupTitle = `QA Subtest group ${stamp}`;
-  const mockQuestion = `Mock practice access check ${stamp}: 2 + 2?`;
+  const mockQuestionPrefix = `Mock practice access check ${stamp}`;
+  const mockQuestions = Array.from({ length: 30 }, (_, index) => ({
+    num: index + 1,
+    text: `${mockQuestionPrefix} ${index + 1}: 2 + 2?`,
+    correctLetter: 'B',
+    correctText: '4',
+    options: [
+      { text: '3', letter: 'A', isCorrect: false },
+      { text: '4', letter: 'B', isCorrect: true },
+    ],
+  }));
   const subtestQuestion = `Subtest practice access check ${stamp}: 3 + 3?`;
+  const subtestChunks = Array.from({ length: 14 }, (_, index) => ({
+    id: `qa_part_${index + 1}`,
+    name: index === 0 ? 'QA subtest' : `QA subtest ${index + 1}`,
+    questions: [{
+      num: 1,
+      text: index === 0 ? subtestQuestion : `${subtestQuestion} #${index + 1}`,
+      correctLetter: 'B',
+      correctText: '6',
+      options: [
+        { text: '5', letter: 'A', isCorrect: false },
+        { text: '6', letter: 'B', isCorrect: true },
+      ],
+    }],
+  }));
 
   let userContext = null;
   let fanKey = null;
@@ -23,18 +47,16 @@ test('Mock fanlar and Subtestlar are available in the personal library', async (
     await page.waitForLoadState('domcontentloaded');
     await page.waitForFunction(() => location.pathname === '/admin/dashboard'
       && typeof window.__CSRF_TOKEN === 'string' && window.__CSRF_TOKEN.length > 0);
-    const saved = await page.evaluate(async ({ mockName, groupTitle, mockQuestion, subtestQuestion }) => {
+    // Let the session store finish persisting the freshly issued CSRF token before fixture writes.
+    await page.waitForTimeout(150);
+    const saved = await page.evaluate(async ({ mockName, groupTitle, mockQuestions, subtestChunks }) => {
       const headers = { 'Content-Type': 'application/json', 'X-CSRF-Token': window.__CSRF_TOKEN };
-      const options = (wrong, right) => [
-        { text: wrong, letter: 'A', isCorrect: false },
-        { text: right, letter: 'B', isCorrect: true },
-      ];
       const fanResponse = await fetch('/admin/api/fans/save', {
         method: 'POST',
         headers,
         body: JSON.stringify({
           name: mockName,
-          questions: [{ num: 1, text: mockQuestion, correctLetter: 'B', correctText: '4', options: options('3', '4') }],
+          questions: mockQuestions,
         }),
       });
       const fan = await fanResponse.json();
@@ -43,11 +65,7 @@ test('Mock fanlar and Subtestlar are available in the personal library', async (
         headers,
         body: JSON.stringify({
           title: groupTitle,
-          chunks: [{
-            id: 'qa_part_1',
-            name: 'QA subtest',
-            questions: [{ num: 1, text: subtestQuestion, correctLetter: 'B', correctText: '6', options: options('5', '6') }],
-          }],
+          chunks: subtestChunks,
         }),
       });
       const group = await groupResponse.json();
@@ -55,7 +73,7 @@ test('Mock fanlar and Subtestlar are available in the personal library', async (
         fan: { status: fanResponse.status, body: fan },
         group: { status: groupResponse.status, body: group },
       };
-    }, { mockName, groupTitle, mockQuestion, subtestQuestion });
+    }, { mockName, groupTitle, mockQuestions, subtestChunks });
 
     fanKey = saved.fan.body.key || null;
     groupKey = saved.group.body.key || null;
@@ -80,18 +98,35 @@ test('Mock fanlar and Subtestlar are available in the personal library', async (
     await expect(userPage.locator('#practice-library')).toBeVisible();
     await expect(userPage.locator('#mock-fanlar')).toContainText(mockName);
     await expect(userPage.locator('#subtestlar')).toContainText(groupTitle);
-    await expect(userPage.locator('#mock-fanlar [data-start-sinov]')).toHaveCount(1);
-    await expect(userPage.locator('#subtestlar [data-start-sinov]')).toHaveCount(1);
+    const mockItem = userPage.locator('#mock-fanlar .prep-item').filter({ hasText: mockName });
+    const mockLaunch = mockItem.locator('[data-start-sinov]');
+    await expect(mockItem.locator('.prep-item-meta')).toContainText('30');
+    await expect(mockLaunch).toHaveAttribute('data-count', '25');
+
+    const accordion = userPage.locator('#subtestlar [data-subtest-group]').filter({ hasText: groupTitle });
+    await expect(accordion).toHaveCount(1);
+    await expect(accordion.locator('.prep-group-meta')).toContainText('14');
+    await expect(accordion.locator('.prep-item')).toHaveCount(14);
+    expect(await accordion.evaluate((details) => details.open)).toBe(false);
+    await expect(accordion.locator('[data-start-sinov]').first()).toBeHidden();
+    await accordion.locator('summary').click();
+    await expect(accordion).toHaveAttribute('open', '');
+    await expect(accordion.locator('[data-start-sinov]')).toHaveCount(14);
+    await expect(accordion.locator('[data-start-sinov]').first()).toBeVisible();
+
     await expect(userPage.locator('[data-practice-nav="mock"]')).toHaveAttribute('href', '/user/panel#mock-fanlar');
     await expect(userPage.locator('[data-practice-nav="subtests"]')).toHaveAttribute('href', '/user/panel#subtestlar');
 
-    const lightCard = await userPage.locator('.prep-card').first().evaluate((el) => getComputedStyle(el).backgroundImage);
+    const lightCard = await userPage.locator('.prep-card').first().evaluate((el) => getComputedStyle(el).backgroundColor);
     const themeButton = userPage.locator('#panelThemeBtn');
     await expect(themeButton).toHaveAttribute('aria-pressed', 'false');
     await themeButton.click();
     await expect(userPage.locator('html')).toHaveAttribute('data-theme', 'dark');
     await expect(themeButton).toHaveAttribute('aria-pressed', 'true');
-    const darkCard = await userPage.locator('.prep-card').first().evaluate((el) => getComputedStyle(el).backgroundImage);
+    await expect(userPage.locator('html')).toHaveClass(/theme-transitioning/);
+    const sweepName = await userPage.locator('html').evaluate((element) => getComputedStyle(element, '::before').animationName);
+    expect(sweepName).toBe('theme-satin-sweep');
+    const darkCard = await userPage.locator('.prep-card').first().evaluate((el) => getComputedStyle(el).backgroundColor);
     expect(darkCard).not.toBe(lightCard);
     await themeButton.click();
     await expect(userPage.locator('html')).toHaveAttribute('data-theme', 'light');
@@ -108,15 +143,38 @@ test('Mock fanlar and Subtestlar are available in the personal library', async (
 
     // Both personal-practice sources launch the existing solo quiz flow.
     await userPage.goto('/user/panel');
-    await userPage.locator('#mock-fanlar [data-start-sinov]').click();
+    await mockLaunch.click();
     await expect(userPage.locator('#start-modal')).toHaveClass(/open/);
+    await expect(userPage.locator('#start-modal-sub')).toContainText('25');
     await userPage.locator('#start-modal [data-act="start"]').click();
     await userPage.waitForURL((url) => url.pathname === '/user/practice' && url.searchParams.get('source') === 'mock');
     await expect(userPage.locator('.pr-title')).toHaveText(mockName);
-    await expect(userPage.locator('#quiz')).toContainText(mockQuestion);
+    await expect(userPage.locator('#qpos')).toHaveText('1 / 25');
+    await expect(userPage.locator('#dots .pr-dot')).toHaveCount(25);
+    await expect(userPage.locator('#quiz')).toContainText(mockQuestionPrefix);
+    await userPage.evaluate(() => {
+      for (let index = 0; index < 25; index += 1) {
+        const correctOption = document.querySelector('#quiz .opt[data-j="1"]');
+        if (!correctOption) throw new Error(`Missing correct option at session question ${index + 1}`);
+        correctOption.click();
+        const next = document.querySelector(index < 24 ? '#next' : '#finish');
+        if (!next) throw new Error(`Missing navigation at session question ${index + 1}`);
+        next.click();
+      }
+    });
+    const gradeResponsePromise = userPage.waitForResponse((response) =>
+      response.url().endsWith('/user/api/practice/grade') && response.request().method() === 'POST');
+    await userPage.locator('[data-rv-done]').click();
+    const mockGradeResponse = await gradeResponsePromise;
+    const mockGrade = await mockGradeResponse.json();
+    expect(mockGradeResponse.status()).toBe(200);
+    expect(mockGrade.total).toBe(25);
+    expect(mockGrade.correct).toBe(25);
+    expect(mockGrade.saved).toBe(false);
 
     await userPage.goto('/user/panel');
-    await userPage.locator('#subtestlar [data-start-sinov]').click();
+    await accordion.locator('summary').click();
+    await accordion.locator('[data-start-sinov]').first().click();
     await expect(userPage.locator('#start-modal')).toHaveClass(/open/);
     await userPage.locator('#start-modal [data-act="start"]').click();
     await userPage.waitForURL((url) => url.pathname === '/user/practice'

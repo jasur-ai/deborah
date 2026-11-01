@@ -100,7 +100,7 @@
     transitionTimer = window.setTimeout(function () {
       root.classList.remove('theme-transitioning');
       transitionTimer = null;
-    }, 680);
+    }, 820);
   }
 
   /** User explicit override (S07.08): localStorage + re-apply */

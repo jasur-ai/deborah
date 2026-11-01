@@ -842,6 +842,7 @@
           headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF },
           body: JSON.stringify({
             answers, source: SOURCE, key: KEY, chunk: CHUNK,
+            questionIds: SOURCE === 'mock' ? QUESTIONS.map((question) => question.id) : undefined,
             // C4-10 rev.4: retry — faqat xato savollar baholanadi va «retry» sifatida saqlanadi
             subset: retryMode ? flow : undefined,
             kind: retryMode ? 'retry' : 'full',

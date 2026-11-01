@@ -4,11 +4,18 @@
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
+import { PANEL_COPY } from '../../data/panel-i18n.js';
 
 const mocks = vi.hoisted(() => ({ fbGet: vi.fn() }));
 vi.mock('../../firebase/admin.js', () => ({ fb: { get: mocks.fbGet } }));
 
-const { buildPracticeCatalog, loadPracticeQuestions } = await import('../../routes/user.js');
+const {
+  buildPracticeCatalog,
+  loadPracticeQuestions,
+  sampleMockPracticeQuestions,
+  selectMockPracticeQuestionIds,
+  MOCK_PRACTICE_QUESTION_LIMIT,
+} = await import('../../routes/user.js');
 
 function snapshot(value, exists = true) {
   return { exists: () => exists, val: () => value };
@@ -25,6 +32,11 @@ function responseStub() {
 
 describe('personal practice catalog', () => {
   beforeEach(() => mocks.fbGet.mockReset());
+
+  it.each(['uz', 'uz-cyrl', 'ru', 'en'])('explains the 25-question Mock session in %s', (lang) => {
+    expect(PANEL_COPY[lang]['prep.mockSub']).toContain('{n}');
+    expect(PANEL_COPY[lang]['prep.mockPoolCount']).toBeTruthy();
+  });
 
   it('builds a metadata-only catalog and filters unsafe source keys', () => {
     const catalog = buildPracticeCatalog({
@@ -51,6 +63,39 @@ describe('personal practice catalog', () => {
     expect(JSON.stringify(catalog)).not.toContain('correct');
     expect(JSON.stringify(catalog)).not.toContain('2 + 2?');
     expect(JSON.stringify(catalog)).not.toContain('Should not appear');
+  });
+
+  it('samples 25 distinct questions from the full Mock bank without mutating it', () => {
+    const bank = Array.from({ length: 335 }, (_, index) => ({ id: index + 1, text: `Question ${index + 1}` }));
+    const original = bank.slice();
+    const sample = sampleMockPracticeQuestions(bank);
+
+    expect(MOCK_PRACTICE_QUESTION_LIMIT).toBe(25);
+    expect(sample).toHaveLength(25);
+    expect(new Set(sample.map((question) => question.id)).size).toBe(25);
+    expect(sample.every((question) => bank.includes(question))).toBe(true);
+    expect(bank).toEqual(original);
+  });
+
+  it('keeps a smaller Mock bank intact and applies a valid custom sample limit', () => {
+    const smallBank = [{ id: 1 }, { id: 2 }, { id: 3 }];
+    expect(sampleMockPracticeQuestions(smallBank)).toEqual(smallBank);
+    expect(sampleMockPracticeQuestions(Array.from({ length: 10 }, (_, id) => ({ id })), 4)).toHaveLength(4);
+    expect(sampleMockPracticeQuestions(Array.from({ length: 30 }, (_, id) => ({ id })), 0)).toHaveLength(25);
+  });
+
+  it('accepts only unique IDs from the validated bank for the matching Mock session', () => {
+    const bank = Array.from({ length: 40 }, (_, index) => ({
+      text: `Question ${index}`,
+      options: ['Wrong', 'Right'],
+      correct: 1,
+    }));
+    const sampleIds = Array.from({ length: 25 }, (_, index) => index);
+
+    expect(selectMockPracticeQuestionIds(bank, sampleIds)).toEqual(sampleIds);
+    expect(selectMockPracticeQuestionIds(bank, [39, 2, 39])).toEqual([]);
+    expect(selectMockPracticeQuestionIds(bank, [39, 99])).toEqual([]);
+    expect(selectMockPracticeQuestionIds(bank, Array.from({ length: 26 }, (_, index) => index))).toEqual([]);
   });
 
   it.each([
