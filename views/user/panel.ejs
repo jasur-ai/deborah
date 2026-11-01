@@ -42,7 +42,7 @@
     .tb-lang button{background:transparent;border:none;border-radius:7px;color:var(--deborah-semantic-color-text-secondary,#9aa3b8);font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.62rem;letter-spacing:.08em;padding:6px 9px;cursor:pointer;transition:all .15s;min-height:0;}
     .tb-lang button:hover{color:var(--deborah-semantic-color-text-primary,#e8ebf5);}
     .tb-lang button.on{background:var(--deborah-semantic-color-action-primary,#c9a45c);color:var(--deborah-semantic-color-action-on-action,#1a1305);font-weight:700;}
-    .tb-theme-btn{width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;border-radius:9px;border:1px solid var(--deborah-semantic-color-border-subtle,rgba(127,137,161,.22));background:var(--deborah-semantic-color-surface-nested,rgba(127,137,161,.12));color:var(--deborah-semantic-color-text-secondary,#9aa3b8);cursor:pointer;transition:all .15s;}
+    .tb-theme-btn{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border-radius:11px;border:1px solid var(--deborah-semantic-color-border-subtle,rgba(127,137,161,.22));background:var(--deborah-semantic-color-surface-nested,rgba(127,137,161,.12));color:var(--deborah-semantic-color-text-secondary,#9aa3b8);cursor:pointer;transition:all .15s;}
     .tb-theme-btn:hover{color:var(--deborah-semantic-color-text-primary,#e8ebf5);border-color:var(--deborah-semantic-color-border-default,rgba(127,137,161,.4));}
     .tb-theme-btn svg{width:16px;height:16px;}
     html[data-resolved-theme="light"] .tb-theme-btn .ico-moon{display:none;}
@@ -200,9 +200,9 @@
           <button type="button" data-plang="ru" class="<%= typeof panelLang !== 'undefined' && panelLang === 'ru' ? 'on' : '' %>">RU</button>
           <button type="button" data-plang="en" class="<%= typeof panelLang !== 'undefined' && panelLang === 'en' ? 'on' : '' %>">EN</button>
         </div>
-        <button class="tb-theme-btn" id="panelThemeBtn" type="button" aria-label="<%= __p('aria.theme') %>">
-          <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
-          <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5 5l1.6 1.6M17.4 17.4 19 19M19 5l-1.6 1.6M6.6 17.4 5 19"/></svg>
+        <button class="tb-theme-btn" id="panelThemeBtn" type="button" aria-label="<%= __p('aria.theme') %>" aria-pressed="false">
+          <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+          <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5 5l1.6 1.6M17.4 17.4 19 19M19 5l-1.6 1.6M6.6 17.4 5 19"/></svg>
         </button>
         <% /* 09/2026 (user qarori): topbar'da faqat til + tema. Quick Prompt, Profilim
               va dublikat 'Yangi test' olib tashlandi — yangi test faqat kutubxona
@@ -354,7 +354,142 @@
     html[data-theme="dark"] .ov-mini-empty{color:#cbb37f;background:#372a16;border-color:#57441f}
     html[data-theme="dark"] .ov-mini-go{color:#e0c98d}
     html[data-theme="dark"] .ws-lib-fold>summary{color:#ead9b4}
+
+    /* Personal preparation library — warm gold, responsive and visible for every account. */
+    .prep-library{display:grid;gap:14px;margin:10px 0 26px;scroll-margin-top:calc(var(--deborah-shell-header-h,64px) + 18px)}
+    .prep-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap}
+    .prep-title{margin:0;color:#5b4317;font-size:1.08rem;font-weight:800;letter-spacing:.01em}
+    .prep-subtitle{margin:3px 0 0;color:#8a7443;font-size:.82rem;font-weight:600}
+    .prep-open-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:#f4e7c9;border:1px solid #e0cf9f;color:#74551d;font-size:.73rem;font-weight:800;white-space:nowrap}
+    .prep-open-badge svg{flex:0 0 auto}
+    .prep-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;align-items:start}
+    .prep-card{min-width:0;padding:15px;border:1px solid #e0cf9f;border-radius:17px;background:linear-gradient(145deg,#fbf5e5 0%,#f2e4c2 100%);box-shadow:0 3px 12px rgba(105,78,26,.08)}
+    .prep-card-head{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+    .prep-card-ico{width:40px;height:40px;display:grid;place-items:center;flex:0 0 auto;border-radius:12px;background:#ecddb5;border:1px solid #dfcc98;color:#73541c}
+    .prep-card-title{min-width:0;flex:1}
+    .prep-card-title h3{margin:0;color:#443316;font-size:.98rem;font-weight:800;line-height:1.25}
+    .prep-card-title p{margin:3px 0 0;color:#897447;font-size:.76rem;font-weight:600;line-height:1.35}
+    .prep-count{flex:0 0 auto;padding:5px 8px;border-radius:999px;background:rgba(255,252,240,.62);border:1px solid #e3d3a8;color:#74551d;font-size:.7rem;font-weight:800;white-space:nowrap}
+    .prep-items,.prep-groups{list-style:none;margin:0;padding:0;display:grid;gap:7px;max-height:390px;overflow:auto;overscroll-behavior:contain;scrollbar-color:#b99b5c transparent;scrollbar-width:thin}
+    .prep-groups{gap:10px}
+    .prep-item{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;padding:9px 10px;border:1px solid #e7d8b3;border-radius:12px;background:rgba(255,252,242,.58)}
+    .prep-item-main{min-width:0;display:grid;gap:2px}
+    .prep-item-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#3f3219;font-size:.84rem;font-weight:750}
+    .prep-item-meta{color:#897447;font-size:.72rem;font-weight:600}
+    .prep-start{min-height:38px;flex:0 0 auto;gap:5px;padding:7px 10px;font-size:.76rem}
+    .prep-start:disabled{opacity:.48;cursor:not-allowed;transform:none!important;filter:none!important;box-shadow:none!important}
+    .prep-group{padding:10px;border:1px solid #e7d8b3;border-radius:13px;background:rgba(255,252,242,.45)}
+    .prep-group-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin:0 0 8px}
+    .prep-group-name{margin:0;color:#51401e;font-size:.82rem;font-weight:800;line-height:1.3}
+    .prep-group-meta{display:block;margin-top:2px;color:#897447;font-size:.69rem;font-weight:600}
+    .prep-group .prep-items{max-height:none;overflow:visible;gap:6px}
+    .prep-group .prep-item{padding:7px 8px;background:rgba(255,252,242,.62)}
+    .prep-empty{padding:13px;border:1px dashed #d5c18b;border-radius:12px;background:rgba(255,252,242,.45);color:#826d3f;font-size:.81rem;font-weight:600}
+    html[data-theme="dark"] .prep-title{color:#f0e2c4}
+    html[data-theme="dark"] .prep-subtitle{color:#b9a576}
+    html[data-theme="dark"] .prep-open-badge{background:#493a20;border-color:#6b5730;color:#ebd6a4}
+    html[data-theme="dark"] .prep-card{background:linear-gradient(145deg,#40331d 0%,#302515 100%);border-color:#66512a;box-shadow:0 3px 14px rgba(0,0,0,.22)}
+    html[data-theme="dark"] .prep-card-ico{background:#594521;border-color:#705a2e;color:#f0d9a6}
+    html[data-theme="dark"] .prep-card-title h3,html[data-theme="dark"] .prep-group-name{color:#f1e4c2}
+    html[data-theme="dark"] .prep-card-title p,html[data-theme="dark"] .prep-item-meta,html[data-theme="dark"] .prep-group-meta{color:#c0ab78}
+    html[data-theme="dark"] .prep-count{background:#46371f;border-color:#69542d;color:#edd9a7}
+    html[data-theme="dark"] .prep-item,html[data-theme="dark"] .prep-group{background:rgba(25,20,13,.38);border-color:#5c4927}
+    html[data-theme="dark"] .prep-item-name{color:#f2e7cd}
+    html[data-theme="dark"] .prep-empty{background:#312716;border-color:#66512a;color:#d5c18b}
+    @media(max-width:760px){.prep-grid{grid-template-columns:1fr}.prep-card{padding:13px}}
+    @media(max-width:420px){.prep-head{align-items:flex-start}.prep-open-badge{font-size:.68rem}.prep-card-head{gap:8px}.prep-card-ico{width:36px;height:36px}.prep-count{font-size:.66rem;padding:4px 7px}.prep-start{min-height:40px;padding:6px 8px}}
+    @media(prefers-reduced-motion:reduce){.prep-start{transition:none!important}}
   </style>
+  <%
+    const practiceMockFans = Array.isArray(mockFans) ? mockFans : [];
+    const practicePreGroups = Array.isArray(preGroups) ? preGroups : [];
+    const practiceSubtestCount = practicePreGroups.reduce((sum, group) => sum + (Array.isArray(group.chunks) ? group.chunks.length : 0), 0);
+  %>
+  <section class="prep-library" id="practice-library" aria-labelledby="prep-library-title">
+    <div class="prep-head">
+      <div>
+        <h2 class="prep-title" id="prep-library-title"><%= __p('prep.title') %></h2>
+        <p class="prep-subtitle"><%= __p('prep.sub') %></p>
+      </div>
+      <span class="prep-open-badge"><%- icon('shieldCheck', 13) %> <%= __p('prep.availableAll') %></span>
+    </div>
+
+    <div class="prep-grid">
+      <article class="prep-card" id="mock-fanlar" aria-labelledby="prep-mock-title">
+        <header class="prep-card-head">
+          <span class="prep-card-ico"><%- icon('bookOpen', 18) %></span>
+          <div class="prep-card-title">
+            <h3 id="prep-mock-title"><%= __p('prep.mockTitle') %></h3>
+            <p><%= __p('prep.mockSub') %></p>
+          </div>
+          <span class="prep-count"><%= __pf('prep.mockCount', practiceMockFans.length) %></span>
+        </header>
+        <% if (practiceMockFans.length) { %>
+          <ul class="prep-items" aria-label="<%= __p('prep.mockTitle') %>">
+            <% practiceMockFans.forEach(function (fan) { %>
+              <li class="prep-item">
+                <div class="prep-item-main">
+                  <span class="prep-item-name"><%= fan.name %></span>
+                  <span class="prep-item-meta"><%= __pf('prep.questionCount', fan.count) %></span>
+                </div>
+                <button type="button" class="btn act-sinov btn-sm prep-start" data-start-sinov
+                  data-name="<%= fan.name %>" data-count="<%= fan.count %>"
+                  data-url="/user/practice?source=mock&amp;key=<%= encodeURIComponent(fan.key) %>"
+                  aria-label="<%= __p('prep.startFor').replace('{name}', fan.name) %>"<% if (!fan.count) { %> disabled<% } %>>
+                  <%- icon('play', 13) %><span><%= __p('prep.start') %></span>
+                </button>
+              </li>
+            <% }); %>
+          </ul>
+        <% } else { %>
+          <div class="prep-empty"><%= __p('prep.emptyMock') %></div>
+        <% } %>
+      </article>
+
+      <article class="prep-card" id="subtestlar" aria-labelledby="prep-subtests-title">
+        <header class="prep-card-head">
+          <span class="prep-card-ico"><%- icon('clipboard', 18) %></span>
+          <div class="prep-card-title">
+            <h3 id="prep-subtests-title"><%= __p('prep.subTitle') %></h3>
+            <p><%= __p('prep.subSub') %></p>
+          </div>
+          <span class="prep-count"><%= __pf('prep.subtestCount', practiceSubtestCount) %></span>
+        </header>
+        <% if (practicePreGroups.length) { %>
+          <div class="prep-groups" aria-label="<%= __p('prep.subTitle') %>">
+            <% practicePreGroups.forEach(function (group) { %>
+              <section class="prep-group" aria-label="<%= group.title %>">
+                <header class="prep-group-head">
+                  <div>
+                    <h4 class="prep-group-name"><%= group.title %></h4>
+                    <span class="prep-group-meta"><%= __p('prep.groupMeta').split('{n}').join(String(group.chunks.length)).split('{q}').join(String(group.count)) %></span>
+                  </div>
+                </header>
+                <ul class="prep-items">
+                  <% group.chunks.forEach(function (chunk) { const subtestName = group.title + ' — ' + chunk.name; %>
+                    <li class="prep-item">
+                      <div class="prep-item-main">
+                        <span class="prep-item-name"><%= chunk.name %></span>
+                        <span class="prep-item-meta"><%= __pf('prep.questionCount', chunk.count) %></span>
+                      </div>
+                      <button type="button" class="btn act-sinov btn-sm prep-start" data-start-sinov
+                        data-name="<%= subtestName %>" data-count="<%= chunk.count %>"
+                        data-url="/user/practice?source=pre&amp;key=<%= encodeURIComponent(group.key) %>&amp;chunk=<%= encodeURIComponent(chunk.id) %>"
+                        aria-label="<%= __p('prep.startFor').replace('{name}', subtestName) %>"<% if (!chunk.count) { %> disabled<% } %>>
+                        <%- icon('play', 13) %><span><%= __p('prep.start') %></span>
+                      </button>
+                    </li>
+                  <% }); %>
+                </ul>
+              </section>
+            <% }); %>
+          </div>
+        <% } else { %>
+          <div class="prep-empty"><%= __p('prep.emptyPre') %></div>
+        <% } %>
+      </article>
+    </div>
+  </section>
   <div class="ws-live" role="status" aria-live="polite" id="ws-live"></div>
 
         <!-- ════ Test Library (S26) ════ -->
@@ -585,12 +720,20 @@
     }
     var tbtn = document.getElementById('panelThemeBtn');
     if (tbtn) {
+      function syncPanelThemeButton() {
+        var T = window.DeborahTheme;
+        var light = T && T.isLight ? T.isLight() : document.documentElement.getAttribute('data-resolved-theme') === 'light';
+        tbtn.setAttribute('aria-pressed', light ? 'false' : 'true');
+      }
       tbtn.addEventListener('click', function(){
         var T = window.DeborahTheme;
         var next = (T && T.isLight && T.isLight()) ? 'dark' : 'light';
         if (T && T.setState) { T.setState(next); } else if (T && T.apply) { T.apply(next); }
+        syncPanelThemeButton();
         fetch('/user/api/settings/profile', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ theme: next }) }).catch(function(){});
       });
+      document.addEventListener('themechange', syncPanelThemeButton);
+      syncPanelThemeButton();
     }
   })();
   </script>

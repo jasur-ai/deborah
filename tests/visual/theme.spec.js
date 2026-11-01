@@ -10,7 +10,7 @@
  *  - S07.04     color-scheme native form control bilan
  *  - S07.05     meta-theme-color real canvas token bilan sinxron
  *  - S07.08     System: localStorage yo'q bo'lsa OS colorScheme ishlaydi
- *  - S07.09     Segmented control (System/Light/Dark) + persist + reload
+ *  - S07.09     Icon-only control (System/Light/Dark) + accessible state + persist
  *  - S07.10     Projector/classroom sahifalarida engine o'chgan (strukturaviy)
  */
 import { expect } from '@playwright/test';
@@ -96,13 +96,66 @@ test('theme toggle (#themeBtn) -- dark -- override light state', async ({ browse
 // USER qarori (qotirilgan): landing'da segmented theme tugmalari YO'Q —
 // faqat bitta #themeBtn toggle. Qayta qo'shilsa bu test qulaydi.
 test("theme landing -- segmented control yo'q, faqat #themeBtn", async ({ browser }, testInfo) => {
-  test.skip(DESKTOP_ONLY(testInfo), 'desktop only');
-  const context = await openThemedContext(browser, 'light', 'app-desktop', { explicit: false });
+  const context = await openThemedContext(browser, 'light', testInfo.project.name, { explicit: false });
   const page = await context.newPage();
   await page.goto('/', { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('#themeBtn')).toBeVisible();
+  const button = page.locator('#themeBtn');
+  await expect(button).toBeVisible();
+  await expect(button).toHaveAttribute('aria-label', 'Tema');
+  await expect(button).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('.theme-segmented')).toHaveCount(0);
   await expect(page.locator('[data-theme-state-btn]')).toHaveCount(0);
+
+  await button.click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(button).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.locator('html')).toHaveClass(/theme-transitioning/);
+  const veil = await page.locator('html').evaluate((element) => getComputedStyle(element, '::before').backgroundImage);
+  expect(veil).toContain('linear-gradient');
+  expect(veil).not.toContain('radial-gradient');
+  await expect(page.locator('html')).not.toHaveClass(/theme-transitioning/, { timeout: 1500 });
+  await context.close();
+});
+
+test('theme control -- icon-only, accessible, refined and reduced-motion aware', async ({ browser }, testInfo) => {
+  const context = await openThemedContext(browser, 'dark', testInfo.project.name);
+  const page = await context.newPage();
+  await page.goto('/user/login', { waitUntil: 'domcontentloaded' });
+  const group = page.locator('.theme-segmented').first();
+  const buttons = group.locator('[data-theme-state-btn]');
+  await expect(buttons).toHaveCount(3);
+  const details = await buttons.evaluateAll((items) => items.map((button) => ({
+    state: button.getAttribute('data-theme-state-btn'),
+    label: button.getAttribute('aria-label'),
+    title: button.getAttribute('title'),
+    text: button.textContent.trim(),
+    iconHidden: button.querySelector('svg')?.getAttribute('aria-hidden') === 'true',
+  })));
+  expect(details.map((item) => item.state)).toEqual(['system', 'light', 'dark']);
+  expect(details.every((item) => item.label && item.title && item.iconHidden && item.text === '')).toBe(true);
+  const targets = await buttons.evaluateAll((items) => items.map((button) => {
+    const { width, height } = button.getBoundingClientRect();
+    return { width, height };
+  }));
+  expect(targets.every((target) => target.width >= 44 && target.height >= 44)).toBe(true);
+
+  await group.locator('[data-theme-state-btn="light"]').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(group.locator('[data-theme-state-btn="light"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('html')).toHaveClass(/theme-transitioning/);
+  const veil = await page.locator('html').evaluate((element) => {
+    const style = getComputedStyle(element, '::before');
+    return { image: style.backgroundImage, layer: Number(style.zIndex) };
+  });
+  expect(veil.image).toContain('linear-gradient');
+  expect(veil.image).not.toContain('radial-gradient');
+  expect(veil.layer).toBeLessThan(1000);
+  await expect(page.locator('html')).not.toHaveClass(/theme-transitioning/, { timeout: 1500 });
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await group.locator('[data-theme-state-btn="dark"]').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect(page.locator('html')).not.toHaveClass(/theme-transitioning/);
   await context.close();
 });
 

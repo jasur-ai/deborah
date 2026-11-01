@@ -518,11 +518,12 @@
   background: var(--deborah-semantic-color-surface-nested);
 }
 .admin-dashboard-page .admin-navbar .theme-segmented button {
-  min-height: 36px;
-  padding: 7px 10px;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
   color: var(--deborah-semantic-color-text-secondary);
-  font-size: .8rem;
-  white-space: nowrap;
 }
 .admin-dashboard-page .admin-navbar .theme-segmented button.is-active {
   background: var(--deborah-semantic-color-action-primary) !important;

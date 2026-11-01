@@ -137,14 +137,79 @@ router.use((req, res, next) => {
   next();
 });
 
+function validPracticeKey(value, maxLength = 120) {
+  const key = String(value || '');
+  return key.length > 0 && key.length <= maxLength
+    && /^[A-Za-z0-9_.-]+$/.test(key) && !key.includes('..') && !key.startsWith('.')
+    ? key : null;
+}
+
+function practiceCatalogCount(record, field) {
+  const raw = Array.isArray(record?.questions) ? record.questions.length : record?.[field];
+  const count = Number(raw);
+  return Number.isFinite(count) && count > 0 ? Math.floor(count) : 0;
+}
+
+/** Public, metadata-only practice catalog. Question payloads stay server-side. */
+export function buildPracticeCatalog(rawFans = {}, rawGroups = {}) {
+  const entriesOf = (value) => value && typeof value === 'object' && !Array.isArray(value)
+    ? Object.entries(value) : [];
+  const cleanName = (value, fallback) => typeof value === 'string' && value.trim()
+    ? value.trim().slice(0, 200) : fallback;
+
+  const mockFans = entriesOf(rawFans).flatMap(([rawKey, data]) => {
+    const key = validPracticeKey(rawKey);
+    if (!key || !data || typeof data !== 'object') return [];
+    return [{ key, name: cleanName(data.name, key), count: practiceCatalogCount(data, 'count') }];
+  }).sort((a, b) => a.name.localeCompare(b.name));
+
+  const preGroups = entriesOf(rawGroups).flatMap(([rawKey, group]) => {
+    const key = validPracticeKey(rawKey);
+    if (!key || !group || typeof group !== 'object') return [];
+    const chunks = (Array.isArray(group.chunks) ? group.chunks : []).flatMap((chunk, index) => {
+      const id = validPracticeKey(chunk?.id, 64);
+      if (!id || !chunk || typeof chunk !== 'object') return [];
+      const fallbackName = `Subtest ${index + 1}`;
+      return [{ id, name: cleanName(chunk.name, fallbackName), count: practiceCatalogCount(chunk, 'count') }];
+    });
+    if (!chunks.length) return [];
+    const chunkTotal = chunks.reduce((sum, chunk) => sum + chunk.count, 0);
+    const storedTotal = Number(group.total);
+    return [{
+      key,
+      title: cleanName(group.title, key),
+      count: chunkTotal || (Number.isFinite(storedTotal) && storedTotal > 0 ? Math.floor(storedTotal) : 0),
+      chunks,
+    }];
+  }).sort((a, b) => a.title.localeCompare(b.title));
+
+  return { mockFans, preGroups };
+}
+
+async function loadPracticeCatalog() {
+  try {
+    const [fansSnap, groupsSnap] = await Promise.all([
+      fb.get(DB_PATHS.MOCK_FANS),
+      fb.get(DB_PATHS.PRE_GROUPS),
+    ]);
+    return buildPracticeCatalog(fansSnap.val() || {}, groupsSnap.val() || {});
+  } catch (err) {
+    console.warn('Practice catalog unavailable:', err?.message || err);
+    return { mockFans: [], preGroups: [] };
+  }
+}
+
 // ── User Panel ──
 async function renderWorkspace(req, res, activeKey, viewName, fallbackTitle) {
   const user = req.session.user;
   try {
-    // VIP stealth (user qarori 09/2026): panel'da VIP izlari YO'Q — mock/pre
-    // to'plamlar bloki butunlay olib tashlangan (ko'rinmaydi, yuklanmaydi).
+    // Personal practice (Mock fanlar/Subtestlar) ochiq barcha akkauntlarga;
+    // VIP holati faqat alohida Cast sozlamalari va eksport ruxsatlariga ta'sir qiladi.
     const isVip = await isCurrentUserVip(req);
-    const testsSnap = await fb.get(`users/${user.safeKey}/tests`);
+    const [testsSnap, practiceCatalog] = await Promise.all([
+      fb.get(`users/${user.safeKey}/tests`),
+      activeKey === 'panel' ? loadPracticeCatalog() : Promise.resolve({ mockFans: [], preGroups: [] }),
+    ]);
     const tests = testsSnap.val() || {};
 
     // AUTH A-28: risk banner copy — user settings'dagi lang (default uz)
@@ -225,6 +290,8 @@ async function renderWorkspace(req, res, activeKey, viewName, fallbackTitle) {
       breachFlagged,
       consentStale,
       tests: testsList,
+      mockFans: practiceCatalog.mockFans,
+      preGroups: practiceCatalog.preGroups,
       // C4-10 overview statistikasi
       testsCount: testsList.length,
       totalQuestions: testsList.reduce((a, t) => a + (Number(t.count) || 0), 0),
@@ -259,6 +326,8 @@ async function renderWorkspace(req, res, activeKey, viewName, fallbackTitle) {
       fullCopy: AUTH_COPY.uz,
       copy: { sidebar: AUTH_COPY.uz.sidebar, header: AUTH_COPY.uz.header },
       tests: [],
+      mockFans: [],
+      preGroups: [],
       username: user.username,
       isVip: false,
       canExportJson: false,
@@ -833,9 +902,9 @@ router.patch('/api/settings/profile', async (req, res) => {
 });
 
 // ═══════════════════════════════════════════════════════════════════
-// S22 — Yakka mashq (solo practice): o'z/ommaviy testlar (student),
-// mock/pre to'plamlar (faqat VIP). Javob kaliti klientga TUSHMAYDI —
-// grade serverda.
+// S22 — Yakka mashq (solo practice): o'z/ommaviy testlar va umumiy
+// Mock fanlar/Subtestlar kutubxonasi barcha autentifikatsiyalangan foydalanuvchilar uchun.
+// Jonli o'yin hosting ruxsatlari routes/game.js'da alohida qoladi.
 // ═══════════════════════════════════════════════════════════════════
 // C4-10 rev.3: variantlar 2 xil shaklda saqlanishi mumkin — string yoki
 // {id,text,isCorrect}. To'g'ri javob ham `correct` (indeks) yoki isCorrect
@@ -929,13 +998,7 @@ async function loadPracticeQuestions(req, res) {
     return { err: res.status(404).json({ ok: false, error: 'not_found' }) };
   }
   if (source === 'mock' || source === 'pre') {
-    // Faqat VIP (imtihonga tayyorlanish to'plamlari — S22 qarori)
-    const vipSnap = await fb.get(`users/${user.safeKey}/isVip`);
-    const isVip = vipSnap.exists() && vipSnap.val() === true;
-    const isStaff = ['teacher', 'admin', 'board'].includes(user.role);
-    if (!isVip && !isStaff) {
-      return { err: res.status(403).json({ ok: false, error: 'vip_required' }) };
-    }
+    // Personal mashq kutubxonasi: VIP darajasi talab qilinmaydi.
     if (source === 'mock') {
       const snap = await fb.get(`mock_fans/${key}`);
       if (!snap.exists()) return { err: res.status(404).json({ ok: false, error: 'not_found' }) };
@@ -1219,6 +1282,6 @@ router.post('/api/practice/grade', async (req, res) => {
 });
 
 // 09/2026 (Faza 1): unit testlar uchun sof funksiyalar
-export { practiceOptionMeta, normalizeShortAnswer, shortAnswerHash, orderHash, matchHash };
+export { practiceOptionMeta, normalizeShortAnswer, shortAnswerHash, orderHash, matchHash, loadPracticeQuestions, validPracticeKey };
 
 export default router;

@@ -291,9 +291,9 @@ body.theme-light .btn-ghost:hover:not(:disabled) {
 
 /* ═══════════════════════════════════════════════════════════════
    THEME TRANSITION (STYLE STEP 07 / S07.06-07)
-   900ms universal transition OLIB TASHLANDI — endi faqat root canvas/text
-   150ms crossfade (public/design/foundations/theme.css). Sahifa "gray haze"
-   qaytarmaydi; reduced-motion'da instant. `data-theme-transition` LEGACY
+   900ms universal transition OLIB TASHLANDI — body canvas/text mayin crossfade
+   va theme.css dagi nozik diagonal warm-gold veil. Reduced-motion'da instant.
+   `data-theme-transition` LEGACY
    attribute — eski kutubxonalar uchun inert, hech qanday transition yozmaydi.
    ═══════════════════════════════════════════════════════════════ */
 

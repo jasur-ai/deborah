@@ -62,8 +62,9 @@ function roleLocals(role, active, extra = {}) {
 }
 
 // ── Teacher Workspace (Overview / Courses / Assessments / Grading / Muhitlarim) ──
-// S22 matritsa: monitoring = FAQAT o'zi yaratgan muhitlar; tayyor mock/subtest
-// kutubxonasi teacher'ga ko'rinmaydi (imtihon tayyorlash maxsadi bilan).
+// Teacher'ning jonli monitoring/hosting scope'i faqat o'zi yaratgan muhitlar bilan
+// cheklangan. Shaxsiy Mock fanlar/Subtestlar mashq kutubxonasi esa barcha
+// autentifikatsiyalangan akkauntlarga /user/panel orqali ochiq.
 router.get('/teacher', requireRole('teacher'), async (req, res) => {
   const role = 'teacher';
   const tab = req.query.tab || 'overview';

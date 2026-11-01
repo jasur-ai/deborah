@@ -112,6 +112,15 @@ const _nT = (k, fb) => {
       <a href="/admin/board" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('shield', 16) %></span><span>Board</span></a>
       <a href="/admin/grading" class="shell-nav-link"><span class="shell-nav-ico"><%- icon('trendUp', 16) %></span><span>Grading</span></a>
     <% } %>
+    <% if (!['teacher_pending', 'teacher_rejected'].includes(_role)) { %>
+      <div class="shell-nav-sec"><%= _st('practiceLibrary', 'Mashq kutubxonasi') %></div>
+      <a href="/user/panel#mock-fanlar" class="shell-nav-link" data-practice-nav="mock">
+        <span class="shell-nav-ico"><%- icon('bookOpen', 16) %></span><span><%= _st('mockFans', 'Mock fanlar') %></span>
+      </a>
+      <a href="/user/panel#subtestlar" class="shell-nav-link" data-practice-nav="subtests">
+        <span class="shell-nav-ico"><%- icon('clipboard', 16) %></span><span><%= _st('subtests', 'Subtestlar') %></span>
+      </a>
+    <% } %>
     <div class="shell-nav-sec"><%= _st('secAccount', 'Akkaunt') %></div>
     <% const _profileHref = _role === 'admin' ? '/admin/profile' : '/user/profile'; %>
     <a href="<%= _profileHref %>" class="shell-nav-link<%= _isActive(_profileHref) ? ' active' : '' %>"><span class="shell-nav-ico"><%- icon('user', 16) %></span><span><%= _role === 'admin' ? 'Admin profili' : _st('myProfile', 'Profilim') %></span></a>

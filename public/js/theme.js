@@ -6,7 +6,7 @@
  * S07.03  Yagona attribute model: html[data-theme] + data-resolved-theme
  * S07.04  color-scheme resolved theme bilan (native form controls)
  * S07.05  meta-theme-color real canvas token bilan (#F5F7FB/#080C1A/#FFFFFF)
- * S07.06  900ms universal transition yo'q — root 150ms crossfade (theme.css)
+ * S07.06  Subtle canvas crossfade + single satin diagonal wash (theme.css)
  * S07.07  Reduced motion → instant
  * S07.08  System preference runtime'da — faqat user override yo'q bo'lsa
  * S07.09  Segmented control: System/Light/Dark ([data-theme-state-btn])
@@ -23,6 +23,7 @@
   var mqLight = null;
   var mqContrast = null;
   var mqReduced = null;
+  var transitionTimer = null;
 
   // S07.08 FIX: prefers() birinchi chaqiruvda lazy-init qiladi —
   // apply() DOMContentLoaded'da wireListeners()dan OLDIN ishlasa ham
@@ -85,11 +86,30 @@
     return r;
   }
 
+  function beginThemeTransition() {
+    if (isIndependentThemePage()) return;
+    if (!mqReduced && window.matchMedia) prefers();
+    if (mqReduced && mqReduced.matches) return;
+    var root = document.documentElement;
+    if (!root) return;
+    if (transitionTimer) window.clearTimeout(transitionTimer);
+    root.classList.remove('theme-transitioning');
+    // Restart a short CSS animation when a second deliberate switch happens quickly.
+    void root.offsetWidth;
+    root.classList.add('theme-transitioning');
+    transitionTimer = window.setTimeout(function () {
+      root.classList.remove('theme-transitioning');
+      transitionTimer = null;
+    }, 680);
+  }
+
   /** User explicit override (S07.08): localStorage + re-apply */
   function setState(state) {
     if (core.STATES.indexOf(state) < 0) return;
+    var before = document.documentElement.getAttribute('data-resolved-theme');
     try { localStorage.setItem(STORAGE_KEY, state); } catch (_) {}
-    apply();
+    var resolved = apply();
+    if (before && resolved && before !== resolved.resolved) beginThemeTransition();
   }
 
   /** Eski data-theme-toggle (icon-only) tugmalar — davomiy compat: dark↔light aylantirish */

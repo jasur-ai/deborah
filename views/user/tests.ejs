@@ -200,7 +200,7 @@
           <button type="button" data-plang="ru" class="<%= typeof panelLang !== 'undefined' && panelLang === 'ru' ? 'on' : '' %>">RU</button>
           <button type="button" data-plang="en" class="<%= typeof panelLang !== 'undefined' && panelLang === 'en' ? 'on' : '' %>">EN</button>
         </div>
-        <button class="tb-theme-btn" id="panelThemeBtn" type="button" aria-label="<%= __p('aria.theme') %>">
+        <button class="tb-theme-btn" id="panelThemeBtn" type="button" aria-label="<%= __p('aria.theme') %>" aria-pressed="false">
           <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
           <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5 5l1.6 1.6M17.4 17.4 19 19M19 5l-1.6 1.6M6.6 17.4 5 19"/></svg>
         </button>
@@ -458,12 +458,20 @@
     }
     var tbtn = document.getElementById('panelThemeBtn');
     if (tbtn) {
+      function syncPanelThemeButton() {
+        var T = window.DeborahTheme;
+        var light = T && T.isLight ? T.isLight() : document.documentElement.getAttribute('data-resolved-theme') === 'light';
+        tbtn.setAttribute('aria-pressed', light ? 'false' : 'true');
+      }
       tbtn.addEventListener('click', function(){
         var T = window.DeborahTheme;
         var next = (T && T.isLight && T.isLight()) ? 'dark' : 'light';
         if (T && T.setState) { T.setState(next); } else if (T && T.apply) { T.apply(next); }
+        syncPanelThemeButton();
         fetch('/user/api/settings/profile', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ theme: next }) }).catch(function(){});
       });
+      document.addEventListener('themechange', syncPanelThemeButton);
+      syncPanelThemeButton();
     }
   })();
   </script>

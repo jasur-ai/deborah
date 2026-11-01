@@ -35,6 +35,7 @@ export const AUTH_COPY = {
     sidebar: {
       roleTeacher: "O'qituvchi", roleStudent: 'Talaba', roleProctor: 'Proktor', roleMarker: 'Baholovchi', roleBoard: "Hay'at",
       secTools: 'Asboblar', secAccount: 'Akkaunt', myTests: 'Testlarim', newTest: 'Yangi test', myPanel: 'Panelim', presentations: 'Taqdimotlar',
+      practiceLibrary: 'Mashq kutubxonasi', mockFans: 'Mock fanlar', subtests: 'Subtestlar',
       calendar: 'Kalendar', portfolio: 'Portfolio', security: 'Xavfsizlik', courses: 'Kurslar', assessments: 'Baholashlar',
       gradingQueue: 'Baholash navbati', liveMonitor: 'Jonli monitoring', ratification: 'Ratifikatsiya',
       myProfile: 'Profilim', logout: 'Chiqish', home: 'Bosh sahifa', panel: 'Panel',
@@ -621,6 +622,7 @@ passkeySettings: {
     sidebar: {
       roleTeacher: '\u040e\u049b\u0438\u0442\u0443\u0432\u0447\u0438', roleStudent: '\u0422\u0430\u043b\u0430\u0431\u0430', roleProctor: '\u041f\u0440\u043e\u043a\u0442\u043e\u0440', roleMarker: '\u0411\u0430\u04b3\u043e\u043b\u043e\u0432\u0447\u0438', roleBoard: '\u04b2\u0430\u0439\u049b\u0430\u0442',
       secTools: '\u0410\u0441\u0431\u043e\u0431\u043b\u0430\u0440', secAccount: '\u0410\u043a\u043a\u0430\u0443\u043d\u0442', myTests: '\u0422\u0435\u0441\u0442\u043b\u0430\u0440\u0438\u043c', newTest: '\u042f\u043d\u0433\u0438 \u0442\u0435\u0441\u0442', myPanel: '\u041f\u0430\u043d\u0435\u043b\u0438\u043c', presentations: '\u0422\u0430\u043a\u0434\u0438\u043c\u043e\u0442\u043b\u0430\u0440',
+      practiceLibrary: '\u041c\u0430\u0448\u049b \u043a\u0443\u0442\u0443\u0431\u0445\u043e\u043d\u0430\u0441\u0438', mockFans: 'Mock \u0444\u0430\u043d\u043b\u0430\u0440', subtests: '\u0421\u0443\u0431\u0442\u0435\u0441\u0442\u043b\u0430\u0440',
       calendar: '\u041a\u0430\u043b\u0435\u043d\u0434\u0430\u0440', portfolio: '\u041f\u043e\u0440\u0442\u0444\u043e\u043b\u0438\u043e', security: '\u0425\u0430\u0432\u0444\u0441\u0438\u0437\u043b\u0438\u043a', courses: '\u041a\u0443\u0440\u0441\u043b\u0430\u0440', assessments: '\u0411\u0430\u04b3\u043e\u043b\u0430\u0448\u043b\u0430\u0440',
       gradingQueue: '\u0411\u0430\u04b3\u043e\u043b\u0430\u0448 \u043d\u0430\u0432\u0431\u0430\u0442\u0438', liveMonitor: '\u0416\u043e\u043d\u043b\u0438 \u043c\u043e\u043d\u0438\u0442\u043e\u0440\u0438\u043d\u0433', ratification: '\u0420\u0430\u0442\u0438\u0444\u0438\u043a\u0430\u0446\u0438\u044f',
       myProfile: '\u041f\u0440\u043e\u0444\u0438\u043b\u0438\u043c', logout: '\u0427\u0438\u049b\u0438\u0448', home: '\u0411\u043e\u0448 \u0441\u0430\u04b3\u0438\u0444\u0430', panel: '\u041f\u0430\u043d\u0435\u043b',
@@ -1208,6 +1210,7 @@ passkeySettings: {
     sidebar: {
       roleTeacher: '\u041f\u0440\u0435\u043f\u043e\u0434\u0430\u0432\u0430\u0442\u0435\u043b\u044c', roleStudent: '\u0421\u0442\u0443\u0434\u0435\u043d\u0442', roleProctor: '\u041f\u0440\u043e\u043a\u0442\u043e\u0440', roleMarker: '\u041e\u0446\u0435\u043d\u0449\u0438\u043a', roleBoard: '\u041a\u043e\u043c\u0438\u0442\u0435\u0442',
       secTools: '\u0418\u043d\u0441\u0442\u0440\u0443\u043c\u0435\u043d\u0442\u044b', secAccount: '\u0410\u043a\u043a\u0430\u0443\u043d\u0442', myTests: '\u041c\u043e\u0438 \u0442\u0435\u0441\u0442\u044b', newTest: '\u041d\u043e\u0432\u044b\u0439 \u0442\u0435\u0441\u0442', myPanel: '\u041c\u043e\u044f \u043f\u0430\u043d\u0435\u043b\u044c', presentations: '\u041f\u0440\u0435\u0437\u0435\u043d\u0442\u0430\u0446\u0438\u0438',
+      practiceLibrary: '\u041f\u0440\u0430\u043a\u0442\u0438\u043a\u0430', mockFans: '\u041f\u0440\u043e\u0431\u043d\u044b\u0435 \u043f\u0440\u0435\u0434\u043c\u0435\u0442\u044b', subtests: '\u0421\u0443\u0431\u0442\u0435\u0441\u0442\u044b',
       calendar: '\u041a\u0430\u043b\u0435\u043d\u0434\u0430\u0440\u044c', portfolio: '\u041f\u043e\u0440\u0442\u0444\u043e\u043b\u0438\u043e', security: '\u0411\u0435\u0437\u043e\u043f\u0430\u0441\u043d\u043e\u0441\u0442\u044c', courses: '\u041a\u0443\u0440\u0441\u044b', assessments: '\u041e\u0446\u0435\u043d\u043a\u0438',
       gradingQueue: '\u041e\u0447\u0435\u0440\u0435\u0434\u044c \u043e\u0446\u0435\u043d\u0438\u0432\u0430\u043d\u0438\u044f', liveMonitor: '\u041c\u043e\u043d\u0438\u0442\u043e\u0440\u0438\u043d\u0433 \u0432 \u0440\u0435\u0430\u043b\u044c\u043d\u043e\u043c \u0432\u0440\u0435\u043c\u0435\u043d\u0438', ratification: '\u0420\u0430\u0442\u0438\u0444\u0438\u043a\u0430\u0446\u0438\u044f',
       myProfile: '\u041c\u043e\u0439 \u043f\u0440\u043e\u0444\u0438\u043b\u044c', logout: '\u0412\u044b\u0439\u0442\u0438', home: '\u0413\u043b\u0430\u0432\u043d\u0430\u044f', panel: '\u041f\u0430\u043d\u0435\u043b\u044c',
@@ -1793,6 +1796,7 @@ passkeySettings: {
     sidebar: {
       roleTeacher: 'Teacher', roleStudent: 'Student', roleProctor: 'Proctor', roleMarker: 'Marker', roleBoard: 'Board',
       secTools: 'Tools', secAccount: 'Account', myTests: 'My tests', newTest: 'New test', myPanel: 'My panel', presentations: 'Presentations',
+      practiceLibrary: 'Practice', mockFans: 'Mock subjects', subtests: 'Subtests',
       calendar: 'Calendar', portfolio: 'Portfolio', security: 'Security', courses: 'Courses', assessments: 'Assessments',
       gradingQueue: 'Grading queue', liveMonitor: 'Live monitoring', ratification: 'Ratification',
       myProfile: 'My profile', logout: 'Log out', home: 'Home', panel: 'Panel',

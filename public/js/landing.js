@@ -515,7 +515,12 @@
   function applyTheme(t){
     /* DeborahTheme engine (theme-core.js) — yagona haqiqat manbai (S07) */
     if(window.DeborahTheme&&window.DeborahTheme.setState){window.DeborahTheme.setState(t);}
-    else{document.documentElement.setAttribute('data-theme',t);}
+    else{document.documentElement.setAttribute('data-theme',t);document.documentElement.setAttribute('data-resolved-theme',t);}
+  }
+  function syncThemeButton(){
+    var button=document.getElementById('themeBtn');
+    if(!button)return;
+    button.setAttribute('aria-pressed',document.documentElement.getAttribute('data-resolved-theme')==='dark'?'true':'false');
   }
   var savedLang='uz',savedTheme='dark';
   /* BUG-092 (S14): path-based sahifalar (/ru,/en,/uz-cyrl) — server tili USTUN.
@@ -531,6 +536,8 @@
     savedTheme=localStorage.getItem('deborah-theme-state')||localStorage.getItem('deborah-theme')||'dark';
   }catch(e){}
   applyTheme(savedTheme);
+  syncThemeButton();
+  document.addEventListener('themechange',syncThemeButton);
   if(savedLang) applyLang(savedLang); /* /uz-cyrl: server render (kirill) o'zgarmaydi */
   document.querySelectorAll('.lang button').forEach(function(b){
     b.addEventListener('click',function(){applyLang(b.getAttribute('data-lang'));});
@@ -676,18 +683,12 @@
     return true;
   });
 
-  /* ═══ Tema — yumshoq o'tish (DeborahTheme engine) ═══ */
-  var fx=document.getElementById('modeFx');
-  document.getElementById('themeBtn').addEventListener('click',function(){
+  /* ═══ Theme toggle — shared refined transition + reduced-motion handling ═══ */
+  var themeButton=document.getElementById('themeBtn');
+  if(themeButton)themeButton.addEventListener('click',function(){
     var next=document.documentElement.getAttribute('data-resolved-theme')==='light'?'dark':'light';
-    var oldBg=getComputedStyle(document.body).backgroundColor;
-    fx.style.transition='none';
-    fx.style.background=oldBg;
-    fx.style.opacity='1';
-    void fx.offsetWidth;
     applyTheme(next);
-    fx.style.transition='opacity .5s ease';
-    fx.style.opacity='0';
+    syncThemeButton();
   });
 /* ── Mosaic (mini) ── */
   var mini=document.getElementById('mini');

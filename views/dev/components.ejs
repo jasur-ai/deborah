@@ -330,9 +330,9 @@
             <a href="#" class="shell-account-menu-item"><span class="shell-nav-ico"><%- icon('home', 14) %></span> Bosh sahifa</a>
             <a href="#" class="shell-account-menu-item"><span class="shell-nav-ico"><%- icon('grid', 14) %></span> Panel</a>
             <div class="theme-segmented" role="group" aria-label="Mavzu">
-              <button type="button" data-theme-state-btn="system" aria-pressed="false">System</button>
-              <button type="button" data-theme-state-btn="light" aria-pressed="false">☀ Light</button>
-              <button type="button" data-theme-state-btn="dark" aria-pressed="false">☾ Dark</button>
+              <button type="button" data-theme-state-btn="system" aria-pressed="false" aria-label="Tizim" title="Tizim"><%- icon('monitor', 17).replace('<svg', '<svg aria-hidden="true" focusable="false"') %></button>
+              <button type="button" data-theme-state-btn="light" aria-pressed="false" aria-label="Yorugʻ" title="Yorugʻ"><%- icon('sun', 17).replace('<svg', '<svg aria-hidden="true" focusable="false"') %></button>
+              <button type="button" data-theme-state-btn="dark" aria-pressed="false" aria-label="Qorongʻi" title="Qorongʻi"><%- icon('moon', 17).replace('<svg', '<svg aria-hidden="true" focusable="false"') %></button>
             </div>
             <a href="#" class="shell-account-menu-item shell-account-menu-item--logout"><span class="shell-nav-ico"><%- icon('logOut', 14) %></span> Chiqish</a>
           </div>

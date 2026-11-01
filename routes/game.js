@@ -84,11 +84,10 @@ async function loadGameQuestions(source, key, chunk) {
   return { questions, testName };
 }
 
-// ── VIP gate: mock/pre manbalarini HOST qilish — faqat TEACHER/ADMIN + VIP ──
-// Foydalanuvchi qarori 2026-08-26: user-VIP va teacher-VIP BIR XIL EMAS.
-// Talaba VIP = panel'da mock/pre kutubxonasi (routes/user.js /panel).
-// Teacher VIP = mock/pre manbasidan o'yin HOST qilish (bu yer). VIP talaba
-// /host'ga ursa — 404 (yashirin, vip.js paradigmasi).
+// ── VIP gate: mock/pre manbalaridan LIVE GAME HOST qilish — TEACHER/ADMIN + VIP ──
+// Shaxsiy practice kutubxonasi routes/user.js'da barcha akkauntlarga ochiq;
+// bu mustaqil gate esa jonli o'yin yaratish ruxsatini cheklaydi.
+// VIP bo'lmagan talaba /host?source=mock|pre ga ursa — 404 (yashirin).
 function vipGateForMockPre(req, res, next) {
   const { source } = req.query;
   if (source === 'mock' || source === 'pre') {
