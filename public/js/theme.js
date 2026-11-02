@@ -97,9 +97,10 @@
     if (!root) return;
     if (transitionTimer) window.clearTimeout(transitionTimer);
     root.classList.remove('theme-transitioning');
-    // Restart a short CSS animation when a second deliberate switch happens quickly.
+    // Restart the CSS animation and flush the old surface colors before apply() changes tokens.
     void root.offsetWidth;
     root.classList.add('theme-transitioning');
+    void root.offsetWidth;
     transitionTimer = window.setTimeout(function () {
       root.classList.remove('theme-transitioning');
       transitionTimer = null;
@@ -110,9 +111,12 @@
   function setState(state) {
     if (core.STATES.indexOf(state) < 0) return;
     var before = document.documentElement.getAttribute('data-resolved-theme');
+    var preference = prefers();
+    var target = core.resolveState(state, preference.light, preference.hc);
     try { localStorage.setItem(STORAGE_KEY, state); } catch (_) {}
-    var resolved = apply();
-    if (before && resolved && before !== resolved.resolved) beginThemeTransition();
+    // Add the transition class while old token values are still active, then apply new colors.
+    if (before && target && before !== target.resolved) beginThemeTransition();
+    return apply();
   }
 
   /** Eski data-theme-toggle (icon-only) tugmalar — davomiy compat: dark↔light aylantirish */

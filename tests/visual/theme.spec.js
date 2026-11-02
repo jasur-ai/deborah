@@ -134,6 +134,8 @@ test('theme control -- icon-only, accessible, refined and reduced-motion aware',
   const context = await openThemedContext(browser, 'dark', testInfo.project.name);
   const page = await context.newPage();
   await page.goto('/user/login', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('.nav-logo img')).toHaveAttribute('src', '/images/logo-text.svg');
+  await expect(page.locator('link[rel="icon"][type="image/svg+xml"]')).toHaveAttribute('href', '/images/logo-icon.svg');
   const group = page.locator('.theme-segmented').first();
   const buttons = group.locator('[data-theme-state-btn]');
   await expect(buttons).toHaveCount(3);

@@ -88,6 +88,8 @@ test('Mock fanlar and Subtestlar are available in the personal library', async (
     });
     const userPage = await userContext.newPage();
     await loginAsUserUI(userPage, { username: 'user', password: 'user' });
+    await expect(userPage.locator('#shell-sidebar .shell-brand-logo')).toHaveAttribute('src', '/images/logo-text.svg');
+    await expect(userPage.locator('link[rel="icon"][type="image/svg+xml"]')).toHaveAttribute('href', '/images/logo-icon.svg');
 
     // The seeded `user` account is non-VIP; both categories must still render.
     const meResponse = await userPage.evaluate(async () => {
@@ -144,15 +146,27 @@ test('Mock fanlar and Subtestlar are available in the personal library', async (
       return parseFloat(raw) * (raw.endsWith('ms') ? 1 : 1000);
     });
     expect(sweepDuration).toBeCloseTo(900, 0);
+    const cardColorMotion = await userPage.locator('.prep-card').first().evaluate((element) => ({
+      properties: getComputedStyle(element).transitionProperty,
+      duration: getComputedStyle(element).transitionDuration,
+      color: getComputedStyle(element).backgroundColor,
+      running: element.getAnimations().some((animation) => animation.playState === 'running'),
+    }));
+    expect(cardColorMotion.properties).toContain('background-color');
+    expect(cardColorMotion.duration).toContain('0.9s');
+    expect(cardColorMotion.color).not.toBe(lightCard);
+    expect(cardColorMotion.running).toBe(true);
     const panelIconMotion = await userPage.locator('#panelThemeBtn .ico-sun').evaluate((element) => ({
       transition: getComputedStyle(element).transitionDuration,
       running: element.getAnimations().some((animation) => animation.playState === 'running'),
     }));
-    expect(panelIconMotion.transition).toContain('0.52s');
+    expect(panelIconMotion.transition).toContain('0.9s');
     expect(panelIconMotion.running).toBe(true);
+    const midCard = cardColorMotion.color;
+    await expect(userPage.locator('html')).not.toHaveClass(/theme-transitioning/, { timeout: 1500 });
     const darkCard = await userPage.locator('.prep-card').first().evaluate((el) => getComputedStyle(el).backgroundColor);
     expect(darkCard).not.toBe(lightCard);
-    await expect(userPage.locator('html')).not.toHaveClass(/theme-transitioning/, { timeout: 1500 });
+    expect(darkCard).not.toBe(midCard);
     await userPage.emulateMedia({ reducedMotion: 'reduce' });
     await themeButton.click();
     await expect(userPage.locator('html')).toHaveAttribute('data-theme', 'light');
