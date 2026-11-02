@@ -17,13 +17,23 @@ const PAGE = `
 </table>
 <div id="users-total"></div>
 <div id="users-page"></div>
-<button id="users-prev"></button>
-<button id="users-next"></button>
+<button id="users-prev" data-users-action="previous-page"></button>
+<button id="users-next" data-users-action="next-page"></button>
 <input id="users-q">
-<div id="block-modal" hidden>
+<select id="users-role"><option value=""></option></select>
+<select id="users-status"><option value=""></option></select>
+<select id="users-vip"><option value=""></option></select>
+<div id="block-modal" class="modal-overlay" hidden>
   <div id="block-user-label"></div>
   <textarea id="block-reason"></textarea>
   <div id="block-reason-err" style="display:none"></div>
+  <button id="block-confirm"></button>
+</div>
+<div id="delete-modal" class="modal-overlay" hidden>
+  <div id="delete-user-label"></div>
+  <input id="delete-confirm-input">
+  <div id="delete-confirm-error" hidden></div>
+  <button id="delete-confirm" data-users-action="confirm-delete" disabled></button>
 </div>
 <div id="audit-tbody"></div>
 <div id="audit-total"></div>
@@ -48,6 +58,9 @@ beforeEach(() => {
       btnBlock: 'Bloklash',
       btnUnblock: 'Aktivlash',
       btnSessions: 'Sessiyalar',
+      btnDelete: "O'chirish",
+      moreActions: "Qo'shimcha amallar",
+      deleteOk: '{name} o\u2018chirildi',
       blockedOk: '{name} bloklandi',
       unblockedOk: '{name} aktivlashtirildi',
       roleOk: "{name} roli o'zgartirildi → {role}",
@@ -77,10 +90,13 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-async function bootUsers() {
+async function bootUsers({ users = USERS_API, total = 1, page = 1, pageSize = 25, pageCount } = {}) {
   fetchMock.mockResolvedValue({
     ok: true,
-    json: () => Promise.resolve({ users: USERS_API, total: 1 }),
+    json: () => Promise.resolve({
+      users, total, page, pageSize,
+      pageCount: pageCount || Math.max(1, Math.ceil(total / pageSize)),
+    }),
   });
   await import('../../public/js/admin/users.js');
   document.dispatchEvent(new Event('DOMContentLoaded'));
@@ -161,6 +177,99 @@ describe('AUTH D-10 — users.js optimistic UI', () => {
     // 300ms dan keyin — qidiruv ishga tushadi (faqat 1 marta)
     await new Promise((r) => setTimeout(r, 250));
     expect(fetchMock.mock.calls.length).toBe(1);
+  });
+
+  it('pagination: keyingi tugma 2-sahifani so\'raydi va sahifa holatini yangilaydi', async () => {
+    await bootUsers({ total: 26 });
+    expect(document.getElementById('users-page').textContent).toBe('1 / 2');
+    expect(document.getElementById('users-next').disabled).toBe(false);
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ users: USERS_API, total: 26, page: 2, pageSize: 25, pageCount: 2 }),
+    });
+
+    document.getElementById('users-next').click();
+    await new Promise((r) => setTimeout(r, 0));
+
+    expect(fetchMock.mock.calls[1][0]).toContain('page=2');
+    expect(document.getElementById('users-page').textContent).toBe('2 / 2');
+    expect(document.getElementById('users-prev').disabled).toBe(false);
+  });
+
+  it('row action menu: keyboard bilan ochiladi, Escape yopadi va fokusni qaytaradi', async () => {
+    await bootUsers();
+    const trigger = document.querySelector('[data-users-action="toggle-user-menu"]');
+    trigger.click();
+    const menu = document.querySelector('[data-user-actions-menu]');
+    expect(menu.hidden).toBe(false);
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+    expect(document.activeElement).toBe(menu.querySelector('[role="menuitem"]'));
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    expect(menu.hidden).toBe(true);
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+    expect(document.activeElement).toBe(trigger);
+
+    trigger.click();
+    expect(menu.hidden).toBe(false);
+    trigger.click(); // a second click on the trigger closes the portaled menu
+    expect(menu.hidden).toBe(true);
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+  });
+
+  it('delete: username tasdig\'i talab qilinadi va API xatosiz chaqiriladi', async () => {
+    await bootUsers();
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({ success: true, key: 'u1' }),
+    });
+    document.querySelector('[data-users-action="toggle-user-menu"]').click();
+    document.querySelector('[data-user-action="delete"]').click();
+
+    const modal = document.getElementById('delete-modal');
+    const input = document.getElementById('delete-confirm-input');
+    const confirmButton = document.getElementById('delete-confirm');
+    const error = document.getElementById('delete-confirm-error');
+    expect(modal.hidden).toBe(false);
+    expect(input.getAttribute('aria-label')).toContain('ali');
+    expect(confirmButton.disabled).toBe(true);
+
+    input.value = 'not-ali';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    expect(confirmButton.disabled).toBe(true);
+    expect(error.hidden).toBe(false);
+
+    input.value = 'ali';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    expect(confirmButton.disabled).toBe(false);
+    expect(error.hidden).toBe(true);
+    confirmButton.click();
+    await new Promise((r) => setTimeout(r, 0));
+
+    const deleteCall = fetchMock.mock.calls.find(([url]) => url === '/admin/api/users/delete');
+    expect(deleteCall).toBeTruthy();
+    expect(JSON.parse(deleteCall[1].body)).toEqual({ key: 'u1' });
+    expect(modal.hidden).toBe(true);
+    expect(document.getElementById('admin-alert').className).toContain('ok');
+  });
+
+  it('delete: server xatosida tushunarli xabar ko\'rsatiladi va qator qayta faollashadi', async () => {
+    await bootUsers();
+    document.querySelector('[data-users-action="toggle-user-menu"]').click();
+    document.querySelector('[data-user-action="delete"]').click();
+    const input = document.getElementById('delete-confirm-input');
+    input.value = 'ali';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    fetchMock.mockRejectedValueOnce(new Error('network unavailable'));
+
+    document.getElementById('delete-confirm').click();
+    await new Promise((r) => setTimeout(r, 0));
+
+    expect(document.getElementById('delete-modal').hidden).toBe(false);
+    expect(document.getElementById('delete-confirm-error').textContent).toContain('network unavailable');
+    expect(document.querySelector('[data-role-key="u1"]').disabled).toBe(false);
+    expect(document.getElementById('admin-alert').textContent).toContain('O\'chirish xato');
   });
 
   it('modal: focus trap — Tab oxirgi elementda fokus birinchiga qaytadi (D-10 §11)', async () => {

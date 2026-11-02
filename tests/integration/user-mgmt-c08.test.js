@@ -92,6 +92,61 @@ describe('AUTH C-08 — user management', () => {
     expect(['active', 'blocked']).toContain(found.status);
   });
 
+  it('pagination: users API page=2 birinchi 25 tadan keyingi foydalanuvchilarni qaytaradi', async () => {
+    const seed = `c08page_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
+    const createdAt = Date.now();
+    const keys = Array.from({ length: 31 }, (_, i) => safeKey(`${seed}_${i}`));
+    for (const [i, key] of keys.entries()) {
+      await fb.set(`users/${key}`, {
+        username: key,
+        name: key,
+        role: 'student',
+        status: 'active',
+        created_at: createdAt + i,
+      });
+    }
+
+    const admin = await adminAgent();
+    const first = await admin.get('/admin/api/users').query({ page: 1, pageSize: 25 });
+    const second = await admin.get('/admin/api/users').query({ page: 2, pageSize: 25 });
+    const clamped = await admin.get('/admin/api/users').query({ page: 999, pageSize: 25 });
+    expect(first.status).toBe(200);
+    expect(second.status).toBe(200);
+    expect(first.body.page).toBe(1);
+    expect(first.body.pageSize).toBe(25);
+    expect(first.body.users).toHaveLength(25);
+    expect(first.body.total).toBeGreaterThan(25);
+    expect(second.body.page).toBe(2);
+    expect(second.body.users.length).toBeGreaterThan(0);
+    expect(clamped.body.page).toBe(clamped.body.pageCount);
+    expect(clamped.body.users.length).toBeGreaterThan(0);
+    const pageKeys = [...first.body.users, ...second.body.users].map((user) => user.key);
+    expect(new Set(pageKeys).size).toBe(pageKeys.length);
+  });
+
+  it('delete: MFA-protected admin endpoint deletes user and rejects unsafe keys', async () => {
+    const userAgent = supertest.agent(app);
+    const uname = `c08delete_${Date.now() % 1000000}_${Math.floor(Math.random() * 10000)}`;
+    const key = await registerUser(userAgent, uname);
+
+    const admin = await adminAgent();
+    const page = await admin.get('/admin/users').set('Accept', 'text/html');
+    const csrf = csrfFrom(page.text);
+    const invalid = await admin.post('/admin/api/users/delete')
+      .set('x-csrf-token', csrf)
+      .send({ key: `${key}/../other` });
+    expect(invalid.status).toBe(400);
+    expect((await fb.get(`users/${key}`)).exists()).toBe(true);
+
+    const deleted = await admin.post('/admin/api/users/delete')
+      .set('x-csrf-token', csrf)
+      .send({ key });
+    expect(deleted.status).toBe(200);
+    expect(deleted.body.success).toBe(true);
+    expect(deleted.body.key).toBe(key);
+    expect((await fb.get(`users/${key}`)).exists()).toBe(false);
+  });
+
   it('blok → user login bloklanadi (generic xato) + audit account:blocked + sessiyalar revoke', async () => {
     const agent = supertest.agent(app);
     const uname = `c08block_${Date.now() % 1000000}`;

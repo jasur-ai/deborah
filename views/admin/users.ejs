@@ -4,6 +4,37 @@
   <%- include('../partials/head') %>
   <link rel="stylesheet" href="/css/admin.css?v=nv6">
   <link rel="stylesheet" href="/design/admin-command.css?v=admin-shell-20261101-r2">
+  <style>
+    .modal-overlay{position:fixed;inset:0;z-index:1600;display:flex;align-items:center;justify-content:center;padding:18px;overflow-y:auto;background:rgba(15,12,8,.62);backdrop-filter:blur(5px)}
+    .modal-overlay[hidden]{display:none!important}
+    .modal{width:min(100%,520px);max-height:calc(100dvh - 36px);overflow:auto;border:1px solid var(--deborah-semantic-color-border-strong);border-radius:16px;background:var(--deborah-semantic-color-surface-raised);color:var(--deborah-semantic-color-text-primary);box-shadow:0 24px 64px rgba(0,0,0,.34)}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid var(--deborah-semantic-color-border-default)}
+    .modal-body{padding:16px 20px}
+    .modal-foot{border-top:1px solid var(--deborah-semantic-color-border-default)}
+    .modal-close{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid var(--deborah-semantic-color-border-default);border-radius:10px;background:var(--deborah-semantic-color-surface-nested);color:var(--deborah-semantic-color-text-primary);font-size:1.4rem;cursor:pointer}
+    .modal-close:hover{border-color:var(--deborah-semantic-color-action-primary-border);background:var(--deborah-semantic-color-action-primary-soft)}
+    .users-actions{display:inline-flex;align-items:center;gap:6px;flex-wrap:nowrap}
+    .users-actions .user-primary-action,.user-actions-trigger{min-height:44px}
+    .user-actions-trigger{display:inline-flex;align-items:center;justify-content:center;width:44px;padding:0;border:1px solid var(--deborah-semantic-color-action-primary-border);border-radius:10px;background:var(--deborah-semantic-color-action-primary-soft);color:var(--deborah-semantic-color-text-primary);cursor:pointer;transition:background .16s,border-color .16s,transform .16s}
+    .user-actions-trigger:hover,.user-actions-trigger[aria-expanded="true"]{background:var(--deborah-semantic-color-action-primary);border-color:var(--deborah-semantic-color-action-primary);color:var(--deborah-semantic-color-action-on-action,#21180b)}
+    .user-actions-trigger:focus-visible,.user-actions-menu button:focus-visible{outline:3px solid var(--deborah-semantic-color-action-primary);outline-offset:2px}
+    .user-actions-menu{position:fixed;z-index:1500;display:grid;gap:4px;min-width:190px;max-width:calc(100vw - 16px);padding:6px;border:1px solid var(--deborah-semantic-color-border-default);border-radius:12px;background:var(--deborah-semantic-color-surface-raised);box-shadow:0 12px 32px rgba(0,0,0,.22)}
+    .user-actions-menu[hidden]{display:none!important}
+    .user-actions-menu button{display:flex;align-items:center;width:100%;min-height:44px;padding:9px 12px;border:0;border-radius:8px;background:transparent;color:var(--deborah-semantic-color-text-primary);font:inherit;text-align:left;cursor:pointer}
+    .user-actions-menu button:hover{background:var(--deborah-semantic-color-action-primary-soft)}
+    .user-actions-menu button[data-user-action="delete"]{color:var(--deborah-semantic-color-danger,#b42318)}
+    #delete-modal .modal{width:min(100%,480px)}
+    #delete-confirm-input{width:100%;min-height:46px;margin-top:8px}
+    #delete-confirm-error{margin-top:8px;color:var(--deborah-semantic-color-danger,#b42318);font-size:.82rem;font-weight:700}
+    #delete-confirm-error[hidden]{display:none}
+    #delete-confirm:disabled{opacity:.55;cursor:not-allowed}
+    #users-page{white-space:nowrap;font-variant-numeric:tabular-nums}
+    @media(max-width:640px){
+      .users-actions .user-primary-action{min-width:84px;padding-inline:10px}
+      .admin-filters #users-q{min-width:100%!important}
+      .user-actions-menu{min-width:185px}
+    }
+  </style>
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to content →</a>
@@ -24,7 +55,7 @@
 
   <div class="admin-layout">
     <%- include('../partials/admin-sidebar', { activePath: '/admin/users', activeTab: '' }) %>
-        <main class="admin-main" id="main">
+    <main class="admin-main" id="main">
       <div class="admin-page-head">
         <div>
           <h1 class="admin-page-title"><%- icon('users', 20) %> Foydalanuvchilar</h1>
@@ -54,29 +85,17 @@
           <option value="active">Active</option>
           <option value="blocked">Bloklangan</option>
         </select>
-        <!-- S22: VIP filtri + tezkor bo'limlar (Userlar / VIP / O'qituvchilar) -->
         <select id="users-vip" class="inp" aria-label="VIP filtri" style="min-width:130px">
           <option value="">VIP: hammasi</option>
           <option value="true">Faqat VIP</option>
           <option value="false">Faqat oddiy</option>
         </select>
-        <button type="button" class="btn" onclick="quickSection('')" style="min-height:44px">Barchasi</button>
-        <button type="button" class="btn" onclick="quickSection('vip')" style="min-height:44px">VIP userlar</button>
-        <button type="button" class="btn" onclick="quickSection('teacher')" style="min-height:44px">O'qituvchilar</button>
-        <button type="button" class="btn btn-primary" onclick="loadUsers(1)" style="min-height:44px"><%- icon('filter', 14) %> Filtrlash</button>
-        <button type="button" class="btn" onclick="resetFilters()" style="min-height:44px">Tozalash</button>
+        <button type="button" class="btn" data-users-action="quick-all" style="min-height:44px">Barchasi</button>
+        <button type="button" class="btn" data-users-action="quick-vip" style="min-height:44px">VIP userlar</button>
+        <button type="button" class="btn" data-users-action="quick-teacher" style="min-height:44px">O'qituvchilar</button>
+        <button type="button" class="btn btn-primary" data-users-action="filter" style="min-height:44px"><%- icon('filter', 14) %> Filtrlash</button>
+        <button type="button" class="btn" data-users-action="reset" style="min-height:44px">Tozalash</button>
       </div>
-      <script>
-        // S22: bo'lim filtrlari — VIP userlar / O'qituvchilar bir klikda
-        function quickSection(kind) {
-          const vipSel = document.getElementById('users-vip');
-          const roleSel = document.getElementById('users-role');
-          if (kind === 'vip') { vipSel.value = 'true'; roleSel.value = ''; }
-          else if (kind === 'teacher') { vipSel.value = ''; roleSel.value = 'teacher'; }
-          else { vipSel.value = ''; roleSel.value = ''; }
-          loadUsers(1);
-        }
-      </script>
 
       <div class="table-wrap dt-wrap is-reflow"><table class="dt" data-density="default">
         <thead><tr>
@@ -96,11 +115,11 @@
 
       <!-- Pagination -->
       <div class="admin-pagination" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;flex-wrap:wrap">
-        <div class="text-muted" id="users-total" style="font-size:.8rem">—</div>
+        <div class="text-muted" id="users-total" style="font-size:.8rem" aria-live="polite">—</div>
         <div style="display:flex;gap:8px;align-items:center">
-          <button type="button" class="btn" id="users-prev" onclick="loadUsers(currentPage - 1)" style="min-height:44px" aria-label="Oldingi sahifa"><%- icon('chevronLeft', 14) %> Oldingi</button>
-          <span id="users-page" class="badge badge-accent" style="font-size:.78rem">1</span>
-          <button type="button" class="btn" id="users-next" onclick="loadUsers(currentPage + 1)" style="min-height:44px" aria-label="Keyingi sahifa">Keyingi <%- icon('chevronRight', 14) %></button>
+          <button type="button" class="btn" id="users-prev" data-users-action="previous-page" style="min-height:44px" aria-label="Oldingi sahifa"><%- icon('chevronLeft', 14) %> Oldingi</button>
+          <span id="users-page" class="badge badge-accent" style="font-size:.78rem" aria-live="polite" tabindex="-1">1 / 1</span>
+          <button type="button" class="btn" id="users-next" data-users-action="next-page" style="min-height:44px" aria-label="Keyingi sahifa">Keyingi <%- icon('chevronRight', 14) %></button>
         </div>
       </div>
     </main>
@@ -111,7 +130,7 @@
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="block-modal-title">
       <div class="modal-head">
         <h2 id="block-modal-title" style="font-size:1rem;margin:0">Foydalanuvchini bloklash</h2>
-        <button type="button" class="modal-close" onclick="closeBlockModal()" aria-label="Yopish">&times;</button>
+        <button type="button" class="modal-close" data-users-action="close-block" aria-label="Yopish">&times;</button>
       </div>
       <div class="modal-body" style="padding:16px 20px">
         <p id="block-user-label" class="text-muted" style="margin:0 0 12px;font-size:.85rem"></p>
@@ -120,8 +139,30 @@
         <div class="err-text" id="block-reason-err" style="display:none" role="alert">Bloklash sababi majburiy</div>
       </div>
       <div class="modal-foot" style="display:flex;justify-content:flex-end;gap:10px;padding:14px 20px">
-        <button type="button" class="btn" onclick="closeBlockModal()" style="min-height:44px">Bekor qilish</button>
-        <button type="button" class="btn btn-danger" id="block-confirm" onclick="confirmBlock()" style="min-height:44px"><%- icon('ban', 14) %> Bloklash</button>
+        <button type="button" class="btn" data-users-action="close-block" style="min-height:44px">Bekor qilish</button>
+        <button type="button" class="btn btn-danger" id="block-confirm" data-users-action="confirm-block" style="min-height:44px"><%- icon('ban', 14) %> Bloklash</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- O'chirish tasdig'i: username qayta kiritiladi, MFA serverda saqlanadi. -->
+  <div class="modal-overlay" id="delete-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title" aria-describedby="delete-modal-description">
+      <div class="modal-head">
+        <h2 id="delete-modal-title" style="font-size:1rem;margin:0">Foydalanuvchini o'chirish</h2>
+        <button type="button" class="modal-close" data-users-action="close-delete" aria-label="Yopish">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:16px 20px">
+        <p id="delete-modal-description" class="text-muted" style="margin:0 0 12px;font-size:.86rem;line-height:1.55">
+          <strong id="delete-user-label"></strong> akkaunti o'chiriladi va uning faol sessiyalari bekor qilinadi. Bu amalni ortga qaytarib bo'lmaydi.
+        </p>
+        <label class="lbl" for="delete-confirm-input">Tasdiqlash uchun username'ni kiriting</label>
+        <input type="text" id="delete-confirm-input" class="inp" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="delete-confirm-error" required>
+        <div id="delete-confirm-error" role="alert" hidden>Username to'liq mos kelmadi.</div>
+      </div>
+      <div class="modal-foot" style="display:flex;justify-content:flex-end;gap:10px;padding:14px 20px">
+        <button type="button" class="btn" data-users-action="close-delete" style="min-height:44px">Bekor qilish</button>
+        <button type="button" class="btn btn-danger" id="delete-confirm" data-users-action="confirm-delete" style="min-height:44px" disabled>O'chirish</button>
       </div>
     </div>
   </div>

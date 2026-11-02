@@ -487,7 +487,26 @@ router.post('/api/pre-groups/delete', async (req, res) => {
 // ── API: Delete user ──
 router.post('/api/users/delete', requireAdminMfaStepUp, async (req, res) => {
   try {
-    await fb.remove(`${DB_PATHS.USERS}/${req.body.key}`);
+    const rawKey = typeof req.body?.key === 'string' ? req.body.key : '';
+    const key = safeKey(rawKey);
+    if (!rawKey || rawKey.trim() !== rawKey || key !== rawKey) {
+      return res.status(400).json({ error: 'invalid_user_key', message: 'Foydalanuvchi kaliti notoʻgʻri.' });
+    }
+
+    const userRef = `${DB_PATHS.USERS}/${key}`;
+    const userSnap = await fb.get(userRef);
+    if (!userSnap.exists()) {
+      return res.status(404).json({ error: 'user_not_found', message: 'Foydalanuvchi topilmadi yoki avval oʻchirilgan.' });
+    }
+    if (userSnap.val()?.role === 'admin') {
+      return res.status(403).json({ error: 'admin_delete_forbidden', message: 'Admin akkauntini ushbu sahifadan oʻchirib boʻlmaydi.' });
+    }
+
+    // O'chirishdan avval shu userning faol sessiyalarini bekor qilamiz.
+    const { revokeByUser } = await import('../src/modules/auth/session-manager.js');
+    await revokeByUser(key, { reason: 'admin_user_delete' });
+    await fb.remove(userRef);
+
     // AUTH A-30 §10: privileged action audit (kim, qachon, nima, IP hash)
     logAuthEvent({
       action: AUDIT_ACTIONS.ADMIN_ACTION,
@@ -496,11 +515,13 @@ router.post('/api/users/delete', requireAdminMfaStepUp, async (req, res) => {
       actorId: req.session?.admin?.username || null,
       ipAddress: req.ip,
       userAgent: req.headers['user-agent'],
-      details: { action: 'user:delete', resource: req.body?.key },
+      details: { action: 'user:delete', resource: key },
     }).catch(() => {});
-    res.json({ success: true });
+    res.json({ success: true, key });
+  } catch (err) {
+    console.error('[admin-user-delete] Failed:', err.message);
+    res.status(500).json({ error: 'user_delete_failed', message: 'Foydalanuvchini oʻchirishda server xatosi yuz berdi.' });
   }
-  catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 // ── API: Get results ──
@@ -665,7 +686,9 @@ router.get('/api/users', async (req, res) => {
     if (req.query.excludeStaff === 'true') filtered = filtered.filter(([, u]) => !VIP_STAFF_ROLES.has(u.role || 'student'));
 
     const total = filtered.length;
-    const pageItems = filtered.slice((page - 1) * pageSize, page * pageSize);
+    const pageCount = Math.max(1, Math.ceil(total / pageSize));
+    const currentPage = Math.min(page, pageCount);
+    const pageItems = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
     const list = pageItems.map(([key, u]) => ({
       key,
       username: u.username || key,
@@ -680,7 +703,7 @@ router.get('/api/users', async (req, res) => {
       vipGrantedBy: u.vipGrantedBy || null,
       vipRevokedAt: u.vipRevokedAt || null,
     }));
-    res.json({ users: list, total, page, pageSize });
+    res.json({ users: list, total, page: currentPage, pageSize, pageCount });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
