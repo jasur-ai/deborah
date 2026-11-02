@@ -166,7 +166,7 @@ h1 em{font-style:italic;color:var(--ld-gold2)}
 .cell.cr{background:rgba(168,121,79,.9)}
 .cell.gd{background:rgba(194,160,106,.9)}
 .cell.gr{background:rgba(127,154,107,.9)}
-.cell.bl{background:rgba(110,122,142,.85)}
+.cell.bl{background:rgba(142,158,125,.9)}
 .devnote{margin-top:12px;font-family:'IBM Plex Mono',Consolas,monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);opacity:0;transition:opacity .5s}
 .devnote b{color:var(--green)}
 .sc-foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:12px 18px;border-top:1px solid var(--line);

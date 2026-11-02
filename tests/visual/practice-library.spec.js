@@ -48,7 +48,7 @@ test('Mock fanlar and Subtestlar are available in the personal library', async (
     await page.waitForFunction(() => location.pathname === '/admin/dashboard'
       && typeof window.__CSRF_TOKEN === 'string' && window.__CSRF_TOKEN.length > 0);
     // Let the session store finish persisting the freshly issued CSRF token before fixture writes.
-    await page.waitForTimeout(150);
+    await page.waitForTimeout(450);
     const saved = await page.evaluate(async ({ mockName, groupTitle, mockQuestions, subtestChunks }) => {
       const headers = { 'Content-Type': 'application/json', 'X-CSRF-Token': window.__CSRF_TOKEN };
       const fanResponse = await fetch('/admin/api/fans/save', {
@@ -96,6 +96,17 @@ test('Mock fanlar and Subtestlar are available in the personal library', async (
     });
     expect(Boolean(meResponse.user?.isVip)).toBe(false);
     await expect(userPage.locator('#practice-library')).toBeVisible();
+    if ((userPage.viewportSize()?.width || 1440) <= 640) {
+      const mobileSummaryLayout = await userPage.evaluate(() => ({
+        viewport: window.innerWidth,
+        document: document.documentElement.scrollWidth,
+        summaryColumns: getComputedStyle(document.querySelector('.ov-grid')).gridTemplateColumns.split(' ').length,
+        lastSummarySpansFullRow: getComputedStyle(document.querySelector('.ov-card--last')).gridColumnStart === '1',
+      }));
+      expect(mobileSummaryLayout.document).toBeLessThanOrEqual(mobileSummaryLayout.viewport);
+      expect(mobileSummaryLayout.summaryColumns).toBe(2);
+      if (mobileSummaryLayout.viewport <= 380) expect(mobileSummaryLayout.lastSummarySpansFullRow).toBe(true);
+    }
     await expect(userPage.locator('#mock-fanlar')).toContainText(mockName);
     await expect(userPage.locator('#subtestlar')).toContainText(groupTitle);
     const mockItem = userPage.locator('#mock-fanlar .prep-item').filter({ hasText: mockName });
@@ -124,12 +135,31 @@ test('Mock fanlar and Subtestlar are available in the personal library', async (
     await expect(userPage.locator('html')).toHaveAttribute('data-theme', 'dark');
     await expect(themeButton).toHaveAttribute('aria-pressed', 'true');
     await expect(userPage.locator('html')).toHaveClass(/theme-transitioning/);
-    const sweepName = await userPage.locator('html').evaluate((element) => getComputedStyle(element, '::before').animationName);
-    expect(sweepName).toBe('theme-satin-sweep');
+    await expect.poll(() => userPage.locator('html').evaluate((element) => {
+      const style = getComputedStyle(element, '::before');
+      return style.animationName === 'theme-satin-sweep' ? Number(style.opacity) : 0;
+    })).toBeGreaterThan(0.1);
+    const sweepDuration = await userPage.locator('html').evaluate((element) => {
+      const raw = getComputedStyle(element, '::before').animationDuration;
+      return parseFloat(raw) * (raw.endsWith('ms') ? 1 : 1000);
+    });
+    expect(sweepDuration).toBeCloseTo(900, 0);
+    const panelIconMotion = await userPage.locator('#panelThemeBtn .ico-sun').evaluate((element) => ({
+      transition: getComputedStyle(element).transitionDuration,
+      running: element.getAnimations().some((animation) => animation.playState === 'running'),
+    }));
+    expect(panelIconMotion.transition).toContain('0.52s');
+    expect(panelIconMotion.running).toBe(true);
     const darkCard = await userPage.locator('.prep-card').first().evaluate((el) => getComputedStyle(el).backgroundColor);
     expect(darkCard).not.toBe(lightCard);
+    await expect(userPage.locator('html')).not.toHaveClass(/theme-transitioning/, { timeout: 1500 });
+    await userPage.emulateMedia({ reducedMotion: 'reduce' });
     await themeButton.click();
     await expect(userPage.locator('html')).toHaveAttribute('data-theme', 'light');
+    await expect(userPage.locator('html')).not.toHaveClass(/theme-transitioning/);
+    const reducedPanelIconMotion = await userPage.locator('#panelThemeBtn .ico-sun').evaluate((element) =>
+      element.getAnimations().some((animation) => animation.playState === 'running'));
+    expect(reducedPanelIconMotion).toBe(false);
 
     // Sidebar anchors remain reachable in the compact drawer used on phones.
     if ((page.viewportSize()?.width || 1440) <= 640) {
@@ -152,6 +182,10 @@ test('Mock fanlar and Subtestlar are available in the personal library', async (
     await expect(userPage.locator('#qpos')).toHaveText('1 / 25');
     await expect(userPage.locator('#dots .pr-dot')).toHaveCount(25);
     await expect(userPage.locator('#quiz')).toContainText(mockQuestionPrefix);
+    if ((userPage.viewportSize()?.width || 1440) <= 640) {
+      const practiceWidth = await userPage.evaluate(() => ({ viewport: window.innerWidth, document: document.documentElement.scrollWidth }));
+      expect(practiceWidth.document).toBeLessThanOrEqual(practiceWidth.viewport);
+    }
     await userPage.evaluate(() => {
       for (let index = 0; index < 25; index += 1) {
         const correctOption = document.querySelector('#quiz .opt[data-j="1"]');

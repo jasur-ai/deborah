@@ -16,21 +16,23 @@ html[data-theme="dark"] { color-scheme: dark; }
 html[data-theme="high-contrast"] { color-scheme: light; }
 
 /* ── 2. Refined theme shift (S07.06) ── a visible diagonal satin sweep, never a radial ripple. */
-body { transition: background-color 300ms cubic-bezier(.22,.72,.24,1), color 260ms ease; }
+body { transition: background-color 360ms cubic-bezier(.22,.72,.24,1), color 320ms ease; }
 html.theme-transitioning::before {
   content: "";
   position: fixed;
-  inset: -20% -60%;
+  inset: -22% -34%;
   z-index: 999;
   pointer-events: none;
-  background: linear-gradient(112deg, transparent 35%, rgba(45,49,56,.08) 41%, rgba(138,106,46,.50) 47%, rgba(255,255,255,.78) 49.5%, rgba(255,248,230,.72) 51.5%, rgba(201,165,101,.52) 54%, rgba(45,49,56,.10) 60%, transparent 67%);
-  animation: theme-satin-sweep 720ms cubic-bezier(.22,.72,.24,1) both;
+  background: linear-gradient(112deg, transparent 27%, rgba(105,120,94,.12) 35%, rgba(138,106,46,.34) 42%, rgba(255,255,255,.78) 48%, rgba(239,237,222,.72) 51%, rgba(164,179,148,.34) 55%, rgba(201,165,101,.54) 61%, rgba(45,49,39,.10) 67%, transparent 75%);
+  animation: theme-satin-sweep 900ms cubic-bezier(.22,.72,.24,1) both;
+  will-change: opacity, transform;
 }
 @keyframes theme-satin-sweep {
-  0% { opacity: 0; transform: translateX(-38%); }
-  22% { opacity: .42; }
-  54% { opacity: .92; transform: translateX(0); }
-  100% { opacity: 0; transform: translateX(38%); }
+  0% { opacity: 0; transform: translate3d(-44%,0,0); }
+  18% { opacity: .52; }
+  48% { opacity: .96; transform: translate3d(-3%,0,0); }
+  58% { opacity: 1; transform: translate3d(0,0,0); }
+  100% { opacity: 0; transform: translate3d(44%,0,0); }
 }
 
 /* ── 3. Reduced motion (S07.07) ── theme switch instant */

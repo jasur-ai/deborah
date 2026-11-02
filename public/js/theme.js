@@ -5,7 +5,7 @@
  * S07.02  Head'dagi tiny sync boot (head.ejs) — FOUC yo'q
  * S07.03  Yagona attribute model: html[data-theme] + data-resolved-theme
  * S07.04  color-scheme resolved theme bilan (native form controls)
- * S07.05  meta-theme-color real canvas token bilan (#F5F7FB/#080C1A/#FFFFFF)
+ * S07.05  meta-theme-color page canvas bilan sinxron (mobile browser chrome)
  * S07.06  Subtle canvas crossfade + single satin diagonal wash (theme.css)
  * S07.07  Reduced motion → instant
  * S07.08  System preference runtime'da — faqat user override yo'q bo'lsa
@@ -76,9 +76,12 @@
     root.setAttribute('data-theme-state', r.state);       // S07.01
     root.style.colorScheme = r.colorScheme;               // S07.04 (fallback inline)
 
-    // S07.05 — meta-theme-color real canvas bilan
+    // S07.05 — mobile browser chrome uses this page's actual theme canvas.
     var mc = document.getElementById('meta-theme-color');
-    if (mc) mc.setAttribute('content', r.canvas);
+    if (mc) {
+      var pageCanvas = mc.getAttribute(r.resolved === 'light' ? 'data-light' : 'data-dark');
+      mc.setAttribute('content', pageCanvas || r.canvas);
+    }
 
     document.dispatchEvent(new CustomEvent('themechange', {
       detail: { state: r.state, resolved: r.resolved, colorScheme: r.colorScheme },
@@ -100,7 +103,7 @@
     transitionTimer = window.setTimeout(function () {
       root.classList.remove('theme-transitioning');
       transitionTimer = null;
-    }, 820);
+    }, 1000);
   }
 
   /** User explicit override (S07.08): localStorage + re-apply */

@@ -47,7 +47,7 @@ for (const os of ['light', 'dark']) {
     expect(a.theme).toBe(os);
     expect(a.resolved).toBe(os);
     expect(a.state).toBe('system');
-    expect(a.meta).toBe(os === 'light' ? '#F5F7FB' : '#080C1A'); // S07.05
+    expect(a.meta).toBe(os === 'light' ? '#E3E2DA' : '#20221D'); // S07.05 — app chrome matches canvas
     await context.close();
   });
 }
@@ -67,7 +67,7 @@ test('theme toggle (#themeBtn) -- light -- persist across reload', async ({ brow
   expect(a.theme).toBe('light');
   expect(a.state).toBe('light');
   expect(a.stored).toBe('light');
-  expect(a.meta).toBe('#F5F7FB');
+  expect(a.meta).toBe('#AAA596');
   // Reload → persisted
   await page.reload({ waitUntil: 'domcontentloaded' });
   a = await themeAttrs(page);
@@ -89,7 +89,7 @@ test('theme toggle (#themeBtn) -- dark -- override light state', async ({ browse
   expect(a.theme).toBe('dark');
   expect(a.state).toBe('dark');
   expect(a.stored).toBe('dark');
-  expect(a.meta).toBe('#080C1A');
+  expect(a.meta).toBe('#1C1813');
   await context.close();
 });
 
@@ -124,7 +124,7 @@ test("theme landing -- segmented control yo'q, faqat #themeBtn", async ({ browse
   expect(veil.image).not.toContain('radial-gradient');
   expect(veil.image).toContain('0.78');
   expect(veil.animation).toBe('theme-satin-sweep');
-  expect(veil.durationMs).toBeCloseTo(720, 0);
+  expect(veil.durationMs).toBeCloseTo(900, 0);
   expect(veil.opacity).toBeGreaterThan(0.1);
   await expect(page.locator('html')).not.toHaveClass(/theme-transitioning/, { timeout: 1500 });
   await context.close();
@@ -171,7 +171,7 @@ test('theme control -- icon-only, accessible, refined and reduced-motion aware',
   expect(veil.image).not.toContain('radial-gradient');
   expect(veil.image).toContain('0.78');
   expect(veil.animation).toBe('theme-satin-sweep');
-  expect(veil.durationMs).toBeCloseTo(720, 0);
+  expect(veil.durationMs).toBeCloseTo(900, 0);
   expect(veil.opacity).toBeGreaterThan(0.1);
   expect(veil.layer).toBeLessThan(1000);
   await expect(page.locator('html')).not.toHaveClass(/theme-transitioning/, { timeout: 1500 });

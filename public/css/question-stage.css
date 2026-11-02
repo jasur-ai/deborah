@@ -77,7 +77,7 @@
 .qstage .cell.cr{background:rgba(168,121,79,.9)}
 .qstage .cell.gd{background:rgba(194,160,106,.9)}
 .qstage .cell.gr{background:rgba(127,154,107,.9)}
-.qstage .cell.bl{background:rgba(110,122,142,.85)}
+.qstage .cell.bl{background:rgba(142,158,125,.9)}
 .qstage .devnote{margin-top:12px;font-family:'IBM Plex Mono',Consolas,monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--qs-dim);opacity:0;transition:opacity .5s}
 .qstage .devnote b{color:var(--qs-green);font-weight:700}
 .qstage .sc-foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:12px 18px;border-top:1px solid var(--qs-line);
