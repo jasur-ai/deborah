@@ -99,18 +99,24 @@ test("theme landing -- segmented control yo'q, faqat #themeBtn", async ({ browse
   const context = await openThemedContext(browser, 'light', testInfo.project.name, { explicit: false });
   const page = await context.newPage();
   await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('.logo-mark')).toHaveAttribute('src', '/images/logo-vintage.png');
+  await expect(page.locator('.logo-word')).toHaveCount(0);
+  await expect(page.locator('link[rel="icon"][type="image/svg+xml"]')).toHaveAttribute('href', '/images/logo-icon.svg');
   const button = page.locator('#themeBtn');
   await expect(button).toBeVisible();
   await expect(button).toHaveAttribute('aria-label', 'Tema');
   await expect(button).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('.theme-segmented')).toHaveCount(0);
   await expect(page.locator('[data-theme-state-btn]')).toHaveCount(0);
+  const darkSurface = await page.locator('body').evaluate((element) => getComputedStyle(element).backgroundColor);
 
   await button.click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect(button).toHaveAttribute('aria-pressed', 'false');
   await expect(page.locator('html')).toHaveClass(/theme-transitioning/);
   await page.waitForTimeout(130);
+  const midSurface = await page.locator('body').evaluate((element) => getComputedStyle(element).backgroundColor);
+  expect(midSurface).not.toBe(darkSurface);
   const veil = await page.locator('html').evaluate((element) => {
     const style = getComputedStyle(element, '::before');
     return {
@@ -127,6 +133,9 @@ test("theme landing -- segmented control yo'q, faqat #themeBtn", async ({ browse
   expect(veil.durationMs).toBeCloseTo(900, 0);
   expect(veil.opacity).toBeGreaterThan(0.1);
   await expect(page.locator('html')).not.toHaveClass(/theme-transitioning/, { timeout: 1500 });
+  const lightSurface = await page.locator('body').evaluate((element) => getComputedStyle(element).backgroundColor);
+  expect(lightSurface).not.toBe(darkSurface);
+  expect(lightSurface).not.toBe(midSurface);
   await context.close();
 });
 
@@ -134,7 +143,7 @@ test('theme control -- icon-only, accessible, refined and reduced-motion aware',
   const context = await openThemedContext(browser, 'dark', testInfo.project.name);
   const page = await context.newPage();
   await page.goto('/user/login', { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('.nav-logo img')).toHaveAttribute('src', '/images/logo-text.svg');
+  await expect(page.locator('.nav-logo img')).toHaveAttribute('src', '/images/logo-vintage.png');
   await expect(page.locator('link[rel="icon"][type="image/svg+xml"]')).toHaveAttribute('href', '/images/logo-icon.svg');
   const group = page.locator('.theme-segmented').first();
   const buttons = group.locator('[data-theme-state-btn]');

@@ -88,7 +88,8 @@ test('Mock fanlar and Subtestlar are available in the personal library', async (
     });
     const userPage = await userContext.newPage();
     await loginAsUserUI(userPage, { username: 'user', password: 'user' });
-    await expect(userPage.locator('#shell-sidebar .shell-brand-logo')).toHaveAttribute('src', '/images/logo-text.svg');
+    await expect(userPage.locator('#shell-sidebar .shell-brand-logo')).toHaveAttribute('src', '/images/logo-vintage.png');
+    await expect(userPage.locator('#shell-sidebar .shell-brand-name')).toHaveText('DEBORAH');
     await expect(userPage.locator('link[rel="icon"][type="image/svg+xml"]')).toHaveAttribute('href', '/images/logo-icon.svg');
 
     // The seeded `user` account is non-VIP; both categories must still render.
