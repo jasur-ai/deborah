@@ -456,6 +456,22 @@
   font-size: .82rem !important;
   font-weight: 600;
 }
+.admin-dashboard .dashboard-result-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 12px;
+  margin-top: 9px;
+  color: var(--deborah-semantic-color-text-secondary);
+  font-size: .74rem;
+  line-height: 1.5;
+}
+.admin-dashboard .dashboard-result-summary strong { color: var(--deborah-semantic-color-action-primary); font-variant-numeric: tabular-nums; }
+.admin-dashboard .dashboard-result-summary--empty { color: var(--deborah-semantic-color-text-muted); font-style: italic; }
+.admin-dashboard .dashboard-subtest-results { margin-top: 10px; }
+.admin-dashboard .dashboard-subtest-results summary { color: var(--deborah-semantic-color-action-primary); font-size: .76rem; font-weight: 700; cursor: pointer; }
+.admin-dashboard .dashboard-subtest-results-list { display: grid; gap: 8px; margin-top: 8px; }
+.admin-dashboard .dashboard-subtest-result { padding: 9px 10px; border: 1px solid var(--deborah-semantic-color-border-default); border-radius: 9px; background: var(--deborah-semantic-color-surface-input); }
+.admin-dashboard .dashboard-subtest-result > span { color: var(--deborah-semantic-color-text-primary); font-size: .78rem; font-weight: 700; }
 .admin-dashboard .admin-fan-btns,
 .admin-dashboard .admin-pre-btns {
   display: flex;

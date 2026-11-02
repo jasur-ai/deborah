@@ -736,6 +736,7 @@
   // Enter qidiruv + debounce (D-10 §07: qidiruv debounce)
   document.addEventListener('DOMContentLoaded', function () {
     let resumeDeleteState = null;
+    let initialDeleteState = null;
     let initialPage = 1;
     const locationParams = new URLSearchParams(window.location.search);
     if (locationParams.get('mfaStepup') === 'delete') {
@@ -758,21 +759,33 @@
         initialPage = Math.max(1, Number(resumeDeleteState.page) || 1);
       }
       locationParams.delete('mfaStepup');
+      locationParams.delete('deleteKey');
       const cleanedSearch = locationParams.toString();
       window.history.replaceState(window.history.state, '', window.location.pathname + (cleanedSearch ? '?' + cleanedSearch : '') + window.location.hash);
       showAlert("Admin MFA tasdiqlandi. O'chirishni yakunlash uchun username'ni qayta tasdiqlang.", true);
     } else {
+      const qFilter = document.getElementById('users-q');
+      if (qFilter) qFilter.value = locationParams.get('q') || '';
+      const requestedKey = locationParams.get('deleteKey') || '';
+      if (/^[a-z0-9_-]{1,60}$/.test(requestedKey)) initialDeleteState = { key: requestedKey, name: '' };
+      if (requestedKey) {
+        locationParams.delete('deleteKey');
+        const cleanedSearch = locationParams.toString();
+        window.history.replaceState(window.history.state, '', window.location.pathname + (cleanedSearch ? '?' + cleanedSearch : '') + window.location.hash);
+      }
       try { window.sessionStorage.removeItem('adminUsersPendingDeleteAfterMfa'); } catch (_) {}
     }
     currentPage = initialPage;
     loadUsers(initialPage).then(() => {
-      if (!resumeDeleteState?.key || !resumeDeleteState?.name) return;
-      const row = findRow(resumeDeleteState.key);
+      const deleteState = resumeDeleteState || initialDeleteState;
+      if (!deleteState?.key) return;
+      const row = findRow(deleteState.key);
       if (row) {
         const opener = row.querySelector('[data-users-action="toggle-user-menu"]') || row.querySelector('.user-primary-action');
-        openDeleteModal(resumeDeleteState.key, resumeDeleteState.name, opener);
+        const rowName = row.querySelector('.font-bold')?.textContent?.trim() || deleteState.name || deleteState.key;
+        openDeleteModal(deleteState.key, deleteState.name || rowName, opener);
       } else {
-        showAlert("MFA tasdiqlandi, lekin foydalanuvchi joriy filtrda topilmadi. Qidiruvni tekshiring.", false);
+        showAlert("Foydalanuvchi joriy qidiruvda topilmadi. Ro'yxatni yangilang yoki qidiruvni tekshiring.", false);
       }
     });
     const q = document.getElementById('users-q');

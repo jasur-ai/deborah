@@ -4,7 +4,7 @@
   <%- include('../partials/head') %>
   <link rel="stylesheet" href="/css/admin.css?v=nv6">
   <link rel="stylesheet" href="/design/admin-command.css?v=admin-shell-20261101-r2">
-  <link rel="stylesheet" href="/css/admin-dashboard.css?v=20261101-r2">
+  <link rel="stylesheet" href="/css/admin-dashboard.css?v=20261102-practice-results-r1">
   <script src="/js/vendor/xlsx.full.min.js?v=0.18.5"></script>
 </head>
 <body class="admin-dashboard-page">
@@ -60,14 +60,20 @@
 
       <!-- TAB: Tezkor foydalanuvchilar -->
       <div class="admin-tab-pane <%= activeTab === 'danger' ? 'active' : '' %>" id="pane-danger">
-        <div class="admin-sec-hd"><div class="admin-sec-title"><%- icon('users', 18) %> Tezkor foydalanuvchi boshqaruvi <span class="badge badge-accent">TEZKOR AMALLAR</span></div><button type="button" class="admin-refresh-btn" data-dashboard-action="refresh-users"><%- icon('refresh', 12) %></button></div>
+        <div class="admin-sec-hd">
+        <div class="admin-sec-title"><%- icon('users', 18) %> Tezkor foydalanuvchi boshqaruvi <span class="badge badge-accent">TEZKOR AMALLAR</span></div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <a href="/admin/users" class="dashboard-action-btn dashboard-action-btn--secondary">To‘liq ro‘yxat</a>
+          <button type="button" class="admin-refresh-btn" data-dashboard-action="refresh-users" aria-label="Foydalanuvchilarni yangilash"><%- icon('refresh', 12) %></button>
+        </div>
+      </div>
         <div class="table-wrap dt-wrap is-reflow"><table class="dt" data-density="default"><thead><tr>
           <th scope="col">#</th>
           <th scope="col" data-sort="name">Login</th>
           <th scope="col" class="dt-ts" data-sort="created">Ro'yxatdan o'tgan</th>
           <th scope="col" class="dt-num" data-sort="tests">Testlar</th>
           <th scope="col">VIP</th>
-          <th scope="col" class="dt-actions">O'chirish</th>
+          <th scope="col" class="dt-actions">Boshqarish</th>
         </tr></thead><tbody id="users-tbody">
           <% if (users.length === 0) { %><tr><td colspan="6"><div class="admin-empty">Foydalanuvchilar yo'q</div></td></tr><% } else { %>
             <% users.forEach((u, i) => { %>                <tr class="dt-row" data-name="<%= String(u.username||'').toLowerCase() %>" data-created="<%= u.created_at || 0 %>" data-tests="<%= u.tests || 0 %>">
@@ -82,7 +88,7 @@
                     <button type="button" class="dashboard-action-btn dashboard-action-btn--secondary" data-dashboard-action="vip-grant" data-username="<%= u.username %>"><%- icon('shield', 11) %> VIP</button>
                   <% } %>
                 </td>
-                <td><button type="button" class="dashboard-action-btn dashboard-action-btn--danger" data-dashboard-action="user-delete" data-key="<%= u.key %>" data-name="<%= u.username %>"><%- icon('trash', 12) %> O'chirish</button></td>
+                <td><button type="button" class="dashboard-action-btn dashboard-action-btn--danger" data-dashboard-action="user-manage-delete" data-key="<%= u.key %>" data-name="<%= u.username %>"><%- icon('trash', 12) %> O‘chirish…</button></td>
               </tr>
             <% }); %>
           <% } %>
@@ -812,19 +818,28 @@
       }
     }
 
-    async function deleteUser(key, name) {
-      if (!(await showConfirm('O\'chirish', name + ' foydalanuvchisini o\'chirishni tasdiqlaysizmi?'))) return;
-      try {
-        const response = await fetch('/admin/api/users/delete', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ key }),
-        });
-        const data = await response.json().catch(() => ({}));
-        if (!response.ok || data.success === false) throw new Error(data.error || `O\'chirish muvaffaqiyatsiz (HTTP ${response.status}).`);
-        location.reload();
-      } catch (error) {
-        showToast(error?.message || 'Foydalanuvchini o\'chirib bo\'lmadi.', 'err');
+    function openSecureUserDelete(key, name) {
+      const params = new URLSearchParams();
+      if (name) params.set('q', name);
+      if (key) params.set('deleteKey', key);
+      window.location.assign('/admin/users?' + params.toString());
+    }
+
+    function practiceSummaryMarkup(summary) {
+      const stats = summary || {};
+      const attempts = Number(stats.attempts) || 0;
+      if (!attempts) {
+        return '<div class="dashboard-result-summary dashboard-result-summary--empty">Natija hali saqlanmagan</div>';
       }
+      const participants = Number(stats.participants) || 0;
+      const average = Number(stats.averagePercent) || 0;
+      const best = Number(stats.bestPercent) || 0;
+      return `<div class="dashboard-result-summary" aria-label="Mashq natijalari">
+        <span><strong>${attempts}</strong> urinish</span>
+        <span><strong>${participants}</strong> ishtirokchi</span>
+        <span>O‘rtacha <strong>${average}%</strong></span>
+        <span>Eng yaxshi <strong>${best}%</strong></span>
+      </div>`;
     }
 
     async function loadFans() {
@@ -847,6 +862,7 @@
               <div class="dashboard-item-copy">
                 <div class="admin-fan-item-name">${svgIcon('book', 16)} <span>${name}</span></div>
                 <div class="admin-fan-item-meta">${Number(fan.count) || 0} ta savol</div>
+                ${practiceSummaryMarkup(fan.practiceResults)}
               </div>
               <div class="admin-fan-btns">
                 <button type="button" class="dashboard-action-btn dashboard-action-btn--quiet" data-dashboard-action="fan-mock" data-key="${key}" data-name="${name}">${svgIcon('zap', 14)} Mock sinovi</button>
@@ -944,11 +960,24 @@
         wrap.innerHTML = groups.map((group) => {
           const key = escHtml(group.key);
           const title = escHtml(group.title);
+          const chunkResults = Array.isArray(group.chunkResults) ? group.chunkResults : [];
+          const chunkSummary = chunkResults.length ? `
+            <details class="dashboard-subtest-results">
+              <summary>Subtestlar kesimidagi natijalar</summary>
+              <div class="dashboard-subtest-results-list">${chunkResults.map((chunk) => `
+                <div class="dashboard-subtest-result">
+                  <span>${escHtml(chunk.name || 'Subtest')}</span>
+                  ${practiceSummaryMarkup(chunk.practiceResults)}
+                </div>`).join('')}
+              </div>
+            </details>` : '';
           return `
             <article class="admin-pre-item">
               <div class="dashboard-item-copy">
                 <div class="admin-pre-item-name">${svgIcon('layers', 16)} <span>${title}</span></div>
                 <div class="admin-pre-item-meta">${Number(group.count) || 0} ta subtest · ${Number(group.total) || 0} ta savol</div>
+                ${practiceSummaryMarkup(group.practiceResults)}
+                ${chunkSummary}
               </div>
               <div class="admin-pre-btns">
                 <button type="button" class="dashboard-action-btn dashboard-action-btn--quiet" data-dashboard-action="pre-edit" data-key="${key}" data-title="${title}">${svgIcon('edit', 14)} Tahrirlash</button>
@@ -1016,7 +1045,7 @@
       else if (action === 'pre-delete') deletePreGroup(key, title || '');
       else if (action === 'vip-grant') quickGrantVip(username || '');
       else if (action === 'vip-revoke') quickRevokeVip(username || '');
-      else if (action === 'user-delete') deleteUser(key || '', name || '');
+      else if (action === 'user-manage-delete') openSecureUserDelete(key || '', name || '');
       else if (action === 'result-delete') deleteResult(code || '');
       else if (action === 'gov-publish') publishGovernance(policyId || '');
       else if (action === 'gov-deprecate') deprecateGovernance(policyId || '');

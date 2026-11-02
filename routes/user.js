@@ -1187,7 +1187,8 @@ router.post('/api/practice/grade', async (req, res) => {
   if (loaded.err) return;
   const user = req.session.user;
   const source = String(req.query.source || req.body?.source || 'user');
-  const saveSource = String(req.body?.source || req.query.source || 'user');
+  // Persist the validated request context used by loadPracticeQuestions (query wins).
+  const saveSource = source;
   const allQuestions = Array.isArray(loaded.questions) ? loaded.questions : [];
   let questionIds = allQuestions.map((_, index) => index);
   if (source === 'mock') {
@@ -1201,7 +1202,7 @@ router.post('/api/practice/grade', async (req, res) => {
   const subset = Array.isArray(req.body?.subset)
     ? req.body.subset.filter((v) => Number.isInteger(+v) && +v >= 0).map((v) => +v)
     : null;
-  const testKey = String(req.body?.key || req.query.key || '');
+  const testKey = String(req.query.key || req.body?.key || '');
   const times = Array.isArray(req.body?.times) ? req.body.times : [];
   const results = [];
   let correct = 0;
@@ -1266,23 +1267,25 @@ router.post('/api/practice/grade', async (req, res) => {
   });
   const total = results.length || 1;
   // ── C4-10 rev.4: natijalarni saqlash.
-  //   • Shaxsiy test → o'z tarixida HAR bir urinish (faqat o'ziga ko'rinadi).
-  //   • Ommaviy test → o'z tarixida ham barcha urinish; «ommaviy/rasmiy» ball
-  //     faqat BIRINCHI (to'liq) urinishdan yoziladi va hammaga ochiq
-  //     public_scores reytingida saqlanadi (keyingi urinishlar uni o'zgartirmaydi).
+  //   • User, Mock va PRE mashqlarining to'liq urinishlari shaxsiy tarixga tushadi.
+  //   • Ommaviy user testi uchun public_scores faqat birinchi to'liq urinishni oladi.
   //   • 09/2026 (user qarori): «retry» (faqat xatolar) — MASHQ, saqlanmaydi.
   //   • 09/2026 (user qarori): shaxsiy tarixda faqat oxirgi 10 ta saqlanadi.
   let saved = false;
   try {
-    if (kind !== 'retry' && user && saveSource === 'user') {
-      const ownSnap = await fb.get(`users/${user.safeKey}/tests/${testKey}`);
-      const isOwn = ownSnap.exists();
+    const saveableSource = ['user', 'mock', 'pre'].includes(saveSource);
+    if (kind !== 'retry' && user && saveableSource) {
+      let isOwn = true;
       let testOwner = null;
-      if (!isOwn) {
-        const pub = await fb.get('public_tests');
-        if (pub.exists()) {
-          for (const [gk, meta] of Object.entries(pub.val() || {})) {
-            if (meta && meta.testKey === testKey && meta.authorUid) { testOwner = meta.authorUid; break; }
+      if (saveSource === 'user') {
+        const ownSnap = await fb.get(`users/${user.safeKey}/tests/${testKey}`);
+        isOwn = ownSnap.exists();
+        if (!isOwn) {
+          const pub = await fb.get('public_tests');
+          if (pub.exists()) {
+            for (const [gk, meta] of Object.entries(pub.val() || {})) {
+              if (meta && meta.testKey === testKey && meta.authorUid) { testOwner = meta.authorUid; break; }
+            }
           }
         }
       }
@@ -1295,14 +1298,17 @@ router.post('/api/practice/grade', async (req, res) => {
         kind, // full | retry (qayta yechish)
         source: isOwn ? 'own' : 'public',
         testOwner: testOwner || null,
+        practiceSource: saveSource,
+        practiceKey: testKey,
+        practiceChunk: saveSource === 'pre' ? String(req.query.chunk || req.body?.chunk || '') : '',
         // 09/2026 (Faza 1): savol tahlili (umumiy vaqt) + fokus rejimi
         totalSec: results.reduce((a, r) => a + (r.sec || 0), 0),
         focusViolations: Math.max(0, Math.min(999, parseInt(req.body?.focusViolations, 10) || 0)),
       };
       await fb.set(`users/${user.safeKey}/practice_history/${histId}`, record);
       saved = true;
-      // Ommaviy «rasmiy» ball — faqat birinchi to'liq urinish (attempt #1)
-      if (!isOwn && testOwner && kind === 'full' && user.safeKey !== testOwner) {
+      // Ommaviy «rasmiy» ball — faqat shaxsiy/public user testining birinchi to'liq urinishida.
+      if (saveSource === 'user' && !isOwn && testOwner && kind === 'full' && user.safeKey !== testOwner) {
         const scorePath = `public_scores/${testOwner}__${testKey}/${user.safeKey}`;
         const ex = await fb.get(scorePath);
         if (!ex.exists()) {

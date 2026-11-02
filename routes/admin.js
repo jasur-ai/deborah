@@ -12,6 +12,7 @@ import { recordMetric } from '../src/telemetry/index.js';
 import { DB_PATHS } from '../utils/constants.js';
 import crypto from 'crypto';
 import { safeKey } from '../utils/helpers.js';
+import { aggregatePracticeResults } from '../src/modules/practice-results.js';
 import { getMfaStatus } from '../src/modules/auth/mfa-totp.js';
 import { ADMIN_MFA_ACCOUNT } from '../src/modules/auth/admin-security.js';
 // AUTH A-19/B-15: teacher approval + B-34 signup review queue
@@ -361,17 +362,27 @@ router.get('/api/audit/export', async (req, res) => {
   }
 });
 
-// ── API: Load fans ──
+// ── API: Load fans with privacy-safe practice aggregates ──
+const emptyPracticeSummary = () => ({
+  attempts: 0, participants: 0, averagePercent: 0, bestPercent: 0,
+  correctAnswers: 0, totalQuestions: 0, lastAt: 0,
+});
+
 router.get('/api/fans', async (req, res) => {
   try {
-    const snap = await fb.get(DB_PATHS.MOCK_FANS);
-    const fans = snap.val() || {};
+    const [fansSnap, usersSnap] = await Promise.all([
+      fb.get(DB_PATHS.MOCK_FANS),
+      fb.get(DB_PATHS.USERS),
+    ]);
+    const fans = fansSnap.val() || {};
+    const practiceResults = aggregatePracticeResults(usersSnap.val() || {}, 'mock').byKey;
     const list = Object.entries(fans)
       .sort((a, b) => (a[1].name || '').localeCompare(b[1].name || ''))
       .map(([key, f]) => ({
         key, name: f.name || key,
         count: f.count || (f.questions ? f.questions.length : 0),
         createdAt: f.createdAt || 0,
+        practiceResults: practiceResults[key] || emptyPracticeSummary(),
       }));
     res.json({ fans: list });
   } catch (err) {
@@ -423,17 +434,32 @@ router.post('/api/fans/update', async (req, res) => {
   }
 });
 
-// ── API: Load PRE groups ──
+// ── API: Load PRE groups with group/subtest practice aggregates ──
 router.get('/api/pre-groups', async (req, res) => {
   try {
-    const snap = await fb.get(DB_PATHS.PRE_GROUPS);
-    const groups = snap.val() || {};
+    const [groupsSnap, usersSnap] = await Promise.all([
+      fb.get(DB_PATHS.PRE_GROUPS),
+      fb.get(DB_PATHS.USERS),
+    ]);
+    const groups = groupsSnap.val() || {};
+    const practice = aggregatePracticeResults(usersSnap.val() || {}, 'pre');
     const list = Object.entries(groups)
-      .sort((a, b) => (b[1].createdAt || 0) - (a[1].createdAt || 0))
-      .map(([key, g]) => ({
-        key, title: g.title || key, chunks: g.chunks || [],
-        total: g.total || 0, count: g.count || 0, createdAt: g.createdAt || 0,
-      }));
+      .sort((a, b) => (b[1]?.createdAt || 0) - (a[1]?.createdAt || 0))
+      .map(([key, rawGroup]) => {
+        const g = rawGroup && typeof rawGroup === 'object' ? rawGroup : {};
+        const chunks = Array.isArray(g.chunks) ? g.chunks : [];
+        return {
+          key, title: g.title || key, chunks,
+          total: g.total || 0, count: g.count || 0, createdAt: g.createdAt || 0,
+          practiceResults: practice.byKey[key] || emptyPracticeSummary(),
+          chunkResults: chunks.map((chunk, index) => ({
+            id: String(chunk?.id || ''),
+            name: chunk?.name || `Subtest ${index + 1}`,
+            count: Number(chunk?.count) || (Array.isArray(chunk?.questions) ? chunk.questions.length : 0),
+            practiceResults: practice.byChunk[key]?.[String(chunk?.id || '')] || emptyPracticeSummary(),
+          })),
+        };
+      });
     res.json({ groups: list });
   } catch (err) {
     res.status(500).json({ error: err.message });
