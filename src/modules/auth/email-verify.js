@@ -87,6 +87,17 @@ function withLock(key, fn) {
 export async function sendVerifyCode({ userKey, email, lang = 'uz' }) {
   if (!userKey || !email) return { ok: false, error: 'missing_fields', httpStatus: 400 };
 
+  // Never claim success (or create an unusable OTP) when production has no real mail provider.
+  if (process.env.NODE_ENV === 'production') {
+    const provider = String(process.env.EMAIL_PROVIDER_PRIMARY || process.env.EMAIL_PROVIDER || 'mock').toLowerCase();
+    const configured = provider === 'postmark'
+      ? !!(process.env.POSTMARK_SERVER_TOKEN || process.env.EMAIL_API_KEY)
+      : provider === 'smtp'
+        ? !!process.env.SMTP_HOST
+        : false;
+    if (!configured) return { ok: false, error: 'email_provider_not_configured', httpStatus: 503 };
+  }
+
   const key = `send:${safeKey(userKey)}`;
   const limit = bump(sendAttempts, key, SEND_MAX_PER_HOUR, 60 * 60 * 1000);
   if (!limit.allowed) {
@@ -108,7 +119,7 @@ export async function sendVerifyCode({ userKey, email, lang = 'uz' }) {
     }
   }
 
-  const code = generateCode();
+  let code = generateCode();
   const salt = crypto.randomBytes(8).toString('hex');
 
   // Collision guard: band (tirik) lookupKey'ga yangi kod generatsiya
@@ -173,6 +184,15 @@ export async function sendVerifyCode({ userKey, email, lang = 'uz' }) {
   // UI "yuborildi" deb ko'rsatib, email hech qachon bormas edi (jim yutqazish).
   // Endi yetkazib bo'lmasa 502 send_failed → UI aniq xato ko'rsatadi.
   if (!sent || sent.ok !== true) {
+    // Delivery failed: invalidate this unsent code and release the cooldown so a
+    // corrected provider configuration can be retried without waiting a minute.
+    try {
+      await fb.update(`email_verify/${lookupKey}`, { used: true, used_at: Date.now(), delivery_failed: true });
+      const latest = await fb.get(`email_verify_last/${safeKey(userKey)}`);
+      if (latest.exists() && latest.val()?.lookupKey === lookupKey) {
+        await fb.set(`email_verify_last/${safeKey(userKey)}`, { at: 0, lookupKey: '' });
+      }
+    } catch (_) { /* send failure is already reported; cleanup is best-effort */ }
     return { ok: false, error: 'send_failed', httpStatus: 502 };
   }
   const preview = process.env.NODE_ENV !== 'production' ? code : null;

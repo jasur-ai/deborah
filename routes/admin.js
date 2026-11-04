@@ -13,6 +13,7 @@ import { DB_PATHS } from '../utils/constants.js';
 import crypto from 'crypto';
 import { safeKey } from '../utils/helpers.js';
 import { aggregatePracticeResults } from '../src/modules/practice-results.js';
+import { PRACTICE_FIRST_SCORES_ROOT, practiceFirstResultPath } from '../src/modules/practice-first-results.js';
 import { getMfaStatus } from '../src/modules/auth/mfa-totp.js';
 import { ADMIN_MFA_ACCOUNT } from '../src/modules/auth/admin-security.js';
 // AUTH A-19/B-15: teacher approval + B-34 signup review queue
@@ -531,6 +532,22 @@ router.post('/api/users/delete', requireAdminMfaStepUp, async (req, res) => {
     // O'chirishdan avval shu userning faol sessiyalarini bekor qilamiz.
     const { revokeByUser } = await import('../src/modules/auth/session-manager.js');
     await revokeByUser(key, { reason: 'admin_user_delete' });
+    const scoreRefs = userSnap.val()?.practice_first_score_refs || {};
+    const prefix = `${PRACTICE_FIRST_SCORES_ROOT}/`;
+    const publicScorePaths = Object.values(scoreRefs).filter((path) => {
+      if (typeof path !== 'string' || !path.startsWith(prefix) || path.includes('..')) return false;
+      const parts = path.split('/');
+      try {
+        if (parts.length === 4 && parts[1] === 'mock') {
+          return practiceFirstResultPath('mock', parts[2], '', key) === path;
+        }
+        if (parts.length === 5 && parts[1] === 'pre') {
+          return practiceFirstResultPath('pre', parts[2], parts[3], key) === path;
+        }
+      } catch (_) { /* malformed/stale reference — never delete outside this account's score path */ }
+      return false;
+    });
+    await Promise.all(publicScorePaths.map((path) => fb.remove(path)));
     await fb.remove(userRef);
 
     // AUTH A-30 §10: privileged action audit (kim, qachon, nima, IP hash)

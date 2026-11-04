@@ -325,32 +325,39 @@ async function sendViaMock(msg) {
 
 /** Postmark API (transactional-only, A-23 §06/§07). */
 async function sendViaPostmark(msg) {
-  const token = process.env.POSTMARK_SERVER_TOKEN;
+  const token = process.env.POSTMARK_SERVER_TOKEN || process.env.EMAIL_API_KEY;
   if (!token) throw new Error('POSTMARK_SERVER_TOKEN not set');
-  const res = await fetch('https://api.postmarkapp.com/email', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'X-Postmark-Server-Token': token,
-    },
-    body: JSON.stringify({
-      From: msg.from,
-      To: msg.to,
-      Subject: msg.subject,
-      HtmlBody: msg.html,
-      TextBody: msg.text,
-      Tag: msg.tag,
-      Metadata: msg.metadata || {},
-      MessageStream: 'outbound', // transactional stream
-    }),
-  });
-  if (!res.ok) {
-    const body = await res.text().catch(() => '');
-    throw new Error(`postmark http-${res.status} ${body.slice(0, 200)}`);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 12_000);
+  try {
+    const res = await fetch('https://api.postmarkapp.com/email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-Postmark-Server-Token': token,
+      },
+      body: JSON.stringify({
+        From: msg.from,
+        To: msg.to,
+        Subject: msg.subject,
+        HtmlBody: msg.html,
+        TextBody: msg.text,
+        Tag: msg.tag,
+        Metadata: msg.metadata || {},
+        MessageStream: 'outbound', // transactional stream
+      }),
+      signal: controller.signal,
+    });
+    if (!res.ok) {
+      const body = await res.text().catch(() => '');
+      throw new Error(`postmark http-${res.status} ${body.slice(0, 200)}`);
+    }
+    const data = await res.json();
+    return { messageId: data.MessageID };
+  } finally {
+    clearTimeout(timeout);
   }
-  const data = await res.json();
-  return { messageId: data.MessageID };
 }
 
 /** SMTP (nodemailer) — generic provider uchun. */

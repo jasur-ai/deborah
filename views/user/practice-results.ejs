@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="<%= htmlLang %>" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <%- include('../partials/head') %>
+  <title><%= title %></title>
+  <style>
+    :root{color-scheme:light dark}
+    body{margin:0;min-height:100vh;background:#f1f2f0;color:#292b28;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+    .pr-public-shell{max-width:900px;margin:0 auto;padding:clamp(14px,3vw,30px) 16px 60px}
+    .pr-public-head{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+    .pr-public-back{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:8px 13px;border:1px solid #d9d7cf;border-radius:12px;background:#fbfaf7;color:#5b503c;font-size:.86rem;font-weight:750;text-decoration:none;white-space:nowrap}
+    .pr-public-back:hover{background:#eee9dd;border-color:#b9975c;color:#342b1d}
+    .pr-public-title{min-width:0;margin:0;color:#292b28;font-size:clamp(1.15rem,3vw,1.65rem);font-weight:850;line-height:1.25;overflow-wrap:anywhere}
+    .pr-public-card{padding:clamp(16px,3vw,25px);border:1px solid #dddbd3;border-radius:20px;background:#fbfaf7;box-shadow:0 8px 28px rgba(42,39,31,.07)}
+    .pr-public-note{margin:0;color:#66665f;font-size:.9rem;line-height:1.6}
+    .pr-public-privacy{margin:8px 0 20px;color:#88734d;font-size:.78rem;font-weight:650;line-height:1.5}
+    .pr-public-count{display:inline-flex;align-items:center;min-height:32px;margin-bottom:12px;padding:5px 10px;border:1px solid #e1d5bd;border-radius:999px;background:#f3eee3;color:#665638;font-size:.76rem;font-weight:800}
+    .pr-public-list{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+    .pr-public-row{display:grid;grid-template-columns:42px minmax(0,1fr) auto minmax(130px,auto);align-items:center;gap:12px;padding:12px 14px;border:1px solid #e1dfd8;border-radius:14px;background:#fff}
+    .pr-public-row.is-mine{border-color:#c9b17e;background:#fcf8ef}
+    .pr-public-rank{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:#efede6;color:#7b6540;font-size:.78rem;font-weight:850;font-variant-numeric:tabular-nums}
+    .pr-public-user{min-width:0;color:#30312d;font-size:.9rem;font-weight:800;overflow-wrap:anywhere}
+    .pr-public-you{display:inline-block;margin-left:6px;padding:2px 7px;border:1px solid #dbc897;border-radius:999px;background:#f4eddb;color:#755a27;font-size:.66rem;font-weight:800;vertical-align:middle}
+    .pr-public-score{display:grid;justify-items:end;gap:2px;color:#654f2a;font-size:1.05rem;font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap}
+    .pr-public-score small{color:#77766e;font-size:.72rem;font-weight:650}
+    .pr-public-date{color:#77766e;font-size:.74rem;text-align:right;white-space:nowrap}
+    .pr-public-empty{padding:28px 16px;border:1px dashed #d3c9b2;border-radius:15px;background:#f8f5ed;color:#70634c;font-size:.92rem;font-weight:700;text-align:center;line-height:1.6}
+    @media(max-width:620px){
+      .pr-public-head{align-items:flex-start;flex-direction:column;gap:10px}
+      .pr-public-back{min-height:44px}
+      .pr-public-row{grid-template-columns:36px minmax(0,1fr) auto;gap:9px;padding:10px}
+      .pr-public-rank{width:30px;height:30px}
+      .pr-public-date{grid-column:2/-1;text-align:left;margin-top:-4px;white-space:normal}
+      .pr-public-score{font-size:1rem}
+    }
+    @media(max-width:360px){.pr-public-shell{padding-left:10px;padding-right:10px}.pr-public-card{padding:13px}.pr-public-row{gap:7px;padding:9px}.pr-public-score{font-size:.94rem}}
+    @media(prefers-reduced-motion:reduce){.pr-public-back{scroll-behavior:auto}}
+    html[data-theme="dark"] body,body[data-theme="dark"]{background:#1d201e;color:#f0eee8}
+      html[data-theme="dark"] .pr-public-title,body[data-theme="dark"] .pr-public-title{color:#f0eee8}
+      html[data-theme="dark"] .pr-public-card,body[data-theme="dark"] .pr-public-card{background:#252824;border-color:#41453f;box-shadow:0 8px 28px rgba(0,0,0,.18)}
+      html[data-theme="dark"] .pr-public-back,body[data-theme="dark"] .pr-public-back{background:#292c28;border-color:#484a43;color:#e2d6ba}
+      html[data-theme="dark"] .pr-public-row,body[data-theme="dark"] .pr-public-row{background:#2b2e2a;border-color:#444740}
+      html[data-theme="dark"] .pr-public-row.is-mine,body[data-theme="dark"] .pr-public-row.is-mine{background:#343127;border-color:#8d7444}
+      html[data-theme="dark"] .pr-public-user,body[data-theme="dark"] .pr-public-user{color:#f0eee8}
+      html[data-theme="dark"] .pr-public-rank,body[data-theme="dark"] .pr-public-rank{background:#383a35;color:#e2d0a6}
+      html[data-theme="dark"] .pr-public-score,body[data-theme="dark"] .pr-public-score{color:#e0c38a}
+      html[data-theme="dark"] .pr-public-count,body[data-theme="dark"] .pr-public-count{background:#353128;border-color:#63553c;color:#e4d2ad}
+      html[data-theme="dark"] .pr-public-empty,body[data-theme="dark"] .pr-public-empty{background:#2b2c27;border-color:#756447;color:#e2d6ba}
+    html[data-theme="dark"] .pr-public-privacy,body[data-theme="dark"] .pr-public-privacy{color:#cfb781}
+  </style>
+</head>
+<body>
+  <%
+    const copy = panelCopy || {};
+    const text = (key, fallback) => copy[key] || fallback;
+    const pageHeading = text('prep.resultsTitle', '{name} — first-attempt results').replace('{name}', itemTitle);
+  %>
+  <main class="pr-public-shell">
+    <header class="pr-public-head">
+      <a class="pr-public-back" href="/user/panel#practice-library">← <%= text('prep.resultsBack', 'Back') %></a>
+      <h1 class="pr-public-title"><%= pageHeading %></h1>
+    </header>
+    <section class="pr-public-card" aria-labelledby="results-title">
+      <p class="pr-public-note" id="results-title"><%= text('prep.resultsNote', 'Only each user’s first completed attempt appears here.') %></p>
+      <p class="pr-public-privacy"><%= text('prep.resultsPrivacy', 'Only usernames and scores are shown.') %></p>
+      <% if (entries.length) { %>
+        <div class="pr-public-count"><%= text('prep.resultsCount', 'First results: {n}').replace('{n}', String(entries.length)) %></div>
+        <ol class="pr-public-list" aria-label="<%= pageHeading %>">
+          <% entries.forEach((entry, index) => { %>
+            <li class="pr-public-row<%= entry.isMine ? ' is-mine' : '' %>">
+              <span class="pr-public-rank" aria-label="<%= text('prep.resultsRank', 'Rank') %> <%= index + 1 %>"><%= index + 1 %></span>
+              <span class="pr-public-user"><%= entry.username %><% if (entry.isMine) { %><span class="pr-public-you"><%= text('prep.resultsMine', 'You') %></span><% } %></span>
+              <span class="pr-public-score"><%= entry.percent %>%<small><%= entry.correct %> / <%= entry.total %></small></span>
+              <time class="pr-public-date"<% if (entry.at > 0) { %> datetime="<%= new Date(entry.at).toISOString() %>"<% } %>><%= entry.at > 0 ? new Date(entry.at).toLocaleString(localeCode) : '—' %></time>
+            </li>
+          <% }); %>
+        </ol>
+      <% } else { %>
+        <div class="pr-public-empty"><%= text('prep.resultsEmpty', 'No first-attempt results yet.') %></div>
+      <% } %>
+    </section>
+  </main>
+</body>
+</html>

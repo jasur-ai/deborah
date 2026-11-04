@@ -19,6 +19,12 @@ import { TEACHER_COOLDOWN_MS } from '../src/modules/auth/teacher-approval.js';
 import { PANEL_COPY, resolvePanelLang, htmlLangOf, localeOf } from '../data/panel-i18n.js';
 import { builderCopyFor } from '../data/test-builder-i18n.js';
 import { practiceCopyFor } from '../data/practice-i18n.js';
+import {
+  findFirstPracticeAttempt,
+  makePublicFirstResult,
+  practiceFirstResultPath,
+  practiceFirstResultsCollectionPath,
+} from '../src/modules/practice-first-results.js';
 
 const router = Router();
 export const MOCK_PRACTICE_QUESTION_LIMIT = 25;
@@ -1182,6 +1188,67 @@ router.get('/practice-history', async (req, res) => {
   });
 });
 
+// Public-to-authenticated-users scoreboard: only each user's first full Mock/PRE attempt.
+router.get('/practice-results', async (req, res) => {
+  const source = String(req.query.source || '');
+  const key = validPracticeKey(req.query.key);
+  const chunk = source === 'pre' ? validPracticeKey(req.query.chunk, 64) : '';
+  if (!['mock', 'pre'].includes(source) || !key || (source === 'pre' && !chunk)) {
+    return res.status(400).render('error', { title: '400', message: 'Mashq turi noto‘g‘ri.', status: 400 });
+  }
+
+  try {
+    let itemTitle = key;
+    if (source === 'mock') {
+      const itemSnap = await fb.get(`mock_fans/${key}`);
+      if (!itemSnap.exists()) return res.status(404).render('error', { title: '404', message: 'Mock fan topilmadi.', status: 404 });
+      const item = itemSnap.val() || {};
+      itemTitle = typeof item.name === 'string' && item.name.trim() ? item.name.trim().slice(0, 200) : key;
+    } else {
+      const groupSnap = await fb.get(`pre_groups/${key}`);
+      if (!groupSnap.exists()) return res.status(404).render('error', { title: '404', message: 'Subtest topilmadi.', status: 404 });
+      const group = groupSnap.val() || {};
+      const subtest = (Array.isArray(group.chunks) ? group.chunks : []).find((entry) => entry && String(entry.id) === chunk);
+      if (!subtest) return res.status(404).render('error', { title: '404', message: 'Subtest topilmadi.', status: 404 });
+      const groupTitle = typeof group.title === 'string' && group.title.trim() ? group.title.trim().slice(0, 200) : key;
+      const subtestTitle = typeof subtest.name === 'string' && subtest.name.trim() ? subtest.name.trim().slice(0, 200) : chunk;
+      itemTitle = `${groupTitle} — ${subtestTitle}`;
+    }
+
+    const collectionPath = practiceFirstResultsCollectionPath(source, key, chunk);
+    const scoresSnap = await fb.get(collectionPath);
+    const scores = scoresSnap.val() && typeof scoresSnap.val() === 'object' ? scoresSnap.val() : {};
+    const entries = Object.entries(scores).flatMap(([accountKey, raw]) => {
+      const safe = makePublicFirstResult(raw, raw?.username);
+      return safe ? [{ ...safe, isMine: accountKey === req.session.user?.safeKey }] : [];
+    }).sort((a, b) => b.percent - a.percent || a.at - b.at || a.username.localeCompare(b.username));
+
+    let rawLang = 'uz';
+    try {
+      const langSnap = await fb.get(`users/${req.session.user.safeKey}/settings/lang`);
+      if (langSnap.exists() && langSnap.val()) rawLang = langSnap.val();
+    } catch (_) {}
+    const pLang = resolvePanelLang(rawLang);
+    const panelCopy = PANEL_COPY[pLang] || PANEL_COPY.uz;
+    const titleTemplate = panelCopy['prep.resultsTitle'] || '{name} — birinchi natijalar';
+    return res.render('user/practice-results', {
+      title: titleTemplate.replace('{name}', itemTitle) + ' — Deborah',
+      itemTitle,
+      source,
+      key,
+      chunk,
+      entries,
+      panelCopy,
+      htmlLang: htmlLangOf(pLang),
+      localeCode: localeOf(pLang),
+      currentUsername: req.session.user?.username || '',
+    });
+  } catch (err) {
+    console.error('[practice-results] load failed:', err?.message || err);
+    return res.status(500).render('error', { title: '500', message: 'Natijalarni yuklab bo‘lmadi.', status: 500 });
+  }
+});
+
 router.post('/api/practice/grade', async (req, res) => {
   const loaded = await loadPracticeQuestions(req, res);
   if (loaded.err) return;
@@ -1290,6 +1357,7 @@ router.post('/api/practice/grade', async (req, res) => {
         }
       }
       const histId = Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+      const practiceChunk = saveSource === 'pre' ? String(req.query.chunk || req.body?.chunk || '') : '';
       const record = {
         key: testKey,
         title: loaded.title,
@@ -1300,7 +1368,7 @@ router.post('/api/practice/grade', async (req, res) => {
         testOwner: testOwner || null,
         practiceSource: saveSource,
         practiceKey: testKey,
-        practiceChunk: saveSource === 'pre' ? String(req.query.chunk || req.body?.chunk || '') : '',
+        practiceChunk,
         // 09/2026 (Faza 1): savol tahlili (umumiy vaqt) + fokus rejimi
         totalSec: results.reduce((a, r) => a + (r.sec || 0), 0),
         focusViolations: Math.max(0, Math.min(999, parseInt(req.body?.focusViolations, 10) || 0)),
@@ -1315,16 +1383,42 @@ router.post('/api/practice/grade', async (req, res) => {
           await fb.set(scorePath, { percent: record.percent, correct, total, at: record.at, username: user.username || user.safeKey });
         }
       }
-      // Oxirgi 10 tadan eskilarini tozalash (xotira chegarasi — user qarori)
+      // Public Mock/PRE board: preserve each user's earliest full result outside the 10-entry personal history.
+      let savedHistory = null;
       try {
         const hsnap = await fb.get(`users/${user.safeKey}/practice_history`);
-        const ids = Object.entries(hsnap.val() || {})
-          .sort((a, b) => ((b[1] && b[1].at) || 0) - ((a[1] && a[1].at) || 0))
-          .map(([id]) => id);
-        for (const oldId of ids.slice(10)) {
-          await fb.remove(`users/${user.safeKey}/practice_history/${oldId}`);
+        savedHistory = hsnap.val() || {};
+      } catch (_) {
+        // The just-written complete attempt is still a valid first-result candidate.
+        savedHistory = { [histId]: record };
+      }
+      if (savedHistory && ['mock', 'pre'].includes(saveSource)) {
+        try {
+          const firstAttempt = findFirstPracticeAttempt(savedHistory, saveSource, testKey, practiceChunk) || record;
+          const publicScore = makePublicFirstResult(firstAttempt, user.username || user.safeKey);
+          if (publicScore) {
+            const publicScorePath = practiceFirstResultPath(saveSource, testKey, practiceChunk, user.safeKey);
+            // Always return an existing value from the transaction: RTDB may call the updater
+            // first with a local null cache, then retry against the authoritative server value.
+            await fb.transaction(publicScorePath, (current) => current && typeof current === 'object' ? current : publicScore);
+            const refKey = crypto.createHash('sha256').update(publicScorePath).digest('hex');
+            await fb.set(`users/${user.safeKey}/practice_first_score_refs/${refKey}`, publicScorePath);
+          }
+        } catch (err) {
+          console.warn('[practice:first-result] save failed:', err?.message || err);
         }
-      } catch (_) { /* non-critical */ }
+      }
+      // Oxirgi 10 tadan eskilarini tozalash (xotira chegarasi — user qarori)
+      if (savedHistory) {
+        try {
+          const ids = Object.entries(savedHistory)
+            .sort((a, b) => ((b[1] && b[1].at) || 0) - ((a[1] && a[1].at) || 0))
+            .map(([id]) => id);
+          for (const oldId of ids.slice(10)) {
+            await fb.remove(`users/${user.safeKey}/practice_history/${oldId}`);
+          }
+        } catch (_) { /* non-critical */ }
+      }
     }
   } catch (_) { /* non-critical */ }
   res.json({

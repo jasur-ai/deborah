@@ -388,7 +388,11 @@
     .prep-item-main{min-width:0;display:grid;gap:2px}
     .prep-item-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--prep-text);font-size:.84rem;font-weight:700}
     .prep-item-meta{color:var(--prep-muted);font-size:.72rem;font-weight:600}
+    .prep-item-actions{display:flex;align-items:center;gap:6px;flex:0 0 auto}
     .prep-start{min-height:38px;flex:0 0 auto;gap:5px;padding:7px 10px;font-size:.76rem}
+    .prep-results{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:7px 10px;border:1px solid var(--prep-border)!important;border-radius:10px;background:var(--prep-card)!important;color:var(--prep-accent)!important;font-size:.74rem;font-weight:750;text-decoration:none;white-space:nowrap;box-shadow:none!important}
+    .prep-results:hover{background:var(--prep-accent-soft)!important;border-color:var(--prep-accent)!important;color:var(--prep-text)!important}
+    .prep-results:focus-visible{outline:2px solid var(--prep-accent);outline-offset:2px}
     .prep-start.btn.act-sinov{background:var(--prep-soft)!important;border:1px solid var(--prep-border)!important;color:var(--prep-text)!important;box-shadow:none!important}
     .prep-start.btn.act-sinov svg{color:var(--prep-accent)}
     .prep-start.btn.act-sinov::after{display:none!important}
@@ -411,7 +415,7 @@
     .prep-group .prep-item{padding:8px;background:var(--prep-surface)}
     .prep-empty{padding:13px;border:1px dashed var(--prep-border);border-radius:12px;background:var(--prep-surface);color:var(--prep-muted);font-size:.81rem;font-weight:600}
     @media(max-width:760px){.prep-grid{grid-template-columns:1fr}.prep-card{padding:13px}}
-    @media(max-width:420px){.prep-head{align-items:flex-start}.prep-open-badge{font-size:.68rem}.prep-card-head{gap:8px}.prep-card-ico{width:36px;height:36px}.prep-count{font-size:.66rem;padding:4px 7px}.prep-start{min-height:40px;padding:6px 8px}}
+    @media(max-width:420px){.prep-head{align-items:flex-start}.prep-open-badge{font-size:.68rem}.prep-card-head{gap:8px}.prep-card-ico{width:36px;height:36px}.prep-count{font-size:.66rem;padding:4px 7px}.prep-start,.prep-results{min-height:40px;padding:6px 8px}}
     @media(prefers-reduced-motion:reduce){.prep-start{transition:none!important}.prep-group-chevron svg{transition:none}}
 
   </style>
@@ -448,12 +452,16 @@
                   <span class="prep-item-name"><%= fan.name %></span>
                   <span class="prep-item-meta"><%= __pf('prep.mockPoolCount', fan.count) %></span>
                 </div>
-                <button type="button" class="btn act-sinov btn-sm prep-start" data-start-sinov
-                  data-name="<%= fan.name %>" data-count="<%= Math.min(fan.count, practiceMockLimit) %>"
-                  data-url="/user/practice?source=mock&amp;key=<%= encodeURIComponent(fan.key) %>"
-                  aria-label="<%= __p('prep.startFor').replace('{name}', fan.name) %>"<% if (!fan.count) { %> disabled<% } %>>
-                  <%- icon('play', 13) %><span><%= __p('prep.start') %></span>
-                </button>
+                <div class="prep-item-actions">
+                  <a class="prep-results" href="/user/practice-results?source=mock&amp;key=<%= encodeURIComponent(fan.key) %>"
+                    aria-label="<%= __p('prep.resultsFor').replace('{name}', fan.name) %>"><%= __p('prep.results') %></a>
+                  <button type="button" class="btn act-sinov btn-sm prep-start" data-start-sinov
+                    data-name="<%= fan.name %>" data-count="<%= Math.min(fan.count, practiceMockLimit) %>"
+                    data-url="/user/practice?source=mock&amp;key=<%= encodeURIComponent(fan.key) %>"
+                    aria-label="<%= __p('prep.startFor').replace('{name}', fan.name) %>"<% if (!fan.count) { %> disabled<% } %>>
+                    <%- icon('play', 13) %><span><%= __p('prep.start') %></span>
+                  </button>
+                </div>
               </li>
             <% }); %>
           </ul>
@@ -490,12 +498,16 @@
                         <span class="prep-item-name"><%= chunk.name %></span>
                         <span class="prep-item-meta"><%= __pf('prep.questionCount', chunk.count) %></span>
                       </div>
-                      <button type="button" class="btn act-sinov btn-sm prep-start" data-start-sinov
-                        data-name="<%= subtestName %>" data-count="<%= chunk.count %>"
-                        data-url="/user/practice?source=pre&amp;key=<%= encodeURIComponent(group.key) %>&amp;chunk=<%= encodeURIComponent(chunk.id) %>"
-                        aria-label="<%= __p('prep.startFor').replace('{name}', subtestName) %>"<% if (!chunk.count) { %> disabled<% } %>>
-                        <%- icon('play', 13) %><span><%= __p('prep.start') %></span>
-                      </button>
+                      <div class="prep-item-actions">
+                        <a class="prep-results" href="/user/practice-results?source=pre&amp;key=<%= encodeURIComponent(group.key) %>&amp;chunk=<%= encodeURIComponent(chunk.id) %>"
+                          aria-label="<%= __p('prep.resultsFor').replace('{name}', subtestName) %>"><%= __p('prep.results') %></a>
+                        <button type="button" class="btn act-sinov btn-sm prep-start" data-start-sinov
+                          data-name="<%= subtestName %>" data-count="<%= chunk.count %>"
+                          data-url="/user/practice?source=pre&amp;key=<%= encodeURIComponent(group.key) %>&amp;chunk=<%= encodeURIComponent(chunk.id) %>"
+                          aria-label="<%= __p('prep.startFor').replace('{name}', subtestName) %>"<% if (!chunk.count) { %> disabled<% } %>>
+                          <%- icon('play', 13) %><span><%= __p('prep.start') %></span>
+                        </button>
+                      </div>
                     </li>
                   <% }); %>
                 </ul>
@@ -1019,6 +1031,7 @@
       sentNote: verifyCopy.sentNote || 'Kod yuborildi — emailni tekshiring',
       recentSent: verifyCopy.recentSent || 'Kod yaqinda yuborilgan — emailni tekshiring',
       deliveryFailed: verifyCopy.deliveryFailed || "Kodni yuborib bo'lmadi — keyinroq qayta urining",
+      deliveryUnavailable: verifyCopy.deliveryUnavailable || 'Email yuborish xizmati sozlanmagan. Administratorga murojaat qiling.',
       errInvalidFormat: verifyCopy.errInvalidFormat || '6 xonali kod kiriting',
       errNetwork: verifyCopy.errNetwork || "Ulanishda muammo — qayta urinib ko'ring",
       errInvalidCode: verifyCopy.errInvalidCode || "Kod noto'g'ri yoki eskirgan",
@@ -1083,7 +1096,11 @@
       }
       if (r.status === 429) {
         showErr(t.limitReached);
-        btnResend.disabled = true;
+        if (body.retryAfterSeconds) startResendTimer(wait);
+        else {
+          btnResend.disabled = false;
+          btnResend.textContent = t.resend;
+        }
         return;
       }
       if (r.status === 400 && e === 'email_required') {
@@ -1092,7 +1109,14 @@
         btnResend.textContent = t.resend;
         return;
       }
-      // 09/2026: delivery muvaffaqiyatsiz (502 send_failed) — aniq xabar, yashirin emas
+      // No provider configured in production: do not leave the user on a false sending state.
+      if (r.status === 503 || e === 'email_provider_not_configured') {
+        showErr(t.deliveryUnavailable || t.deliveryFailed || '');
+        btnResend.disabled = false;
+        btnResend.textContent = t.resend;
+        return;
+      }
+      // Delivery failed (502): show an actionable error instead of a false success.
       if (r.status === 502 || e === 'send_failed') {
         showErr(t.deliveryFailed || '');
         btnResend.disabled = false;
@@ -1126,14 +1150,27 @@
     overlay.addEventListener('click', function (e) { if (e.target === overlay) overlay.classList.remove('open'); });
 
     function postVerify(path, body, cb) {
+      var isSend = path.indexOf('/verify/send') !== -1;
+      var controller = new AbortController();
+      var timeout = window.setTimeout(function () { controller.abort(); }, isSend ? 90000 : 15000);
       fetch(path, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
         body: JSON.stringify(body),
+        signal: controller.signal,
       })
-        .then(function (r) { return r.json().then(function (j) { return { status: r.status, j: j }; }); })
-        .then(cb)
-        .catch(function () { showErr(t.errNetwork); });
+        .then(function (r) {
+          return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; });
+        })
+        .then(function (result) { if (typeof cb === 'function') cb(result); })
+        .catch(function () {
+          showErr(t.errNetwork);
+          if (isSend && btnResend) {
+            btnResend.disabled = false;
+            btnResend.textContent = t.resend;
+          }
+        })
+        .finally(function () { window.clearTimeout(timeout); });
     }
 
     btnSubmit.addEventListener('click', function () {
