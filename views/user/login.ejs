@@ -140,23 +140,14 @@
             <span class="strength-hint" id="pw-strength-hint" data-labels='<%= JSON.stringify(copy.register.passwordStrength) %>'></span>
           </div>
 
-          <!-- AUTH A-19: teacher arizasi tanlovi (register'da) -->
-          <label class="auth-check" style="display:flex;gap:8px;align-items:flex-start;margin:12px 0 4px;cursor:pointer;font-size:.82rem">
-            <input type="checkbox" id="reg-want-teacher" name="role" value="teacher" style="margin-top:2px;width:16px;height:16px;accent-color:var(--accent-glow)">
-            <span><%- icon('bookOpen', 14) %> <%= copy.register.teacherCta || "O'qituvchi sifatida ro'yxatdan o'tish (admin tasdiqlaydi)" %></span>
-          </label>
-          <div id="reg-teacher-fields" style="display:none;margin-top:8px">
-            <label class="lbl" for="reg-university"><%= copy.register.universityPh || 'Universitet / tashkilot' %></label>
-            <input class="inp" id="reg-university" name="university" type="text" placeholder="<%= copy.register.universityPh || 'Universitet / tashkilot' %>" autocomplete="organization" autocapitalize="words" spellcheck="false" maxlength="200" style="margin-bottom:8px">
-            <label class="lbl" for="reg-reason"><%= copy.register.reasonPh || 'Ariza matni (ixtiyoriy)' %></label>
-            <textarea class="inp" id="reg-reason" name="reason" rows="2" placeholder="<%= copy.register.reasonPh || 'Ariza matni (ixtiyoriy)' %>" maxlength="500" style="resize:vertical;margin-bottom:8px"></textarea>
-          </div>
-
           <button type="submit" class="btn btn-secondary auth-submit" data-analytics="register_submit"><span class="auth-spinner" aria-hidden="true"></span><%- icon('edit', 15) %> <%= copy.register.btn %></button>
         </form>
 
         <div class="bottom-cta" style="<%= mode === 'reg' ? '' : 'display:none' %>" id="has-account">
           <%= copy.register.hasAccount %> <a href="?mode=login&lang=<%= lang %>"><%= copy.register.loginLink %></a>
+        </div>
+        <div class="bottom-cta" style="<%= mode === 'reg' ? '' : 'display:none' %>" id="reg-forgot">
+          <a href="/user/forgot?lang=<%= lang %>" class="forgot-link"><%= copy.login.forgot %></a>
         </div>
         <div class="bottom-cta" style="<%= mode === 'login' ? '' : 'display:none' %>" id="no-account">
           <%= copy.login.noAccount %> <a href="/user/register?lang=<%= lang %>" data-analytics="login_signup_click"><%= copy.login.signup %></a>
@@ -182,19 +173,6 @@
   <script>window.__INAPP_COPY__ = <%- JSON.stringify(copy.mobile || {}).replace(/</g, '\\u003c') %>;</script>
   <script src="/js/inapp-guard.js" defer></script>
   <script>
-    // AUTH A-19: teacher checkbox → university/reason maydonlarini ochish
-    (function () {
-      'use strict';
-      var cb = document.getElementById('reg-want-teacher');
-      var fields = document.getElementById('reg-teacher-fields');
-      if (cb && fields) {
-        cb.addEventListener('change', function () {
-          fields.style.display = cb.checked ? 'block' : 'none';
-          var u = document.getElementById('reg-university');
-          if (u) u.required = cb.checked;
-        });
-      }
-    })();
     // AUTH D-07: lockout countdown endi public/js/auth.js'da (initLockoutCountdown)
     // inline dublikat olib tashlandi — ikki timer raqobati yo'qoldi
   </script>

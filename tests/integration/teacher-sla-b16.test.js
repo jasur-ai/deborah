@@ -140,15 +140,26 @@ describe('AUTH B-16 — teacher SLA + limited mode', () => {
     await fb.set(`users/${key}/teacher_cooldown_until`, Date.now() - 1000);
     const page2 = await agent.get('/user/teacher-approval');
     expect(page2.text).not.toContain('aria-disabled="true"');
-    expect(page2.text).toContain('/user/register?role=teacher');
+    expect(page2.text).toContain('href="/ustoz"');
   });
 
-  it('Appeal: cooldown o\'tgan rejected → qayta register → TEACHER_APPEAL + yangi row', async () => {
+  it('Appeal: rejected teacher reapplies through authenticated /ustoz → TEACHER_APPEAL + new row', async () => {
     const key = safeKey(`b16app_${Date.now() % 1000000}`);
     await mkUser(key, 'teacher_rejected', { decidedAt: Date.now() - 31 * DAY });
 
     const agent = supertest.agent(app);
-    const page = await agent.get('/user/login?lang=uz');
+    const loginRes = await login(agent, key);
+    expect(loginRes.status).toBe(302);
+    expect(loginRes.headers.location).toContain('/user/teacher-approval');
+
+    // Reapply CTA enters the hidden area; the authenticated rejected teacher is allowed.
+    const portal = await agent.get('/ustoz');
+    expect(portal.status).toBe(302);
+    expect(portal.headers.location).toBe('/user/register?role=teacher&lang=uz');
+    const page = await agent.get(portal.headers.location);
+    expect(page.status).toBe(200);
+    expect(page.text).toContain('id="reg-university"');
+    expect(page.text).toContain(`value="${key}"`);
     const csrf = csrfFrom(page.text);
     const reg = await agent.post('/user/login').set('x-forwarded-for', nextIp()).type('form').send({
       mode: 'reg', consent: 'on', _csrf: csrf, role: 'teacher', username: key,

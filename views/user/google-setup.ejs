@@ -70,19 +70,12 @@
           <input type="hidden" name="lang" value="<%= lang %>">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
-          <!-- B-10 §07: rol kartalari — Talaba / O'qituvchi (keyboard-native radio) -->
+          <!-- Google registration follows the entry point: student on public auth, teacher only on hidden /ustoz. -->
+          <% if (teacherAllowed) { %>
           <fieldset class="role-grid" id="gs-role-select">
             <legend class="role-legend"><%= copy.setup.roleTitle %></legend>
             <label class="role-card">
-              <input type="radio" name="role" value="student" <%= typeof prevRole !== 'undefined' && prevRole === 'teacher' ? '' : 'checked' %>>
-              <span class="role-ico"><%- icon('user', 18) %></span>
-              <span class="role-txt">
-                <strong><%= copy.setup.roleStudent %></strong>
-                <small><%= copy.setup.roleStudentHint %></small>
-              </span>
-            </label>
-            <label class="role-card">
-              <input type="radio" name="role" value="teacher" <%= typeof prevRole !== 'undefined' && prevRole === 'teacher' ? 'checked' : '' %>>
+              <input type="radio" name="role" value="teacher" checked>
               <span class="role-ico"><%- icon('bookOpen', 18) %></span>
               <span class="role-txt">
                 <strong><%= copy.setup.roleTeacher %></strong>
@@ -90,7 +83,20 @@
               </span>
             </label>
           </fieldset>
-          <p class="role-note" id="gs-teacher-note" hidden><%- icon('info', 13) %><span><%= copy.setup.teacherNote %></span></p>
+          <p class="role-note" id="gs-teacher-note"><%- icon('info', 13) %><span><%= copy.setup.teacherNote %></span></p>
+          <% } else { %>
+          <fieldset class="role-grid" id="gs-role-select">
+            <legend class="role-legend"><%= copy.setup.roleTitle %></legend>
+            <label class="role-card">
+              <input type="radio" name="role" value="student" checked>
+              <span class="role-ico"><%- icon('user', 18) %></span>
+              <span class="role-txt">
+                <strong><%= copy.setup.roleStudent %></strong>
+                <small><%= copy.setup.roleStudentHint %></small>
+              </span>
+            </label>
+          </fieldset>
+          <% } %>
 
           <!-- B-10 §05: invite kod (URL'dan prefilled) — privilege bermaydi, marker -->
           <label class="lbl" for="gs-invite"><%= copy.setup.inviteLabel %></label>

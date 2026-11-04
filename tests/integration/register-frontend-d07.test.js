@@ -1,7 +1,8 @@
 /**
  * Deborah — D-07 Register frontend — Integration/contract tests
  * ------------------------------------------------------------
- *  - GET /user/register → D-07 elementlar (live check status, honeypot, rol)
+ *  - GET /user/register → D-07 elementlar (live check status, honeypot, forgot-password)
+ *  - Public signup is student-only; teacher submit must enter through /ustoz
  *  - POST /user/login (mode=reg) → success submit (redirect/200)
  *  - Xato → inline error (data-field + aria-invalid) sahifaga qaytadi
  *  - Email xato → data-field="email" (B-03 konventsiyasi)
@@ -47,19 +48,36 @@ describe('D-07 — Register frontend (integration)', () => {
   it('GET /user/register → D-07 frontend elementlari render', async () => {
     const res = await supertest(app).get('/user/register?lang=uz');
     expect(res.status).toBe(200);
-    // D-07: live email check + honeypot + rol + strength
+    // D-07: live email check + honeypot + strength; no public teacher role.
     expect(res.text).toContain('id="reg-email"');
     expect(res.text).toContain('email-status');
     expect(res.text).toContain('reg-website');
     expect(res.text).toContain('id="reg-password"');
     expect(res.text).toContain('pw-strength');
     expect(res.text).toContain('id="invite-toggle"');
-    expect(res.text).toContain('role-card');
+    expect(res.text).not.toContain('role-card');
+    expect(res.text).not.toContain('name="role"');
+    expect(res.text).not.toContain('id="reg-university"');
+    expect(res.text).toContain('/user/forgot?lang=uz');
     // register.js + zxcvbn yuklanadi (defer)
     expect(res.text).toContain('/js/register.js');
     expect(res.text).toContain('/js/vendor/zxcvbn.js');
     // CSRF token bor
     expect(csrfFrom(res.text)).toBeTruthy();
+  });
+
+  it('forgot-password is reachable on the registration tab and public landing signup', async () => {
+    const tab = await supertest(app).get('/user/login?mode=reg&lang=uz');
+    expect(tab.status).toBe(200);
+    expect(tab.text).toMatch(/id="reg-forgot"/);
+    expect(tab.text).toContain('/user/forgot?lang=uz');
+
+    const landing = await supertest(app).get('/');
+    const registerForm = landing.text.match(/<form id="fReg"[\s\S]*?<\/form>/);
+    expect(registerForm).toBeTruthy();
+    expect(registerForm[0]).toContain('data-forgot-link');
+    expect(registerForm[0]).toContain('/user/forgot?lang=uz');
+    expect(registerForm[0]).not.toContain('name="role"');
   });
 
   it('register submit → muvaffaqiyat (mode=reg, role=student)', async () => {
@@ -84,9 +102,9 @@ describe('D-07 — Register frontend (integration)', () => {
     expect(snap.val().role || 'student').toBe('student');
   });
 
-  it('register submit (role=teacher) → teacher_pending', async () => {
+  it('teacher application submit from /ustoz → teacher_pending', async () => {
     const agent = supertest.agent(app);
-    const page = await getRegisterPage(agent);
+    const page = await agent.get('/ustoz');
     const csrf = csrfFrom(page.text);
     const username = `d07t_${Date.now() % 1000000000}`;
     const res = await agent.post('/user/login')

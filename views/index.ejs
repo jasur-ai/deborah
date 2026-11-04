@@ -25,6 +25,7 @@
 <script>
   window.__CSRF_TOKEN = '<%= csrfToken %>';
   window.__AUTH_PROVIDERS = { google: <%- oidcEnabled ? 'true' : 'false' %> };
+  window.__TEACHER_ENTRY = true;
 </script>
 
 <a class="skip-link" href="#main" data-i18n-skip>Asosiy kontentga o‘tish</a>
@@ -84,7 +85,7 @@
 </div>
 <!-- S31: menyu — O'NG TEPADA (⋮). Admin FAQAT shu yerda. -->
 <div class="hmenu" id="hmenu" role="menu">
-  <a href="/ustoz" role="menuitem" data-i18n="hm.kirish">Kirish</a>
+  <a href="/ustoz" role="menuitem" data-i18n="hm.kirish">O'qituvchilar</a>
   <a href="/admin/login" role="menuitem" data-i18n="admin.btn">Admin</a>
   <a href="#cast" role="menuitem" data-i18n="hm.cast">Cast</a>
   <a href="#kontakt" role="menuitem" data-i18n="hm.documents">Hujjatlar</a>
@@ -250,6 +251,7 @@
             <div class="fld"><label for="lEmail" data-i18n="auth.loginId">Email yoki username</label><input id="lEmail" name="username" type="text" autocomplete="username" required></div>
             <div class="fld"><label for="lPass" data-i18n="auth.pass">Parol</label><span class="pw-wrap" style="display:block;position:relative"><input id="lPass" name="password" type="password" autocomplete="current-password" required><button type="button" class="pw-toggle" data-pw-toggle="lPass" aria-label="Parolni ko'rsatish" aria-pressed="false"><span data-pw-toggle-label>👁</span></button></span></div>
             <button class="btn btn-gold auth-submit" type="submit" data-i18n="auth.login">Kirish</button>
+            <div style="text-align:right;margin-top:9px;font-size:.8rem"><a href="/user/forgot?lang=<%= lang %>" data-forgot-link data-i18n="auth.forgot" style="color:var(--ld-gold);text-underline-offset:3px">Parolni unutdingizmi?</a></div>
             <div class="auth-msg" id="doneLogin"></div>
           </form>
           <form id="fReg" action="/user/login" method="POST" style="display:none">
@@ -269,15 +271,9 @@
             <div class="fld"><label for="rEmail" data-i18n="auth.email">Email</label><input id="rEmail" name="email" type="email" autocomplete="email" required></div>
             <div class="fld"><label for="rUser" data-i18n="auth.username">Username</label><input id="rUser" name="username" type="text" autocomplete="username" spellcheck="false" minlength="2" maxlength="50" required><div class="fld-hint" id="rUserHint" aria-live="polite"></div></div>
             <div class="fld"><label for="rPass" data-i18n="auth.pass">Parol</label><span class="pw-wrap" style="display:block;position:relative"><input id="rPass" name="password" type="password" autocomplete="new-password" minlength="8" required><button type="button" class="pw-toggle" data-pw-toggle="rPass" aria-label="Parolni ko'rsatish" aria-pressed="false"><span data-pw-toggle-label>👁</span></button></span><div class="fld-hint dim" data-i18n="auth.passHint">Kamida 8 belgi — harf va raqam</div></div>
-            <% // BUG-035: rol tanlash (server role=teacher'ni qabul qiladi; university/subject
-               // bo'lmasa to'liq /user/register formaga prefilled o'tadi — mavjud mantiq) %>
-            <div class="fld">
-              <label data-i18n="auth.role">Rolingiz</label>
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <label style="flex:1;display:flex;align-items:center;gap:8px;border:1px solid rgba(0,0,0,.18);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:.85rem;font-weight:600"><input type="radio" name="role" value="" checked><span data-i18n="auth.roleStudent">Talaba</span></label>
-                <label style="flex:1;display:flex;align-items:center;gap:8px;border:1px solid rgba(0,0,0,.18);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:.85rem;font-weight:600"><input type="radio" name="role" value="teacher"><span data-i18n="auth.roleTeacher">O'qituvchi</span></label>
-              </div>
-            </div>
+            <!-- This landing is the hidden teacher area; registrations here are teacher applications. -->
+            <input type="hidden" name="role" value="teacher">
+            <div class="fld"><strong data-i18n="auth.roleTeacher">O'qituvchi</strong></div>
             <% // BUG-036: faol rozilik %>
             <div class="fld" style="display:flex;gap:8px;align-items:flex-start">
               <input type="checkbox" name="consent" id="rConsent" required style="margin-top:3px;width:16px;height:16px;accent-color:#b8860b">
@@ -285,7 +281,8 @@
             </div>
             <button class="btn btn-gold auth-submit" type="submit" data-i18n="auth.register">Ro'yxatdan o'tish</button>
             <% // BUG-040: to'liq teacher arizasiga yo'l %>
-            <div style="text-align:center;margin-top:10px;font-size:.8rem"><a href="/user/register" data-i18n="auth.teacherLink">O'qituvchi uchun to'liq ariza →</a></div>
+            <div style="text-align:right;margin-top:9px;font-size:.8rem"><a href="/user/forgot?lang=<%= lang %>" data-forgot-link data-i18n="auth.forgot" style="color:var(--ld-gold);text-underline-offset:3px">Parolni unutdingizmi?</a></div>
+            <div style="text-align:center;margin-top:10px;font-size:.8rem"><a href="/user/register?role=teacher" data-i18n="auth.teacherLink">O'qituvchi uchun to'liq ariza →</a></div>
             <div class="auth-msg" id="doneReg"></div>
           </form>
         </div>

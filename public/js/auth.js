@@ -78,8 +78,10 @@
       }
       var cta = document.getElementById('has-account');
       var noAcc = document.getElementById('no-account');
+      var regForgot = document.getElementById('reg-forgot');
       if (cta) cta.style.display = mode === 'reg' ? '' : 'none';
       if (noAcc) noAcc.style.display = mode === 'login' ? '' : 'none';
+      if (regForgot) regForgot.style.display = mode === 'reg' ? '' : 'none';
       // URL'ni server-side tab state'ga moslash (history push, reload'da saqlanadi)
       if (window.history && window.history.replaceState) {
         var url = new URL(window.location.href);

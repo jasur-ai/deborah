@@ -57,7 +57,7 @@
 
         <!-- AUTH A-04: Google birinchi (oidcEnabled'da). Register sahifasida ham doim ko'rinadi. -->
         <% if (oidcEnabled) { %>
-          <a href="/auth/google" class="btn-google" data-analytics="register_google_start" data-google-btn>
+          <a href="<%= teacherFlow ? '/auth/google?role=teacher' : '/auth/google' %>" class="btn-google" data-analytics="register_google_start" data-google-btn>
             <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84C8.87 7.48 11.26 5.38 12 5.38z"/></svg>
             <span><%= copy.login.google %></span>
           </a>
@@ -92,37 +92,17 @@
             <input id="reg-website" name="website" type="text" tabindex="-1" autocomplete="off" value="">
           </div>
 
-          <!-- B-03: rol tanlovi — talaba/teacher kartalari (AUTH A-19 bilan izchil) -->
-          <fieldset class="role-grid" id="role-select">
-            <legend class="role-legend"><%= copy.register.roleTitle %></legend>
-            <label class="role-card">
-              <!-- B-03 (review fix): xatoda tanlangan rol saqlanadi (prevRole) -->
-              <input type="radio" name="role" value="" <%= typeof prevRole !== 'undefined' && prevRole === 'teacher' ? '' : 'checked' %>>
-              <span class="role-ico"><%- icon('user', 18) %></span>
-              <span class="role-txt">
-                <strong><%= copy.register.roleStudent %></strong>
-                <small><%= copy.register.roleStudentHint %></small>
-              </span>
-            </label>
-            <label class="role-card">
-              <input type="radio" name="role" value="teacher" <%= typeof prevRole !== 'undefined' && prevRole === 'teacher' ? 'checked' : '' %>>
-              <span class="role-ico"><%- icon('bookOpen', 18) %></span>
-              <span class="role-txt">
-                <strong><%= copy.register.roleTeacher %></strong>
-                <small><%= copy.register.roleTeacherHint %></small>
-              </span>
-            </label>
-          </fieldset>
-          <p class="role-note" id="teacher-note" hidden><%- icon('info', 13) %><span><%= copy.register.teacherNote %></span></p>
-
-          <!-- B-29: teacher application form — role=teacher tanlanganda ko'rinadi -->
-          <div id="teacher-app-fields" hidden>
+          <% if (teacherFlow) { %>
+          <!-- Teacher application is entered from the hidden top-right O'qituvchilar area. -->
+          <input type="hidden" name="role" value="teacher">
+          <p class="role-note"><%- icon('info', 13) %><span><%= copy.register.teacherNote %></span></p>
+          <div class="teacher-app-fields">
             <label class="lbl" for="reg-university"><%= copy.register.universityPh %></label>
-            <input class="inp" id="reg-university" name="university" type="text" placeholder="<%= copy.register.universityHint %>" autocomplete="organization" autocapitalize="words" spellcheck="false" maxlength="200" aria-invalid="false" data-inline-error="err-reg-university" aria-describedby="err-reg-university" value="<%= typeof prevUniversity !== 'undefined' && prevUniversity ? prevUniversity : '' %>">
+            <input class="inp" id="reg-university" name="university" type="text" placeholder="<%= copy.register.universityHint %>" autocomplete="organization" autocapitalize="words" spellcheck="false" maxlength="200" required aria-required="true" aria-invalid="false" data-inline-error="err-reg-university" aria-describedby="err-reg-university" value="<%= typeof prevUniversity !== 'undefined' && prevUniversity ? prevUniversity : '' %>">
             <div class="err-text" id="err-reg-university" data-inline-error="university" style="display:none" role="alert"><%- icon('alertTriangle', 13) %><span></span></div>
 
             <label class="lbl" for="reg-subject"><%= copy.register.subjectPh %></label>
-            <input class="inp" id="reg-subject" name="subject" type="text" placeholder="<%= copy.register.subjectHint %>" autocomplete="off" autocapitalize="words" spellcheck="false" maxlength="100" aria-invalid="false" data-inline-error="err-reg-subject" aria-describedby="err-reg-subject" value="<%= typeof prevSubject !== 'undefined' && prevSubject ? prevSubject : '' %>">
+            <input class="inp" id="reg-subject" name="subject" type="text" placeholder="<%= copy.register.subjectHint %>" autocomplete="off" autocapitalize="words" spellcheck="false" maxlength="100" required aria-required="true" aria-invalid="false" data-inline-error="err-reg-subject" aria-describedby="err-reg-subject" value="<%= typeof prevSubject !== 'undefined' && prevSubject ? prevSubject : '' %>">
             <div class="err-text" id="err-reg-subject" data-inline-error="subject" style="display:none" role="alert"><%- icon('alertTriangle', 13) %><span></span></div>
 
             <label class="lbl" for="reg-experience"><%= copy.register.experiencePh %></label>
@@ -133,6 +113,7 @@
             <textarea class="inp" id="reg-reason" name="reason" rows="2" maxlength="500" placeholder="<%= copy.register.reasonPh %>" style="resize:vertical" aria-invalid="false" data-inline-error="err-reg-reason" aria-describedby="err-reg-reason"><%= typeof prevReason !== 'undefined' && prevReason ? prevReason : '' %></textarea>
             <div class="err-text" id="err-reg-reason" data-inline-error="reason" style="display:none" role="alert"><%- icon('alertTriangle', 13) %><span></span></div>
           </div>
+          <% } %>
 
           <!-- B-03: ism (ixtiyoriy, B-01 `name`) -->
           <label class="lbl" for="reg-name"><%= copy.register.name %></label>
@@ -201,6 +182,9 @@
 
         <div class="bottom-cta">
           <%= copy.register.hasAccount %> <a href="/user/login?lang=<%= lang %>"><%= copy.register.loginLink %></a>
+        </div>
+        <div class="bottom-cta">
+          <a href="/user/forgot?lang=<%= lang %>" class="forgot-link"><%= copy.login.forgot %></a>
         </div>
         <div class="trust trust--multi">
           <span><%- icon('shield', 13) %> <%= copy.register.trustFree %></span>

@@ -1,7 +1,7 @@
 /**
  * AUTH B-29 — Teacher approval (integration)
- *  - Register: role=teacher + university/subject majburiy → teacher_pending
- *  - Register: role=teacher, university yo'q → xato (universityRequired)
+ *  - /ustoz orqali role=teacher + university/subject majburiy → teacher_pending
+ *  - /ustoz oqimida university yo'q → xato (universityRequired)
  *  - Review queue /api/teachers/pending → ariza ko'rinadi (subject/experience)
  *  - IDOR: boshqa user arizasini ko'rish blok (teacher-approval faqat o'z statusi)
  */
@@ -32,7 +32,7 @@ describe('AUTH B-29 — teacher application', () => {
   });
 
   async function postRegister(agent, fields) {
-    const page = await agent.get('/user/register?lang=uz');
+    const page = await agent.get('/ustoz');
     const csrf = csrfFrom(page.text);
     return agent.post('/user/login').type('form').send({
       _csrf: csrf,

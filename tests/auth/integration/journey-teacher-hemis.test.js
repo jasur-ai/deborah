@@ -72,7 +72,7 @@ describe('AUTH D-17 §08 — teacher approval journey', () => {
   it('teacher register → teacher_pending → admin approve → teacher → /teacher', async () => {
     const agent = supertest.agent(app);
     const uname = `jthr_${Date.now() % 1000000}`;
-    const page = await agent.get('/user/register');
+    const page = await agent.get('/ustoz');
     const csrf = page.text.match(/name="_csrf" value="([^"]+)"/);
     const reg = await agent.post('/user/login').set('x-forwarded-for', nextIp()).type('form').send({
       _csrf: csrf ? csrf[1] : '',

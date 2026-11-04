@@ -60,13 +60,13 @@
           <% if (cooldown.active) { %>
             <p class="ta-hint"><%- icon('clock', 13) %> <%= copy.cooldownActive.replace('__days__', cooldown.days) %></p>
             <div class="ta-actions">
-              <a href="/user/register?role=teacher" class="btn btn-secondary" aria-disabled="true" style="opacity:.55;pointer-events:none"><%- icon('refresh', 14) %> <%= copy.reapplyBtn %></a>
+              <a href="/ustoz" class="btn btn-secondary" aria-disabled="true" style="opacity:.55;pointer-events:none"><%- icon('refresh', 14) %> <%= copy.reapplyBtn %></a>
               <a href="mailto:support@deborah.uz?subject=Teacher%20ariza%20apellyatsiya" class="btn btn-quiet"><%- icon('mail', 14) %> <%= copy.appeal %></a>
             </div>
           <%          } else { %>
             <p class="ta-hint"><%- copy.reapply %></p>
             <div class="ta-actions">
-              <a href="/user/register?role=teacher" class="btn btn-primary"><%- icon('refresh', 14) %> <%= copy.reapplyBtn %></a>
+              <a href="/ustoz" class="btn btn-primary"><%- icon('refresh', 14) %> <%= copy.reapplyBtn %></a>
               <a href="mailto:support@deborah.uz?subject=Teacher%20ariza%20apellyatsiya" class="btn btn-quiet"><%- icon('mail', 14) %> <%= copy.appeal %></a>
             </div>
             <!-- AUTH B-36 §12: in-app apellyatsiya formasi (cooldown o'tgach) -->

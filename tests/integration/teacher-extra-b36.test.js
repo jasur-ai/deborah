@@ -42,7 +42,7 @@ function csrfFrom(html) {
 
 async function registerTeacher({ username, email, university = 'Toshkent Davlat Universiteti', subject = 'Matematika' }) {
   const agent = supertest.agent(app);
-  const page = await agent.get('/user/register');
+  const page = await agent.get('/ustoz');
   const csrf = csrfFrom(page.text);
   const r = await agent.post('/user/login').type('form').set('x-forwarded-for', '203.0.113.42').send({
     _csrf: csrf, lang: 'uz', mode: 'reg', consent: 'on', username, email, password: PW,

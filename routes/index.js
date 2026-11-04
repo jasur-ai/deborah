@@ -4,10 +4,7 @@
  */
 
 import { Router } from 'express';
-import { LANDING_COPY, STATS_COPY, resolveLandingLang } from '../data/landing.js';
-import { getStats } from '../src/modules/opendata/index.js';
 import { isOidcEnabled } from '../src/modules/auth/oidc.js';
-import { isOAuthConfigured as isHemisOAuthConfigured } from '../src/modules/auth/providers/hemis.js';
 
 const router = Router();
 
@@ -26,30 +23,6 @@ async function renderCastLanding(req, res) {
   });
 }
 
-async function renderLanding(req, res, langKey) {
-  const lang = resolveLandingLang(langKey);
-  const path = lang === 'uz' ? '/' : `/${lang}`;
-  // AUTH A-13: haqiqiy ochiq ma'lumotlar stats (cache/bundled — tez; fail-soft)
-  let opendata = null;
-  try {
-    opendata = await getStats();
-  } catch {
-    opendata = null; // stats bloki ko'rsatilmaydi — landing ishlashda davom etadi
-  }
-  res.render('index', {
-    title: LANDING_COPY[lang].meta.title,
-    description: LANDING_COPY[lang].meta.description,
-    copy: { ...LANDING_COPY[lang], stats: STATS_COPY[lang] },
-    lang,
-    path,
-    opendata,
-    csrfToken: req.session?.csrfToken || '',
-    // REAL provider holati: tugmalar jimgina emas — sozlanmagan bo'lsa aniq xabar
-    oidcEnabled: isOidcEnabled(),
-    hemisEnabled: isHemisOAuthConfigured(),
-  });
-}
-
 router.get('/', (req, res) => {
   renderCastLanding(req, res).catch((e) => res.status(500).send(String(e?.message || e)));
 });
@@ -59,11 +32,8 @@ router.get('/ru', (req, res) => renderCastLanding(req, res).catch((e) => res.sta
 router.get('/en', (req, res) => renderCastLanding(req, res).catch((e) => res.status(500).send(String(e?.message || e))));
 router.get('/uz-cyrl', (req, res) => renderCastLanding(req, res).catch((e) => res.status(500).send(String(e?.message || e))));
 
-// S34: O'QITUVCHI LANDING (uploads/index.html 1:1) — /ustoz'da (ochiq ko'rinmaydi).
-// renderLanding() endi faqat /ustoz uchun ishlatiladi (redirectIfAuth auth.js'da).
-router.get('/ustoz-landing', (req, res) => {
-  renderLanding(req, res, 'uz').catch((e) => res.status(500).send(String(e?.message || e)));
-});
+// Legacy alias must enter through the session-marked hidden teacher portal.
+router.get('/ustoz-landing', (req, res) => res.redirect(302, '/ustoz'));
 
 // ═══════════════════════════════════════════════════════════
 // STEP 21 S21.08 — Legal / trust hujjat sahifalari

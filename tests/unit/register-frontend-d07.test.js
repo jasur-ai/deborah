@@ -2,7 +2,7 @@
  * Deborah — D-07 Register frontend (public/js/register.js) — Unit tests
  * --------------------------------------------------------------------
  * jsdom environment'da register.js'ning DOM logikasini tekshiramiz:
- *   - rol kartalari → teacher-note + teacher-app-fields (A-19/B-29)
+ *   - public signup student-only; teacher form strength rule server role'iga mos
  *   - invite toggle (aria-expanded + fokus)
  *   - email live check debounce 300ms (B-05 + D-07)
  *   - password strength meter (zxcvbn / heuristic, B-27 + D-07)
@@ -16,18 +16,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 const HTML = `
 <div id="auth-alert" class="msg" role="alert"></div>
-<fieldset class="role-grid" id="role-select">
-  <label class="role-card">
-    <input type="radio" name="role" value="" checked>
-  </label>
-  <label class="role-card">
-    <input type="radio" name="role" value="teacher">
-  </label>
-</fieldset>
-<p class="role-note" id="teacher-note" hidden></p>
-<div id="teacher-app-fields" hidden>
-  <input id="reg-university" name="university">
-</div>
 <form id="form-reg" class="auth-form" method="POST" action="/user/login">
   <div class="hp-field" aria-hidden="true">
     <input id="reg-website" name="website" type="text" tabindex="-1" value="">
@@ -81,34 +69,31 @@ async function bootRegister() {
   document.dispatchEvent(new Event('DOMContentLoaded'));
 }
 
-describe('D-07 — rol kartalari (A-19/B-29)', () => {
-  it('student (default) → teacher-note va app fields yashirin', async () => {
+describe('D-07 — public student-only signup and teacher strength rule', () => {
+  it('public register DOM has no role picker or teacher application fields', async () => {
     await bootRegister();
-    expect(document.getElementById('teacher-note').hidden).toBe(true);
-    expect(document.getElementById('teacher-app-fields').hidden).toBe(true);
+    expect(document.querySelector('input[name="role"]')).toBeNull();
+    expect(document.getElementById('reg-university')).toBeNull();
   });
 
-  it('teacher tanlansa → teacher-note + app fields kochrinadi, university required', async () => {
+  it('teacher role hidden field raises the strength threshold to score 4', async () => {
+    const form = document.getElementById('form-reg');
+    form.insertAdjacentHTML('afterbegin', '<input type="hidden" name="role" value="teacher">');
     await bootRegister();
-    const teacher = document.querySelector('input[name="role"][value="teacher"]');
-    teacher.checked = true;
-    teacher.dispatchEvent(new Event('change'));
-    expect(document.getElementById('teacher-note').hidden).toBe(false);
-    expect(document.getElementById('teacher-app-fields').hidden).toBe(false);
-    expect(document.getElementById('reg-university').required).toBe(true);
+    const pw = document.getElementById('reg-password');
+    pw.value = 'MyPassword2026X'; // heuristic score 3: enough for student, not teacher
+    pw.dispatchEvent(new Event('input'));
+    expect(document.getElementById('pw-strength-hint').style.color)
+      .toContain('text-muted');
   });
 
-  it('teacher → student ga qaytsa → yashirin, required olib tashlanadi', async () => {
+  it('student signup accepts the normal score 3 threshold', async () => {
     await bootRegister();
-    const teacher = document.querySelector('input[name="role"][value="teacher"]');
-    teacher.checked = true;
-    teacher.dispatchEvent(new Event('change'));
-    const student = document.querySelector('input[name="role"][value=""]');
-    student.checked = true;
-    student.dispatchEvent(new Event('change'));
-    expect(document.getElementById('teacher-note').hidden).toBe(true);
-    expect(document.getElementById('teacher-app-fields').hidden).toBe(true);
-    expect(document.getElementById('reg-university').required).toBe(false);
+    const pw = document.getElementById('reg-password');
+    pw.value = 'MyPassword2026X';
+    pw.dispatchEvent(new Event('input'));
+    expect(document.getElementById('pw-strength-hint').style.color)
+      .toContain('status-success');
   });
 });
 

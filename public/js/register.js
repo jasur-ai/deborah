@@ -4,7 +4,7 @@
  * auth.js bilan birga yuklanadi (tablar, parol toggle, caps-lock, strength
  * meter, submit lock, lockout countdown — hammasi auth.js'da). Bu fayl
  * register sahifasiga xos bo'lganlarni bajaradi:
- *   - rol kartalari (talaba/teacher) → teacher note ko'rsatish
+ *   - teacher arizasi faqat /ustoz sessiyasi bilan server-render qilinadi
  *   - invite kod maydonini ochish/yopish (aria-expanded)
  *   - inline error'lar — auth.js faqat username/password'ni ko'rsatadi;
  *     name/email/invite maydonlarini shu yerda field'ga qarab ko'rsatamiz
@@ -13,32 +13,9 @@
   'use strict';
 
   document.addEventListener('DOMContentLoaded', function () {
-    // ── Rol kartalari → teacher note + application form (A-19/B-29) ──
-    var roleInputs = document.querySelectorAll('.role-card input[name="role"]');
-    var teacherNote = document.getElementById('teacher-note');
-    var teacherFields = document.getElementById('teacher-app-fields');
-    var roleWasTeacher = false;
-    function syncRoleNote() {
-      if (!teacherNote) return;
-      var checked = document.querySelector('.role-card input[name="role"]:checked');
-      var isTeacher = !!(checked && checked.value === 'teacher');
-      teacherNote.hidden = !isTeacher;
-      // B-29: teacher → application maydonlari ko'rinadi; student'da yashirin
-      if (teacherFields) teacherFields.hidden = !isTeacher;
-      if (isTeacher && !roleWasTeacher) {
-        // Rol endi teacher — maydonlarni required qilamiz (universitet majburiy)
-        var u = document.getElementById('reg-university');
-        if (u) { u.required = true; u.setAttribute('aria-required', 'true'); }
-      } else if (!isTeacher && roleWasTeacher) {
-        var u2 = document.getElementById('reg-university');
-        if (u2) { u2.required = false; u2.setAttribute('aria-required', 'false'); }
-      }
-      roleWasTeacher = isTeacher;
-    }
-    roleInputs.forEach(function (r) {
-      r.addEventListener('change', syncRoleNote);
-    });
-    syncRoleNote();
+    // Role is not user-selectable on public registration. The /ustoz entry
+    // point renders a teacher-only application form with a hidden role field;
+    // the server validates the matching session marker on submit.
 
     // ── Invite toggle (yig'iladigan maydon) ──
     var inviteBtn = document.getElementById('invite-toggle');
@@ -191,8 +168,9 @@
       try {
         strengthLabels = JSON.parse(pwHint.getAttribute('data-labels') || '[]');
       } catch (_) { /* keep empty */ }
-      var requireStrong = !!document.querySelector('.role-card input[name="role"]:checked');
-      var roleInputs2 = document.querySelectorAll('.role-card input[name="role"]');
+      // Teacher applications require score 4 on the server; mirror that rule
+      // in the strength hint when the authorized teacher form is rendered.
+      var requireStrong = !!document.querySelector('input[name="role"][value="teacher"]');
 
       function scoreOf(v) {
         if (!v) return 0;
@@ -224,7 +202,6 @@
       }
 
       pwInput2.addEventListener('input', updateStrength);
-      roleInputs2.forEach(function (r) { r.addEventListener('change', updateStrength); });
     }
 
     // ── AUTH A-21 + D-07: honeypot guard (submit'da) ──

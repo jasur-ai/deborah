@@ -9,12 +9,13 @@
  *  qolgan qismi (pendingGoogle sessiyasi, redirect) REAL ishlaydi.
  *
  *  Testlar:
- *   1. callback → /user/google-setup redirect; sahifa welcome + role kartalar + prefill
+ *   1. Public callback → /user/google-setup; student only + email prefill
  *   2. POST role=student → 302 /user/panel; account (google:{sub}) yaratilgan + verified
- *   3. POST role=teacher → 302 /user/teacher-approval; account teacher_pending
- *   4. POST role=admin → rad (rol allowlist) — account yaratilmaydi
- *   5. pendingGoogle yo'q → /user/google-setup 302 /user/login
- *   6. Bekor qilish (cancel) → 302 /user/login + pending tozalanadi
+ *   3. Public teacher role tampered → rad; account yaratilmaydi
+ *   4. Teacher role from /ustoz OAuth entry → 302 /user/teacher-approval
+ *   5. POST role=admin → rad (rol allowlist) — account yaratilmaydi
+ *   6. pendingGoogle yo'q → /user/google-setup 302 /user/login
+ *   7. Bekor qilish (cancel) → 302 /user/login + pending tozalanadi
  */
 
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
@@ -78,7 +79,13 @@ function freshGoogle(tag) {
   return mockGoogleUser;
 }
 
-async function runCallback(agent) {
+async function runCallback(agent, { teacherEntry = false } = {}) {
+  if (teacherEntry) {
+    const portal = await agent.get('/ustoz');
+    expect(portal.status).toBe(200);
+  }
+  const start = await agent.get(teacherEntry ? '/auth/google?role=teacher' : '/auth/google');
+  expect(start.status).toBe(302);
   // A-24 §8 redirect_uri EXACT match — Host header GOOGLE_REDIRECT_URI'ga mos bo'lishi kerak
   return agent
     .get('/auth/google/callback?code=test-code&state=test-state')
@@ -92,7 +99,7 @@ async function setupCsrf(agent) {
 }
 
 describe('AUTH B-10 — Google rol modal (2-qadam)', () => {
-  it('callback → /user/google-setup; sahifa welcome + role kartalar + email prefill', async () => {
+  it('public callback → /user/google-setup; student option only + email prefill', async () => {
     const agent = (await import('supertest')).default.agent(app);
     freshGoogle('flow');
 
@@ -105,7 +112,7 @@ describe('AUTH B-10 — Google rol modal (2-qadam)', () => {
     expect(page.text).toContain('Xush kelibsiz');
     expect(page.text).toContain(mockGoogleUser.email);
     expect(page.text).toContain('name="role" value="student"');
-    expect(page.text).toContain('name="role" value="teacher"');
+    expect(page.text).not.toContain('name="role" value="teacher"');
     // invite field mavjud
     expect(page.text).toContain('id="gs-invite"');
   });
@@ -134,12 +141,44 @@ describe('AUTH B-10 — Google rol modal (2-qadam)', () => {
     expect(snap.val().google_sub).toBe(mockGoogleUser.sub);
   });
 
-  it('POST role=teacher → 302 teacher-approval; account teacher_pending', async () => {
+  it('public Google flow cannot submit role=teacher directly', async () => {
+    const supertest = await import('supertest');
+    const agent = supertest.default.agent(app);
+    freshGoogle('denied-tea');
+    await runCallback(agent);
+    const { page, csrf } = await setupCsrf(agent);
+    expect(page.text).not.toContain('name="role" value="teacher"');
+
+    const post = await agent.post('/user/google-setup').type('form').send({
+      _csrf: csrf, lang: 'uz', role: 'teacher', invite: '',
+    });
+    expect(post.status).toBe(200);
+    expect(post.text).toContain('yuqori o&#39;ngdagi');
+
+    const { fb } = await import('../../firebase/admin.js');
+    const { safeKey } = await import('../../utils/helpers.js');
+    const snap = await fb.get(`users/${safeKey(`google:${mockGoogleUser.sub}`)}`);
+    expect(snap.exists()).toBe(false);
+  });
+
+  it('/ustoz full form carries the teacher-only Google entry marker', async () => {
+    const supertest = await import('supertest');
+    const agent = supertest.default.agent(app);
+    const portal = await agent.get('/ustoz');
+    expect(portal.status).toBe(200);
+    const fullForm = await agent.get('/user/register?role=teacher');
+    expect(fullForm.status).toBe(200);
+    expect(fullForm.text).toContain('href="/auth/google?role=teacher"');
+    expect(fullForm.text).toContain('/user/forgot?lang=uz');
+  });
+
+  it('POST role=teacher from /ustoz Google entry → teacher_pending', async () => {
     const supertest = await import('supertest');
     const agent = supertest.default.agent(app);
     freshGoogle('tea');
-    await runCallback(agent);
-    const { csrf } = await setupCsrf(agent);
+    await runCallback(agent, { teacherEntry: true });
+    const { page, csrf } = await setupCsrf(agent);
+    expect(page.text).toContain('name="role" value="teacher"');
 
     const post = await agent
       .post('/user/google-setup')

@@ -83,7 +83,7 @@ describe('AUTH D-12 — skip-link + #main (WCAG 2.4.1)', () => {
   it('teacher-approval sahifasi (teacher_pending bilan)', async () => {
     const agent = supertest.agent(app);
     const uname = `d12t_${Date.now() % 1000000}`;
-    let page = await agent.get('/user/login?lang=uz');
+    let page = await agent.get('/ustoz');
     const csrf = csrfFrom(page.text);
     await agent
       .post('/user/login')

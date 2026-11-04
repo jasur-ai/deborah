@@ -76,7 +76,7 @@ describe('AUTH B-04 — Username validatsiya', () => {
     const r2 = await postRegister(supertest.agent(app), 'smith', { email: `x${Date.now()}@test.uz` });
     expect(r2.status).toBe(200);
     expect(r2.headers.location).toBeUndefined();
-    expect(r2.text).toContain('role-grid'); // register xato-sahifasi (panel emas)
+    expect(r2.text).not.toContain('role-grid'); // student-only register xato-sahifasi
   });
 
   it('dots/dash username register + case-insensitive login', async () => {
@@ -93,7 +93,7 @@ describe('AUTH B-04 — Username validatsiya', () => {
   it('rezerv so\'z "admin" → blok, error register sahifasida', async () => {
     const res = await postRegister(supertest.agent(app), 'admin');
     expect(res.status).toBe(200);
-    expect(res.text).toContain('role-grid'); // register sahifasi
+    expect(res.text).not.toContain('role-grid'); // student-only register sahifasi
     expect(res.text).toContain('data-field="username"');
     // User yaratilmadi
     expect((await fb.get('users/admin')).exists()).toBe(false);
