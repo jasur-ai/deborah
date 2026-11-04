@@ -697,6 +697,31 @@ router.post('/api/users/unblock', requireAdminMfaStepUp, async (req, res) => {
 // ular /admin/teachers'da alohida boshqariladi (user qarori 2026-08-29).
 const VIP_STAFF_ROLES = new Set(['teacher', 'teacher_pending', 'teacher_rejected', 'co_teacher', 'board']);
 
+// OAuth users may be stored under provider IDs (e.g. `google_<sub>`) while
+// admin UIs display their actual username. Resolve the displayed username
+// against the user record before falling back to a legacy username-key path.
+async function resolveVipTarget(username) {
+  const normalized = safeKey(username);
+  if (!normalized) return null;
+
+  const snap = await fb.get(DB_PATHS.USERS);
+  const users = snap.val() || {};
+  const matches = Object.entries(users).filter(([, user]) =>
+    user?.username && safeKey(user.username) === normalized);
+
+  if (matches.length > 1) return { ambiguous: true };
+  if (matches.length === 1) {
+    const [userKey, user] = matches[0];
+    return { userKey, user };
+  }
+
+  const legacyUser = users[normalized];
+  if (legacyUser && (!legacyUser.username || safeKey(legacyUser.username) === normalized)) {
+    return { userKey: normalized, user: legacyUser };
+  }
+  return null;
+}
+
 router.get('/api/users', async (req, res) => {
   try {
     const usersSnap = await fb.get(DB_PATHS.USERS);
@@ -860,15 +885,17 @@ router.post('/api/vip/grant', requireAdminMfaStepUp, async (req, res) => {
     const { username } = req.body;
     if (!username) return res.status(400).json({ error: 'Username required' });
 
-    const userKey = safeKey(username);
-    const snap = await fb.get(`${DB_PATHS.USERS}/${userKey}`);
-    
-    if (!snap.exists()) {
+    const target = await resolveVipTarget(username);
+    if (target?.ambiguous) {
+      return res.status(409).json({ error: 'Username bir nechta hisobga mos keldi' });
+    }
+    if (!target) {
       return res.status(404).json({ error: 'Bunday foydalanuvchi topilmadi' });
     }
+    const { userKey, user: targetUser } = target;
 
     // S25: o'qituvchi/xodim VIP bo'la olmaydi — alohida bo'limda boshqariladi
-    const targetRole = snap.val()?.role || 'student';
+    const targetRole = targetUser?.role || 'student';
     if (VIP_STAFF_ROLES.has(targetRole)) {
       return res.status(400).json({ error: "O'qituvchilar VIP bo'la olmaydi — 'O'qituvchilar' bo'limida alohida boshqariladi" });
     }
@@ -899,12 +926,14 @@ router.post('/api/vip/revoke', requireAdminMfaStepUp, async (req, res) => {
     const { username } = req.body;
     if (!username) return res.status(400).json({ error: 'Username required' });
 
-    const userKey = safeKey(username);
-    const snap = await fb.get(`${DB_PATHS.USERS}/${userKey}`);
-    
-    if (!snap.exists()) {
+    const target = await resolveVipTarget(username);
+    if (target?.ambiguous) {
+      return res.status(409).json({ error: 'Username bir nechta hisobga mos keldi' });
+    }
+    if (!target) {
       return res.status(404).json({ error: 'Bunday foydalanuvchi topilmadi' });
     }
+    const { userKey } = target;
 
     await fb.update(`${DB_PATHS.USERS}/${userKey}`, {
       isVip: false,

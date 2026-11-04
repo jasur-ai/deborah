@@ -1113,6 +1113,31 @@
       el.className = 'admin-msg active ' + tone;
     }
 
+    async function requestVipGrant(username) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 20000);
+      try {
+        const res = await fetch('/admin/api/vip/grant', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username }),
+          signal: controller.signal,
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || `VIP berilmadi (HTTP ${res.status}).`);
+        }
+        return data;
+      } catch (error) {
+        if (error?.name === 'AbortError') {
+          throw new Error('VIP so‘rovi 20 soniyada javob bermadi. Qayta urinib ko‘ring.');
+        }
+        throw error;
+      } finally {
+        clearTimeout(timeout);
+      }
+    }
+
     async function grantVip() {
       const username = document.getElementById('vip-username').value.trim();
       if (!username) { setVipMsg('Username kiriting!', 'err'); return; }
@@ -1123,24 +1148,18 @@
       setVipMsg('VIP berilmoqda...', 'ok');
       document.getElementById('vip-result').style.display = 'none';
       try {
-        const res = await fetch('/admin/api/vip/grant', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username })
-        });
-        const data = await res.json();
-        if (data.success) {
-          setVipMsg('', '');
-          // STYLE S33.03: plain password UI'da ko'rsatilmaydi
-          const detail = document.getElementById('vip-result-detail');
-          detail.innerHTML = 'Foydalanuvchi: <strong>' + esc(data.username) + '</strong> — VIP huquqi berildi';
-          document.getElementById('vip-result').style.display = 'block';
-          document.getElementById('vip-username').value = '';
-          setTimeout(() => loadVip(), 2000);
-        } else {
-          setVipMsg('Xato: ' + (data.error || ''), 'err');
-        }
+        const data = await requestVipGrant(username);
+        setVipMsg('', '');
+        // STYLE S33.03: plain password UI'da ko'rsatilmaydi
+        const detail = document.getElementById('vip-result-detail');
+        detail.innerHTML = 'Foydalanuvchi: <strong>' + esc(data.username) + '</strong> — VIP huquqi berildi';
+        document.getElementById('vip-result').style.display = 'block';
+        document.getElementById('vip-username').value = '';
+        setTimeout(() => loadVip(), 2000);
       } catch(e) {
-        setVipMsg('Xato: ' + e.message, 'err');
+        const message = e?.message || 'VIP berilmadi.';
+        setVipMsg('Xato: ' + message, 'err');
+        if (typeof showToast === 'function') showToast('VIP berilmadi: ' + message, 'err', 6000);
       } finally {
         if (btn) { btn.disabled = false; btn.removeAttribute('aria-busy'); btn.innerHTML = '<%- icon('shield', 14) %> VIP qilish'; }
       }
@@ -1149,20 +1168,12 @@
     async function quickGrantVip(username) {
       if (!(await showConfirm('VIP berish', username + ' foydalanuvchisiga VIP berilsinmi?'))) return;
       try {
-        const res = await fetch('/admin/api/vip/grant', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username })
-        });
-        const data = await res.json();
-        if (data.success) {
-          // STYLE S33.03: parol toast'da ko'rsatilmaydi
-          showToast('VIP berildi!', 'ok', 3000);
-          if (currentTab === 'vip') { loadVip(); } else { location.reload(); }
-        } else {
-          showToast('Xato: ' + (data.error || ''), 'err');
-        }
+        await requestVipGrant(username);
+        // STYLE S33.03: parol toast'da ko'rsatilmaydi
+        showToast('VIP berildi!', 'ok', 3000);
+        if (currentTab === 'vip') { loadVip(); } else { location.reload(); }
       } catch(e) {
-        showToast('Xato: ' + e.message, 'err');
+        showToast('VIP berilmadi: ' + (e?.message || 'Xatolik'), 'err', 6000);
       }
     }
 
