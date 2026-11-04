@@ -119,6 +119,7 @@ function reauthLimited(kind, id, ip) {
 }
 // AUTH A-18: email verify — sendVerifyCode + indexEmail (register flow)
 import { sendVerifyCode, indexEmail } from '../src/modules/auth/email-verify.js';
+import { issuePasswordResetEmail } from './reset.js';
 // AUTH B-01: users final schema — register'da canonical record yaratish.
 import { normalizeUserRecord } from '../src/modules/auth/user-schema.js';
 // AUTH D-24 §10 / D-25 §07: qonuniy rozilik (consent) — purpose'li yozuv
@@ -2654,13 +2655,12 @@ router.post('/user/forgot', redirectIfAuth, async (req, res) => {
       const userData = userSnap.exists() ? userSnap.val() : {};
       const verifiedEmail = !!(userData.email && userData.email_verified === true);
       if (verifiedEmail) {
-        const token = crypto.randomBytes(48).toString('hex');
-        const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
-        const expiresAt = Date.now() + 15 * 60 * 1000;
-        await fb.set(`resetTokens/${tokenHash}`, {
-          safeKey: userKey,
-          expiresAt,
-          createdAt: Date.now(),
+        // HTML forgot form ham JSON API kabi navbatga yuboradi; avvalgi
+        // implementatsiya token yaratib, emailni umuman jo'natmas edi.
+        const { token } = await issuePasswordResetEmail({
+          userKey,
+          lang,
+          origin: `${req.protocol}://${req.get('host')}`,
         });
         // Dev/test: token havolasi LOG'GA CHIQARILMAYDI (A-17 PII scan —
         // log/audit'da token bo'lmasligi shart). Preview sahifada ko'rsatiladi

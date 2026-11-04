@@ -100,6 +100,26 @@ describe('AUTH B-31 — email queue (unit)', () => {
     expect(order).toEqual(['reset', 'welcome']); // urgent birinchi
   });
 
+  it('expired reset job goes to DLQ without sending a dead link', async () => {
+    const r = await enqueueEmail({
+      template: 'reset',
+      data: {
+        userKey: 'b31-expired-reset',
+        lang: 'uz',
+        resetUrl: 'https://example.test/user/reset?token=expired',
+        expiresAt: Date.now() - 1,
+      },
+      priority: 'urgent',
+    });
+    let sendCalls = 0;
+    const result = await processEmailQueue({
+      deps: { sendEmail: async () => { sendCalls++; return { ok: true }; } },
+    });
+    expect(result.deadletter).toBe(1);
+    expect(sendCalls).toBe(0);
+    expect((await fb.get(`${EMAIL_QUEUE_PATH}/${r.jobId}`)).val().status).toBe('deadletter');
+  });
+
   it('retry: transient fail → attempts+1, backoff 1m; 2-fail → 5m; 3-fail → DLQ', async () => {
     await fb.set(`users/${safeKey('b31retry')}/email`, 'b31retry@test.uz');
     const r = await enqueueEmail({ template: 'welcome', data: { userKey: 'b31retry' } });

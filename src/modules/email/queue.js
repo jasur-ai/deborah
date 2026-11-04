@@ -10,7 +10,7 @@
  *     invite uchun `inviteTokenHash` saqlanadi — recipient send paytida
  *     DB'dan o'qiladi (email o'zgarsa ham eng yangi manzilga boradi).
  *   - Job data minimal; OTP/parol YO'Q. Faqat 'reset' template'ida `resetUrl`
- *     saqlanadi — bu single-use 30 daqiqalik capability havola (OTP emas),
+ *     saqlanadi — bu single-use 15 daqiqalik capability havola (OTP emas),
  *     va job ishlovdan keyin o'chiriladi.
  *
  * Retry (§08): faqat transient error uchun — 3 urinish, backoff 1m/5m/15m.
@@ -39,6 +39,7 @@ export const EMAIL_MAX_ATTEMPTS = 3;
 export const EMAIL_QUEUE_BATCH = 10;
 export const EMAIL_QUEUE_INTER_MS = 100; // §10: per-provider rate throttle (burst qarshi)
 export const EMAIL_LEASE_STALE_MS = 60_000; // processing'da qotib qolgan job'ni qayta olish
+const RESET_EMAIL_TTL_MS = 15 * 60 * 1000;
 
 /** §07: priority — urgent (reset/verify/security) birinchi. */
 export const EMAIL_PRIORITY = { urgent: 0, normal: 1 };
@@ -176,6 +177,22 @@ export async function processEmailQueue({ now = Date.now(), limit = EMAIL_QUEUE_
 
   for (const [jobId, job] of due) {
     if (result.sent + result.retried + result.deadletter >= limit) break;
+
+    // Reset links are single-use and expire after 15 minutes. The queue may
+    // contain legacy jobs from before the worker was enabled; never email an
+    // already-expired capability link when draining that backlog.
+    if (job.template === 'reset') {
+      const suppliedExpiry = Number(job.data?.expiresAt);
+      const createdAt = Number(job.createdAt);
+      const expiresAt = Number.isFinite(suppliedExpiry) && suppliedExpiry > 0
+        ? suppliedExpiry
+        : (Number.isFinite(createdAt) && createdAt > 0 ? createdAt + RESET_EMAIL_TTL_MS : 0);
+      if (!expiresAt || expiresAt <= nowTime) {
+        await markDeadletter(jobId, job, 'reset-expired');
+        result.deadletter++;
+        continue;
+      }
+    }
 
     // Lease — ikki worker bir job'ni olmasin
     await fb.set(`${EMAIL_QUEUE_PATH}/${jobId}/status`, 'processing').catch(() => {});

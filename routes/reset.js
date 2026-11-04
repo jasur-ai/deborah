@@ -92,7 +92,7 @@ async function findValidToken(token) {
 
 /**
  * Yangi reset token yaratadi (AUTH A-06 §6/§9).
- * @returns {{ token: string }} — plain token (havolada), DB'da hash saqlanadi
+ * @returns {{ token: string, expiresAt: number }} — plain token (havolada), DB'da hash saqlanadi
  */
 async function createResetToken(userKey) {
   const token = crypto.randomBytes(48).toString('hex'); // 96 belgi
@@ -105,7 +105,36 @@ async function createResetToken(userKey) {
   });
   // User index — complete'da BARCHA tokenlarni invalidatsiya qilish uchun (A-06 §14)
   await fb.set(`${RESET_TOKEN_USER_PATH}/${userKey}/${hash}`, true);
-  return token;
+  return { token, expiresAt };
+}
+
+/**
+ * Create a single-use reset link and enqueue its email. Shared by the HTML
+ * forgot-password form and the JSON API so neither flow can silently skip mail.
+ */
+export async function issuePasswordResetEmail({ userKey, lang = 'uz', origin }) {
+  const { token, expiresAt } = await createResetToken(userKey);
+  const resetUrl = new URL('/user/reset', origin).toString();
+  const link = new URL(resetUrl);
+  link.searchParams.set('token', token);
+  const tHash = tokenHash(token);
+  let queued = null;
+  try {
+    const { enqueueEmail } = await import('../src/modules/email/queue.js');
+    queued = await enqueueEmail({
+      template: 'reset',
+      data: { userKey, lang, resetUrl: link.toString(), expiresAt },
+      priority: 'urgent',
+      idempotencyKey: `reset:${userKey}:${tHash.slice(0, 12)}`,
+      tag: 'reset',
+    });
+  } catch (err) {
+    console.warn('[email:reset] enqueue failed:', err?.message || err);
+  }
+  if (queued !== null && !queued?.ok) {
+    console.warn('[email:reset] enqueue rejected:', queued?.error || 'unknown');
+  }
+  return { token, expiresAt, queued: queued?.ok === true };
 }
 
 /**
@@ -357,23 +386,13 @@ router.post('/api/reset/request',
       return res.json(genericResetOk());
     }
 
-    const token = await createResetToken(userKey);
-
-    // AUTH B-31: reset email navbatga (urgent) — send async, worker to'kadi.
-    // PII: job'da plaintext email YO'Q — faqat userKey + resetUrl (single-use
-    // 30 daqiqalik capability havola; token audit/log'ga chiqmaydi — A-17).
-    // Idempotency: token hash asosi — bir xil token ikki marta enqueue emas.
+    // AUTH B-31: both HTML and JSON reset flows use the same email queue path.
     const lang = String(req.query.lang || req.body.lang || 'uz');
-    const { enqueueEmail } = await import('../src/modules/email/queue.js');
-    const resetUrl = `${req.protocol}://${req.get('host')}/user/reset?token=${token}`;
-    const tHash = tokenHash(token);
-    await enqueueEmail({
-      template: 'reset',
-      data: { userKey, lang, resetUrl },
-      priority: 'urgent',
-      idempotencyKey: `reset:${userKey}:${tHash.slice(0, 12)}`,
-      tag: 'reset',
-    }).catch((err) => console.warn('[email:reset] enqueue failed:', err?.message || err));
+    const { token } = await issuePasswordResetEmail({
+      userKey,
+      lang,
+      origin: `${req.protocol}://${req.get('host')}`,
+    });
     // Timing: provider round-trip o'rniga kalibrlangan padding — mavjud user
     // yo'li mavjud bo'lmagan yo'ldan (250ms) hali ham sekinroq (enumeration yo'q).
     await new Promise((r) => setTimeout(r, 300));

@@ -12,6 +12,8 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import crypto from 'crypto';
 import { snapshotDb, restoreDb, startServer, stopServer } from '../helpers/setup.js';
 import { fb } from '../../firebase/admin.js';
+import { safeKey } from '../../utils/helpers.js';
+import { EMAIL_QUEUE_PATH, processEmailQueue } from '../../src/modules/email/queue.js';
 import {
   parseResetRequest,
   parseResetComplete,
@@ -150,6 +152,46 @@ describe('AUTH A-06 — API reset flow (request→verify→complete)', () => {
     const missingBody = await missingRes.json();
     expect(missingBody.ok).toBe(true);
     expect(missingBody.message).toBe('reset.sent'); // bir xil javob
+  });
+
+  it('HTML /user/forgot flow queues and drains the reset email', async () => {
+    const htmlUser = await registerUser('203.0.113.42');
+    // Isolate this assertion from the preceding JSON/API request job.
+    await fb.remove(EMAIL_QUEUE_PATH);
+
+    // Avoid ?lang here: that sets a separate lang cookie before connect.sid.
+    const { csrf, cookie } = await getCsrf('/user/forgot');
+    const response = await postForm('/user/forgot', cookie, {
+      _csrf: csrf,
+      lang: 'uz',
+      username: htmlUser.username,
+    }, '203.0.113.43');
+    expect(response.status).toBe(200);
+    const html = await response.text();
+    expect(html).toContain('data-testid="dev-reset-preview"');
+
+    const queueSnap = await fb.get(EMAIL_QUEUE_PATH);
+    const queuedEntry = Object.entries(queueSnap.val() || {}).find(([, job]) =>
+      job?.template === 'reset' && job?.data?.userKey === safeKey(htmlUser.username));
+    expect(queuedEntry).toBeTruthy();
+    const [jobId, job] = queuedEntry;
+    expect(job.status).toBe('queued');
+    expect(job.data.expiresAt).toBeGreaterThan(Date.now());
+    expect(job.data.resetUrl).toContain('/user/reset?token=');
+
+    const deliveredTo = [];
+    const drained = await processEmailQueue({
+      deps: {
+        sendEmail: async (message) => {
+          deliveredTo.push(message.to);
+          return { ok: true, messageId: 'a06-html-reset' };
+        },
+      },
+    });
+    expect(drained.sent).toBe(1);
+    const expectedEmail = (await fb.get(`users/${safeKey(htmlUser.username)}/email`)).val();
+    expect(deliveredTo).toContain(expectedEmail);
+    expect((await fb.get(`${EMAIL_QUEUE_PATH}/${jobId}`)).val().status).toBe('sent');
   });
 
   it('POST /api/reset/verify — valid | invalid | expired holatlari', async () => {

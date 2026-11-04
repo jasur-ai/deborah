@@ -60,6 +60,7 @@ import aiGenerateRoutes from './routes/ai-generate.js'; // REAL AI (Gemini)
 import profileRoutes from './routes/profile.js'; // "Profilim" — hamma rollar uchun
 import { ADMIN_SIDEBAR_GROUPS } from './data/admin-navigation.js';
 import emailWebhookRoutes from './routes/email-webhook.js'; // E-07/D-32 email budget webhook
+import { startEmailQueueWorker } from './src/modules/email/worker.js';
 import passkeyRoutes from './routes/passkey.js'; // E-05 passkey (WebAuthn)
 import pushRoutes from './routes/push.js'; // E-03 push bildirishnomalar (FCM/VAPID)
 
@@ -667,6 +668,10 @@ if (isMainModule) {
       env: CONFIG.NODE_ENV,
       node: process.version,
     }, `Server started on http://${CONFIG.HOST}:${CONFIG.PORT}`);
+
+    // Start the persistent email outbox only in the real server process.
+    // createApp() remains side-effect-free for tests and one-shot imports.
+    startEmailQueueWorker({ logger: log });
 
     console.log(`
 ╔═══════════════════════════════════════════╗
