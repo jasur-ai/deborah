@@ -19,6 +19,7 @@ import { AUTH_COPY } from '../../data/auth-i18n.js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SETTINGS_JS = readFileSync(join(__dirname, '../../public/js/passkey-settings.js'), 'utf8');
 const LOGIN_JS = readFileSync(join(__dirname, '../../public/js/passkey-login.js'), 'utf8');
+const PROFILE_VIEW = readFileSync(join(__dirname, '../../views/user/security-profile.ejs'), 'utf8');
 
 const SETTINGS_MARKUP = (copyAttr) => `
 <!DOCTYPE html><html><body>
@@ -68,13 +69,13 @@ async function buildSettings({ passkeys = [], ok = true, withCred = true } = {})
 
 const REQUIRED_KEYS = [
   'title', 'desc', 'empty', 'add', 'remove', 'lastUsed', 'device', 'sync',
-  'reauthTitle', 'reauthPlaceholder', 'reauthSubmit', 'reauthRequired',
+  'reauthTitle', 'reauthHint', 'reauthPlaceholder', 'reauthSubmit', 'reauthRequired',
   'reauthRate', 'reauthWrong', 'loadFail', 'addFail', 'removeFail',
   'startFail', 'verifyFail', 'recoveryNote',
 ];
 
 describe('AUTH D-08 — passkeySettings i18n (4 til)', () => {
-  it('uz / uz-cyrl / ru / en — passkeySettings bloki bor, 20 kalit, bo\'sh emas', () => {
+  it('uz / uz-cyrl / ru / en — passkeySettings bloki bor, 21 kalit, bo\'sh emas', () => {
     for (const lang of ['uz', 'uz-cyrl', 'ru', 'en']) {
       const ps = AUTH_COPY[lang] && AUTH_COPY[lang].passkeySettings;
       expect(ps, `${lang}.passkeySettings mavjud emas`).toBeTruthy();
@@ -89,6 +90,12 @@ describe('AUTH D-08 — passkeySettings i18n (4 til)', () => {
     // D-08: login bloki (passkey/passkeyError/passkeyRate) — settings bloki alohida
     expect(AUTH_COPY.uz.login.passkey).toBeTruthy();
     expect(AUTH_COPY.uz.passkeySettings.title).not.toBe(AUTH_COPY.uz.login.passkey);
+  });
+
+  it('reauth UI current password va qurilma prompti haqida aniq ko\'rsatma beradi', () => {
+    expect(PROFILE_VIEW).toContain('pk.reauthHint');
+    expect(PROFILE_VIEW).toContain('aria-describedby="passkey-reauth-hint"');
+    expect(PROFILE_VIEW).toContain('autocomplete="current-password"');
   });
 });
 

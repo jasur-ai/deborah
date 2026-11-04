@@ -167,10 +167,11 @@
       </div>
       <div id="passkey-err" class="verdict fail" role="alert" style="display:none"></div>
       <div id="passkey-reauth" style="display:none;margin-top:12px">
-        <div style="font-size:.82rem;font-weight:700;margin-bottom:6px"><%- icon('shieldCheck', 13) %> <%= pk.reauthTitle || 'Xavfsizlik uchun parolingizni tasdiqlang' %></div>
+        <div id="passkey-reauth-title" style="font-size:.82rem;font-weight:700;margin-bottom:6px"><%- icon('shieldCheck', 13) %> <%= pk.reauthTitle || 'Passkey qo‘shish uchun joriy akkaunt parolingizni kiriting' %></div>
+        <div id="passkey-reauth-hint" style="font-size:.76rem;color:var(--deborah-semantic-color-text-muted);line-height:1.55;margin-bottom:10px"><%= pk.reauthHint || 'Avval Deborah akkauntingizning joriy parolini kiriting. Keyin brauzer yoki qurilma oynasida barmoq izi, Face ID yoki qurilma PIN-kodi bilan tasdiqlang — alohida passkey kodini yozmaysiz.' %></div>
         <div class="verify-row">
           <div class="pw-wrap">
-            <input class="verify-inp" id="passkey-reauth-pw" type="password" placeholder="<%= pk.reauthPlaceholder || 'Parol' %>" autocomplete="current-password" style="min-width:180px">
+            <input class="verify-inp" id="passkey-reauth-pw" type="password" placeholder="<%= pk.reauthPlaceholder || 'Joriy akkaunt paroli' %>" aria-label="<%= pk.reauthPlaceholder || 'Joriy akkaunt paroli' %>" aria-describedby="passkey-reauth-hint" autocomplete="current-password" style="min-width:180px">
             <button type="button" class="pw-toggle" data-pw-toggle="passkey-reauth-pw" aria-label="Parolni ko'rsatish" aria-pressed="false"><span data-pw-toggle-label>👁</span></button>
           </div>
           <button class="verify-btn" id="passkey-reauth-btn" type="button" style="min-height:44px"><%= pk.reauthSubmit || 'Tasdiqlash' %></button>
