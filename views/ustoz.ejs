@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>O'qituvchilar uchun — Deborah</title>
-  <meta name="description" content="Deborah o'qituvchi maydoni: Cast monitoring, AI Studiya, dars reja, baholash.">
+  <meta name="description" content="Deborah o'qituvchi maydoni: Cast monitoring, AI Studiya, dars reja, baholash. Ro'yxatdan o'tmasdan, arizani yuboring.">
   <link rel="stylesheet" href="/css/landing.css">
   <style>
     /* S27: O'qituvchi maydoni — landing bilan bir oila (vintage dark), class-only */
@@ -26,7 +26,7 @@
     .uz-feat-ico{font-size:1.3rem}
     .uz-feat b{display:block;font-size:.92rem;margin:8px 0 4px}
     .uz-feat span{font-size:.78rem;color:var(--mut,#b3aa98);line-height:1.5}
-    .uz-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:980px;margin:44px auto 0;padding:0 20px 70px}
+    .uz-cols{display:grid;grid-template-columns:1fr;gap:18px;max-width:980px;margin:44px auto 0;padding:0 20px 70px}
     @media(max-width:860px){.uz-cols{grid-template-columns:1fr}}
     .uz-card{background:rgba(255,255,255,.03);border:1px solid rgba(194,160,106,.2);border-radius:18px;padding:26px 26px 22px;text-align:left}
     .uz-card h2{font-size:1.12rem;margin:0 0 4px;font-weight:900}
@@ -47,15 +47,11 @@
     .uz-note{margin-top:14px;font-size:.74rem;color:var(--mut,#b3aa98);line-height:1.55;border-top:1px dashed rgba(194,160,106,.25);padding-top:12px}
     .uz-note b{color:var(--ld-gold,#c2a06a)}
     .uz-err{background:rgba(220,80,60,.12);border:1px solid rgba(220,110,90,.4);border-radius:10px;color:#f3b3a6;font-size:.8rem;padding:10px 12px;margin-bottom:14px;line-height:1.5}
+    .uz-ok{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.4);border-radius:10px;color:#a7f3d0;font-size:.8rem;padding:10px 12px;margin-bottom:14px;line-height:1.5}
     .uz-switch{font-size:.78rem;color:var(--mut,#b3aa98);text-align:center;margin-top:14px}
     .uz-switch a{color:var(--ld-gold,#c2a06a);font-weight:700;text-decoration:none}
     @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-  /* Parol ko'rsatish tugmasi (universal pw-toggle) */
-.pw-wrap{position:relative}
-.pw-wrap>input{padding-right:52px !important;box-sizing:border-box;width:100%}
-.pw-toggle{position:absolute;right:4px;top:50%;transform:translateY(-50%);min-width:44px;min-height:44px;border:0;background:transparent;cursor:pointer;font-size:1.05rem;line-height:1;color:inherit;opacity:.7;border-radius:10px}
-.pw-toggle:hover{opacity:1}
-</style>
+  </style>
   <%- include('partials/critical-mobile-css') %>
 </head>
 <body class="uz-page" id="top">
@@ -82,40 +78,15 @@
     </section>
 
     <div class="uz-cols" id="auth">
-      <!-- ═══ KIRISH ═══ -->
-      <section class="uz-card" aria-labelledby="uz-login-h">
-        <h2 id="uz-login-h">Kirish</h2>
-        <div class="uz-card-sub">O'qituvchi logini — username yoki email</div>
+      <!-- ═══ ARIZA YUBORISH (royxatdan o'tmasdan) ═══ -->
+      <section class="uz-card" aria-labelledby="uz-apply-h">
+        <h2 id="uz-apply-h">O'qituvchi arizasi</h2>
+        <div class="uz-card-sub">Ro'yxatdan o'tish shart emas. Ma'lumotlaringiz adminga yuboriladi — tasdiqlangach login va parol emailga keladi.</div>
         <% if (typeof error !== 'undefined' && error) { %><div class="uz-err" role="alert"><%= error %></div><% } %>
-        <form action="/user/login" method="POST" novalidate>
+        <% if (typeof ok !== 'undefined' && ok) { %><div class="uz-ok" role="status"><b>Ariza yuborildi.</b> Admin tasdiqlagandan so'ng emailingizga login va parol keladi. <a href="/user/login">Kirish sahifasiga o'tish →</a></div><% } %>
+        <form id="apply-form" novalidate>
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-          <input type="hidden" name="mode" value="login">
           <input type="hidden" name="lang" value="uz">
-          <div class="uz-fld">
-            <label for="ul-acc">Username yoki email</label>
-            <input class="uz-inp" id="ul-acc" name="username" type="text" autocomplete="username" required>
-          </div>
-          <div class="uz-fld">
-            <label for="ul-pass">Parol</label>
-            <div class="pw-wrap">
-              <input class="uz-inp" id="ul-pass" name="password" type="password" autocomplete="current-password" required>
-              <button type="button" class="pw-toggle" data-pw-toggle="ul-pass" aria-label="Parolni ko'rsatish" aria-pressed="false"><span data-pw-toggle-label>👁</span></button>
-            </div>
-          </div>
-          <button class="uz-btn" type="submit">Kirish</button>
-          <div class="uz-switch">Arizangiz tasdiqlanganini kutyapsizmi? <a href="/user/teacher-approval">Ariza holati →</a></div>
-        </form>
-      </section>
-
-      <!-- ═══ ARIZA (REGISTER) ═══ -->
-      <section class="uz-card" aria-labelledby="uz-reg-h">
-        <h2 id="uz-reg-h">O'qituvchi arizasi</h2>
-        <div class="uz-card-sub">Ma'lumotlaringiz adminga yuboriladi — tasdiqlangach o'qituvchi paneliga kirasiz</div>
-        <form action="/user/login" method="POST">
-          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-          <input type="hidden" name="mode" value="reg">
-          <input type="hidden" name="lang" value="uz">
-          <input type="hidden" name="role" value="teacher">
           <input type="text" name="website" id="uz-hp" tabindex="-1" autocomplete="off" value="" aria-hidden="true" style="position:absolute;left:-9999px">
           <div class="uz-row">
             <div class="uz-fld">
@@ -123,34 +94,23 @@
               <input class="uz-inp" id="ur-name" name="name" type="text" autocomplete="name" required>
             </div>
             <div class="uz-fld">
-              <label for="ur-username">Username</label>
-              <input class="uz-inp" id="ur-username" name="username" type="text" autocomplete="username" pattern="[a-zA-Z0-9_.\-]{2,50}" required>
+              <label for="ur-email">Email (keyingi login)</label>
+              <input class="uz-inp" id="ur-email" name="email" type="email" autocomplete="email" required>
             </div>
           </div>
           <div class="uz-fld">
-            <label for="ur-email">Email</label>
-            <input class="uz-inp" id="ur-email" name="email" type="email" autocomplete="email" required>
-          </div>
-          <div class="uz-fld">
-            <label for="ur-pass">Parol (kamida 15 belgi)</label>
-            <div class="pw-wrap">
-              <input class="uz-inp" id="ur-pass" name="password" type="password" autocomplete="new-password" minlength="15" maxlength="128" required>
-              <button type="button" class="pw-toggle" data-pw-toggle="ur-pass" aria-label="Parolni ko'rsatish" aria-pressed="false"><span data-pw-toggle-label>👁</span></button>
-            </div>
+            <label for="ur-uni">Universitet / maktab</label>
+            <input class="uz-inp" id="ur-uni" name="university" type="text" autocomplete="organization" required>
           </div>
           <div class="uz-row">
-            <div class="uz-fld">
-              <label for="ur-uni">Universitet / maktab</label>
-              <input class="uz-inp" id="ur-uni" name="university" type="text" autocomplete="organization" required>
-            </div>
             <div class="uz-fld">
               <label for="ur-subj">Fan</label>
               <input class="uz-inp" id="ur-subj" name="subject" type="text" autocomplete="off" required>
             </div>
-          </div>
-          <div class="uz-fld">
-            <label for="ur-exp">Tajriba (yil)</label>
-            <input class="uz-inp" id="ur-exp" name="experience" type="number" min="0" max="50" inputmode="numeric">
+            <div class="uz-fld">
+              <label for="ur-exp">Tajriba (yil)</label>
+              <input class="uz-inp" id="ur-exp" name="experience" type="number" min="0" max="50" inputmode="numeric">
+            </div>
           </div>
           <div class="uz-fld">
             <label for="ur-reason">Nega o'qituvchi sifatida qo'shilmoqchisiz?</label>
@@ -161,41 +121,92 @@
             <span>Maxfiylik siyosati va foydalanish shartlariga roziman. Ma'lumotlarim arizani ko'rib chiqish uchun adminga yuboriladi.</span>
           </label>
           <button class="uz-btn" type="submit">Arizani yuborish</button>
-          <div class="uz-note"><b>Qanday ishlaydi:</b> ariza yuborilgach, holatingiz «Kutilmoqda» bo'ladi → admin <b>O'qituvchilar</b> bo'limida ko'rib chiqadi → tasdiqlansa, shu login/parol bilan kirib ishlashni boshlaysiz. Rad etilsa, sababi ko'rsatiladi.</div>
+          <div class="uz-note"><b>Qanday ishlaydi:</b> arizani yuborganingizda holat «Kutilmoqda» bo'ladi → admin <b>O'qituvchilar</b> bo'limida ko'rib chiqadi → tasdiqlansa, emailingizga login (emailingiz) va parol keladi. Rad etilsa, sababi ko'rsatiladi.</div>
+        </form>
+      </section>
+
+      <!-- ═══ ALLOQACHON KIRISH (tasdiqlangan o'qituvchilarga) ═══ -->
+      <section class="uz-card" aria-labelledby="uz-login-h">
+        <h2 id="uz-login-h">Kirish (tasdiqlangan o'qituvchilarga)</h2>
+        <div class="uz-card-sub">Arizangiz tasdiqlanganidan so'ng emailingizdagi login va parol bilan kiring.</div>
+        <% if (typeof loginError !== 'undefined' && loginError) { %><div class="uz-err" role="alert"><%= loginError %></div><% } %>
+        <form action="/user/login" method="POST" novalidate>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="mode" value="login">
+          <input type="hidden" name="lang" value="uz">
+          <div class="uz-fld">
+            <label for="ul-acc">Login (email)</label>
+            <input class="uz-inp" id="ul-acc" name="username" type="text" autocomplete="username" required>
+          </div>
+          <div class="uz-fld">
+            <label for="ul-pass">Parol</label>
+            <div class="pw-wrap">
+              <input class="uz-inp" id="ul-pass" name="password" type="password" autocomplete="current-password" required>
+              <button type="button" class="pw-toggle" data-pw-toggle="ul-pass" aria-label="Parolni ko'rsatish" aria-pressed="false"><span data-pw-toggle-label>👁</span></button>
+            </div>
+          </div>
+          <button class="uz-btn uz-btn--ghost" type="submit">Kirish</button>
+          <div class="uz-switch">Arizangiz hali kutilmoqda? <a href="/user/teacher-approval">Ariza holati →</a></div>
         </form>
       </section>
     </div>
   </main>
 
   <script>
-    // Honeypot maydonini oddiy userlardan yashirish (botlar uchun ko'rinadi)
     (function () { var hp = document.getElementById('uz-hp'); if (hp) hp.setAttribute('aria-hidden', 'true'); })();
+    document.getElementById('apply-form')?.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const btn = this.querySelector('.uz-btn');
+      const old = btn.textContent;
+      btn.textContent = 'Yuborilmoqda…';
+      btn.disabled = true;
+      try {
+        const fd = new FormData(this);
+        const body = {};
+        for (const [k, v] of fd.entries()) body[k] = v;
+        const r = await fetch('/api/teacher/apply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        const d = await r.json();
+        if (!d.ok) throw new Error(d.error || 'Ariza yuborishda xatolik');
+        this.innerHTML = '<div class="uz-ok" role="status"><b>Ariza yuborildi.</b> Admin tasdiqlagandan so'ng emailingizga login va parol keladi.</div>';
+      } catch (err) {
+        const errDiv = document.createElement('div');
+        errDiv.className = 'uz-err';
+        errDiv.role = 'alert';
+        errDiv.textContent = err.message || 'Tarmoq xatosi';
+        this.prepend(errDiv);
+      } finally {
+        btn.textContent = old;
+        btn.disabled = false;
+      }
+    });
   </script>
   <script src="/js/icon-kit.js"></script>
-<script>
-/* Universal parol ko'rsatish/yashirish (auth.js yuklanmagan sahifalar uchun) */
-(function(){
-  if (window.__pwToggleInit) return; window.__pwToggleInit = true;
-  function bind(scope){
-    (scope || document).querySelectorAll('[data-pw-toggle]').forEach(function(btn){
-      if (btn.__pwBound) return;
-      var input = document.getElementById(btn.getAttribute('data-pw-toggle'));
-      if (!input) return;
-      btn.__pwBound = true;
-      btn.addEventListener('click', function(){
-        var show = input.type === 'password';
-        input.type = show ? 'text' : 'password';
-        btn.setAttribute('aria-pressed', show ? 'true' : 'false');
-        var l = btn.querySelector('[data-pw-toggle-label]');
-        if (l) l.textContent = show ? '\uD83D\uDE48' : '\uD83D\uDC41';
-        try { input.focus({ preventScroll: true }); } catch (e) { input.focus(); }
-      });
-    });
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ bind(); });
-  else bind();
-})();
-</script>
-
+  <script>
+    (function(){
+      if (window.__pwToggleInit) return; window.__pwToggleInit = true;
+      function bind(scope){
+        (scope || document).querySelectorAll('[data-pw-toggle]').forEach(function(btn){
+          if (btn.__pwBound) return;
+          var input = document.getElementById(btn.getAttribute('data-pw-toggle'));
+          if (!input) return;
+          btn.__pwBound = true;
+          btn.addEventListener('click', function(){
+            var show = input.type === 'password';
+            input.type = show ? 'text' : 'password';
+            btn.setAttribute('aria-pressed', show ? 'true' : 'false');
+            var l = btn.querySelector('[data-pw-toggle-label]');
+            if (l) l.textContent = show ? '\uD83D\uDE48' : '\uD83D\uDC41';
+            try { input.focus({ preventScroll: true }); } catch (e) { input.focus(); }
+          });
+        });
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ bind(); });
+      else bind();
+    })();
+  </script>
 </body>
 </html>

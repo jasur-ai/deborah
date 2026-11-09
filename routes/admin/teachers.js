@@ -17,7 +17,7 @@
 import { Router } from 'express';
 import { fb } from '../../firebase/admin.js';
 import { requireAdmin, requireRecentAdminAuth, requireAdminMfaStepUp } from '../../middleware/auth.js';
-import { safeKey } from '../../utils/helpers.js';
+import { safeKey, hashPassword } from '../../utils/helpers.js';
 
 // AUTH D-10 §13: admin UI copy — 4 til (AUTH_COPY[lang].admin).
 // users/audit JS `window.__ADMIN_COPY__` dan o'qiydi (yo'q bo'lsa fallback).
@@ -315,22 +315,46 @@ router.post('/api/teachers/:id/approve', requireRecentAdminAuth, requireAdminMfa
       return res.status(409).json({ ok: false, error: decide.error, role: decide.role });
     }
 
+    // Foydalanuvchi ma'lumotlarini olamiz (email uchun)
+    const userSnap0 = await fb.get(`users/${userId}`);
+    const uData = userSnap0.exists() ? userSnap0.val() : {};
+
+    // ── Parol avtomatik generated: email local part + "123" ──
+    // Masalan: uztoz@gmail.com → login: uztoz@gmail.com, parol: uztoz123
+    const emailLocal = String(uData?.email || '').split('@')[0] || userId;
+    const generatedPassword = String(emailLocal).replace(/[^a-zA-Z0-9]/g, '') + '123';
+    const passwordHash = await hashPassword(generatedPassword);
+
+    await fb.set(`users/${userId}`, {
+      password: passwordHash,
+      email_verified: true,
+      teacher_credentials_generated_at: now,
+      teacher_credentials_note: 'Login: email; parol: email local part + 123',
+    }, { merge: true }).catch(() => {});
+
     // Xabar (A-19 §11): email/Telegram infra P2 — hozircha user record + audit
     await fb.set(`users/${userId}/notification_last`, {
       type: 'teacher_approved',
-      message: 'Tabriklaymiz, o\'qituvchi sifatida tasdiqlandingiz!',
+      message: 'Tabriklaymiz, o\'qituvchi sifatida tasdiqlandingiz! Login: ' + (uData?.email || userId) + ', parol: ' + generatedPassword,
       at: now,
+      login: uData?.email || userId,
+      password: generatedPassword,
     }).catch(() => {});
 
-    // AUTH A-23: teacher_approved email (user email bo'lsa; fire-and-forget)
-    const userSnap = await fb.get(`users/${userId}`);
-    const uData = userSnap.exists() ? userSnap.val() : {};
-    if (uData.email && uData.email_verified) {
+    // AUTH A-23: teacher_approved email (login va parol bilan; fire-and-forget)
+    const userSnap2 = await fb.get(`users/${userId}`);
+    const uData2 = userSnap2.exists() ? userSnap2.val() : {};
+    if (uData2.email) {
       const { renderTeacherApproved } = await import('../../src/modules/email/templates.js');
       const { sendEmail } = await import('../../src/modules/email/provider.js');
-      const tpl = renderTeacherApproved({ username: uData.username || userId, lang: uData.lang || 'uz' });
+      const tpl = renderTeacherApproved({
+        username: uData2.username || userId,
+        lang: uData2.lang || 'uz',
+        login: uData2.email,
+        password: generatedPassword,
+      });
       await sendEmail({
-        to: uData.email,
+        to: uData2.email,
         subject: tpl.subject,
         html: tpl.html,
         text: tpl.text,
@@ -346,7 +370,7 @@ router.post('/api/teachers/:id/approve', requireRecentAdminAuth, requireAdminMfa
     // AUTH D-06 §06: teacher approval metric (Prometheus)
     try { recordMetric('auth_teacher_approval_total', 1, { type: 'counter', labels: { outcome: 'approved' } }); } catch (_) {}
 
-    res.json({ ok: true, role: 'teacher' });
+    res.json({ ok: true, role: 'teacher', login: uData2?.email || userId, password: generatedPassword });
   } catch (err) {
     console.error('Teacher approve error:', err);
     res.status(500).json({ ok: false, error: err.message });

@@ -11,7 +11,7 @@ import { fb } from '../firebase/admin.js';
 import { requireAdmin } from '../middleware/auth.js';
 import { requireAdminMfaStepUp } from '../middleware/auth.js';
 import { requireRole } from '../middleware/roles.js';
-import { safeKey } from '../utils/helpers.js';
+import { safeKey, hashPassword } from '../utils/helpers.js';
 import {
   classroomGroupId,
   normalizeGroupName,
@@ -39,6 +39,79 @@ function roleCtx(req) {
     username: isAdmin ? (session.admin.username || 'admin') : user.username || '',
     safeKey: isAdmin ? (session.admin.safeKey || session.admin.username || 'admin') : user.safeKey || '',
   };
+}
+
+/* ── Public: O'qituvchi arizasi (royxatdan o'tmasdan) ──
+ * Body: name, email, university, subject, experience?, reason?, consent
+ * Yaratadi: users/{key} role=teacher_pending, parol YO'Q.
+ * Admin tasdiqlagandan so'ng parol avtomatik generated bo'ladi (email local part + 123).
+ */
+router.post('/api/teacher/apply', async (req, res) => {
+  const { name, email, university, subject, experience, reason, consent } = req.body || {};
+  const cleanName = normalizePersonName(name);
+  if (!cleanName) return res.status(400).json({ ok: false, error: 'Ism va familiya shart' });
+  const cleanEmail = String(email || '').normalize('NFKC').trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) return res.status(400).json({ ok: false, error: 'Email noto‘g‘ri' });
+  if (!university || String(university).trim().length < 2) return res.status(400).json({ ok: false, error: 'Universitet / maktab shart' });
+  if (!subject || String(subject).trim().length < 2) return res.status(400).json({ ok: false, error: 'Fan shart' });
+  if (consent !== 'on' && consent !== true) return res.status(400).json({ ok: false, error: 'Rozilikmajburiy' });
+
+  // Email unikalmi? (barcha rollar)
+  const usersSnap = await fb.get('users');
+  const users = usersSnap.exists() ? usersSnap.val() || {} : {};
+  for (const [uKey, u] of Object.entries(users)) {
+    if (u && String(u.email || '').toLowerCase() === cleanEmail) {
+      return res.status(409).json({ ok: false, error: 'Bu email bilan foydalanuvchi allaqachon ro‘yxatdan o‘tgan' });
+    }
+  }
+
+  const userKey = safeKey(cleanName) || safeKey(cleanEmail.split('@')[0]);
+  if (!userKey) return res.status(400).json({ ok: false, error: 'Foydalanuvchi kaliti aniqlanmadi' });
+
+  // userKey unikalmi?
+  if (users[userKey]) {
+    return res.status(409).json({ ok: false, error: 'Bu ism bilan foydalanuvchi allaqachon ro‘yxatdan o‘tgan' });
+  }
+
+  const now = Date.now();
+  await fb.set(`users/${userKey}`, {
+    username: userKey,
+    password: '', // parol admin tasdiqlaganda generated bo'ladi
+    email: cleanEmail,
+    email_verified: false,
+    role: 'teacher_pending',
+    name: cleanName,
+    display_name: cleanName,
+    created_at: now,
+    source: 'teacher_apply',
+    isVip: false,
+    teacher_application: {
+      full_name: cleanName,
+      university: String(university).trim(),
+      subject: String(subject).trim(),
+      experience: experience ? String(experience).trim() : '',
+      reason: reason ? String(reason).trim() : '',
+      consent: true,
+      appliedAt: now,
+      status: 'pending',
+    },
+    teacher_decision_at: null,
+  });
+
+  await auditTeacherApply({ userKey, email: cleanEmail, ipAddress: req.ip, userAgent: req.headers['user-agent'] }).catch(() => {});
+  res.json({ ok: true, message: "Ariza yuborildi. Admin tasdiqlagandan so'ng emailingizga login va parol keladi." });
+});
+
+async function auditTeacherApply({ userKey, email, ipAddress, userAgent }) {
+  const { audit, AUDIT_ACTIONS } = await import('../src/modules/auth/audit.js');
+  return audit({
+    action: AUDIT_ACTIONS.TEACHER_APPLY || 'teacher.apply',
+    userId: userKey,
+    resourceType: 'teacher_application',
+    details: { email, status: 'pending' },
+    ipAddress,
+    userAgent,
+  });
 }
 
 /* ── Admin: o'quvchi qo'shish (HEMIS ID majburiy) ──

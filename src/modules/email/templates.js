@@ -32,6 +32,8 @@ const T = {
     teacherApprovedTitle: "O‘qituvchi arizasi qabul qilindi",
     teacherApprovedBody: "O‘qituvchi arizangiz tasdiqlandi. Endi darslarni boshqarishingiz mumkin.",
     teacherApprovedCta: 'Birinchi testingizni yarating',
+    loginLabel: 'Login (email)',
+    passwordLabel: 'Parol',
     teacherRejectedTitle: "O‘qituvchi arizasi rad etildi",
     teacherRejectedBody: "O‘qituvchi arizangiz rad etildi. Savollaringiz bo‘lsa, administrator bilan bog‘laning.",
     inviteTitle: 'Sinflarga taklif',
@@ -82,6 +84,8 @@ const T = {
     teacherApprovedTitle: "Ўқитувчи аризаси қабул қилинди",
     teacherApprovedBody: "Ўқитувчи аризангиз тасдиқланди. Энди дарсларни бошқаришингиз мумкин.",
     teacherApprovedCta: 'Биринчи тестингизни яратинг',
+    loginLabel: 'Login (email)',
+    passwordLabel: 'Пароль',
     teacherRejectedTitle: "Ўқитувчи аризаси рад этилди",
     teacherRejectedBody: "Ўқитувчи аризангиз рад этилди. Саволларингиз бўлса, администратор билан боғланинг.",
     inviteTitle: 'Синфларга таклиф',
@@ -132,6 +136,8 @@ const T = {
     teacherApprovedTitle: 'Заявка учителя одобрена',
     teacherApprovedBody: 'Ваша заявка учителя одобрена. Теперь вы можете управлять занятиями.',
     teacherApprovedCta: 'Создать первый тест',
+    loginLabel: 'Login (email)',
+    passwordLabel: 'Пароль',
     teacherRejectedTitle: 'Заявка учителя отклонена',
     teacherRejectedBody: 'Ваша заявка учителя отклонена. При вопросах обратитесь к администратору.',
     inviteTitle: 'Приглашение в классы',
@@ -182,6 +188,8 @@ const T = {
     teacherApprovedTitle: 'Teacher application approved',
     teacherApprovedBody: 'Your teacher application has been approved. You can now manage classes.',
     teacherApprovedCta: 'Create your first test',
+    loginLabel: 'Login (email)',
+    passwordLabel: 'Password',
     teacherRejectedTitle: 'Teacher application declined',
     teacherRejectedBody: 'Your teacher application was declined. Contact an administrator if you have questions.',
     inviteTitle: 'Class invitation',
@@ -376,19 +384,23 @@ export function renderWelcome({ username, lang }) {
 }
 
 /** Teacher tasdiqlandi. */
-export function renderTeacherApproved({ username, lang }) {
+export function renderTeacherApproved({ username, lang, login, password }) {
   const t = T[resolveTemplateLang(lang)];
   const preheader = t.teacherApprovedTitle;
   const base = process.env.SITE_URL || `http://localhost:${process.env.PORT || 3000}`;
   const teacherUrl = `${base.replace(/\/$/, '')}/teacher`;
+  const credentialsBlock = login && password
+    ? `<p style="font-size:15px;line-height:1.6;color:#334155;background:#f1f5f9;border-radius:8px;padding:12px 16px;margin:16px 0 0"><strong>${t.loginLabel}:</strong> ${esc(login)}<br><strong>${t.passwordLabel}:</strong> ${esc(password)}</p>`
+    : '';
   const html = layout(
     t,
     preheader,
     `<h1 style="font-size:20px;margin:0 0 8px;color:#0f172a">${t.teacherApprovedTitle}</h1>
-     <p style="font-size:15px;line-height:1.6;color:#334155;margin:0 0 4px">${t.teacherApprovedBody}</p>`,
+     <p style="font-size:15px;line-height:1.6;color:#334155;margin:0 0 4px">${t.teacherApprovedBody}</p>
+     ${credentialsBlock}`,
     { href: teacherUrl, label: t.teacherApprovedCta || t.panelBtn || 'Open' },
   );
-  const text = `${t.hello}${username ? `, ${esc(username)}` : ''}!\n\n${t.teacherApprovedTitle}\n\n${t.teacherApprovedBody}\n\n${t.teacherApprovedCta || 'Open'}: ${teacherUrl}\n\n${t.ignore}\n${t.footer}`;
+  const text = `${t.hello}${username ? `, ${esc(username)}` : ''}!\n\n${t.teacherApprovedTitle}\n\n${t.teacherApprovedBody}\n${login && password ? `${t.loginLabel}: ${login}\n${t.passwordLabel}: ${password}\n\n` : ''}${t.teacherApprovedCta || 'Open'}: ${teacherUrl}\n\n${t.ignore}\n${t.footer}`;
   return { subject: `${t.teacherApprovedTitle} — ${BRAND}`, html, text, preheader };
 }
 
