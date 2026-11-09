@@ -1,11 +1,17 @@
+/**
+ * Deborah — Sinf / guruh / o'quvchi (eski shamola bilan mos)
+ * -----------------------------------------------------------
+ * Eski roster/invites uslubiga rioya qilinadi:
+ *   - guruh:   groups/{gid}      (rosting staging.js da allaqachon ishlatilmoqda)
+ *   - o'quvchi: users/{key}.group = gid  (ustun maydon)
+ *   - o'qituvchi-guruh: groups/{gid}/teachers/{tkey}
+ * HEMIS-ga avtomatik sinq QILINMAYDI — faqat ichki journal.
+ */
+
 import crypto from 'crypto';
 import { safeKey } from '../../../utils/helpers.js';
 
 export const CLASSROOM_QR_TTL_MS = 45_000;
-export const CLASSROOM_QR_ROTATE_MS = 15_000;
-export const CLASSROOM_JOIN_TICKET_TTL_MS = 90_000;
-export const CLASSROOM_DEFAULT_RADIUS_METERS = 300;
-export const CLASSROOM_MAX_GEO_ACCURACY_METERS = 250;
 
 export const DEFAULT_GRADE_POLICY = Object.freeze({
   weights: Object.freeze({ accuracy: 80, speed: 20 }),
@@ -54,11 +60,10 @@ export function classroomUserKey(value) {
 export function validateClassroomLocation(input = {}) {
   const latitude = Number(input.latitude);
   const longitude = Number(input.longitude);
-  const radiusMeters = Number(input.radiusMeters ?? CLASSROOM_DEFAULT_RADIUS_METERS);
+  const radiusMeters = Number(input.radiusMeters ?? 300);
   if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90) return { ok: false, error: 'Kenglik qiymati noto‘g‘ri' };
   if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180) return { ok: false, error: 'Uzunlik qiymati noto‘g‘ri' };
   if (!Number.isFinite(radiusMeters) || radiusMeters < 50 || radiusMeters > 3000) return { ok: false, error: 'Radius 50–3000 metr oralig‘ida bo‘lishi kerak' };
-  // Dars nuqtasi — faqat tekshiruv uchun saqlanadi; talaba koordinatalari qayd etilmaydi.
   return { ok: true, geofence: { latitude, longitude, radiusMeters: Math.round(radiusMeters) } };
 }
 
@@ -68,7 +73,6 @@ export function validateGradePolicy(input = {}) {
   if (!Number.isInteger(accuracy) || !Number.isInteger(speed) || accuracy < 0 || speed < 0 || accuracy + speed !== 100) {
     return { ok: false, error: 'Aniqlik va tezlik ulushlari butun foiz bo‘lib, yig‘indisi 100 bo‘lishi kerak' };
   }
-
   const rawThresholds = Array.isArray(input.thresholds) ? input.thresholds : DEFAULT_GRADE_POLICY.thresholds;
   if (rawThresholds.length !== 3) return { ok: false, error: 'Uchta baho chegarasi kiritilishi kerak' };
   const thresholds = rawThresholds.map((row, index) => ({
@@ -86,15 +90,11 @@ export function validateGradePolicy(input = {}) {
   if (!Number.isFinite(below) || below < 0 || below > 10 || below > thresholds[2].grade) {
     return { ok: false, error: 'Eng past baho 0–10 oralig‘ida va oxirgi chegaradan yuqori bo‘lmasligi kerak' };
   }
-  return {
-    ok: true,
-    policy: { weights: { accuracy, speed }, thresholds, below },
-  };
+  return { ok: true, policy: { weights: { accuracy, speed }, thresholds, below } };
 }
 
 export function calculateClassroomGrade({ answers = [], questionCount = 0, policy = DEFAULT_GRADE_POLICY } = {}) {
   const total = Math.max(0, Number(questionCount) || 0);
-  const attempted = answers.length;
   const correct = answers.reduce((sum, answer) => sum + (answer?.isCorrect === true ? 1 : 0), 0);
   const totalPoints = answers.reduce((sum, answer) => {
     const score = Number(answer?.score);
@@ -107,24 +107,13 @@ export function calculateClassroomGrade({ answers = [], questionCount = 0, polic
     grade = normalizedPolicy.thresholds.find((row) => percent >= row.minPercent)?.grade ?? normalizedPolicy.below;
   }
   return {
-    attempted,
+    attempted: answers.length,
     correct,
     questionCount: total,
     accuracyPercent: total > 0 ? Math.round((correct / total) * 10000) / 100 : null,
     scorePercent: percent,
     grade,
   };
-}
-
-export function distanceMeters(a, b) {
-  const radians = (value) => (value * Math.PI) / 180;
-  const earthRadius = 6_371_000;
-  const dLat = radians(b.latitude - a.latitude);
-  const dLon = radians(b.longitude - a.longitude);
-  const lat1 = radians(a.latitude);
-  const lat2 = radians(b.latitude);
-  const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
-  return earthRadius * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
 }
 
 export function classroomDisplayName(student = {}) {

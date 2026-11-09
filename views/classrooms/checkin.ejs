@@ -73,7 +73,6 @@
   let geoDone = false;
   let geoAllowed = true;
 
-  // Geolokatsiya — ixtiyoriy, faqat sinf chekasi tekshiruv uchun. Koordinatalar saqlanmaydi.
   if('geolocation' in navigator){
     geoRow.hidden=false;
     navigator.geolocation.getCurrentPosition((pos)=>{
