@@ -323,9 +323,14 @@ router.post('/api/teachers/:id/approve', requireRecentAdminAuth, requireAdminMfa
     // Masalan: uztoz@gmail.com → login: uztoz@gmail.com, parol: uztoz123
     const emailLocal = String(uData?.email || '').split('@')[0] || userId;
     const generatedPassword = String(emailLocal).replace(/[^a-zA-Z0-9]/g, '') + '123';
-    const passwordHash = await hashPassword(generatedPassword);
 
-    await fb.set(`users/${userId}/password`, passwordHash).catch(() => {});
+    // Agar foydalanuvchi allaqachon parolga ega bo'lmasa (apply shaklidan keldi) —
+    // avtomatik generatsiya qilamiz. Agar parol allaqachon bo'lsa (reg orqali keldi) —
+    // uni saqlaymiz, o'zgartirmaymiz.
+    if (!uData?.password) {
+      const passwordHash = await hashPassword(generatedPassword);
+      await fb.set(`users/${userId}/password`, passwordHash).catch(() => {});
+    }
     await fb.set(`users/${userId}/email_verified`, true).catch(() => {});
     await fb.set(`users/${userId}/teacher_credentials_generated_at`, now).catch(() => {});
     await fb.set(`users/${userId}/teacher_credentials_note`, 'Login: email; parol: email local part + 123').catch(() => {});
