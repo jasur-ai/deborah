@@ -16,7 +16,7 @@ const _t = (k, fb) => (_nc[k] || fb);
     <button type="button" class="nav-burger" aria-label="<%= _t('menu', 'Menyu') %>" aria-expanded="false" aria-controls="nav-links"><%- icon('menu', 18) %></button>
     <ul class="nav-links" id="nav-links">
       <li><a href="/#roles" class="nav-link<%= _navActive === 'product' ? ' active' : '' %>"><%= _t('product', 'Product') %></a></li>
-      <li><a href="/#teachers" class="nav-link<%= _navActive === 'teachers' ? ' active' : '' %>"><%= _t('teachers', 'Teachers') %></a></li>
+      <li><a href="/user/login" class="nav-link<%= _navActive === 'teachers' ? ' active' : '' %>"><%= _t('login', 'Kirish') %></a></li>
       <li><a href="/user/panel" class="nav-link<%= _navActive === 'cast' ? ' active' : '' %>">Cast</a></li>
       <li><a href="/#ready" class="nav-link<%= _navActive === 'ready' ? ' active' : '' %>"><%= _t('ready', 'Ready tests') %></a></li>
       <li><a href="/#resources" class="nav-link<%= _navActive === 'resources' ? ' active' : '' %>"><%= _t('resources', 'Resources') %></a></li>
