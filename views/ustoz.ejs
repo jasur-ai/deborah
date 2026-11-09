@@ -78,10 +78,10 @@
     </section>
 
     <div class="uz-cols" id="auth">
-      <!-- ═══ ARIZA YUBORISH (royxatdan o'tmasdan) ═══ -->
+      <!-- ═══ ARIZA YUBORISH ═══ -->
       <section class="uz-card" aria-labelledby="uz-apply-h">
         <h2 id="uz-apply-h">O'qituvchi arizasi</h2>
-        <div class="uz-card-sub">Faqat arizani yuboring. Ro'yxatdan o'tish shart emas. Ma'lumotlaringiz adminga yuboriladi — tasdiqlangach login va parol emailga keladi.</div>
+        <div class="uz-card-sub">Faqat arizani yuboring. Ma'lumotlaringiz adminga yuboriladi — tasdiqlangach login va parol emailga keladi.</div>
         <% if (typeof error !== 'undefined' && error) { %><div class="uz-err" role="alert"><%= error %></div><% } %>
         <% if (typeof ok !== 'undefined' && ok) { %><div class="uz-ok" role="status"><b>Ariza yuborildi.</b> Admin tasdiqlagandan so'ng emailingizga login va parol keladi. <a href="/user/login">Kirish sahifasiga o'tish →</a></div><% } %>
         <form id="apply-form" novalidate>
