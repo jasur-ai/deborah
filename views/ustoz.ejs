@@ -107,30 +107,6 @@
         </form>
       </section>
 
-      <!-- ═══ ALLOQACHON KIRISH (tasdiqlangan o'qituvchilarga) ═══ -->
-      <section class="uz-card" aria-labelledby="uz-login-h">
-        <h2 id="uz-login-h">Kirish (tasdiqlangan o'qituvchilarga)</h2>
-        <div class="uz-card-sub">Arizangiz tasdiqlanganidan so'ng emailingizdagi login va parol bilan kiring.</div>
-        <% if (typeof loginError !== 'undefined' && loginError) { %><div class="uz-err" role="alert"><%= loginError %></div><% } %>
-        <form action="/user/login" method="POST" novalidate>
-          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-          <input type="hidden" name="mode" value="login">
-          <input type="hidden" name="lang" value="uz">
-          <div class="uz-fld">
-            <label for="ul-acc">Login (email)</label>
-            <input class="uz-inp" id="ul-acc" name="username" type="text" autocomplete="username" required>
-          </div>
-          <div class="uz-fld">
-            <label for="ul-pass">Parol</label>
-            <div class="pw-wrap">
-              <input class="uz-inp" id="ul-pass" name="password" type="password" autocomplete="current-password" required>
-              <button type="button" class="pw-toggle" data-pw-toggle="ul-pass" aria-label="Parolni ko'rsatish" aria-pressed="false"><span data-pw-toggle-label>👁</span></button>
-            </div>
-          </div>
-          <button class="uz-btn uz-btn--ghost" type="submit">Kirish</button>
-          <div class="uz-switch">Arizangiz hali kutilmoqda? <a href="/user/teacher-approval">Ariza holati →</a></div>
-        </form>
-      </section>
     </div>
   </main>
 
