@@ -89,6 +89,7 @@ import devRoutes from './routes/dev.js';
 import academicRoutes from './routes/academic.js';
 import rosterRoutes from './routes/roster.js';
 import accommodationRoutes from './routes/accommodation.js';
+import classroomsRoutes from './routes/classrooms.js';
 import competencyRoutes from './routes/competency.js';
 import itemBankRoutes from './routes/item-bank.js';
 import rubricRoutes from './routes/rubric.js';
@@ -498,6 +499,9 @@ app.get('/health', (req, res) => {
 
   // ── Accommodation API routes ──
   app.use('/', accommodationRoutes);
+
+  // ── O'quvchi / sinf / guruh (classrooms) routes ──
+  app.use('/', classroomsRoutes);
 
   // ── Competency API routes ──
   app.use('/', competencyRoutes);

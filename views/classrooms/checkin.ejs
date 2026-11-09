@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Sinfga kirish — Deborah</title>
+  <link rel="icon" type="image/svg+xml" href="/images/logo-icon.svg">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    :root{--bg:#f8fafc;--card:#ffffff;--text:#0f172a;--muted:#64748b;--accent:#2563eb;--border:#e2e8f0;--ok:#15803d;--bad:#b91c1c;}
+    body{background:var(--bg);color:var(--text);font-family:'Source Sans 3',system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;}
+    .box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;width:100%;max-width:420px;box-shadow:0 10px 30px rgba(0,0,0,.08);}
+    .brand{display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+    .brand b{font-size:1.1rem;color:var(--accent);}
+    h1{font-size:1.05rem;margin-bottom:6px;}
+    p.sub{font-size:.85rem;color:var(--muted);margin-bottom:18px;}
+    label{display:block;font-size:.8rem;font-weight:700;color:#475569;margin-bottom:6px;}
+    input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:.95rem;background:#ffffff;}
+    button{width:100%;padding:10px;border-radius:10px;border:none;background:var(--accent);color:#ffffff;font-size:.95rem;font-weight:700;cursor:pointer;transition:background .15s;}
+    button:hover{background:#1d4ed8;}
+    button:disabled{opacity:.6;cursor:not-allowed;}
+    .msg{margin:12px 0;font-size:.85rem;font-weight:600;}
+    .msg--ok{color:var(--ok);}.msg--bad{color:var(--bad);}
+    .row{margin-bottom:14px;}
+    .geo{display:flex;align-items:center;gap:10px;margin-top:8px;font-size:.82rem;color:var(--muted);}
+    .geo-dot{width:8px;height:8px;border-radius:50%;background:#cbd5e1;}
+    .geo-dot--on{background:var(--ok);}
+    .hidden{display:none;}
+    .success{text-align:center;}
+    .success .big{font-size:2.5rem;margin-bottom:8px;}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="brand"><b>Deborah</b> Sinfga kirish</div>
+    <div id="step-form">
+      <h1>Ismingizni kiriting</h1>
+      <p class="sub">O‘qituvchi tomonidan berilgan QR orqali kirmoqchisiz. Sinf joyida tekshiriladi.</p>
+      <form id="checkin-form">
+        <div class="row"><label>Ism, familiya</label><input id="name" type="text" placeholder="Ismingiz..." maxlength="60" required autocomplete="name"></div>
+        <div class="row geo hidden" id="geo-row">
+          <div class="geo-dot" id="geo-dot"></div>
+          <span id="geo-text">Joylashuv tekshirilmoqda…</span>
+        </div>
+        <div id="err" class="msg--bad hidden"></div>
+        <button type="button" id="join-btn" disabled>Kirish</button>
+      </form>
+    </div>
+    <div id="step-ok" class="success hidden">
+      <div class="big">✓</div>
+      <h1 id="ok-title">Xush kelibsiz</h1>
+      <p class="sub" id="ok-sub">Siz sinfga qabul qilindingiz.</p>
+    </div>
+  </div>
+<script>
+(function(){
+  const token = (new URLSearchParams(location.search).get('token') || '').trim();
+  const form = document.getElementById('checkin-form');
+  const nameInp = document.getElementById('name');
+  const joinBtn = document.getElementById('join-btn');
+  const err = document.getElementById('err');
+  const geoRow = document.getElementById('geo-row');
+  const geoDot = document.getElementById('geo-dot');
+  const geoText = document.getElementById('geo-text');
+  const stepForm = document.getElementById('step-form');
+  const stepOk = document.getElementById('step-ok');
+  const okTitle = document.getElementById('ok-title');
+  const okSub = document.getElementById('ok-sub');
+
+  if(!token){ err.textContent='Token topilmadi.'; err.hidden=false; return; }
+
+  let coords = null;
+  let geoDone = false;
+  let geoAllowed = true;
+
+  // Geolokatsiya — ixtiyoriy, faqat sinf chekasi tekshiruv uchun. Koordinatalar saqlanmaydi.
+  if('geolocation' in navigator){
+    geoRow.hidden=false;
+    navigator.geolocation.getCurrentPosition((pos)=>{
+      coords = { latitude: pos.coords.latitude, longitude: pos.coords.longitude };
+      geoDone=true; geoAllowed=true;
+      geoDot.className='geo-dot geo-dot--on'; geoText.textContent='Joylashuv aniqlandi';
+      updateBtn();
+    }, (err)=>{
+      geoDone=true; geoAllowed=false;
+      geoDot.className='geo-dot'; geoText.textContent='Joylashuv tekshirilmadi (sinf chekasi tekshirilmaydi)';
+      updateBtn();
+    }, { enableHighAccuracy:false, timeout:10000, maximumAge:0 });
+  } else {
+    geoDone=true; geoAllowed=false;
+    geoRow.hidden=false; geoText.textContent='Brauzer joylashuvni qo‘llab-quvvatlamaydi';
+    updateBtn();
+  }
+
+  nameInp.addEventListener('input', updateBtn);
+  function updateBtn(){ joinBtn.disabled = !nameInp.value.trim(); }
+
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    err.hidden=true; joinBtn.disabled=true; joinBtn.textContent='Kirilmoqda…';
+    const body = { token, name: nameInp.value.trim(), latitude: coords ? coords.latitude : null, longitude: coords ? coords.longitude : null };
+    try{
+      const r = await fetch('/api/classrooms/checkin', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+      const d = await r.json();
+      if(!d.ok) throw new Error(d.error||'Kirishda xatolik');
+      stepForm.hidden=true; stepOk.hidden=false;
+      okTitle.textContent = d.inRange ? 'Xush kelibsiz, '+escapeHtml(d.name) : 'Kirish rad etildi';
+      okSub.textContent = d.inRange ? 'Siz sinfga qabul qilindingiz.' : 'Siz sinf chegara tashqaridasiz. Qaytadan urinib ko‘ring.';
+      okSub.className = d.inRange ? 'sub msg--ok' : 'sub msg--bad';
+    }catch(err_){
+      err.textContent = err_.message||'Tarmoq xatosi';
+      err.hidden=false;
+      joinBtn.disabled=false; joinBtn.textContent='Kirish';
+    }
+  });
+})();
+function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+</script>
+</body>
+</html>

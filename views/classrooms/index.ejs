@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <title>Sinf — Deborah</title>
+  <link rel="stylesheet" href="/css/admin.css?v=nv6">
+  <style>
+    :root{--clr-accent:#2563eb;--clr-surface:#f8fafc;--clr-border:#e2e8f0;}
+    .shell{display:flex;height:100vh;overflow:hidden;font-family:'Source Sans 3',system-ui,sans-serif;color:#0f172a;}
+    .shell nav{width:260px;background:#ffffff;border-right:1px solid var(--clr-border);flex-shrink:0;overflow-y:auto;padding:20px 0;}
+    .shell .brand{padding:0 18px 16px;font-weight:800;font-size:1.15rem;color:#2563eb;border-bottom:1px solid var(--clr-border);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+    .shell .nav-item{display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;font-size:0.92rem;color:#334155;border:none;background:transparent;text-align:left;width:100%;transition:background .15s,color .15s;}
+    .shell .nav-item:hover{background:#f1f5f9;color:#0f172a;}
+    .shell .nav-item.active{background:#eff6ff;color:#2563eb;font-weight:700;border-left:3px solid #2563eb;}
+    .shell main{flex:1;overflow-y:auto;background:var(--clr-surface);padding:24px;display:none;}
+    .shell main.active{display:block;}
+    .page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+    .page-head h1{font-size:1.25rem;margin:0;}
+    .page-head p.sub{margin:4px 0 0;font-size:0.85rem;color:#64748b;}
+    .card{background:#ffffff;border:1px solid var(--clr-border);border-radius:12px;padding:16px;margin-bottom:14px;}
+    .card h2{font-size:0.85rem;text-transform:uppercase;letter-spacing:.04em;color:#64748b;margin:0 0 12px;font-weight:700;}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;}
+    .tile{background:#ffffff;border:1px solid var(--clr-border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:box-shadow .15s,border-color .15s;}
+    .tile:hover{border-color:#94a3b8;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+    .tile .ico{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:1.35rem;flex-shrink:0;}
+    .tile .ico--students{background:#e0f2fe;color:#0369a1;}
+    .tile .ico--groups{background:#f0fdf4;color:#15803d;}
+    .tile .ico--qr{background:#fef3c7;color:#b45309;}
+    .tile strong{font-size:1rem;display:block;}
+    .tile small{font-size:.78rem;color:#64748b;}
+    table{width:100%;border-collapse:collapse;font-size:.86rem;}
+    th{text-align:left;font-weight:700;font-size:.78rem;color:#64748b;padding:8px 10px;border-bottom:1px solid var(--clr-border);}
+    td{padding:8px 10px;border-bottom:1px solid var(--clr-border);vertical-align:middle;}
+    tr:hover td{background:#f8fafc;}
+    .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.72rem;font-weight:700;background:#e2e8f0;color:#334155;}
+    .badge--ok{background:#dcfce7;color:#166534;}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;border:1px solid var(--clr-border);background:#ffffff;color:#0f172a;font-size:.88rem;cursor:pointer;font-weight:600;transition:background .15s,border-color .15s;}
+    .btn:hover{background:#f1f5f9;border-color:#94a3b8;}
+    .btn--primary{background:#2563eb;color:#ffffff;border-color:#2563eb;}
+    .btn--primary:hover{background:#1d4ed8;}
+    .btn--danger{background:#fee2e2;color:#991b1b;border-color:#fecaca;}
+    .btn--danger:hover{background:#fecaca;}
+    .form{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 18px;max-width:720px;}
+    .form label{font-size:.8rem;font-weight:700;color:#475569;}
+    .form input,.form select{width:100%;padding:8px 10px;border:1px solid var(--clr-border);border-radius:10px;background:#ffffff;font-size:.88rem;}
+    .form .full{grid-column:1/-1;}
+    .muted{color:#64748b;font-size:.8rem;}
+    .empty{text-align:center;padding:30px;color:#64748b;}
+    .ok-msg{color:#166534;font-size:.85rem;margin:8px 0 12px;font-weight:600;}
+    .err-msg{color:#dc2626;font-size:.85rem;margin:8px 0 12px;font-weight:600;}
+    .qr-box{border:1px solid var(--clr-border);border-radius:12px;padding:16px;text-align:center;max-width:320px;margin:0 auto;}
+    .qr-box img{width:180px;height:180px;border-radius:8px;background:#ffffff;}
+    .qr-hint{font-size:.78rem;color:#64748b;margin-top:8px;line-height:1.4;}
+    @media(max-width:768px){.shell{flex-direction:column;}.shell nav{width:100%;height:auto;border-right:none;border-bottom:1px solid var(--clr-border);display:flex;overflow-x:auto;padding:8px 4px;}.shell .brand{display:none;}.shell .nav-item{white-space nowrap;padding:8px 12px;font-size:.82rem;}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <nav>
+      <div class="brand">Sinf<b>Deborah</b></div>
+      <button type="button" class="nav-item active" id="nav-students"><span class="ico ico--students">👨‍🎓</span>O‘quvchilar</button>
+      <button type="button" class="nav-item" id="nav-groups"><span class="ico ico--groups">👥</span>Guruhlar</button>
+      <button type="button" class="nav-item" id="nav-qr"><span class="ico ico--qr">📱</span>QR kirish</button>
+    </nav>
+    <main id="view-students" class="active">
+      <div class="page-head">
+        <div><h1>O‘quvchilar ro‘yxati</h1><p class="sub">Barcha guruhdagi o‘quvchilar, HEMIS ID va bazaviy baholar</p></div>
+        <button type="button" class="btn btn--primary" id="btn-add-student"><span>➕</span> O‘quvchi qo‘shish</button>
+      </div>
+      <div id="msg-students"></div>
+      <div class="card">
+        <div class="form" id="form-add-student" style="display:none">
+          <label>Ism</label><input id="f-first" type="text" placeholder="Ism" maxlength="40">
+          <label>Familiya</label><input id="f-last" type="text" placeholder="Familiya" maxlength="40">
+          <label>Guruh</label><input id="f-group" type="text" placeholder="Guruh nomi (yangi bo‘lsa yaratiladi)" maxlength="80">
+          <label>HEMIS ID</label><input id="f-hemi" type="text" placeholder="HEMIS ID" maxlength="40">
+          <label>Username (ixtiyoriy)</label><input id="f-user" type="text" placeholder="Mavjud o‘quvchi username yoki yangi login">
+          <div class="full"><button type="button" class="btn btn--primary" id="f-save">Saqlash</button> <button type="button" class="btn" id="f-cancel">Bekor qilish</button></div>
+        </div>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Ism, familiya</th><th>Guruh</th><th>HEMIS ID</th><th>Username</th><th>Amal</th></tr></thead>
+          <tbody id="tbl-students"></tbody>
+        </table>
+      </div>
+    </main>
+
+    <main id="view-groups">
+      <div class="page-head">
+        <div><h1>Guruhlar</h1><p class="sub">O‘quvchi guruhlarini yarating va o‘qituvchi biriktiring</p></div>
+        <button type="button" class="btn btn--primary" id="btn-add-group"><span>➕</span> Yangi guruh</button>
+      </div>
+      <div id="msg-groups"></div>
+      <div class="card">
+        <div class="form" id="form-add-group" style="display:none">
+          <label>Guruh nomi</label><input id="g-name" type="text" placeholder="Masalan: 9-A sinf, Dasturlash" maxlength="80">
+          <div class="full"><button type="button" class="btn btn--primary" id="g-save">Yaratish</button> <button type="button" class="btn" id="g-cancel">Bekor qilish</button></div>
+        </div>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Guruh</th><th>O‘quvchilari</th><th>Geofence</th><th>Grade policy</th><th>Amal</th></tr></thead>
+          <tbody id="tbl-groups"></tbody>
+        </table>
+      </div>
+    </main>
+
+    <main id="view-qr">
+      <div class="page-head">
+        <div><h1>QR kirish (sinf)</h1><p class="sub">Guruh uchun QR rasmni oching, talaba brauzerida skanerlaydi. Geofence yoqilsa — faqat sinf chegara ichida ochiladi.</p></div>
+        <div id="msg-qr"></div>
+        <div class="card">
+          <label>Guruhni tanlang</label>
+          <select id="qr-group" class="inp" style="padding:8px 10px;border-radius:10px;border:1px solid var(--clr-border);width:100%;max-width:360px;"></select>
+        </div>
+        <div class="qr-box" id="qr-preview" style="display:none">
+          <div style="font-weight:700;margin-bottom:8px">Skanerlash uchun rasmni oching</div>
+          <img id="qr-img" alt="QR">
+          <div class="qr-hint" id="qr-hint">QR faqat belgilangan vaqt davomida amal qiladi. Geofence yoqilgan bo‘lsa, talaba sinf joyida bo‘lishi shart.</div>
+          <button type="button" class="btn btn--primary" id="btn-rotate-qr" style="margin-top:10px">Kodni yangilash</button>
+        </div>
+      </div>
+    </main>
+  </div>
+<script>
+const views = { students:'view-students', groups:'view-groups', qr:'view-qr' };
+function show(name){ Object.values(views).forEach(v=>document.getElementById(v).classList.remove('active')); document.getElementById(views[name]).classList.add('active'); document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active')); document.getElementById('nav-'+name).classList.add('active'); document.getElementById('msg-'+name).textContent=''; }
+document.getElementById('nav-students').onclick=()=>show('students');
+document.getElementById('nav-groups').onclick=()=>show('groups');
+document.getElementById('nav-qr').onclick=()=>show('qr');
+
+function setMsg(view,text,err){ const el=document.getElementById('msg-'+view); el.textContent=text; el.className=err?'err-msg':'ok-msg'; }
+
+// ── Students ──
+async function loadStudents(){ const r=await fetch('/api/admin/classrooms/students'); const d=await r.json(); const t=document.getElementById('tbl-students'); t.innerHTML=''; (d.students||[]).forEach(s=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${escape(s.firstName||'')}&nbsp;${escape(s.lastName||'')}</td><td><span class="badge">${escape(s.group)}</span></td><td>${escape(s.hemisId||'—')}</td><td>${escape(s.username||'—')}</td><td><button class="btn btn--danger btn-sm" onclick="delStudent('${escape(s.userId||'')}', '${escape(s.group||'')}')">O‘chirish</button></td>`; t.appendChild(tr); }); }
+function escape(s){ return String(s||'').replace(/[&<>"']/g,c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+document.getElementById('btn-add-student').onclick=()=>{ const f=document.getElementById('form-add-student'); f.style.display=f.style.display==='none'?'grid':'none'; };
+document.getElementById('f-cancel').onclick=()=>{ document.getElementById('form-add-student').style.display='none'; };
+document.getElementById('f-save').onclick=async()=>{
+  const body={ firstName:document.getElementById('f-first').value, lastName:document.getElementById('f-last').value, group:document.getElementById('f-group').value, hemisId:document.getElementById('f-hemi').value, username:document.getElementById('f-user').value };
+  const r=await fetch('/api/admin/classrooms/students',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const d=await r.json();
+  if(d.ok){ setMsg('students','O‘quvchi saqlandi',false); loadStudents(); document.getElementById('form-add-student').style.display='none'; } else setMsg('students',d.error||'Xatolik',true);
+};
+async function delStudent(uid,gid){ if(!confirm("O‘quvchini guruhdan o‘chirilsinmi?")) return; await fetch(`/api/admin/classrooms/groups/${encodeURIComponent(gid)}/members/${encodeURIComponent(uid)}`,{method:'DELETE'}); loadStudents(); }
+loadStudents();
+
+// ── Groups ──
+async function loadGroups(){ const r=await fetch('/api/admin/classrooms/students'); const d=await r.json(); const t=document.getElementById('tbl-groups'); t.innerHTML=''; const sel=document.getElementById('qr-group'); sel.innerHTML='<option value="">Guruh tanlang</option>'; (d.groups||[]).forEach(g=>{ const tr=document.createElement('tr'); const opt=document.createElement('option'); opt.value=g.id; opt.textContent=g.name||g.id; sel.appendChild(opt); tr.innerHTML=`<td><strong>${escape(g.name||g.id)}</strong><div class="muted">${escape(g.code||g.id)}</div></td><td><span class="badge badge--ok">${g.memberCount||0}</span></td><td><span class="badge">${g.geofence?'Yoqilgan':'Yo‘q'}</span></td><td><span class="badge">${g.gradePolicy?'Yoqilgan':'Standart'}</span></td><td><button class="btn btn--primary btn-sm" onclick="openGroup('${escape(g.id)}')">Tarkib</button></td>`; t.appendChild(tr); }); }
+document.getElementById('btn-add-group').onclick=()=>{ const f=document.getElementById('form-add-group'); f.style.display=f.style.display==='none'?'grid':'none'; };
+document.getElementById('g-cancel').onclick=()=>{ document.getElementById('form-add-group').style.display='none'; };
+document.getElementById('g-save').onclick=async()=>{
+  const name=document.getElementById('g-name').value;
+  const r=await fetch('/api/admin/classrooms/groups',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name})});
+  const d=await r.json();
+  if(d.ok){ setMsg('groups','Guruh yaratildi',false); loadGroups(); document.getElementById('form-add-group').style.display='none'; } else setMsg('groups',d.error||'Xatolik',true);
+};
+loadGroups();
+
+// ── QR ──
+async function loadQrGroups(){ const r=await fetch('/api/admin/classrooms/students'); const d=await r.json(); const sel=document.getElementById('qr-group'); sel.innerHTML='<option value="">Guruh tanlang</option>'; (d.groups||[]).forEach(g=>{ const o=document.createElement('option'); o.value=g.id; o.textContent=(g.name||g.id); sel.appendChild(o); }); }
+document.getElementById('qr-group').onchange=async()=>{
+  const gid=document.getElementById('qr-group').value;
+  const box=document.getElementById('qr-preview'); box.style.display='none';
+  document.getElementById('btn-rotate-qr').disabled=true;
+  if(!gid) return;
+  try{
+    const r=await fetch('/api/classrooms/qr/token?group='+encodeURIComponent(gid));
+    const d=await r.json();
+    if(!d.ok) throw new Error(d.error||'Xatolik');
+    const img=document.getElementById('qr-img');
+    img.src='/cast/qr?d='+encodeURIComponent(d.url)+'&v='+Date.now();
+    const hint=document.getElementById('qr-hint');
+    box.style.display='block';
+    hint.textContent='QR rasmni skanerlang. Kod muddati: 45 soniya. Talaba ismini kiritadi va sinf joyida tekshiriladi.';
+    document.getElementById('btn-rotate-qr').disabled=false;
+  }catch(e){ setMsg('qr',e.message||'QR olishda xatolik',true); }
+};
+document.getElementById('btn-rotate-qr').onclick=()=>{ document.getElementById('qr-group').dispatchEvent(new Event('change')); };
+loadQrGroups();
+</script>
+</body>
+</html>
