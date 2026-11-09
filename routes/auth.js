@@ -1053,30 +1053,15 @@ router.get('/ustoz', redirectIfAuthForTeacherPortal, async (req, res) => {
   if (req.session?.user?.role === 'teacher_rejected') {
     return res.redirect('/user/register?role=teacher&lang=uz');
   }
-  // S34: /ustoz endi TO'LIQ o'qituvchi landing'ini ko'rsatadi (uploads/index.html 1:1 —
-  // views/index.ejs). Cast landing (/) hammaga ko'rinadi; o'qituvchi maydoni shu yerda —
-  // robots.txt Disallow + kanonik / → qidiruv tizimlarida ochiq ko'rinmaydi.
+  // /ustoz — faqat o'qituvchi ariza shakli (Ism, Email, Rozilik). Ro'yxatdan o'tish yo'q.
   try {
-    const { LANDING_COPY } = await import('../data/landing.js');
-    const { isOidcEnabled } = await import('../src/modules/auth/oidc.js');
-    return res.render('index', {
-      title: LANDING_COPY.uz.meta.title,
-      description: LANDING_COPY.uz.meta.description,
-      copy: LANDING_COPY.uz,
-      lang: 'uz',
-      path: '/',
-      csrfToken: req.session.csrfToken || '',
-      oidcEnabled: isOidcEnabled(),
-      hemisEnabled: false,
-      opendata: null,
-    });
-  } catch (e) {
-    // fail-soft: eski ustoz maydoni sahifasi
     return res.render('ustoz', {
       title: "O'qituvchilar uchun — Deborah",
       csrfToken: req.session.csrfToken || '',
       error: null,
     });
+  } catch (e) {
+    return res.status(500).send('Sahifa yuklanmadi');
   }
 });
 
