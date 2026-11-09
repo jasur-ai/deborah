@@ -325,12 +325,10 @@ router.post('/api/teachers/:id/approve', requireRecentAdminAuth, requireAdminMfa
     const generatedPassword = String(emailLocal).replace(/[^a-zA-Z0-9]/g, '') + '123';
     const passwordHash = await hashPassword(generatedPassword);
 
-    await fb.set(`users/${userId}`, {
-      password: passwordHash,
-      email_verified: true,
-      teacher_credentials_generated_at: now,
-      teacher_credentials_note: 'Login: email; parol: email local part + 123',
-    }, { merge: true }).catch(() => {});
+    await fb.set(`users/${userId}/password`, passwordHash).catch(() => {});
+    await fb.set(`users/${userId}/email_verified`, true).catch(() => {});
+    await fb.set(`users/${userId}/teacher_credentials_generated_at`, now).catch(() => {});
+    await fb.set(`users/${userId}/teacher_credentials_note`, 'Login: email; parol: email local part + 123').catch(() => {});
 
     // Xabar (A-19 §11): email/Telegram infra P2 — hozircha user record + audit
     await fb.set(`users/${userId}/notification_last`, {

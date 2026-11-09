@@ -47,7 +47,7 @@ function roleCtx(req) {
  * Admin tasdiqlagandan so'ng parol avtomatik generated bo'ladi (email local part + 123).
  */
 router.post('/api/teacher/apply', async (req, res) => {
-  const { name, email, consent } = req.body || {};
+  const { name, email, university, subject, experience, reason, consent } = req.body || {};
   const cleanName = normalizePersonName(name);
   if (!cleanName) return res.status(400).json({ ok: false, error: 'Ism shart' });
   const cleanEmail = String(email || '').normalize('NFKC').trim().toLowerCase();
@@ -85,6 +85,10 @@ router.post('/api/teacher/apply', async (req, res) => {
     isVip: false,
     teacher_application: {
       full_name: cleanName,
+      university: String(university || '').trim(),
+      subject: String(subject || '').trim(),
+      experience: String(experience || '').trim(),
+      reason: String(reason || '').trim(),
       consent: true,
       appliedAt: now,
       status: 'pending',
