@@ -47,8 +47,8 @@ function roleCtx(req) {
  * Admin tasdiqlagandan so'ng parol avtomatik generated bo'ladi (email local part + 123).
  */
 router.post('/api/teacher/apply', async (req, res) => {
-  const { name, email, university, subject, experience, reason, consent } = req.body || {};
-  const cleanName = normalizePersonName(name);
+  const { name, username, email, password, university, subject, experience, reason, consent } = req.body || {};
+  const cleanName = normalizePersonName(name || username || '');
   if (!cleanName) return res.status(400).json({ ok: false, error: 'Ism shart' });
   const cleanEmail = String(email || '').normalize('NFKC').trim().toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) return res.status(400).json({ ok: false, error: 'Email noto‘g‘ri' });
@@ -72,9 +72,16 @@ router.post('/api/teacher/apply', async (req, res) => {
   }
 
   const now = Date.now();
+  // Agar ro'yxatdan o'tganda parol berilgan bo'lsa — ununi hashlab saqlaymiz.
+  // Aks holda bo'sh qoldiramiz, admin approve qilganida uname+123 orqali generatsiya qilinadi.
+  let passwordHash = '';
+  if (password && String(password).length >= 8) {
+    passwordHash = await hashPassword(String(password));
+  }
+
   await fb.set(`users/${userKey}`, {
     username: userKey,
-    password: '', // parol admin tasdiqlaganda generated bo'ladi
+    password: passwordHash,
     email: cleanEmail,
     email_verified: false,
     role: 'teacher_pending',
