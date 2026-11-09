@@ -81,7 +81,7 @@
       <!-- ═══ ARIZA YUBORISH (royxatdan o'tmasdan) ═══ -->
       <section class="uz-card" aria-labelledby="uz-apply-h">
         <h2 id="uz-apply-h">O'qituvchi arizasi</h2>
-        <div class="uz-card-sub">Ro'yxatdan o'tish shart emas. Ma'lumotlaringiz adminga yuboriladi — tasdiqlangach login va parol emailga keladi.</div>
+        <div class="uz-card-sub">Faqat arizani yuboring. Ro'yxatdan o'tish shart emas. Ma'lumotlaringiz adminga yuboriladi — tasdiqlangach login va parol emailga keladi.</div>
         <% if (typeof error !== 'undefined' && error) { %><div class="uz-err" role="alert"><%= error %></div><% } %>
         <% if (typeof ok !== 'undefined' && ok) { %><div class="uz-ok" role="status"><b>Ariza yuborildi.</b> Admin tasdiqlagandan so'ng emailingizga login va parol keladi. <a href="/user/login">Kirish sahifasiga o'tish →</a></div><% } %>
         <form id="apply-form" novalidate>
@@ -90,38 +90,20 @@
           <input type="text" name="website" id="uz-hp" tabindex="-1" autocomplete="off" value="" aria-hidden="true" style="position:absolute;left:-9999px">
           <div class="uz-row">
             <div class="uz-fld">
-              <label for="ur-name">Ism va familiya</label>
-              <input class="uz-inp" id="ur-name" name="name" type="text" autocomplete="name" required>
+              <label for="ur-name">Ism</label>
+              <input class="uz-inp" id="ur-name" name="name" type="text" autocomplete="name" placeholder="Ismingiz" required>
             </div>
             <div class="uz-fld">
               <label for="ur-email">Email (keyingi login)</label>
-              <input class="uz-inp" id="ur-email" name="email" type="email" autocomplete="email" required>
+              <input class="uz-inp" id="ur-email" name="email" type="email" autocomplete="email" placeholder="email@manzil.uz" required>
             </div>
-          </div>
-          <div class="uz-fld">
-            <label for="ur-uni">Universitet / maktab</label>
-            <input class="uz-inp" id="ur-uni" name="university" type="text" autocomplete="organization" required>
-          </div>
-          <div class="uz-row">
-            <div class="uz-fld">
-              <label for="ur-subj">Fan</label>
-              <input class="uz-inp" id="ur-subj" name="subject" type="text" autocomplete="off" required>
-            </div>
-            <div class="uz-fld">
-              <label for="ur-exp">Tajriba (yil)</label>
-              <input class="uz-inp" id="ur-exp" name="experience" type="number" min="0" max="50" inputmode="numeric">
-            </div>
-          </div>
-          <div class="uz-fld">
-            <label for="ur-reason">Nega o'qituvchi sifatida qo'shilmoqchisiz?</label>
-            <textarea class="uz-inp" id="ur-reason" name="reason" rows="2" maxlength="500" placeholder="Qisqacha (ixtiyoriy, lekin tasdiqlashga yordam beradi)"></textarea>
           </div>
           <label class="uz-consent">
             <input type="checkbox" name="consent" value="on" required>
-            <span>Maxfiylik siyosati va foydalanish shartlariga roziman. Ma'lumotlarim arizani ko'rib chiqish uchun adminga yuboriladi.</span>
+            <span>Roziman: ma'lumotlarim arizani ko'rib chiqish uchun adminga yuboriladi.</span>
           </label>
           <button class="uz-btn" type="submit">Arizani yuborish</button>
-          <div class="uz-note"><b>Qanday ishlaydi:</b> arizani yuborganingizda holat «Kutilmoqda» bo'ladi → admin <b>O'qituvchilar</b> bo'limida ko'rib chiqadi → tasdiqlansa, emailingizga login (emailingiz) va parol keladi. Rad etilsa, sababi ko'rsatiladi.</div>
+          <div class="uz-note"><b>Qanday ishlaydi:</b> arizani yuborganingizda holat «Kutilmoqda» bo'ladi → admin ko'rib chiqadi → tasdiqlansa, emailingizga login (emailingiz) va parol keladi.</div>
         </form>
       </section>
 

@@ -42,18 +42,16 @@ function roleCtx(req) {
 }
 
 /* ── Public: O'qituvchi arizasi (royxatdan o'tmasdan) ──
- * Body: name, email, university, subject, experience?, reason?, consent
+ * Body: name, email, consent
  * Yaratadi: users/{key} role=teacher_pending, parol YO'Q.
  * Admin tasdiqlagandan so'ng parol avtomatik generated bo'ladi (email local part + 123).
  */
 router.post('/api/teacher/apply', async (req, res) => {
-  const { name, email, university, subject, experience, reason, consent } = req.body || {};
+  const { name, email, consent } = req.body || {};
   const cleanName = normalizePersonName(name);
-  if (!cleanName) return res.status(400).json({ ok: false, error: 'Ism va familiya shart' });
+  if (!cleanName) return res.status(400).json({ ok: false, error: 'Ism shart' });
   const cleanEmail = String(email || '').normalize('NFKC').trim().toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) return res.status(400).json({ ok: false, error: 'Email noto‘g‘ri' });
-  if (!university || String(university).trim().length < 2) return res.status(400).json({ ok: false, error: 'Universitet / maktab shart' });
-  if (!subject || String(subject).trim().length < 2) return res.status(400).json({ ok: false, error: 'Fan shart' });
   if (consent !== 'on' && consent !== true) return res.status(400).json({ ok: false, error: 'Rozilikmajburiy' });
 
   // Email unikalmi? (barcha rollar)
@@ -87,10 +85,6 @@ router.post('/api/teacher/apply', async (req, res) => {
     isVip: false,
     teacher_application: {
       full_name: cleanName,
-      university: String(university).trim(),
-      subject: String(subject).trim(),
-      experience: experience ? String(experience).trim() : '',
-      reason: reason ? String(reason).trim() : '',
       consent: true,
       appliedAt: now,
       status: 'pending',
