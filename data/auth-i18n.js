@@ -41,7 +41,7 @@ export const AUTH_COPY = {
       myProfile: 'Profilim', logout: 'Chiqish', home: 'Bosh sahifa', panel: 'Panel',
     },
     // S14 (BUG-087): nav.ejs chrome 4 til (oldin fallback uz qolardi)
-    nav: { aria: 'Asosiy navigatsiya', menu: 'Menyu', product: 'Product', teachers: 'Teachers', ready: 'Ready tests', resources: 'Resources', logout: 'Chiqish', login: 'Kirish', cta: "Ro'yxatdan o'tish" },
+    nav: { aria: 'Asosiy navigatsiya', menu: 'Menyu', product: 'Product', teachers: 'Kirish', ready: 'Ready tests', resources: 'Resources', logout: 'Chiqish', login: 'Kirish', cta: "Ro'yxatdan o'tish" },
     // S14 (BUG-087): settings sahifasi 4 til (avval faqat fallback uz edi)
     settings: {
       title: 'Sozlamalar', backToPanel: 'Mening panelim', logout: 'Chiqish',
@@ -631,7 +631,7 @@ passkeySettings: {
       myProfile: '\u041f\u0440\u043e\u0444\u0438\u043b\u0438\u043c', logout: '\u0427\u0438\u049b\u0438\u0448', home: '\u0411\u043e\u0448 \u0441\u0430\u04b3\u0438\u0444\u0430', panel: '\u041f\u0430\u043d\u0435\u043b',
     },
     // S14 (BUG-087): nav.ejs chrome 4 til (oldin fallback uz qolardi)
-    nav: { aria: '\u0410\u0441\u043e\u0441\u0438\u0439 \u043d\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u044f', menu: '\u041c\u0435\u043d\u044e', product: 'Product', teachers: 'Teachers', ready: 'Ready tests', resources: 'Resources', logout: '\u0427\u0438\u049b\u0438\u0448', login: '\u041a\u0438\u0440\u0438\u0448', cta: '\u0420\u045e\u0439\u0445\u0430\u0442\u0434\u0430\u043d \u045e\u0442\u0438\u0448' },
+    nav: { aria: '\u0410\u0441\u043e\u0441\u0438\u0439 \u043d\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u044f', menu: '\u041c\u0435\u043d\u044e', product: 'Product', teachers: '\u041a\u0438\u0440\u0438\u0448', ready: 'Ready tests', resources: 'Resources', logout: '\u0427\u0438\u049b\u0438\u0448', login: '\u041a\u0438\u0440\u0438\u0448', cta: '\u0420\u045e\u0439\u0445\u0430\u0442\u0434\u0430\u043d \u045e\u0442\u0438\u0448' },
     // S14 (BUG-087): settings sahifasi 4 til (avval faqat fallback uz edi)
     settings: {
       title: '\u0421\u043e\u0437\u043b\u0430\u043c\u0430\u043b\u0430\u0440', backToPanel: '\u041c\u0435\u043d\u0438\u043d\u0433 \u043f\u0430\u043d\u0435\u043b\u0438\u043c', logout: '\u0427\u0438\u049b\u0438\u0448',
@@ -1222,7 +1222,7 @@ passkeySettings: {
       myProfile: '\u041c\u043e\u0439 \u043f\u0440\u043e\u0444\u0438\u043b\u044c', logout: '\u0412\u044b\u0439\u0442\u0438', home: '\u0413\u043b\u0430\u0432\u043d\u0430\u044f', panel: '\u041f\u0430\u043d\u0435\u043b\u044c',
     },
     // S14 (BUG-087): nav.ejs chrome 4 til (oldin fallback uz qolardi)
-    nav: { aria: '\u041e\u0441\u043d\u043e\u0432\u043d\u0430\u044f \u043d\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u044f', menu: '\u041c\u0435\u043d\u044e', product: 'Product', teachers: 'Teachers', ready: 'Ready tests', resources: 'Resources', logout: '\u0412\u044b\u0439\u0442\u0438', login: '\u0412\u0445\u043e\u0434', cta: '\u0420\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u044f' },
+    nav: { aria: '\u041e\u0441\u043d\u043e\u0432\u043d\u0430\u044f \u043d\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u044f', menu: '\u041c\u0435\u043d\u044e', product: 'Product', teachers: '\u0412\u0445\u043e\u0434', ready: 'Ready tests', resources: 'Resources', logout: '\u0412\u044b\u0439\u0442\u0438', login: '\u0412\u0445\u043e\u0434', cta: '\u0420\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u044f' },
     // S14 (BUG-087): settings sahifasi 4 til (avval faqat fallback uz edi)
     settings: {
       title: '\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438', backToPanel: '\u041c\u043e\u044f \u043f\u0430\u043d\u0435\u043b\u044c', logout: '\u0412\u044b\u0439\u0442\u0438',
@@ -1811,7 +1811,7 @@ passkeySettings: {
       myProfile: 'My profile', logout: 'Log out', home: 'Home', panel: 'Panel',
     },
     // S14 (BUG-087): nav.ejs chrome 4 til (oldin fallback uz qolardi)
-    nav: { aria: 'Main navigation', menu: 'Menu', product: 'Product', teachers: 'Teachers', ready: 'Ready tests', resources: 'Resources', logout: 'Log out', login: 'Log in', cta: 'Register' },
+    nav: { aria: 'Main navigation', menu: 'Menu', product: 'Product', teachers: 'Log in', ready: 'Ready tests', resources: 'Resources', logout: 'Log out', login: 'Log in', cta: 'Register' },
     // S14 (BUG-087): settings sahifasi 4 til (avval faqat fallback uz edi)
     settings: {
       title: 'Settings', backToPanel: 'My panel', logout: 'Log out',
