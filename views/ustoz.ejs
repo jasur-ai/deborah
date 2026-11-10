@@ -56,11 +56,21 @@
 </head>
 <body class="uz-page" id="top">
   <header class="uz-top">
-    <a class="uz-brand" href="/ustoz" aria-label="Deborah o'qituvchilar maydoni">
+    <a class="uz-brand logo" href="/ustoz" aria-label="Deborah o'qituvchilar maydoni">
       <span class="uz-brand-mark" aria-hidden="true">D</span>
       <b>DEBORAH</b>
     </a>
     <span class="uz-top-badge">O'qituvchilar maydoni</span>
+    <div class="hmenu" id="hmenu">
+      <a href="/admin/login" class="hm-link">Admin kirish</a>
+      <a href="/ustoz" class="hm-link active">O'qituvchi arizasi</a>
+    </div>
+    <div class="ctrls">
+      <a class="kbtn" href="#auth">Kirish</a>
+      <button id="themeBtn" class="tb-btn" aria-label="Tema"></button>
+      <div class="lang-switch" data-lang="ru">RU</div>
+      <button id="hbtn" class="hbtn" aria-label="Menyu"></button>
+    </div>
     <a class="uz-back" href="/">← Asosiy sahifa</a>
   </header>
 
@@ -142,6 +152,10 @@
       }
     });
   </script>
+  <footer class="ftr" id="kontakt">
+    <div class="ftr-row">Aloqa: support@deborah.uz</div>
+    <div class="ftr-row">© 2026 Deborah</div>
+  </footer>
   <script src="/js/icon-kit.js"></script>
   <script>
     (function(){

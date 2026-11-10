@@ -100,30 +100,24 @@ describe('Landing — HTTP routing (CAST demo 1:1 — tasdiqlangan cast.html por
     expect(t).toContain('Bepul boshlash');
   });
 
-  it('S33 — tartib: hero → stats → feat → qadam → signal → auth → cred → cta (/ustoz)', async () => {
-    // S34: bu struktura o'qituvchi landing'ida (index.ejs) — /ustoz'da; / esa cast landing
+  it('S33 — /ustoz: o'qituvchi arizasi 3 maydondan iborat (ism, email, rozilik), "register" so'zi yo'q', async () => {
     const html = await (await fetch(`${serverUrl}/ustoz`)).text();
-    const pos = (needle) => html.indexOf(needle);
-    expect(pos('id="top"')).toBeGreaterThan(-1);
-    expect(pos('class="stats"')).toBeGreaterThan(pos('id="top"'));
-    expect(pos('id="feat"')).toBeGreaterThan(pos('class="stats"'));
-    expect(pos('id="qadam"')).toBeGreaterThan(pos('id="feat"'));
-    expect(pos('id="signal"')).toBeGreaterThan(pos('id="qadam"'));
-    expect(pos('id="auth"')).toBeGreaterThan(pos('id="signal"'));
-    expect(pos('class="cred-in"')).toBeGreaterThan(pos('id="auth"'));
-    expect(pos('class="cta-stamp')).toBeGreaterThan(pos('class="cred-in"'));
-    // hero ichida jonli cast ekrani
-    expect(pos('id="cast"')).toBeGreaterThan(pos('id="top"'));
-    expect(pos('id="cast"')).toBeLessThan(pos('class="stats"'));
-    // 9 ta imkoniyat kartasi
-    expect((html.match(/class="f-card reveal"/g) || []).length).toBe(9);
-    // Join overlay: 5–7 xonali kod (maxlength 7)
-    expect(html).toContain('id="joinOverlay"');
-    expect(html).toMatch(/id="jcode"[^>]*maxlength="7"/);
-    // Eski demo bo'limlari YO'Q
-    for (const gone of ['ld-roles', 'ld-demo', 'ld-trust', 'ld-how', 'data-theme-state-btn']) {
-      expect(html).not.toContain(gone);
-    }
+    // Asosiy sahifa markeri
+    expect(html).toContain('id="top"');
+    // Hero bo'limi
+    expect(html).toContain('uz-kicker');
+    expect(html).toContain('Sinfxonangiz');
+    // Ariza shakli
+    expect(html).toContain('id="auth"');
+    expect(html).toContain('id="ur-name"');
+    expect(html).toContain('id="ur-email"');
+    expect(html).toContain('name="consent"');
+    // CSRF token bor
+    expect(html).toContain('name="_csrf"');
+    // "register"/ro'yxatdan o'tish so'zi YO'Q
+    expect(html).not.toMatch(/register|ro'yxatdan|royxatdan/gi);
+    // Ariza tugmasi
+    expect(html).toContain('Arizani yuborish');
   });
 
   it('CAST — footer: Sahifalar/Hujjatlar/Aloqa + deborah.uz + ©2026', async () => {

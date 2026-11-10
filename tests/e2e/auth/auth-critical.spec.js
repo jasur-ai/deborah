@@ -43,7 +43,9 @@ test.describe('AUTH D-14 — critical journey', () => {
 
   test('teacher: register → teacher-approval sahifasi', async ({ page }) => {
     const username = `e2e_t${UNIQ}`;
-    await page.goto('/user/register');
+    // O'qituvchi ariza faqat /ustoz entry orqali ochiladi (B-03)
+    await page.goto('/ustoz');
+    await page.goto('/user/register?role=teacher&lang=uz');
     await page.fill('#reg-username', username);
     await page.fill('#reg-email', `${username}@test.uz`);
     await page.fill('#reg-password', 'parol-2026-x-uzun');

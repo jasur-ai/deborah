@@ -286,6 +286,7 @@ function renderUserRegister(res, opts) {
     prevReason,
     teacherFlow: teacherFlow || prevRole === 'teacher',
     prevConsent,
+    csrfToken: res.locals?.csrfToken || crypto.randomBytes(32).toString('hex'),
     oidcEnabled: isOidcEnabled(),
     // B-08 §07: Turnstile site key (secret backend'da; site key frontend widget uchun)
     turnstileSiteKey: CONFIG.TURNSTILE_SITE_KEY || '',
@@ -639,7 +640,7 @@ router.get('/admin/mfa/enroll', async (req, res) => {
           title: 'Admin 2FA sozlash',
           secret: setup.secret, otpauth: setup.otpauth, qr, error: null,
           // S30: enable POST uchun CSRF (head.ejs window.__CSRF_TOKEN)
-          csrfToken: req.session?.csrfToken || (req.csrfToken ? req.csrfToken() : ''),
+          csrfToken: res.locals?.csrfToken || crypto.randomBytes(32).toString('hex'),
         });
       } catch (_) {
         return res.redirect('/admin/profile?mfa=error');
@@ -654,7 +655,7 @@ router.get('/admin/mfa/enroll', async (req, res) => {
     qr: enroll.qr || null,
     error: null,
     // S30: head.ejs window.__CSRF_TOKEN shu local'dan oladi (enable POST uchun)
-    csrfToken: req.session?.csrfToken || (req.csrfToken ? req.csrfToken() : ''),
+    csrfToken: res.locals?.csrfToken || crypto.randomBytes(32).toString('hex'),
   });
 });
 
@@ -1029,11 +1030,10 @@ router.get('/user/register', redirectIfAuthForTeacherPortal, (req, res) => {
   const reapplyingUser = teacherFlow && req.session?.user?.role === 'teacher_rejected'
     ? req.session.user
     : null;
-  // Ro'yxatdan o'tish sahifasida teacher roli hammada ko'rinadi (E2E test uchun).
   renderUserRegister(res, {
     lang,
     prevRole: teacherFlow ? 'teacher' : null,
-    teacherFlow: true,
+    teacherFlow: teacherFlow,
     prevUsername: reapplyingUser?.username || null,
     prevEmail: reapplyingUser?.email || null,
   });
@@ -1275,8 +1275,19 @@ router.post('/user/login',
   const requestedTeacher = mode === 'reg' && req.body.role === 'teacher';
   const lang = resolveAuthLang(req.body.lang || req.query.lang || req.cookies?.lang);
   const copy = AUTH_COPY[lang];
-  // Ro'yxatdan o'tishda role=teacher qabul qilinadi — /ustoz entry talab qilinmaydi.
+  // Ro'yxatdan o'tishda role=teacher faqat /ustoz entry orqali — baza tekshiruvi.
   const wantsTeacher = requestedTeacher;
+  if (wantsTeacher && !hasActiveTeacherSignupEntry(req)) {
+    return res.status(403).render('user/register', {
+      lang,
+      error: "O'qituvchi arizasini faqat /ustoz bosqichidan boshlang",
+      teacherFlow: false,
+      prevUsername: username,
+      prevEmail: req.body.email,
+      prevName: req.body.name,
+      prevInvite: req.body.invite,
+    });
+  }
   // AUTH A-05: time_to_success histogram uchun — login boshidagi vaqt.
   const loginStartedAt = Date.now();
 

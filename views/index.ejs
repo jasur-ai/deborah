@@ -251,7 +251,7 @@
             <div class="fld"><label for="lEmail" data-i18n="auth.loginId">Email yoki username</label><input id="lEmail" name="username" type="text" autocomplete="username" required></div>
             <div class="fld"><label for="lPass" data-i18n="auth.pass">Parol</label><span class="pw-wrap" style="display:block;position:relative"><input id="lPass" name="password" type="password" autocomplete="current-password" required><button type="button" class="pw-toggle" data-pw-toggle="lPass" aria-label="Parolni ko'rsatish" aria-pressed="false"><span data-pw-toggle-label>👁</span></button></span></div>
             <button class="btn btn-gold auth-submit" type="submit" data-i18n="auth.login">Kirish</button>
-            <div style="text-align:right;margin-top:9px;font-size:.8rem"><a href="/user/forgot?lang=<%= lang %>" data-forgot-link data-i18n="auth.forgot" style="color:var(--ld-gold);text-underline-offset:3px">Parolni unutdingizmi?</a></div>
+            <div style="text-align:right;margin-top:9px;font-size:.8rem"><a href="/user/forgot?lang=<%= lang %>" data-forgot-link data-i18n="auth.forgot" style="color:var(--ld-gold);text-underline-offset:3px;min-height:44px;display:inline-flex;align-items:center;">Parolni unutdingizmi?</a></div>
             <div class="auth-msg" id="doneLogin"></div>
           </form>
           <form id="fReg" action="/user/login" method="POST" style="display:none">
@@ -281,7 +281,7 @@
             </div>
             <button class="btn btn-gold auth-submit" type="submit" data-i18n="auth.register">Ro'yxatdan o'tish</button>
             <% // BUG-040: to'liq teacher arizasiga yo'l %>
-            <div style="text-align:right;margin-top:9px;font-size:.8rem"><a href="/user/forgot?lang=<%= lang %>" data-forgot-link data-i18n="auth.forgot" style="color:var(--ld-gold);text-underline-offset:3px">Parolni unutdingizmi?</a></div>
+            <div style="text-align:right;margin-top:9px;font-size:.8rem"><a href="/user/forgot?lang=<%= lang %>" data-forgot-link data-i18n="auth.forgot" style="color:var(--ld-gold);text-underline-offset:3px;min-height:44px;display:inline-flex;align-items:center;">Parolni unutdingizmi?</a></div>
             <div style="text-align:center;margin-top:10px;font-size:.8rem"><a href="/user/register?role=teacher" data-i18n="auth.teacherLink">O'qituvchi uchun to'liq ariza →</a></div>
             <div class="auth-msg" id="doneReg"></div>
           </form>

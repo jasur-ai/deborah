@@ -92,7 +92,8 @@
             <input id="reg-website" name="website" type="text" tabindex="-1" autocomplete="off" value="">
           </div>
 
-          <!-- B-03: rol tanlovi (student / teacher) -->
+          <% if (teacherFlow) { %>
+          <!-- B-03: rol tanlovi (student / teacher) — faqat o'qituvchi ariza rejimida -->
           <fieldset class="role-selector" style="margin:16px 0;border:none;padding:0">
             <legend class="lbl" style="margin-bottom:8px"><%= copy.register.roleLabel || 'Rol' %></legend>
             <label class="role-card" style="display:inline-flex;align-items:center;gap:6px;padding:10px 14px;border:1px solid rgba(194,160,106,.28);border-radius:10px;cursor:pointer">
@@ -105,7 +106,6 @@
             </label>
           </fieldset>
 
-          <% if (teacherFlow) { %>
           <!-- Teacher application is entered from the hidden top-right O'qituvchilar area. -->
           <p class="role-note"><%- icon('info', 13) %><span><%= copy.register.teacherNote %></span></p>
           <div class="teacher-app-fields">

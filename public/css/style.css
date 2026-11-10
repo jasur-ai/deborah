@@ -919,5 +919,5 @@ body.shell-open .shell-sidebar { transform: translateX(0); }
   .shell-nav-ico svg { width: 18px; height: 18px; }
   .shell-role-chip { margin: 4px 10px 10px; padding: 10px 12px; }
   .nav-btn { padding: 11px 14px; font-size: .85rem; }
-  .nav-logo-img, .nav-logo .logo-img { height: 34px; }
+  .nav-logo-img, .nav-logo .logo-img { height: 44px; }
 }

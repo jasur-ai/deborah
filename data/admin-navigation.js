@@ -25,7 +25,7 @@ export const ADMIN_NAVIGATION = [
       page('teachers', 'O‘qituvchi arizalari', '/admin/teachers', 'bookOpen'),
       page('vip-users', 'VIP foydalanuvchilar', '/admin/vip', 'shield'),
       page('roster', 'Ro‘yxat importi', '/admin/roster', 'file'),
-      page('classrooms', 'Sinf o‘quvchilari', '/classrooms/index', 'users'),
+      page('classrooms', 'Sinf o‘quvchilari', '/admin/classrooms', 'users'),
       page('audit', 'Audit jurnali', '/admin/audit', 'activity'),
       page('email-cost', 'Email xarajatlari', '/admin/email-cost', 'mail'),
       page('admin-profile', 'Admin profili', '/admin/profile', 'user'),
@@ -133,7 +133,7 @@ export const ADMIN_SIDEBAR_GROUPS = [
       { id: 'teachers', label: 'O‘qituvchi arizalari', href: '/admin/teachers', icon: 'bookOpen' },
       { id: 'vip-users', label: 'VIP foydalanuvchilar', href: '/admin/vip', icon: 'shield' },
       { id: 'roster', label: 'Ro‘yxat importi', href: '/admin/roster', icon: 'file' },
-      { id: 'classrooms', label: 'Sinf o‘quvchilari', href: '/classrooms/index', icon: 'users' },
+      { id: 'classrooms', label: 'Sinf o‘quvchilari', href: '/admin/classrooms', icon: 'users' },
     ],
   },
   {

@@ -145,7 +145,7 @@ describe('Admin navigation — catalog', () => {
     // Secondary tools remain discoverable through the catalogue and visibly active.
     const toolPage = await agent.get('/admin/accessibility');
     expect(toolPage.status).toBe(200);
-    expect(toolPage.text).toMatch(/href="\/admin\/index"\s+class="admin-side-btn active"/);
+    expect(toolPage.text).toMatch(/href="\/admin\/index"\s+class="admin-side-btn shell-nav-link active"/);
     expect(response.text).not.toContain('action="/user/logout"');
     expect(response.text).not.toContain('href="/student"');
     expect(response.text).not.toContain('href="/teacher"');
