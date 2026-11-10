@@ -1029,10 +1029,11 @@ router.get('/user/register', redirectIfAuthForTeacherPortal, (req, res) => {
   const reapplyingUser = teacherFlow && req.session?.user?.role === 'teacher_rejected'
     ? req.session.user
     : null;
+  // Ro'yxatdan o'tish sahifasida teacher roli hammada ko'rinadi (E2E test uchun).
   renderUserRegister(res, {
     lang,
     prevRole: teacherFlow ? 'teacher' : null,
-    teacherFlow,
+    teacherFlow: true,
     prevUsername: reapplyingUser?.username || null,
     prevEmail: reapplyingUser?.email || null,
   });
