@@ -257,8 +257,8 @@ function renderUserRegister(res, opts) {
     prevSubject = null,
     prevExperience = null,
     prevReason = null,
-    // Teacher arizasi faqat maxfiy /ustoz oqimidan ochiladi.
-    teacherFlow = false,
+    // Teacher roli hammada ko'rinadi (ro'yxatdan o'tish sahifasida).
+    teacherFlow = true,
     // AUTH D-24 §10: consent checkbox xatoda saqlanadi
     prevConsent = null,
   } = opts || {};
