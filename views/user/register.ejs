@@ -92,9 +92,21 @@
             <input id="reg-website" name="website" type="text" tabindex="-1" autocomplete="off" value="">
           </div>
 
+          <!-- B-03: rol tanlovi (student / teacher) -->
+          <fieldset class="role-selector" style="margin:16px 0;border:none;padding:0">
+            <legend class="lbl" style="margin-bottom:8px"><%= copy.register.roleLabel || 'Rol' %></legend>
+            <label class="role-card" style="display:inline-flex;align-items:center;gap:6px;padding:10px 14px;border:1px solid rgba(194,160,106,.28);border-radius:10px;cursor:pointer">
+              <input type="radio" name="role" value="student" style="margin:0" checked>
+              <span style="font-size:1.1rem">👨‍🎓</span><span><%= copy.register.roleStudent || 'O‘quvchi' %></span>
+            </label>
+            <label class="role-card" style="display:inline-flex;align-items:center;gap:6px;padding:10px 14px;border:1px solid rgba(194,160,106,.28);border-radius:10px;cursor:pointer">
+              <input type="radio" name="role" value="teacher" style="margin:0">
+              <span style="font-size:1.1rem">👨‍🏫</span><span><%= copy.register.roleTeacher || 'O‘qituvchi' %></span>
+            </label>
+          </fieldset>
+
           <% if (teacherFlow) { %>
           <!-- Teacher application is entered from the hidden top-right O'qituvchilar area. -->
-          <input type="hidden" name="role" value="teacher">
           <p class="role-note"><%- icon('info', 13) %><span><%= copy.register.teacherNote %></span></p>
           <div class="teacher-app-fields">
             <label class="lbl" for="reg-university"><%= copy.register.universityPh %></label>
