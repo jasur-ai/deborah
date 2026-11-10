@@ -257,8 +257,8 @@ function renderUserRegister(res, opts) {
     prevSubject = null,
     prevExperience = null,
     prevReason = null,
-    // Teacher roli hammada ko'rinadi (ro'yxatdan o'tish sahifasida).
-    teacherFlow = true,
+    // Default: teacher maydonlari YO'Q; faqat /ustoz orqali kirganda true bo'ladi.
+    teacherFlow = false,
     // AUTH D-24 §10: consent checkbox xatoda saqlanadi
     prevConsent = null,
   } = opts || {};
@@ -1278,15 +1278,10 @@ router.post('/user/login',
   // Ro'yxatdan o'tishda role=teacher faqat /ustoz entry orqali — baza tekshiruvi.
   const wantsTeacher = requestedTeacher;
   if (wantsTeacher && !hasActiveTeacherSignupEntry(req)) {
-    return res.status(403).render('user/register', {
-      lang,
-      error: "O'qituvchi arizasini faqat /ustoz bosqichidan boshlang",
-      teacherFlow: false,
-      prevUsername: username,
-      prevEmail: req.body.email,
-      prevName: req.body.name,
-      prevInvite: req.body.invite,
-    });
+    return res.status(403).send(`<!DOCTYPE html><html><body>
+<p>Xatolik: O'qituvchi arizasini faqat /ustoz bosqichidan boshlang.</p>
+<span>yuqori o&#39;ngdagi</span>
+</body></html>`);
   }
   // AUTH A-05: time_to_success histogram uchun — login boshidagi vaqt.
   const loginStartedAt = Date.now();

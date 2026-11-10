@@ -507,6 +507,9 @@ router.get('/api/user/classrooms/students/me/grade', requireRole('student'), asy
 router.get('/classrooms/index', requireAdmin, async (req, res) => {
   res.render('classrooms/index', { title: 'Sinf boshqaruvi' });
 });
+router.get('/admin/classrooms', requireAdmin, async (req, res) => {
+  res.render('classrooms/index', { title: 'Sinf boshqaruvi' });
+});
 
 /* ── QR check-in sahifasi ──
  * GET /classrooms/checkin?token=...

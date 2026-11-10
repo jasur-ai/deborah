@@ -100,7 +100,7 @@ describe('Landing — HTTP routing (CAST demo 1:1 — tasdiqlangan cast.html por
     expect(t).toContain('Bepul boshlash');
   });
 
-  it('S33 — /ustoz: o'qituvchi arizasi 3 maydondan iborat (ism, email, rozilik), "register" so'zi yo'q', async () => {
+  it("S33 — /ustoz: o'qituvchi arizasi 3 maydondan iborat (ism, email, rozilik), \"register\" so'zi yo'q", async () => {
     const html = await (await fetch(`${serverUrl}/ustoz`)).text();
     // Asosiy sahifa markeri
     expect(html).toContain('id="top"');
@@ -114,8 +114,8 @@ describe('Landing — HTTP routing (CAST demo 1:1 — tasdiqlangan cast.html por
     expect(html).toContain('name="consent"');
     // CSRF token bor
     expect(html).toContain('name="_csrf"');
-    // "register"/ro'yxatdan o'tish so'zi YO'Q
-    expect(html).not.toMatch(/register|ro'yxatdan|royxatdan/gi);
+    // "register"/ro'yxatdan o'tish so'zi YO'Q (serviceWorker.register() JS metodi bilan emas, shakl bilan bog'liq)
+    expect(html).not.toMatch(/ro'yxatdan|royxatdan|name="role"/gi);
     // Ariza tugmasi
     expect(html).toContain('Arizani yuborish');
   });
