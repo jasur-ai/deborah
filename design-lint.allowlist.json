@@ -79,7 +79,7 @@
     "views/game/enter.ejs::font-size:.8rem;color:var(--muted);margin-top:14px;",
     "views/game/host.ejs::color:var(--muted);font-size:.82rem;font-weight:700",
     "views/game/host.ejs::font-size:.72rem;font-weight:700;color:var(--muted)",
-    "views/index.ejs::color:var(--ld-gold);text-underline-offset:3px",
+    "views/index.ejs::color:var(--ld-gold);text-underline-offset:3px;min-height:44px;display:inline-flex;align-items:center;",
     "views/partials/components/form-field.ejs::color:var(--deborah-semantic-color-status-danger)",
     "views/partials/components/form-field.ejs::color:var(--deborah-semantic-color-status-warning)",
     "views/partials/landing-features.ejs::width:10%;background:#94a3b8",
