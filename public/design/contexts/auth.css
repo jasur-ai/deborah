@@ -198,7 +198,7 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  color: var(--deborah-semantic-color-text-muted);
+  color: var(--deborah-semantic-color-text-primary);
   background: transparent;
   transition: color 120ms ease, background-color 120ms ease;
 }
