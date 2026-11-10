@@ -56,6 +56,10 @@ async function adminReauth(agent, csrf) {
 }
 
 async function registerAs(agent, { username, email, teacher = false, university = '', subject = 'Matematika', reason = '' }) {
+  // B-03: o'qituvchi ariza faqat /ustoz entry orqali (mashhadni boshlash)
+  if (teacher) {
+    await agent.get('/ustoz');
+  }
   const page = await agent.get('/user/login?lang=uz');
   const csrf = csrfFrom(page.text);
   const body = { mode: 'reg', consent: 'on', _csrf: csrf, username, email, password: 'parol-2026-x-uzun', lang: 'uz' };
