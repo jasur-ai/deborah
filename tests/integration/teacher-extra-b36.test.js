@@ -82,7 +82,7 @@ async function adminAgent() {
     _csrf: csrf, username: adminUser, password: adminPass,
   });
   expect([302, 200]).toContain(alr.status);
-  const dash = await admin.get('/admin');
+  const dash = await admin.get('/admin/dashboard');
   const m = dash.text.match(/__CSRF_TOKEN\s*=\s*'([^']+)'/) || dash.text.match(/const CSRF = '([^']+)'/);
   admin.__csrf = m ? m[1] : '';
   await admin.post('/api/admin/reauth').send({ password: adminPass }).set('x-csrf-token', admin.__csrf);

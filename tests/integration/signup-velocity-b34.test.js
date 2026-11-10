@@ -76,7 +76,7 @@ async function adminAgent() {
   });
   expect([302, 200]).toContain(alr.status);
   // Admin sahifasidan CSRF token (login session'ini regeneratsiya qilgan)
-  const dash = await admin.get('/admin');
+  const dash = await admin.get('/admin/dashboard');
   const m = dash.text.match(/__CSRF_TOKEN\s*=\s*'([^']+)'/) || dash.text.match(/const CSRF = '([^']+)'/);
   const token = m ? m[1] : '';
   // A-25 §09: sensitive amal uchun yaqin reauth talab (parol qayta tasdiqlash)
