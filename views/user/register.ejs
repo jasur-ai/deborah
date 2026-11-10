@@ -110,11 +110,11 @@
           <p class="role-note"><%- icon('info', 13) %><span><%= copy.register.teacherNote %></span></p>
           <div class="teacher-app-fields">
             <label class="lbl" for="reg-university"><%= copy.register.universityPh %></label>
-            <input class="inp" id="reg-university" name="university" type="text" placeholder="<%= copy.register.universityHint %>" autocomplete="organization" autocapitalize="words" spellcheck="false" maxlength="200" required aria-required="true" aria-invalid="false" data-inline-error="err-reg-university" aria-describedby="err-reg-university" value="<%= typeof prevUniversity !== 'undefined' && prevUniversity ? prevUniversity : '' %>">
+            <input class="inp" id="reg-university" name="university" type="text" placeholder="<%= copy.register.universityHint %>" autocomplete="organization" autocapitalize="words" spellcheck="false" maxlength="200" aria-required="false" aria-invalid="false" data-inline-error="err-reg-university" aria-describedby="err-reg-university" value="<%= typeof prevUniversity !== 'undefined' && prevUniversity ? prevUniversity : '' %>">
             <div class="err-text" id="err-reg-university" data-inline-error="university" style="display:none" role="alert"><%- icon('alertTriangle', 13) %><span></span></div>
 
             <label class="lbl" for="reg-subject"><%= copy.register.subjectPh %></label>
-            <input class="inp" id="reg-subject" name="subject" type="text" placeholder="<%= copy.register.subjectHint %>" autocomplete="off" autocapitalize="words" spellcheck="false" maxlength="100" required aria-required="true" aria-invalid="false" data-inline-error="err-reg-subject" aria-describedby="err-reg-subject" value="<%= typeof prevSubject !== 'undefined' && prevSubject ? prevSubject : '' %>">
+            <input class="inp" id="reg-subject" name="subject" type="text" placeholder="<%= copy.register.subjectHint %>" autocomplete="off" autocapitalize="words" spellcheck="false" maxlength="100" aria-required="false" aria-invalid="false" data-inline-error="err-reg-subject" aria-describedby="err-reg-subject" value="<%= typeof prevSubject !== 'undefined' && prevSubject ? prevSubject : '' %>">
             <div class="err-text" id="err-reg-subject" data-inline-error="subject" style="display:none" role="alert"><%- icon('alertTriangle', 13) %><span></span></div>
 
             <label class="lbl" for="reg-experience"><%= copy.register.experiencePh %></label>
