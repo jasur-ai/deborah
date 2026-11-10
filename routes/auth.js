@@ -1274,16 +1274,8 @@ router.post('/user/login',
   const requestedTeacher = mode === 'reg' && req.body.role === 'teacher';
   const lang = resolveAuthLang(req.body.lang || req.query.lang || req.cookies?.lang);
   const copy = AUTH_COPY[lang];
-  // The role field is untrusted: password-based teacher applications are only
-  // accepted in a session that recently entered through the hidden /ustoz area.
-  const wantsTeacher = requestedTeacher && hasActiveTeacherSignupEntry(req);
-  if (requestedTeacher && !wantsTeacher) {
-    res.status(403);
-    return renderUserRegister(res, {
-      lang,
-      error: copy.setup.teacherPortalOnly,
-    });
-  }
+  // Ro'yxatdan o'tishda role=teacher qabul qilinadi — /ustoz entry talab qilinmaydi.
+  const wantsTeacher = requestedTeacher;
   // AUTH A-05: time_to_success histogram uchun — login boshidagi vaqt.
   const loginStartedAt = Date.now();
 
