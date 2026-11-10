@@ -26,6 +26,10 @@ function csrfFrom(html) {
 }
 
 async function register(agent, { username, email, role = '', extra = {} }) {
+  // O'qituvchi roli faqat /ustoz entry orqali ochiladi (B-03)
+  if (role === 'teacher') {
+    await agent.get('/ustoz');
+  }
   const page = await agent.get('/user/register');
   const csrf = page.text.match(/name="_csrf" value="([^"]+)"/);
   const res = await agent.post('/user/login').set('x-forwarded-for', nextIp()).type('form').send({
