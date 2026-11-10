@@ -12,7 +12,7 @@
     : navPathOnly(item.href) === navPath || (item.id === 'all-tools' && !directNavMatch);
 %>
 <div class="admin-drawer-overlay" id="admin-drawer-overlay" aria-hidden="true"></div>
-<aside class="<%= isLegacyShell ? 'admin-sidebar admin-sidebar--legacy' : 'admin-sidebar' %>" id="admin-sidebar" aria-label="Admin navigatsiyasi">
+<aside class="<%= isLegacyShell ? 'admin-sidebar admin-sidebar--legacy' : 'admin-sidebar' %>" id="admin-sidebar" role="navigation" aria-label="Asosiy navigatsiya">
   <div class="admin-sidebar-brand">
     <span class="admin-sidebar-brand-mark"><%- icon('shield', 15) %></span>
     <div><strong>Admin</strong><small>Boshqaruv menyusi</small></div>
@@ -26,7 +26,7 @@
       <nav class="admin-nav-group-items" aria-label="<%= group.label %>">
         <% group.items.forEach((item) => { const active = navIsActive(item); %>
           <a href="<%= item.href %>"
-             class="admin-side-btn <%= active ? 'active' : '' %>"
+             class="admin-side-btn shell-nav-link <%= active ? 'active' : '' %>"
              <%= item.tab ? `data-admin-tab="${item.tab}"` : '' %>
              <%= active ? 'aria-current="page"' : '' %>>
             <span class="admin-side-ico"><%- icon(item.icon || 'grid', 16) %></span>
