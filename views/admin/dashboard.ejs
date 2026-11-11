@@ -312,6 +312,16 @@
       refreshActiveTab();
     }
 
+    // S33.08: sidebar nav itemlar (data-admin-tab) switchTab'ga delegatsiya qilinadi;
+    // sidebar VIP tab: switchTab('vip') — CSP-kompatibl, inline onclick ishlatilmaydi
+    document.querySelectorAll('.admin-side-btn[data-admin-tab]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const tab = btn.getAttribute('data-admin-tab');
+        if (document.getElementById('pane-' + tab)) switchTab(tab);
+      });
+    });
+
     function refreshActiveTab() {
       if (currentTab === 'fans') loadFans();
       else if (currentTab === 'pre') loadPreGroups();
