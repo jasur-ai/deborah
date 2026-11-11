@@ -53,6 +53,10 @@ async function adminReauth(agent, csrf) {
 }
 
 async function registerAs(app_, agent, { username, email, password = 'parol-2026-x-uzun', teacher = false, university = '', subject = '', reason = '' }) {
+  // B-03: o'qituvchi ariza faqat /ustoz entry orqali
+  if (teacher) {
+    await agent.get('/ustoz');
+  }
   const ip = nextIp();
   const page = await agent.get('/user/login?lang=uz');
   const csrf = csrfFrom(page.text);

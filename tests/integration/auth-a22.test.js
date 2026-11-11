@@ -30,6 +30,10 @@ function csrfFrom(html) {
 }
 
 async function registerUser(agent, { username, password, email, role, university, subject } = {}) {
+  // B-03: o'qituvchi ariza faqat /ustoz entry orqali
+  if (role === 'teacher') {
+    await agent.get('/ustoz');
+  }
   const page = await agent.get('/user/login?mode=reg');
   const csrf = csrfFrom(page.text);
   return agent
