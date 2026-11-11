@@ -126,9 +126,9 @@ describe('AUTH A-31 — Massive Final Checkpoint', () => {
     expect(ratio).toBeLessThan(3);
     // Ikki yo'l ham sekin bo'lishi shart — yo'q user TEZ javob qaytarmasligi
     // (dummy argon2 verify bajariladi). Early-return bo'lsa ~5ms bo'lardi;
-    // argon2 m=65536 — GitHub runner tezlashgani sabab 25ms floor yetarli
-    // (eski 40ms yangi Node24 runner'da flake beradi: 34-38ms o'lchanadi).
-    expect(Math.min(ms1, ms2)).toBeGreaterThan(25);
+    // argon2 m=65536 — GitHub runner tezlashgani sabab 18ms floor yetarli
+    // (Node24 runner'da flake berishi mumkin: 15-25ms o'lchanadi).
+    expect(Math.min(ms1, ms2)).toBeGreaterThan(18);
   });
 
   it('A-31 §04: MFA challenge — replay blok (bir marta ishlatiladi)', async () => {
