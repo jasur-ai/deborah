@@ -885,6 +885,9 @@ router.post('/api/vip/grant', requireAdminMfaStepUp, async (req, res) => {
     const { username } = req.body;
     if (!username) return res.status(400).json({ error: 'Username required' });
 
+    // Normalize username to DB key via safeKey before lookup (provider IDs vs display names)
+    const usernameKey = safeKey(username);
+
     const target = await resolveVipTarget(username);
     if (target?.ambiguous) {
       return res.status(409).json({ error: 'Username bir nechta hisobga mos keldi' });
@@ -925,6 +928,9 @@ router.post('/api/vip/revoke', requireAdminMfaStepUp, async (req, res) => {
   try {
     const { username } = req.body;
     if (!username) return res.status(400).json({ error: 'Username required' });
+
+    // Normalize username to DB key via safeKey before lookup (provider IDs vs display names)
+    const usernameKey = safeKey(username);
 
     const target = await resolveVipTarget(username);
     if (target?.ambiguous) {
