@@ -895,7 +895,7 @@ router.post('/api/vip/grant', requireAdminMfaStepUp, async (req, res) => {
     if (!target) {
       return res.status(404).json({ error: 'Bunday foydalanuvchi topilmadi' });
     }
-    const { userKey, user: targetUser } = target;
+    const { user: targetUser } = target;
 
     // S25: o'qituvchi/xodim VIP bo'la olmaydi — alohida bo'limda boshqariladi
     const targetRole = targetUser?.role || 'student';
@@ -907,7 +907,7 @@ router.post('/api/vip/grant', requireAdminMfaStepUp, async (req, res) => {
     // Generate random VIP management password (stored separately, does NOT change user's login password)
     const vipPass = Math.random().toString(36).slice(2, 8) + Math.random().toString(36).slice(2, 6);
 
-    await fb.update(`${DB_PATHS.USERS}/${userKey}`, {
+    await fb.update(`${DB_PATHS.USERS}/${target.userKey}`, {
       isVip: true,
       vipGrantedAt: Date.now(),
       vipGrantedBy: req.session.admin?.username || 'admin',
@@ -939,9 +939,8 @@ router.post('/api/vip/revoke', requireAdminMfaStepUp, async (req, res) => {
     if (!target) {
       return res.status(404).json({ error: 'Bunday foydalanuvchi topilmadi' });
     }
-    const { userKey } = target;
 
-    await fb.update(`${DB_PATHS.USERS}/${userKey}`, {
+    await fb.update(`${DB_PATHS.USERS}/${target.userKey}`, {
       isVip: false,
       vipRevokedAt: Date.now(),
       // Keep vipGrantedAt/vipGrantedBy for audit trail
