@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>O'qituvchilar uchun — Deborah</title>
-  <meta name="description" content="Deborah o'qituvchi maydoni: Cast monitoring, AI Studiya, dars reja, baholash. Akkount yaratish shart emas, arizani yuboring.">
+  <meta name="description" content="Deborah o'qituvchi maydoni: Cast monitoring, AI Studiya, dars reja, baholash. Ro'yxatdan o'tmasdan, arizani yuboring.">
   <link rel="stylesheet" href="/css/landing.css">
   <style>
     /* S27: O'qituvchi maydoni — landing bilan bir oila (vintage dark), class-only */
@@ -56,21 +56,11 @@
 </head>
 <body class="uz-page" id="top">
   <header class="uz-top">
-    <a class="uz-brand logo" href="/ustoz" aria-label="Deborah o'qituvchilar maydoni">
+    <a class="uz-brand" href="/ustoz" aria-label="Deborah o'qituvchilar maydoni">
       <span class="uz-brand-mark" aria-hidden="true">D</span>
       <b>DEBORAH</b>
     </a>
     <span class="uz-top-badge">O'qituvchilar maydoni</span>
-    <div class="hmenu" id="hmenu">
-      <a href="/admin/login" class="hm-link">Admin kirish</a>
-      <a href="/ustoz" class="hm-link active">O'qituvchi arizasi</a>
-    </div>
-    <div class="ctrls">
-      <button id="themeBtn" class="tb-btn" aria-label="Tema"></button>
-      <a class="kbtn" href="#auth">Kirish</a>
-      <div class="lang-switch" data-lang="ru">RU</div>
-      <button id="hbtn" class="hbtn" aria-label="Menyu"></button>
-    </div>
     <a class="uz-back" href="/">← Asosiy sahifa</a>
   </header>
 
@@ -78,9 +68,7 @@
     <section class="uz-hero">
       <div class="uz-kicker">Faqat o'qituvchilar uchun</div>
       <h1>Sinfxonangiz — <em>bir joyda</em></h1>
-      <div class="uz-hero-note">O'qituvchi ishi — <em>yengil</em>.<br>Dars — samarali.</div>
       <p>Jonli Cast muhitlari ustidan to'liq nazorat, AI Studiya (dars reja, savol va slayd generatsiya, OCR), baholash navbati va tayyorlash materiallari. Kirish — o'qituvchi arizasi orqali.</p>
-      <a class="uz-btn uz-btn--ghost" href="/user/login">Bepul boshlash</a>
       <div class="uz-feats" aria-label="Imkoniyatlar">
         <div class="uz-feat"><div class="uz-feat-ico">📡</div><b>Cast monitoring</b><span>O'zingiz yaratgan jonli muhitlar: ishtirokchilar, holat, natijalar</span></div>
         <div class="uz-feat"><div class="uz-feat-ico">✨</div><b>AI Studiya</b><span>Savol/slayd generator, OCR, dars reja — PDF/Word/Excel eksport</span></div>
@@ -96,10 +84,9 @@
         <div class="uz-card-sub">Faqat arizani yuboring. Ma'lumotlaringiz adminga yuboriladi — tasdiqlangach login va parol emailga keladi.</div>
         <% if (typeof error !== 'undefined' && error) { %><div class="uz-err" role="alert"><%= error %></div><% } %>
         <% if (typeof ok !== 'undefined' && ok) { %><div class="uz-ok" role="status"><b>Ariza yuborildi.</b> Admin tasdiqlagandan so'ng emailingizga login va parol keladi. <a href="/user/login">Kirish sahifasiga o'tish →</a></div><% } %>
-        <form id="fReg" novalidate>
+        <form id="apply-form" novalidate>
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <input type="hidden" name="lang" value="uz">
-          <input type="hidden" name="role" value="teacher">
           <input type="text" name="website" id="uz-hp" tabindex="-1" autocomplete="off" value="" aria-hidden="true" style="position:absolute;left:-9999px">
           <div class="uz-row">
             <div class="uz-fld">
@@ -116,7 +103,6 @@
             <span>Roziman: ma'lumotlarim arizani ko'rib chiqish uchun adminga yuboriladi.</span>
           </label>
           <button class="uz-btn" type="submit">Arizani yuborish</button>
-          <a href="/user/forgot?lang=uz" class="forgot-link">Parolni unutdingizmi?</a>
           <div class="uz-note"><b>Qanday ishlaydi:</b> arizani yuborganingizda holat «Kutilmoqda» bo'ladi → admin ko'rib chiqadi → tasdiqlansa, emailingizga login (emailingiz) va parol keladi.</div>
         </form>
       </section>
@@ -156,10 +142,6 @@
       }
     });
   </script>
-  <footer class="ftr" id="kontakt">
-    <div class="ftr-row">Aloqa: support@deborah.uz</div>
-    <div class="ftr-row">© 2026 Deborah</div>
-  </footer>
   <script src="/js/icon-kit.js"></script>
   <script>
     (function(){
