@@ -128,7 +128,7 @@
               <td><span class="t-reason t-exp"><%= u.experience || '—' %></span></td>
               <td class="dt-ts"><%= new Date(u.appliedAt).toLocaleDateString('uz-UZ', { day: '2-digit', month: 'short', year: 'numeric' }) %>
                 <% if (u.approval?.level === 'window-exceeded') { %><br><span class="badge t-badge-amber">Eslatma 72s</span><% } %>
-                <% if (u.approval?.level === 'escalated') { %><br><span class="badge t-badge-danger">Eskalatsiya 7k</span><% } %>
+                <% if (u.approval?.level === 'escalated' || (u.appliedAt && Date.now() - new Date(u.appliedAt).getTime() > 7 * 24 * 60 * 60 * 1000)) { %><br><span class="badge t-badge-danger">Eskalatsiya 7k</span><% } %>
               </td>
               <td>
                 <% if (u.role === 'teacher_pending') { %><span class="badge t-badge-amber">Kutilmoqda</span><% } %>
