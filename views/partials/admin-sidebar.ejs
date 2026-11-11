@@ -27,7 +27,7 @@
         <% group.items.forEach((item) => { const active = navIsActive(item); %>
           <a href="<%= item.href %>"
              class="admin-side-btn shell-nav-link <%= active ? 'active' : '' %>"
-             <%= item.tab ? `data-admin-tab="${item.tab}" onclick="switchTab('${item.tab}')"` : '' %>
+             <%- item.tab ? `data-admin-tab="${item.tab}" onclick="switchTab('${item.tab}')"` : '' %>
              <%= active ? 'aria-current="page"' : '' %>>
             <span class="admin-side-ico"><%- icon(item.icon || 'grid', 16) %></span>
             <span class="admin-side-label-text"><%= item.label %></span>
