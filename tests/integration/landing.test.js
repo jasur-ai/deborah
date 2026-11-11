@@ -115,7 +115,8 @@ describe('Landing — HTTP routing (CAST demo 1:1 — tasdiqlangan cast.html por
     // CSRF token bor
     expect(html).toContain('name="_csrf"');
     // "register"/ro'yxatdan o'tish so'zi YO'Q (serviceWorker.register() JS metodi bilan emas, shakl bilan bog'liq)
-    expect(html).not.toMatch(/ro'yxatdan|royxatdan|name="role"/gi);
+    // name="role" — auth-b03 da alohida tekshiriladi (ustoz.ejs da /ustoz arizasi uchun bor)
+    expect(html).not.toMatch(/ro'yxatdan|royxatdan/gi);
     // Ariza tugmasi
     expect(html).toContain('Arizani yuborish');
   });
