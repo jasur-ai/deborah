@@ -1218,6 +1218,45 @@ router.post('/api/practice/grade', async (req, res) => {
   });
 });
 
+// ── Teacher Groups API — o'qituvchiga biriktirilgan guruhlar va talabalar ──
+// GET /api/teacher/groups — joriy o'qituvchiga biriktirilgan guruhlar
+router.get('/api/teacher/groups', requireAuth, async (req, res) => {
+  try {
+    const user = req.session.user;
+    if (user.role !== 'teacher' && user.role !== 'admin') {
+      return res.status(403).json({ error: 'Ruxsat etilmagan rol' });
+    }
+    const groupsSnap = await fb.get('groups');
+    const groups = groupsSnap.exists() ? groupsSnap.val() : {};
+    const teacherKey = user.safeKey || user.username;
+    const myGroups = Object.entries(groups)
+      .filter(([, g]) => g.teacherId === teacherKey || g.teacherId === user.username)
+      .map(([key, g]) => ({ id: key, ...g }));
+    res.json({ groups: myGroups });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/teacher/groups/:groupId/students — guruhdagi talabalar ballari bilan
+router.get('/api/teacher/groups/:groupId/students', requireAuth, async (req, res) => {
+  try {
+    const user = req.session.user;
+    if (user.role !== 'teacher' && user.role !== 'admin') {
+      return res.status(403).json({ error: 'Ruxsat etilmagan rol' });
+    }
+    const { groupId } = req.params;
+    const studentsSnap = await fb.get('students');
+    const students = studentsSnap.exists() ? studentsSnap.val() : {};
+    const groupStudents = Object.entries(students)
+      .filter(([, s]) => s.group_id === groupId)
+      .map(([key, s]) => ({ id: key, ...s }));
+    res.json({ students: groupStudents });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // 09/2026 (Faza 1): unit testlar uchun sof funksiyalar
 export { practiceOptionMeta, normalizeShortAnswer, shortAnswerHash, orderHash, matchHash };
 

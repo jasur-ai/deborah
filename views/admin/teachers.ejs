@@ -279,9 +279,16 @@
           j = await r.json();
         }
         if (r.ok && j.ok) {
-          showMsg(modalAction === 'approve' ? '✅ Tasdiqlandi' : 'Rad etildi', true);
-          document.querySelector('tr[data-id="' + modalId + '"]')?.remove();
-          closeModal();
+          if (modalAction === 'approve' && j.credentialsCreated && j.login && j.password) {
+            showMsg('✅ Tasdiqlandi. Login: <b>' + j.login + '</b>, parol: <b>' + j.password + '</b> — ekranda ko'rsatildi va emailga yuborildi.', true);
+            setTimeout(() => {
+              document.querySelector('tr[data-id="' + modalId + '"]')?.remove();
+              closeModal();
+            }, 3000);
+          } else {
+            showMsg(modalAction === 'approve' ? '✅ Tasdiqlandi' : 'Rad etildi', true);
+            document.querySelector('tr[data-id="' + modalId + '"]')?.remove();
+            closeModal();
         } else {
           showMsg('Xato: ' + (j.error || r.status), false);
         }

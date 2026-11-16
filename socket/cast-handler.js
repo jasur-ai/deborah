@@ -133,6 +133,7 @@ import { submitWallItem, listWallQueue, moderateWallItem, getPublicWall, markDir
 import { isBlocked, blockParticipant, unblockParticipant, rotateJoinCode, canModerate, holdWhenModeratorUnavailable } from '../services/cast/governance-service.js';
 // C5-01: Post-Cast Action Pack — end session'da async report job
 import { buildActionPackForSession } from '../services/cast/action-pack-service.js';
+import { classifyScore } from '../services/cast/scoring.js';
 // C5-04: Analytics event pipeline — PII-safe, non-blocking
 import { buildAnalyticsEvent, AnalyticsBuffer, safeEmit, ANALYTICS_EVENTS } from '../services/cast/analytics.js';
 import { normalizeForCompare, isReservedImpersonation, hasInvisibleAbuse, assessAlias } from '../services/cast/nickname.js';
@@ -4361,11 +4362,18 @@ export function setupCastHandlers(io, socket) {
     // Save final leaderboard snapshot (immutable)
     const participants = await listParticipants(cmd.sessionId);
     const scores = await getScores(cmd.sessionId);
-    const rows = Object.entries(participants).map(([pid, p]) => ({
-      participantId: pid,
-      displayAlias: p.displayAlias,
-      score: scores[pid]?.total || 0,
-    }));
+    const rows = Object.entries(participants).map(([pid, p]) => {
+      const accuracyPct = p.accuracyPercent ?? 0;
+      const classification = classifyScore(accuracyPct);
+      return {
+        participantId: pid,
+        displayAlias: p.displayAlias,
+        score: scores[pid]?.total || 0,
+        accuracyPercent: accuracyPct,
+        scoreLevel: classification.level,
+        scoreLabel: classification.label,
+      };
+    });
     rows.sort((a, b) => b.score - a.score);
     await fb.set(`cast_sessions/${cmd.sessionId}/action_pack/final_leaderboard`, { rows, endedAt: Date.now() });
 

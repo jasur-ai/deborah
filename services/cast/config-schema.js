@@ -82,7 +82,8 @@ const ScoringSchema = z
     wrongPoints: z.number().int().default(0),
     tieBreak: z.enum(['same_rank_then_stable_display']).default('same_rank_then_stable_display'),
     partialCredit: z.boolean().default(false),
-    multiplier: z.number().min(0).max(10).default(1),
+    // Cast test auto-ball: 1 / 1.5 / 2 ball max, default 1.5
+    multiplier: z.enum([1, 1.5, 2]).default(1.5),
     // C3-03 Vote→Discuss→Revote: revote bo'lsa qaysi ball olinadi
     scorePolicy: zEnum(CAST_SCORE_POLICY).default(CAST_SCORE_POLICY.FIRST_ONLY),
     // C4-08: institution governance limit — max speed weight (0..1 → speedBonusMax ball)

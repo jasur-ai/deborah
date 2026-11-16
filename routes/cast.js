@@ -36,6 +36,7 @@ import {
 } from '../services/cast/session-store.js';
 import { initialState } from '../services/cast/state-machine.js';
 import { toCastError } from '../services/cast/errors.js';
+import { classifyScore } from '../services/cast/scoring.js';
 import { CAST_ROLES, CAST_SCHEMA_VERSION, CAST_PRESETS } from '../utils/cast-constants.js';
 import { participantQuestionProjection, directorQuestionProjection } from '../services/cast/projections.js';
 // C4-06: child-safe governance — minor-safe preset server'da majburiy
@@ -1311,6 +1312,36 @@ router.get('/api/cast/sessions/:id/results/export', requireAuth, async (req, res
       return res.send(lines.join('\n'));
     }
     res.json({ ok: true, report });
+  } catch (err) {
+    res.status(400).json({ ok: false, error: toCastError(err) });
+  }
+});
+
+// ── General leaderboard — hamma ishtirokchi ballari bilan (C5-01) ──
+router.get('/api/cast/sessions/:id/results/leaderboard', requireAuth, async (req, res) => {
+  try {
+    const { id: sessionId } = req.params;
+    const actorId = `user:${req.session?.user?.safeKey || req.session?.user?.username}`;
+    const role = await getRole(sessionId, actorId);
+    if (!role || !['owner', 'co_host', 'moderator'].includes(role.role)) {
+      return res.status(403).json({ ok: false, error: { code: 'NOT_AUTHORIZED' } });
+    }
+    const participants = await listParticipants(sessionId);
+    const scores = await getScores(sessionId);
+    const rows = Object.entries(participants || {}).map(([pid, p]) => {
+      const accuracyPct = p.accuracyPercent ?? 0;
+      const classification = classifyScore(accuracyPct);
+      return {
+        participantId: pid,
+        displayAlias: p.displayAlias || pid,
+        score: scores[pid]?.total || 0,
+        accuracyPercent: accuracyPct,
+        scoreLevel: classification.level,
+        scoreLabel: classification.label,
+      };
+    });
+    rows.sort((a, b) => b.score - a.score);
+    res.json({ ok: true, leaderboard: rows });
   } catch (err) {
     res.status(400).json({ ok: false, error: toCastError(err) });
   }

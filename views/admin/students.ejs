@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <%- include('../partials/head') %>
+  <link rel="stylesheet" href="/css/admin.css?v=nv4">
+  <link rel="stylesheet" href="/design/admin-command.css">
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content →</a>
+  <nav class="admin-navbar">
+    <div class="admin-nav-left">
+      <button type="button" class="admin-nav-hamburger" aria-label="Menyu" aria-expanded="false" aria-controls="admin-sidebar" onclick="toggleAdminDrawer()"><span></span><span></span><span></span></button>
+      <a href="/" class="admin-nav-brand">
+        <span class="admin-nav-logo"><img src="/images/logo-vintage.png" alt="Deborah" class="logo-img" style="height:34px;width:auto"></span>
+        <span class="admin-nav-badge">ADMIN</span>
+      </a>
+    </div>
+    <div class="flex items-center gap-8">
+      <a href="/admin/dashboard" class="admin-nav-btn"><%- icon('arrowLeft', 14) %> Dashboard</a>
+      <%- include('../partials/theme-control') %>
+      <a href="/admin/logout" class="admin-nav-btn"><%- icon('logOut', 14) %> Chiqish</a>
+    </div>
+  </nav>
+
+  <div class="admin-layout">
+    <div class="admin-drawer-overlay" id="admin-drawer-overlay" onclick="toggleAdminDrawer()"></div>
+    <div class="admin-sidebar" id="admin-sidebar">
+      <div class="admin-side-label">Bo'limlar</div>
+      <a href="/admin/students" class="admin-side-btn active" style="--c:var(--deborah-semantic-color-action-primary);--cbg:rgba(37,99,235,.14)"><span class="admin-side-ico"><%- icon('users', 16) %></span>Talabalar</a>
+      <a href="/admin/users" class="admin-side-btn"><span class="admin-side-ico"><%- icon('users', 16) %></span>Foydalanuvchilar</a>
+      <a href="/admin/dashboard#pane-pre" class="admin-side-btn" style="--c:var(--accent-glow);--cbg:rgba(100,116,139,.14)"><span class="admin-side-ico"><%- icon('layers', 16) %></span>PRE Testlar</a>
+      <a href="/admin/dashboard#pane-results" class="admin-side-btn"><span class="admin-side-ico"><%- icon('trophy', 16) %></span>Natijalar</a>
+      <a href="/admin/vip" class="admin-side-btn" style="--c:#f59e0b;--cbg:rgba(245,158,11,.14)"><span class="admin-side-ico"><%- icon('shield', 16) %></span>VIP</a>
+      <div class="admin-side-label" style="margin-top:8px">Asboblar</div>
+      <a href="/arena" target="_blank" class="admin-side-btn" style="--c:var(--green);--cbg:rgba(0,229,160,.1)"><span class="admin-side-ico"><%- icon('monitor', 16) %></span>Test Arena</a>
+    </div>
+
+    <main class="admin-main" id="main">
+      <div class="admin-page-head">
+        <div>
+          <h1 class="admin-page-title"><%- icon('users', 20) %> Talabalar boshqaruvi</h1>
+          <p class="admin-page-sub">Ism, familiya, guruh, yonalish — guruhlarni o'qituvchiga biriktirish</p>
+        </div>
+      </div>
+
+      <div id="admin-alert" class="msg" role="alert" aria-live="assertive" style="display:none"></div>
+
+      <!-- Yangi talaba qo'shish forma -->
+      <div class="admin-card" style="margin-bottom:18px">
+        <div class="admin-card-head">
+          <h2 class="admin-card-title"><%- icon('userPlus', 16) %> Yangi talaba qo'shish</h2>
+        </div>
+        <div class="admin-card-body">
+          <form id="add-student-form" class="admin-grid admin-grid-3" style="gap:12px">
+            <div class="admin-fld">
+              <label class="admin-label" for="s-ism">Ism</label>
+              <input type="text" id="s-ism" name="ism" class="inp" placeholder="Ism" required autocomplete="given-name">
+            </div>
+            <div class="admin-fld">
+              <label class="admin-label" for="s-familiya">Familiya</label>
+              <input type="text" id="s-familiya" name="familiya" class="inp" placeholder="Familiya" required autocomplete="family-name">
+            </div>
+            <div class="admin-fld">
+              <label class="admin-label" for="s-guruh">Guruh</label>
+              <input type="text" id="s-guruh" name="guruh" class="inp" placeholder="Misol: 21-B" required>
+            </div>
+            <div class="admin-fld">
+              <label class="admin-label" for="s-yonalish">Yonalish</label>
+              <input type="text" id="s-yonalish" name="yonalish" class="inp" placeholder="Misol: Kompyuter muhandisligi" required>
+            </div>
+            <div class="admin-fld">
+              <label class="admin-label" for="s-group-id">Guruh ID (o'qituvchi biriktirish uchun)</label>
+              <select id="s-group-id" name="group_id" class="inp">
+                <option value="">Guruh tanlanmagan</option>
+                <% Object.entries(groups || {}).forEach(([gid, g]) => { %>
+                <option value="<%= gid %>"><%= g.title || gid %></option>
+                <% }); %>
+              </select>
+            </div>
+            <div class="admin-fld" style="grid-column: span 3; display:flex; align-items:flex-end">
+              <button type="submit" class="btn btn-primary" id="btn-add-student" style="min-height:44px"><%- icon('userPlus', 14) %> Talaba qo'shish</button>
+            </div>
+          </form>
+          <div id="add-student-err" class="err-text" style="display:none;margin-top:8px"></div>
+        </div>
+      </div>
+
+      <!-- Talabalar jadvali -->
+      <div class="admin-card">
+        <div class="admin-card-head" style="display:flex;justify-content:space-between;align-items:center">
+          <h2 class="admin-card-title"><%- icon('list', 16) %> Barcha talabalar</h2>
+          <button type="button" class="btn" onclick="location.reload()" style="min-height:44px"><%- icon('refreshCw', 14) %> Yangilash</button>
+        </div>
+        <div class="admin-card-body">
+          <% if (error) { %>
+          <div class="err-text" style="padding:10px"><%= error %></div>
+          <% } else if (!students || students.length === 0) { %>
+          <div class="admin-empty">Talabalar yo'q. Iltimos, yuqorida yangi talaba qo'shing.</div>
+          <% } else { %>
+          <div class="table-wrap dt-wrap is-reflow"><table class="dt" data-density="default">
+            <thead><tr>
+              <th scope="col">#</th>
+              <th scope="col">Ism</th>
+              <th scope="col">Familiya</th>
+              <th scope="col">Guruh</th>
+              <th scope="col">Yonalish</th>
+              <th scope="col">Guruh ID</th>
+              <th scope="col" class="dt-actions">Amallar</th>
+            </tr></thead>
+            <tbody id="students-tbody">
+              <% let idx = 1; students.forEach((s) => { %>
+              <tr>
+                <td><%= idx++ %></td>
+                <td><%= s.ism || '-' %></td>
+                <td><%= s.familiya || '-' %></td>
+                <td><%= s.guruh || '-' %></td>
+                <td><%= s.yonalish || '-' %></td>
+                <td><span class="badge badge-secondary"><%= s.group_id || '-' %></span></td>
+                <td class="dt-actions">
+                  <button type="button" class="btn btn-sm" onclick="moveStudent('<%= s.id %>')" title="Guruhga biriktirish"><%- icon('shuffle', 12) %> Biriktirish</button>
+                  <button type="button" class="btn btn-sm btn-danger" onclick="deleteStudent('<%= s.id %>', '<%= s.ism %> <%= s.familiya %>')" title="O'chirish"><%- icon('trash2', 12) %></button>
+                </td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table></div>
+          <% } %>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Guruhga biriktirish modali -->
+  <div class="modal-overlay" id="move-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="move-modal-title">
+      <div class="modal-head">
+        <h2 id="move-modal-title" style="font-size:1rem;margin:0">Talabani guruhga biriktirish</h2>
+        <button type="button" class="modal-close" onclick="closeMoveModal()" aria-label="Yopish">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:16px 20px">
+        <p id="move-student-label" class="text-muted" style="margin:0 0 12px;font-size:.85rem"></p>
+        <label class="lbl" for="move-group-select">Guruhni tanlang</label>
+        <select id="move-group-select" class="inp" required>
+          <option value="">Guruh tanlanmagan</option>
+          <% Object.entries(groups || {}).forEach(([gid, g]) => { %>
+          <option value="<%= gid %>"><%= g.title || gid %></option>
+          <% }); %>
+        </select>
+      </div>
+      <div class="modal-foot" style="display:flex;justify-content:flex-end;gap:10px;padding:14px 20px">
+        <button type="button" class="btn" onclick="closeMoveModal()" style="min-height:44px">Bekor qilish</button>
+        <button type="button" class="btn btn-primary" id="move-confirm" onclick="confirmMove()" style="min-height:44px"><%- icon('arrowRight', 14) %> Biriktirish</button>
+      </div>
+    </div>
+  </div>
+
+  <input type="hidden" id="csrf-token" value="<%= csrfToken %>">
+  <script>
+    // Global student id for move modal
+    let __moveStudentId = null;
+
+    function moveStudent(studentId) {
+      __moveStudentId = studentId;
+      const modal = document.getElementById('move-modal');
+      const label = document.getElementById('move-student-label');
+      label.textContent = 'Quyidagi talabaning guruhini tanlang:';
+      modal.hidden = false;
+    }
+
+    function closeMoveModal() {
+      document.getElementById('move-modal').hidden = true;
+      __moveStudentId = null;
+    }
+
+    async function confirmMove() {
+      const select = document.getElementById('move-group-select');
+      const groupId = select.value;
+      if (!__moveStudentId) return;
+      try {
+        const res = await fetch(`/admin/api/students/${__moveStudentId}/move`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': document.getElementById('csrf-token').value },
+          body: JSON.stringify({ group_id: groupId }),
+        });
+        if (res.ok) {
+          closeMoveModal();
+          location.reload();
+        } else {
+          alert('Biriktirishda xatolik yuz berdi');
+        }
+      } catch (e) {
+        alert('Xatolik: ' + e.message);
+      }
+    }
+
+    async function deleteStudent(studentId, name) {
+      if (!confirm(`"${name}" talabasini o'chirmoqchimisiz?`)) return;
+      try {
+        const res = await fetch(`/admin/api/students/${studentId}`, {
+          method: 'DELETE',
+          headers: { 'X-CSRF-Token': document.getElementById('csrf-token').value },
+        });
+        if (res.ok) location.reload();
+        else alert('O\'chirishda xatolik yuz berdi');
+      } catch (e) {
+        alert('Xatolik: ' + e.message);
+      }
+    }
+
+    document.getElementById('add-student-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('btn-add-student');
+      const errDiv = document.getElementById('add-student-err');
+      btn.disabled = true;
+      errDiv.style.display = 'none';
+      try {
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+        const res = await fetch('/admin/api/students', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': document.getElementById('csrf-token').value },
+          body: JSON.stringify(data),
+        });
+        if (res.ok) {
+          e.target.reset();
+          location.reload();
+        } else {
+          const json = await res.json();
+          errDiv.textContent = json.error || 'Xatolik yuz berdi';
+          errDiv.style.display = 'block';
+        }
+      } catch (err) {
+        errDiv.textContent = err.message;
+        errDiv.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  </script>
+  <script src="/js/admin/common.js" defer></script>
+</body>
+</html>

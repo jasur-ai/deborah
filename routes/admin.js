@@ -19,6 +19,8 @@ import teacherRoutes from './admin/teachers.js';
 // BUG-029: Barcha funksiyalar — bir ko'rinish indeks (sidebar'dan avto-katalog)
 import adminIndexRoutes from './admin/index.js';
 import signupReviewRoutes from './admin/signup-reviews.js';
+// Student management — talaba/guruh boshqaruvi
+import studentRoutes from './admin/students.js';
 // C4-08: institution governance — policy CRUD, publish, diff, migration preview, audit export
 import {
   createInstitutionPolicy,
@@ -45,6 +47,7 @@ router.use(requireAdmin);
 router.use(teacherRoutes);
 router.use(adminIndexRoutes); // GET /admin/index — BUG-029
 router.use(signupReviewRoutes);
+router.use(studentRoutes);
 
 // ── Dashboard ──
 router.get('/dashboard', async (req, res) => {

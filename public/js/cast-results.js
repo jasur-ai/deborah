@@ -13,6 +13,7 @@
   const REPORT_URL = `/api/cast/sessions/${SID}/results/report`;
   const EXPORT_URL = `/api/cast/sessions/${SID}/results/export`;
   const AI_DRAFT_URL = `/api/cast/sessions/${SID}/results/ai-draft`;
+const LEADERBOARD_URL = `/api/cast/sessions/${SID}/results/leaderboard`;
 
   const $ = (id) => document.getElementById(id);
   const esc = (v) => {
@@ -197,6 +198,25 @@
       });
     }
 
+    // General leaderboard — hamma ishtirokchi ballari bilan
+    const lb = report.leaderboard || report.finalLeaderboard || [];
+    if (lb && lb.length > 0) {
+      let lbHtml = '<tbody>';
+      let rank = 1;
+      for (const row of lb) {
+        const pct = row.accuracyPercent ?? 0;
+        lbHtml += `<tr>
+          <td>${rank++}</td>
+          <td>${esc(row.displayAlias || row.participantId)}</td>
+          <td class="res-num">${row.score ?? 0}</td>
+          <td>${fmtPctInt(pct)}</td>
+          <td>${scoreLevelLabel(row.scoreLevel)}</td>
+        </tr>`;
+      }
+      lbHtml += '</tbody>';
+      document.getElementById('res-leaderboard-rows').innerHTML = lbHtml;
+    }
+
     // Retention
     const ret = report.retention || {};
     let retHtml = `<p>Data class: <b>${esc(ret.dataClass || 'action_pack')}</b> · Saqlash: <b>${ret.days ?? '—'}</b> kun (${esc(ret.expiryAction || '')})</p>`;
@@ -265,5 +285,6 @@
   document.addEventListener('DOMContentLoaded', () => {
     bind();
     loadReport();
+    loadLeaderboard();
   });
 })();

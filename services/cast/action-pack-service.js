@@ -11,6 +11,7 @@
  */
 
 import { hashConfig } from './config-schema.js';
+import { classifyScore } from './scoring.js';
 import { computeQuestionEvidence } from './evidence-service.js';
 import { computeConfidenceMatrix, MIN_CELL_COUNT } from './confidence-service.js';
 import { getMisconception, MISCONCEPTION_VERSION } from './misconception-service.js';
@@ -74,10 +75,13 @@ export function summarizeAccuracy({ answersByQuestion = {} }) {
       if (rec.isCorrect || rec.status === 'CORRECT') correct++;
     }
   }
+  const pct = accepted > 0 ? Math.round((correct / accepted) * 1000) / 10 : null;
   return {
     accepted,
     correct,
-    accuracyPercent: accepted > 0 ? Math.round((correct / accepted) * 1000) / 10 : null,
+    accuracyPercent: pct,
+    scoreLevel: pct ? classifyScore(pct).level : null,
+    scoreLabel: pct ? classifyScore(pct).label : null,
   };
 }
 
@@ -317,6 +321,8 @@ export function projectStudentRecap({ participantId, answersByQuestion = {}, mis
     generatedAt: Date.now(),
     version: ACTION_PACK_VERSION,
     accuracy: accuracy,
+    scoreLevel: accuracy.accuracyPercent ? classifyScore(accuracy.accuracyPercent).level : null,
+    scoreLabel: accuracy.accuracyPercent ? classifyScore(accuracy.accuracyPercent).label : null,
     items,
   };
 }

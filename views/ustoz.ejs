@@ -175,6 +175,23 @@
         </form>
       </section>
     </div>
+
+    <section class="uz-cols" id="groups" style="margin-top:40px">
+      <div class="uz-card" aria-labelledby="uz-groups-h">
+        <h2 id="uz-groups-h">Guruhlarim</h2>
+        <div class="uz-card-sub">Biriktirilgan guruhlar — ustiga bosganingizda hamma talaba ballari bilan ko'rinadi</div>
+        <div id="groups-list" class="uz-groups-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:16px">
+          <div class="uz-empty-groups" style="color:var(--mut,#b3aa98);font-size:.82rem;padding:12px">Guruhlar topilmadi. Admin sizga guruh biriktirgandan so'ng shu yerda ko'rinadi.</div>
+        </div>
+      </div>
+
+      <div class="uz-card" aria-labelledby="uz-students-h" style="display:none" id="group-students-card">
+        <h2 id="uz-students-h" style="margin-bottom:8px">Guruhdagi talabalar</h2>
+        <div class="uz-card-sub" style="margin-bottom:14px" id="group-title"></div>
+        <div id="students-list" style="display:flex;flex-direction:column;gap:8px"></div>
+        <button type="button" class="uz-btn--ghost" onclick="document.getElementById('group-students-card').style.display='none';document.getElementById('groups-list').style.display='grid'" style="margin-top:10px;align-self:flex-start;min-height:40px">← Orqaga guruhlarga</button>
+      </div>
+    </section>
   </main>
 
   <script>
@@ -205,6 +222,89 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ bind(); });
   else bind();
 })();
+
+// ── Guruhlar va talabalar (o'qituvchi uchun) ──
+async function loadTeacherGroups() {
+  try {
+    const res = await fetch('/api/teacher/groups', { credentials: 'same-origin' });
+    const data = await res.json();
+    const container = document.getElementById('groups-list');
+    if (!container) return;
+    container.innerHTML = '';
+    if (!data.groups || data.groups.length === 0) {
+      container.innerHTML = '<div class="uz-empty-groups" style="color:var(--mut,#b3aa98);font-size:.82rem;padding:12px">Guruhlar topilmadi. Admin sizga guruh biriktirgandan so\'ng shu yerda ko\'rinadi.</div>';
+      return;
+    }
+    data.groups.forEach((g) => {
+      const card = document.createElement('div');
+      card.className = 'uz-feat';
+      card.style.cursor = 'pointer';
+      card.style.borderColor = 'rgba(194,160,106,.4)';
+      card.innerHTML = `
+        <div class="uz-feat-ico">👥</div>
+        <b>${escapeHtml(g.title || 'Guruh')}</b>
+        <span style="font-size:.7rem;color:var(--mut,#b3aa98);">${escapeHtml(g.teacherId || '')}</span>
+      `;
+      card.onclick = () => loadGroupStudents(g.id, g.title || 'Guruh');
+      container.appendChild(card);
+    });
+  } catch (e) {
+    console.error('Groups load error:', e);
+  }
+}
+
+async function loadGroupStudents(groupId, groupName) {
+  try {
+    const res = await fetch(`/api/teacher/groups/${encodeURIComponent(groupId)}/students`, { credentials: 'same-origin' });
+    const data = await res.json();
+    const card = document.getElementById('group-students-card');
+    const list = document.getElementById('students-list');
+    const title = document.getElementById('group-title');
+    if (!card || !list || !title) return;
+    title.textContent = groupName;
+    list.innerHTML = '';
+    if (!data.students || data.students.length === 0) {
+      list.innerHTML = '<div style="color:var(--mut,#b3aa98);font-size:.82rem;padding:12px">Bu guruhda hali talabalar yo\'q.</div>';
+    } else {
+      data.students.forEach((s) => {
+        const item = document.createElement('div');
+        item.style.padding = '8px 12px';
+        item.style.border = '1px solid rgba(194,160,106,.2)';
+        item.style.borderRadius = '10px';
+        item.style.background = 'rgba(255,255,255,.03)';
+        item.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-weight:700">${escapeHtml(s.ism || '')} ${escapeHtml(s.familiya || '')}</div>
+              <div style="font-size:.72rem;color:var(--mut,#b3aa98)">${escapeHtml(s.guruh || '-')} · ${escapeHtml(s.yonalish || '-')}</div>
+            </div>
+            <div style="font-size:.78rem;color:var(--mut,#b3aa98)">Ball: —</div>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+    document.getElementById('groups-list').style.display = 'none';
+    card.style.display = 'block';
+  } catch (e) {
+    console.error('Students load error:', e);
+  }
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// Load groups on page load
+if (document.getElementById('groups-list')) {
+  loadTeacherGroups();
+}
 </script>
 
 </body>

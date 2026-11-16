@@ -407,6 +407,8 @@ export const AUDIT_ACTIONS = {
   ADMIN_ACTION: 'admin:action',
   ADMIN_MFA_STEPUP: 'admin:mfa:stepup',
   ADMIN_MFA_RESET: 'admin:mfa:reset',
+  // Student management
+  STUDENT_ADDED: 'student:added',
   // Password reset (plan_login §5)
   RESET_REQUEST: 'user:reset:request',
   RESET_COMPLETE: 'user:reset:complete',

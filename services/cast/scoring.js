@@ -138,3 +138,19 @@ export function accuracyPercent(correctCount, scorableCount) {
   if (!scorableCount) return null;
   return Math.round((correctCount / scorableCount) * 100);
 }
+
+/**
+ * Cast test score classification (avto-ball chegaralari):
+ *   88% → yuqori (high)
+ *   75% → o'rta (medium)
+ *   < 75% → past (low)
+ *
+ * @param {number} pct — accuracy percent 0..100
+ * @returns {{level: string, label: string, color: string}}
+ */
+export function classifyScore(pct) {
+  if (pct == null) return { level: 'past', label: 'Past', color: '#ef4444' };
+  if (pct >= 88) return { level: 'yuqori', label: 'Yuqori', color: '#22c55e' };
+  if (pct >= 75) return { level: 'orta', label: "O'rta", color: '#f59e0b' };
+  return { level: 'past', label: 'Past', color: '#ef4444' };
+}
