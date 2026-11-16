@@ -971,13 +971,17 @@ const OIDC_ERROR_MAP = {
 // ── User Register Page (AUTH B-03: alohida universitar forma) ──
 // Google birinchi → divider → ≤5 maydon (rol, ism, email, username, parol) +
 // invite kod (ixtiyoriy). POST /user/login (mode=reg) — barcha A-faza himoyasi
-// (CSRF, honeypot, register limiter, email validatsiya, HIBP) qayta ishlatiladi.
+// (CSRF, honeypot, register limiter, email validatsiya, HIBP) qayta ishlatildi.
+// Bitta auth sahifa qoldirildi: /user/login (register tabi ham shu yerda).
 router.get('/user/register', redirectIfAuth, (req, res) => {
   const lang = resolveAuthLang(req.query.lang || req.cookies?.lang);
   try {
     recordMetric('auth.register.view', 1, { type: 'counter', labels: { lang } });
   } catch (_) {}
-  renderUserRegister(res, { lang });
+  const q = new URLSearchParams({ mode: 'reg', lang }).toString();
+  // Qo'shimcha query parametrlar (role=teacher h.k.) saqlanadi.
+  if (req.query.role) q += `&role=${encodeURIComponent(req.query.role)}`;
+  res.redirect(`/user/login?${q}`);
 });
 
 // ── S27: O'qituvchilar maydoni (/ustoz) — landing burger'idagi yashirin kirish ──
@@ -2179,6 +2183,63 @@ router.post('/user/login',
           field: 'email',
         });
       }
+
+    // AUTH A-19 §07: teacher register — faqat ariza, akkaunt YO'Q.
+    // Admin tasdiqlaganda akkaunt yaratiladi (login = email local part, parol = username123).
+    if (wantsTeacher) {
+      const appResult = await submitTeacherApplication({
+        userKey,
+        username: normalizedUsername,
+        email,
+        name: parsed.name || '',
+        university: parsed.university || '',
+        subject: parsed.subject || '',
+        experience: parsed.experience || '',
+        reason: parsed.reason || '',
+        lang,
+        appeal: false,
+      });
+      if (!appResult || !appResult.ok) {
+        if (appResult?.error === 'duplicate_application') {
+          return renderUserRegister(res, {
+            lang,
+            error: copy.errors.duplicate_application || copy.errors.required,
+            prevUsername: username,
+            prevEmail: email,
+            prevName: req.body.name,
+            prevInvite: req.body.invite,
+            prevRole: 'teacher',
+            prevUniversity: req.body.university,
+            prevSubject: req.body.subject,
+            prevExperience: req.body.experience,
+            prevReason: req.body.reason,
+            field: 'username',
+          });
+        }
+        return renderUserRegister(res, {
+          lang,
+          error: copy.errors.server || 'Ariza yuborishda xatolik yuz berdi',
+          prevUsername: username,
+          prevEmail: email,
+          prevName: req.body.name,
+          prevRole: 'teacher',
+        });
+      }
+      // Rolni teacher_pending ga o'rnatamiz (submitTeacherApplication
+      // faqat teacher_application yozadi, role'ni yo'q).
+      await fb.set(`users/${userKey}/role`, 'teacher_pending');
+      await fb.set(`users/${userKey}/role_version`, Date.now());
+      logAuthEvent({
+        action: AUDIT_ACTIONS.TEACHER_APPLICATION,
+        outcome: 'submitted',
+        method: 'register',
+        actorId: userKey,
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent'],
+        details: { role: 'teacher_pending', applicationOnly: true },
+      }).catch(() => {});
+      return res.redirect('/user/teacher-approval?applied=1');
+    }
 
       // AUTH A-22: NIST parol siyosati — dynamic min (8 MFA / 15 oddiy),
       // complexity talabi yo'q; teacher uchun zxcvbn score >= 4 SHART.

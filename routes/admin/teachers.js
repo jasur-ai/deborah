@@ -17,7 +17,7 @@
 import { Router } from 'express';
 import { fb } from '../../firebase/admin.js';
 import { requireAdmin, requireRecentAdminAuth, requireAdminMfaStepUp } from '../../middleware/auth.js';
-import { safeKey } from '../../utils/helpers.js';
+import { safeKey, hashPassword } from '../../utils/helpers.js';
 import crypto from 'crypto';
 
 // AUTH D-10 §13: admin UI copy — 4 til (AUTH_COPY[lang].admin).
@@ -323,10 +323,13 @@ router.post('/api/teachers/:id/approve', requireRecentAdminAuth, requireAdminMfa
       at: now,
     }).catch(() => {});
 
-    // AUTH A-23: teacher_approved email (user email bo'lsa; fire-and-forget)
+    // AUTH A-23: teacher_approved email (user email bo'lsa; fire-and-forget).
+    // Admin tasdiqlashi orqali email tasdiqlanadi — email_verified shu yerda
+    // (keyingi blokda) true qilinadi, shuning uchun yuborish uchun faqat email
+    // tekshiriladi.
     const userSnap = await fb.get(`users/${userId}`);
     const uData = userSnap.exists() ? userSnap.val() : {};
-    if (uData.email && uData.email_verified) {
+    if (uData.email) {
       const { renderTeacherApproved } = await import('../../src/modules/email/templates.js');
       const { sendEmail } = await import('../../src/modules/email/provider.js');
       const tpl = renderTeacherApproved({ username: uData.username || userId, lang: uData.lang || 'uz' });
@@ -346,9 +349,8 @@ router.post('/api/teachers/:id/approve', requireRecentAdminAuth, requireAdminMfa
     } catch (_) { /* non-critical */ }
 
     // ── O'qituvchi akkaunti: login = email oldincha qismi ──
-    // Parolni overwriting qilmaymiz — foydalanuvchi ro'yxatdan o'tganda
-    // o'rnatgan parol saqlanadi. login123 ekranda ko'rsatiladi va emailga
-    // yuboriladi (boshqa bir credential sifatida).
+    // Ariza faqat yuborilgan (registerdan o'tilmagan), shuning uchun akkaunt
+    // shu yerda yaratiladi: login = email local part, parol = username123 (hash).
     let login = null, shownPassword = null;
     try {
       const uSnap = await fb.get(`users/${userId}`);
@@ -357,11 +359,14 @@ router.post('/api/teachers/:id/approve', requireRecentAdminAuth, requireAdminMfa
       const emailLocal = String(email).split('@')[0] || uData.username || userId;
       login = emailLocal.replace(/[^a-zA-Z0-9_.-]/g, '_').toLowerCase();
       shownPassword = login + '123';
-      // Username ni yangilash (agar email local part mavjud bo'lsa)
+      // Username ni yangilash
       if (login && (!uData.username || uData.username !== login)) {
         await fb.set(`users/${userId}/username`, login);
       }
-      // Asl parolni o'zgarmaymiz — foydalanuvchi ro'yxatdan o'tgan parol ishlashi shart.
+      // Akkauntni to'liq yaratish: parol hash + email verified (admin tasdiqlashi orqali)
+      const hashed = await hashPassword(shownPassword);
+      await fb.set(`users/${userId}/password`, hashed);
+      await fb.set(`users/${userId}/email_verified`, true);
       await fb.set(`users/${userId}/teacher_credentials_shown`, {
         login, shownPassword, shownAt: Date.now(), shownBy: req.session?.admin?.username || 'admin',
       });
