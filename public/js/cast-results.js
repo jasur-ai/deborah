@@ -31,6 +31,12 @@ const LEADERBOARD_URL = `/api/cast/sessions/${SID}/results/leaderboard`;
 
   let report = null;
 
+  // C5-03: ball darajasiga mos label (backend classifyScore bilan bir xil)
+  function scoreLevelLabel(level) {
+    const map = { yuqori: 'Yuqori', orta: "O'rta", past: 'Past' };
+    return map[level] || 'Past';
+  }
+
   function setCard(id, html) {
     const card = $(id);
     if (!card) return;
@@ -242,6 +248,33 @@ const LEADERBOARD_URL = `/api/cast/sessions/${SID}/results/leaderboard`;
     } catch (err) {
       $('res-badge').textContent = '⚠️ Yuklash xatosi';
       $('res-fingerprint').textContent = err.message || String(err);
+    }
+  }
+
+  async function loadLeaderboard() {
+    try {
+      const r = await fetch(LEADERBOARD_URL, { credentials: 'same-origin' });
+      const data = await r.json();
+      if (data.ok && data.leaderboard) {
+        const rows = data.leaderboard;
+        let lbHtml = '<tbody>';
+        let rank = 1;
+        for (const row of rows) {
+          const pct = row.accuracyPercent ?? 0;
+          lbHtml += `<tr>
+            <td>${rank++}</td>
+            <td>${esc(row.displayAlias || row.participantId)}</td>
+            <td class="res-num">${row.score ?? 0}</td>
+            <td>${fmtPctInt(pct)}</td>
+            <td>${scoreLevelLabel(row.scoreLevel)}</td>
+          </tr>`;
+        }
+        lbHtml += '</tbody>';
+        const tbody = document.getElementById('res-leaderboard-rows');
+        if (tbody) tbody.innerHTML = lbHtml;
+      }
+    } catch (err) {
+      // Leaderboard yuklash xatosi — asosiy hisobotdan bypass qilamiz
     }
   }
 
