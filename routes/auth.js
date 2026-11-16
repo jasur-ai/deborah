@@ -972,16 +972,13 @@ const OIDC_ERROR_MAP = {
 // Google birinchi → divider → ≤5 maydon (rol, ism, email, username, parol) +
 // invite kod (ixtiyoriy). POST /user/login (mode=reg) — barcha A-faza himoyasi
 // (CSRF, honeypot, register limiter, email validatsiya, HIBP) qayta ishlatildi.
-// Bitta auth sahifa qoldirildi: /user/login (register tabi ham shu yerda).
+// (CSRF, honeypot, register limiter, email validatsiya, HIBP) qayta ishlatiladi.
 router.get('/user/register', redirectIfAuth, (req, res) => {
   const lang = resolveAuthLang(req.query.lang || req.cookies?.lang);
   try {
     recordMetric('auth.register.view', 1, { type: 'counter', labels: { lang } });
   } catch (_) {}
-  const q = new URLSearchParams({ mode: 'reg', lang }).toString();
-  // Qo'shimcha query parametrlar (role=teacher h.k.) saqlanadi.
-  if (req.query.role) q += `&role=${encodeURIComponent(req.query.role)}`;
-  res.redirect(`/user/login?${q}`);
+  renderUserRegister(res, { lang });
 });
 
 // ── S27: O'qituvchilar maydoni (/ustoz) — landing burger'idagi yashirin kirish ──
@@ -2225,8 +2222,7 @@ router.post('/user/login',
           prevRole: 'teacher',
         });
       }
-      // Rolni teacher_pending ga o'rnatamiz (submitTeacherApplication
-      // faqat teacher_application yozadi, role'ni yo'q).
+      // Rolni teacher_pending ga o'rnatamiz.
       await fb.set(`users/${userKey}/role`, 'teacher_pending');
       await fb.set(`users/${userKey}/role_version`, Date.now());
       logAuthEvent({
@@ -2238,6 +2234,23 @@ router.post('/user/login',
         userAgent: req.headers['user-agent'],
         details: { role: 'teacher_pending', applicationOnly: true },
       }).catch(() => {});
+      // Sessiyani o'rnatamiz — /user/teacher-approval sahifasiga kirish uchun.
+      // Parol YO'Q (admin tasdiqlaganda username123 beriladi).
+      req.session.user = {
+        username: normalizedUsername,
+        safeKey: userKey,
+        isVip: false,
+        role: 'teacher_pending',
+        email,
+        emailVerified: false,
+        passwordUpdatedAt: 0,
+        roleVersion: 1,
+      };
+      req.session.csrfToken = crypto.randomBytes(32).toString('hex');
+      req.session.lastActiveAt = Date.now();
+      req.session.startedAt = Date.now();
+      req.session.lastRotatedAt = Date.now();
+      await new Promise((resolve) => req.session.save(resolve));
       return res.redirect('/user/teacher-approval?applied=1');
     }
 
