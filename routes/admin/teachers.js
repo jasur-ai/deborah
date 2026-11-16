@@ -17,7 +17,7 @@
 import { Router } from 'express';
 import { fb } from '../../firebase/admin.js';
 import { requireAdmin, requireRecentAdminAuth, requireAdminMfaStepUp } from '../../middleware/auth.js';
-import { safeKey, hashPassword } from '../../utils/helpers.js';
+import { safeKey } from '../../utils/helpers.js';
 import crypto from 'crypto';
 
 // AUTH D-10 §13: admin UI copy — 4 til (AUTH_COPY[lang].admin).
@@ -345,22 +345,27 @@ router.post('/api/teachers/:id/approve', requireRecentAdminAuth, requireAdminMfa
       await revokeByUser(userId, { reason: 'teacher_approve' });
     } catch (_) { /* non-critical */ }
 
-    // ── O'qituvchi akkaunti yaraladi: login = email oldincha qismi, parol = username123 ──
-    let login = null, password = null;
+    // ── O'qituvchi akkaunti: login = email oldincha qismi ──
+    // Parolni overwriting qilmaymiz — foydalanuvchi ro'yxatdan o'tganda
+    // o'rnatgan parol saqlanadi. login123 ekranda ko'rsatiladi va emailga
+    // yuboriladi (boshqa bir credential sifatida).
+    let login = null, shownPassword = null;
     try {
       const uSnap = await fb.get(`users/${userId}`);
       const uData = uSnap.exists() ? uSnap.val() : {};
       const email = uData.email || '';
       const emailLocal = String(email).split('@')[0] || uData.username || userId;
       login = emailLocal.replace(/[^a-zA-Z0-9_.-]/g, '_').toLowerCase();
-      password = login + '123';
-      const hashed = await hashPassword(password);
-      await fb.set(`users/${userId}/username`, login);
-      await fb.set(`users/${userId}/password`, hashed);
+      shownPassword = login + '123';
+      // Username ni yangilash (agar email local part mavjud bo'lsa)
+      if (login && (!uData.username || uData.username !== login)) {
+        await fb.set(`users/${userId}/username`, login);
+      }
+      // Asl parolni o'zgarmaymiz — foydalanuvchi ro'yxatdan o'tgan parol ishlashi shart.
       await fb.set(`users/${userId}/teacher_credentials_shown`, {
-        login, password, shownAt: Date.now(), shownBy: req.session?.admin?.username || 'admin',
+        login, shownPassword, shownAt: Date.now(), shownBy: req.session?.admin?.username || 'admin',
       });
-    } catch (_) { /* credentials create fail-soft — login/parol yo'q bo'ladi */ }
+    } catch (_) { /* credentials create fail-soft */ }
 
     // Email xabar: "tasdiqlandi, login va parol shu"
     try {
@@ -372,12 +377,12 @@ router.post('/api/teachers/:id/approve', requireRecentAdminAuth, requireAdminMfa
         const lang = uData2.lang || 'uz';
         const tpl = renderTeacherApproved({ username: login || userId, lang });
         // Login/parolni xabarga qo'shamiz (plain-text, spam-free)
-        const credHtml = `<p style="font-family:monospace;background:rgba(255,255,255,.06);border:1px solid rgba(194,160,106,.2);border-radius:8px;padding:12px 16px;margin:14px 0;line-height:1.6">Login: <b>${login}</b><br>Parol: <b>${password}</b></p>`;
+        const credHtml = `<p style="font-family:monospace;background:rgba(255,255,255,.06);border:1px solid rgba(194,160,106,.2);border-radius:8px;padding:12px 16px;margin:14px 0;line-height:1.6">Login: <b>${login}</b><br>Parol: <b>${shownPassword}</b></p>`;
         await sendEmail({
           to: uData2.email,
           subject: tpl.subject,
           html: tpl.html.replace('</body>', credHtml + '</body>'),
-          text: tpl.text + '\nLogin: ' + login + '\nParol: ' + password + '\n',
+          text: tpl.text + '\nLogin: ' + login + '\nParol: ' + shownPassword + '\n',
           tag: 'teacher_approved_credentials',
         }).catch((err) => console.warn('[email:teacher_approved_creds] send failed:', err?.message || err));
       }
@@ -386,7 +391,7 @@ router.post('/api/teachers/:id/approve', requireRecentAdminAuth, requireAdminMfa
     // AUTH D-06 §06: teacher approval metric (Prometheus)
     try { recordMetric('auth_teacher_approval_total', 1, { type: 'counter', labels: { outcome: 'approved' } }); } catch (_) {}
 
-    res.json({ ok: true, role: 'teacher', login, password, credentialsCreated: !!login });
+    res.json({ ok: true, role: 'teacher', login, shownPassword, credentialsCreated: !!login });
   } catch (err) {
     console.error('Teacher approve error:', err);
     res.status(500).json({ ok: false, error: err.message });
