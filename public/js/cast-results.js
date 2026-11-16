@@ -240,6 +240,7 @@ const LEADERBOARD_URL = `/api/cast/sessions/${SID}/results/leaderboard`;
       if (data.ok && data.ready) {
         report = data.report;
         render();
+        loadLeaderboard(); // Report tayyor bo'lganda reytingni yuklaymiz
       } else {
         $('res-badge').textContent = '⏳ Tayyorlanmoqda…';
         $('res-fingerprint').textContent = data.message || 'Hisobot hali tayyor emas';
@@ -318,6 +319,5 @@ const LEADERBOARD_URL = `/api/cast/sessions/${SID}/results/leaderboard`;
   document.addEventListener('DOMContentLoaded', () => {
     bind();
     loadReport();
-    loadLeaderboard();
   });
 })();
