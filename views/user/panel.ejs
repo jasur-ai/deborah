@@ -42,14 +42,13 @@
     .tb-lang button{background:transparent;border:none;border-radius:7px;color:var(--deborah-semantic-color-text-secondary,#9aa3b8);font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.62rem;letter-spacing:.08em;padding:6px 9px;cursor:pointer;transition:all .15s;min-height:0;}
     .tb-lang button:hover{color:var(--deborah-semantic-color-text-primary,#e8ebf5);}
     .tb-lang button.on{background:var(--deborah-semantic-color-action-primary,#c9a45c);color:var(--deborah-semantic-color-action-on-action,#1a1305);font-weight:700;}
-    .tb-theme-btn{position:relative;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;overflow:hidden;border-radius:11px;border:1px solid var(--deborah-semantic-color-border-subtle);background:var(--deborah-semantic-color-surface-nested);color:var(--deborah-semantic-color-text-secondary);cursor:pointer;transition:color .2s ease,border-color .2s ease,background-color .25s ease,box-shadow .25s ease;}
-    .tb-theme-btn:hover{color:var(--deborah-semantic-color-text-primary);border-color:var(--deborah-semantic-color-border-default);}
-    .tb-theme-btn svg{position:absolute;width:18px;height:18px;pointer-events:none;transform-origin:50% 50%;transition:opacity .24s ease,transform .52s cubic-bezier(.2,.8,.2,1);}
-    html[data-resolved-theme="light"] .tb-theme-btn .ico-sun,html:not([data-resolved-theme="light"]) .tb-theme-btn .ico-moon{opacity:1;transform:rotate(0) scale(1);}
-    html[data-resolved-theme="light"] .tb-theme-btn .ico-moon{opacity:0;transform:rotate(-100deg) scale(.68);}
-    html:not([data-resolved-theme="light"]) .tb-theme-btn .ico-sun{opacity:0;transform:rotate(100deg) scale(.68);}
-    html.theme-transitioning .tb-theme-btn{border-color:var(--deborah-semantic-color-action-primary);box-shadow:0 0 0 3px var(--deborah-user-accent-sage-soft),0 0 18px var(--deborah-semantic-color-action-primary-soft);}
-    @media(prefers-reduced-motion:reduce){.tb-theme-btn,.tb-theme-btn svg{transition:none!important}}
+    .tb-theme-btn{width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;border-radius:9px;border:1px solid var(--deborah-semantic-color-border-subtle,rgba(127,137,161,.22));background:var(--deborah-semantic-color-surface-nested,rgba(127,137,161,.12));color:var(--deborah-semantic-color-text-secondary,#9aa3b8);cursor:pointer;transition:all .15s;}
+    .tb-theme-btn:hover{color:var(--deborah-semantic-color-text-primary,#e8ebf5);border-color:var(--deborah-semantic-color-border-default,rgba(127,137,161,.4));}
+    .tb-theme-btn svg{width:16px;height:16px;}
+    html[data-resolved-theme="light"] .tb-theme-btn .ico-moon{display:none;}
+    html:not([data-resolved-theme="light"]) .tb-theme-btn .ico-sun{display:none;}
+    html[data-resolved-theme="light"] .tb-theme-btn .ico-sun{display:block;}
+    html:not([data-resolved-theme="light"]) .tb-theme-btn .ico-moon{display:block;}
 
     .modal-overlay.open{display:flex;}
     .modal-box{background:var(--deborah-semantic-color-surface-raised);border-radius:var(--deborah-radius-lg,20px);padding:24px;width:100%;max-width:480px;border:1px solid var(--deborah-semantic-color-border-subtle);box-shadow:var(--shadow-xl);max-height:90vh;overflow-y:auto;}
@@ -201,9 +200,9 @@
           <button type="button" data-plang="ru" class="<%= typeof panelLang !== 'undefined' && panelLang === 'ru' ? 'on' : '' %>">RU</button>
           <button type="button" data-plang="en" class="<%= typeof panelLang !== 'undefined' && panelLang === 'en' ? 'on' : '' %>">EN</button>
         </div>
-        <button class="tb-theme-btn" id="panelThemeBtn" type="button" aria-label="<%= __p('aria.theme') %>" aria-pressed="false">
-          <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
-          <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5 5l1.6 1.6M17.4 17.4 19 19M19 5l-1.6 1.6M6.6 17.4 5 19"/></svg>
+        <button class="tb-theme-btn" id="panelThemeBtn" type="button" aria-label="<%= __p('aria.theme') %>">
+          <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+          <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5 5l1.6 1.6M17.4 17.4 19 19M19 5l-1.6 1.6M6.6 17.4 5 19"/></svg>
         </button>
         <% /* 09/2026 (user qarori): topbar'da faqat til + tema. Quick Prompt, Profilim
               va dublikat 'Yangi test' olib tashlandi — yangi test faqat kutubxona
@@ -286,240 +285,76 @@
     </div>
   </section>
   <style>
-    /* Overview cards share the same stone / gold / sage palette as practice. */
+    /* ── C4-10 rev.2: iliq (qaymoq/oltin/zaytun) umumiy-ma'lumot kartalari.
+          Oq (#fff) ishlatilmaydi — oppoq bloklar tuzatildi. */
     .ov-sec{display:grid;gap:14px;margin:4px 0 20px}
     .ov-head{display:flex;flex-direction:column;gap:2px}
-    .ov-title{margin:0;font-size:1.05rem;font-weight:800;color:#5b4317;letter-spacing:.01em}
-    .ov-sub{margin:0;font-size:.8rem;color:var(--deborah-semantic-color-text-muted);line-height:1.45}
-    .ov-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;align-items:start}
+    .ov-title{margin:0;font-size:1.05rem;font-weight:800;color:#2a1d0a;letter-spacing:.01em}
+    .ov-sub{margin:0;font-size:.8rem;color:#7d6e4e}
+    .ov-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
     .ov-card{display:flex;flex-direction:column;gap:10px;padding:14px 16px;border-radius:16px;
-      background:var(--deborah-semantic-color-surface-raised);border:1px solid var(--deborah-semantic-color-border-subtle);
-      box-shadow:0 2px 10px rgba(29,33,25,.06);color:var(--deborah-semantic-color-text-primary);
-      transition:background-color .28s ease,border-color .28s ease,box-shadow .28s ease}
-    .ov-card>summary{list-style:none;display:flex;align-items:center;gap:12px;min-width:0;cursor:pointer;user-select:none}
-    div.ov-card{flex-direction:row;align-items:center;gap:12px}
+      background:linear-gradient(180deg,#fdf8ec 0%,#f6ecd6 100%);
+      border:1px solid #e4d3a8;box-shadow:0 2px 10px rgba(122,94,42,.08);color:inherit}
+    .ov-card>summary{list-style:none;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none}
+    /* 09/2026 FIX: details bo'lmagan kartalar (Savollar, Oxirgi ishlangan) ham
+       gorizontal — column'da icon/son/matni ustma-ust tushardi (PC buzilishi) */
+    div.ov-card{flex-direction:row;align-items:center;gap:12px;}
     .ov-card>summary::-webkit-details-marker{display:none}
-    .ov-card>summary:focus-visible{outline:2px solid var(--deborah-semantic-color-focus);outline-offset:2px;border-radius:10px}
+    .ov-card>summary:focus-visible{outline:2px solid #b08d3f;outline-offset:2px;border-radius:10px}
     a.ov-card{text-decoration:none}
-    a.ov-card:hover{text-decoration:none;border-color:var(--deborah-semantic-color-border-strong)}
-    .ov-xpand[open]{border-color:var(--deborah-semantic-color-border-strong);background:var(--deborah-semantic-color-surface-alternate)}
+    a.ov-card:hover{text-decoration:none;border-color:#c9a55c}
+    .ov-xpand[open]{border-color:#cbb170;background:linear-gradient(180deg,#fdf8ec,#f2e4c4)}
     .ov-card-ic{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:11px;flex:0 0 auto;
-      background:var(--deborah-semantic-color-action-primary-soft);color:var(--deborah-semantic-color-action-primary);border:1px solid var(--deborah-semantic-color-border-subtle)}
-    #ov-xpand-pres .ov-card-ic,.ov-card--last .ov-card-ic{background:var(--deborah-user-accent-sage-soft);color:var(--deborah-user-accent-sage);border-color:var(--deborah-semantic-color-border-subtle)}
+      background:#efe1bd;color:#6d4c13;border:1px solid #e2cf9d}
     .ov-card-body{display:flex;flex-direction:column;gap:2px;min-width:0}
-    .ov-num{font-size:1.45rem;font-weight:800;line-height:1.1;color:var(--deborah-semantic-color-action-primary)}
-    .ov-num--sm{font-size:.9rem;line-height:1.5;padding-top:3px;font-weight:700;color:var(--deborah-semantic-color-text-primary)}
-    .ov-lbl{font-size:.8rem;color:var(--deborah-semantic-color-text-muted)}
-    .ov-x-arrow{margin-left:auto;color:var(--deborah-semantic-color-text-muted);transition:transform .18s ease}
+    .ov-num{font-size:1.45rem;font-weight:800;line-height:1.1;color:#5f430f}
+    .ov-num--sm{font-size:.9rem;line-height:1.5;padding-top:3px;font-weight:700}
+    .ov-lbl{font-size:.8rem;color:#7d6e4e}
+    .ov-x-arrow{margin-left:auto;color:#a08a4e;transition:transform .15s ease}
     .ov-xpand[open]>summary .ov-x-arrow{transform:rotate(180deg)}
-    .ov-mini{border-top:1px dashed var(--deborah-semantic-color-divider);margin-top:4px;padding-top:10px;display:grid;gap:8px}
-    .ov-mini-hd{font-size:.68rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--deborah-semantic-color-text-muted)}
+    .ov-mini{border-top:1px dashed #dcc894;margin-top:4px;padding-top:10px;display:grid;gap:8px}
+    .ov-mini-hd{font-size:.68rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#8a7443}
     .ov-mini-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
     .ov-mini-list li{display:flex;justify-content:space-between;gap:10px;align-items:baseline;padding:7px 10px;border-radius:10px;
-      background:var(--deborah-semantic-color-surface-nested);border:1px solid var(--deborah-semantic-color-border-subtle);font-size:.84rem}
-    .ov-mini-list li:hover{background:var(--deborah-semantic-color-surface-alternate)}
-    .ov-mi-name{font-weight:600;color:var(--deborah-semantic-color-text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .ov-mi-meta{font-size:.74rem;color:var(--deborah-semantic-color-text-muted);flex:0 0 auto}
-    .ov-mini-empty{font-size:.82rem;color:var(--deborah-semantic-color-text-muted);background:var(--deborah-semantic-color-surface-nested);
-      border:1px dashed var(--deborah-semantic-color-border-default);border-radius:10px;padding:10px 12px}
-    .ov-mini-go{font-size:.8rem;font-weight:700;color:var(--deborah-semantic-color-action-primary);text-decoration:none}
-    .ov-mini-go:hover{text-decoration:underline;color:var(--deborah-semantic-color-action-primary-hover)}
+      background:#fbf3df;border:1px solid #eee0bb;font-size:.84rem}
+    .ov-mini-list li:hover{background:#f6e9c8}
+    .ov-mi-name{font-weight:600;color:#3a2c12;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .ov-mi-meta{font-size:.74rem;color:#8a7443;flex:0 0 auto}
+    .ov-mini-empty{font-size:.82rem;color:#8a7443;background:#fbf3df;border:1px dashed #dcc894;border-radius:10px;padding:10px 12px}
+    .ov-mini-go{font-size:.8rem;font-weight:700;color:#7c5a1d;text-decoration:none}
+    .ov-mini-go:hover{text-decoration:underline;color:#5f430f}
     .ov-card--last .ov-num--sm{white-space:nowrap}
-    .ws-lib-fold{border-top:1px solid var(--deborah-semantic-color-divider);padding-top:10px;margin-top:2px}
+    .ws-lib-fold{border-top:1px solid #e4d3a8;padding-top:10px;margin-top:2px}
     .ws-lib-fold>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:700;
-      color:var(--deborah-semantic-color-text-secondary);padding:6px 2px;user-select:none}
+      color:#4a3a1c;padding:6px 2px;user-select:none}
     .ws-lib-fold>summary::-webkit-details-marker{display:none}
     .ws-lib-fold[open]>summary{margin-bottom:10px}
-    .ws-lib-fold-sum{color:var(--deborah-semantic-color-text-muted);font-weight:600}
-    @media(max-width:640px){
-      .ov-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-      .ov-card,div.ov-card{padding:11px 12px;gap:8px}
-      .ov-card>summary{gap:8px}
-      .ov-card-ic{width:34px;height:34px}
-      .ov-num{font-size:1.18rem}
-      .ov-num--sm{font-size:.78rem}
-      .ov-lbl{font-size:.72rem;line-height:1.25}
-    }
-    @media(max-width:380px){
-      .ov-grid{gap:8px}
-      .ov-card,div.ov-card{padding:10px;gap:7px}
-      .ov-card>summary{gap:6px}
-      .ov-card-ic{width:30px;height:30px}
-      .ov-num{font-size:1.08rem}
-      .ov-num--sm{font-size:.72rem}
-      .ov-lbl{font-size:.68rem}
-      .ov-x-arrow{width:12px;flex:0 0 12px}
-      .ov-card--last{grid-column:1 / -1}
-    }
+    .ws-lib-fold-sum{color:#8a7443;font-weight:600}
   </style>
   <style>
-    /* Personal preparation library — neutral surfaces with restrained gold accents. */
-    .prep-library{
-      --prep-card:var(--deborah-semantic-color-surface-raised);
-      --prep-surface:var(--deborah-semantic-color-surface-alternate);
-      --prep-soft:var(--deborah-semantic-color-surface-nested);
-      --prep-border:var(--deborah-semantic-color-border-subtle);
-      --prep-text:var(--deborah-semantic-color-text-primary);
-      --prep-muted:var(--deborah-semantic-color-text-muted);
-      --prep-accent:var(--deborah-semantic-color-action-primary);
-      --prep-accent-soft:var(--deborah-semantic-color-action-primary-soft);
-      --prep-sage:var(--deborah-user-accent-sage);
-      --prep-sage-soft:var(--deborah-user-accent-sage-soft);
-      display:grid;gap:14px;margin:10px 0 26px;scroll-margin-top:calc(var(--deborah-shell-header-h,64px) + 18px)
-    }
-    .prep-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap}
-    .prep-title{margin:0;color:var(--prep-text);font-size:1.08rem;font-weight:800;letter-spacing:.01em}
-    .prep-subtitle{margin:3px 0 0;color:var(--prep-muted);font-size:.82rem;font-weight:600}
-    .prep-open-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:var(--prep-soft);border:1px solid var(--prep-border);color:var(--prep-text);font-size:.73rem;font-weight:700;white-space:nowrap}
-    .prep-open-badge svg{flex:0 0 auto;color:var(--prep-sage)}
-    #subtestlar .prep-card-ico{background:var(--prep-sage-soft);color:var(--prep-sage)}
-    #subtestlar .prep-group-count{background:var(--prep-sage-soft);color:var(--prep-sage)}
-    .prep-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;align-items:start}
-    .prep-card{min-width:0;padding:15px;border:1px solid var(--prep-border);border-radius:17px;background:var(--prep-card);box-shadow:0 5px 18px rgba(25,30,26,.06);transition:background-color .28s ease,border-color .28s ease,box-shadow .28s ease}
-    .prep-card-head{display:flex;align-items:center;gap:11px;margin-bottom:12px}
-    .prep-card-ico{width:40px;height:40px;display:grid;place-items:center;flex:0 0 auto;border-radius:12px;background:var(--prep-soft);border:1px solid var(--prep-border);color:var(--prep-accent)}
-    .prep-card-title{min-width:0;flex:1}
-    .prep-card-title h3{margin:0;color:var(--prep-text);font-size:.98rem;font-weight:800;line-height:1.25}
-    .prep-card-title p{margin:3px 0 0;color:var(--prep-muted);font-size:.76rem;font-weight:600;line-height:1.4}
-    .prep-count{flex:0 0 auto;padding:5px 8px;border-radius:999px;background:var(--prep-soft);border:1px solid var(--prep-border);color:var(--prep-muted);font-size:.7rem;font-weight:700;white-space:nowrap}
-    .prep-items,.prep-groups{list-style:none;margin:0;padding:0;display:grid;gap:7px;max-height:390px;overflow:auto;overscroll-behavior:contain;scrollbar-color:var(--prep-accent) transparent;scrollbar-width:thin}
-    .prep-groups{gap:8px}
-    .prep-item{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;padding:9px 10px;border:1px solid var(--prep-border);border-radius:12px;background:var(--prep-surface)}
-    .prep-item-main{min-width:0;display:grid;gap:2px}
-    .prep-item-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--prep-text);font-size:.84rem;font-weight:700}
-    .prep-item-meta{color:var(--prep-muted);font-size:.72rem;font-weight:600}
-    .prep-item-actions{display:flex;align-items:center;gap:6px;flex:0 0 auto}
-    .prep-start{min-height:38px;flex:0 0 auto;gap:5px;padding:7px 10px;font-size:.76rem}
-    .prep-results{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:7px 10px;border:1px solid var(--prep-border)!important;border-radius:10px;background:var(--prep-card)!important;color:var(--prep-accent)!important;font-size:.74rem;font-weight:750;text-decoration:none;white-space:nowrap;box-shadow:none!important}
-    .prep-results:hover{background:var(--prep-accent-soft)!important;border-color:var(--prep-accent)!important;color:var(--prep-text)!important}
-    .prep-results:focus-visible{outline:2px solid var(--prep-accent);outline-offset:2px}
-    .prep-start.btn.act-sinov{background:var(--prep-soft)!important;border:1px solid var(--prep-border)!important;color:var(--prep-text)!important;box-shadow:none!important}
-    .prep-start.btn.act-sinov svg{color:var(--prep-accent)}
-    .prep-start.btn.act-sinov::after{display:none!important}
-    .prep-start.btn.act-sinov:hover{transform:translateY(-1px);filter:none!important;background:var(--prep-accent-soft)!important;border-color:var(--prep-accent)!important;box-shadow:0 3px 12px rgba(20,25,21,.1)!important}
-    .prep-start:disabled{opacity:.48;cursor:not-allowed;transform:none!important;filter:none!important;box-shadow:none!important}
-    .prep-group{min-width:0;padding:0;overflow:hidden;border:1px solid var(--prep-border);border-radius:13px;background:var(--prep-card)}
-    .prep-group-toggle{display:flex;align-items:center;gap:10px;width:100%;padding:12px;border:0;background:transparent;color:var(--prep-text);text-align:left;cursor:pointer;list-style:none}
-    .prep-group-toggle::-webkit-details-marker{display:none}
-    .prep-group-toggle:hover{background:var(--prep-surface)}
-    .prep-group-toggle:focus-visible{outline:2px solid var(--prep-accent);outline-offset:-3px;border-radius:12px}
-    .prep-group-copy{min-width:0;flex:1}
-    .prep-group-name{display:block;margin:0;color:var(--prep-text);font-size:.86rem;font-weight:750;line-height:1.3}
-    .prep-group-meta{display:block;margin-top:3px;color:var(--prep-muted);font-size:.72rem;font-weight:600}
-    .prep-group-count{flex:0 0 auto;min-width:30px;padding:4px 8px;border:1px solid var(--prep-border);border-radius:999px;background:var(--prep-accent-soft);color:var(--prep-accent);font-size:.72rem;font-weight:800;text-align:center}
-    .prep-group-chevron{width:30px;height:30px;display:grid;place-items:center;flex:0 0 auto;border-radius:50%;color:var(--prep-muted)}
-    .prep-group-chevron svg{display:block;transition:transform .18s ease}
-    .prep-group[open] .prep-group-toggle{border-bottom:1px solid var(--prep-border)}
-    .prep-group[open] .prep-group-chevron svg{transform:rotate(180deg)}
-    .prep-group .prep-items{max-height:none;overflow:visible;gap:6px;padding:8px}
-    .prep-group .prep-item{padding:8px;background:var(--prep-surface)}
-    .prep-empty{padding:13px;border:1px dashed var(--prep-border);border-radius:12px;background:var(--prep-surface);color:var(--prep-muted);font-size:.81rem;font-weight:600}
-    @media(max-width:760px){.prep-grid{grid-template-columns:1fr}.prep-card{padding:13px}}
-    @media(max-width:420px){.prep-head{align-items:flex-start}.prep-open-badge{font-size:.68rem}.prep-card-head{gap:8px}.prep-card-ico{width:36px;height:36px}.prep-count{font-size:.66rem;padding:4px 7px}.prep-start,.prep-results{min-height:40px;padding:6px 8px}}
-    @media(prefers-reduced-motion:reduce){.prep-start{transition:none!important}.prep-group-chevron svg{transition:none}}
-
+    /* ── C4-10 rev.3: yumshoqroq (malla emas) umumiy-ma'lumot + dark-mode iliq */
+    .ov-grid{align-items:start}
+    .ov-title{color:#5b4317;letter-spacing:.01em}
+    .ov-sub{color:#8a7443}
+    .ov-card{background:linear-gradient(180deg,#fbf4e2 0%,#f4e7c9 100%);border-color:#e0cf9f}
+    .ov-card-ic{background:#f0e3c2;color:#7c5a1d;border-color:#e2cf9d}
+    .ov-num{color:#6b4a1e}
+    .ov-lbl{color:#8a7443}
+    .ov-mini-list li{background:#faf1db;border-color:#efe0ba}
+    html[data-theme="dark"] .ov-title{color:#f0e2c4}
+    html[data-theme="dark"] .ov-sub{color:#b9a576}
+    html[data-theme="dark"] .ov-card{background:linear-gradient(180deg,#4a3a20 0%,#392c17 100%);border-color:#66512a;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+    html[data-theme="dark"] .ov-card-ic{background:#5a4522;color:#f0d9a6;border-color:#6b5430}
+    html[data-theme="dark"] .ov-num{color:#f0d9a6}
+    html[data-theme="dark"] .ov-lbl{color:#cdb98a}
+    html[data-theme="dark"] .ov-mini-hd{color:#cdb98a}
+    html[data-theme="dark"] .ov-mini-list li{background:#3d2f1a;border-color:#57441f}
+    html[data-theme="dark"] .ov-mi-name{color:#f2e6c8}
+    html[data-theme="dark"] .ov-mi-meta{color:#c2a96f}
+    html[data-theme="dark"] .ov-mini-empty{color:#cbb37f;background:#372a16;border-color:#57441f}
+    html[data-theme="dark"] .ov-mini-go{color:#e0c98d}
+    html[data-theme="dark"] .ws-lib-fold>summary{color:#ead9b4}
   </style>
-  <%
-    const practiceMockFans = Array.isArray(mockFans) ? mockFans : [];
-    const practicePreGroups = Array.isArray(preGroups) ? preGroups : [];
-    const practiceSubtestCount = practicePreGroups.reduce((sum, group) => sum + (Array.isArray(group.chunks) ? group.chunks.length : 0), 0);
-    const practiceMockLimit = Number.isInteger(mockQuestionLimit) && mockQuestionLimit > 0 ? mockQuestionLimit : 25;
-  %>
-  <section class="prep-library" id="practice-library" aria-labelledby="prep-library-title">
-    <div class="prep-head">
-      <div>
-        <h2 class="prep-title" id="prep-library-title"><%= __p('prep.title') %></h2>
-        <p class="prep-subtitle"><%= __p('prep.sub') %></p>
-      </div>
-      <span class="prep-open-badge"><%- icon('shieldCheck', 13) %> <%= __p('prep.availableAll') %></span>
-    </div>
-
-    <div class="prep-grid">
-      <article class="prep-card" id="mock-fanlar" aria-labelledby="prep-mock-title">
-        <header class="prep-card-head">
-          <span class="prep-card-ico"><%- icon('bookOpen', 18) %></span>
-          <div class="prep-card-title">
-            <h3 id="prep-mock-title"><%= __p('prep.mockTitle') %></h3>
-            <p><%= __p('prep.mockSub').replace('{n}', String(practiceMockLimit)) %></p>
-          </div>
-          <span class="prep-count"><%= __pf('prep.mockCount', practiceMockFans.length) %></span>
-        </header>
-        <% if (practiceMockFans.length) { %>
-          <ul class="prep-items" aria-label="<%= __p('prep.mockTitle') %>">
-            <% practiceMockFans.forEach(function (fan) { %>
-              <li class="prep-item">
-                <div class="prep-item-main">
-                  <span class="prep-item-name"><%= fan.name %></span>
-                  <span class="prep-item-meta"><%= __pf('prep.mockPoolCount', fan.count) %></span>
-                </div>
-                <div class="prep-item-actions">
-                  <a class="prep-results" href="/user/practice-results?source=mock&amp;key=<%= encodeURIComponent(fan.key) %>"
-                    aria-label="<%= __p('prep.resultsFor').replace('{name}', fan.name) %>"><%= __p('prep.results') %></a>
-                  <button type="button" class="btn act-sinov btn-sm prep-start" data-start-sinov
-                    data-name="<%= fan.name %>" data-count="<%= Math.min(fan.count, practiceMockLimit) %>"
-                    data-url="/user/practice?source=mock&amp;key=<%= encodeURIComponent(fan.key) %>"
-                    aria-label="<%= __p('prep.startFor').replace('{name}', fan.name) %>"<% if (!fan.count) { %> disabled<% } %>>
-                    <%- icon('play', 13) %><span><%= __p('prep.start') %></span>
-                  </button>
-                </div>
-              </li>
-            <% }); %>
-          </ul>
-        <% } else { %>
-          <div class="prep-empty"><%= __p('prep.emptyMock') %></div>
-        <% } %>
-      </article>
-
-      <article class="prep-card" id="subtestlar" aria-labelledby="prep-subtests-title">
-        <header class="prep-card-head">
-          <span class="prep-card-ico"><%- icon('clipboard', 18) %></span>
-          <div class="prep-card-title">
-            <h3 id="prep-subtests-title"><%= __p('prep.subTitle') %></h3>
-            <p><%= __p('prep.subSub') %></p>
-          </div>
-          <span class="prep-count"><%= __pf('prep.subtestCount', practiceSubtestCount) %></span>
-        </header>
-        <% if (practicePreGroups.length) { %>
-          <div class="prep-groups" aria-label="<%= __p('prep.subTitle') %>">
-            <% practicePreGroups.forEach(function (group) { %>
-              <details class="prep-group" data-subtest-group>
-                <summary class="prep-group-toggle">
-                  <span class="prep-group-copy">
-                    <span class="prep-group-name"><%= group.title %></span>
-                    <span class="prep-group-meta"><%= __p('prep.groupMeta').split('{n}').join(String(group.chunks.length)).split('{q}').join(String(group.count)) %></span>
-                  </span>
-                  <span class="prep-group-count" aria-hidden="true"><%= group.chunks.length %></span>
-                  <span class="prep-group-chevron" aria-hidden="true"><%- icon('chevronDown', 16) %></span>
-                </summary>
-                <ul class="prep-items" aria-label="<%= group.title %>">
-                  <% group.chunks.forEach(function (chunk) { const subtestName = group.title + ' — ' + chunk.name; %>
-                    <li class="prep-item">
-                      <div class="prep-item-main">
-                        <span class="prep-item-name"><%= chunk.name %></span>
-                        <span class="prep-item-meta"><%= __pf('prep.questionCount', chunk.count) %></span>
-                      </div>
-                      <div class="prep-item-actions">
-                        <a class="prep-results" href="/user/practice-results?source=pre&amp;key=<%= encodeURIComponent(group.key) %>&amp;chunk=<%= encodeURIComponent(chunk.id) %>"
-                          aria-label="<%= __p('prep.resultsFor').replace('{name}', subtestName) %>"><%= __p('prep.results') %></a>
-                        <button type="button" class="btn act-sinov btn-sm prep-start" data-start-sinov
-                          data-name="<%= subtestName %>" data-count="<%= chunk.count %>"
-                          data-url="/user/practice?source=pre&amp;key=<%= encodeURIComponent(group.key) %>&amp;chunk=<%= encodeURIComponent(chunk.id) %>"
-                          aria-label="<%= __p('prep.startFor').replace('{name}', subtestName) %>"<% if (!chunk.count) { %> disabled<% } %>>
-                          <%- icon('play', 13) %><span><%= __p('prep.start') %></span>
-                        </button>
-                      </div>
-                    </li>
-                  <% }); %>
-                </ul>
-              </details>
-            <% }); %>
-          </div>
-        <% } else { %>
-          <div class="prep-empty"><%= __p('prep.emptyPre') %></div>
-        <% } %>
-      </article>
-    </div>
-  </section>
   <div class="ws-live" role="status" aria-live="polite" id="ws-live"></div>
 
         <!-- ════ Test Library (S26) ════ -->
@@ -750,20 +585,12 @@
     }
     var tbtn = document.getElementById('panelThemeBtn');
     if (tbtn) {
-      function syncPanelThemeButton() {
-        var T = window.DeborahTheme;
-        var light = T && T.isLight ? T.isLight() : document.documentElement.getAttribute('data-resolved-theme') === 'light';
-        tbtn.setAttribute('aria-pressed', light ? 'false' : 'true');
-      }
       tbtn.addEventListener('click', function(){
         var T = window.DeborahTheme;
         var next = (T && T.isLight && T.isLight()) ? 'dark' : 'light';
         if (T && T.setState) { T.setState(next); } else if (T && T.apply) { T.apply(next); }
-        syncPanelThemeButton();
         fetch('/user/api/settings/profile', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ theme: next }) }).catch(function(){});
       });
-      document.addEventListener('themechange', syncPanelThemeButton);
-      syncPanelThemeButton();
     }
   })();
   </script>
@@ -1031,7 +858,6 @@
       sentNote: verifyCopy.sentNote || 'Kod yuborildi — emailni tekshiring',
       recentSent: verifyCopy.recentSent || 'Kod yaqinda yuborilgan — emailni tekshiring',
       deliveryFailed: verifyCopy.deliveryFailed || "Kodni yuborib bo'lmadi — keyinroq qayta urining",
-      deliveryUnavailable: verifyCopy.deliveryUnavailable || 'Email yuborish xizmati sozlanmagan. Administratorga murojaat qiling.',
       errInvalidFormat: verifyCopy.errInvalidFormat || '6 xonali kod kiriting',
       errNetwork: verifyCopy.errNetwork || "Ulanishda muammo — qayta urinib ko'ring",
       errInvalidCode: verifyCopy.errInvalidCode || "Kod noto'g'ri yoki eskirgan",
@@ -1096,11 +922,7 @@
       }
       if (r.status === 429) {
         showErr(t.limitReached);
-        if (body.retryAfterSeconds) startResendTimer(wait);
-        else {
-          btnResend.disabled = false;
-          btnResend.textContent = t.resend;
-        }
+        btnResend.disabled = true;
         return;
       }
       if (r.status === 400 && e === 'email_required') {
@@ -1109,14 +931,7 @@
         btnResend.textContent = t.resend;
         return;
       }
-      // No provider configured in production: do not leave the user on a false sending state.
-      if (r.status === 503 || e === 'email_provider_not_configured') {
-        showErr(t.deliveryUnavailable || t.deliveryFailed || '');
-        btnResend.disabled = false;
-        btnResend.textContent = t.resend;
-        return;
-      }
-      // Delivery failed (502): show an actionable error instead of a false success.
+      // 09/2026: delivery muvaffaqiyatsiz (502 send_failed) — aniq xabar, yashirin emas
       if (r.status === 502 || e === 'send_failed') {
         showErr(t.deliveryFailed || '');
         btnResend.disabled = false;
@@ -1150,27 +965,14 @@
     overlay.addEventListener('click', function (e) { if (e.target === overlay) overlay.classList.remove('open'); });
 
     function postVerify(path, body, cb) {
-      var isSend = path.indexOf('/verify/send') !== -1;
-      var controller = new AbortController();
-      var timeout = window.setTimeout(function () { controller.abort(); }, isSend ? 90000 : 15000);
       fetch(path, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
         body: JSON.stringify(body),
-        signal: controller.signal,
       })
-        .then(function (r) {
-          return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; });
-        })
-        .then(function (result) { if (typeof cb === 'function') cb(result); })
-        .catch(function () {
-          showErr(t.errNetwork);
-          if (isSend && btnResend) {
-            btnResend.disabled = false;
-            btnResend.textContent = t.resend;
-          }
-        })
-        .finally(function () { window.clearTimeout(timeout); });
+        .then(function (r) { return r.json().then(function (j) { return { status: r.status, j: j }; }); })
+        .then(cb)
+        .catch(function () { showErr(t.errNetwork); });
     }
 
     btnSubmit.addEventListener('click', function () {

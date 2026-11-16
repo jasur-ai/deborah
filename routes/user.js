@@ -19,15 +19,8 @@ import { TEACHER_COOLDOWN_MS } from '../src/modules/auth/teacher-approval.js';
 import { PANEL_COPY, resolvePanelLang, htmlLangOf, localeOf } from '../data/panel-i18n.js';
 import { builderCopyFor } from '../data/test-builder-i18n.js';
 import { practiceCopyFor } from '../data/practice-i18n.js';
-import {
-  findFirstPracticeAttempt,
-  makePublicFirstResult,
-  practiceFirstResultPath,
-  practiceFirstResultsCollectionPath,
-} from '../src/modules/practice-first-results.js';
 
 const router = Router();
-export const MOCK_PRACTICE_QUESTION_LIMIT = 25;
 
 // → All routes require auth
 router.use(requireAuth);
@@ -144,79 +137,14 @@ router.use((req, res, next) => {
   next();
 });
 
-function validPracticeKey(value, maxLength = 120) {
-  const key = String(value || '');
-  return key.length > 0 && key.length <= maxLength
-    && /^[A-Za-z0-9_.-]+$/.test(key) && !key.includes('..') && !key.startsWith('.')
-    ? key : null;
-}
-
-function practiceCatalogCount(record, field) {
-  const raw = Array.isArray(record?.questions) ? record.questions.length : record?.[field];
-  const count = Number(raw);
-  return Number.isFinite(count) && count > 0 ? Math.floor(count) : 0;
-}
-
-/** Public, metadata-only practice catalog. Question payloads stay server-side. */
-export function buildPracticeCatalog(rawFans = {}, rawGroups = {}) {
-  const entriesOf = (value) => value && typeof value === 'object' && !Array.isArray(value)
-    ? Object.entries(value) : [];
-  const cleanName = (value, fallback) => typeof value === 'string' && value.trim()
-    ? value.trim().slice(0, 200) : fallback;
-
-  const mockFans = entriesOf(rawFans).flatMap(([rawKey, data]) => {
-    const key = validPracticeKey(rawKey);
-    if (!key || !data || typeof data !== 'object') return [];
-    return [{ key, name: cleanName(data.name, key), count: practiceCatalogCount(data, 'count') }];
-  }).sort((a, b) => a.name.localeCompare(b.name));
-
-  const preGroups = entriesOf(rawGroups).flatMap(([rawKey, group]) => {
-    const key = validPracticeKey(rawKey);
-    if (!key || !group || typeof group !== 'object') return [];
-    const chunks = (Array.isArray(group.chunks) ? group.chunks : []).flatMap((chunk, index) => {
-      const id = validPracticeKey(chunk?.id, 64);
-      if (!id || !chunk || typeof chunk !== 'object') return [];
-      const fallbackName = `Subtest ${index + 1}`;
-      return [{ id, name: cleanName(chunk.name, fallbackName), count: practiceCatalogCount(chunk, 'count') }];
-    });
-    if (!chunks.length) return [];
-    const chunkTotal = chunks.reduce((sum, chunk) => sum + chunk.count, 0);
-    const storedTotal = Number(group.total);
-    return [{
-      key,
-      title: cleanName(group.title, key),
-      count: chunkTotal || (Number.isFinite(storedTotal) && storedTotal > 0 ? Math.floor(storedTotal) : 0),
-      chunks,
-    }];
-  }).sort((a, b) => a.title.localeCompare(b.title));
-
-  return { mockFans, preGroups };
-}
-
-async function loadPracticeCatalog() {
-  try {
-    const [fansSnap, groupsSnap] = await Promise.all([
-      fb.get(DB_PATHS.MOCK_FANS),
-      fb.get(DB_PATHS.PRE_GROUPS),
-    ]);
-    return buildPracticeCatalog(fansSnap.val() || {}, groupsSnap.val() || {});
-  } catch (err) {
-    console.warn('Practice catalog unavailable:', err?.message || err);
-    return { mockFans: [], preGroups: [] };
-  }
-}
-
 // ── User Panel ──
 async function renderWorkspace(req, res, activeKey, viewName, fallbackTitle) {
   const user = req.session.user;
   try {
-    // Personal practice (Mock fanlar/Subtestlar) ochiq barcha akkauntlarga;
-    // VIP holati faqat alohida Cast sozlamalari va eksport ruxsatlariga ta'sir qiladi.
+    // VIP stealth (user qarori 09/2026): panel'da VIP izlari YO'Q — mock/pre
+    // to'plamlar bloki butunlay olib tashlangan (ko'rinmaydi, yuklanmaydi).
     const isVip = await isCurrentUserVip(req);
-    const [testsSnap, practiceCatalog] = await Promise.all([
-      fb.get(`users/${user.safeKey}/tests`),
-      activeKey === 'panel' ? loadPracticeCatalog() : Promise.resolve({ mockFans: [], preGroups: [] }),
-    ]);
+    const testsSnap = await fb.get(`users/${user.safeKey}/tests`);
     const tests = testsSnap.val() || {};
 
     // AUTH A-28: risk banner copy — user settings'dagi lang (default uz)
@@ -297,9 +225,6 @@ async function renderWorkspace(req, res, activeKey, viewName, fallbackTitle) {
       breachFlagged,
       consentStale,
       tests: testsList,
-      mockFans: practiceCatalog.mockFans,
-      preGroups: practiceCatalog.preGroups,
-      mockQuestionLimit: MOCK_PRACTICE_QUESTION_LIMIT,
       // C4-10 overview statistikasi
       testsCount: testsList.length,
       totalQuestions: testsList.reduce((a, t) => a + (Number(t.count) || 0), 0),
@@ -334,9 +259,6 @@ async function renderWorkspace(req, res, activeKey, viewName, fallbackTitle) {
       fullCopy: AUTH_COPY.uz,
       copy: { sidebar: AUTH_COPY.uz.sidebar, header: AUTH_COPY.uz.header },
       tests: [],
-      mockFans: [],
-      preGroups: [],
-      mockQuestionLimit: MOCK_PRACTICE_QUESTION_LIMIT,
       username: user.username,
       isVip: false,
       canExportJson: false,
@@ -911,9 +833,9 @@ router.patch('/api/settings/profile', async (req, res) => {
 });
 
 // ═══════════════════════════════════════════════════════════════════
-// S22 — Yakka mashq (solo practice): o'z/ommaviy testlar va umumiy
-// Mock fanlar/Subtestlar kutubxonasi barcha autentifikatsiyalangan foydalanuvchilar uchun.
-// Jonli o'yin hosting ruxsatlari routes/game.js'da alohida qoladi.
+// S22 — Yakka mashq (solo practice): o'z/ommaviy testlar (student),
+// mock/pre to'plamlar (faqat VIP). Javob kaliti klientga TUSHMAYDI —
+// grade serverda.
 // ═══════════════════════════════════════════════════════════════════
 // C4-10 rev.3: variantlar 2 xil shaklda saqlanishi mumkin — string yoki
 // {id,text,isCorrect}. To'g'ri javob ham `correct` (indeks) yoki isCorrect
@@ -978,19 +900,6 @@ function shuffled(arr) {
   return a;
 }
 
-/** Each Mock session gets a fresh, unbiased sample; smaller banks remain whole. */
-export function sampleMockPracticeQuestions(questions, limit = MOCK_PRACTICE_QUESTION_LIMIT) {
-  if (!Array.isArray(questions) || !questions.length) return [];
-  const safeLimit = Number.isInteger(limit) && limit > 0 ? limit : MOCK_PRACTICE_QUESTION_LIMIT;
-  if (questions.length <= safeLimit) return questions.slice();
-  const pool = questions.slice();
-  for (let i = 0; i < safeLimit; i++) {
-    const j = i + crypto.randomInt(pool.length - i);
-    [pool[i], pool[j]] = [pool[j], pool[i]];
-  }
-  return pool.slice(0, safeLimit);
-}
-
 async function loadPracticeQuestions(req, res) {
   const source = String(req.query.source || req.body?.source || 'user');
   const key = String(req.query.key || req.body?.key || '');
@@ -1020,7 +929,13 @@ async function loadPracticeQuestions(req, res) {
     return { err: res.status(404).json({ ok: false, error: 'not_found' }) };
   }
   if (source === 'mock' || source === 'pre') {
-    // Personal mashq kutubxonasi: VIP darajasi talab qilinmaydi.
+    // Faqat VIP (imtihonga tayyorlanish to'plamlari — S22 qarori)
+    const vipSnap = await fb.get(`users/${user.safeKey}/isVip`);
+    const isVip = vipSnap.exists() && vipSnap.val() === true;
+    const isStaff = ['teacher', 'admin', 'board'].includes(user.role);
+    if (!isVip && !isStaff) {
+      return { err: res.status(403).json({ ok: false, error: 'vip_required' }) };
+    }
     if (source === 'mock') {
       const snap = await fb.get(`mock_fans/${key}`);
       if (!snap.exists()) return { err: res.status(404).json({ ok: false, error: 'not_found' }) };
@@ -1041,8 +956,10 @@ async function loadPracticeQuestions(req, res) {
   return { err: res.status(400).json({ ok: false, error: 'invalid_source' }) };
 }
 
-function preparePracticeQuestions(rawQuestions) {
-  return (Array.isArray(rawQuestions) ? rawQuestions : []).map((q, i) => {
+router.get('/practice', async (req, res) => {
+  const loaded = await loadPracticeQuestions(req, res);
+  if (loaded.err) return;
+  const qs = (loaded.questions || []).map((q, i) => {
     const meta = practiceOptionMeta(q);
     const qType = ['single_choice', 'true_false', 'multiple_select', 'short_answer', 'exit_ticket', 'match', 'reorder'].includes(q?.type) ? q.type : 'single_choice';
     const item = {
@@ -1051,7 +968,7 @@ function preparePracticeQuestions(rawQuestions) {
       type: qType,
       options: meta.texts,
       // 09/2026 (user qarori): har savoldan keyin darhol to'g'ri/noto'g'ri
-      // natija chiqishi uchun correct clientga uzatiladi (jonli viktorina tarzi).
+      // natija chiqishi uchun correct clientga yuboriladi (jonli viktorina tarzi).
       // Yakuniy baho baribir server (/user/api/practice/grade) hisoblaydi.
       correct: meta.correctIdx,
       explanation: String(q?.explanation || ''),
@@ -1090,31 +1007,6 @@ function preparePracticeQuestions(rawQuestions) {
     return item;
   }).filter((q) => q.text && !q._drop && (['short_answer', 'match', 'reorder'].includes(q.type) || q.options.length >= 2))
     .map((q) => { delete q._drop; return q; });
-}
-
-/** Keep Mock grade requests tied to the exact validated sample shown for that session. */
-export function selectMockPracticeQuestionIds(rawQuestions, requestedIds, limit = MOCK_PRACTICE_QUESTION_LIMIT) {
-  if (!Array.isArray(requestedIds) || requestedIds.length === 0) return [];
-  const safeLimit = Number.isInteger(limit) && limit > 0 ? limit : MOCK_PRACTICE_QUESTION_LIMIT;
-  if (requestedIds.length > safeLimit) return [];
-  const validIds = new Set(preparePracticeQuestions(rawQuestions).map((question) => question.id));
-  const selected = [];
-  const seen = new Set();
-  for (const value of requestedIds) {
-    const id = Number(value);
-    if (!Number.isInteger(id) || id < 0 || !validIds.has(id) || seen.has(id)) return [];
-    seen.add(id);
-    selected.push(id);
-  }
-  return selected;
-}
-
-router.get('/practice', async (req, res) => {
-  const loaded = await loadPracticeQuestions(req, res);
-  if (loaded.err) return;
-  let qs = preparePracticeQuestions(loaded.questions);
-  const source = String(req.query.source || 'user');
-  if (source === 'mock') qs = sampleMockPracticeQuestions(qs);
   if (!qs.length) return res.status(404).render('error', { title: '404', message: 'Savollar topilmadi', status: 404 });
 
   // Practice i18n: 4 til (uz/uz-cyrl/ru/en) — data/practice-i18n.js
@@ -1132,7 +1024,7 @@ router.get('/practice', async (req, res) => {
     pLang,
     htmlLang: htmlLangOf(pLang),
     pCopy,
-    source,
+    source: String(req.query.source || 'user'),
     key: String(req.query.key || ''),
     chunk: String(req.query.chunk || ''),
     questions: qs,
@@ -1188,80 +1080,10 @@ router.get('/practice-history', async (req, res) => {
   });
 });
 
-// Public-to-authenticated-users scoreboard: only each user's first full Mock/PRE attempt.
-router.get('/practice-results', async (req, res) => {
-  const source = String(req.query.source || '');
-  const key = validPracticeKey(req.query.key);
-  const chunk = source === 'pre' ? validPracticeKey(req.query.chunk, 64) : '';
-  if (!['mock', 'pre'].includes(source) || !key || (source === 'pre' && !chunk)) {
-    return res.status(400).render('error', { title: '400', message: 'Mashq turi noto‘g‘ri.', status: 400 });
-  }
-
-  try {
-    let itemTitle = key;
-    if (source === 'mock') {
-      const itemSnap = await fb.get(`mock_fans/${key}`);
-      if (!itemSnap.exists()) return res.status(404).render('error', { title: '404', message: 'Mock fan topilmadi.', status: 404 });
-      const item = itemSnap.val() || {};
-      itemTitle = typeof item.name === 'string' && item.name.trim() ? item.name.trim().slice(0, 200) : key;
-    } else {
-      const groupSnap = await fb.get(`pre_groups/${key}`);
-      if (!groupSnap.exists()) return res.status(404).render('error', { title: '404', message: 'Subtest topilmadi.', status: 404 });
-      const group = groupSnap.val() || {};
-      const subtest = (Array.isArray(group.chunks) ? group.chunks : []).find((entry) => entry && String(entry.id) === chunk);
-      if (!subtest) return res.status(404).render('error', { title: '404', message: 'Subtest topilmadi.', status: 404 });
-      const groupTitle = typeof group.title === 'string' && group.title.trim() ? group.title.trim().slice(0, 200) : key;
-      const subtestTitle = typeof subtest.name === 'string' && subtest.name.trim() ? subtest.name.trim().slice(0, 200) : chunk;
-      itemTitle = `${groupTitle} — ${subtestTitle}`;
-    }
-
-    const collectionPath = practiceFirstResultsCollectionPath(source, key, chunk);
-    const scoresSnap = await fb.get(collectionPath);
-    const scores = scoresSnap.val() && typeof scoresSnap.val() === 'object' ? scoresSnap.val() : {};
-    const entries = Object.entries(scores).flatMap(([accountKey, raw]) => {
-      const safe = makePublicFirstResult(raw, raw?.username);
-      return safe ? [{ ...safe, isMine: accountKey === req.session.user?.safeKey }] : [];
-    }).sort((a, b) => b.percent - a.percent || a.at - b.at || a.username.localeCompare(b.username));
-
-    let rawLang = 'uz';
-    try {
-      const langSnap = await fb.get(`users/${req.session.user.safeKey}/settings/lang`);
-      if (langSnap.exists() && langSnap.val()) rawLang = langSnap.val();
-    } catch (_) {}
-    const pLang = resolvePanelLang(rawLang);
-    const panelCopy = PANEL_COPY[pLang] || PANEL_COPY.uz;
-    const titleTemplate = panelCopy['prep.resultsTitle'] || '{name} — birinchi natijalar';
-    return res.render('user/practice-results', {
-      title: titleTemplate.replace('{name}', itemTitle) + ' — Deborah',
-      itemTitle,
-      source,
-      key,
-      chunk,
-      entries,
-      panelCopy,
-      htmlLang: htmlLangOf(pLang),
-      localeCode: localeOf(pLang),
-      currentUsername: req.session.user?.username || '',
-    });
-  } catch (err) {
-    console.error('[practice-results] load failed:', err?.message || err);
-    return res.status(500).render('error', { title: '500', message: 'Natijalarni yuklab bo‘lmadi.', status: 500 });
-  }
-});
-
 router.post('/api/practice/grade', async (req, res) => {
   const loaded = await loadPracticeQuestions(req, res);
   if (loaded.err) return;
   const user = req.session.user;
-  const source = String(req.query.source || req.body?.source || 'user');
-  // Persist the validated request context used by loadPracticeQuestions (query wins).
-  const saveSource = source;
-  const allQuestions = Array.isArray(loaded.questions) ? loaded.questions : [];
-  let questionIds = allQuestions.map((_, index) => index);
-  if (source === 'mock') {
-    questionIds = selectMockPracticeQuestionIds(allQuestions, req.body?.questionIds);
-    if (!questionIds.length) return res.status(400).json({ ok: false, error: 'invalid_question_sample' });
-  }
   const answers = Array.isArray(req.body?.answers) ? req.body.answers : [];
   const kind = req.body?.kind === 'retry' ? 'retry' : 'full';
   // C4-10 rev.4: qayta yechish (faqat xatolar) — subset shu orig-indekslar bo'yicha
@@ -1269,13 +1091,12 @@ router.post('/api/practice/grade', async (req, res) => {
   const subset = Array.isArray(req.body?.subset)
     ? req.body.subset.filter((v) => Number.isInteger(+v) && +v >= 0).map((v) => +v)
     : null;
-  const testKey = String(req.query.key || req.body?.key || '');
+  const testKey = String(req.body?.key || req.query.key || '');
   const times = Array.isArray(req.body?.times) ? req.body.times : [];
   const results = [];
   let correct = 0;
-  questionIds.forEach((questionId, i) => {
+  (loaded.questions || []).forEach((q, i) => {
     if (subset && !subset.includes(i)) return; // faqat xato savollar
-    const q = allQuestions[questionId];
     const meta = practiceOptionMeta(q);
     const qType = ['single_choice', 'true_false', 'multiple_select', 'short_answer', 'exit_ticket', 'match', 'reorder'].includes(q?.type) ? q.type : 'single_choice';
     const correctIdx = Math.max(0, meta.correctIdx);
@@ -1334,30 +1155,27 @@ router.post('/api/practice/grade', async (req, res) => {
   });
   const total = results.length || 1;
   // ── C4-10 rev.4: natijalarni saqlash.
-  //   • User, Mock va PRE mashqlarining to'liq urinishlari shaxsiy tarixga tushadi.
-  //   • Ommaviy user testi uchun public_scores faqat birinchi to'liq urinishni oladi.
+  //   • Shaxsiy test → o'z tarixida HAR bir urinish (faqat o'ziga ko'rinadi).
+  //   • Ommaviy test → o'z tarixida ham barcha urinish; «ommaviy/rasmiy» ball
+  //     faqat BIRINCHI (to'liq) urinishdan yoziladi va hammaga ochiq
+  //     public_scores reytingida saqlanadi (keyingi urinishlar uni o'zgartirmaydi).
   //   • 09/2026 (user qarori): «retry» (faqat xatolar) — MASHQ, saqlanmaydi.
   //   • 09/2026 (user qarori): shaxsiy tarixda faqat oxirgi 10 ta saqlanadi.
   let saved = false;
   try {
-    const saveableSource = ['user', 'mock', 'pre'].includes(saveSource);
-    if (kind !== 'retry' && user && saveableSource) {
-      let isOwn = true;
+    if (kind !== 'retry' && user && String(req.body?.source || req.query.source || 'user') === 'user') {
+      const ownSnap = await fb.get(`users/${user.safeKey}/tests/${testKey}`);
+      const isOwn = ownSnap.exists();
       let testOwner = null;
-      if (saveSource === 'user') {
-        const ownSnap = await fb.get(`users/${user.safeKey}/tests/${testKey}`);
-        isOwn = ownSnap.exists();
-        if (!isOwn) {
-          const pub = await fb.get('public_tests');
-          if (pub.exists()) {
-            for (const [gk, meta] of Object.entries(pub.val() || {})) {
-              if (meta && meta.testKey === testKey && meta.authorUid) { testOwner = meta.authorUid; break; }
-            }
+      if (!isOwn) {
+        const pub = await fb.get('public_tests');
+        if (pub.exists()) {
+          for (const [gk, meta] of Object.entries(pub.val() || {})) {
+            if (meta && meta.testKey === testKey && meta.authorUid) { testOwner = meta.authorUid; break; }
           }
         }
       }
       const histId = Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
-      const practiceChunk = saveSource === 'pre' ? String(req.query.chunk || req.body?.chunk || '') : '';
       const record = {
         key: testKey,
         title: loaded.title,
@@ -1366,59 +1184,30 @@ router.post('/api/practice/grade', async (req, res) => {
         kind, // full | retry (qayta yechish)
         source: isOwn ? 'own' : 'public',
         testOwner: testOwner || null,
-        practiceSource: saveSource,
-        practiceKey: testKey,
-        practiceChunk,
         // 09/2026 (Faza 1): savol tahlili (umumiy vaqt) + fokus rejimi
         totalSec: results.reduce((a, r) => a + (r.sec || 0), 0),
         focusViolations: Math.max(0, Math.min(999, parseInt(req.body?.focusViolations, 10) || 0)),
       };
       await fb.set(`users/${user.safeKey}/practice_history/${histId}`, record);
       saved = true;
-      // Ommaviy «rasmiy» ball — faqat shaxsiy/public user testining birinchi to'liq urinishida.
-      if (saveSource === 'user' && !isOwn && testOwner && kind === 'full' && user.safeKey !== testOwner) {
+      // Ommaviy «rasmiy» ball — faqat birinchi to'liq urinish (attempt #1)
+      if (!isOwn && testOwner && kind === 'full' && user.safeKey !== testOwner) {
         const scorePath = `public_scores/${testOwner}__${testKey}/${user.safeKey}`;
         const ex = await fb.get(scorePath);
         if (!ex.exists()) {
           await fb.set(scorePath, { percent: record.percent, correct, total, at: record.at, username: user.username || user.safeKey });
         }
       }
-      // Public Mock/PRE board: preserve each user's earliest full result outside the 10-entry personal history.
-      let savedHistory = null;
+      // Oxirgi 10 tadan eskilarini tozalash (xotira chegarasi — user qarori)
       try {
         const hsnap = await fb.get(`users/${user.safeKey}/practice_history`);
-        savedHistory = hsnap.val() || {};
-      } catch (_) {
-        // The just-written complete attempt is still a valid first-result candidate.
-        savedHistory = { [histId]: record };
-      }
-      if (savedHistory && ['mock', 'pre'].includes(saveSource)) {
-        try {
-          const firstAttempt = findFirstPracticeAttempt(savedHistory, saveSource, testKey, practiceChunk) || record;
-          const publicScore = makePublicFirstResult(firstAttempt, user.username || user.safeKey);
-          if (publicScore) {
-            const publicScorePath = practiceFirstResultPath(saveSource, testKey, practiceChunk, user.safeKey);
-            // Always return an existing value from the transaction: RTDB may call the updater
-            // first with a local null cache, then retry against the authoritative server value.
-            await fb.transaction(publicScorePath, (current) => current && typeof current === 'object' ? current : publicScore);
-            const refKey = crypto.createHash('sha256').update(publicScorePath).digest('hex');
-            await fb.set(`users/${user.safeKey}/practice_first_score_refs/${refKey}`, publicScorePath);
-          }
-        } catch (err) {
-          console.warn('[practice:first-result] save failed:', err?.message || err);
+        const ids = Object.entries(hsnap.val() || {})
+          .sort((a, b) => ((b[1] && b[1].at) || 0) - ((a[1] && a[1].at) || 0))
+          .map(([id]) => id);
+        for (const oldId of ids.slice(10)) {
+          await fb.remove(`users/${user.safeKey}/practice_history/${oldId}`);
         }
-      }
-      // Oxirgi 10 tadan eskilarini tozalash (xotira chegarasi — user qarori)
-      if (savedHistory) {
-        try {
-          const ids = Object.entries(savedHistory)
-            .sort((a, b) => ((b[1] && b[1].at) || 0) - ((a[1] && a[1].at) || 0))
-            .map(([id]) => id);
-          for (const oldId of ids.slice(10)) {
-            await fb.remove(`users/${user.safeKey}/practice_history/${oldId}`);
-          }
-        } catch (_) { /* non-critical */ }
-      }
+      } catch (_) { /* non-critical */ }
     }
   } catch (_) { /* non-critical */ }
   res.json({
@@ -1430,6 +1219,6 @@ router.post('/api/practice/grade', async (req, res) => {
 });
 
 // 09/2026 (Faza 1): unit testlar uchun sof funksiyalar
-export { practiceOptionMeta, normalizeShortAnswer, shortAnswerHash, orderHash, matchHash, loadPracticeQuestions, validPracticeKey };
+export { practiceOptionMeta, normalizeShortAnswer, shortAnswerHash, orderHash, matchHash };
 
 export default router;

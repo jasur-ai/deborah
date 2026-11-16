@@ -42,7 +42,7 @@ function csrfFrom(html) {
 
 async function registerTeacher({ username, email, university = 'Toshkent Davlat Universiteti', subject = 'Matematika' }) {
   const agent = supertest.agent(app);
-  const page = await agent.get('/ustoz');
+  const page = await agent.get('/user/register');
   const csrf = csrfFrom(page.text);
   const r = await agent.post('/user/login').type('form').set('x-forwarded-for', '203.0.113.42').send({
     _csrf: csrf, lang: 'uz', mode: 'reg', consent: 'on', username, email, password: PW,
@@ -82,7 +82,7 @@ async function adminAgent() {
     _csrf: csrf, username: adminUser, password: adminPass,
   });
   expect([302, 200]).toContain(alr.status);
-  const dash = await admin.get('/admin/dashboard');
+  const dash = await admin.get('/admin');
   const m = dash.text.match(/__CSRF_TOKEN\s*=\s*'([^']+)'/) || dash.text.match(/const CSRF = '([^']+)'/);
   admin.__csrf = m ? m[1] : '';
   await admin.post('/api/admin/reauth').send({ password: adminPass }).set('x-csrf-token', admin.__csrf);

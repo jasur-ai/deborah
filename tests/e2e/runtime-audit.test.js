@@ -66,8 +66,7 @@ beforeAll(async () => {
 }, 90000);
 afterAll(async () => { if (ctx) await ctx.close().catch(() => {}); await stopE2E(); });
 
-// SKIP: Playwright Chromium bu sandboxda mavjud emas (e2e faqat CI/Render’da ishadi).
-describe.skip('zz audit', () => {
+describe('zz audit', () => {
   it('A builder: 7 tur + excel + AI + save + preview + validatsiya', async () => {
     const page = await newPage(ctx);
     const errs = watch(page);

@@ -12,8 +12,6 @@ import { recordMetric } from '../src/telemetry/index.js';
 import { DB_PATHS } from '../utils/constants.js';
 import crypto from 'crypto';
 import { safeKey } from '../utils/helpers.js';
-import { aggregatePracticeResults } from '../src/modules/practice-results.js';
-import { PRACTICE_FIRST_SCORES_ROOT, practiceFirstResultPath } from '../src/modules/practice-first-results.js';
 import { getMfaStatus } from '../src/modules/auth/mfa-totp.js';
 import { ADMIN_MFA_ACCOUNT } from '../src/modules/auth/admin-security.js';
 // AUTH A-19/B-15: teacher approval + B-34 signup review queue
@@ -40,28 +38,16 @@ import {
   INSTITUTION_POLICY_PATH,
 } from '../services/cast/institution-policy.js';
 import { PRESET_REGISTRY } from '../services/cast/presets.js';
-import { ADMIN_DASHBOARD_TABS, ADMIN_SIDEBAR_GROUPS } from '../data/admin-navigation.js';
 
 const router = Router();
 
 router.use(requireAdmin);
-// Barcha asosiy admin sahifalarida yagona, qisqa va izchil sidebar.
-router.use((req, res, next) => {
-  res.locals.adminSidebarGroups = ADMIN_SIDEBAR_GROUPS;
-  next();
-});
 router.use(teacherRoutes);
 router.use(adminIndexRoutes); // GET /admin/index — BUG-029
 router.use(signupReviewRoutes);
 
-// Eski admin sahifalarida /admin ga qaytuvchi logotip/havolalar bor edi.
-// Barchasini aniq boshqaruv paneliga olib boramiz, 404 emas.
-router.get('/', (req, res) => res.redirect(302, '/admin/dashboard'));
-
 // ── Dashboard ──
 router.get('/dashboard', async (req, res) => {
-  const requestedTab = String(req.query.tab || 'overview');
-  const activeTab = ADMIN_DASHBOARD_TABS.has(requestedTab) ? requestedTab : 'overview';
   try {
     const [usersSnap, gamesSnap, fansSnap] = await Promise.all([
       fb.get(DB_PATHS.USERS),
@@ -100,7 +86,7 @@ router.get('/dashboard', async (req, res) => {
       fans: [],
       preGroups: [],
       results: [],
-      activeTab,
+      activeTab: req.query.tab || 'danger',
       // AUTH D-10 §13: 4 til admin copy (AUTH_COPY[lang].admin)
       adminCopy: await adminCopyFor(req),
     });
@@ -110,7 +96,7 @@ router.get('/dashboard', async (req, res) => {
       title: 'Admin Panel',
       stats: { usersCount: 0, gamesCount: 0, testsCount: 0, fansCount: 0 },
       users: [], fans: [], preGroups: [], results: [],
-      activeTab,
+      activeTab: 'danger',
       error: err.message,
       adminCopy: await adminCopyFor(req),
     });
@@ -363,27 +349,17 @@ router.get('/api/audit/export', async (req, res) => {
   }
 });
 
-// ── API: Load fans with privacy-safe practice aggregates ──
-const emptyPracticeSummary = () => ({
-  attempts: 0, participants: 0, averagePercent: 0, bestPercent: 0,
-  correctAnswers: 0, totalQuestions: 0, lastAt: 0,
-});
-
+// ── API: Load fans ──
 router.get('/api/fans', async (req, res) => {
   try {
-    const [fansSnap, usersSnap] = await Promise.all([
-      fb.get(DB_PATHS.MOCK_FANS),
-      fb.get(DB_PATHS.USERS),
-    ]);
-    const fans = fansSnap.val() || {};
-    const practiceResults = aggregatePracticeResults(usersSnap.val() || {}, 'mock').byKey;
+    const snap = await fb.get(DB_PATHS.MOCK_FANS);
+    const fans = snap.val() || {};
     const list = Object.entries(fans)
       .sort((a, b) => (a[1].name || '').localeCompare(b[1].name || ''))
       .map(([key, f]) => ({
         key, name: f.name || key,
         count: f.count || (f.questions ? f.questions.length : 0),
         createdAt: f.createdAt || 0,
-        practiceResults: practiceResults[key] || emptyPracticeSummary(),
       }));
     res.json({ fans: list });
   } catch (err) {
@@ -435,32 +411,17 @@ router.post('/api/fans/update', async (req, res) => {
   }
 });
 
-// ── API: Load PRE groups with group/subtest practice aggregates ──
+// ── API: Load PRE groups ──
 router.get('/api/pre-groups', async (req, res) => {
   try {
-    const [groupsSnap, usersSnap] = await Promise.all([
-      fb.get(DB_PATHS.PRE_GROUPS),
-      fb.get(DB_PATHS.USERS),
-    ]);
-    const groups = groupsSnap.val() || {};
-    const practice = aggregatePracticeResults(usersSnap.val() || {}, 'pre');
+    const snap = await fb.get(DB_PATHS.PRE_GROUPS);
+    const groups = snap.val() || {};
     const list = Object.entries(groups)
-      .sort((a, b) => (b[1]?.createdAt || 0) - (a[1]?.createdAt || 0))
-      .map(([key, rawGroup]) => {
-        const g = rawGroup && typeof rawGroup === 'object' ? rawGroup : {};
-        const chunks = Array.isArray(g.chunks) ? g.chunks : [];
-        return {
-          key, title: g.title || key, chunks,
-          total: g.total || 0, count: g.count || 0, createdAt: g.createdAt || 0,
-          practiceResults: practice.byKey[key] || emptyPracticeSummary(),
-          chunkResults: chunks.map((chunk, index) => ({
-            id: String(chunk?.id || ''),
-            name: chunk?.name || `Subtest ${index + 1}`,
-            count: Number(chunk?.count) || (Array.isArray(chunk?.questions) ? chunk.questions.length : 0),
-            practiceResults: practice.byChunk[key]?.[String(chunk?.id || '')] || emptyPracticeSummary(),
-          })),
-        };
-      });
+      .sort((a, b) => (b[1].createdAt || 0) - (a[1].createdAt || 0))
+      .map(([key, g]) => ({
+        key, title: g.title || key, chunks: g.chunks || [],
+        total: g.total || 0, count: g.count || 0, createdAt: g.createdAt || 0,
+      }));
     res.json({ groups: list });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -514,42 +475,7 @@ router.post('/api/pre-groups/delete', async (req, res) => {
 // ── API: Delete user ──
 router.post('/api/users/delete', requireAdminMfaStepUp, async (req, res) => {
   try {
-    const rawKey = typeof req.body?.key === 'string' ? req.body.key : '';
-    const key = safeKey(rawKey);
-    if (!rawKey || rawKey.trim() !== rawKey || key !== rawKey) {
-      return res.status(400).json({ error: 'invalid_user_key', message: 'Foydalanuvchi kaliti notoʻgʻri.' });
-    }
-
-    const userRef = `${DB_PATHS.USERS}/${key}`;
-    const userSnap = await fb.get(userRef);
-    if (!userSnap.exists()) {
-      return res.status(404).json({ error: 'user_not_found', message: 'Foydalanuvchi topilmadi yoki avval oʻchirilgan.' });
-    }
-    if (userSnap.val()?.role === 'admin') {
-      return res.status(403).json({ error: 'admin_delete_forbidden', message: 'Admin akkauntini ushbu sahifadan oʻchirib boʻlmaydi.' });
-    }
-
-    // O'chirishdan avval shu userning faol sessiyalarini bekor qilamiz.
-    const { revokeByUser } = await import('../src/modules/auth/session-manager.js');
-    await revokeByUser(key, { reason: 'admin_user_delete' });
-    const scoreRefs = userSnap.val()?.practice_first_score_refs || {};
-    const prefix = `${PRACTICE_FIRST_SCORES_ROOT}/`;
-    const publicScorePaths = Object.values(scoreRefs).filter((path) => {
-      if (typeof path !== 'string' || !path.startsWith(prefix) || path.includes('..')) return false;
-      const parts = path.split('/');
-      try {
-        if (parts.length === 4 && parts[1] === 'mock') {
-          return practiceFirstResultPath('mock', parts[2], '', key) === path;
-        }
-        if (parts.length === 5 && parts[1] === 'pre') {
-          return practiceFirstResultPath('pre', parts[2], parts[3], key) === path;
-        }
-      } catch (_) { /* malformed/stale reference — never delete outside this account's score path */ }
-      return false;
-    });
-    await Promise.all(publicScorePaths.map((path) => fb.remove(path)));
-    await fb.remove(userRef);
-
+    await fb.remove(`${DB_PATHS.USERS}/${req.body.key}`);
     // AUTH A-30 §10: privileged action audit (kim, qachon, nima, IP hash)
     logAuthEvent({
       action: AUDIT_ACTIONS.ADMIN_ACTION,
@@ -558,13 +484,11 @@ router.post('/api/users/delete', requireAdminMfaStepUp, async (req, res) => {
       actorId: req.session?.admin?.username || null,
       ipAddress: req.ip,
       userAgent: req.headers['user-agent'],
-      details: { action: 'user:delete', resource: key },
+      details: { action: 'user:delete', resource: req.body?.key },
     }).catch(() => {});
-    res.json({ success: true, key });
-  } catch (err) {
-    console.error('[admin-user-delete] Failed:', err.message);
-    res.status(500).json({ error: 'user_delete_failed', message: 'Foydalanuvchini oʻchirishda server xatosi yuz berdi.' });
+    res.json({ success: true });
   }
+  catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 // ── API: Get results ──
@@ -697,31 +621,6 @@ router.post('/api/users/unblock', requireAdminMfaStepUp, async (req, res) => {
 // ular /admin/teachers'da alohida boshqariladi (user qarori 2026-08-29).
 const VIP_STAFF_ROLES = new Set(['teacher', 'teacher_pending', 'teacher_rejected', 'co_teacher', 'board']);
 
-// OAuth users may be stored under provider IDs (e.g. `google_<sub>`) while
-// admin UIs display their actual username. Resolve the displayed username
-// against the user record before falling back to a legacy username-key path.
-async function resolveVipTarget(username) {
-  const normalized = safeKey(username);
-  if (!normalized) return null;
-
-  const snap = await fb.get(DB_PATHS.USERS);
-  const users = snap.val() || {};
-  const matches = Object.entries(users).filter(([, user]) =>
-    user?.username && safeKey(user.username) === normalized);
-
-  if (matches.length > 1) return { ambiguous: true };
-  if (matches.length === 1) {
-    const [userKey, user] = matches[0];
-    return { userKey, user };
-  }
-
-  const legacyUser = users[normalized];
-  if (legacyUser && (!legacyUser.username || safeKey(legacyUser.username) === normalized)) {
-    return { userKey: normalized, user: legacyUser };
-  }
-  return null;
-}
-
 router.get('/api/users', async (req, res) => {
   try {
     const usersSnap = await fb.get(DB_PATHS.USERS);
@@ -754,9 +653,7 @@ router.get('/api/users', async (req, res) => {
     if (req.query.excludeStaff === 'true') filtered = filtered.filter(([, u]) => !VIP_STAFF_ROLES.has(u.role || 'student'));
 
     const total = filtered.length;
-    const pageCount = Math.max(1, Math.ceil(total / pageSize));
-    const currentPage = Math.min(page, pageCount);
-    const pageItems = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+    const pageItems = filtered.slice((page - 1) * pageSize, page * pageSize);
     const list = pageItems.map(([key, u]) => ({
       key,
       username: u.username || key,
@@ -771,7 +668,7 @@ router.get('/api/users', async (req, res) => {
       vipGrantedBy: u.vipGrantedBy || null,
       vipRevokedAt: u.vipRevokedAt || null,
     }));
-    res.json({ users: list, total, page: currentPage, pageSize, pageCount });
+    res.json({ users: list, total, page, pageSize });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -885,20 +782,15 @@ router.post('/api/vip/grant', requireAdminMfaStepUp, async (req, res) => {
     const { username } = req.body;
     if (!username) return res.status(400).json({ error: 'Username required' });
 
-    // Normalize username to DB key via safeKey before lookup (provider IDs vs display names)
     const userKey = safeKey(username);
-
-    const target = await resolveVipTarget(username);
-    if (target?.ambiguous) {
-      return res.status(409).json({ error: 'Username bir nechta hisobga mos keldi' });
-    }
-    if (!target) {
+    const snap = await fb.get(`${DB_PATHS.USERS}/${userKey}`);
+    
+    if (!snap.exists()) {
       return res.status(404).json({ error: 'Bunday foydalanuvchi topilmadi' });
     }
-    const { user: targetUser } = target;
 
     // S25: o'qituvchi/xodim VIP bo'la olmaydi — alohida bo'limda boshqariladi
-    const targetRole = targetUser?.role || 'student';
+    const targetRole = snap.val()?.role || 'student';
     if (VIP_STAFF_ROLES.has(targetRole)) {
       return res.status(400).json({ error: "O'qituvchilar VIP bo'la olmaydi — 'O'qituvchilar' bo'limida alohida boshqariladi" });
     }
@@ -907,7 +799,7 @@ router.post('/api/vip/grant', requireAdminMfaStepUp, async (req, res) => {
     // Generate random VIP management password (stored separately, does NOT change user's login password)
     const vipPass = Math.random().toString(36).slice(2, 8) + Math.random().toString(36).slice(2, 6);
 
-    await fb.update(`${DB_PATHS.USERS}/${target.userKey}`, {
+    await fb.update(`${DB_PATHS.USERS}/${userKey}`, {
       isVip: true,
       vipGrantedAt: Date.now(),
       vipGrantedBy: req.session.admin?.username || 'admin',
@@ -929,18 +821,14 @@ router.post('/api/vip/revoke', requireAdminMfaStepUp, async (req, res) => {
     const { username } = req.body;
     if (!username) return res.status(400).json({ error: 'Username required' });
 
-    // Normalize username to DB key via safeKey before lookup (provider IDs vs display names)
     const userKey = safeKey(username);
-
-    const target = await resolveVipTarget(username);
-    if (target?.ambiguous) {
-      return res.status(409).json({ error: 'Username bir nechta hisobga mos keldi' });
-    }
-    if (!target) {
+    const snap = await fb.get(`${DB_PATHS.USERS}/${userKey}`);
+    
+    if (!snap.exists()) {
       return res.status(404).json({ error: 'Bunday foydalanuvchi topilmadi' });
     }
 
-    await fb.update(`${DB_PATHS.USERS}/${target.userKey}`, {
+    await fb.update(`${DB_PATHS.USERS}/${userKey}`, {
       isVip: false,
       vipRevokedAt: Date.now(),
       // Keep vipGrantedAt/vipGrantedBy for audit trail

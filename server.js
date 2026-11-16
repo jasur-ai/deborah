@@ -58,9 +58,7 @@ import hemisRoutes from './routes/hemis.js';
 import externalIntegrationRoutes from './routes/external-integration.js';
 import aiGenerateRoutes from './routes/ai-generate.js'; // REAL AI (Gemini)
 import profileRoutes from './routes/profile.js'; // "Profilim" — hamma rollar uchun
-import { ADMIN_SIDEBAR_GROUPS } from './data/admin-navigation.js';
 import emailWebhookRoutes from './routes/email-webhook.js'; // E-07/D-32 email budget webhook
-import { startEmailQueueWorker } from './src/modules/email/worker.js';
 import passkeyRoutes from './routes/passkey.js'; // E-05 passkey (WebAuthn)
 import pushRoutes from './routes/push.js'; // E-03 push bildirishnomalar (FCM/VAPID)
 
@@ -89,7 +87,6 @@ import devRoutes from './routes/dev.js';
 import academicRoutes from './routes/academic.js';
 import rosterRoutes from './routes/roster.js';
 import accommodationRoutes from './routes/accommodation.js';
-import classroomsRoutes from './routes/classrooms.js';
 import competencyRoutes from './routes/competency.js';
 import itemBankRoutes from './routes/item-bank.js';
 import rubricRoutes from './routes/rubric.js';
@@ -379,11 +376,6 @@ export async function createApp() {
 
   // ── Locals for EJS views ──
   app.use(setLocals);
-  // Admin pages outside routes/admin.js also share the same navigation source.
-  app.use((req, res, next) => {
-    if (req.path.startsWith('/admin')) res.locals.adminSidebarGroups = ADMIN_SIDEBAR_GROUPS;
-    next();
-  });
 
   // ── Static files ──
   app.use(express.static(join(__dirname, 'public'), {
@@ -499,9 +491,6 @@ app.get('/health', (req, res) => {
 
   // ── Accommodation API routes ──
   app.use('/', accommodationRoutes);
-
-  // ── O'quvchi / sinf / guruh (classrooms) routes ──
-  app.use('/', classroomsRoutes);
 
   // ── Competency API routes ──
   app.use('/', competencyRoutes);
@@ -672,10 +661,6 @@ if (isMainModule) {
       env: CONFIG.NODE_ENV,
       node: process.version,
     }, `Server started on http://${CONFIG.HOST}:${CONFIG.PORT}`);
-
-    // Start the persistent email outbox only in the real server process.
-    // createApp() remains side-effect-free for tests and one-shot imports.
-    startEmailQueueWorker({ logger: log });
 
     console.log(`
 ╔═══════════════════════════════════════════╗

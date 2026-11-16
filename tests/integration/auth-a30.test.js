@@ -297,13 +297,12 @@ describe('AUTH A-30 — Admin/Teacher privilege hardening', () => {
       .send({ code: await generate({ secret }), challengeId: challengeId[1] });
     expect(res.status).toBe(200);
 
-    // Fresh MFA → sensitive amal MFA gate'dan o'tadi; mavjud bo'lmagan user 404 qaytaradi.
+    // Fresh MFA → sensitive amal (user delete) o'tadi (status != 403 mfa_stepup)
     const dashCsrf = csrfFromPanel((await agent.get('/admin/dashboard')).text);
     const del = await agent.post('/admin/api/users/delete')
       .set('x-forwarded-for', nextIp())
       .set('x-csrf-token', dashCsrf)
       .send({ key: 'nonexistent-user' });
-    expect(del.status).toBe(404);
-    expect(del.body.error).toBe('user_not_found');
+    expect(del.status).toBe(200); // fresh MFA → allowed (user yo'q bo'lsa ham 200)
   });
 });

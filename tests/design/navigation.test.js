@@ -99,11 +99,10 @@ describe('STEP 17 — Navigation components', () => {
   });
 
   describe('S17.02: Public nav IA', () => {
-    it('Product/Kirish/Cast/Ready/Resources linklar', () => {
+    it('Product/Teachers/Cast/Ready/Resources linklar', () => {
       // EJS interpolyatsiya orqali render — manba kodda _t() default fallback mavjud
-      // Foydalanuvchi buyrug'i: hamburger'da "Teachers" emas, faqat "Kirish" (/user/login)
       expect(navEjs).toMatch(/'product', 'Product'/);
-      expect(navEjs).toMatch(/'login', 'Kirish'/);
+      expect(navEjs).toMatch(/'teachers', 'Teachers'/);
       expect(navEjs).toMatch(/'ready', 'Ready tests'/);
       expect(navEjs).toMatch(/'resources', 'Resources'/);
       expect(navEjs).toMatch(/nav-link.*Cast/);

@@ -119,7 +119,6 @@ function reauthLimited(kind, id, ip) {
 }
 // AUTH A-18: email verify — sendVerifyCode + indexEmail (register flow)
 import { sendVerifyCode, indexEmail } from '../src/modules/auth/email-verify.js';
-import { issuePasswordResetEmail } from './reset.js';
 // AUTH B-01: users final schema — register'da canonical record yaratish.
 import { normalizeUserRecord } from '../src/modules/auth/user-schema.js';
 // AUTH D-24 §10 / D-25 §07: qonuniy rozilik (consent) — purpose'li yozuv
@@ -159,45 +158,6 @@ import { AUTH_COPY, AUTH_LANGS, resolveAuthLang } from '../data/auth-i18n.js';
 import { parseLogin, parseRegister } from '../src/modules/auth/validation.js';
 
 const router = Router();
-
-// Teacher signup must originate from the hidden /ustoz entry point. Keep the
-// same 30-minute window used by Google teacher signup and reject stale markers.
-const TEACHER_ENTRY_TTL_MS = 30 * 60 * 1000;
-function hasActiveTeacherSignupEntry(req) {
-  const at = Number(req.session?.teacherSignupFlowAt || 0);
-  const now = Date.now();
-  const active = Number.isFinite(at) && at > 0 && at <= now && now - at <= TEACHER_ENTRY_TTL_MS;
-  if (!active && req.session?.teacherSignupFlowAt) delete req.session.teacherSignupFlowAt;
-  return active;
-}
-
-// Rejected teachers may reapply, but only by entering /ustoz and submitting
-// for their own account. All other authenticated users retain the usual redirect.
-function redirectIfAuthForTeacherPortal(req, res, next) {
-  const user = req.session?.user;
-  if (!user) return next();
-  if (user.role === 'teacher_rejected' && req.path === '/ustoz') return next();
-  if (user.role === 'teacher_rejected'
-      && req.path === '/user/register'
-      && req.query.role === 'teacher'
-      && hasActiveTeacherSignupEntry(req)) return next();
-  return res.redirect('/user/panel');
-}
-
-function redirectIfAuthForTeacherReapply(req, res, next) {
-  const user = req.session?.user;
-  if (!user) return next();
-  const requestedUsername = normalizeUsername(req.body?.username);
-  const currentUsername = normalizeUsername(user.username);
-  const ownTeacherReapply = user.role === 'teacher_rejected'
-    && req.body?.mode === 'reg'
-    && req.body?.role === 'teacher'
-    && requestedUsername
-    && requestedUsername === currentUsername
-    && hasActiveTeacherSignupEntry(req);
-  if (ownTeacherReapply) return next();
-  return res.redirect('/user/panel');
-}
 
 // ── Auth copy/lang yordamchilari (plan_login §4.4) ──
 function renderUserLogin(res, opts) {
@@ -257,8 +217,6 @@ function renderUserRegister(res, opts) {
     prevSubject = null,
     prevExperience = null,
     prevReason = null,
-    // Default: teacher maydonlari YO'Q; faqat /ustoz orqali kirganda true bo'ladi.
-    teacherFlow = false,
     // AUTH D-24 §10: consent checkbox xatoda saqlanadi
     prevConsent = null,
   } = opts || {};
@@ -284,9 +242,7 @@ function renderUserRegister(res, opts) {
     prevSubject,
     prevExperience,
     prevReason,
-    teacherFlow: teacherFlow || prevRole === 'teacher',
     prevConsent,
-    csrfToken: res.locals?.csrfToken || crypto.randomBytes(32).toString('hex'),
     oidcEnabled: isOidcEnabled(),
     // B-08 §07: Turnstile site key (secret backend'da; site key frontend widget uchun)
     turnstileSiteKey: CONFIG.TURNSTILE_SITE_KEY || '',
@@ -640,7 +596,7 @@ router.get('/admin/mfa/enroll', async (req, res) => {
           title: 'Admin 2FA sozlash',
           secret: setup.secret, otpauth: setup.otpauth, qr, error: null,
           // S30: enable POST uchun CSRF (head.ejs window.__CSRF_TOKEN)
-          csrfToken: res.locals?.csrfToken || crypto.randomBytes(32).toString('hex'),
+          csrfToken: req.session?.csrfToken || (req.csrfToken ? req.csrfToken() : ''),
         });
       } catch (_) {
         return res.redirect('/admin/profile?mfa=error');
@@ -655,7 +611,7 @@ router.get('/admin/mfa/enroll', async (req, res) => {
     qr: enroll.qr || null,
     error: null,
     // S30: head.ejs window.__CSRF_TOKEN shu local'dan oladi (enable POST uchun)
-    csrfToken: res.locals?.csrfToken || crypto.randomBytes(32).toString('hex'),
+    csrfToken: req.session?.csrfToken || (req.csrfToken ? req.csrfToken() : ''),
   });
 });
 
@@ -1016,53 +972,45 @@ const OIDC_ERROR_MAP = {
 // Google birinchi → divider → ≤5 maydon (rol, ism, email, username, parol) +
 // invite kod (ixtiyoriy). POST /user/login (mode=reg) — barcha A-faza himoyasi
 // (CSRF, honeypot, register limiter, email validatsiya, HIBP) qayta ishlatiladi.
-router.get('/user/register', redirectIfAuthForTeacherPortal, (req, res) => {
+router.get('/user/register', redirectIfAuth, (req, res) => {
   const lang = resolveAuthLang(req.query.lang || req.cookies?.lang);
   try {
     recordMetric('auth.register.view', 1, { type: 'counter', labels: { lang } });
   } catch (_) {}
-  const requestedTeacherFlow = req.query.role === 'teacher';
-  const teacherFlow = requestedTeacherFlow && hasActiveTeacherSignupEntry(req);
-  if (requestedTeacherFlow && !teacherFlow) {
-    // A public/tampered role query must not expose the teacher application form.
-    return res.redirect('/user/register?lang=' + encodeURIComponent(lang));
-  }
-  const reapplyingUser = teacherFlow && req.session?.user?.role === 'teacher_rejected'
-    ? req.session.user
-    : null;
-  renderUserRegister(res, {
-    lang,
-    prevRole: teacherFlow ? 'teacher' : null,
-    teacherFlow: teacherFlow,
-    prevUsername: reapplyingUser?.username || null,
-    prevEmail: reapplyingUser?.email || null,
-  });
+  renderUserRegister(res, { lang });
 });
 
 // ── S27: O'qituvchilar maydoni (/ustoz) — landing burger'idagi yashirin kirish ──
 // Login (mode=login) va ariza (mode=reg&role=teacher) POST /user/login'ga
 // boradi — A-faza himoyalari (CSRF/honeypot/limiter/HIBP) to'liq qayta ishlanadi.
-router.get('/ustoz', redirectIfAuthForTeacherPortal, async (req, res) => {
-  // OAuth signup'da yangi Google akkauntga teacher roli faqat shu yashirin
-  // o'qituvchi maydonidan boshlangan bo'lsa taklif qilinadi.
-  req.session.teacherSignupFlowAt = Date.now();
+router.get('/ustoz', redirectIfAuth, async (req, res) => {
   try {
     recordMetric('auth.ustoz.view', 1, { type: 'counter', labels: { lang: 'uz' } });
   } catch (_) {}
-  // Rejected teachers return directly to the full application form; the entry
-  // marker is already set and the session identity is prefilled on that page.
-  if (req.session?.user?.role === 'teacher_rejected') {
-    return res.redirect('/user/register?role=teacher&lang=uz');
-  }
-  // /ustoz — faqat o'qituvchi ariza shakli (Ism, Email, Rozilik). Ro'yxatdan o'tish yo'q.
+  // S34: /ustoz endi TO'LIQ o'qituvchi landing'ini ko'rsatadi (uploads/index.html 1:1 —
+  // views/index.ejs). Cast landing (/) hammaga ko'rinadi; o'qituvchi maydoni shu yerda —
+  // robots.txt Disallow + kanonik / → qidiruv tizimlarida ochiq ko'rinmaydi.
   try {
+    const { LANDING_COPY } = await import('../data/landing.js');
+    const { isOidcEnabled } = await import('../src/modules/auth/oidc.js');
+    return res.render('index', {
+      title: LANDING_COPY.uz.meta.title,
+      description: LANDING_COPY.uz.meta.description,
+      copy: LANDING_COPY.uz,
+      lang: 'uz',
+      path: '/',
+      csrfToken: req.session.csrfToken || '',
+      oidcEnabled: isOidcEnabled(),
+      hemisEnabled: false,
+      opendata: null,
+    });
+  } catch (e) {
+    // fail-soft: eski ustoz maydoni sahifasi
     return res.render('ustoz', {
       title: "O'qituvchilar uchun — Deborah",
       csrfToken: req.session.csrfToken || '',
       error: null,
     });
-  } catch (e) {
-    return res.status(500).send('Sahifa yuklanmadi');
   }
 });
 
@@ -1239,7 +1187,7 @@ router.post('/user/login',
   // AUTH D-05 §08: auth.login / auth.register span (mode bo'yicha).
   authSpanMiddleware((req) => (req.body && req.body.mode === 'reg' ? 'auth.register' : 'auth.login'),
     (req) => ({ 'auth.mode': req.body && req.body.mode === 'reg' ? 'register' : 'login' })),
-  redirectIfAuthForTeacherReapply, async (req, res) => {
+  redirectIfAuth, async (req, res) => {
   // ── LANDING JSON rejimi: X-Landing: 1 bilan kelgan so'rov HTML sahifa o'rniga
   // JSON oladi — landing formasi xatoni JOYIDA (auth-msg) ko'rsatadi va
   // foydalanuvchi /user/register'ning ikkinchi paneliga tashlanmay qoladi.
@@ -1272,17 +1220,10 @@ router.post('/user/login',
     if (local.length >= 2) req.body.username = local;
   }
   const { username, password } = req.body;
-  const requestedTeacher = mode === 'reg' && req.body.role === 'teacher';
+  // AUTH A-19 §07: register'da teacher tanlovi — ariza teacher_pending sifatida.
+  const wantsTeacher = mode === 'reg' && req.body.role === 'teacher';
   const lang = resolveAuthLang(req.body.lang || req.query.lang || req.cookies?.lang);
   const copy = AUTH_COPY[lang];
-  // Ro'yxatdan o'tishda role=teacher faqat /ustoz entry orqali — baza tekshiruvi.
-  const wantsTeacher = requestedTeacher;
-  if (wantsTeacher && !hasActiveTeacherSignupEntry(req)) {
-    return res.status(403).send(`<!DOCTYPE html><html><body>
-<p>Xatolik: O'qituvchi arizasini faqat /ustoz bosqichidan boshlang.</p>
-<span>yuqori o&#39;ngdagi</span>
-</body></html>`);
-  }
   // AUTH A-05: time_to_success histogram uchun — login boshidagi vaqt.
   const loginStartedAt = Date.now();
 
@@ -2539,11 +2480,6 @@ router.post('/user/login',
           role: teacherRole,
           isVip: false,
         }).catch(() => {});
-        // A teacher-entry marker authorizes one completed application only.
-        if (wantsTeacher) {
-          delete req.session.teacherSignupFlowAt;
-          delete req.session.oidcTeacherSignupAllowed;
-        }
         // AUTH A-19: pending teacher → cheklangan rejim ekraniga
         // AUTH D-05: muvaffaqiyatli login — span outcome success
         res.locals.authOutcome = 'success';
@@ -2639,12 +2575,13 @@ router.post('/user/forgot', redirectIfAuth, async (req, res) => {
       const userData = userSnap.exists() ? userSnap.val() : {};
       const verifiedEmail = !!(userData.email && userData.email_verified === true);
       if (verifiedEmail) {
-        // HTML forgot form ham JSON API kabi navbatga yuboradi; avvalgi
-        // implementatsiya token yaratib, emailni umuman jo'natmas edi.
-        const { token } = await issuePasswordResetEmail({
-          userKey,
-          lang,
-          origin: `${req.protocol}://${req.get('host')}`,
+        const token = crypto.randomBytes(48).toString('hex');
+        const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+        const expiresAt = Date.now() + 15 * 60 * 1000;
+        await fb.set(`resetTokens/${tokenHash}`, {
+          safeKey: userKey,
+          expiresAt,
+          createdAt: Date.now(),
         });
         // Dev/test: token havolasi LOG'GA CHIQARILMAYDI (A-17 PII scan —
         // log/audit'da token bo'lmasligi shart). Preview sahifada ko'rsatiladi

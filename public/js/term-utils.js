@@ -70,8 +70,8 @@
   };
 
   var JARGON = {
-    mock: { label: 'Mock fanlar', jargon: ['Mock', 'Mock Fanlar', 'MOCK'] },
-    pre: { label: 'Subtestlar', jargon: ['Tayyor testlar', 'PRE Testlar', 'PRE Test', 'PRE'] },
+    mock: { label: 'Namuna fanlar', jargon: ['Mock', 'Mock Fanlar', 'MOCK'] },
+    pre: { label: 'Tayyor testlar', jargon: ['PRE', 'PRE Testlar', 'PRE Test'] },
     characters: { label: 'Qahramonlar', jargon: ['Characters', 'Character'] },
     realtime: { label: 'Jonli o\u02BByin', jargon: ['Real-time Multiplayer', 'Realtime'] },
     cast: { label: 'Jonli sessiya', jargon: ['Cast', 'CAST'] },
@@ -84,16 +84,18 @@
 
   function approveJargon(text) {
     if (!text) return text;
+    var out = String(text);
+    // Eng uzun jargon birinchi almashtiriladi ("Mock Fanlar" -> "Mock" ichida qolmaydi).
     var all = [];
     Object.keys(JARGON).forEach(function (key) {
       JARGON[key].jargon.forEach(function (j) { all.push({ j: j, label: JARGON[key].label }); });
     });
     all.sort(function (a, b) { return b.j.length - a.j.length; });
-    var labels = new Map(all.map(function (item) { return [item.j.toLowerCase(), item.label]; }));
-    var alternatives = all.map(function (item) { return item.j.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); });
-    var matcher = new RegExp('\\b(?:' + alternatives.join('|') + ')\\b', 'gi');
-    // Replace the original text in one pass so the canonical label isn't processed again.
-    return String(text).replace(matcher, function (match) { return labels.get(match.toLowerCase()) || match; });
+    all.forEach(function (item) {
+      var esc = item.j.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      out = out.split(new RegExp('\\b' + esc + '\\b', 'g')).join(item.label);
+    });
+    return out;
   }
 
   window.DeborahTerms = {

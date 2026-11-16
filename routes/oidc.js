@@ -62,7 +62,6 @@ function inviteClaimError(copy, error) {
 }
 
 const router = Router();
-const TEACHER_ENTRY_TTL_MS = 30 * 60 * 1000;
 
 // AUTH A-07 §19: in-app browser (Telegram, FB/IG webview, Line, Android WebView) —
 // OAuth consent cookie'larini to'g'ri saqlay olmaydi → real browser'ga o'tish kerak.
@@ -101,14 +100,6 @@ router.get('/auth/google', (req, res) => {
       status: 400,
     });
   }
-
-  // Teacher roli Google signup'da faqat yashirin /ustoz maydonidan boshlanganda ruxsat etiladi.
-  const teacherEntryAt = Number(req.session?.teacherSignupFlowAt || 0);
-  const teacherEntryAge = Date.now() - teacherEntryAt;
-  req.session.oidcTeacherSignupAllowed = req.query.role === 'teacher'
-    && teacherEntryAt > 0
-    && teacherEntryAge >= 0
-    && teacherEntryAge <= TEACHER_ENTRY_TTL_MS;
 
   try {
     recordMetric('auth.login.google_start', 1, { type: 'counter' })?.catch?.(() => {});
@@ -204,7 +195,6 @@ router.get('/auth/google/callback', async (req, res) => {
     }
 
     const { googleUser } = result;
-    const teacherAllowed = req.session.oidcTeacherSignupAllowed === true;
 
     // AUTH B-10 §06: yangi Google user — account hali yaratilmagan;
     // rol modal (2-qadam): pendingGoogle sessiyada, /user/google-setup'da
@@ -223,7 +213,6 @@ router.get('/auth/google/callback', async (req, res) => {
           picture: googleUser.picture || '',
           emailVerified: googleUser.emailVerified === true,
           invite,
-          teacherAllowed,
           createdAt: Date.now(),
         };
         req.session.csrfToken = crypto.randomBytes(32).toString('hex');
@@ -335,7 +324,6 @@ function renderGoogleSetup(res, opts) {
     error,
     prevRole,
     prevInvite,
-    teacherAllowed: !!(pending && pending.teacherAllowed),
   });
 }
 
@@ -348,7 +336,7 @@ router.get('/user/google-setup', (req, res) => {
     lang,
     pending,
     prevInvite: pending.invite || '',
-    prevRole: pending.teacherAllowed ? 'teacher' : 'student',
+    prevRole: 'student',
   });
 });
 
@@ -367,15 +355,7 @@ router.post('/user/google-setup', async (req, res) => {
     return renderGoogleSetup(res, {
       lang, pending,
       error: AUTH_COPY[resolveAuthLang(lang)].errors.required,
-      prevRole: pending.teacherAllowed ? 'teacher' : 'student',
-      prevInvite: pending.invite || '',
-    });
-  }
-  if (role === 'teacher' && pending.teacherAllowed !== true) {
-    return renderGoogleSetup(res, {
-      lang, pending,
-      error: AUTH_COPY[resolveAuthLang(lang)].setup.teacherPortalOnly,
-      prevRole: 'student',
+      prevRole: role === 'teacher' ? 'teacher' : 'student',
       prevInvite: pending.invite || '',
     });
   }

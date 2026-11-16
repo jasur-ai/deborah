@@ -119,9 +119,7 @@ async function auditPage(page, path) {
 }
 
 let authCtx;
-// SKIP: Playwright Chromium bu sandboxda mavjud emas (e2e faqat CI/Render’da ishadi).
-// Kod-level tuzatishlar allaqachon kirgado: logo 44px (style.css), forgot-link 44px (index.ejs).
-describe.skip('mobil smoke (390×844)', () => {
+describe('mobil smoke (390×844)', () => {
   beforeAll(async () => {
     authCtx = await mobileContext();
     await login(authCtx);

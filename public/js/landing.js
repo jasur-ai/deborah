@@ -5,7 +5,7 @@
   var I18N={
   uz:{
     'hdr.kirish':'Kirish',
-    'hm.kirish':'Kirish','hm.cast':'Cast hujjatlar','hm.documents':'Hujjatlar',
+    'hm.kirish':'Kirish','hm.cast':'Cast','hm.documents':'Hujjatlar',
     'join.k':"Tayyor cast",
     'join.h3':"Castga <em>kirish</em>",
     'join.p':'Kodni kiriting.',
@@ -26,7 +26,6 @@
     'under':'Bu — <b>cast</b>: savol ekranda, javoblar telefonda. Har bir savol shu tarzda uzatiladi.',
     'auth.k':"Kirish va ro'yxatdan o'tish",'auth.h2':"Hisobingizga kiring",'auth.t1':'Kirish','auth.t2':"Ro'yxatdan o'tish",'auth.login':'Kirish','auth.register':"Ro'yxatdan o'tish",'auth.doneReg':"Ro'yxatdan o'tdingiz. Endi tizimga kira olasiz.",
     'auth.google':'Google bilan kirish',
-    'auth.forgot':'Parolni unutdingizmi?',
     'auth.loginId':'Email yoki username',
     'auth.username':'Username',
     'auth.userFree':'✓ Bo\'sh — mos username',
@@ -131,7 +130,7 @@
      lekin I18Nda uz-cyrl yo'q edi → aralash skript (server kirill, data-i18n lotin) */
   'uz-cyrl':{
     'hdr.kirish':'Кириш',
-    'hm.kirish':'Кириш','hm.cast':'Cast hujjatlar','hm.documents':'Ҳужжатлар',
+    'hm.kirish':'Кириш','hm.cast':'Cast','hm.documents':'Ҳужжатлар',
     'join.k':'Тайёр cast',
     'join.h3':'Castга <em>кириш</em>',
     'join.p':'Кодни киритинг.',
@@ -152,7 +151,6 @@
     'under':'Бу — <b>cast</b>: савол экранда, жавоблар телефонда. Ҳар бир савол шу тарзда узатилади.',
     'auth.k':"Deborah ҳисоби",'auth.h2':"Ҳисобингизга киринг",'auth.t1':'Кириш','auth.t2':'Рўйхатдан ўтиш','auth.login':'Кириш','auth.register':'Рўйхатдан ўтиш','auth.doneReg':'Рўйхатдан ўтдингиз. Энди тизимга кира оласиз.',
     'auth.google':'Google билан кириш',
-    'auth.forgot':'Паролни унутдингизми?',
     'auth.loginId':'Email ёки username',
     'auth.username':'Username',
     'auth.userFree':"✓ Бўш — мос username",
@@ -254,7 +252,7 @@
   },
   ru:{
     'hdr.kirish':'Вход',
-    'hm.kirish':'Вход','hm.cast':'Cast hujjatlar','hm.documents':'Документы',
+    'hm.kirish':'Вход','hm.cast':'Cast','hm.documents':'Документы',
     'join.k':'Готовый cast',
     'join.h3':'Вход в <em>cast</em>',
     'join.p':'Введите код.',
@@ -275,7 +273,6 @@
     'under':'Это — <b>cast</b>: вопрос на экране, ответы в телефоне. Так передаётся каждый вопрос.',
     'auth.k':"Аккаунт Deborah",'auth.h2':"Войдите в аккаунт",'auth.t1':'Вход','auth.t2':'Регистрация','auth.login':'Вход','auth.register':'Регистрация','auth.doneReg':'Вы зарегистрированы. Теперь можете войти.',
     'auth.google':'Войти через Google',
-    'auth.forgot':'Забыли пароль?',
     'auth.loginId':'Email или имя пользователя',
     'auth.username':'Имя пользователя',
     'auth.userFree':'✓ Свободно — подходит',
@@ -379,7 +376,7 @@
   },
   en:{
     'hdr.kirish':'Sign in',
-    'hm.kirish':'Log in','hm.cast':'Cast hujjatlar','hm.documents':'Documents',
+    'hm.kirish':'Sign in','hm.cast':'Cast','hm.documents':'Documents',
     'join.k':'Ready cast',
     'join.h3':'Join the <em>cast</em>',
     'join.p':'Enter the code.',
@@ -400,7 +397,6 @@
     'under':'This is <b>cast</b>: question on screen, answers on phones. Every question is delivered this way.',
     'auth.k':"Deborah account",'auth.h2':"Sign in to your account",'auth.t1':'Sign in','auth.t2':'Register','auth.login':'Sign in','auth.register':'Register','auth.doneReg':'You are registered. You can now sign in.',
     'auth.google':'Sign in with Google',
-    'auth.forgot':'Forgot password?',
     'auth.loginId':'Email or username',
     'auth.username':'Username',
     'auth.userFree':'✓ Available — good pick',
@@ -515,17 +511,11 @@
     try{localStorage.setItem('deborah-lang',lang);}catch(e){}
     /* Real formalar: hidden lang sinxron */
     ['loginLang','regLang'].forEach(function(id){var i=document.getElementById(id);if(i)i.value=lang;});
-    document.querySelectorAll('[data-forgot-link]').forEach(function(a){a.href='/user/forgot?lang='+encodeURIComponent(lang);});
   }
   function applyTheme(t){
     /* DeborahTheme engine (theme-core.js) — yagona haqiqat manbai (S07) */
     if(window.DeborahTheme&&window.DeborahTheme.setState){window.DeborahTheme.setState(t);}
-    else{document.documentElement.setAttribute('data-theme',t);document.documentElement.setAttribute('data-resolved-theme',t);}
-  }
-  function syncThemeButton(){
-    var button=document.getElementById('themeBtn');
-    if(!button)return;
-    button.setAttribute('aria-pressed',document.documentElement.getAttribute('data-resolved-theme')==='dark'?'true':'false');
+    else{document.documentElement.setAttribute('data-theme',t);}
   }
   var savedLang='uz',savedTheme='dark';
   /* BUG-092 (S14): path-based sahifalar (/ru,/en,/uz-cyrl) — server tili USTUN.
@@ -541,8 +531,6 @@
     savedTheme=localStorage.getItem('deborah-theme-state')||localStorage.getItem('deborah-theme')||'dark';
   }catch(e){}
   applyTheme(savedTheme);
-  syncThemeButton();
-  document.addEventListener('themechange',syncThemeButton);
   if(savedLang) applyLang(savedLang); /* /uz-cyrl: server render (kirill) o'zgarmaydi */
   document.querySelectorAll('.lang button').forEach(function(b){
     b.addEventListener('click',function(){applyLang(b.getAttribute('data-lang'));});
@@ -611,10 +599,7 @@
       var prov=b.getAttribute('data-prov');
       var url='/auth/google';
       var on=PROV.google;
-      if(on){
-        if(window.__TEACHER_ENTRY && b.closest('#fReg')) url+='?role=teacher';
-        window.location.href=url;return;
-      }
+      if(on){window.location.href=url;return;}
       var msg=b.closest('form').querySelector('.auth-msg');
       if(msg){
         msg.textContent=d['prov.g.off'];
@@ -683,18 +668,26 @@
       doneReg.classList.add('show');
       return false;
     }
-    /* Hidden /ustoz sahifasidagi ariza to'liq teacher formaga o'tadi;
-       ommaviy landing esa AJAX orqali talaba sifatida ro'yxatdan o'tadi. */
-    if(window.__TEACHER_ENTRY){document.getElementById('fReg').submit();return false;}
+    /* BUG-035: O'qituvchi roli tanlanganda NATIV POST — server to'liq
+       /user/register ariza sahifasini prefilled render qiladi (university/
+       subject maydonlari u yerda). AJAX bu holatda HTML'ni o'qiy olmaydi. */
+    var roleSel=document.querySelector('#fReg input[name="role"]:checked');
+    if(roleSel&&roleSel.value==='teacher'){document.getElementById('fReg').submit();return false;}
     return true;
   });
 
-  /* ═══ Theme toggle — shared refined transition + reduced-motion handling ═══ */
-  var themeButton=document.getElementById('themeBtn');
-  if(themeButton)themeButton.addEventListener('click',function(){
+  /* ═══ Tema — yumshoq o'tish (DeborahTheme engine) ═══ */
+  var fx=document.getElementById('modeFx');
+  document.getElementById('themeBtn').addEventListener('click',function(){
     var next=document.documentElement.getAttribute('data-resolved-theme')==='light'?'dark':'light';
+    var oldBg=getComputedStyle(document.body).backgroundColor;
+    fx.style.transition='none';
+    fx.style.background=oldBg;
+    fx.style.opacity='1';
+    void fx.offsetWidth;
     applyTheme(next);
-    syncThemeButton();
+    fx.style.transition='opacity .5s ease';
+    fx.style.opacity='0';
   });
 /* ── Mosaic (mini) ── */
   var mini=document.getElementById('mini');
