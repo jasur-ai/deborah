@@ -126,8 +126,10 @@ describe('AUTH D-17 §08 — teacher approval journey', () => {
     const agent2 = supertest.agent(app);
     const loginPage = await agent2.get('/user/login?lang=uz');
     const lcsrf = csrfFrom(loginPage.text);
+    // Admin tasdiqlashda parol = login + '123' (login = email local part = uname)
+    const teacherPassword = uname + '123';
     const login = await agent2.post('/user/login').set('x-forwarded-for', nextIp()).type('form').send({
-      _csrf: lcsrf, username: uname, password: 'sirli-parol-2026-x', lang: 'uz',
+      _csrf: lcsrf, username: uname, password: teacherPassword, lang: 'uz',
     });
     expect(login.status).toBe(302);
     expect(login.headers.location).toBe('/teacher');

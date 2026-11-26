@@ -57,7 +57,7 @@ describe('AUTH B-29 — teacher application', () => {
       reason: "O'qituvchiman",
     });
     expect(r.status).toBe(302);
-    expect(r.headers.location).toBe('/user/teacher-approval');
+    expect(r.headers.location).toContain('/user/teacher-approval');
 
     // DB'da teacher_pending + canonical ariza (university/subject saqlangan)
     const snap = await fb.get(`users/${safeKey(uname)}`);

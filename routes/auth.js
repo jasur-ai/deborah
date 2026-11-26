@@ -2223,8 +2223,9 @@ router.post('/user/login',
         });
       }
       // Rolni teacher_pending ga o'rnatamiz.
+      const teacherRoleVersion = Date.now();
       await fb.set(`users/${userKey}/role`, 'teacher_pending');
-      await fb.set(`users/${userKey}/role_version`, Date.now());
+      await fb.set(`users/${userKey}/role_version`, teacherRoleVersion);
       logAuthEvent({
         action: AUDIT_ACTIONS.TEACHER_APPLICATION,
         outcome: 'submitted',
@@ -2244,7 +2245,7 @@ router.post('/user/login',
         email,
         emailVerified: false,
         passwordUpdatedAt: 0,
-        roleVersion: 1,
+        roleVersion: teacherRoleVersion,
       };
       req.session.csrfToken = crypto.randomBytes(32).toString('hex');
       req.session.lastActiveAt = Date.now();

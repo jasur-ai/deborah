@@ -15,7 +15,7 @@ import { snapshotDb, restoreDb } from '../helpers/setup.js';
 import { createApp } from '../../server.js';
 import supertest from 'supertest';
 import { fb } from '../../firebase/admin.js';
-import { safeKey } from '../../utils/helpers.js';
+import { safeKey, hashPassword } from '../../utils/helpers.js';
 
 const PW = 'parol-2026-x-uzun';
 
@@ -107,6 +107,8 @@ describe('AUTH B-36 — appeal flow', () => {
     const stamp = Date.now() % 1000000;
     const uname = `b36ap${stamp}`;
     await registerTeacher({ username: uname, email: `${uname}@test.uz` });
+    // Teacher register parol saqlamaydi — login uchun hash qo'shamiz
+    await fb.set(`users/${safeKey(uname)}/password`, await hashPassword(PW));
 
     // Admin rad etadi
     const admin = await adminAgent();
@@ -141,6 +143,7 @@ describe('AUTH B-36 — appeal flow', () => {
     const stamp = Date.now() % 1000000;
     const uname = `b36x${stamp}`;
     await registerTeacher({ username: uname, email: `${uname}@test.uz` });
+    await fb.set(`users/${safeKey(uname)}/password`, await hashPassword(PW));
     // Hali rejected emas — 403
     const agent = await loginUser(uname);
     const before = await agent.post('/api/teacher/appeal').set('x-csrf-token', agent.__csrf).send({ reason: 'qisqa sabab xxxxxxxx' });
@@ -200,6 +203,9 @@ describe('AUTH B-36 — co-teacher scope', () => {
     const admin = await adminAgent();
     await decideTeacher(admin, own, 'approve');
     await decideTeacher(admin, other, 'approve');
+    // Approve'da parol = login+'123' bo'ldi; loginUser PW bilan kirishi uchun o'rnatamiz
+    await fb.set(`users/${safeKey(own)}/password`, await hashPassword(PW));
+    await fb.set(`users/${safeKey(other)}/password`, await hashPassword(PW));
 
     const a = await loginUser(own);
     const add = await a.post('/api/teacher/co-teachers').set('x-csrf-token', a.__csrf)
