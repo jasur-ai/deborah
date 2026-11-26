@@ -233,10 +233,6 @@
             <div class="k" data-i18n="auth.k">Deborah hisobi</div>
             <h2 data-i18n="auth.h2">Hisobingizga kiring</h2>
           </div>
-          <div class="tabs">
-            <button type="button" class="on" data-tab="login" data-i18n="auth.t1">Kirish</button>
-            <button type="button" data-tab="reg" data-i18n="auth.t2">Ro'yxatdan o'tish</button>
-          </div>
           <form id="fLogin" action="/user/login" method="POST">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <input type="hidden" name="mode" value="login">
@@ -253,42 +249,9 @@
             <button class="btn btn-gold auth-submit" type="submit" data-i18n="auth.login">Kirish</button>
             <div class="auth-msg" id="doneLogin"></div>
           </form>
-          <form id="fReg" action="/user/login" method="POST" style="display:none">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <input type="hidden" name="mode" value="reg">
-            <!-- S34i FIX: hidden consent OLIB TASHLANDI (checkbox bilan 2x consent=on
-                 express'da massiv → zod rad → "Ism va parolni kiriting.") -->
-            <input type="hidden" name="lang" value="<%= lang %>" id="regLang">
-            <div class="providers">
-              <button class="provider provider-g" type="button" data-prov="google">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1Z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23Z"/><path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84Z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15A11 11 0 0 0 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52Z"/></svg>
-                <span data-i18n="auth.google">Google bilan kirish</span>
-              </button>
-            </div>
-            <div class="sep"><span data-i18n="auth.or">yoki email bilan</span></div>
-            <div class="fld"><label for="rName" data-i18n="auth.name">Ism va familiya</label><input id="rName" name="name" type="text" autocomplete="name" required></div>
-            <div class="fld"><label for="rEmail" data-i18n="auth.email">Email</label><input id="rEmail" name="email" type="email" autocomplete="email" required></div>
-            <div class="fld"><label for="rUser" data-i18n="auth.username">Username</label><input id="rUser" name="username" type="text" autocomplete="username" spellcheck="false" minlength="2" maxlength="50" required><div class="fld-hint" id="rUserHint" aria-live="polite"></div></div>
-            <div class="fld"><label for="rPass" data-i18n="auth.pass">Parol</label><span class="pw-wrap" style="display:block;position:relative"><input id="rPass" name="password" type="password" autocomplete="new-password" minlength="8" required><button type="button" class="pw-toggle" data-pw-toggle="rPass" aria-label="Parolni ko'rsatish" aria-pressed="false"><span data-pw-toggle-label>👁</span></button></span><div class="fld-hint dim" data-i18n="auth.passHint">Kamida 8 belgi — harf va raqam</div></div>
-            <% // BUG-035: rol tanlash (server role=teacher'ni qabul qiladi; university/subject
-               // bo'lmasa to'liq /user/register formaga prefilled o'tadi — mavjud mantiq) %>
-            <div class="fld">
-              <label data-i18n="auth.role">Rolingiz</label>
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <label style="flex:1;display:flex;align-items:center;gap:8px;border:1px solid rgba(0,0,0,.18);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:.85rem;font-weight:600"><input type="radio" name="role" value="" checked><span data-i18n="auth.roleStudent">Talaba</span></label>
-                <label style="flex:1;display:flex;align-items:center;gap:8px;border:1px solid rgba(0,0,0,.18);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:.85rem;font-weight:600"><input type="radio" name="role" value="teacher"><span data-i18n="auth.roleTeacher">O'qituvchi</span></label>
-              </div>
-            </div>
-            <% // BUG-036: faol rozilik %>
-            <div class="fld" style="display:flex;gap:8px;align-items:flex-start">
-              <input type="checkbox" name="consent" id="rConsent" required style="margin-top:3px;width:16px;height:16px;accent-color:#b8860b">
-              <label for="rConsent" style="font-size:.78rem;font-weight:400;line-height:1.45">Men <a href="/privacy" target="_blank" rel="noopener">maxfiylik siyosati</a> va <a href="/terms" target="_blank" rel="noopener">foydalanish shartlariga</a> roziman</label>
-            </div>
-            <button class="btn btn-gold auth-submit" type="submit" data-i18n="auth.register">Ro'yxatdan o'tish</button>
-            <% // BUG-040: to'liq teacher arizasiga yo'l %>
-            <div style="text-align:center;margin-top:10px;font-size:.8rem"><a href="/user/register" data-i18n="auth.teacherLink">O'qituvchi uchun to'liq ariza →</a></div>
-            <div class="auth-msg" id="doneReg"></div>
-          </form>
+          <div style="text-align:center;margin-top:16px">
+            <a class="btn btn-gold" href="/user/register?role=teacher" data-i18n="auth.applyTeacher">O'qituvchi arizasi berish →</a>
+          </div>
         </div>
       </div>
     </div>

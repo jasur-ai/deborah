@@ -33,7 +33,7 @@
     'auth.userReserved':'Bu nom tizim uchun ajratilgan',
     'auth.userInvalid':'2–50 belgi: lotin harflari, raqam, . _ -',
     'auth.passHint':'Kamida 8 belgi — harf va raqam',
-    'auth.role':'Rolingiz','auth.roleStudent':'Talaba','auth.roleTeacher':"O'qituvchi",'auth.teacherLink':"O'qituvchi uchun to'liq ariza →",
+    'auth.role':'Rolingiz','auth.roleStudent':'Talaba','auth.roleTeacher':"O'qituvchi",'auth.teacherLink':"O'qituvchi uchun to'liq ariza →",'auth.applyTeacher':"O'qituvchi arizasi berish →",
     'err.net':'Tarmoq xatosi — qayta urinib ko\'ring',
     'err.wait':'Bir necha soniya kuting...','auth.or':'yoki email bilan',
     'auth.name':'Ism va familiya','auth.email':'Email','auth.pass':'Parol',
@@ -158,7 +158,7 @@
     'auth.userReserved':'Бу ном тизим учун ажратилган',
     'auth.userInvalid':'2–50 белги: лотин ҳарфлари, рақам, . _ -',
     'auth.passHint':'Камида 8 белги — ҳарф ва рақам',
-    'auth.role':'Ролингиз','auth.roleStudent':'Талаба','auth.roleTeacher':'Ўқитувчи','auth.teacherLink':"Ўқитувчи учун тўлиқ ариза →",
+    'auth.role':'Ролингиз','auth.roleStudent':'Талаба','auth.roleTeacher':'Ўқитувчи','auth.teacherLink':"Ўқитувчи учун тўлиқ ариза →",'auth.applyTeacher':"Ўқитувчи аризаси бериш →",
     'err.net':'Тармоқ хатоси — қайта уриниб кўринг',
     'err.wait':'Бир неча сония кутинг...','auth.or':'ёки email билан',
     'auth.name':'Исм ва фамилия','auth.email':'Email','auth.pass':'Парол',
@@ -280,7 +280,7 @@
     'auth.userReserved':'Это имя зарезервировано системой',
     'auth.userInvalid':'2–50 символов: латиница, цифры, . _ -',
     'auth.passHint':'Минимум 8 символов — буквы и цифры',
-    'auth.role':'Ваша роль','auth.roleStudent':'Студент','auth.roleTeacher':'Преподаватель','auth.teacherLink':'Полная заявка преподавателя →',
+    'auth.role':'Ваша роль','auth.roleStudent':'Студент','auth.roleTeacher':'Преподаватель','auth.teacherLink':'Полная заявка преподавателя →','auth.applyTeacher':'Подать заявку преподавателя →',
     'err.net':'Ошибка сети — попробуйте ещё раз',
     'err.wait':'Подождите несколько секунд...','auth.or':'или по email',
     'auth.name':'Имя и фамилия','auth.email':'Email','auth.pass':'Пароль',
@@ -404,7 +404,7 @@
     'auth.userReserved':'This name is reserved by the system',
     'auth.userInvalid':'2–50 chars: letters, digits, . _ -',
     'auth.passHint':'At least 8 characters — letters and digits',
-    'auth.role':'Your role','auth.roleStudent':'Student','auth.roleTeacher':'Teacher','auth.teacherLink':'Full teacher application →',
+    'auth.role':'Your role','auth.roleStudent':'Student','auth.roleTeacher':'Teacher','auth.teacherLink':'Full teacher application →','auth.applyTeacher':'Apply as teacher →',
     'err.net':'Network error — please retry',
     'err.wait':'Please wait a few seconds...','auth.or':'or with email',
     'auth.name':'Full name','auth.email':'Email','auth.pass':'Password',
@@ -579,18 +579,6 @@
   hmenu.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){hmenu.classList.remove('open');});});
 
 
-  /* ═══ Tabs (Kirish / Ro'yxatdan o'tish) ═══ */
-  var tabs=document.querySelectorAll('.tabs button');
-  var fLogin=document.getElementById('fLogin'),fReg=document.getElementById('fReg');
-  tabs.forEach(function(b){
-    b.addEventListener('click',function(){
-      var t=b.getAttribute('data-tab');
-      tabs.forEach(function(x){x.classList.toggle('on',x===b);});
-      fLogin.style.display=(t==='login')?'block':'none';
-      fReg.style.display=(t==='reg')?'block':'none';
-    });
-  });
-
   /* ═══ REAL: Providerlar (Google) ═══ */
   var PROV=(window.__AUTH_PROVIDERS||{});
   document.querySelectorAll('.provider').forEach(function(b){
@@ -609,30 +597,7 @@
     });
   });
 
-  /* ═══ REAL: fReg — username LIVE tekshiruv (band/mavjud) ═══ */
-  var doneReg=document.getElementById('doneReg');
-  var rUser=document.getElementById('rUser');
-  var rUserHint=document.getElementById('rUserHint');
-  var userState={ok:false,checked:''};
-  var userTimer=null;
   function L(){return I18N[document.documentElement.getAttribute('lang')]||I18N.uz;}
-  rUser.addEventListener('input',function(){
-    var v=rUser.value.trim();
-    rUser.classList.remove('ok','err');rUserHint.className='fld-hint';rUserHint.textContent='';
-    userState={ok:false,checked:v};
-    clearTimeout(userTimer);
-    if(!v){return;}
-    if(v.length<2||v.length>50){rUser.classList.add('err');rUserHint.classList.add('err');rUserHint.textContent=L()['auth.userInvalid'];return;}
-    userTimer=setTimeout(function(){
-      fetch('/user/login/username-check?username='+encodeURIComponent(v),{credentials:'same-origin'})
-        .then(function(r){return r.json();})
-        .then(function(j){
-          if(userState.checked!==v||j.reason==='rate'){return;}
-          if(j.ok){rUser.classList.add('ok');rUserHint.classList.add('ok');rUserHint.textContent=L()['auth.userFree'];userState={ok:true,checked:v};}
-          else{rUser.classList.add('err');rUserHint.classList.add('err');rUserHint.textContent=L()[j.reason==='taken'?'auth.userTaken':j.reason==='reserved'?'auth.userReserved':'auth.userInvalid'];userState={ok:false,checked:v};}
-        }).catch(function(){});
-    },450);
-  });
 
   /* ═══ REAL: fetch submit (X-Landing JSON rejimi) — xato JOYIDA, 2-panel YO'Q ═══ */
   function submitAuth(formId,msgId,preCb){
@@ -661,20 +626,6 @@
     });
   }
   submitAuth('fLogin','doneLogin');
-  submitAuth('fReg','doneReg',function(d){
-    var v=rUser.value.trim();
-    if(v&&rUser.classList.contains('err')){
-      doneReg.textContent=rUserHint.textContent||d['auth.userInvalid'];
-      doneReg.classList.add('show');
-      return false;
-    }
-    /* BUG-035: O'qituvchi roli tanlanganda NATIV POST — server to'liq
-       /user/register ariza sahifasini prefilled render qiladi (university/
-       subject maydonlari u yerda). AJAX bu holatda HTML'ni o'qiy olmaydi. */
-    var roleSel=document.querySelector('#fReg input[name="role"]:checked');
-    if(roleSel&&roleSel.value==='teacher'){document.getElementById('fReg').submit();return false;}
-    return true;
-  });
 
   /* ═══ Tema — yumshoq o'tish (DeborahTheme engine) ═══ */
   var fx=document.getElementById('modeFx');
